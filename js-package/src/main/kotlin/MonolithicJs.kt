@@ -139,7 +139,7 @@ private fun buildSinglePlotComponent(
     parentElement: HTMLElement
 ) {
 
-    LiveMapUtil.newCursorProvider()
+    LiveMapUtil.newCursorService()
 
     val assembler = plotBuildInfo.plotAssembler
     injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)

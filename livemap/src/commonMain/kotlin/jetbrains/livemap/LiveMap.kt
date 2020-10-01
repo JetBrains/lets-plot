@@ -98,7 +98,7 @@ class LiveMap(
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
     private val myAttribution: String?,
-    private val myCursorProvider: CursorProvider
+    private val myCursorService: CursorService
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -244,7 +244,7 @@ class LiveMap(
                     myMapLocationConsumer,
                     myLayerManager,
                     myAttribution,
-                    myCursorProvider
+                    myCursorService
                 ),
 
                 CellStateUpdateSystem(componentManager),

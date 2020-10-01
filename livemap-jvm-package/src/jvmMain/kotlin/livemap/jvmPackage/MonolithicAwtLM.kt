@@ -59,7 +59,7 @@ object MonolithicAwtLM {
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
 
-                LiveMapUtil.newCursorProvider()
+                LiveMapUtil.newCursorService()
                 injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
                 val plot = assembler.createPlot()

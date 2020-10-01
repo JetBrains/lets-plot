@@ -13,7 +13,7 @@ import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.ui.CursorProvider
+import jetbrains.livemap.ui.CursorService
 
 class LiveMapSpec(
     val geocodingService: GeocodingService,
@@ -33,7 +33,7 @@ class LiveMapSpec(
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
     val tileSystemProvider: TileSystemProvider,
     val attribution: String?,
-    val cursorProvider: CursorProvider,
+    val cursorService: CursorService,
     val minZoom: Int = LiveMapConstants.MIN_ZOOM,
     val maxZoom: Int = LiveMapConstants.MAX_ZOOM,
     val devParams: DevParams

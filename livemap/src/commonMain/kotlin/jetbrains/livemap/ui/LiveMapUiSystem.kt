@@ -38,7 +38,7 @@ class LiveMapUiSystem(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
     private val myAttribution: String?,
-    private val myCursorProvider: CursorProvider
+    private val myCursorService: CursorService
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
@@ -192,11 +192,11 @@ class LiveMapUiSystem(
 
     private fun changeCursorOnHover(listeners: EventListenerComponent) {
         listeners.addOverListener {
-            myCursorProvider.pointer()
+            myCursorService.pointer()
         }
 
         listeners.addOutListener {
-            myCursorProvider.default()
+            myCursorService.default()
         }
     }
 

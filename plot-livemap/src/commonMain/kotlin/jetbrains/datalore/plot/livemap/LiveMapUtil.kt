@@ -19,22 +19,22 @@ import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapCanvasFigure
 import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.ui.Clipboard
-import jetbrains.livemap.ui.CursorProvider
+import jetbrains.livemap.ui.CursorService
 
 object LiveMapUtil {
 
-    private var myCursorProvider = CursorProvider({}, {})
+    private var myCursorService = CursorService({}, {})
 
-    fun newCursorProvider() {
-        myCursorProvider = CursorProvider({}, {})
+    fun newCursorService() {
+        myCursorService = CursorService({}, {})
     }
 
     fun setDefaultCursor(default: () -> Unit) {
-        myCursorProvider.default = default
+        myCursorService.default = default
     }
 
     fun setPointerCursor(pointer: () -> Unit) {
-        myCursorProvider.pointer = pointer
+        myCursorService.pointer = pointer
     }
 
     fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
@@ -42,7 +42,7 @@ object LiveMapUtil {
             if (tileLayers.any(GeomLayer::isLiveMap)) {
                 require(tileLayers.count(GeomLayer::isLiveMap) == 1)
                 require(tileLayers.first().isLiveMap)
-                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions, myCursorProvider))
+                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions, myCursorService))
             }
         }
     }
@@ -89,7 +89,7 @@ object LiveMapUtil {
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
         private val myLiveMapOptions: LiveMapOptions,
-        cursorProvider: CursorProvider
+        cursorService: CursorService
     ) : LiveMapProvider {
 
         private val liveMapSpecBuilder: LiveMapSpecBuilder
@@ -141,7 +141,7 @@ object LiveMapUtil {
                     .mapLocationConsumer { locationRect ->
                         Clipboard.copy(LiveMapLocation.getLocationString(locationRect))
                     }
-                    .cursorProvider(cursorProvider)
+                    .cursorService(cursorService)
             }
         }
 
