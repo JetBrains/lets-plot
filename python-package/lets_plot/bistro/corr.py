@@ -74,10 +74,12 @@ class corr_plot_builder:
 
     def __init__(self, data, show_legend=None, format=None, flip=None):
         """
-        :param data:  dictionary or pandas DataFrame  required. Correlation will bw calculated for each variable pair.
-        :param show_legend: Boolean. If True legend is shown. Default - True.
-        :param format: format for tooltips and labels. Default '.2f'.
-        :param flip: Boolean. If True th y axis is flipped.
+        Parameters
+        ----------
+        data :  dictionary or pandas DataFrame  required. Correlation will bw calculated for each variable pair.
+        show_legend : Boolean. If True legend is shown. Default - True.
+        format : format for tooltips and labels. Default '.2f'.
+        flip : Boolean. If True the y axis is flipped.
         """
 
         self._data = data
@@ -133,10 +135,16 @@ class corr_plot_builder:
     def palette_gradient(self, low, mid, high):
         """
         Set scale_color_gradient2 for corr plot
-        :param low: color, corresponded to correlation -1
-        :param mid: color, corresponded to correlation 0
-        :param high:color, corresponded to correlation 1
-        :return: self
+
+        Parameters
+        ----------
+        low : color, corresponded to correlation -1
+        mid : color, corresponded to correlation 0
+        high : color, corresponded to correlation 1
+
+        Returns
+        -------
+            self
         """
         self._color_scale = scale_color_gradient2(name='Correlation',
                                                   low=low, mid=mid, high=high,
@@ -157,63 +165,90 @@ class corr_plot_builder:
     def patette_BrBG(self):
         """
         Set scale_color_brewer with BrBG palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('BrBG')
 
     def patette_PiYG(self):
         """
         Set scale_color_brewer with PiYG palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('PiYG')
 
     def patette_PRGn(self):
         """
         Set scale_color_brewer with PRGn palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('PRGn')
 
     def patette_PuOr(self):
         """
         Set scale_color_brewer with PuOr palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('PuOr')
 
     def patette_RdBu(self):
         """
         Set scale_color_brewer with RdBu palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('RdBu')
 
     def patette_RdGy(self):
         """
         Set scale_color_brewer with RdGy palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('RdGy')
 
     def patette_RdYlBu(self):
         """
         Set scale_color_brewer with RdYlBu palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('RdYlBu')
 
     def patette_RdYlGn(self):
         """
         Set scale_color_brewer with RdYlGn palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('RdYlGn')
 
     def patette_Spectral(self):
         """
         Set scale_color_brewer with Spectral palette for corr plot.
-        :return: self
+
+        Returns
+        -------
+            self
         """
         return self._set_diverging_palette('Spectral')
 
@@ -221,11 +256,18 @@ class corr_plot_builder:
 
         """
         Method adds correlation matrix layer drawn by points to the plot.
-        :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
-        :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
-        :param format: Text format for tooltips. Default - '.2f'
-        :param other_args: - other args, passed to geom_point.
-        :return: self
+
+        Parameters
+        ----------
+        type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
+        fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
+        format: Text format for tooltips. Default - '.2f'
+        other_args: - other args, passed to geom_point.
+
+
+        Returns
+        -------
+            self
         """
 
         self._points_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
@@ -239,12 +281,18 @@ class corr_plot_builder:
 
         """
         Method adds correlation matrix layer drawn with geom_text to the plot.
-        :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
-        :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
-        :param format: Text format for tooltips and labels. Default - '.2f'
-        :param map_size - Boolean, if True, then absolute value of correlation is mapped to text size.
-        :param other_args: - other args, passed to geom_text.
-        :return: self
+
+        Parameters
+        ----------
+        type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
+        fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
+        format: Text format for tooltips and labels. Default - '.2f'
+        map_size - Boolean, if True, then absolute value of correlation is mapped to text size.
+        other_args: - other args, passed to geom_text.
+
+        Returns
+        -------
+            self
         """
         other_args['label_format'] = self._get_format(format)
 
@@ -269,11 +317,17 @@ class corr_plot_builder:
 
         """
         Method adds correlation matrix layer drawn as square tiles to the plot.
-        :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
-        :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
-        :param format: Text format for tooltips and labels. Default - '.2f'
-        :param other_args: - other args, passed to geom_text.
-        :return: self
+
+        Parameters
+        ----------
+        type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
+        fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
+        format: Text format for tooltips and labels. Default - '.2f'
+        other_args: - other args, passed to geom_text.
+
+        Returns
+        -------
+            self
         """
 
         self._text_color = 'white'
@@ -289,7 +343,10 @@ class corr_plot_builder:
 
         """
         This method create PlotSpec and returns it.
-        :return: PlotSpec for correlation matrix.
+
+        Returns
+        -------
+            self
         """
 
         layers = []
@@ -311,11 +368,17 @@ class corr_plot_builder:
 def corr_plot_scatter(data, format=None, palette=None):
     """
     Draws correlation matrix as scatterplot
-    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
-    for each variable pair.
-    :param format: Format specification for tooltips and labels.
-    :param palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    :return: PlotSpec for correlation matrix
+
+    Parameters
+    ----------
+    data : dictionary or pandas DataFrame  required. Correlation will be calculated
+        for each variable pair.
+    format : Format specification for tooltips and labels.
+    palette : palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
+
+    Returns
+    -------
+        PlotSpec for correlation matrix
     """
 
     plot_builder = corr_plot_builder(data=data, format=format, flip=True)
@@ -330,11 +393,17 @@ def corr_plot_scatter(data, format=None, palette=None):
 def corr_plot_tiles(data, format=None, palette=None):
     """
     Draws correlation matrix as tiles
-    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
-    for each variable pair.
-    :param format: Format specification for tooltips and labels.
-    :param palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    :return: PlotSpec for correlation matrix
+
+    Parameters
+    ----------
+    data: dictionary or pandas DataFrame  required. Correlation will be calculated
+        for each variable pair.
+    format: Format specification for tooltips and labels.
+    palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
+
+    Returns
+    -------
+        PlotSpec for correlation matrix
     """
     plot_builder = corr_plot_builder(data=data, format=format, flip=True)
     plot_builder.tiles()
@@ -348,11 +417,17 @@ def corr_plot_tiles(data, format=None, palette=None):
 def corr_plot_tileslab(data, format=None, palette=None):
     """
     Draws correlation matrix as tiles with labels
-    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
-    for each variable pair.
-    :param format: Format specification for tooltips and labels.
-    :param palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    :return: PlotSpec for correlation matrix
+
+    Parameters
+    ----------
+    data: dictionary or pandas DataFrame  required. Correlation will be calculated
+        for each variable pair.
+    format: Format specification for tooltips and labels.
+    palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
+
+    Returns
+    -------
+        PlotSpec for correlation matrix
     """
     plot_builder = corr_plot_builder(data=data, format=format, flip=True)
     plot_builder.tiles()
@@ -367,11 +442,17 @@ def corr_plot_tileslab(data, format=None, palette=None):
 def corr_plot_scatterlab(data, format=None, palette=None):
     """
     Draws correlation matrix as mix of scattrplot and labels
-    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
-    for each variable pair.
-    :param format: Format specification for tooltips and labels.
-    :param palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    :return: PlotSpec for correlation matrix
+
+    Parameters
+    ----------
+    data: dictionary or pandas DataFrame  required. Correlation will be calculated
+        for each variable pair.
+    format: Format specification for tooltips and labels.
+    palette: palette name, one of BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
+
+    Returns
+    -------
+        PlotSpec for correlation matrix
     """
     plot_builder = corr_plot_builder(data=data, format=format, flip=True)
     plot_builder.points(type='lower')
