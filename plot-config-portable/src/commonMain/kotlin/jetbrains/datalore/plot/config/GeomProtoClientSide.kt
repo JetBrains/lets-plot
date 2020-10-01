@@ -119,7 +119,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.animation = opts[Point.ANIMATION]
                 }
 
-                val sizeUnit = opts.getString(Point.SizeUnit.SIZE_UNIT)?.toLowerCase()
+                val sizeUnit = opts.getString(Point.SIZE_UNIT)?.toLowerCase()
                 sizeUnit?.let {
                     if (sizeUnit != Point.SizeUnit.X && sizeUnit != Point.SizeUnit.Y) {
                         throw IllegalArgumentException(
@@ -161,7 +161,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
-                val sizeUnit = opts.getString(Text.SizeUnit.SIZE_UNIT)?.toLowerCase()
+                val sizeUnit = opts.getString(Text.SIZE_UNIT)?.toLowerCase()
                 sizeUnit?.let {
                     if (sizeUnit != Text.SizeUnit.X && sizeUnit != Text.SizeUnit.Y) {
                         throw IllegalArgumentException(
