@@ -17,6 +17,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.input.CursorPointerComponent
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
@@ -37,8 +38,7 @@ class LiveMapUiSystem(
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
-    private val myAttribution: String?,
-    private val myCursorService: CursorService
+    private val myAttribution: String?
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
@@ -46,6 +46,9 @@ class LiveMapUiSystem(
     private lateinit var myGetCenter: MutableImage
     private lateinit var myMakeGeometry: MutableImage
     private lateinit var myViewport: Viewport
+    private lateinit var myButtonPlus: EcsEntity
+    private lateinit var myButtonMinus: EcsEntity
+
     private var myUiState: UiState = ResourcesLoading()
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -80,12 +83,12 @@ class LiveMapUiSystem(
         val getMakeGeometryOrigin = getCenterOrigin.add(DoubleVector(0.0, side + padding))
 
         myZoomPlus = MutableImage(plusOrigin, size)
-        val buttonPlus = myUiService.addButton(myZoomPlus)
-        addListenersToZoomButton(buttonPlus, myViewport.maxZoom, 1.0)
+        myButtonPlus = myUiService.addButton(myZoomPlus)
+        addListenersToZoomButton(myButtonPlus, myViewport.maxZoom, 1.0)
 
         myZoomMinus = MutableImage(minusOrigin, size)
-        val buttonMinus = myUiService.addButton(myZoomMinus)
-        addListenersToZoomButton(buttonMinus, myViewport.minZoom, -1.0)
+        myButtonMinus = myUiService.addButton(myZoomMinus)
+        addListenersToZoomButton(myButtonMinus, myViewport.minZoom, -1.0)
 
         myGetCenter = MutableImage(getCenterOrigin, size)
         val buttonGetCenter = myUiService.addButton(myGetCenter)
@@ -133,8 +136,6 @@ class LiveMapUiSystem(
     private fun addListenersToGetCenterButton(button: EcsEntity) {
         val listeners = button.getComponent<EventListenerComponent>()
 
-        changeCursorOnHover(listeners)
-
         listeners.addClickListener {
             it.stopPropagation()
             myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
@@ -146,8 +147,6 @@ class LiveMapUiSystem(
     private fun addListenersToZoomButton(button: EcsEntity, disablingZoom: Int, animationDelta: Double) {
         val camera = getSingletonEntity(CameraComponent::class)
         val listeners = button.getComponent<EventListenerComponent>()
-
-        changeCursorOnHover(listeners)
 
         listeners.addClickListener {
             it.stopPropagation()
@@ -169,8 +168,6 @@ class LiveMapUiSystem(
     private fun addListenersToMakeGeometryButton(button: EcsEntity) {
         val listeners = button.getComponent<EventListenerComponent>()
 
-        changeCursorOnHover(listeners)
-
         listeners.addClickListener {
             it.stopPropagation()
             if (containsEntity(MakeGeometryWidgetComponent::class)) finishDrawing() else activateCreateWidget()
@@ -182,21 +179,9 @@ class LiveMapUiSystem(
     private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
         val listeners = link.getComponent<EventListenerComponent>()
 
-        changeCursorOnHover(listeners)
-
         listeners.addClickListener {
             it.stopPropagation()
             hrefConsumer()
-        }
-    }
-
-    private fun changeCursorOnHover(listeners: EventListenerComponent) {
-        listeners.addOverListener {
-            myCursorService.pointer()
-        }
-
-        listeners.addOutListener {
-            myCursorService.default()
         }
     }
 
@@ -274,6 +259,18 @@ class LiveMapUiSystem(
 
         internal fun updateZoomButtons(zoom: Double) {
             val res = myUiService.resourceManager
+
+            if (zoom == myViewport.minZoom.toDouble() && myButtonMinus.contains<CursorPointerComponent>()) {
+                myButtonMinus.remove<CursorPointerComponent>()
+            } else if(zoom != myViewport.minZoom.toDouble() && !myButtonMinus.contains<CursorPointerComponent>()) {
+                myButtonMinus.add(CursorPointerComponent(myZoomMinus))
+            }
+
+            if (zoom == myViewport.maxZoom.toDouble() && myButtonPlus.contains<CursorPointerComponent>()) {
+                myButtonPlus.remove<CursorPointerComponent>()
+            } else if(zoom != myViewport.maxZoom.toDouble() && !myButtonPlus.contains<CursorPointerComponent>()) {
+                myButtonPlus.add(CursorPointerComponent(myZoomPlus))
+            }
 
             myZoomMinus.snapshot = if (zoom == myViewport.minZoom.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
             myZoomPlus.snapshot = if (zoom == myViewport.maxZoom.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]

@@ -219,6 +219,7 @@ class LiveMap(
                 MouseInputDetectionSystem(componentManager),
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
+                CursorSystem(componentManager, myCursorService),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
@@ -243,8 +244,7 @@ class LiveMap(
                     componentManager,
                     myMapLocationConsumer,
                     myLayerManager,
-                    myAttribution,
-                    myCursorService
+                    myAttribution
                 ),
 
                 CellStateUpdateSystem(componentManager),
