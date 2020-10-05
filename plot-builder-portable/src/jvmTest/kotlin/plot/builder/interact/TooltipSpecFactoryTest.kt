@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
+import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -78,5 +79,45 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
 
         assertLines(0, widthMapping.longTooltipText())
         assertFill(hintFill)
+    }
+
+    @Test
+    fun checkIfTooltipIsOutlier() {
+        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
+        createTooltipSpecs(
+            geomTargetBuilder.withPathHitShape()
+                .withLayoutHint(
+                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        FILL_COLOR
+                    )
+                )
+                .build()
+        )
+        assertLines(listOf(widthMapping.longTooltipText()), isOutlier = true)
+    }
+
+    @Test
+    fun shouldNotAddSemicolonIfLineFormatterIsSet() {
+        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
+        // set line format -> short text will be used
+        val widthAes = MappingValue(
+            AES_WIDTH,
+            format = "{}"
+        )
+        createTooltipSpecWithValueSources(
+            geomTargetBuilder.withPathHitShape()
+                .withLayoutHint(
+                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        FILL_COLOR
+                    )
+                )
+                .build(),
+            valueSources = listOf(widthAes)
+        )
+        assertLines(listOf(widthMapping.shortTooltipText()), isOutlier = true)
     }
 }

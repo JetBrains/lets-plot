@@ -41,4 +41,15 @@ class UiService(private val myComponentManager: EcsComponentManager, val resourc
             renderBox
         )
     }
+
+    fun addLink(renderBox: RenderBox): EcsEntity {
+        return myComponentManager
+            .createEntity("ui_link")
+            .addComponents {
+                + ParentLayerComponent(myComponentManager.getEntity(UiLayerComponent::class).id)
+                + ClickableComponent(renderBox)
+                + MouseInputComponent()
+                + EventListenerComponent()
+            }
+    }
 }

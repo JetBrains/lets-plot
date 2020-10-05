@@ -33,7 +33,7 @@ def maptiles_lets_plot(url: str, theme: str = None) -> dict:
         MAPTILES_KIND: _VECTOR_LETS_PLOT,
         MAPTILES_URL: url,
         MAPTILES_THEME: theme,
-        MAPTILES_ATTRIBUTION: 'Map data © OpenStreetMap contributors'
+        MAPTILES_ATTRIBUTION: 'Map data <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap</a> contributors'
     }
 
 
@@ -43,6 +43,7 @@ def maptiles_zxy(url: str, attribution: str = None) -> dict:
         Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
     :param attribution:
         An attribution or a copyright notice to display on the map as required by the tile license.
+        Supports HTML links <a href="http://www.example.com">Example</a>
     :return:
         Tile provider settings
     """

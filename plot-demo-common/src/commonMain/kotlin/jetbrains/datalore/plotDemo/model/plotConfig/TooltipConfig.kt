@@ -18,7 +18,8 @@ class TooltipConfig : PlotConfigDemoBase() {
             basic(),
             redefineDefaults(),
             tooltipAesList(),
-            tooltipEmptyList()
+            tooltipEmptyList(),
+            outliers()
         )
     }
 
@@ -50,15 +51,15 @@ class TooltipConfig : PlotConfigDemoBase() {
                                     'x/y|$aesX x $aesY', 
                                     '$aesColor (miles per gallon)',
                                     'car \'$vehicleName\' ($originCar)',
-                                    '@|19$modelYear',
+                                    '@|$modelYear',
                                     '@|$originCar',
                                     '#mpg data set'
                                ],
-                               'tooltip_formats': {
-                                    '$aesX': '.1f', 
-                                    '$aesY': '.2f', 
-                                    '$aesColor': '.2f'
-                               }
+                               'tooltip_formats': [
+                                    { 'field' : 'x', 'format' : '.1f' }, 
+                                    { 'field' : 'y', 'format' : '.2f' }, 
+                                    { 'field' : 'var@model year', 'format' : '19{.0f}' }
+                               ]
                            }
                         }
                      ]
@@ -84,9 +85,9 @@ class TooltipConfig : PlotConfigDemoBase() {
                            'geom': 'area',
                            'stat': 'density',
                            'tooltips' : {
-                                'tooltip_formats': {
-                                    '$aesColor': '.4f'
-                                 }
+                                'tooltip_formats': [
+                                    { 'field' : 'color', 'format' : 'is {.4f} (cm)' }
+                                 ]
                             }
                         }
                      ]
@@ -179,5 +180,34 @@ class TooltipConfig : PlotConfigDemoBase() {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
+    }
+
+    private fun outliers(): Map<String, Any> {
+        val spec = """{
+      'data': {
+            'hwy': [4.2, 11.5, 7.3, 5.8, 6.4, 10.0],
+            'class': ["suv", "suv", "suv", "suv", "suv", "suv"]
+      },
+      'mapping': {
+        'x': 'class',
+        'y': 'hwy'
+      },
+      'kind': 'plot',
+      'layers': [
+        {
+          'geom': 'boxplot',
+          'tooltips': {
+            'tooltip_formats': [
+              { 'field' : 'middle', 'format' : '{{mid}} = {.3f}' },
+              { 'field' : '${'$'}Y', 'format' : '.1f' }
+            ],
+            'tooltip_lines': [   
+               'min, max|${'$'}ymin, ${'$'}ymax'
+            ]
+          }
+        }
+      ]
+    }""".trimMargin()
+        return HashMap(parsePlotSpec(spec))
     }
 }

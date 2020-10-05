@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.MappedDataAccess.MappedData
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
+import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 
@@ -47,10 +47,6 @@ class TooltipSpecFactory(
 
         private fun outlierHints(): Map<Aes<*>, TipLayoutHint> {
             return myGeomTarget.aesTipLayoutHints
-        }
-
-        private fun outlierAesList(): List<Aes<*>> {
-            return outlierHints().map { it.key }
         }
 
         private fun outlierTooltipSpec(): List<TooltipSpec> {
@@ -121,8 +117,9 @@ class TooltipSpecFactory(
 
         private fun generalDataPoints(): List<DataPoint> {
             val nonOutlierDataPoints = myDataPoints.filterNot(DataPoint::isOutlier)
+            val outliers = outlierDataPoints().mapNotNull(DataPoint::aes)
             val generalAesList = removeDiscreteDuplicatedMappings(
-                aesWithoutOutliers = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outlierAesList()
+                aesWithoutOutliers = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outliers
             )
             return nonOutlierDataPoints.filter { dataPoint ->
                 when (dataPoint.aes){

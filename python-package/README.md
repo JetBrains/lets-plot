@@ -30,11 +30,9 @@ or just run shell command (if the changes are only in the Python code):
 
 * change dir to `lets-plot/python-package`
 * create / activate Python environment (if needed)
-* run shell commands: 
+* run shell command: 
 
-`pip uninstall lets-plot`
-
-`pip install --no-index --find-links=dist/ lets-plot --no-deps`
+`pip install --no-index --find-links=dist/ lets-plot --no-deps --force-reinstall`
  
 ## Test in Jupyter
 

@@ -12,12 +12,15 @@ from ._version import __version__
 from ._global_settings import _settings, is_production
 
 from .plot import *
+from .export import *
 from .frontend_context import *
 from .settings_utils import *
 
 __all__ = (plot.__all__ +
+           bistro.__all__ +
            frontend_context.__all__ +
            settings_utils.__all__ +
+           export.__all__ +
            ['LetsPlot'])
 
 from .frontend_context import _configuration as cfg

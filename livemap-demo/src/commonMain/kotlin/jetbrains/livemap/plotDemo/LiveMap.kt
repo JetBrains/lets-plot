@@ -54,7 +54,7 @@ class LiveMap : PlotConfigDemoBase() {
                         "kind": "vector_lets_plot",
                         "url": "ws://10.0.0.127:3933",
                         "theme": "dark",
-                        "attribution": "Map data © OpenStreetMap contributors"
+                        "attribution": "Map data <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap</a> contributors"
                     }
                 },
                 {
