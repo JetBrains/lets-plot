@@ -174,34 +174,31 @@ class TooltipBox : SvgComponent() {
         }
 
         internal fun update(lines: List<TooltipSpec.Line>, labelTextColor: Color, valueTextColor: Color) {
-            val valueComponents = lines
-                .map(TooltipSpec.Line::value)
-                .map { TextLabel(it).apply { textColor().set(valueTextColor) } }
-                .onEach { myLines.children().add(it.rootGroup) }
+            val lineComponents: List<Pair<TextLabel, TextLabel?>> = lines.map { line ->
+                TextLabel(line.value) to line.label?.let { TextLabel(it) }
+            }
 
-            val labelComponents: List<TextLabel?> = lines
-                .map(TooltipSpec.Line::label)
-                .map { labelString ->
-                    if (labelString == null) {
-                        null
-                    } else {
-                        TextLabel(labelString).apply { textColor().set(labelTextColor) }
-                    }
+            lineComponents
+                .map { it.first }
+                .onEach {
+                    it.textColor().set(valueTextColor)
+                    myLines.children().add(it.rootGroup)
                 }
-                .onEach { textLabel ->
-                    if (textLabel != null) {
-                        myLines.children().add(textLabel.rootGroup)
-                    }
+            lineComponents
+                .mapNotNull { it.second }
+                .onEach {
+                    it.textColor().set(labelTextColor)
+                    myLines.children().add(it.rootGroup)
                 }
 
-            val maxLabelWidth = labelComponents.filterNotNull().map { it.rootGroup.bBox.width }.max() ?: 0.0
+            val maxLabelWidth = lineComponents.mapNotNull { it.second }.map { it.rootGroup.bBox.width }.max() ?: 0.0
 
             var maxLineWidth = 0.0
-            valueComponents.forEachIndexed { index, valueTextLabel ->
-                val valueBbox = valueTextLabel.rootGroup.bBox
+            lineComponents.forEach { line ->
+                val valueBbox = line.first.rootGroup.bBox
                 maxLineWidth = max(
                     maxLineWidth,
-                    if (labelComponents[index] == null) {
+                    if (line.second == null) {
                         valueBbox.width
                     } else {
                         maxLabelWidth + valueBbox.width + LABEL_VALUE_INTERVAL
@@ -209,9 +206,10 @@ class TooltipBox : SvgComponent() {
                 )
             }
 
-            val textSize = valueComponents
-                .foldIndexed(DoubleVector.ZERO, { index, textDimension, valueTextLabel ->
-                    val labelTextLabel = labelComponents[index]
+            val textSize = lineComponents
+                .fold(DoubleVector.ZERO, { textDimension, line ->
+                    val valueTextLabel = line.first
+                    val labelTextLabel = line.second
 
                     val valueBbox = valueTextLabel.rootGroup.bBox
                     val labelBBox =
