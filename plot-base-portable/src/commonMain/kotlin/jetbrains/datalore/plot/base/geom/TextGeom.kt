@@ -23,7 +23,7 @@ class TextGeom : GeomBase() {
     var formatter: StringFormat? = null
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
-    private var sizeUnitScale: Double? = null
+    private var sizeUnitRatioCache: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
@@ -43,8 +43,8 @@ class TextGeom : GeomBase() {
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
-                val scaleFactor = getSizeUnitScaleFactor(ctx, aesthetics)
-                GeomHelper.decorate(label, p, scaleFactor)
+                val sizeUnitRatio = getSizeUnitRatio(ctx, aesthetics)
+                GeomHelper.decorate(label, p, sizeUnitRatio)
 
                 val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
@@ -68,9 +68,9 @@ class TextGeom : GeomBase() {
         return testString.length * fontSize * TEXT_WIDTH_NORM
     }
 
-    private fun getSizeUnitScaleFactor(ctx: GeomContext, aesthetics: Aesthetics): Double {
-        sizeUnitScale?.let { return sizeUnitScale!! }
-        sizeUnitScale = 1.0
+    private fun getSizeUnitRatio(ctx: GeomContext, aesthetics: Aesthetics): Double {
+        sizeUnitRatioCache?.let { return sizeUnitRatioCache!! }
+        sizeUnitRatioCache = 1.0
 
         sizeUnit?.let {
             val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
@@ -78,10 +78,10 @@ class TextGeom : GeomBase() {
             val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
             val maxTextWidth = estimateMaxTextWidth(fontSize)
 
-            sizeUnitScale = unitRes / maxTextWidth
+            sizeUnitRatioCache = unitRes / maxTextWidth
         }
 
-        return sizeUnitScale!!
+        return sizeUnitRatioCache!!
     }
 
     private fun toString(label: Any?): String {

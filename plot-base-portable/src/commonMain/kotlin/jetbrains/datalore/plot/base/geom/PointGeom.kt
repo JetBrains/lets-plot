@@ -25,7 +25,7 @@ open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
-    private var sizeUnitScale: Double? = null
+    private var sizeUnitRatioCache: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -51,21 +51,21 @@ open class PointGeom : GeomBase() {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                val scaleFactor = getSizeUnitScaleFactor(ctx, p)
+                val sizeUnitRatio = getSizeUnitRatio(ctx, p)
 
                 targetCollector.addPoint(
-                    i, location, scaleFactor * shape.size(p) / 2,
+                    i, location, sizeUnitRatio * shape.size(p) / 2,
                     tooltipParams(p)
                 )
-                val o = PointShapeSvg.create(shape, location, p, scaleFactor)
+                val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)
             }
         }
         root.add(wrap(slimGroup))
     }
 
-    private fun getSizeUnitScaleFactor(ctx: GeomContext, p: DataPointAesthetics): Double {
-        sizeUnitScale?.let { return sizeUnitScale!! }
+    private fun getSizeUnitRatio(ctx: GeomContext, p: DataPointAesthetics): Double {
+        sizeUnitRatioCache?.let { return sizeUnitRatioCache!! }
 
         sizeUnit?.let {
             val pointSize = p.size() ?: return 1.0
@@ -79,8 +79,9 @@ open class PointGeom : GeomBase() {
             if (size == 0.0)
                 return 1.0
 
-            sizeUnitScale = unitRes * pointSize / size
-            return sizeUnitScale!!
+            sizeUnitRatioCache = unitRes * pointSize / size
+
+            return sizeUnitRatioCache!!
         }
 
         return 1.0
