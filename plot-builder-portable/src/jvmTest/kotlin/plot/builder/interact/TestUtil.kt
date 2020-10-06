@@ -47,7 +47,7 @@ object TestUtil {
         var i = 0
         val n = tooltipSpecs.size
         while (i < n) {
-            val tooltipText = tooltipSpecs[i].lines
+            val tooltipText = tooltipSpecs[i].lines.map(TooltipSpec.Line::toString)
             assertListsEqual(expectedTooltips[i], tooltipText)
             ++i
         }

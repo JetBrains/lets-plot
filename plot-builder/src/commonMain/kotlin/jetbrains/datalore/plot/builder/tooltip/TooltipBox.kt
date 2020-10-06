@@ -61,7 +61,7 @@ class TooltipBox : SvgComponent() {
         add(myTextBox)
     }
 
-    internal fun setContent(fill: Color, lines: List<TooltipSpec.LabelValue>, style: String, isOutlier: Boolean) {
+    internal fun setContent(fill: Color, lines: List<TooltipSpec.Line>, style: String, isOutlier: Boolean) {
         addClassName(style)
         if (isOutlier) {
             fillColor = Colors.mimicTransparency(fill, fill.alpha / 255.0, Color.WHITE)
@@ -71,7 +71,7 @@ class TooltipBox : SvgComponent() {
             fillColor = Color.WHITE
             textColor = fill.changeAlpha(255).takeIf { fill.isDark() } ?: DARK_TEXT_COLOR
         }
-        myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, textColor = textColor)
+        myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, valueTextColor = textColor)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -173,13 +173,14 @@ class TooltipBox : SvgComponent() {
             add(myContent)
         }
 
-        internal fun update(lines: List<TooltipSpec.LabelValue>, labelTextColor: Color, textColor: Color) {
+        internal fun update(lines: List<TooltipSpec.Line>, labelTextColor: Color, valueTextColor: Color) {
             val valueComponents = lines
-                .map { TextLabel(it.value).apply { textColor().set(textColor) } }
+                .map(TooltipSpec.Line::value)
+                .map { TextLabel(it).apply { textColor().set(valueTextColor) } }
                 .onEach { myLines.children().add(it.rootGroup) }
 
             val labelComponents: List<TextLabel?> = lines
-                .map(TooltipSpec.LabelValue::label)
+                .map(TooltipSpec.Line::label)
                 .map { labelString ->
                     if (labelString == null) {
                         null
@@ -193,9 +194,7 @@ class TooltipBox : SvgComponent() {
                     }
                 }
 
-            val maxLabelWidth = labelComponents.filterNotNull().map {
-                it.rootGroup.bBox.width
-            }.max() ?: 0.0
+            val maxLabelWidth = labelComponents.filterNotNull().map { it.rootGroup.bBox.width }.max() ?: 0.0
 
             var maxLineWidth = 0.0
             valueComponents.forEachIndexed { index, valueTextLabel ->

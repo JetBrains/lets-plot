@@ -49,18 +49,17 @@ class TooltipLine(
 
     private fun chooseLabel(dataLabel: String?): String? {
         return when (label) {
-            USE_DEFAULT_LABEL -> dataLabel    // use default label (from data)
+            DEFAULT_LABEL_SPECIFIER -> dataLabel    // use default label (from data)
             else -> label                     // use the given label (can be null)
         }
-
     }
 
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
-            label = USE_DEFAULT_LABEL,
+            label = DEFAULT_LABEL_SPECIFIER,
             pattern = LinePatternFormatter.valueInLinePattern(),
             fields = listOf(valueSource)
         )
-        private const val USE_DEFAULT_LABEL = "@"
+        private const val DEFAULT_LABEL_SPECIFIER = "@"
     }
 }

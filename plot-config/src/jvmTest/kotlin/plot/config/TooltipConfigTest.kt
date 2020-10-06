@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -179,21 +180,35 @@ class TooltipConfigTest {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
                 "\${var@model name}",             // no label
-                "|\${var@model name}",            // empty label (now it's the same as 'no label')
+                "|\${var@model name}",            // empty label
                 "@|\${var@model name}",           // default = the variable name
                 "the model|\${var@model name}"    // specified
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
 
-        val expectedLines = listOf(
-            "dodge",
-            "dodge",
-            "model name: dodge",
-            "the model: dodge"
-        )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        val expected: List<Line> = listOf(
+            null to "dodge",
+            "" to "dodge",
+            "model name" to "dodge",
+            "the model" to "dodge"
+        ).map(Line.Companion::withLabelAndValue)
+
+        val actual = getGeneralTooltipLabelValues(geomLayer)
+
+        assertEquals(expected.size, actual.size, "Wrong number of lines in the general tooltip")
+        for (index in expected.indices) {
+            assertEquals(
+                expected[index].label,
+                actual[index].label,
+                "Wrong label in line #$index in the general tooltip"
+            )
+            assertEquals(
+                expected[index].value,
+                actual[index].value,
+                "Wrong value in line #$index in the general tooltip"
+            )
+        }
     }
 
     @Test
@@ -331,8 +346,12 @@ class TooltipConfigTest {
         }
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<String> {
+            return getGeneralTooltipLabelValues(geomLayer).map(Line::toString)
+        }
+
+        private fun getGeneralTooltipLabelValues(geomLayer: GeomLayer): List<Line> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filterNot(DataPoint::isOutlier).map(DataPoint::line)
+            return dataPoints.filterNot(DataPoint::isOutlier).map { Line(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
@@ -342,7 +361,7 @@ class TooltipConfigTest {
 
         private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.line })
+            return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 
         private fun assertTooltipLines(expectedLines: List<String>, actualLines: List<String>) {

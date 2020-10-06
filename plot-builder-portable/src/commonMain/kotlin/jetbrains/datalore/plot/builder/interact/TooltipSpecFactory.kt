@@ -53,12 +53,15 @@ class TooltipSpecFactory(
             val tooltipSpecs = ArrayList<TooltipSpec>()
             val outlierDataPoints = outlierDataPoints()
             outlierHints().forEach { (aes, hint) ->
-                val linesForAes = outlierDataPoints.filter { aes == it.aes }.map { TooltipSpec.LabelValue(null, it.value) }
+                val linesForAes = outlierDataPoints
+                    .filter { aes == it.aes }
+                    .map(DataPoint::value)
+                    .map(TooltipSpec.Line.Companion::withValue)
                 if (linesForAes.isNotEmpty()) {
                     tooltipSpecs.add(
                         TooltipSpec(
                             layoutHint = hint,
-                            labelValues = linesForAes,
+                            lines = linesForAes,
                             fill = hint.color ?: tipLayoutHint().color!!,
                             isOutlier = true
                         )
@@ -72,8 +75,8 @@ class TooltipSpecFactory(
         private fun axisTooltipSpec(): List<TooltipSpec>  {
             val tooltipSpecs = ArrayList<TooltipSpec>()
             val axis = mapOf(
-                Aes.X to axisDataPoints().filter { Aes.X == it.aes }.map { TooltipSpec.LabelValue(null, it.value) },
-                Aes.Y to axisDataPoints().filter { Aes.Y == it.aes }.map { TooltipSpec.LabelValue(null, it.value) }
+                Aes.X to axisDataPoints().filter { Aes.X == it.aes }.map(DataPoint::value).map(TooltipSpec.Line.Companion::withValue),
+                Aes.Y to axisDataPoints().filter { Aes.Y == it.aes }.map(DataPoint::value).map(TooltipSpec.Line.Companion::withValue)
             )
             axis.forEach { (aes, lines) ->
                 if (lines.isNotEmpty()) {
@@ -81,7 +84,7 @@ class TooltipSpecFactory(
                     tooltipSpecs.add(
                         TooltipSpec(
                             layoutHint = layoutHint,
-                            labelValues = lines,
+                            lines = lines,
                             fill = layoutHint.color!!,
                             isOutlier = true
                         )
@@ -92,12 +95,14 @@ class TooltipSpecFactory(
         }
 
         private fun generalTooltipSpec(): List<TooltipSpec> {
-            val generalLines = generalDataPoints().map { TooltipSpec.LabelValue(it.label, it.value) }
+            val generalLines = generalDataPoints()
+                .map { it.label to it.value }
+                .map(TooltipSpec.Line.Companion::withLabelAndValue)
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(
                         tipLayoutHint(),
-                        labelValues = generalLines,
+                        lines = generalLines,
                         fill = tipLayoutHint().color!!,
                         isOutlier = false
                     )

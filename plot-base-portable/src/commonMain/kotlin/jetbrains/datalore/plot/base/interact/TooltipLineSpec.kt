@@ -17,9 +17,5 @@ interface TooltipLineSpec {
         val aes: Aes<*>?,
         val isAxis: Boolean,
         val isOutlier: Boolean
-    ) {
-        // todo remove it, now it's used in test only
-        val line: String
-            get() = if (label.isNullOrEmpty()) value else "$label: $value"
-    }
+    )
 }
