@@ -53,7 +53,7 @@ class StringFormat(
 
     fun format(values: List<Any>): String {
         if (argsNumber != values.size) {
-            error("Wrong format pattern \"$pattern\" to format values=$values")
+            error("Can't format values $values with pattern \"$pattern\"). Wrong number of arguments: expected $argsNumber instead of ${values.size}")
         }
         return when (formatType) {
             FormatType.NUMBER_FORMAT -> {

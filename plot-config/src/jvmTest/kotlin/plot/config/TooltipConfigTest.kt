@@ -389,6 +389,21 @@ class TooltipConfigTest {
         )
     }
 
+    @Test
+    fun `wrong tooltip format (wrong number of arguments)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FORMAT to "{.2f} {.2f}"
+                    )
+                )
+            ),
+            expectedMessage = "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2"
+        )
+    }
+
     private fun assertFailTooltipSpec(
         tooltipConfig: Any?,
         expectedMessage: String

@@ -23,7 +23,7 @@ class MappingValue(
     private var myIsContinuous: Boolean = false
     private val myFormatter = format?.let {
         StringFormat(format).also {
-            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'" }
+            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'. Expected 1 argument instead of ${it.argsNumber}" }
         }
     }
 
