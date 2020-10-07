@@ -52,15 +52,15 @@ class layer_tooltips(FeatureSpec):
     >>> from lets_plot import *
     >>> mpg_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/mpg.csv'
     >>> mpg = pd.read_csv(mpg_url)
-    >>> ggplot(mpg, aes(x='displ', y='hwy')) \
-    >>>   + geom_point(aes(color='cty', shape='drv'), \
-    >>>                tooltips=layer_tooltips()
-    >>>                         .format('color', '.1f')                               # set the format for the aes value
-    >>>                         .line('$color (miles per gallon)')                    # "15.0 (miles per gallon)"
-    >>>                         .line('number of cylinders: $var@cyl')                # "number of cylinders: 4"
-    >>>                         .line('${var@manufacturer} $var@model ($var@year)')   # "ford mustang (1999)"
-    >>>                         .line('--[mpg dataset] --'))                          # "--[mpg dataset] --"
-   """
+    >>> ggplot(mpg, aes(x='displ', y='hwy')) +
+    ... geom_point(aes(color='cty', shape='drv'),
+    ...                tooltips=layer_tooltips()
+    ...                         .format('color', '.1f')                               # set the format for the aes value
+    ...                         .line('$color (miles per gallon)')                    # "15.0 (miles per gallon)"
+    ...                         .line('number of cylinders: $var@cyl')                # "number of cylinders: 4"
+    ...                         .line('${var@manufacturer} $var@model ($var@year)')   # "ford mustang (1999)"
+    ...                         .line('--[mpg dataset] --'))                          # "--[mpg dataset] --"
+    """
 
     def __init__(self):
         self.tooltip_formats: List = []
