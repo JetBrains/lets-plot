@@ -68,13 +68,11 @@ class TooltipBox : SvgComponent() {
         if (isOutlier) {
             fillColor = Colors.mimicTransparency(fill, fill.alpha / 255.0, Color.WHITE)
             textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
-            strokeColor = fillColor
-
         } else {
             fillColor = Color.WHITE
             textColor = fill.takeIf { fill.isDark() } ?: darker(fill) ?: DARK_TEXT_COLOR
-            strokeColor = textColor
         }
+        strokeColor = textColor
         myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, valueTextColor = textColor)
     }
 
@@ -181,31 +179,43 @@ class TooltipBox : SvgComponent() {
         }
 
         internal fun update(lines: List<TooltipSpec.Line>, labelTextColor: Color, valueTextColor: Color) {
-            val lineComponents: List<Pair<TextLabel, TextLabel?>> = lines.map { line ->
-                TextLabel(line.value) to line.label?.let { TextLabel(it) }
-            }
+            val valueComponents: List<TextLabel> = lines
+                .map(TooltipSpec.Line::value)
+                .map { TextLabel(it) }
 
-            lineComponents
-                .map { it.first }
+            val labelInfoComponents: List<Pair<String?, TextLabel?>> = lines
+                .map(TooltipSpec.Line::label)
+                .map { label ->
+                    // TextLabel is null for both situation: string is null or empty
+                    val textLabel = if (label.isNullOrEmpty()) null else TextLabel(label)
+                    label to textLabel
+                }
+
+            valueComponents
                 .onEach {
                     it.textColor().set(valueTextColor)
                     myLines.children().add(it.rootGroup)
                 }
-            lineComponents
+
+            labelInfoComponents
                 .mapNotNull { it.second }
                 .onEach {
                     it.textColor().set(labelTextColor)
                     myLines.children().add(it.rootGroup)
                 }
 
-            val maxLabelWidth = lineComponents.mapNotNull { it.second }.map { it.rootGroup.bBox.width }.max() ?: 0.0
+            val maxLabelWidth =
+                labelInfoComponents.mapNotNull { it.second }.map { it.rootGroup.bBox.width }.max() ?: 0.0
+
+            val lineComponents = valueComponents.zip(labelInfoComponents)
 
             var maxLineWidth = 0.0
             lineComponents.forEach { line ->
                 val valueBbox = line.first.rootGroup.bBox
+                val labelTextLabel = line.second.second
                 maxLineWidth = max(
                     maxLineWidth,
-                    if (line.second == null) {
+                    if (labelTextLabel == null) {
                         valueBbox.width
                     } else {
                         maxLabelWidth + valueBbox.width + LABEL_VALUE_INTERVAL
@@ -216,7 +226,8 @@ class TooltipBox : SvgComponent() {
             val textSize = lineComponents
                 .fold(DoubleVector.ZERO, { textDimension, line ->
                     val valueTextLabel = line.first
-                    val labelTextLabel = line.second
+                    val labelTextLabel = line.second.second
+                    val labelString = line.second.first
 
                     val valueBbox = valueTextLabel.rootGroup.bBox
                     val labelBBox =
@@ -241,8 +252,14 @@ class TooltipBox : SvgComponent() {
                             valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
                         valueBbox.width == maxLineWidth -> {
+                            // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             valueTextLabel.x().set(-valueBbox.left)
+                        }
+                        labelString == "" -> {
+                            // Move value to the right border
+                            valueTextLabel.x().set(maxLineWidth)
+                            valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
                         else -> {
                             // Move value to the center
