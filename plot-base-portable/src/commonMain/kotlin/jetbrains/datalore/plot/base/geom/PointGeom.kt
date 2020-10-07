@@ -25,7 +25,6 @@ open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
-    private var sizeUnitRatioCache: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -65,7 +64,6 @@ open class PointGeom : GeomBase() {
     }
 
     private fun getSizeUnitRatio(ctx: GeomContext, p: DataPointAesthetics): Double {
-        sizeUnitRatioCache?.let { return sizeUnitRatioCache!! }
 
         sizeUnit?.let {
             val pointSize = p.size() ?: return 1.0
@@ -79,9 +77,7 @@ open class PointGeom : GeomBase() {
             if (size == 0.0)
                 return 1.0
 
-            sizeUnitRatioCache = unitRes * pointSize / size
-
-            return sizeUnitRatioCache!!
+            return unitRes * pointSize / size
         }
 
         return 1.0
