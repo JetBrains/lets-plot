@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.base.values.Colors.darker
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -54,6 +55,7 @@ class TooltipBox : SvgComponent() {
 
     private var textColor: Color = Color.BLACK
     private var fillColor: Color = Color.WHITE
+    private var strokeColor: Color = Color.BLACK
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
 
     override fun buildComponent() {
@@ -66,10 +68,12 @@ class TooltipBox : SvgComponent() {
         if (isOutlier) {
             fillColor = Colors.mimicTransparency(fill, fill.alpha / 255.0, Color.WHITE)
             textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
+            strokeColor = fillColor
 
         } else {
             fillColor = Color.WHITE
-            textColor = fill.changeAlpha(255).takeIf { fill.isDark() } ?: DARK_TEXT_COLOR
+            textColor = fill.takeIf { fill.isDark() } ?: darker(fill) ?: DARK_TEXT_COLOR
+            strokeColor = textColor
         }
         myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, valueTextColor = textColor)
     }
@@ -103,8 +107,11 @@ class TooltipBox : SvgComponent() {
                 }
             }
 
-            myPointerPath.strokeColor().set(textColor)
-            myPointerPath.fillColor().set(fillColor)
+            myPointerPath.apply {
+                strokeColor().set(strokeColor)
+                strokeOpacity().set(1.0)
+                fillColor().set(fillColor)
+            }
 
             val vertFootingIndent = -calculatePointerFootingIndent(contentRect.height)
             val horFootingIndent = calculatePointerFootingIndent(contentRect.width)
