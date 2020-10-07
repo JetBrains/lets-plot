@@ -23,7 +23,6 @@ class TextGeom : GeomBase() {
     var formatter: StringFormat? = null
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
-    private var sizeUnitRatioCache: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
@@ -69,19 +68,16 @@ class TextGeom : GeomBase() {
     }
 
     private fun getSizeUnitRatio(ctx: GeomContext, aesthetics: Aesthetics): Double {
-        sizeUnitRatioCache?.let { return sizeUnitRatioCache!! }
-        sizeUnitRatioCache = 1.0
-
         sizeUnit?.let {
             val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
             val unitRes = ctx.getUnitResolution(aes)
             val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
             val maxTextWidth = estimateMaxTextWidth(fontSize)
 
-            sizeUnitRatioCache = unitRes / maxTextWidth
+            return unitRes / maxTextWidth
         }
 
-        return sizeUnitRatioCache!!
+        return 1.0
     }
 
     private fun toString(label: Any?): String {
