@@ -120,6 +120,12 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
 
                 geom.sizeUnit = opts.getString(Point.SIZE_UNIT)?.toLowerCase()
+                geom.sizeUnit?.let {
+                    if (it != "x" && it != "y") {
+                        throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+                    }
+                }
+
                 geom
             }
 
@@ -151,6 +157,12 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
 
                 geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.toLowerCase()
+                geom.sizeUnit?.let {
+                    if (it != "x" && it != "y") {
+                        throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+                    }
+                }
+
                 geom
             }
 
