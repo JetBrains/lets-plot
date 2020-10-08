@@ -95,9 +95,7 @@ class TooltipSpecFactory(
         }
 
         private fun generalTooltipSpec(): List<TooltipSpec> {
-            val generalLines = generalDataPoints()
-                .map { it.label to it.value }
-                .map(TooltipSpec.Line.Companion::withLabelAndValue)
+            val generalLines = generalDataPoints().map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(

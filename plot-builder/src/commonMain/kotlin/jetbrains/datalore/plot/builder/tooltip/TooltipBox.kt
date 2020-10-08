@@ -55,7 +55,6 @@ class TooltipBox : SvgComponent() {
 
     private var textColor: Color = Color.BLACK
     private var fillColor: Color = Color.WHITE
-    private var strokeColor: Color = Color.BLACK
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
 
     override fun buildComponent() {
@@ -63,16 +62,15 @@ class TooltipBox : SvgComponent() {
         add(myTextBox)
     }
 
-    internal fun setContent(fill: Color, lines: List<TooltipSpec.Line>, style: String, isOutlier: Boolean) {
+    internal fun setContent(color: Color, lines: List<TooltipSpec.Line>, style: String, isOutlier: Boolean) {
         addClassName(style)
         if (isOutlier) {
-            fillColor = Colors.mimicTransparency(fill, fill.alpha / 255.0, Color.WHITE)
+            fillColor = Colors.mimicTransparency(color, color.alpha / 255.0, Color.WHITE)
             textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
         } else {
             fillColor = Color.WHITE
-            textColor = fill.takeIf { fill.isDark() } ?: darker(fill) ?: DARK_TEXT_COLOR
+            textColor = color.takeIf { color.isDark() } ?: darker(color) ?: DARK_TEXT_COLOR
         }
-        strokeColor = textColor
         myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, valueTextColor = textColor)
     }
 
@@ -106,7 +104,7 @@ class TooltipBox : SvgComponent() {
             }
 
             myPointerPath.apply {
-                strokeColor().set(strokeColor)
+                strokeColor().set(textColor)
                 strokeOpacity().set(1.0)
                 fillColor().set(fillColor)
             }
