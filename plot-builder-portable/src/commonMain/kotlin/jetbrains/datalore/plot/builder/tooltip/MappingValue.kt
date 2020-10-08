@@ -35,7 +35,7 @@ class MappingValue(
         myDataLabel = when {
             isAxis -> null
             dataLabel.isEmpty() -> ""
-            dataLabel in axisLabels -> null
+            dataLabel in axisLabels -> ""
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
