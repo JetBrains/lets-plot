@@ -79,9 +79,9 @@ class corr_plot_builder:
         data :  dictionary or pandas DataFrame
             Correlation will bw calculated for each variable pair. Required.
         show_legend : Boolean
-            If True legend is shown. Default True
+            If True legend is shown. Default - True.
         format : string
-            Format for tooltips and labels. Default '.2f'.
+            Format for tooltips and labels. Default - '.2f'.
         flip : Boolean.
             If True the y axis is flipped.
         """
@@ -146,7 +146,7 @@ class corr_plot_builder:
             Color corresponded to correlation -1.
         mid : string
             Color corresponded to correlation 0.
-        high :
+        high : string
             Color corresponded to correlation 1.
 
         Returns
