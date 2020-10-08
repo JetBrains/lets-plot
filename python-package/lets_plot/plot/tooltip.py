@@ -14,21 +14,22 @@ __all__ = ['layer_tooltips']
 
 class layer_tooltips(FeatureSpec):
     """
-    Define tooltips.
+    Configure tooltips.
 
     Parameters
     ----------
-    line() - line to show in the tooltip
+    line() - line to show in the tooltip.
         Adds line template to the tooltip.
         Variables and aesthetics can be accessed via a special syntax:
             - $color for aes
             - $var@year for variable
             - ${var@number of cylinders} for variable with spaces in the name
             - ${var@income in $} for variable with spaces and dollar sign in the name
-            - $var@income_$_per_month for variable with dollar sign in the name
+            - $var@nameWith$ for the variable with dollar sign in its name
+        Escaping a dollar sign with a backslash: \$text to get the string "$text".
         The specified 'line' for outlier will move it to the general multi-line tooltip.
 
-    format() defines a format for the displayable value:
+    format() defines the format for displaying the value:
             .format(field = 'var@density', format = '.1f')
             .format(field = 'color', format = 'value is {.1f}')
         This format will be applied to the mapped value in the default tooltip or to the corresponding value
@@ -37,10 +38,10 @@ class layer_tooltips(FeatureSpec):
         The numeric format for non-numeric value will be ignored.
         The string template in format will allow to change lines for the default tooltip without 'line' specifying.
         Also the template will change the line for outliers.
-        To include a bracket character in the literal text - it can be escaped by doubling: {{ and }}.
+        To include a brace character in the literal text - it can be escaped by doubling: {{ and }}.
         Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
 
-    "none" to not show tooltips from this layer.
+    Set tooltips = "none" to hide tooltips from this layer.
 
     Returns
     -------
