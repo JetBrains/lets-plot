@@ -63,22 +63,22 @@ class layer_tooltips(FeatureSpec):
     """
 
     def __init__(self):
-        self.tooltip_formats: List = []
-        self.tooltip_lines: List = None
+        self._tooltip_formats: List = []
+        self._tooltip_lines: List = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
         d = super().as_dict()
-        d['tooltip_formats'] = self.tooltip_formats
-        d['tooltip_lines'] = self.tooltip_lines
+        d['tooltip_formats'] = self._tooltip_formats
+        d['tooltip_lines'] = self._tooltip_lines
         return d
 
     def format(self, field=None, format=None):
-        self.tooltip_formats.append({"field": field, "format": format})
+        self._tooltip_formats.append({"field": field, "format": format})
         return self
 
     def line(self, value):
-        if self.tooltip_lines is None:
-            self.tooltip_lines = []
-        self.tooltip_lines.append(value)
+        if self._tooltip_lines is None:
+            self._tooltip_lines = []
+        self._tooltip_lines.append(value)
         return self

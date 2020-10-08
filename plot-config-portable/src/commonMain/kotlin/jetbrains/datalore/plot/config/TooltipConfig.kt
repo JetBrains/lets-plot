@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.util.StringFormat
 import jetbrains.datalore.plot.builder.tooltip.*
+import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
+import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 
 class TooltipConfig(
     opts: Map<*, *>,
@@ -48,20 +50,20 @@ class TooltipConfig(
             val label = detachLabel(tooltipLine)
             val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
-            val usedValueSources = mutableListOf<ValueSource>()
-            val linePattern = SOURCE_RE_PATTERN.replace(valueString) { match ->
+            val fieldsInPattern = mutableListOf<ValueSource>()
+            val pattern: String = SOURCE_RE_PATTERN.replace(valueString) { match ->
                 if (match.value == "\\$VALUE_SOURCE_PREFIX") {
                     // it is a part of the text (not of the name)
                     VALUE_SOURCE_PREFIX
                 } else {
-                    usedValueSources += getValueSource(match.value)
+                    fieldsInPattern += getValueSource(match.value)
                     StringFormat.valueInLinePattern()
                 }
             }
             return TooltipLine(
                 label,
-                linePattern,
-                usedValueSources
+                pattern,
+                fieldsInPattern
             )
         }
 
@@ -90,12 +92,10 @@ class TooltipConfig(
             val allFormats = mutableMapOf<String, String>()
             tooltipFormats.forEach { tooltipFormat ->
                 require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
-                require(
-                    tooltipFormat.has(Option.TooltipFormat.FIELD) && tooltipFormat.has(Option.TooltipFormat.FORMAT)
-                ) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
+                require(tooltipFormat.has(FIELD) && tooltipFormat.has(FORMAT)) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
 
-                val configName = tooltipFormat[Option.TooltipFormat.FIELD] as String
-                val configFormat = tooltipFormat[Option.TooltipFormat.FORMAT] as String
+                val configName = tooltipFormat[FIELD] as String
+                val configFormat = tooltipFormat[FORMAT] as String
 
                 if (configName.startsWith("$")) {
                     val positionals = when (configName.removePrefix("$")) {

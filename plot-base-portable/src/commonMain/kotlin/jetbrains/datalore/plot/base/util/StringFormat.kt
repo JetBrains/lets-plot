@@ -35,7 +35,8 @@ class StringFormat(
         myNumberFormatters = when (formatType) {
             FormatType.NUMBER_FORMAT -> listOf(initNumberFormat(pattern))
             FormatType.STRING_FORMAT -> {
-                RE_PATTERN.findAll(pattern).map { it.groupValues[MATCH_INDEX] }.toList()
+                BRACES_REGEX.findAll(pattern)
+                    .map { it.groupValues[TEXT_IN_BRACES] }
                     .map { format ->
                         if (format.isNotEmpty()) {
                             initNumberFormat(format)
@@ -43,6 +44,7 @@ class StringFormat(
                             null
                         }
                     }
+                    .toList()
             }
         }
     }
@@ -62,7 +64,7 @@ class StringFormat(
             }
             FormatType.STRING_FORMAT -> {
                 var index = 0
-                RE_PATTERN.replace(pattern) {
+                BRACES_REGEX.replace(pattern) {
                     val originalValue = values[index]
                     val formatter = myNumberFormatters[index++]
                     formatValue(originalValue, formatter)
@@ -77,14 +79,7 @@ class StringFormat(
         return when {
             numberFormatter == null -> value.toString()
             value is Number -> numberFormatter.apply(value)
-            value is String -> {
-                val numberValue = value.toFloatOrNull()
-                if (numberValue != null) {
-                    numberFormatter.apply(numberValue.toFloat())
-                } else {
-                    value
-                }
-            }
+            value is String -> value.toFloatOrNull()?.let(numberFormatter::apply) ?: value
             else -> error("Failed to format value with type ${value::class.simpleName}. Supported types are Number and String.")
         }
     }
@@ -93,8 +88,8 @@ class StringFormat(
         // Format strings contain “replacement fields” surrounded by curly brackets {}.
         // Anything that is not contained in brackets is considered literal text, which is copied unchanged to the output.
         // To include a bracket character in the text - it can be escaped by doubling: {{ and }}.
-        private val RE_PATTERN = Regex("""(?![^{])(\{([^{}]*)})(?=[^}]|$)""")
-        const val MATCH_INDEX = 2
+        private val BRACES_REGEX = Regex("""(?![^{])(\{([^{}]*)})(?=[^}]|$)""")
+        const val TEXT_IN_BRACES = 2
 
         fun valueInLinePattern() = "{}"
     }
