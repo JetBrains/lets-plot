@@ -3,9 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base
+package jetbrains.datalore.base.stringFormat
 
-import jetbrains.datalore.plot.base.util.StringFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

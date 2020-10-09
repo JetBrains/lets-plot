@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.util.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders

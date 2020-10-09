@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.plot.base.util.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat
 
 class MappingValue(
     val aes: Aes<*>,

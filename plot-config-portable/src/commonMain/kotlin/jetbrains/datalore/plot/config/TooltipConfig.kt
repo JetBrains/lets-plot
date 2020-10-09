@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
-import jetbrains.datalore.plot.base.util.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT

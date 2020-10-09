@@ -18,7 +18,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.util.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
