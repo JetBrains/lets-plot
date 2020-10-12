@@ -45,11 +45,19 @@ class StringFormatTest {
     }
 
     @Test
-    fun `string pattern with curly brackets`() {
+    fun `string pattern with braces`() {
         val formatPattern = "{.1f} {{text}}"
         val valueToFormat = 4
         val formattedString = StringFormat(formatPattern).format(valueToFormat)
         assertEquals("4.0 {text}", formattedString)
+    }
+
+    @Test
+    fun `value inside braces`() {
+        val formatPattern = "{{{.1f}}}"
+        val valueToFormat = 4
+        val formattedString = StringFormat(formatPattern).format(valueToFormat)
+        assertEquals("{4.0}", formattedString)
     }
 
     @Test

@@ -85,10 +85,14 @@ class StringFormat(
     }
 
     companion object {
-        // Format strings contain “replacement fields” surrounded by curly brackets {}.
-        // Anything that is not contained in brackets is considered literal text, which is copied unchanged to the output.
-        // To include a bracket character in the text - it can be escaped by doubling: {{ and }}.
-        private val BRACES_REGEX = Regex("""(?![^{])(\{([^{}]*)})(?=[^}]|$)""")
+        // Format strings contain “replacement fields” surrounded by braces {}.
+        // Anything that is not contained in braces is considered literal text, which is copied unchanged to the output.
+        // If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}.
+        //     "text" -> "text"
+        //     "{{text}}" -> "{text}"
+        //     "{.1f} -> 1.2
+        //     "{{{.1f}}} -> {1.2}
+        private val BRACES_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)})(?=[^}]|}}|$)""")
         const val TEXT_IN_BRACES = 2
 
         fun valueInLinePattern() = "{}"

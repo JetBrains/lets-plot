@@ -109,7 +109,7 @@ class TooltipConfigTest {
                 ),
                 mapOf(
                     Option.TooltipFormat.FIELD to "shape",
-                    Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with curly brackets in the text
+                    Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with braces in the text
                 )
 
             )
