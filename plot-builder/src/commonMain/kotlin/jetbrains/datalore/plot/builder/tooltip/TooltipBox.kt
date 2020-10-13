@@ -209,14 +209,14 @@ class TooltipBox : SvgComponent() {
 
             var maxLineWidth = 0.0
             lineComponents.forEach { line ->
-                val valueBbox = line.first.rootGroup.bBox
+                val valueBBox = line.first.rootGroup.bBox
                 val labelTextLabel = line.second.second
                 maxLineWidth = max(
                     maxLineWidth,
                     if (labelTextLabel == null) {
-                        valueBbox.width
+                        valueBBox.width
                     } else {
-                        maxLabelWidth + valueBbox.width + LABEL_VALUE_INTERVAL
+                        maxLabelWidth + valueBBox.width + LABEL_VALUE_INTERVAL
                     }
                 )
             }
@@ -227,7 +227,7 @@ class TooltipBox : SvgComponent() {
                     val labelTextLabel = line.second.second
                     val labelString = line.second.first
 
-                    val valueBbox = valueTextLabel.rootGroup.bBox
+                    val valueBBox = valueTextLabel.rootGroup.bBox
                     val labelBBox =
                         labelTextLabel?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
@@ -235,7 +235,7 @@ class TooltipBox : SvgComponent() {
                     // Can't use bBox.height:
                     //  - in Batik it is close to the abs(bBox.top)
                     //  - in JavaFx it is constant = fontSize
-                    val yPosition = textDimension.y - min(valueBbox.top, labelBBox.top)
+                    val yPosition = textDimension.y - min(valueBBox.top, labelBBox.top)
                     valueTextLabel.y().set(yPosition)
                     labelTextLabel?.y()?.set(yPosition)
 
@@ -249,10 +249,10 @@ class TooltipBox : SvgComponent() {
                             valueTextLabel.x().set(maxLineWidth)
                             valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
-                        valueBbox.width == maxLineWidth -> {
+                        valueBBox.width == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            valueTextLabel.x().set(-valueBbox.left)
+                            valueTextLabel.x().set(-valueBBox.left)
                         }
                         labelString == "" -> {
                             // Move value to the right border
@@ -269,7 +269,7 @@ class TooltipBox : SvgComponent() {
                     DoubleVector(
                         x = maxLineWidth,
                         y = valueTextLabel.y().get()!! + max(
-                            valueBbox.height + valueBbox.top,
+                            valueBBox.height + valueBBox.top,
                             labelBBox.height + labelBBox.top
                         ) + LINE_INTERVAL
                     )
