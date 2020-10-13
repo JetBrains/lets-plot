@@ -8,14 +8,16 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import jetbrains.datalore.base.stringFormat.StringFormat
 
 class TooltipLine(
     val label: String?,
     val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
-    private val myLineFormatter =
-        LinePatternFormatter(pattern)
+    private val myLineFormatter = StringFormat(pattern).also {
+        require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
+    }
 
     fun setDataContext(dataContext: DataContext) {
         fields.forEach { it.setDataContext(dataContext) }
@@ -50,7 +52,7 @@ class TooltipLine(
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
             label = null,
-            pattern = LinePatternFormatter.valueInLinePattern(),
+            pattern = StringFormat.valueInLinePattern(),
             fields = listOf(valueSource)
         )
     }

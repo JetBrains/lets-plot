@@ -24,7 +24,7 @@ class TargetPrototype(
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
         return GeomTarget(
             hitIndex,
-            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor(), tooltipKind),
+            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor(), tooltipKind, tooltipParams.getStemLength()),
             tooltipParams.getTipLayoutHints()
         )
     }
@@ -34,29 +34,30 @@ class TargetPrototype(
             hitCoord: DoubleVector,
             hitShape: HitShape,
             fill: Color,
-            tooltipKind: TipLayoutHint.Kind
+            tooltipKind: TipLayoutHint.Kind,
+            stemLength: TipLayoutHint.StemLength
         ): TipLayoutHint {
 
             return when (hitShape.kind) {
                 POINT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill)
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POINT")
                 }
 
                 RECT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill)
-                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill)
-                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill)
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill, stemLength)
+                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill, stemLength)
+                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
                 }
 
                 PATH -> when (tooltipKind) {
-                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill)
+                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for PATH")
                 }
 
                 POLYGON -> when (tooltipKind) {
-                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill)
+                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POLYGON")
                 }
             }
