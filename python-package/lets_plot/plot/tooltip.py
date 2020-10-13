@@ -38,7 +38,11 @@ class layer_tooltips(FeatureSpec):
         The numeric format for non-numeric value will be ignored.
         The string template in format will allow to change lines for the default tooltip without 'line' specifying.
         Also the template will change the line for outliers.
-        To include a brace character in the literal text - it can be escaped by doubling: {{ and }}.
+        If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}, e.g.,
+             'text' -> "text"
+             '{{text}}' -> "{text}"
+             '$var@model' -> "mustang"
+             '{{$var@model}}' -> "{mustang}"
         Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
 
     Set tooltips = "none" to hide tooltips from this layer.
