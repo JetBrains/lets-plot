@@ -12,7 +12,7 @@ from lets_plot.geo_data import regions, regions_builder
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequest, PayloadKind, ExplicitRequest, \
     AmbiguityResolver
-from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint
+from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint, Answer
 from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _prepare_parent, \
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
 from lets_plot.geo_data.regions import _to_scope, _coerce_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
@@ -42,6 +42,11 @@ REGION_QUERY_LA = RegionQuery('LA', PARENT_WITH_NAME, AmbiguityResolver())
 REGION_QUERY_NY = RegionQuery('NY', PARENT_WITH_NAME, AmbiguityResolver())
 
 NAMESAKES_EXAMPLE_LIMIT = 10
+
+
+def feature_id(answer: Answer) -> str:
+    assert len(answer.features) == 1
+    return answer.features[0].id
 
 
 def make_expected_map_region(region_kind: RegionKind, values):
@@ -91,8 +96,8 @@ def test_regions_with_highlights(mock_geocoding):
     )
 
 
-FOO = FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()
-BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').build_geocoded()
+FOO = Answer('foo', [FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()])
+BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').build_geocoded()])
 
 @pytest.mark.parametrize('location,expected', [
     # none
@@ -112,7 +117,7 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
             FOO,
             BAR
         ]),
-     MapRegion.scope([FOO.id, BAR.id])
+     MapRegion.scope([feature_id(FOO), feature_id(BAR)])
     ),
 
     # list of strings
@@ -132,8 +137,8 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
      ],
 
      [
-         MapRegion.scope([FOO.id]),
-         MapRegion.scope([BAR.id])
+         MapRegion.scope([feature_id(FOO)]),
+         MapRegion.scope([feature_id(BAR)])
      ]
     ),
 
@@ -144,7 +149,7 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
      ],
      [
          MapRegion.with_name(FOO.query),
-         MapRegion.scope([BAR.id])
+         MapRegion.scope([feature_id(BAR)])
      ]
     )
 ])

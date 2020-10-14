@@ -11,18 +11,18 @@ from shapely.geometry import Point
 from lets_plot.geo_data import regions_builder, GeocodingService
 from lets_plot.geo_data.gis.request import RegionQuery, MapRegion, MapRegionKind, IgnoringStrategyKind, \
     AmbiguityResolver
-from lets_plot.geo_data.gis.response import FeatureBuilder, LevelKind, GeoPoint, GeoRect
+from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, LevelKind, GeoPoint, GeoRect
 from lets_plot.geo_data.regions import Regions
 from lets_plot.geo_data.regions_builder import RegionsBuilder
 from .geo_data import make_success_response
 
-Query = namedtuple('Query', 'name, region_id, region, feature')
+Query = namedtuple('Query', 'name, region_id, region, feature, answer')
 ShapelyPoint = Point
 
 
 def make_query(name: str, region_id: str) -> Query:
     region_feataure = FeatureBuilder().set_query(name).set_name(name).set_id(region_id).build_geocoded()
-    return Query(name, region_id, MapRegion.scope([region_id]), region_feataure)
+    return Query(name, region_id, MapRegion.scope([region_id]), region_feataure, Answer(name, [region_feataure]))
 
 
 FOO = make_query('foo', 'foo_region')
@@ -120,7 +120,7 @@ def test_with_regions():
     actual = \
         regions_builder(
             request=names(FOO),
-            within=Regions(LevelKind.city, [FOO.feature])) \
+            within=Regions(LevelKind.city, [FOO.answer])) \
             ._get_queries()
 
     expected = [
@@ -472,10 +472,10 @@ def names(*queries: Query) -> List[str]:
 
 
 def single_region(*queries: Query) -> Regions:
-    return Regions(LevelKind.city, [query.feature for query in queries])
+    return Regions(LevelKind.city, [query.answer for query in queries])
 
 
 def regions_list(*queries: Query) -> List[Regions]:
     return [
-        Regions(LevelKind.city, [query.feature]) for query in queries
+        Regions(LevelKind.city, [query.answer]) for query in queries
     ]

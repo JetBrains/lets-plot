@@ -6,7 +6,7 @@ import pytest
 
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind
-from lets_plot.geo_data.gis.response import FeatureBuilder, GeoPoint
+from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint
 from lets_plot.geo_data.regions import _coerce_resolution, _parse_resolution, Regions, Resolution, DF_ID, DF_FOUND_NAME, DF_REQUEST
 from lets_plot.plot import ggplot, geom_polygon
 from .geo_data import make_region, make_success_response, get_map_data_meta
@@ -110,8 +110,8 @@ class TestMapRegions:
         df = Regions(
             LevelKind.city,
             [
-                self.foo.set_query('').set_id('123').build_geocoded(),
-                self.bar.set_query('').set_id('456').build_geocoded(),
+                Answer('', [self.foo.set_query('').set_id('123').build_geocoded()]),
+                Answer('', [self.bar.set_query('').set_id('456').build_geocoded()]),
             ]
         ).to_data_frame()
 
@@ -121,8 +121,8 @@ class TestMapRegions:
         regions = Regions(
             LevelKind.city,
             [
-                self.foo.build_geocoded(),
-                self.bar.build_geocoded()
+                Answer('', [self.foo.build_geocoded()]),
+                Answer('', [self.bar.build_geocoded()])
             ]
         ).as_list()
 
@@ -138,7 +138,7 @@ class TestMapRegions:
         geocoding_result = Regions(
             LevelKind.city,
             [
-                FeatureBuilder().set_id(foo_id).set_query('').set_name(foo_name).build_geocoded()
+                Answer('', [FeatureBuilder().set_id(foo_id).set_query('').set_name(foo_name).build_geocoded()])
             ]
         )
 
@@ -168,9 +168,9 @@ class TestMapRegions:
         geocoding_result = Regions(
             LevelKind.city,
             [
-                self.foo.set_query('').build_geocoded(),
-                self.bar.set_query('').build_geocoded(),
-                self.baz.set_query('').build_geocoded(),
+                Answer('', [self.foo.set_query('').build_geocoded()]),
+                Answer('', [self.bar.set_query('').build_geocoded()]),
+                Answer('', [self.baz.set_query('').build_geocoded()]),
             ]
         )
 
@@ -206,17 +206,17 @@ class TestMapRegions:
         geocoding_result = Regions(
             LevelKind.city,
             [
-                self.foo.set_query('').build_geocoded(),
-                self.bar.set_query('').build_geocoded(),
-                self.foo.set_query('').build_geocoded()
+                Answer('', [self.foo.set_query('').build_geocoded()]),
+                Answer('', [self.bar.set_query('').build_geocoded()]),
+                Answer('', [self.foo.set_query('').build_geocoded()])
             ]
         )
 
         mock_request.return_value = make_success_response() \
-            .set_geocoded_features(
+            .set_answers(
             [
-                self.foo.set_query(foo_id).set_centroid(GeoPoint(0, 1)).build_geocoded(),
-                self.bar.set_query(bar_id).set_centroid(GeoPoint(0, 1)).build_geocoded()
+                Answer(foo_id, [self.foo.set_query(foo_id).set_centroid(GeoPoint(0, 1)).build_geocoded()]),
+                Answer(bar_id, [self.bar.set_query(bar_id).set_centroid(GeoPoint(0, 1)).build_geocoded()])
             ]
         ).build()
 

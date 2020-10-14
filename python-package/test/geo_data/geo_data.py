@@ -7,7 +7,7 @@ from typing import List, Union
 from lets_plot.geo_data import DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import ResponseField, GeometryKind
-from lets_plot.geo_data.gis.response import GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
+from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
     Response, SuccessResponse, AmbiguousResponse, ErrorResponse, ResponseBuilder
 from lets_plot.geo_data.regions import Regions
 
@@ -59,7 +59,7 @@ def use_local_server():
 NO_COLUMN = '<no column>'
 IGNORED = '__value_ignored__'
 
-def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_name: Union[str, List] = IGNORED, id: Union[str, List] = IGNORED, county: Union[str, List] = IGNORED, state: Union[str, List] = IGNORED, country: Union[str, List] = IGNORED, lon=None, lat=None) -> dict:
+def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_name: Union[str, List] = IGNORED, id: Union[str, List] = IGNORED, county: Union[str, List] = IGNORED, state: Union[str, List] = IGNORED, country: Union[str, List] = IGNORED, lon=None, lat=None):
     def assert_str(column, expected):
         if expected == IGNORED:
             return
@@ -101,13 +101,16 @@ def make_geocode_region(request: str, name: str, geo_object_id: str, highlights:
     return Regions(level_kind, [make_region(request, name, geo_object_id, highlights)])
 
 
-def make_region(request: str, name: str, geo_object_id: str, highlights: List[str]) -> GeocodedFeature:
-    return FeatureBuilder() \
-        .set_query(request) \
-        .set_name(name) \
-        .set_id(geo_object_id) \
-        .set_highlights(highlights) \
-        .build_geocoded()
+def make_region(request: str, name: str, geo_object_id: str, highlights: List[str]) -> Answer:
+    return Answer(request,
+                  [FeatureBuilder() \
+                  .set_query(request) \
+                  .set_name(name) \
+                  .set_id(geo_object_id) \
+                  .set_highlights(highlights) \
+                  .build_geocoded()
+                   ]
+                  )
 
 
 def make_centroid_point() -> GeoPoint:

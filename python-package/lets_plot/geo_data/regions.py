@@ -6,9 +6,9 @@ from pandas import DataFrame, Series
 
 from .gis.geocoding_service import GeocodingService
 from .gis.request import PayloadKind, RequestBuilder, RequestKind, MapRegion, RegionQuery
-from .gis.response import GeocodedFeature, Namesake, AmbiguousFeature, LevelKind
+from .gis.response import Answer, GeocodedFeature, Namesake, AmbiguousFeature, LevelKind
 from .gis.response import SuccessResponse, Response, AmbiguousResponse, ErrorResponse
-from .type_assertion import assert_type
+from .type_assertion import assert_type, assert_list_type
 from .._type_utils import CanToDataFrame
 
 NO_OBJECTS_FOUND_EXCEPTION_TEXT = 'No objects were found.'
@@ -110,13 +110,22 @@ class PlacesDataFrameBuilder:
 
 
 class Regions(CanToDataFrame):
-    def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False, queries: List[RegionQuery] = []):
+    def __init__(self, level_kind: LevelKind, answers: List[Answer], highlights: bool = False, queries: List[RegionQuery] = []):
+        assert_list_type(answers, Answer)
+        assert_list_type(queries, RegionQuery)
+
         try:
             import geopandas
         except:
             raise ValueError('Module \'geopandas\'is required for using regions') from None
 
         self._level_kind: LevelKind = level_kind
+        self._answers: List[Answer] = answers
+
+        features = []
+        for answer in answers:
+            features.extend(answer.features)
+
         self._geocoded_features: List[GeocodedFeature] = features
         self._highlights: bool = highlights
         self._queries: List[RegionQuery] = queries
@@ -131,7 +140,7 @@ class Regions(CanToDataFrame):
         return [MapRegion.place(feature.id, feature.query, self._level_kind) for feature in self._geocoded_features]
 
     def as_list(self) -> List['Regions']:
-        return [Regions(self._level_kind, [feature], self._highlights) for feature in self._geocoded_features]
+        return [Regions(self._level_kind, [answer], self._highlights) for answer in self._answers]
 
     def unique_ids(self) -> List[str]:
         seen = set()
