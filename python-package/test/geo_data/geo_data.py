@@ -74,7 +74,7 @@ def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_na
 
         if isinstance(expected, list):
             actual = df[column][index:index + len(expected)].tolist()
-            assert actual == expected
+            assert actual == expected, str(expected) + '!=' + str(actual)
             return
 
         raise ValueError('Not support type of expected: {}'.format(str(type(expected))))

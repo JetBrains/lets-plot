@@ -5,7 +5,7 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import PlacesDataFrameBuilder, select_not_empty_name, DF_REQUEST, DF_FOUND_NAME, abstractmethod
+from lets_plot.geo_data import PlacesDataFrameBuilder, arrange_queries, select_not_empty_name, DF_REQUEST, DF_FOUND_NAME, abstractmethod
 from lets_plot.geo_data.gis.response import GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 from lets_plot.geo_data.gis.request import RegionQuery
 
@@ -42,7 +42,7 @@ class RectGeoDataFrame:
 
     def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
-        queries = queries if len(queries) == len(features) else None
+        queries: List[Optional[RegionQuery]] = arrange_queries(features, queries)
 
         for i in range(len(features)):
             feature = features[i]
@@ -81,7 +81,7 @@ class CentroidsGeoDataFrame:
 
     def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
-        queries = queries if len(queries) == len(features) else None
+        queries: List[Optional[RegionQuery]] = arrange_queries(features, queries)
 
         for i in range(len(features)):
             feature = features[i]
@@ -99,7 +99,7 @@ class BoundariesGeoDataFrame:
 
     def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
-        queries = queries if len(queries) == len(features) else None
+        queries: List[Optional[RegionQuery]] = arrange_queries(features, queries)
 
         geometry = []
         for i in range(len(features)):

@@ -52,9 +52,9 @@ def test_valid_success_response():
 
     assert isinstance(response, SuccessResponse)
     assert 'OK' == response.message
-    assert 2 == len(response.features)
-    assert_geocoded(foo, response.features[0])
-    assert_geocoded(foofoo, response.features[1])
+    assert 2 == len(response.answers)
+    assert_geocoded(foo, response.answers[0].features[0])
+    assert_geocoded(foofoo, response.answers[1].features[0])
 
 
 def test_ambiguous_response():

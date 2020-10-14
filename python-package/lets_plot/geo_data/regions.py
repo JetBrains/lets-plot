@@ -49,6 +49,21 @@ def select_not_empty_name(feature: GeocodedFeature) -> str:
     return feature.name if feature.query is None or feature.query == '' else feature.query
 
 
+def arrange_queries(features: List[GeocodedFeature], queries: List[RegionQuery]) -> List[Optional[RegionQuery]]:
+    res = []
+    for feature in features:
+        request: Optional[RegionQuery] = None
+
+        for query in queries:
+            if query.request == feature.query:
+                request = query
+                break
+
+        res.append(request)
+
+    return res
+
+
 class PlacesDataFrameBuilder:
     def __init__(self):
         self._request: List[str] = []
@@ -57,16 +72,16 @@ class PlacesDataFrameBuilder:
         self._state: List[Optional[str]] = []
         self._country: List[Optional[str]] = []
 
-    def append_row(self, request: str, found_name: str, queries: Optional[List[RegionQuery]], parent_row: int):
+    def append_row(self, request: str, found_name: str, queries: List[Optional[RegionQuery]], parent_row: int):
         self._request.append(request)
         self._found_name.append(found_name)
 
-        if queries is None or len(queries) == 0:
-            self._county.append(None)
-            self._state.append(None)
-            self._country.append(None)
+        query: Optional[RegionQuery] = queries[parent_row]
+        if query is None:
+            self._county.append(MapRegion.name_or_none(None))
+            self._state.append(MapRegion.name_or_none(None))
+            self._country.append(MapRegion.name_or_none(None))
         else:
-            query: RegionQuery = queries[parent_row]
             self._county.append(MapRegion.name_or_none(query.county))
             self._state.append(MapRegion.name_or_none(query.state))
             self._country.append(MapRegion.name_or_none(query.country))
@@ -252,7 +267,7 @@ class Regions(CanToDataFrame):
         data[DF_ID] = [feature.id for feature in self._geocoded_features]
 
         # for us-48 queries doesnt' count
-        queries = self._queries if len(self._queries) == len(self._geocoded_features) else None
+        queries: List[Optional[RegionQuery]] = arrange_queries(self._geocoded_features, self._queries)
 
         for i in range(len(self._geocoded_features)):
             feature = self._geocoded_features[i]
@@ -272,7 +287,12 @@ class Regions(CanToDataFrame):
         if not isinstance(response, SuccessResponse):
             _raise_exception(response)
 
-        self._join_payload(response.features)
+        features = []
+
+        for a in response.answers:
+            features.extend(a.features)
+
+        self._join_payload(features)
 
         return df_converter.to_data_frame(self._geocoded_features, self._queries)
 

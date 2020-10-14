@@ -77,16 +77,30 @@ class Response:
         assert_type(message, str)
         self.message: str = message
 
+class Answer:
+    def __init__(self, query: str, features: List[GeocodedFeature]):
+        assert_type(query, str)
+        assert_list_type(features, GeocodedFeature)
+
+        self.query: str = query
+        self.features: List[GeocodedFeature] = features
+
 
 class SuccessResponse(Response):
-    def __init__(self, message: str, level: LevelKind, features: List[GeocodedFeature]):
+    def __init__(self, message: str, level: LevelKind, answers: List[Answer]):
         super().__init__(message)
 
         assert_type(message, str)
         assert_optional_type(level, LevelKind)
-        assert_list_type(features, GeocodedFeature)
+        assert_list_type(answers, Answer)
 
         self.level: LevelKind = level
+        self.answers: List[Answer] = answers
+
+        features = []
+        for answer in answers:
+            features.extend(answer.features)
+
         self.features: List[GeocodedFeature] = features
 
 
@@ -187,7 +201,7 @@ class ResponseBuilder:
         self.status: Status = None
         self.level: LevelKind = None
         self.message: str = None
-        self.geocoded_features: List[GeocodedFeature] = None
+        self.answers: List[Answer] = None
         self.ambiguous_features: List[AmbiguousFeature] = None
         self.data: Dict = None
 
@@ -211,16 +225,25 @@ class ResponseBuilder:
         self.ambiguous_features = v
         return self
 
-    def set_geocoded_features(self, v: List[GeocodedFeature]) -> 'ResponseBuilder':
-        assert_list_type(v, GeocodedFeature)
-        self.geocoded_features = v
+    def set_answers(self, v: List[Answer]) -> 'ResponseBuilder':
+        assert_list_type(v, Answer)
+        self.answers = v
         return self
+
+    def set_geocoded_features(self, v: List[GeocodedFeature]):
+        '''
+        Exactly matching non-exploding features, i.e. one feature per answer
+        '''
+        assert_list_type(v, GeocodedFeature)
+        self.answers = [Answer(f.query, [f]) for f in v]
+        return self
+
 
     def build(self) -> Response:
         if self.status == Status.error:
             return ErrorResponse(self.message)
         elif self.status == Status.success:
-            return SuccessResponse(self.message, self.level, self.geocoded_features)
+            return SuccessResponse(self.message, self.level, self.answers)
         elif self.status == Status.ambiguous:
             return AmbiguousResponse(self.message, self.level, self.ambiguous_features)
         else:
