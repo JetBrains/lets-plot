@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
@@ -73,6 +74,8 @@ object GeomInteractionUtil {
         return when (geomKind) {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
+            // by default geom_text doesn't show tooltips, but user can enable them via tooltips config
+            GeomKind.TEXT -> GeomMeta.renders(GeomKind.TEXT)
             else -> emptyList()
         }
     }
@@ -154,6 +157,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.BOX_PLOT -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
+            GeomKind.TEXT,
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,

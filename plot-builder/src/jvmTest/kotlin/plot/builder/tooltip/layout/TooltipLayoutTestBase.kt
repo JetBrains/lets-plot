@@ -8,11 +8,10 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import kotlin.test.assertEquals
@@ -302,6 +301,9 @@ internal open class TooltipLayoutTestBase {
 
         const val DEFAULT_OBJECT_RADIUS = 40.0
         private const val DOUBLE_COMPARE_EPSILON = 0.01
+
+        val NORMAL_STEM_LENGTH = TipLayoutHint.StemLength.NORMAL.value
+        val AXIS_STEM_LENGTH = TipLayoutHint.StemLength.NONE.value
 
         fun makeText(text: String): List<String> {
             return listOf(text)

@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI
 import kotlin.math.cos
@@ -129,7 +129,7 @@ internal class VerticalTooltipRotatingExpander(private val verticalSpace: jetbra
         }
 
         fun rotate(alpha: Double): DoubleRectangle {
-            val r = NORMAL_STEM_LENGTH
+            val r = TipLayoutHint.StemLength.NORMAL.value
             val newAttachmentCoord = DoubleVector(r * cos(alpha), r * sin(alpha)).add(myTargetCoord)
 
             val newTooltipCoord = when {

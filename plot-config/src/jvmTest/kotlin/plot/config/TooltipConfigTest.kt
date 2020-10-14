@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class TooltipConfigTest {
@@ -109,7 +110,7 @@ class TooltipConfigTest {
                 ),
                 mapOf(
                     Option.TooltipFormat.FIELD to "shape",
-                    Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with curly brackets in the text
+                    Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with braces in the text
                 )
 
             )
@@ -297,6 +298,129 @@ class TooltipConfigTest {
 
         val generalLines = getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(listOf(generalExpectedLine), generalLines)
+    }
+
+    @Test
+    fun `numeric format for non-numeric value will be ignored`() {
+        val tooltipConfig = mapOf(
+            Option.Layer.TOOLTIP_LINES to listOf(
+                "class is \$var@class"
+            ),
+            Option.Layer.TOOLTIP_FORMATS to listOf(
+                mapOf(
+                    Option.TooltipFormat.FIELD to "var@class",
+                    Option.TooltipFormat.FORMAT to ".2f"
+                )
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "class is suv"
+        )
+        assertTooltipStrings(expectedLines, getGeneralTooltipStrings(geomLayer))
+    }
+
+    @Test
+    fun `geom_text by default should not show tooltip`() {
+        val geomTextLayer = buildGeomLayer(
+            geom = "text",
+            data = mapOf("label" to listOf("my text")),
+            mapping = mapOf(Aes.LABEL.name to "label"),
+            tooltips = null
+        )
+        assertTooltipLines(
+            expectedLines = emptyList(),
+            actualLines = getGeneralTooltipLines(geomTextLayer)
+        )
+    }
+
+    @Test
+    fun `geom_text should support tooltips configuration`() {
+        val geomTextLayer = buildGeomLayer(
+            geom = "text",
+            data = mapOf("label" to listOf("my text")),
+            mapping = mapOf(Aes.LABEL.name to "label"),
+            tooltips = mapOf(
+                Option.Layer.TOOLTIP_LINES to listOf("\$label")
+            )
+        )
+        assertTooltipStrings(
+            expected = listOf("my text"),
+            actual = getGeneralTooltipStrings(geomTextLayer)
+        )
+    }
+
+    @Test
+    fun `wrong tooltip format (no arguments)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(Option.Layer.TOOLTIP_FORMATS to listOf(emptyMap<String, String>())),
+            expectedMessage = "Invalid 'format' arguments: 'field' and 'format' are expected"
+        )
+    }
+
+    @Test
+    fun `wrong tooltip format (list instead of map)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    listOf(
+                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FORMAT to ".2f"
+                    )
+                )
+            ),
+            expectedMessage = "Wrong tooltip 'format' arguments"
+        )
+    }
+
+    @Test
+    fun `wrong tooltip format (dollar in field name)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        Option.TooltipFormat.FIELD to "\$color",
+                        Option.TooltipFormat.FORMAT to ".2f"
+                    )
+                )
+            ),
+            expectedMessage = "X or Y is expected before '\$' as positional aes"
+        )
+    }
+
+    @Test
+    fun `wrong tooltip format (wrong number of arguments)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FORMAT to "{.2f} {.2f}"
+                    )
+                )
+            ),
+            expectedMessage = "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2"
+        )
+    }
+
+    private fun assertFailTooltipSpec(
+        tooltipConfig: Any?,
+        expectedMessage: String
+    ) {
+        val plotOpts = mutableMapOf(
+            Option.PlotBase.DATA to data,
+            Option.PlotBase.MAPPING to mapping,
+            Option.Plot.LAYERS to listOf(
+                mapOf(
+                    Option.Layer.GEOM to "point",
+                    Option.Layer.TOOLTIPS to tooltipConfig
+                )
+            )
+        )
+        val plotSpec = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts.toMutableMap())
+
+        assertTrue(PlotConfig.isFailure(plotSpec))
+        assertEquals(expectedMessage, PlotConfig.getErrorMessage(plotSpec))
     }
 
     companion object {
