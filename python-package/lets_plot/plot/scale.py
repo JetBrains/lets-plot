@@ -846,7 +846,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=trans,
+                  trans=None,
                   #
                   values=values)
 
