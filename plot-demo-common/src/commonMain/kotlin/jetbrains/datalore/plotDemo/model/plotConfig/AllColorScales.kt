@@ -6,10 +6,12 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
+import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
+import jetbrains.datalore.plot.config.Option.Scale.START_HUE
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
-import kotlin.math.round
-import kotlin.math.sign
+import kotlin.random.Random
 
 open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
@@ -22,7 +24,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             color_gradient2_midpoint(),
             color_gradient2_rainbow(),
 
-            color_hue(),
+            color_hue(0.0, 360.0),
+            color_hue(90.0, 180.0),
+            color_hue(90.0, 180.0, dir = -1),
+            color_hue(0.0, 360.0, 180.0),
+            color_hue_discrete(90.0, 360.0),
+            color_hue_discrete(90.0, 360.0, -1),
+
             color_hue_chroma(),
             color_hue_luminance(),
 
@@ -41,17 +49,6 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
 
     companion object {
-
-        private fun listOfInts(fromValue: Int, toValue: Int): List<Int> {
-            val increment = round(sign((toValue - fromValue).toFloat())).toInt()
-            val list = ArrayList<Int>()
-            var i = fromValue
-            while (i < toValue) {
-                list.add(i)
-                i += increment
-            }
-            return list
-        }
 
         private fun scaleParamsAsJsonPart(map: Map<String, Any>): String {
             val sb = StringBuilder()
@@ -82,7 +79,22 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return sb.toString()
         }
 
-        private fun specWithContinuousColors(
+        private fun specWithDiscreteData(
+            dataCount: Int,
+            scale_mapper_kind: String,
+            scaleParams: Map<String, Any> = emptyMap()
+        ): String {
+            val paramsCopy = HashMap(scaleParams)
+            paramsCopy["scale_mapper_kind"] = scale_mapper_kind
+
+            val chars = ('a'..'z').toList().map { it.toString() }
+            val r = Random(37)
+            val data = (0..dataCount).map { r.nextInt(until = chars.size) }.map { chars[it] }.toList()
+
+            return specWithColorScale(data, paramsCopy)
+        }
+
+        private fun specWithContinuousData(
             fromX: Int,
             toX: Int,
             scale_mapper_kind: String,
@@ -90,20 +102,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         ): String {
             val paramsCopy = HashMap(scaleParams)
             paramsCopy["scale_mapper_kind"] = scale_mapper_kind
-            return specWithColorScale(
-                fromX,
-                toX,
-                paramsCopy
-            )
-        }
-
-        private fun specWithColorScale(fromX: Int, toX: Int, scaleParams: Map<String, Any>): String {
-            return specWithColorScale(
-                listOfInts(
-                    fromX,
-                    toX
-                ), scaleParams
-            )
+            return specWithColorScale((fromX..toX).toList(), paramsCopy)
         }
 
         private fun specWithColorScale(data: List<*>, scaleParams: Map<String, Any>): String {
@@ -140,8 +139,9 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 // =======================
 //
 
+        @Suppress("FunctionName")
         private fun color_gradient(): Map<String, Any> {
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 0,
                 128,
                 "color_gradient"
@@ -149,12 +149,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_gradient_blue_red(): Map<String, Any> {
             val params = mapOf(
                 "low" to "blue",
                 "high" to "red"
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 0,
                 128,
                 "color_gradient",
@@ -163,8 +164,9 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_gradient2(): Map<String, Any> {
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_gradient2"
@@ -173,11 +175,12 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_gradient2_midpoint(): Map<String, Any> {
             val params = mapOf(
                 "midpoint" to 10.0
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_gradient2",
@@ -187,13 +190,14 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_gradient2_rainbow(): Map<String, Any> {
             val params = mapOf(
                 "low" to "green",
                 "mid" to "yellow",
                 "high" to "red"
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_gradient2",
@@ -203,21 +207,44 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
-        private fun color_hue(): Map<String, Any> {
-            val spec = specWithContinuousColors(
+        @Suppress("FunctionName")
+        private fun color_hue(h0: Double, h1: Double, start: Double = 0.0, dir: Int = 1): Map<String, Any> {
+            val params = mapOf(
+                HUE_RANGE to listOf(h0, h1),
+                START_HUE to start,
+                DIRECTION to dir
+            )
+            val spec = specWithContinuousData(
                 -64,
                 64,
-                "color_hue"
+                "color_hue",
+                params
             )
 
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
+        private fun color_hue_discrete(h0: Double, h1: Double, dir: Int = 1): Map<String, Any> {
+            val params = mapOf(
+                HUE_RANGE to listOf(h0, h1),
+                DIRECTION to dir
+            )
+            val spec = specWithDiscreteData(
+                32,
+                "color_hue",
+                params
+            )
+
+            return parsePlotSpec(spec)
+        }
+
+        @Suppress("FunctionName")
         private fun color_hue_chroma(): Map<String, Any> {
             val params = mapOf(
                 "c" to 20
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_hue",
@@ -227,11 +254,12 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_hue_luminance(): Map<String, Any> {
             val params = mapOf(
                 "l" to 40
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_hue",
@@ -241,8 +269,9 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_grey(): Map<String, Any> {
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_grey"
@@ -251,12 +280,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_grey_white2black(): Map<String, Any> {
             val params = mapOf(
                 "start" to 1.0,
                 "end" to 0
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_grey",
@@ -267,8 +297,9 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
 
+        @Suppress("FunctionName")
         private fun color_brewer(): Map<String, Any> {
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_brewer"
@@ -277,11 +308,12 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_brewer_direction(): Map<String, Any> {
             val params = mapOf(
                 "direction" to -1
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_brewer",
@@ -291,11 +323,12 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_brewer_diverging(): Map<String, Any> {
             val params = mapOf(
                 "type" to "div"
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_brewer",
@@ -305,11 +338,12 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_brewer_qualitative(): Map<String, Any> {
             val params = mapOf(
                 "type" to "qual"
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_brewer",
@@ -319,12 +353,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_brewer_qualitative_paired(): Map<String, Any> {
             val params = mapOf(
                 "type" to "qual",
                 "palette" to "Paired"
             )
-            val spec = specWithContinuousColors(
+            val spec = specWithContinuousData(
                 -64,
                 64,
                 "color_brewer",
@@ -334,6 +369,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             return parsePlotSpec(spec)
         }
 
+        @Suppress("FunctionName")
         private fun color_manual(): Map<String, Any> {
             val params = mapOf(
                 "values" to listOf(
@@ -347,9 +383,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
                     "#CC79A7"
                 )
             )
-            val spec =
-                specWithColorScale(-8, 8, params)
-
+            val spec = specWithColorScale((-8..8).toList(), params)
             return parsePlotSpec(spec)
         }
 

@@ -33,7 +33,7 @@ class ScaleConfigTest {
 
     private fun checkMappingDiscrete(expected: List<*>, input: List<*>, mapperProvider: MapperProvider<*>) {
         val map = mapOf(
-                "var" to input
+            "var" to input
         )
         val data = DataFrameUtil.fromMap(map)
 
@@ -53,12 +53,14 @@ class ScaleConfigTest {
 
     private fun checkIdentityMappingContinuous(input: List<Double>, mapperProvider: MapperProvider<Double>) {
         val map = mapOf(
-                "var" to input
+            "var" to input
         )
         val data = DataFrameUtil.fromMap(map)
 
-        val mapper = mapperProvider.createContinuousMapper(data, DataFrameUtil.findVariableOrFail(data, "var"),
-                Double.NaN, Double.NaN, Transforms.IDENTITY)
+        val mapper = mapperProvider.createContinuousMapper(
+            data, DataFrameUtil.findVariableOrFail(data, "var"),
+            Double.NaN, Double.NaN, Transforms.IDENTITY
+        )
         for (v in input) {
             assertEquals(v, mapper.apply(v))
         }
@@ -68,12 +70,12 @@ class ScaleConfigTest {
     @Test
     fun colorIdentityMapper() {
         val inputs = listOf(
-                listOf("red", "green", "blue"),
-                listOf("#ff0000", "#00ff00", "#0000ff"),
-                listOf("rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"),
-                listOf("rgba(255,0,0,1.0)", "rgba(0,255,0,1.0)", "rgba(0,0,255,1.0)"),
-                listOf(0xff0000, 0x00ff00, 0x0000ff),
-                listOf(0xff0000.toDouble(), 0x00ff00.toDouble(), 0x0000ff.toDouble())
+            listOf("red", "green", "blue"),
+            listOf("#ff0000", "#00ff00", "#0000ff"),
+            listOf("rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"),
+            listOf("rgba(255,0,0,1.0)", "rgba(0,255,0,1.0)", "rgba(0,0,255,1.0)"),
+            listOf(0xff0000, 0x00ff00, 0x0000ff),
+            listOf(0xff0000.toDouble(), 0x00ff00.toDouble(), 0x0000ff.toDouble())
         )
 
         for (aes in Aes.values()) {
@@ -114,7 +116,7 @@ class ScaleConfigTest {
     }
 
     @Test
-    fun colorHueMapperForDiscreteFillColorScale() {
+    fun colorHueMapperForDiscreteColorScale() {
         fun checkDiscreteScale(aes: Aes<Color>) {
 
             val scaleSpec = mapOf(
@@ -129,9 +131,9 @@ class ScaleConfigTest {
                 .createScale(dataFrame, dataFrame.variables().first { it.name == "a" })
                 .mapper
 
-            assertEquals(Color(160,229,114), scaleMapper(1.0))
-            assertEquals(Color(114,206,229), scaleMapper(2.0))
-            assertEquals(Color(206,114,229), scaleMapper(3.0))
+            assertEquals(Color(114, 229, 143), scaleMapper(1.0))
+            assertEquals(Color(143, 114, 229), scaleMapper(2.0))
+            assertEquals(Color(229, 143, 114), scaleMapper(3.0))
         }
 
         checkDiscreteScale(Aes.FILL)
