@@ -184,7 +184,7 @@ class TooltipBox : SvgComponent() {
             val labelInfoComponents: List<Pair<String?, TextLabel?>> = lines
                 .map(TooltipSpec.Line::label)
                 .map { label ->
-                    // TextLabel is null for both situation: string is null or empty
+                    // TextLabel is null for both situations: string is null or empty
                     val textLabel = if (label.isNullOrEmpty()) null else TextLabel(label)
                     label to textLabel
                 }
@@ -205,12 +205,12 @@ class TooltipBox : SvgComponent() {
             val maxLabelWidth =
                 labelInfoComponents.mapNotNull { it.second }.map { it.rootGroup.bBox.width }.max() ?: 0.0
 
-            val lineComponents = valueComponents.zip(labelInfoComponents)
+            val lineComponents = labelInfoComponents.zip(valueComponents)
 
             var maxLineWidth = 0.0
-            lineComponents.forEach { line ->
-                val valueBBox = line.first.rootGroup.bBox
-                val labelTextLabel = line.second.second
+            lineComponents.forEach { (labelComponent, valueComponent) ->
+                val valueBBox = valueComponent.rootGroup.bBox
+                val labelTextLabel = labelComponent.second
                 maxLineWidth = max(
                     maxLineWidth,
                     if (labelTextLabel == null) {
@@ -222,10 +222,9 @@ class TooltipBox : SvgComponent() {
             }
 
             val textSize = lineComponents
-                .fold(DoubleVector.ZERO, { textDimension, line ->
-                    val valueTextLabel = line.first
-                    val labelTextLabel = line.second.second
-                    val labelString = line.second.first
+                .fold(DoubleVector.ZERO, { textDimension, (label, valueTextLabel) ->
+                    val labelString = label.first
+                    val labelTextLabel = label.second
 
                     val valueBBox = valueTextLabel.rootGroup.bBox
                     val labelBBox =
