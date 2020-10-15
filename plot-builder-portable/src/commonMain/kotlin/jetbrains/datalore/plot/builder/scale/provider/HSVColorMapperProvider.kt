@@ -25,7 +25,25 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
     ): GuideMapper<Color> {
         val domainValuesAsNumbers = MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
         val mapperDomain = ensureApplicableRange(SeriesUtil.range(domainValuesAsNumbers.values))
-        val gradient = ColorMapper.gradientHSV(mapperDomain, fromHSV, toHSV, false, naValue)
+
+        var newFromHue = fromHSV.h
+        var newToHue = toHSV.h
+        if (domainValues.size > 1) {
+            // if 'from' and 'to' hue are too close - ajust the 'toHue'
+            val hueDiff = abs(toHSV.h % 360 - fromHSV.h % 360)
+            val step = (toHSV.h - fromHSV.h) / domainValues.size
+            if (hueDiff < abs(step) / 2) {
+                newFromHue = fromHSV.h + step / 2
+                newToHue = toHSV.h - step / 2
+            }
+        }
+
+        val gradient = ColorMapper.gradientHSV(
+            mapperDomain,
+            HSV(newFromHue, fromHSV.s, fromHSV.v),
+            HSV(newToHue, toHSV.s, toHSV.v),
+            false, naValue
+        )
         return GuideMappers.adapt(gradient)
     }
 

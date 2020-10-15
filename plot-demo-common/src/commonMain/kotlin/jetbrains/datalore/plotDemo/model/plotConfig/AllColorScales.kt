@@ -28,8 +28,10 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             color_hue(90.0, 180.0),
             color_hue(90.0, 180.0, dir = -1),
             color_hue(0.0, 360.0, 180.0),
-            color_hue_discrete(90.0, 360.0),
-            color_hue_discrete(90.0, 360.0, -1),
+//            color_hue_discrete(90.0, 360.0),
+//            color_hue_discrete(90.0, 360.0, -1),
+            color_hue_discrete(15.0, 375.0),
+            color_hue_discrete(15.0, 375.0, -1),
 
             color_hue_chroma(),
             color_hue_luminance(),
@@ -89,7 +91,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
             val chars = ('a'..'z').toList().map { it.toString() }
             val r = Random(37)
-            val data = (0..dataCount).map { r.nextInt(until = chars.size) }.map { chars[it] }.toList()
+            val data = (0 until dataCount).map { r.nextInt(until = chars.size) }.map { chars[it] }.toList()
 
             return specWithColorScale(data, paramsCopy)
         }
