@@ -161,7 +161,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             "mono" to "monospace"
         )
 
-        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double) {
+        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0) {
 
             label.textColor().set(p.color())
             label.textOpacity().set(p.alpha())

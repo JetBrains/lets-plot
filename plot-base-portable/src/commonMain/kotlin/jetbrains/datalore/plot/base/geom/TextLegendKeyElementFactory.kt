@@ -18,7 +18,7 @@ internal class TextLegendKeyElementFactory :
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val label = TextLabel("a")
-        GeomHelper.decorate(label, p, 1.0)
+        GeomHelper.decorate(label, p)
         label.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
         label.moveTo(size.x / 2, size.y / 2)
