@@ -82,7 +82,7 @@ class TextGeom : GeomBase() {
             val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
             val maxTextWidth = estimateMaxTextWidth(fontSize)
 
-            if (maxTextWidth == 1.0) {
+            if (maxTextWidth == 0.0) {
                 return 1.0
             }
 
