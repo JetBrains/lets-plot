@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Mercator projection (`geom_map(), coord_map()`)
  - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`
  - Colorbars: take in account limits defined in continuous color/fill scales.
+ - 'scale_color_hue' incorrectly interprets chroma range [[#206](https://github.com/JetBrains/lets-plot/issues/206)]
  
 ### Deprecated
 
