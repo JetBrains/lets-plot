@@ -4,5 +4,5 @@
 from .im import *
 from .corr import *
 
-__all__ = im.__all__ + corr.__all__
-
+__all__ = (im.__all__ +
+           corr.__all__)
