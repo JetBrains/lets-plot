@@ -203,13 +203,13 @@ class TooltipBox : SvgComponent() {
                 .max() ?: 0.0
             var maxLineWidth = 0.0
             linesInfo.forEach { (_, labelComponent, valueComponent) ->
-                val valueBBox = valueComponent.rootGroup.bBox
+                val valueWidth = valueComponent.rootGroup.bBox.width
                 maxLineWidth = max(
                     maxLineWidth,
                     if (labelComponent == null) {
-                        valueBBox.width
+                        valueWidth
                     } else {
-                        maxLabelWidth + valueBBox.width + LABEL_VALUE_INTERVAL
+                        maxLabelWidth + valueWidth + LABEL_VALUE_INTERVAL
                     }
                 )
             }
