@@ -77,12 +77,12 @@ class corr_plot_builder:
         Parameters
         ----------
         data :  dictionary or pandas DataFrame
-            Correlation will bw calculated for each variable pair. Required.
+            Correlation will be calculated for each variable pair.
         show_legend : Boolean
             If True legend is shown. Default - True.
         format : string
             Format for tooltips and labels. Default - '.2f'.
-        flip : Boolean.
+        flip : Boolean
             If True the y axis is flipped.
         """
 
@@ -143,11 +143,11 @@ class corr_plot_builder:
         Parameters
         ----------
         low : string
-            Color corresponded to correlation -1.
+            Color for low end of gradient (correlation -1).
         mid : string
-            Color corresponded to correlation 0.
+            Color for mid point (correlation 0).
         high : string
-            Color corresponded to correlation 1.
+            Color for high end of gradient (correlation 1).
 
         Returns
         -------
@@ -261,7 +261,7 @@ class corr_plot_builder:
 
     def points(self, type=None, fill_diagonal=None, format=None, **other_args):
         """
-        Method adds correlation matrix layer drawn by points to the plot.
+        Method defines correlation matrix layer drawn by points to the plot.
 
         Parameters
         ----------
@@ -286,7 +286,7 @@ class corr_plot_builder:
 
     def labels(self, type=None, fill_diagonal=None, format=None, map_size=False, **other_args):
         """
-        Method adds correlation matrix layer drawn with geom_text to the plot.
+        Method defines correlation matrix layer drawn with geom_text to the plot.
 
         Parameters
         ----------
@@ -306,11 +306,10 @@ class corr_plot_builder:
         other_args['label_format'] = self._get_format(format)
 
         if 'size' not in other_args:
+            other_args['size_unit'] = 'x'
+
             if not map_size:
-                other_args['size_unit'] = 'x'
                 other_args['size'] = 1
-            else:
-                other_args['size_unit'] = 'x'
 
         if 'color' not in other_args:
             other_args['color'] = self._text_color
@@ -324,7 +323,7 @@ class corr_plot_builder:
 
     def tiles(self, type=None, fill_diagonal=None, format=None, **other_args):
         """
-        Method adds correlation matrix layer drawn as square tiles to the plot.
+        Method defines correlation matrix layer drawn as square tiles to the plot.
 
         Parameters
         ----------
