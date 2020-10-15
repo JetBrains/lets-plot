@@ -66,13 +66,15 @@ class TextGeom : GeomBase() {
         }
     }
 
-
-    private fun estimateMaxTextWidth(fontSize: Double): Double {
-        val testString = toString(TEST_VAL)
-        return testString.length * fontSize * TEXT_WIDTH_NORM
-    }
-
     private fun getSizeUnitRatio(ctx: GeomContext, aesthetics: Aesthetics): Double {
+        fun estimateMaxTextWidth(fontSize: Double): Double {
+            val testVal = -9.40
+            val textWidthNorm = 0.6
+
+            val testString = toString(testVal)
+            return testString.length * fontSize * textWidthNorm
+        }
+
         sizeUnit?.let { sizeUnitValue ->
             val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
             val unitRes = ctx.getUnitResolution(aes)
@@ -96,8 +98,6 @@ class TextGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
         const val DEF_NA_VALUE = "n/a"
-        const val TEST_VAL = -9.40
-        const val TEXT_WIDTH_NORM = 0.6
     }
 }
 
