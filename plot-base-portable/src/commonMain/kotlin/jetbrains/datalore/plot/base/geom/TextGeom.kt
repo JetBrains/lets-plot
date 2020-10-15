@@ -77,14 +77,15 @@ class TextGeom : GeomBase() {
         }
 
         sizeUnit?.let { sizeUnitValue ->
-            val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
-            val unitRes = ctx.getUnitResolution(aes)
             val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
             val maxTextWidth = estimateMaxTextWidth(fontSize)
 
             if (maxTextWidth == 0.0) {
                 return 1.0
             }
+
+            val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
+            val unitRes = ctx.getUnitResolution(aes)
 
             return unitRes / maxTextWidth
         }
