@@ -123,7 +123,6 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
         fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
-
             @Suppress("NAME_SHADOWING")
             val end = toClient(end, p)
             val line = SvgLineElement(
@@ -262,7 +261,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             return when (sizeUnitName.toLowerCase()) {
                 "x" -> Aes.X
                 "y" -> Aes.Y
-                else -> error("size_unit value must be either 'x' or 'y'")
+                else -> error("Size unit value must be either 'x' or 'y'")
             }
         }
     }
