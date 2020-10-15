@@ -2,7 +2,6 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-
 from .coord import *
 from .core import *
 from .facet import *
@@ -39,5 +38,5 @@ __all__ = (coord.__all__ +
            scale_convenience.__all__ +
            scale_identity.__all__ +
            theme_.__all__ +
-           tooltip.__all__ )
+           tooltip.__all__)
 

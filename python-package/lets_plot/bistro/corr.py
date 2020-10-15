@@ -28,15 +28,6 @@ __all__ = ['corr_plot_builder', 'corr_plot_scatter', 'corr_plot_tiles',
            'corr_plot_tileslab', 'corr_plot_scatterlab']
 
 
-def _reverse_type(type):
-    if type == 'upper':
-        return 'lower'
-    elif type == 'lower':
-        return 'upper'
-
-    return type
-
-
 def _get_numeric_columns_count(data):
     res = 0
 
@@ -45,18 +36,10 @@ def _get_numeric_columns_count(data):
 
         if numpy and isinstance(values, numpy.ndarray):
             res += 1
-        elif pandas and isinstance(values, pandas.Series):
-            if is_numeric_dtype(data[k]):
-                res += 1
-        elif isinstance(values, list):
-
-            if len(values) == 0:
-                continue
-
-            value = values[0]
-
-            if is_number(value):
-                res += 1
+        elif pandas and isinstance(values, pandas.Series) and is_numeric_dtype(values):
+            res += 1
+        elif isinstance(values, list) and all(values, lambda v: v is None or is_number(v)):
+            res += 1
 
     return res
 
@@ -129,6 +112,14 @@ class corr_plot_builder:
             line('${var@..corr..}')
 
     def _get_type(self, type):
+        def _reverse_type(type):
+            if type == 'upper':
+                return 'lower'
+            elif type == 'lower':
+                return 'upper'
+
+            return type
+
         res = type if type else "full"
 
         if self._reverse_y:
