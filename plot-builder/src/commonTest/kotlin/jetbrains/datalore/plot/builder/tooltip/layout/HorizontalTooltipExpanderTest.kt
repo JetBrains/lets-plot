@@ -191,7 +191,7 @@ class HorizontalTooltipExpanderTest {
     private fun newTooltip(text: String, size: DoubleVector, position: DoubleVector, pointer: DoubleVector): PositionedTooltip {
         val spec = TooltipSpec(
             layoutHint = TipLayoutHint.cursorTooltip(
-                DoubleVector(0.0, 0.0),
+                DoubleVector.ZERO,
                 Color.BLACK
             ),
             lines = listOf(TooltipSpec.Line.withValue(text)),

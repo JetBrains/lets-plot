@@ -185,24 +185,28 @@ class TooltipBox : SvgComponent() {
                 )
             }
             // for labels
-            val labelSvgComponents: List<TextLabel> = linesInfo.mapNotNull { it.second }
-            labelSvgComponents.onEach {
-                it.textColor().set(labelTextColor)
-                myLines.children().add(it.rootGroup)
+            linesInfo.onEach { (_, labelComponent, _) ->
+                if (labelComponent != null) {
+                    labelComponent.textColor().set(labelTextColor)
+                    myLines.children().add(labelComponent.rootGroup)
+                }
             }
             // for values
-            linesInfo.map { it.third }.onEach {
-                it.textColor().set(valueTextColor)
-                myLines.children().add(it.rootGroup)
+            linesInfo.onEach { (_, _, valueComponent) ->
+                valueComponent.textColor().set(valueTextColor)
+                myLines.children().add(valueComponent.rootGroup)
             }
 
-            val maxLabelWidth = labelSvgComponents.map { it.rootGroup.bBox.width }.max() ?: 0.0
+            val maxLabelWidth = linesInfo
+                .mapNotNull { (_, labelComponent, _) -> labelComponent }
+                .map { it.rootGroup.bBox.width }
+                .max() ?: 0.0
             var maxLineWidth = 0.0
-            linesInfo.forEach { (_, labelTextLabel, valueTextLabel) ->
-                val valueBBox = valueTextLabel.rootGroup.bBox
+            linesInfo.forEach { (_, labelComponent, valueComponent) ->
+                val valueBBox = valueComponent.rootGroup.bBox
                 maxLineWidth = max(
                     maxLineWidth,
-                    if (labelTextLabel == null) {
+                    if (labelComponent == null) {
                         valueBBox.width
                     } else {
                         maxLabelWidth + valueBBox.width + LABEL_VALUE_INTERVAL
@@ -211,49 +215,49 @@ class TooltipBox : SvgComponent() {
             }
 
             val textSize = linesInfo
-                .fold(DoubleVector.ZERO, { textDimension, (labelString, labelTextLabel, valueTextLabel) ->
-                    val valueBBox = valueTextLabel.rootGroup.bBox
+                .fold(DoubleVector.ZERO, { textDimension, (labelText, labelComponent, valueComponent) ->
+                    val valueBBox = valueComponent.rootGroup.bBox
                     val labelBBox =
-                        labelTextLabel?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+                        labelComponent?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
                     // bBox.top is negative baseline of the text.
                     // Can't use bBox.height:
                     //  - in Batik it is close to the abs(bBox.top)
                     //  - in JavaFx it is constant = fontSize
                     val yPosition = textDimension.y - min(valueBBox.top, labelBBox.top)
-                    valueTextLabel.y().set(yPosition)
-                    labelTextLabel?.y()?.set(yPosition)
+                    valueComponent.y().set(yPosition)
+                    labelComponent?.y()?.set(yPosition)
 
                     when {
-                        labelTextLabel != null -> {
+                        labelComponent != null -> {
                             // Move label to the left border, value - to the right
 
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            labelTextLabel.x().set(-labelBBox.left)
+                            labelComponent.x().set(-labelBBox.left)
 
-                            valueTextLabel.x().set(maxLineWidth)
-                            valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            valueComponent.x().set(maxLineWidth)
+                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
                         valueBBox.width == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            valueTextLabel.x().set(-valueBBox.left)
+                            valueComponent.x().set(-valueBBox.left)
                         }
-                        labelString == "" -> {
+                        labelText == "" -> {
                             // Move value to the right border
-                            valueTextLabel.x().set(maxLineWidth)
-                            valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            valueComponent.x().set(maxLineWidth)
+                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
                         else -> {
                             // Move value to the center
-                            valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                            valueTextLabel.x().set(maxLineWidth / 2)
+                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+                            valueComponent.x().set(maxLineWidth / 2)
                         }
                     }
 
                     DoubleVector(
                         x = maxLineWidth,
-                        y = valueTextLabel.y().get()!! + max(
+                        y = valueComponent.y().get()!! + max(
                             valueBBox.height + valueBBox.top,
                             labelBBox.height + labelBBox.top
                         ) + LINE_INTERVAL
