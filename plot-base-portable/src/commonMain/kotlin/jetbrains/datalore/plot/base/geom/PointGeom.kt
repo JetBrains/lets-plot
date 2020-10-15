@@ -65,17 +65,17 @@ open class PointGeom : GeomBase() {
 
     private fun getSizeUnitRatio(ctx: GeomContext, p: DataPointAesthetics): Double {
 
-        sizeUnit?.let {
+        sizeUnit?.let { sizeUnitValue ->
             val pointSize = p.size() ?: return 1.0
-
-            val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
-            val unitRes = ctx.getUnitResolution(aes)
-
             val shape = p.shape()!!
             val size = shape.size(p)
 
-            if (size == 0.0)
+            if (size == 0.0) {
                 return 1.0
+            }
+
+            val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
+            val unitRes = ctx.getUnitResolution(aes)
 
             return unitRes * pointSize / size
         }
