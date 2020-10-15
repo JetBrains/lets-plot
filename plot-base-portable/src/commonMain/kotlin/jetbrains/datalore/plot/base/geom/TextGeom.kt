@@ -7,7 +7,12 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
 
-import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.base.numberFormat.NumberFormat
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
@@ -68,8 +73,8 @@ class TextGeom : GeomBase() {
     }
 
     private fun getSizeUnitRatio(ctx: GeomContext, aesthetics: Aesthetics): Double {
-        sizeUnit?.let {
-            val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
+        sizeUnit?.let { sizeUnitValue ->
+            val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
             val unitRes = ctx.getUnitResolution(aes)
             val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
             val maxTextWidth = estimateMaxTextWidth(fontSize)
