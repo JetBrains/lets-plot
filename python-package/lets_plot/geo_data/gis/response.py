@@ -36,13 +36,13 @@ class Boundary(GeometryBase):
 
 
 class GeocodedFeature:
-    def __init__(self, query: str, id: str, name: str,
+    def __init__(self, query: Optional[str], id: str, name: str,
                  highlights: Optional[List[str]],
                  boundary: Optional[Boundary],
                  centroid: Optional[GeoPoint],
                  limit: Optional[GeoRect],
                  position: Optional[GeoRect]):
-        assert_type(query, str)
+        assert_optional_type(query, str)
         assert_type(id, str)
         assert_type(name, str)
         assert_optional_list_type(highlights, str)
@@ -51,7 +51,7 @@ class GeocodedFeature:
         assert_optional_type(limit, GeoRect)
         assert_optional_type(position, GeoRect)
 
-        self.query: str = query
+        self.query: Optional[str] = query # optional for requests like find all countries
         self.id: str = id
         self.name: str = name
         self.highlights: Optional[List[str]] = highlights
@@ -78,11 +78,11 @@ class Response:
         self.message: str = message
 
 class Answer:
-    def __init__(self, query: str, features: List[GeocodedFeature]):
-        assert_type(query, str)
+    def __init__(self, query: Optional[str], features: List[GeocodedFeature]):
+        assert_optional_type(query, str)
         assert_list_type(features, GeocodedFeature)
 
-        self.query: str = query
+        self.query: Optional[str] = query
         self.features: List[GeocodedFeature] = features
 
 

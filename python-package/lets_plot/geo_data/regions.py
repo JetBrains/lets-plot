@@ -49,19 +49,11 @@ def select_not_empty_name(feature: GeocodedFeature) -> str:
     return feature.name if feature.query is None or feature.query == '' else feature.query
 
 
-def arrange_queries(features: List[GeocodedFeature], queries: List[RegionQuery]) -> List[Optional[RegionQuery]]:
-    res = []
-    for feature in features:
-        request: Optional[RegionQuery] = None
-
-        for query in queries:
-            if query.request == feature.query:
-                request = query
-                break
-
-        res.append(request)
-
-    return res
+def zip_answers(queries, answers):
+    if len(queries) > 0:
+        return zip(queries, answers)
+    elif len(queries) == len(answers):
+        return zip([None] * len(answers), answers)
 
 
 class PlacesDataFrameBuilder:
@@ -72,11 +64,10 @@ class PlacesDataFrameBuilder:
         self._state: List[Optional[str]] = []
         self._country: List[Optional[str]] = []
 
-    def append_row(self, request: str, found_name: str, queries: List[Optional[RegionQuery]], parent_row: int):
+    def append_row(self, request: str, found_name: str, query: Optional[RegionQuery]):
         self._request.append(request)
         self._found_name.append(found_name)
 
-        query: Optional[RegionQuery] = queries[parent_row]
         if query is None:
             self._county.append(MapRegion.name_or_none(None))
             self._state.append(MapRegion.name_or_none(None))
@@ -105,7 +96,7 @@ class PlacesDataFrameBuilder:
 
 
     @abstractmethod
-    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
+    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery] = []) -> DataFrame:
         raise ValueError('Not implemented')
 
 
@@ -113,6 +104,7 @@ class Regions(CanToDataFrame):
     def __init__(self, level_kind: LevelKind, answers: List[Answer], highlights: bool = False, queries: List[RegionQuery] = []):
         assert_list_type(answers, Answer)
         assert_list_type(queries, RegionQuery)
+        assert len(queries) == 0 or len(answers) == len(queries)
 
         try:
             import geopandas
@@ -140,7 +132,12 @@ class Regions(CanToDataFrame):
         return [MapRegion.place(feature.id, feature.query, self._level_kind) for feature in self._geocoded_features]
 
     def as_list(self) -> List['Regions']:
-        return [Regions(self._level_kind, [answer], self._highlights) for answer in self._answers]
+        if len(self._queries) == 0:
+            return [Regions(self._level_kind, [answer], self._highlights) for answer in self._answers]
+
+        assert len(self._queries) == len(self._answers)
+        return [Regions(self._level_kind, [answer], self._highlights, [query]) for query, answer in zip(self._queries, self._answers)]
+
 
     def unique_ids(self) -> List[str]:
         seen = set()
@@ -276,11 +273,9 @@ class Regions(CanToDataFrame):
         data[DF_ID] = [feature.id for feature in self._geocoded_features]
 
         # for us-48 queries doesnt' count
-        queries: List[Optional[RegionQuery]] = arrange_queries(self._geocoded_features, self._queries)
-
-        for i in range(len(self._geocoded_features)):
-            feature = self._geocoded_features[i]
-            places.append_row(select_not_empty_name(feature), feature.name, queries, i)
+        for query, answer in zip_answers(self._queries, self._answers):
+            for feature in answer.features:
+                places.append_row(select_not_empty_name(feature), feature.name, query)
 
         data = {**data, **places.build_dict()}
 
@@ -303,7 +298,7 @@ class Regions(CanToDataFrame):
 
         self._join_payload(features)
 
-        return df_converter.to_data_frame(self._geocoded_features, self._queries)
+        return df_converter.to_data_frame(self._answers, self._queries)
 
     def _request_builder(self, payload_kind: PayloadKind) -> RequestBuilder:
         assert_type(payload_kind, PayloadKind)

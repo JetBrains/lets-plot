@@ -113,5 +113,5 @@ def test_drop_not_found_with_namesakes():
                request=['jefferson', 'jefferson'],
                found_name=['Jefferson County', 'Jefferson County'],
                state=['alabama', 'arkansas'],
-               country=['usa', 'usa', 'usa']
+               country=['usa', 'usa']
                )

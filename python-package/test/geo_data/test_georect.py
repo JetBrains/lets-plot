@@ -4,7 +4,7 @@
 import pytest
 from pandas import DataFrame
 
-from lets_plot.geo_data.gis.response import GeoRect, FeatureBuilder
+from lets_plot.geo_data.gis.response import Answer, GeoRect, FeatureBuilder
 from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST
 from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
 
@@ -47,12 +47,15 @@ def make_rect(lon_min: float, lon_max: float) -> GeoRect:
 def data_frame(r: GeoRect):
     return LimitsGeoDataFrame().to_data_frame(
         [
-            FeatureBuilder() \
-                .set_id(ID) \
-                .set_query(NAME) \
-                .set_name(FOUND_NAME) \
-                .set_limit(r) \
-                .build_geocoded()
+            Answer(NAME, [
+                FeatureBuilder() \
+                   .set_id(ID) \
+                   .set_query(NAME) \
+                   .set_name(FOUND_NAME) \
+                   .set_limit(r) \
+                   .build_geocoded()
+            ]
+            )
         ]
     )
 
