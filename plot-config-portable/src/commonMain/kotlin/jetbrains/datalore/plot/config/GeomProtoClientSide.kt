@@ -50,7 +50,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
-            GeomKind.CROSS_BAR -> return GeomProvider.crossBar {
+            GeomKind.CROSS_BAR -> return GeomProvider.crossBar() {
                 val geom = CrossBarGeom()
                 if (opts.hasOwn(CrossBar.FATTEN)) {
                     geom.fattenMidline = opts.getDouble(CrossBar.FATTEN)!!
@@ -58,7 +58,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
-            GeomKind.POINT_RANGE -> return GeomProvider.pointRange {
+            GeomKind.POINT_RANGE -> return GeomProvider.pointRange() {
                 val geom = PointRangeGeom()
                 if (opts.hasOwn(PointRange.FATTEN)) {
                     geom.fattenMidPoint = opts.getDouble(PointRange.FATTEN)!!

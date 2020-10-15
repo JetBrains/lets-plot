@@ -20,14 +20,13 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
     var fillDiagonal = DEF_FILL_DIAGONAL
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (correlationMethod != Method.PEARSON)
-            throw IllegalArgumentException(
-                "Unsupported correlation method: $correlationMethod (only pearson is currently available)"
-            )
+        require(correlationMethod == Method.PEARSON)
+        { "Unsupported correlation method: $correlationMethod (only Pearson is currently available)" }
+
 
         val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson)
         val vals = cm.getNumeric(Stats.CORR)
-        val abs: List<Double?> = vals.map { it?.let { abs(it)} }
+        val abs: List<Double?> = vals.map { it?.let(::abs) }
 
         return cm.builder().putNumeric(Stats.CORR_ABS, abs).build()
     }
