@@ -67,6 +67,7 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
+    // TODO: Corrmatrix specific. Need universal implementation size_unit for various geoms
     private fun getSizeUnitRatio(ctx: GeomContext, p: DataPointAesthetics): Double {
 
         sizeUnit?.let { sizeUnitValue ->

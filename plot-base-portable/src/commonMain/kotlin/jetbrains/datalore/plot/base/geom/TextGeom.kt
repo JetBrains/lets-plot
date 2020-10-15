@@ -66,6 +66,7 @@ class TextGeom : GeomBase() {
         }
     }
 
+    // TODO: Corrmatrix specific. Need universal implementation size_unit for various geoms
     private fun getSizeUnitRatio(ctx: GeomContext, aesthetics: Aesthetics): Double {
         fun estimateMaxTextWidth(fontSize: Double): Double {
             val testVal = -9.40
@@ -80,6 +81,10 @@ class TextGeom : GeomBase() {
             val unitRes = ctx.getUnitResolution(aes)
             val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
             val maxTextWidth = estimateMaxTextWidth(fontSize)
+
+            if (maxTextWidth == 1.0) {
+                return 1.0
+            }
 
             return unitRes / maxTextWidth
         }
