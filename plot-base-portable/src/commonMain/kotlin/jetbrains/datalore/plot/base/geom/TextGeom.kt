@@ -63,7 +63,7 @@ class TextGeom : GeomBase() {
         }
     }
 
-    // TODO: Corrmatrix specific. Need universal implementation size_unit for various geoms
+    // TODO: Correlation matrix specific. Need universal implementation size_unit for various geoms
     private fun getSizeUnitRatio(ctx: GeomContext, aesthetics: Aesthetics): Double {
         fun estimateMaxTextWidth(fontSize: Double): Double {
             val testVal = -9.40
