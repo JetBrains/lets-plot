@@ -23,6 +23,8 @@ import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
 import jetbrains.datalore.plot.config.Option.Geom.Step
+import jetbrains.datalore.plot.config.Option.SizeUnit
+
 
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
     private val preferredCoordinateSystem: CoordProvider? = when (geomKind) {
@@ -119,10 +121,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.animation = opts[Point.ANIMATION]
                 }
 
-                geom.sizeUnit = opts.getString(Point.SIZE_UNIT)?.toLowerCase()
+                geom.sizeUnit = opts.getString(SizeUnit.SIZE_UNIT)?.toLowerCase()
                 geom.sizeUnit?.let {
-                    if (it != "x" && it != "y") {
-                        throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+                    if (it != SizeUnit.AES_X && it != SizeUnit.AES_Y) {
+                        throw IllegalArgumentException("Expected: size_unit = '${SizeUnit.AES_X}' " +
+                                "or size_unit = '${SizeUnit.AES_Y}'")
                     }
                 }
 
@@ -156,10 +159,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
-                geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.toLowerCase()
+                geom.sizeUnit = opts.getString(SizeUnit.SIZE_UNIT)?.toLowerCase()
                 geom.sizeUnit?.let {
-                    if (it != "x" && it != "y") {
-                        throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+                    if (it != SizeUnit.AES_X && it != SizeUnit.AES_Y) {
+                        throw IllegalArgumentException("Expected: size_unit = '${SizeUnit.AES_X}' " +
+                                "or size_unit = '${SizeUnit.AES_Y}'")
                     }
                 }
 
