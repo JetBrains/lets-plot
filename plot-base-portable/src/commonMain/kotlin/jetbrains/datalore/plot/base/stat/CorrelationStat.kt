@@ -20,8 +20,9 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
     var fillDiagonal = DEF_FILL_DIAGONAL
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        require(correlationMethod == Method.PEARSON)
-        { "Unsupported correlation method: $correlationMethod (only Pearson is currently available)" }
+        require(correlationMethod == Method.PEARSON) {
+            "Unsupported correlation method: $correlationMethod (only Pearson is currently available)"
+        }
 
 
         val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson)
