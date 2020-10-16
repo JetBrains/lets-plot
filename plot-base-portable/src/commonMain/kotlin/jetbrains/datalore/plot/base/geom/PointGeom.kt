@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.getUnitResBySizeUnit
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColorValue
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
@@ -79,8 +80,7 @@ open class PointGeom : GeomBase() {
                 return 1.0
             }
 
-            val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
-            val unitRes = ctx.getUnitResolution(aes)
+            val unitRes = getUnitResBySizeUnit(ctx, sizeUnitValue)
 
             return unitRes * pointSize / size
         }

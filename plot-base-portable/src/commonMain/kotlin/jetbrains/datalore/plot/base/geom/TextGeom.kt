@@ -81,8 +81,7 @@ class TextGeom : GeomBase() {
                 return 1.0
             }
 
-            val aes = GeomHelper.getSizeUnitAes(sizeUnitValue)
-            val unitRes = ctx.getUnitResolution(aes)
+            val unitRes = GeomHelper.getUnitResBySizeUnit(ctx, sizeUnitValue)
 
             return unitRes / maxTextWidth
         }
