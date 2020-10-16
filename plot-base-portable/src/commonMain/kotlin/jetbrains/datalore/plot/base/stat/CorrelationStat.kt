@@ -5,14 +5,12 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.stat.CorrelationUtil.correlationMatrix
 import jetbrains.datalore.plot.base.stat.math3.correlationPearson
 import kotlin.math.abs
-
 
 class CorrelationStat : BaseStat(DEF_MAPPING) {
     var correlationMethod = DEF_CORRELATION_METHOD
