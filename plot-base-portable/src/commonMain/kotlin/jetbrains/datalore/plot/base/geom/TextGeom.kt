@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
-
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
