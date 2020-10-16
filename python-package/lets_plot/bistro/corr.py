@@ -64,7 +64,8 @@ class corr_plot_builder:
         show_legend : Boolean
             If True legend is shown. Default - True.
         format : string
-            Format for tooltips and labels. Default - '.2f'.
+            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+            Default - '.2f'.
         flip : Boolean
             If True the y axis is flipped.
         """
@@ -261,7 +262,8 @@ class corr_plot_builder:
         fill_diagonal : Boolean
             If True the main diagonal is filled with values. Default - True.
         format : string
-            Text format for tooltips. Default - '.2f'
+            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+            Default - '.2f'.
 
         Returns
         -------
@@ -286,7 +288,8 @@ class corr_plot_builder:
         fill_diagonal : Boolean
             If True the main diagonal is filled with values. Default - True.
         format : string
-            Text format for tooltips and labels. Default - '.2f'.
+            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+            Default - '.2f'.
         map_size - Boolean
             If True, then absolute value of correlation is mapped to text size. Default - False.
 
@@ -323,7 +326,8 @@ class corr_plot_builder:
         fill_diagonal : Boolean
             If True the main diagonal is filled with values. Default - True.
         format : string
-            Text format for tooltips and labels. Default - '.2f'.
+            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+            Default - '.2f'.
 
         Returns
         -------
@@ -373,7 +377,8 @@ def corr_plot_scatter(data, format=None, palette=None):
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
     format : string
-        Format specification for tooltips and labels.
+        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -400,7 +405,8 @@ def corr_plot_tiles(data, format=None, palette=None):
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
     format : string
-        Format specification for tooltips and labels.
+        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -426,7 +432,8 @@ def corr_plot_tileslab(data, format=None, palette=None):
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
     format : string
-        Format specification for tooltips and labels.
+        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -453,7 +460,8 @@ def corr_plot_scatterlab(data, format=None, palette=None):
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
     format : string
-        Format specification for tooltips and labels.
+        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
+        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
