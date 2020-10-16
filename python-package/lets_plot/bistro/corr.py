@@ -14,7 +14,6 @@ except ImportError:
     pandas = None
 
 from lets_plot._type_utils import is_number
-from pandas.api.types import is_numeric_dtype
 from lets_plot.plot.plot import ggsize
 from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.geom import geom_point, geom_text
@@ -292,20 +291,25 @@ class corr_plot_builder:
         return self._set_diverging_palette('Spectral')
 
     def _get_numeric_columns_count(self):
+
+        def is_numeric_values(values):
+            if (numpy and isinstance(values, numpy.ndarray)) or (pandas and isinstance(values, pandas.Series)):
+                return is_numeric_values(values.tolist())
+
+            if isinstance(values, list) and all(map(lambda v: v is None or is_number(v), values)):
+                return True
+
+            return False
+
         res = 0
 
         for k in self._data:
             values = self._data[k]
 
-            if numpy and isinstance(values, numpy.ndarray):
-                res += 1
-            elif pandas and isinstance(values, pandas.Series) and is_numeric_dtype(values):
-                res += 1
-            elif isinstance(values, list) and all(values, lambda v: v is None or is_number(v)):
+            if is_numeric_values(values):
                 res += 1
 
         return res
-
 
     def _add_common_params(self, plot):
         _COLUMN_WIDTH = 60
