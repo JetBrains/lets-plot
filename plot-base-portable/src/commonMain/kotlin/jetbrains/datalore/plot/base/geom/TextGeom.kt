@@ -101,8 +101,8 @@ class TextGeom : GeomBase() {
     }
 
     companion object {
-        const val HANDLES_GROUPS = false
         const val DEF_NA_VALUE = "n/a"
+        const val HANDLES_GROUPS = false
     }
 }
 
