@@ -28,28 +28,6 @@ __all__ = ['corr_plot_builder', 'corr_plot_scatter', 'corr_plot_tiles',
            'corr_plot_tileslab', 'corr_plot_scatterlab']
 
 
-def _get_numeric_columns_count(data):
-    res = 0
-
-    for k in data:
-        values = data[k]
-
-        if numpy and isinstance(values, numpy.ndarray):
-            res += 1
-        elif pandas and isinstance(values, pandas.Series) and is_numeric_dtype(values):
-            res += 1
-        elif isinstance(values, list) and all(values, lambda v: v is None or is_number(v)):
-            res += 1
-
-    return res
-
-
-_COLUMN_WIDTH = 60
-_MIN_PLOT_WIDTH = 400
-_MAX_PLOT_WIDTH = 900
-_PLOT_PROPORTION = 3.0 / 4.0
-
-
 class corr_plot_builder:
     """
     This class is intended to build correlation matrix plots.
@@ -82,174 +60,6 @@ class corr_plot_builder:
                                                   low='red', mid='light_gray', high='blue',
                                                   breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
                                                   limits=[-1.0, 1.0])
-
-    def _add_common_params(self, plot):
-        plot += theme(axis_title=element_blank(),
-                      legend_title=element_blank(),
-                      axis_line_x=element_blank(),
-                      axis_line_y=element_blank())
-
-        plot += coord_fixed()
-        plot += scale_size_identity(name="", na_value=0)
-        plot += self._color_scale
-
-        if self._reverse_y:
-            plot += scale_y_discrete_reversed()
-
-        columns_count = _get_numeric_columns_count(self._data)
-        width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
-        height = width * _PLOT_PROPORTION
-
-        plot += ggsize(width, height)
-
-        return plot
-
-    def _get_format(self, format):
-        return format if format else self._format
-
-    def _tooltip_spec(self, format):
-        return layer_tooltips(). \
-            format(field='var@..corr..', format=self._get_format(format)). \
-            line('${var@..corr..}')
-
-    def _get_type(self, type):
-        def _reverse_type(type):
-            if type == 'upper':
-                return 'lower'
-            elif type == 'lower':
-                return 'upper'
-
-            return type
-
-        res = type if type else "full"
-
-        if self._reverse_y:
-            res = _reverse_type(res)
-
-        return res
-
-    def palette_gradient(self, low, mid, high):
-        """
-        Set scale_color_gradient2 for corr plot.
-
-        Parameters
-        ----------
-        low : string
-            Color for low end of gradient (correlation -1).
-        mid : string
-            Color for mid point (correlation 0).
-        high : string
-            Color for high end of gradient (correlation 1).
-
-        Returns
-        -------
-            self
-        """
-        self._color_scale = scale_color_gradient2(name='Correlation',
-                                                  low=low, mid=mid, high=high,
-                                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                                  limits=[-1.0, 1.0])
-
-        return self
-
-    def _set_diverging_palette(self, palette):
-        self._color_scale = scale_color_brewer(name='Correlation',
-                                               type='div',
-                                               palette=palette,
-                                               breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                               limits=[-1.0, 1.0])
-
-        return self
-
-    def patette_BrBG(self):
-        """
-        Set scale_color_brewer with BrBG palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('BrBG')
-
-    def patette_PiYG(self):
-        """
-        Set scale_color_brewer with PiYG palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('PiYG')
-
-    def patette_PRGn(self):
-        """
-        Set scale_color_brewer with PRGn palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('PRGn')
-
-    def patette_PuOr(self):
-        """
-        Set scale_color_brewer with PuOr palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('PuOr')
-
-    def patette_RdBu(self):
-        """
-        Set scale_color_brewer with RdBu palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('RdBu')
-
-    def patette_RdGy(self):
-        """
-        Set scale_color_brewer with RdGy palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('RdGy')
-
-    def patette_RdYlBu(self):
-        """
-        Set scale_color_brewer with RdYlBu palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('RdYlBu')
-
-    def patette_RdYlGn(self):
-        """
-        Set scale_color_brewer with RdYlGn palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('RdYlGn')
-
-    def patette_Spectral(self):
-        """
-        Set scale_color_brewer with Spectral palette for corr plot.
-
-        Returns
-        -------
-            self
-        """
-        return self._set_diverging_palette('Spectral')
 
     def points(self, type=None, fill_diagonal=None, format=None, **other_args):
         """
@@ -366,6 +176,195 @@ class corr_plot_builder:
         plot = PlotSpec(self._data, mapping=None, scales=[], layers=layers)
 
         return self._add_common_params(plot)
+
+    def palette_gradient(self, low, mid, high):
+        """
+        Set scale_color_gradient2 for corr plot.
+
+        Parameters
+        ----------
+        low : string
+            Color for low end of gradient (correlation -1).
+        mid : string
+            Color for mid point (correlation 0).
+        high : string
+            Color for high end of gradient (correlation 1).
+
+        Returns
+        -------
+            self
+        """
+        self._color_scale = scale_color_gradient2(name='Correlation',
+                                                  low=low, mid=mid, high=high,
+                                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                                  limits=[-1.0, 1.0])
+
+        return self
+
+    def patette_BrBG(self):
+        """
+        Set scale_color_brewer with BrBG palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('BrBG')
+
+    def patette_PiYG(self):
+        """
+        Set scale_color_brewer with PiYG palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('PiYG')
+
+    def patette_PRGn(self):
+        """
+        Set scale_color_brewer with PRGn palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('PRGn')
+
+    def patette_PuOr(self):
+        """
+        Set scale_color_brewer with PuOr palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('PuOr')
+
+    def patette_RdBu(self):
+        """
+        Set scale_color_brewer with RdBu palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('RdBu')
+
+    def patette_RdGy(self):
+        """
+        Set scale_color_brewer with RdGy palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('RdGy')
+
+    def patette_RdYlBu(self):
+        """
+        Set scale_color_brewer with RdYlBu palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('RdYlBu')
+
+    def patette_RdYlGn(self):
+        """
+        Set scale_color_brewer with RdYlGn palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('RdYlGn')
+
+    def patette_Spectral(self):
+        """
+        Set scale_color_brewer with Spectral palette for corr plot.
+
+        Returns
+        -------
+            self
+        """
+        return self._set_diverging_palette('Spectral')
+
+    def _get_numeric_columns_count(self):
+        res = 0
+
+        for k in self._data:
+            values = self._data[k]
+
+            if numpy and isinstance(values, numpy.ndarray):
+                res += 1
+            elif pandas and isinstance(values, pandas.Series) and is_numeric_dtype(values):
+                res += 1
+            elif isinstance(values, list) and all(values, lambda v: v is None or is_number(v)):
+                res += 1
+
+        return res
+
+
+    def _add_common_params(self, plot):
+        _COLUMN_WIDTH = 60
+        _MIN_PLOT_WIDTH = 400
+        _MAX_PLOT_WIDTH = 900
+        _PLOT_PROPORTION = 3.0 / 4.0
+
+        plot += theme(axis_title=element_blank(),
+                      legend_title=element_blank(),
+                      axis_line_x=element_blank(),
+                      axis_line_y=element_blank())
+
+        plot += coord_fixed()
+        plot += scale_size_identity(name="", na_value=0)
+        plot += self._color_scale
+
+        if self._reverse_y:
+            plot += scale_y_discrete_reversed()
+
+        columns_count = self._get_numeric_columns_count()
+        width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
+        height = width * _PLOT_PROPORTION
+
+        plot += ggsize(width, height)
+
+        return plot
+
+    def _get_format(self, format):
+        return format if format else self._format
+
+    def _tooltip_spec(self, format):
+        return layer_tooltips(). \
+            format(field='var@..corr..', format=self._get_format(format)). \
+            line('${var@..corr..}')
+
+    def _get_type(self, type):
+        def _reverse_type(type):
+            if type == 'upper':
+                return 'lower'
+            elif type == 'lower':
+                return 'upper'
+
+            return type
+
+        res = type if type else "full"
+
+        if self._reverse_y:
+            res = _reverse_type(res)
+
+        return res
+
+    def _set_diverging_palette(self, palette):
+        self._color_scale = scale_color_brewer(name='Correlation',
+                                               type='div',
+                                               palette=palette,
+                                               breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                               limits=[-1.0, 1.0])
+
+        return self
 
 
 def corr_plot_scatter(data, format=None, palette=None):
