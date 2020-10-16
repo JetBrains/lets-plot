@@ -117,18 +117,12 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.POINT -> return GeomProvider.point {
                 val geom = PointGeom()
+
                 if (opts.has(Point.ANIMATION)) {
                     geom.animation = opts[Point.ANIMATION]
                 }
 
-                geom.sizeUnit = opts.getString(SizeUnit.SIZE_UNIT)?.toLowerCase()
-                geom.sizeUnit?.let {
-                    if (it != SizeUnit.AES_X && it != SizeUnit.AES_Y) {
-                        throw IllegalArgumentException("Expected: size_unit = '${SizeUnit.AES_X}' " +
-                                "or size_unit = '${SizeUnit.AES_Y}'")
-                    }
-                }
-
+                geom.sizeUnit = getSizeUnitValue(opts)
                 geom
             }
 
@@ -159,13 +153,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
-                geom.sizeUnit = opts.getString(SizeUnit.SIZE_UNIT)?.toLowerCase()
-                geom.sizeUnit?.let {
-                    if (it != SizeUnit.AES_X && it != SizeUnit.AES_Y) {
-                        throw IllegalArgumentException("Expected: size_unit = '${SizeUnit.AES_X}' " +
-                                "or size_unit = '${SizeUnit.AES_Y}'")
-                    }
-                }
+                geom.sizeUnit = getSizeUnitValue(opts)
 
                 geom
             }
@@ -189,6 +177,17 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 return PROVIDER[geomKind]!!
             }
         }
+    }
+
+    private fun getSizeUnitValue(opts: OptionsAccessor): String? {
+        val sizeUnit = opts.getString(SizeUnit.SIZE_UNIT)?.toLowerCase()
+        sizeUnit?.let {
+            if (it != "x" && it != "y") {
+                throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+            }
+        }
+
+        return sizeUnit
     }
 
     private companion object {

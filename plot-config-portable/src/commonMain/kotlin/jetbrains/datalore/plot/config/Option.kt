@@ -222,8 +222,6 @@ object Option {
 
     object SizeUnit {
         const val SIZE_UNIT = "size_unit"
-        const val AES_X = "x"
-        const val AES_Y = "y"
     }
 
     object Mapping {
