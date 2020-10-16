@@ -44,7 +44,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColor
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
@@ -85,8 +85,8 @@ object DefaultMapperProvider {
             this.put(Z, NUMERIC_IDENTITY)
             this.put(YMIN, NUMERIC_IDENTITY)
             this.put(YMAX, NUMERIC_IDENTITY)
-            this.put(COLOR, createColor())
-            this.put(FILL, createColor())
+            this.put(COLOR, createColorMapperProvider())
+            this.put(FILL, createColorMapperProvider())
             this.put(ALPHA, AlphaMapperProvider.DEFAULT)
             this.put(SHAPE, createWithDiscreteOutput(ShapeMapper.allShapes(), ShapeMapper.NA_VALUE))
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))

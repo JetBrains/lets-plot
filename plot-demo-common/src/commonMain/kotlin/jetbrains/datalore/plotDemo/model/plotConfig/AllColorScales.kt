@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
-import kotlin.random.Random
 
 open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
@@ -44,6 +43,12 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             color_brewer_diverging(),
             color_brewer_qualitative(),
             color_brewer_qualitative_paired(),
+
+            color_brewer_discrete_def(2),
+            color_brewer_discrete_def(4),
+            color_brewer_discrete_def(8),
+            color_brewer_discrete_def(12),
+            color_brewer_discrete_def(32),
 
             color_manual()
         )
@@ -89,9 +94,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             val paramsCopy = HashMap(scaleParams)
             paramsCopy["scale_mapper_kind"] = scale_mapper_kind
 
-            val chars = ('a'..'z').toList().map { it.toString() }
-            val r = Random(37)
-            val data = (0 until dataCount).map { r.nextInt(until = chars.size) }.map { chars[it] }.toList()
+            val data = (0 until dataCount).map { "s$it" }.toList()
 
             return specWithColorScale(data, paramsCopy)
         }
@@ -370,6 +373,19 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
             return parsePlotSpec(spec)
         }
+
+        @Suppress("FunctionName")
+        private fun color_brewer_discrete_def(count: Int): Map<String, Any> {
+            val params = emptyMap<String, Any>()
+            val spec = specWithDiscreteData(
+                count,
+                "color_brewer",
+                params
+            )
+
+            return parsePlotSpec(spec)
+        }
+
 
         @Suppress("FunctionName")
         private fun color_manual(): Map<String, Any> {

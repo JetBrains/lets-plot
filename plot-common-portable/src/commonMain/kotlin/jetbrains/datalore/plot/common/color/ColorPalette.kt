@@ -120,7 +120,7 @@ object ColorPalette {
         Set3("set 3", ColorSets.SET_3);
 
         final override val type: Type
-            get() = ColorPalette.Type.QUALITATIVE
+            get() = Type.QUALITATIVE
 
         final override val maxColors: Int
             get() = maxColorSetSize(this)

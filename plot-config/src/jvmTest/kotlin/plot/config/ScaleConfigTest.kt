@@ -131,9 +131,9 @@ class ScaleConfigTest {
                 .createScale(dataFrame, dataFrame.variables().first { it.name == "a" })
                 .mapper
 
-            assertEquals(Color(114,229,172), scaleMapper(1.0))
-            assertEquals(Color(114,114,229), scaleMapper(2.0))
-            assertEquals(Color(229,114,172), scaleMapper(3.0))
+            assertEquals(Color(222,235,247), scaleMapper(1.0))
+            assertEquals(Color(198,219,239), scaleMapper(2.0))
+            assertEquals(Color(158,202,225), scaleMapper(3.0))
         }
 
         checkDiscreteScale(Aes.FILL)

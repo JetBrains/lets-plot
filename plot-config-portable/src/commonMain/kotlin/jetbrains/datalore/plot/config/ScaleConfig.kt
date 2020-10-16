@@ -76,7 +76,8 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             // False - show only hollow shapes, otherwise - all (default)
             if (solid is Boolean && solid == false) {
                 mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(
-                    ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE)
+                    ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE
+                )
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {
             mapperProvider =
@@ -91,17 +92,21 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
         val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
 
         val scaleMapperKind =
-            getString(SCALE_MAPPER_KIND) ?:
-            if (!has(OUTPUT_VALUES) && discreteDomain && aes in setOf<Aes<*>>(Aes.FILL, Aes.COLOR))
-                COLOR_HUE
+            getString(SCALE_MAPPER_KIND) ?: if (!has(OUTPUT_VALUES) && discreteDomain && aes in setOf<Aes<*>>(
+                    Aes.FILL,
+                    Aes.COLOR
+                )
+            )
+            // Default palette type for discrete colors
+                COLOR_BREWER
             else
                 null
 
         when (scaleMapperKind) {
-            null -> {}
+            null -> {
+            }
             IDENTITY ->
-                mapperProvider =
-                    createIdentityMapperProvider(aes, naValue)
+                mapperProvider = createIdentityMapperProvider(aes, naValue)
             COLOR_GRADIENT ->
                 mapperProvider = ColorGradientMapperProvider(
                     getColor(LOW),
