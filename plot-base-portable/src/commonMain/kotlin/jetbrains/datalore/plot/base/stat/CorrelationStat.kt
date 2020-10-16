@@ -24,8 +24,8 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
 
 
         val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson)
-        val vals = cm.getNumeric(Stats.CORR)
-        val abs: List<Double?> = vals.map { it?.let(::abs) }
+        val values = cm.getNumeric(Stats.CORR)
+        val abs: List<Double?> = values.map { it?.let(::abs) }
 
         return cm.builder().putNumeric(Stats.CORR_ABS, abs).build()
     }
