@@ -18,6 +18,8 @@ import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil
+import jetbrains.datalore.plot.common.color.PaletteUtil.colorSchemeByIndex
+import jetbrains.datalore.plot.common.color.PaletteUtil.defColorSchemeForPaletteType
 
 /**
  * @param paletteTypeName - One of seq (sequential), div (diverging) or qual (qualitative)
@@ -51,7 +53,6 @@ class ColorBrewerMapperProvider(
     }
 
     override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Color> {
-
         val colors = getColors(data, variable)
         return GuideMappers.discreteToDiscrete(data, variable, colors, naValue)
     }
@@ -108,16 +109,12 @@ class ColorBrewerMapperProvider(
             paletteNameOrIndex is Number -> colorSchemeByIndex(paletteType, paletteNameOrIndex.toInt())
             paletteNameOrIndex is String -> colorSchemeByName(paletteType, paletteNameOrIndex)
             else -> {
-                when {
-                    data.isNumeric(variable) -> colorSchemeByIndex(paletteType, 0)
-                    else -> {
-                        val size = DataFrameUtil.distinctValues(data, variable).size
-                        when {
-                            size <= 8 -> ColorPalette.Qualitative.Set2
-                            else -> ColorPalette.Qualitative.Set3
-                        }
-                    }
+                val categoriesCount = if (data.isNumeric(variable)) {
+                    null
+                } else {
+                    DataFrameUtil.distinctValues(data, variable).size
                 }
+                defColorSchemeForPaletteType(paletteType, categoriesCount)
             }
         }
     }
@@ -150,17 +147,6 @@ class ColorBrewerMapperProvider(
                 // Replace generic error massage with specific one
                 throw IllegalArgumentException(cantFindPaletteError(paletteName))
             }
-        }
-
-        private fun colorSchemeByIndex(paletteType: ColorPalette.Type, index: Int): ColorScheme {
-            @Suppress("UNCHECKED_CAST")
-            val values: Array<ColorScheme> = when (paletteType) {
-                ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.values() as Array<ColorScheme>
-                ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.values() as Array<ColorScheme>
-                ColorPalette.Type.QUALITATIVE -> ColorPalette.Qualitative.values() as Array<ColorScheme>
-            }
-
-            return values[index % values.size]
         }
 
         private fun cantFindPaletteError(paletteName: String): String {
