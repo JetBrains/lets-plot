@@ -45,14 +45,13 @@ class Resolution(enum.Enum):
 def contains_values(column):
     return any(v is not None for v in column)
 
-def select_not_empty_name(feature: GeocodedFeature) -> str:
-    return feature.name if feature.query is None or feature.query == '' else feature.query
+def select_request(query: RegionQuery, answer: Answer, feature: GeocodedFeature) -> str:
+    return query.request if len(answer.features) <= 1 else feature.name
 
-
-def zip_answers(queries, answers):
+def zip_answers(queries: List, answers: List):
     if len(queries) > 0:
         return zip(queries, answers)
-    elif len(queries) == len(answers):
+    else:
         return zip([None] * len(answers), answers)
 
 
@@ -101,7 +100,7 @@ class PlacesDataFrameBuilder:
 
 
 class Regions(CanToDataFrame):
-    def __init__(self, level_kind: LevelKind, answers: List[Answer], highlights: bool = False, queries: List[RegionQuery] = []):
+    def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery], highlights: bool = False):
         assert_list_type(answers, Answer)
         assert_list_type(queries, RegionQuery)
         assert len(queries) == 0 or len(answers) == len(queries)
@@ -129,14 +128,18 @@ class Regions(CanToDataFrame):
         return len(self._geocoded_features)
 
     def to_map_regions(self):
-        return [MapRegion.place(feature.id, feature.query, self._level_kind) for feature in self._geocoded_features]
+        regions: List[MapRegion] = []
+        for answer, query in zip_answers(self._answers, self._queries):
+            for feature in answer.features:
+                regions.append(MapRegion.place(feature.id, select_request(query, answer, feature), self._level_kind))
+        return regions
 
     def as_list(self) -> List['Regions']:
         if len(self._queries) == 0:
-            return [Regions(self._level_kind, [answer], self._highlights) for answer in self._answers]
+            return [Regions(self._level_kind, [answer], [RegionQuery(request=None)], self._highlights) for answer in self._answers]
 
         assert len(self._queries) == len(self._answers)
-        return [Regions(self._level_kind, [answer], self._highlights, [query]) for query, answer in zip(self._queries, self._answers)]
+        return [Regions(self._level_kind, [answer], [query], self._highlights) for query, answer in zip(self._queries, self._answers)]
 
 
     def unique_ids(self) -> List[str]:
@@ -275,7 +278,7 @@ class Regions(CanToDataFrame):
         # for us-48 queries doesnt' count
         for query, answer in zip_answers(self._queries, self._answers):
             for feature in answer.features:
-                places.append_row(select_not_empty_name(feature), feature.name, query)
+                places.append_row(select_request(query, answer, feature), feature.name, query)
 
         data = {**data, **places.build_dict()}
 

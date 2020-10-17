@@ -5,11 +5,13 @@ from unittest import mock
 import pytest
 
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
-from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind
+from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind, \
+    RegionQuery
 from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint
-from lets_plot.geo_data.regions import _coerce_resolution, _parse_resolution, Regions, Resolution, DF_ID, DF_FOUND_NAME, DF_REQUEST
+from lets_plot.geo_data.regions import _coerce_resolution, _parse_resolution, Regions, Resolution, DF_ID, DF_FOUND_NAME, \
+    DF_REQUEST
 from lets_plot.plot import ggplot, geom_polygon
-from .geo_data import make_region, make_success_response, get_map_data_meta
+from .geo_data import make_region, make_success_response, get_map_data_meta, features_to_queries, features_to_answers
 
 USA_REQUEST = 'united states'
 USA_NAME = 'USA'
@@ -108,22 +110,18 @@ class TestMapRegions:
 
     def test_to_dataframe(self):
         df = Regions(
-            LevelKind.city,
-            [
-                Answer('', [self.foo.set_query('').set_id('123').build_geocoded()]),
-                Answer('', [self.bar.set_query('').set_id('456').build_geocoded()]),
-            ]
+            level_kind=LevelKind.city,
+            queries=[RegionQuery(request='FOO'), RegionQuery(request='BAR')],
+            answers=features_to_answers([self.foo.build_geocoded(), self.bar.build_geocoded()])
         ).to_data_frame()
 
-        assert [self.foo.name, self.bar.name] == df[DF_REQUEST].tolist()
+        assert ['FOO', 'BAR'] == df[DF_REQUEST].tolist()
 
     def test_as_list(self):
         regions = Regions(
-            LevelKind.city,
-            [
-                Answer('', [self.foo.build_geocoded()]),
-                Answer('', [self.bar.build_geocoded()])
-            ]
+            level_kind=LevelKind.city,
+            queries=features_to_queries([self.foo.build_geocoded(), self.bar.build_geocoded()]),
+            answers=features_to_answers([self.foo.build_geocoded(), self.bar.build_geocoded()])
         ).as_list()
 
         assert 2 == len(regions)
@@ -132,13 +130,20 @@ class TestMapRegions:
         assert_region_df(self.bar, regions[1].to_data_frame())
 
     @mock.patch.object(GeocodingService, 'do_request')
-    def test_df_request_when_query_is_empty_should_be_taken_from_found_name_column(self, mock_request):
+    def test_exploding_answers_to_data_frame_take_request_from_feature_name(self, mock_request):
         foo_id = '123'
         foo_name = 'foo'
+
+        bar_id = '456'
+        bar_name = 'bar'
         geocoding_result = Regions(
-            LevelKind.city,
-            [
-                Answer('', [FeatureBuilder().set_id(foo_id).set_query('').set_name(foo_name).build_geocoded()])
+            level_kind=LevelKind.city,
+            queries=[RegionQuery(request=None)],
+            answers=[
+                Answer('', [
+                    FeatureBuilder().set_id(foo_id).set_query('').set_name(foo_name).build_geocoded(),
+                    FeatureBuilder().set_id(bar_id).set_query('').set_name(bar_name).build_geocoded()
+                ])
             ]
         )
 
@@ -146,7 +151,9 @@ class TestMapRegions:
             .set_geocoded_features(
             [
                 FeatureBuilder().set_id(foo_id).set_query(foo_id).set_name(foo_name).set_centroid(
-                    GeoPoint(0, 1)).build_geocoded()
+                    GeoPoint(0, 1)).build_geocoded(),
+                FeatureBuilder().set_id(bar_id).set_query(bar_id).set_name(bar_name).set_centroid(
+                    GeoPoint(2, 3)).build_geocoded(),
             ]
         ).build()
 
@@ -155,19 +162,25 @@ class TestMapRegions:
         mock_request.assert_called_with(
             RequestBuilder() \
                 .set_request_kind(RequestKind.explicit)
-                .set_ids([foo_id]) \
+                .set_ids([foo_id, bar_id]) \
                 .set_requested_payload([PayloadKind.centroids]) \
                 .build()
         )
 
         assert foo_name == df[DF_REQUEST][0]
+        assert bar_name == df[DF_REQUEST][1]
 
     @mock.patch.object(GeocodingService, 'do_request')
-    def test_df_rows_order(self, mock_request):
+    def test_direct_answers_take_request_from_query(self, mock_request):
 
         geocoding_result = Regions(
-            LevelKind.city,
-            [
+            level_kind=LevelKind.city,
+            queries=[
+                RegionQuery(request='fooo'),
+                RegionQuery(request='barr'),
+                RegionQuery(request='bazz'),
+            ],
+            answers=[
                 Answer('', [self.foo.set_query('').build_geocoded()]),
                 Answer('', [self.bar.set_query('').build_geocoded()]),
                 Answer('', [self.baz.set_query('').build_geocoded()]),
@@ -193,7 +206,7 @@ class TestMapRegions:
                 .build()
         )
 
-        assert [self.foo.name, self.bar.name, self.baz.name] == df[DF_REQUEST].tolist()
+        assert ['fooo', 'barr', 'bazz'] == df[DF_REQUEST].tolist()
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_df_rows_duplication_should_be_processed_correctly(self, mock_request):
@@ -204,11 +217,12 @@ class TestMapRegions:
         bar_name = 'bar'
 
         geocoding_result = Regions(
-            LevelKind.city,
-            [
-                Answer('', [self.foo.set_query('').build_geocoded()]),
-                Answer('', [self.bar.set_query('').build_geocoded()]),
-                Answer('', [self.foo.set_query('').build_geocoded()])
+            level_kind=LevelKind.city,
+            queries=[RegionQuery('foo'), RegionQuery('bar'), RegionQuery('foo')],
+            answers=[
+                Answer('', [self.foo.build_geocoded()]),
+                Answer('', [self.bar.build_geocoded()]),
+                Answer('', [self.foo.build_geocoded()])
             ]
         )
 
@@ -230,7 +244,7 @@ class TestMapRegions:
                 .build()
         )
 
-        assert [self.foo.name, self.bar.name, self.foo.name] == df[DF_REQUEST].tolist()
+        assert ['foo', 'bar', 'foo'] == df[DF_REQUEST].tolist()
 
     # python invokes geocoding functions when Regions objects detected in map
     # changed from previous version, where client invoked these functions
@@ -270,11 +284,23 @@ class TestMapRegions:
         assert expected_map_data_meta == get_map_data_meta(plotSpec, 0)
 
     def make_regions(self) -> Regions:
+        usa = FeatureBuilder() \
+            .set_query(USA_REQUEST) \
+            .set_name(USA_NAME) \
+            .set_id(USA_ID) \
+            .set_highlights(USA_HIGHLIGHTS) \
+            .build_geocoded()
+
+        russia = FeatureBuilder() \
+            .set_query(RUSSIA_REQUEST) \
+            .set_name(RUSSIA_NAME) \
+            .set_id(RUSSIA_ID) \
+            .set_highlights(RUSSIA_HIGHLIGHTS) \
+            .build_geocoded()
+
         regions = Regions(
-            LevelKind.country,
-            [
-                make_region(USA_REQUEST, USA_NAME, USA_ID, USA_HIGHLIGHTS),
-                make_region(RUSSIA_REQUEST, RUSSIA_NAME, RUSSIA_ID, RUSSIA_HIGHLIGHTS)
-            ]
+            level_kind=LevelKind.country,
+            queries=features_to_queries([usa, russia]),
+            answers=features_to_answers([usa, russia])
         )
         return regions

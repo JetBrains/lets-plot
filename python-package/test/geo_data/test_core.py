@@ -17,7 +17,7 @@ from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _pr
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
 from lets_plot.geo_data.regions import _to_scope, _coerce_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
     DF_FOUND_NAME
-from .geo_data import make_geocode_region, make_region, make_success_response
+from .geo_data import make_geocode_region, make_region, make_success_response, features_to_answers, features_to_queries
 
 DATAFRAME_COLUMN_NAME = 'name'
 DATAFRAME_NAME_LIST = ['usa', 'russia']
@@ -95,6 +95,8 @@ def test_regions_with_highlights(mock_geocoding):
         None # progress_callback
     )
 
+FOO_FEATURE = FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()
+BAR_FEATURE = FeatureBuilder().set_query('bar').set_name('barname').set_id('barid').build_geocoded()
 
 FOO = Answer('foo', [FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()])
 BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').build_geocoded()])
@@ -112,11 +114,10 @@ BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_i
 
     # single region
     (Regions(
-        LEVEL_KIND,
-        [
-            FOO,
-            BAR
-        ]),
+        level_kind=LEVEL_KIND,
+        queries=features_to_queries([FOO_FEATURE, BAR_FEATURE]),
+        answers=features_to_answers([FOO_FEATURE, BAR_FEATURE])
+    ),
      MapRegion.scope([feature_id(FOO), feature_id(BAR)])
     ),
 
@@ -132,8 +133,16 @@ BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_i
 
     # list of regions
     ([
-         Regions(LEVEL_KIND, [FOO]),
-         Regions(LEVEL_KIND, [BAR])
+         Regions(
+             level_kind=LEVEL_KIND,
+             queries=features_to_queries([FOO_FEATURE]),
+             answers=features_to_answers([FOO_FEATURE])
+         ),
+         Regions(
+             level_kind=LEVEL_KIND,
+             queries=features_to_queries([BAR_FEATURE]),
+             answers=features_to_answers([BAR_FEATURE]),
+         )
      ],
 
      [
@@ -145,7 +154,11 @@ BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_i
     # mix of strings and regions
     ([
          'foo',
-         Regions(LEVEL_KIND, [BAR]),
+         Regions(
+             level_kind=LEVEL_KIND,
+             queries=features_to_queries([BAR_FEATURE]),
+             answers=features_to_answers([BAR_FEATURE])
+         )
      ],
      [
          MapRegion.with_name(FOO.query),
@@ -166,11 +179,9 @@ def test_to_parent_with_id():
 def test_request_remove_duplicated_ids(mock_request):
     try:
         Regions(
-            LEVEL_KIND,
-            [
-                make_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS),
-                make_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
-            ]
+            level_kind=LEVEL_KIND,
+            queries=features_to_queries([FOO_FEATURE, FOO_FEATURE]),
+            answers=features_to_answers([FOO_FEATURE, FOO_FEATURE])
         ).centroids()
     except ValueError:
         pass  # response doesn't contain proper feature with ids - ignore
@@ -178,7 +189,7 @@ def test_request_remove_duplicated_ids(mock_request):
     mock_request.assert_called_with(
         ExplicitRequest(
             requested_payload=[PayloadKind.centroids],
-            ids=[REGION_ID]
+            ids=[FOO_FEATURE.id]
         )
     )
 
@@ -231,23 +242,17 @@ def test_geocode_limit(mock_request):
 
 @mock.patch.object(GeocodingService, 'do_request')
 def test_reorder_for_centroids_should_happen(mock_request):
-    mock_request.return_value = make_success_response() \
-        .set_geocoded_features(
-        [
-            FeatureBuilder().set_id('2').set_query('New York').set_name('New York').set_centroid(GeoPoint(0, 0)).build_geocoded(),
-            FeatureBuilder().set_id('3').set_query('Las Vegas').set_name('Las Vegas').set_centroid(GeoPoint(0, 0)).build_geocoded(),
-            FeatureBuilder().set_id('1').set_query('Los Angeles').set_name('Los Angeles').set_centroid(GeoPoint(0, 0)).build_geocoded()
-        ]
-    ).build()
+    new_york = FeatureBuilder().set_id('2').set_query('New York').set_name('New York').set_centroid(GeoPoint(0, 0)).build_geocoded()
+    las_vegas = FeatureBuilder().set_id('3').set_query('Las Vegas').set_name('Las Vegas').set_centroid(GeoPoint(0, 0)).build_geocoded()
+
+    los_angeles = FeatureBuilder().set_id('1').set_query('Los Angeles').set_name('Los Angeles').set_centroid(
+        GeoPoint(0, 0)).build_geocoded()
+    mock_request.return_value = make_success_response().set_geocoded_features([new_york, las_vegas, los_angeles]).build()
 
     df = Regions(
-        LevelKind.city,
-        [
-            make_region('Los Angeles', 'Los Angeles', '1', []),
-            make_region('New York', 'New York', '2', []),
-            make_region('Las Vegas', 'Las Vegas', '3', []),
-            make_region('Los Angeles', 'Los Angeles', '1', []),
-        ]
+        level_kind=LevelKind.city,
+        queries=features_to_queries([los_angeles, new_york, las_vegas, los_angeles]),
+        answers=features_to_answers([los_angeles, new_york, las_vegas, los_angeles])
     ).centroids()
 
     assert ['Los Angeles', 'New York', 'Las Vegas', 'Los Angeles'] == df[DF_FOUND_NAME].tolist()

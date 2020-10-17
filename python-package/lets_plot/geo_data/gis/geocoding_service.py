@@ -94,8 +94,3 @@ class GeocodingService:
             raise ValueError(
                 'Geocoding server connection failure: {} {} ({})'.format(e.code, e.msg, e.filename)) from None
 
-        except Exception as e:
-            return ResponseBuilder() \
-                .set_status(Status.error) \
-                .set_message('Internal service exception: {}'.format(str(e))) \
-                .build()

@@ -7,6 +7,7 @@ from typing import List, Union
 from lets_plot.geo_data import DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import ResponseField, GeometryKind
+from lets_plot.geo_data.gis.request import RegionQuery
 from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
     Response, SuccessResponse, AmbiguousResponse, ErrorResponse, ResponseBuilder
 from lets_plot.geo_data.regions import Regions
@@ -98,7 +99,11 @@ def assert_found_names(df: DataFrame, names: List[str]):
 
 
 def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Regions:
-    return Regions(level_kind, [make_region(request, name, geo_object_id, highlights)])
+    return Regions(
+        level_kind=level_kind,
+        answers=[make_region(request, name, geo_object_id, highlights)],
+        queries=[RegionQuery(request=request)]
+    )
 
 
 def make_region(request: str, name: str, geo_object_id: str, highlights: List[str]) -> Answer:
@@ -279,3 +284,12 @@ def assert_boundary(boundary: DataFrame, index: int, points: List[GJPoint], name
 def assert_point(df: DataFrame, index: int, lon: float, lat: float):
     assert lon == df[DF_LON][index]
     assert lat == df[DF_LAT][index]
+
+def feature_to_answer(feature: GeocodedFeature) -> Answer:
+    return Answer(feature.query, [feature])
+
+def features_to_answers(features: List[GeocodedFeature]) -> List[Answer]:
+    return [Answer(feature.query, [feature]) for feature in features]
+
+def features_to_queries(features: List[GeocodedFeature]) -> List[RegionQuery]:
+    return [RegionQuery(feature.query) for feature in features]

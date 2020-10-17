@@ -71,9 +71,9 @@ class MapRegion:
 
 
     @staticmethod
-    def place(id: str, request: str, level_kind: LevelKind):
+    def place(id: str, request: Optional[str], level_kind: LevelKind):
         assert_type(id, str)
-        assert_type(request, str)
+        assert_optional_type(request, str)
         assert_type(level_kind, LevelKind)
         return MapRegion(MapRegionKind.place, [id], request, level_kind)
 
@@ -99,9 +99,9 @@ class MapRegion:
         self._level_kind: Optional[LevelKind] = level_kind
         self._hash = hash((self.values, self.kind))
 
-    def request(self) -> str:
+    def request(self) -> Optional[str]:
         assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind. Expected \'place\', but was ' + str(self.kind)
-        assert_type(self._request, str)
+        assert_optional_type(self._request, str)
         return self._request
 
     def name(self) -> str:
@@ -164,8 +164,8 @@ class AmbiguityResolver:
 class RegionQuery:
     def __init__(self,
                  request: Optional[str],
-                 scope: Optional[MapRegion],
-                 ambiguity_resolver: AmbiguityResolver,
+                 scope: Optional[MapRegion] = None,
+                 ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty(),
                  country: Optional[MapRegion] = None,
                  state: Optional[MapRegion] = None,
                  county: Optional[MapRegion] = None

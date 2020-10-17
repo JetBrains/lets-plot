@@ -123,7 +123,7 @@ class ErrorResponse(Response):
 
 class FeatureBuilder:
     def __init__(self):
-        self.query: str = None
+        self.query: Optional[str] = None
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.highlights: Optional[List[str]] = None
@@ -134,8 +134,8 @@ class FeatureBuilder:
         self.total_namesake_count: Optional[int] = None
         self.namesake_examples: List[Namesake] = []
 
-    def set_query(self, v: str) -> 'FeatureBuilder':
-        assert_type(v, str)
+    def set_query(self, v: Optional[str]) -> 'FeatureBuilder':
+        assert_optional_type(v, str)
         self.query = v
         return self
 

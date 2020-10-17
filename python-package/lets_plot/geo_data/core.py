@@ -5,7 +5,7 @@ from pandas import Series
 
 from .gis.geocoding_service import GeocodingService
 from .gis.geometry import GeoPoint
-from .gis.request import RequestBuilder, RequestKind
+from .gis.request import RequestBuilder, RequestKind, RegionQuery
 from .gis.response import Response, SuccessResponse
 from .regions import Regions, _raise_exception, _to_level_kind, _to_scope
 from .regions_builder import RegionsBuilder
@@ -65,7 +65,7 @@ def regions_xy(lon, lat, level, within=None):
     if not isinstance(response, SuccessResponse):
         _raise_exception(response)
 
-    return Regions(response.level, response.answers, False)
+    return Regions(response.level, response.answers, [RegionQuery(request=str(lon) + ', ' + str(lat))], False)
 
 
 def regions_builder(level=None, request=None, within=None, highlights=False) -> RegionsBuilder:

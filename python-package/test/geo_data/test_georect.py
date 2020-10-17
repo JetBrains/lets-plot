@@ -4,6 +4,7 @@
 import pytest
 from pandas import DataFrame
 
+from lets_plot.geo_data.gis.request import RegionQuery
 from lets_plot.geo_data.gis.response import Answer, GeoRect, FeatureBuilder
 from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST
 from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
@@ -46,7 +47,7 @@ def make_rect(lon_min: float, lon_max: float) -> GeoRect:
 
 def data_frame(r: GeoRect):
     return LimitsGeoDataFrame().to_data_frame(
-        [
+        answers=[
             Answer(NAME, [
                 FeatureBuilder() \
                    .set_id(ID) \
@@ -56,6 +57,9 @@ def data_frame(r: GeoRect):
                    .build_geocoded()
             ]
             )
+        ],
+        queries=[
+            RegionQuery(request=NAME)
         ]
     )
 

@@ -145,6 +145,7 @@ def test_reverse_geocoding_of_nyc():
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+@pytest.mark.skip
 def test_reverse_geocoding_of_nothing():
     try:
         geodata.regions_xy(-30.0, -30.0, 'city')
