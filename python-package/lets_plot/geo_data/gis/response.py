@@ -36,13 +36,13 @@ class Boundary(GeometryBase):
 
 
 class GeocodedFeature:
-    def __init__(self, query: Optional[str], id: str, name: str,
+    def __init__(self,
+                 id: str, name: str,
                  highlights: Optional[List[str]],
                  boundary: Optional[Boundary],
                  centroid: Optional[GeoPoint],
                  limit: Optional[GeoRect],
                  position: Optional[GeoRect]):
-        assert_optional_type(query, str)
         assert_type(id, str)
         assert_type(name, str)
         assert_optional_list_type(highlights, str)
@@ -51,7 +51,6 @@ class GeocodedFeature:
         assert_optional_type(limit, GeoRect)
         assert_optional_type(position, GeoRect)
 
-        self.query: Optional[str] = query # optional for requests like find all countries
         self.id: str = id
         self.name: str = name
         self.highlights: Optional[List[str]] = highlights
@@ -78,11 +77,8 @@ class Response:
         self.message: str = message
 
 class Answer:
-    def __init__(self, query: Optional[str], features: List[GeocodedFeature]):
-        assert_optional_type(query, str)
+    def __init__(self, features: List[GeocodedFeature]):
         assert_list_type(features, GeocodedFeature)
-
-        self.query: Optional[str] = query
         self.features: List[GeocodedFeature] = features
 
 
@@ -193,7 +189,7 @@ class FeatureBuilder:
         return AmbiguousFeature(self.query, self.total_namesake_count, self.namesake_examples)
 
     def build_geocoded(self) -> GeocodedFeature:
-        return GeocodedFeature(self.query, self.id, self.name, self.highlights, self.boundary, self.centroid, self.limit, self.position)
+        return GeocodedFeature(self.id, self.name, self.highlights, self.boundary, self.centroid, self.limit, self.position)
 
 
 class ResponseBuilder:
@@ -235,7 +231,7 @@ class ResponseBuilder:
         Exactly matching non-exploding features, i.e. one feature per answer
         '''
         assert_list_type(v, GeocodedFeature)
-        self.answers = [Answer(f.query, [f]) for f in v]
+        self.answers = [Answer([f]) for f in v]
         return self
 
 

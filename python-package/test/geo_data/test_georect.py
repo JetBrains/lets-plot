@@ -48,10 +48,9 @@ def make_rect(lon_min: float, lon_max: float) -> GeoRect:
 def data_frame(r: GeoRect):
     return LimitsGeoDataFrame().to_data_frame(
         answers=[
-            Answer(NAME, [
+            Answer([
                 FeatureBuilder() \
                    .set_id(ID) \
-                   .set_query(NAME) \
                    .set_name(FOUND_NAME) \
                    .set_limit(r) \
                    .build_geocoded()

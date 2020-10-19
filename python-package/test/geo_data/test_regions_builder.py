@@ -22,7 +22,7 @@ ShapelyPoint = Point
 
 def make_query(name: str, region_id: str) -> Query:
     region_feataure = FeatureBuilder().set_query(name).set_name(name).set_id(region_id).build_geocoded()
-    return Query(name, region_id, MapRegion.scope([region_id]), region_feataure, Answer(name, [region_feataure]))
+    return Query(name, region_id, MapRegion.scope([region_id]), region_feataure, Answer([region_feataure]))
 
 
 FOO = make_query('foo', 'foo_region')
@@ -136,7 +136,7 @@ def test_with_regions():
 
 
 def test_countries_alike():
-    assert [] == RegionsBuilder(level=LevelKind.country)._get_queries()
+    assert [query()] == RegionsBuilder(level=LevelKind.country)._get_queries()
 
 
 def test_us48_alike():
@@ -412,7 +412,7 @@ def test_empty():
     actual = \
         regions_builder()._get_queries()
 
-    expected = []
+    expected = [query()]
 
     assert expected == actual
 
@@ -421,7 +421,7 @@ def test_positional_empty():
     actual = \
         regions_builder(request=[])._get_queries()
 
-    expected = []
+    expected = [query()]
 
     assert expected == actual
 

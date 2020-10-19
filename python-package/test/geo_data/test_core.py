@@ -95,11 +95,11 @@ def test_regions_with_highlights(mock_geocoding):
         None # progress_callback
     )
 
-FOO_FEATURE = FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()
-BAR_FEATURE = FeatureBuilder().set_query('bar').set_name('barname').set_id('barid').build_geocoded()
+FOO_FEATURE = FeatureBuilder().set_name('fooname').set_id('fooid').build_geocoded()
+BAR_FEATURE = FeatureBuilder().set_name('barname').set_id('barid').build_geocoded()
 
-FOO = Answer('foo', [FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()])
-BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').build_geocoded()])
+FOO = Answer([FeatureBuilder().set_name('fooname').set_id('fooid').build_geocoded()])
+BAR = Answer([FeatureBuilder().set_name('barname').set_id('barid').build_geocoded()])
 
 @pytest.mark.parametrize('location,expected', [
     # none
@@ -153,7 +153,7 @@ BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_i
 
     # mix of strings and regions
     ([
-         'foo',
+         FOO_FEATURE.name,
          Regions(
              level_kind=LEVEL_KIND,
              queries=features_to_queries([BAR_FEATURE]),
@@ -161,7 +161,7 @@ BAR = Answer('foo', [FeatureBuilder().set_query('foo').set_name('barname').set_i
          )
      ],
      [
-         MapRegion.with_name(FOO.query),
+         MapRegion.with_name(FOO_FEATURE.name),
          MapRegion.scope([feature_id(BAR)])
      ]
     )

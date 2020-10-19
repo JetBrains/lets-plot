@@ -30,8 +30,8 @@ RF_ID = RUSSIA_ID
 RESOLUTION = 12
 
 
-def assert_region_df(region_object, df, index=0):
-    assert region_object.query == df[DF_REQUEST][index]
+def assert_region_df(region_object: FeatureBuilder, df, index=0):
+    assert region_object.name == df[DF_REQUEST][index]
     assert region_object.id == df[DF_ID][index]
     assert region_object.name == df[DF_FOUND_NAME][index]
 
@@ -42,17 +42,17 @@ class TestMapRegions:
         self.foo_id = 'foo_id'
         self.foo_query = 'foo'
         self.foo_name = 'Foo'
-        self.foo = FeatureBuilder().set_query(self.foo_query).set_id(self.foo_id).set_name(self.foo_name)
+        self.foo: FeatureBuilder = FeatureBuilder().set_query(self.foo_query).set_id(self.foo_id).set_name(self.foo_name)
 
         self.bar_id = 'bar_id'
         self.bar_query = 'bar'
         self.bar_name = 'Bar'
-        self.bar = FeatureBuilder().set_query(self.bar_query).set_id(self.bar_id).set_name(self.bar_name)
+        self.bar: FeatureBuilder = FeatureBuilder().set_query(self.bar_query).set_id(self.bar_id).set_name(self.bar_name)
 
         self.baz_id = 'baz_id'
         self.baz_query = 'baz'
         self.baz_name = 'Baz'
-        self.baz = FeatureBuilder().set_query(self.baz_query).set_id(self.baz_id).set_name(self.baz_name)
+        self.baz: FeatureBuilder = FeatureBuilder().set_query(self.baz_query).set_id(self.baz_id).set_name(self.baz_name)
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_boundaries(self, mock_request):
@@ -140,9 +140,9 @@ class TestMapRegions:
             level_kind=LevelKind.city,
             queries=[RegionQuery(request=None)],
             answers=[
-                Answer('', [
-                    FeatureBuilder().set_id(foo_id).set_query('').set_name(foo_name).build_geocoded(),
-                    FeatureBuilder().set_id(bar_id).set_query('').set_name(bar_name).build_geocoded()
+                Answer([
+                    FeatureBuilder().set_id(foo_id).set_name(foo_name).build_geocoded(),
+                    FeatureBuilder().set_id(bar_id).set_name(bar_name).build_geocoded()
                 ])
             ]
         )
@@ -181,9 +181,9 @@ class TestMapRegions:
                 RegionQuery(request='bazz'),
             ],
             answers=[
-                Answer('', [self.foo.set_query('').build_geocoded()]),
-                Answer('', [self.bar.set_query('').build_geocoded()]),
-                Answer('', [self.baz.set_query('').build_geocoded()]),
+                Answer([self.foo.set_query('').build_geocoded()]),
+                Answer([self.bar.set_query('').build_geocoded()]),
+                Answer([self.baz.set_query('').build_geocoded()]),
             ]
         )
 
@@ -220,17 +220,17 @@ class TestMapRegions:
             level_kind=LevelKind.city,
             queries=[RegionQuery('foo'), RegionQuery('bar'), RegionQuery('foo')],
             answers=[
-                Answer('', [self.foo.build_geocoded()]),
-                Answer('', [self.bar.build_geocoded()]),
-                Answer('', [self.foo.build_geocoded()])
+                Answer([self.foo.build_geocoded()]),
+                Answer([self.bar.build_geocoded()]),
+                Answer([self.foo.build_geocoded()])
             ]
         )
 
         mock_request.return_value = make_success_response() \
             .set_answers(
             [
-                Answer(foo_id, [self.foo.set_query(foo_id).set_centroid(GeoPoint(0, 1)).build_geocoded()]),
-                Answer(bar_id, [self.bar.set_query(bar_id).set_centroid(GeoPoint(0, 1)).build_geocoded()])
+                Answer([self.foo.set_query(foo_id).set_centroid(GeoPoint(0, 1)).build_geocoded()]),
+                Answer([self.bar.set_query(bar_id).set_centroid(GeoPoint(0, 1)).build_geocoded()])
             ]
         ).build()
 
@@ -255,13 +255,11 @@ class TestMapRegions:
             .set_geocoded_features(
             [
                 FeatureBuilder() \
-                    .set_query(USA_REQUEST) \
                     .set_id(USA_ID) \
                     .set_name(USA_NAME) \
                     .set_boundary(GeoPoint(0, 1))
                     .build_geocoded(),
                 FeatureBuilder() \
-                    .set_query(RUSSIA_REQUEST) \
                     .set_id(RUSSIA_ID) \
                     .set_name(RUSSIA_NAME) \
                     .set_boundary(GeoPoint(0, 1))
@@ -285,14 +283,12 @@ class TestMapRegions:
 
     def make_regions(self) -> Regions:
         usa = FeatureBuilder() \
-            .set_query(USA_REQUEST) \
             .set_name(USA_NAME) \
             .set_id(USA_ID) \
             .set_highlights(USA_HIGHLIGHTS) \
             .build_geocoded()
 
         russia = FeatureBuilder() \
-            .set_query(RUSSIA_REQUEST) \
             .set_name(RUSSIA_NAME) \
             .set_id(RUSSIA_ID) \
             .set_highlights(RUSSIA_HIGHLIGHTS) \

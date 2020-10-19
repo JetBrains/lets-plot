@@ -91,7 +91,7 @@ def test_geo_limit_response():
     data_frame: DataFrame = LimitsGeoDataFrame().to_data_frame(
         answers=features_to_answers(response.features),
         queries=features_to_queries(response.features))
-    assert_geo_limit(data_frame, 0, name=NAME)
+    assert_geo_limit(data_frame, 0)
 
 
 def test_geo_centroid_response():
@@ -109,7 +109,7 @@ def test_geo_centroid_response():
         answers=features_to_answers(response.features),
         queries=features_to_queries(response.features)
     )
-    assert_geo_centroid(data_frame, 0, name=NAME)
+    assert_geo_centroid(data_frame, 0)
 
 
 def test_geo_boundaries_point_response():
@@ -218,7 +218,7 @@ def test_geo_boundaries_multipolygon_response():
     assert_geo_multiboundary(boundary, index=1, multipolygon=[[r3]])
 
 
-def assert_geo_limit(limit: DataFrame, index: int, name=NAME, found_name=FOUND_NAME):
+def assert_geo_limit(limit: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME):
     assert isinstance(limit, GeoDataFrame)
     assert_names(limit, index, name, found_name)
 
@@ -229,20 +229,20 @@ def assert_geo_limit(limit: DataFrame, index: int, name=NAME, found_name=FOUND_N
     assert GEO_RECT_MAX_LAT == bounds[3]
 
 
-def assert_geo_centroid(centroid: DataFrame, index: int, name=NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
+def assert_geo_centroid(centroid: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
     assert isinstance(centroid, GeoDataFrame)
     assert_names(centroid, index, name, found_name)
     assert lon == centroid.geometry[index].x
     assert lat == centroid.geometry[index].y
 
 
-def assert_geo_boundary(boundary: DataFrame, index: int, polygon: GJPolygon, name=NAME, found_name=FOUND_NAME):
+def assert_geo_boundary(boundary: DataFrame, index: int, polygon: GJPolygon, name=FOUND_NAME, found_name=FOUND_NAME):
     assert isinstance(boundary, GeoDataFrame)
     assert_names(boundary, index, name, found_name)
     assert_geo_polygon(boundary.geometry[index], polygon)
 
 
-def assert_geo_multiboundary(boundary: DataFrame, index: int, multipolygon: GJMultipolygon, name=NAME, found_name=FOUND_NAME):
+def assert_geo_multiboundary(boundary: DataFrame, index: int, multipolygon: GJMultipolygon, name=FOUND_NAME, found_name=FOUND_NAME):
     assert isinstance(boundary, GeoDataFrame)
     assert_names(boundary, index, name, found_name)
     assert_geo_multipolygon(boundary.geometry[index], multipolygon)

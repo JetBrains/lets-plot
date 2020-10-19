@@ -6,7 +6,6 @@ from lets_plot.geo_data.gis.response import GeocodedFeature, GeoPoint, GeoRect, 
 
 
 def assert_geocoded(expected: GeocodedFeature, actual: GeocodedFeature):
-    assert expected.query == actual.query
     assert expected.id == actual.id
     assert expected.name == actual.name
     assert_point(expected.centroid, actual.centroid)

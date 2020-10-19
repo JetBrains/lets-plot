@@ -79,11 +79,10 @@ class ResponseParser:
     def _parse_answers(answers_json: List[Dict], response: ResponseBuilder):
         answers: List[Answer] = []
         for answer_json in answers_json:
-            query = answer_json.get(ResponseField.query.value)
             features_json = answer_json.get(ResponseField.features.value, [])
             geocoded_features: List[GeocodedFeature] = []
             for feature_json in features_json:
-                feature = FeatureBuilder().set_query(query)
+                feature = FeatureBuilder()
 
                 FluentDict(feature_json) \
                     .visit_str(ResponseField.geo_object_id, feature.set_id) \
@@ -95,7 +94,7 @@ class ResponseParser:
                     .visit_object_optional(ResponseField.position, lambda json: feature.set_position(ResponseParser._parse_rect(json)))
 
                 geocoded_features.append(feature.build_geocoded())
-            answers.append(Answer(query, geocoded_features))
+            answers.append(Answer(geocoded_features))
 
         response.set_answers(answers)
 
@@ -169,7 +168,6 @@ class ResponseFormatter:
         for feature in answer.features:
             features.append(
                 FluentDict() \
-                .put(ResponseField.query, feature.query) \
                 .put(ResponseField.geo_object_id, feature.id) \
                 .put(ResponseField.name, feature.name) \
                 .put(ResponseField.boundary, ResponseFormatter._format_boundary(feature.boundary)) \
@@ -180,7 +178,6 @@ class ResponseFormatter:
             )
 
         return FluentDict() \
-            .put(ResponseField.query, answer.query) \
             .put(ResponseField.features, features) \
             .to_dict()
 

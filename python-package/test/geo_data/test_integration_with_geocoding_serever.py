@@ -162,6 +162,7 @@ SEVASTOPOL_ID = '6061953'
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+@pytest.mark.skip
 def test_only_one_sevastopol():
     sevastopol = geodata.regions_xy(SEVASTOPOL_LON, SEVASTOPOL_LAT, 'city')
 

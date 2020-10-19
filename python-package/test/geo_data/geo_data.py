@@ -101,15 +101,13 @@ def assert_found_names(df: DataFrame, names: List[str]):
 def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Regions:
     return Regions(
         level_kind=level_kind,
-        answers=[make_region(request, name, geo_object_id, highlights)],
-        queries=[RegionQuery(request=request)]
+        queries=[RegionQuery(request=request)],
+        answers=[make_region(name, geo_object_id, highlights)]
     )
 
 
-def make_region(request: str, name: str, geo_object_id: str, highlights: List[str]) -> Answer:
-    return Answer(request,
-                  [FeatureBuilder() \
-                  .set_query(request) \
+def make_region(name: str, geo_object_id: str, highlights: List[str]) -> Answer:
+    return Answer([FeatureBuilder() \
                   .set_name(name) \
                   .set_id(geo_object_id) \
                   .set_highlights(highlights) \
@@ -252,12 +250,12 @@ def get_map_data_meta(plotSpec, layerIdx: int) -> dict:
 
 
 
-def assert_names(df: DataFrame, index: int, name=NAME, found_name=FOUND_NAME):
+def assert_names(df: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME):
     assert name == df[DF_REQUEST][index]
     assert found_name == df[DF_FOUND_NAME][index]
 
 
-def assert_limit(limit: DataFrame, index: int, name=NAME, found_name=FOUND_NAME):
+def assert_limit(limit: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME):
     assert_names(limit, index, name, found_name)
 
     min_lon = limit['lonmin'][index]
@@ -270,12 +268,12 @@ def assert_limit(limit: DataFrame, index: int, name=NAME, found_name=FOUND_NAME)
     assert GEO_RECT_MAX_LAT == max_lat
 
 
-def assert_centroid(centroid: DataFrame, index: int, name=NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
+def assert_centroid(centroid: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
     assert_names(centroid, index, name, found_name)
     assert_point(centroid, index, lon, lat)
 
 
-def assert_boundary(boundary: DataFrame, index: int, points: List[GJPoint], name=NAME, found_name=FOUND_NAME):
+def assert_boundary(boundary: DataFrame, index: int, points: List[GJPoint], name=FOUND_NAME, found_name=FOUND_NAME):
     assert_names(boundary, index, name, found_name)
     for i, point in enumerate(points):
         assert_point(boundary, index + i, lon(point), lat(point))
@@ -286,10 +284,10 @@ def assert_point(df: DataFrame, index: int, lon: float, lat: float):
     assert lat == df[DF_LAT][index]
 
 def feature_to_answer(feature: GeocodedFeature) -> Answer:
-    return Answer(feature.query, [feature])
+    return Answer([feature])
 
 def features_to_answers(features: List[GeocodedFeature]) -> List[Answer]:
-    return [Answer(feature.query, [feature]) for feature in features]
+    return [Answer([feature]) for feature in features]
 
 def features_to_queries(features: List[GeocodedFeature]) -> List[RegionQuery]:
-    return [RegionQuery(feature.query) for feature in features]
+    return [RegionQuery(feature.name) for feature in features]

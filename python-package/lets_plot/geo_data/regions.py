@@ -103,7 +103,7 @@ class Regions(CanToDataFrame):
     def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery], highlights: bool = False):
         assert_list_type(answers, Answer)
         assert_list_type(queries, RegionQuery)
-        assert len(queries) == 0 or len(answers) == len(queries)
+        assert len(answers) == len(queries)
 
         try:
             import geopandas

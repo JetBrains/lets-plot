@@ -58,7 +58,7 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
         positional_matching = isinstance(scopes, list)
 
         if positional_matching:
-            if len(requests) != len(scopes):
+            if requests is not None and len(requests) != len(scopes):
                 raise ValueError('Length of request and scope is not equal')
 
             return [
@@ -93,9 +93,15 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
         states = ensure_is_parent_list(states)
         counties = ensure_is_parent_list(counties)
 
-        assert countries is None or len(countries) == len(requests)
-        assert states is None or len(states) == len(requests)
-        assert counties is None or len(counties) == len(requests)
+
+        if countries is not None and len(countries) == len(requests):
+            raise ValueError('Countries count({}) != names count({})'.format(len(countries), len(requests)))
+
+        if states is not None and len(states) == len(requests):
+            raise ValueError('States count({}) != names count({})'.format(len(states), len(requests)))
+
+        if counties is not None and len(counties) == len(requests):
+            raise ValueError('Counties count({}) != names count({})'.format(len(counties), len(requests)))
 
         queries = []
         for i in range(len(requests)):
@@ -269,7 +275,7 @@ class RegionsBuilder:
                 self._queries.append(overriding)
 
         if len(self._queries) == 0:
-            return []
+            return [RegionQuery(request=None, scope=None, ambiguity_resolver=self._default_ambiguity_resolver)]
 
         return [
             RegionQuery(
