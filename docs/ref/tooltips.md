@@ -9,7 +9,7 @@ The following functions are used to set lines and define formatting in the toolt
 
 
 ### layer_tooltips().line(...)
-Specifies the string template to use it in the multi-line tooltip. The presence of `line()` overrides the default tooltip.
+Specifies the string template to use in the multi-line tooltip. The presence of `line()` overrides the default tooltip.
 
 Variables and aesthetics can be accessed via a special syntax:
 - `$color` for aesthetic;
@@ -50,7 +50,7 @@ The string template in format will allow to change lines for the default tooltip
 
 If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}, e.g.,
 - `text` -> `"text"`
-- `{{text}}' -> `"{text}"`
+- `{{text}}` -> `"{text}"`
 - `$var@model` -> `"mustang"`
 - `{{$var@model}}` -> `"{mustang}"`
 
@@ -60,11 +60,11 @@ Variable's and aesthetic's formats are not interchangeable, i.e. var format will
 ### Examples
 
 ```
-p = ggplot(mpg, aes(x='displ', y='hwy', color='manufacturer')) + theme(legend_position='none')` 
+p = ggplot(mpg, aes(x='displ', y='hwy', color='manufacturer')) + theme(legend_position='none') 
 
 p + geom_point(size=5, tooltips=layer_tooltips()\
                                     .format('var@cty', '.1f')
-                                    .format('var@hwy',  '.1f')
+                                    .format('var@hwy', '.1f')
                                     .line('$var@manufacturer $var@model')
                                     .line('cty/hwy|$var@cty/$var@hwy')
                                     .line('@|$var@class')
