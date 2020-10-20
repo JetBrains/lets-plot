@@ -70,9 +70,7 @@ def test_regions(mock_geocoding):
                          level=LEVEL_KIND,
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False
-                         ),
-        None, # chunk_size
-        None # progress_callback
+                         )
     )
 
 
@@ -90,9 +88,7 @@ def test_regions_with_highlights(mock_geocoding):
                          level=LEVEL_KIND,
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False
-                         ),
-        None, # chunk_size
-        None # progress_callback
+                         )
     )
 
 FOO_FEATURE = FeatureBuilder().set_name('fooname').set_id('fooid').build_geocoded()

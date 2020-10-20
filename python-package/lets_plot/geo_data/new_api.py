@@ -29,20 +29,19 @@ def regions_builder2(level=None, names=None, scope=None, countries=None, states=
     level : ['country' | 'state' | 'county' | 'city' | None]
         The level of administrative division. Default is a 'state'.
     names : [array | string | None]
-        Data can be filtered by full names at any level (only exact matching).
+        Names of objects to be geocoded.
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    countries : [array | string | None]
-        Parent countries. Should have same size as names.
-    states : [array | string | None]
-        Parent states. Should have same size as names.
-    counties : [array | string | None]
-        Parent counties. Should have same size as names.
+    countries : [array | None]
+        Parent countries. Should have same size as names. Can contain strings or Regions objects.
+    states : [array | None]
+        Parent states. Should have same size as names. Can contain strings or Regions objects.
+    counties : [array | None]
+        Parent counties. Should have same size as names. Can contain strings or Regions objects.
     scope : [array | string | Regions | None]
-        Data can be filtered by within name.
-        If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
-        'US-48' includes continental part of United States (48 states).
+        Limits area of geocoding. Applyed to a highest admin level of parents that are set or to names, if no parents given.
+        If all parents are set (including countries) then the scope parameter is ignored.
+        If scope is an array then geocoding will try to search objects in all scopes.
 
     Returns
     -------
@@ -58,8 +57,6 @@ def regions_builder2(level=None, names=None, scope=None, countries=None, states=
     >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
     """
     return RegionsBuilder(level, names, scope, highlights,
-                          progress_callback=None,
-                          chunk_size=None,
                           allow_ambiguous=False,
                           countries=countries,
                           states=states,

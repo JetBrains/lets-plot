@@ -36,21 +36,23 @@ def _to_near_coord(near: Optional[Union[Regions, ShapelyPointType]]) -> Optional
         else:
             raise ValueError("Unexpected geocoding response for id " + str(near_id[0]))
 
-    if ShapelyWrapper.is_point(near):
+    if LazyShapely.is_point(near):
         return GeoPoint(lon=near.x, lat=near.y)
 
     raise ValueError('Not supported type')
 
 
-def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPolygonType]]) -> Tuple[scope_types, Optional[GeoRect]]:
-    if not ShapelyWrapper.is_polygon(box):
+def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPolygonType]]) -> Tuple[
+    scope_types, Optional[GeoRect]]:
+    if not LazyShapely.is_polygon(box):
         return box, None
 
     return None, GeoRect(min_lon=box.bounds[0], min_lat=box.bounds[1], max_lon=box.bounds[2], max_lat=box.bounds[3])
 
 
 def _create_queries(request: request_types, scope: scope_types, ambiguity_resovler: AmbiguityResolver,
-                    countries: parent_types = None, states: parent_types = None, counties: parent_types = None) -> List[RegionQuery]:
+                    countries: parent_types = None, states: parent_types = None, counties: parent_types = None) -> List[
+    RegionQuery]:
     requests: Optional[List[str]] = _ensure_is_list(request)
 
     if (countries is None and states is None and counties is None) or requests is None:
@@ -93,7 +95,6 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
         states = ensure_is_parent_list(states)
         counties = ensure_is_parent_list(counties)
 
-
         if countries is not None and len(countries) != len(requests):
             raise ValueError('Countries count({}) != names count({})'.format(len(countries), len(requests)))
 
@@ -118,10 +119,10 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
         return queries
 
 
-class ShapelyWrapper:
+class LazyShapely:
     @staticmethod
     def is_point(p) -> bool:
-        if not ShapelyWrapper.is_shapely_available():
+        if not LazyShapely._is_shapely_available():
             return False
 
         from shapely.geometry import Point
@@ -129,14 +130,14 @@ class ShapelyWrapper:
 
     @staticmethod
     def is_polygon(p):
-        if not ShapelyWrapper.is_shapely_available():
+        if not LazyShapely._is_shapely_available():
             return False
 
         from shapely.geometry import Polygon
         return isinstance(p, Polygon)
 
     @staticmethod
-    def is_shapely_available():
+    def _is_shapely_available():
         try:
             import shapely
             return True
@@ -150,9 +151,7 @@ class RegionsBuilder:
                  request: request_types = None,
                  scope: scope_types = None,
                  highlights: bool = False,
-                 progress_callback = None,
-                 chunk_size = None,
-                 allow_ambiguous = False,
+                 allow_ambiguous=False,
                  countries=None,
                  states=None,
                  counties=None
@@ -160,11 +159,10 @@ class RegionsBuilder:
 
         self._level: Optional[LevelKind] = _to_level_kind(level)
         self._overridings: List[RegionQuery] = []
-        self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty() # TODO rename to geohint
-        self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver, countries, states, counties)
+        self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()  # TODO rename to geohint
+        self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver, countries,
+                                                           states, counties)
         self._highlights: bool = highlights
-        self._on_progress = progress_callback
-        self._chunk_size = chunk_size
         self._allow_ambiguous = allow_ambiguous
 
     def drop_not_found(self) -> 'RegionsBuilder':
@@ -178,11 +176,6 @@ class RegionsBuilder:
     def allow_ambiguous(self) -> 'RegionsBuilder':
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
         self._allow_ambiguous = True
-        return self
-
-    def chunk_request(self, on_progress=None, chunk_size=40):
-        self._chunk_size = chunk_size
-        self._on_progress = on_progress
         return self
 
     def where(self,
@@ -251,11 +244,7 @@ class RegionsBuilder:
             .set_allow_ambiguous(self._allow_ambiguous) \
             .build()
 
-        # Too many queries - can fail with timeout. Chunk queries.
-        if len(self._get_queries()) > 100_000 and self._chunk_size is None:
-            self.chunk_request(self._on_progress, 40)
-
-        response: Response = GeocodingService().do_request(request, self._chunk_size, self._on_progress)
+        response: Response = GeocodingService().do_request(request)
 
         if not isinstance(response, SuccessResponse):
             _raise_exception(response)

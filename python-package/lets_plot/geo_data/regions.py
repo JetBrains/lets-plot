@@ -45,8 +45,10 @@ class Resolution(enum.Enum):
 def contains_values(column):
     return any(v is not None for v in column)
 
+
 def select_request(query: RegionQuery, answer: Answer, feature: GeocodedFeature) -> str:
     return query.request if len(answer.features) <= 1 else feature.name
+
 
 def zip_answers(queries: List, answers: List):
     if len(queries) > 0:
@@ -76,7 +78,6 @@ class PlacesDataFrameBuilder:
             self._state.append(MapRegion.name_or_none(query.state))
             self._country.append(MapRegion.name_or_none(query.country))
 
-
     def build_dict(self):
         data = {}
         data[DF_REQUEST] = self._request
@@ -93,14 +94,14 @@ class PlacesDataFrameBuilder:
 
         return data
 
-
     @abstractmethod
     def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery] = []) -> DataFrame:
         raise ValueError('Not implemented')
 
 
 class Regions(CanToDataFrame):
-    def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery], highlights: bool = False):
+    def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery],
+                 highlights: bool = False):
         assert_list_type(answers, Answer)
         assert_list_type(queries, RegionQuery)
         assert len(answers) == len(queries)
@@ -136,11 +137,12 @@ class Regions(CanToDataFrame):
 
     def as_list(self) -> List['Regions']:
         if len(self._queries) == 0:
-            return [Regions(self._level_kind, [answer], [RegionQuery(request=None)], self._highlights) for answer in self._answers]
+            return [Regions(self._level_kind, [answer], [RegionQuery(request=None)], self._highlights) for answer in
+                    self._answers]
 
         assert len(self._queries) == len(self._answers)
-        return [Regions(self._level_kind, [answer], [query], self._highlights) for query, answer in zip(self._queries, self._answers)]
-
+        return [Regions(self._level_kind, [answer], [query], self._highlights) for query, answer in
+                zip(self._queries, self._answers)]
 
     def unique_ids(self) -> List[str]:
         seen = set()
@@ -286,7 +288,6 @@ class Regions(CanToDataFrame):
             data[DF_HIGHLIGHTS] = [feature.highlights for feature in self._geocoded_features]
 
         return DataFrame(data)
-
 
     def _execute(self, request_builder: RequestBuilder, df_converter):
         response = GeocodingService().do_request(request_builder.build())
