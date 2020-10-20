@@ -73,18 +73,6 @@ object PaletteUtil {
     fun paletteTypeByPaletteName(paletteName: String): ColorPalette.Type? =
         PAL_TYPE_BY_PAL_NAME[paletteName]
 
-    fun defColorSchemeForPaletteType(paletteType: ColorPalette.Type, size: Int?): ColorScheme {
-        return when (paletteType) {
-            ColorPalette.Type.QUALITATIVE -> {
-                if (size != null && size <= 8) ColorPalette.Qualitative.Set2
-                else ColorPalette.Qualitative.Set3
-            }
-            else -> {
-                colorSchemeByIndex(paletteType, 0)
-            }
-        }
-    }
-
     fun colorSchemeByIndex(paletteType: ColorPalette.Type, index: Int): ColorScheme {
         @Suppress("UNCHECKED_CAST")
         val values: Array<ColorScheme> = when (paletteType) {

@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
@@ -22,13 +21,12 @@ open class LinearNormalizingMapperProvider(
     }
 
     override fun createContinuousMapper(
-        data: DataFrame,
-        variable: DataFrame.Variable,
+        domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
         trans: Transform?
     ): GuideMapper<Double> {
-        val dataRange = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
+        val dataRange = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
         return GuideMappers.continuousToContinuous(dataRange, outputRange, naValue)
     }
 }

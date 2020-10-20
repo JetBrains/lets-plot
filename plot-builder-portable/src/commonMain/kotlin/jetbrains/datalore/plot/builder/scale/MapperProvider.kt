@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 interface MapperProvider<T> {
     /**
@@ -18,8 +19,7 @@ interface MapperProvider<T> {
      * Create mapper with continuous (numeric) input (domain)
      */
     fun createContinuousMapper(
-        data: DataFrame,
-        variable: DataFrame.Variable,
+        domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
         trans: Transform?

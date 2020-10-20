@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
@@ -42,7 +43,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
@@ -54,6 +54,7 @@ import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.AlphaMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.SizeMapperProvider
+
 
 object DefaultMapperProvider {
 
@@ -149,7 +150,9 @@ object DefaultMapperProvider {
                 }
 
                 override fun createContinuousMapper(
-                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                    domain: ClosedRange<Double>,
+                    lowerLimit: Double?,
+                    upperLimit: Double?,
                     trans: Transform?
                 ): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
@@ -162,7 +165,9 @@ object DefaultMapperProvider {
                 }
 
                 override fun createContinuousMapper(
-                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                    domain: ClosedRange<Double>,
+                    lowerLimit: Double?,
+                    upperLimit: Double?,
                     trans: Transform?
                 ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY

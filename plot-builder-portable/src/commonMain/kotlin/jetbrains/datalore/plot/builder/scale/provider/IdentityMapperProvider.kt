@@ -5,8 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.MapperProvider
@@ -22,8 +21,7 @@ class IdentityMapperProvider<T>(
     }
 
     override fun createContinuousMapper(
-        data: DataFrame,
-        variable: Variable,
+        domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
         trans: Transform?

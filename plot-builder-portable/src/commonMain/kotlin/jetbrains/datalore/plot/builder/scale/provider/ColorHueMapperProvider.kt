@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
@@ -68,13 +67,13 @@ class ColorHueMapperProvider(
     }
 
     override fun createContinuousMapper(
-        data: DataFrame,
-        variable: DataFrame.Variable,
+        domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
         trans: Transform?
     ): GuideMapper<Color> {
-        val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
+        @Suppress("NAME_SHADOWING")
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
         return createContinuousMapper(domain, myHSVIntervals)
     }
 

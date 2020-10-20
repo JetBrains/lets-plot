@@ -5,10 +5,9 @@
 
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -27,13 +26,12 @@ object DefaultMapperProviderUtil {
             }
 
             override fun createContinuousMapper(
-                data: DataFrame,
-                variable: Variable,
+                domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
                 trans: Transform?
             ): GuideMapper<Color> {
-                return continuous.createContinuousMapper(data, variable, lowerLimit, upperLimit, trans)
+                return continuous.createContinuousMapper(domain, lowerLimit, upperLimit, trans)
             }
         }
     }
@@ -45,14 +43,13 @@ object DefaultMapperProviderUtil {
             }
 
             override fun createContinuousMapper(
-                data: DataFrame,
-                variable: Variable,
+                domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
                 trans: Transform?
             ): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(
-                    MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans),
+                    MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans),
                     outputValues, naValue
                 )
             }
@@ -63,8 +60,7 @@ object DefaultMapperProviderUtil {
     internal fun createObjectIdentity(aes: Aes<Any?>): MapperProvider<Any?> {
         return object : IdentityDiscreteMapperProvider<Any?>({ it }, null) {
             override fun createContinuousMapper(
-                data: DataFrame,
-                variable: Variable,
+                domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
                 trans: Transform?
@@ -99,8 +95,7 @@ object DefaultMapperProviderUtil {
     ): MapperProvider<T> {
         return object : IdentityDiscreteMapperProvider<T>(converter, DefaultNaValue[aes]) {
             override fun createContinuousMapper(
-                data: DataFrame,
-                variable: Variable,
+                domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
                 trans: Transform?
@@ -108,7 +103,7 @@ object DefaultMapperProviderUtil {
                 if (continuousMapper != null) {
                     return GuideMappers.adaptContinuous(continuousMapper)
                 }
-                throw IllegalStateException("Can't create $aes mapper for continuous domain ($variable)")
+                throw IllegalStateException("Can't create $aes mapper for continuous domain $domain")
             }
         }
     }

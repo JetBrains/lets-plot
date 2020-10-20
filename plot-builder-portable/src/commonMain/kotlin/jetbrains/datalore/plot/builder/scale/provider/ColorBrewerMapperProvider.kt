@@ -5,21 +5,23 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.WithGuideBreaks
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.common.color.ColorPalette
+import jetbrains.datalore.plot.common.color.ColorPalette.Qualitative.Set2
+import jetbrains.datalore.plot.common.color.ColorPalette.Qualitative.Set3
+import jetbrains.datalore.plot.common.color.ColorPalette.Type.*
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil
 import jetbrains.datalore.plot.common.color.PaletteUtil.colorSchemeByIndex
-import jetbrains.datalore.plot.common.color.PaletteUtil.defColorSchemeForPaletteType
+
 
 /**
  * @param paletteTypeName - One of seq (sequential), div (diverging) or qual (qualitative)
@@ -53,27 +55,26 @@ class ColorBrewerMapperProvider(
     }
 
     override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
-        val colors = discreteColors(domainValues.size)
+        val colorScheme = colorScheme(true, domainValues.size)
+        val colors = colors(colorScheme, domainValues.size)
         return GuideMappers.discreteToDiscrete(domainValues, colors, naValue)
     }
 
     override fun createContinuousMapper(
-        data: DataFrame,
-        variable: DataFrame.Variable,
+        domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
         trans: Transform?
     ): GuideMapper<Color> {
-        val colors = getColors(data, variable)
-        return GuideMappers.continuousToDiscrete(
-            MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans),
-            colors,
-            naValue
-        )
+        val colorScheme = colorScheme(false)
+        val colors = colors(colorScheme, colorScheme.maxColors)
+
+        @Suppress("NAME_SHADOWING")
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
+        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
     }
 
-    private fun discreteColors(count: Int): List<Color> {
-        val colorScheme = discreteColorScheme(count)
+    private fun colors(colorScheme: ColorScheme, count: Int): List<Color> {
         val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count)
         return when (direction?.let { direction < 0 } ?: false) {
             true -> Lists.reverse(colors)
@@ -81,23 +82,7 @@ class ColorBrewerMapperProvider(
         }
     }
 
-    private fun getColors(data: DataFrame, variable: DataFrame.Variable): List<Color> {
-        val colorScheme = colorScheme(data, variable)
-        val colors: List<Color> = when {
-            data.isNumeric(variable) -> PaletteUtil.schemeColors(colorScheme, colorScheme.maxColors)
-            else -> {
-                val size = DataFrameUtil.distinctValues(data, variable).size
-                PaletteUtil.schemeColors(colorScheme, size)
-            }
-        }
-
-        return when (direction?.let { direction < 0 } ?: false) {
-            true -> Lists.reverse(colors)
-            false -> colors
-        }
-    }
-
-    private fun discreteColorScheme(colorCount: Int): ColorScheme {
+    private fun colorScheme(discrete: Boolean, colorCount: Int? = null): ColorScheme {
         val paletteType = when {
             paletteNameOrIndex is String -> {
                 val palType = PaletteUtil.paletteTypeByPaletteName(paletteNameOrIndex)
@@ -105,46 +90,18 @@ class ColorBrewerMapperProvider(
                 palType
             }
             paletteTypeName != null -> paletteType(paletteTypeName)
-            else -> ColorPalette.Type.QUALITATIVE
+            discrete -> QUALITATIVE
+            else -> SEQUENTIAL
         }
 
         return when {
             paletteNameOrIndex is Number -> colorSchemeByIndex(paletteType, paletteNameOrIndex.toInt())
             paletteNameOrIndex is String -> colorSchemeByName(paletteType, paletteNameOrIndex)
-            else -> {
-                defColorSchemeForPaletteType(paletteType, colorCount)
+            paletteType == QUALITATIVE -> {
+                if (colorCount != null && colorCount <= Set2.maxColors) Set2
+                else Set3
             }
-        }
-    }
-
-    private fun colorScheme(data: DataFrame, variable: DataFrame.Variable): ColorScheme {
-        val paletteType = when {
-            paletteNameOrIndex is String -> {
-                val palType = PaletteUtil.paletteTypeByPaletteName(paletteNameOrIndex)
-                require(palType != null) { cantFindPaletteError(paletteNameOrIndex) }
-                palType
-            }
-            paletteTypeName != null -> paletteType(paletteTypeName)
-            else -> {
-                // Default palette type
-                when {
-                    data.isNumeric(variable) -> ColorPalette.Type.SEQUENTIAL
-                    else -> ColorPalette.Type.QUALITATIVE
-                }
-            }
-        }
-
-        return when {
-            paletteNameOrIndex is Number -> colorSchemeByIndex(paletteType, paletteNameOrIndex.toInt())
-            paletteNameOrIndex is String -> colorSchemeByName(paletteType, paletteNameOrIndex)
-            else -> {
-                val categoriesCount = if (data.isNumeric(variable)) {
-                    null
-                } else {
-                    DataFrameUtil.distinctValues(data, variable).size
-                }
-                defColorSchemeForPaletteType(paletteType, categoriesCount)
-            }
+            else -> colorSchemeByIndex(paletteType, 0)
         }
     }
 
@@ -152,12 +109,12 @@ class ColorBrewerMapperProvider(
     companion object {
         private fun paletteType(name: String?): ColorPalette.Type {
             if (name == null) {
-                return ColorPalette.Type.SEQUENTIAL
+                return SEQUENTIAL
             }
             return when (name) {
-                "seq" -> ColorPalette.Type.SEQUENTIAL
-                "div" -> ColorPalette.Type.DIVERGING
-                "qual" -> ColorPalette.Type.QUALITATIVE
+                "seq" -> SEQUENTIAL
+                "div" -> DIVERGING
+                "qual" -> QUALITATIVE
                 else -> throw IllegalArgumentException(
                     "Palette type expected one of 'seq' (sequential), 'div' (diverging) or 'qual' (qualitative) but was: '$name'"
                 )
@@ -167,9 +124,9 @@ class ColorBrewerMapperProvider(
         private fun colorSchemeByName(paletteType: ColorPalette.Type, paletteName: String): ColorScheme {
             try {
                 return when (paletteType) {
-                    ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.valueOf(paletteName)
-                    ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.valueOf(paletteName)
-                    ColorPalette.Type.QUALITATIVE -> ColorPalette.Qualitative.valueOf(paletteName)
+                    SEQUENTIAL -> ColorPalette.Sequential.valueOf(paletteName)
+                    DIVERGING -> ColorPalette.Diverging.valueOf(paletteName)
+                    QUALITATIVE -> ColorPalette.Qualitative.valueOf(paletteName)
                 }
             } catch (ignore: IllegalArgumentException) {
                 // Enum type has no constant with the specified name error.

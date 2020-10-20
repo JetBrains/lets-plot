@@ -20,7 +20,6 @@ import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.common.color.ColorPalette
-import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,10 +53,11 @@ class ScaleConfigTest {
             "var" to input
         )
         val data = DataFrameUtil.fromMap(map)
-
+        val datavar = DataFrameUtil.findVariableOrFail(data, "var")
         val mapper = mapperProvider.createContinuousMapper(
-            data, DataFrameUtil.findVariableOrFail(data, "var"),
-            Double.NaN, Double.NaN, Transforms.IDENTITY
+            data.range(datavar)!!,
+            Double.NaN,
+            Double.NaN, Transforms.IDENTITY
         )
         for (v in input) {
             assertEquals(v, mapper.apply(v))
@@ -129,7 +129,7 @@ class ScaleConfigTest {
                 .createScale(dataFrame, dataFrame.variables().first { it.name == "a" })
                 .mapper
 
-            val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it)}
+            val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }
             assertEquals(expected[0], scaleMapper(0.0))
             assertEquals(expected[1], scaleMapper(1.0))
             assertEquals(expected[2], scaleMapper(2.0))

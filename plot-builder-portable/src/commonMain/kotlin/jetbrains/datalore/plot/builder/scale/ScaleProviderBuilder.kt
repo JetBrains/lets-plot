@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 /**
  * see ggplot2: discrete_scale(...) / continuous_scale(...)
@@ -175,6 +176,8 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
 
             } else {
                 // continuous (numeric) domain
+                val dataRange = ensureApplicableRange(data.range(variable))
+
                 var lowerLimit: Double? = null
                 var upperLimit: Double? = null
                 if (myLimits != null) {
@@ -198,8 +201,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                     scale = Scales.continuousDomain(name, absentMapper(variable), false)
                 } else {
                     val mapper = mapperProvider.createContinuousMapper(
-                        data,
-                        variable,
+                        dataRange,
                         lowerLimit,
                         upperLimit,
                         myContinuousTransform
