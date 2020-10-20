@@ -17,7 +17,8 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.input.CursorPointerComponent
+import jetbrains.livemap.core.input.CursorStyle
+import jetbrains.livemap.core.input.CursorStyleComponent
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
@@ -260,16 +261,16 @@ class LiveMapUiSystem(
         internal fun updateZoomButtons(zoom: Double) {
             val res = myUiService.resourceManager
 
-            if (zoom == myViewport.minZoom.toDouble() && myButtonMinus.contains<CursorPointerComponent>()) {
-                myButtonMinus.remove<CursorPointerComponent>()
-            } else if(zoom != myViewport.minZoom.toDouble() && !myButtonMinus.contains<CursorPointerComponent>()) {
-                myButtonMinus.add(CursorPointerComponent(myZoomMinus))
+            if (zoom == myViewport.minZoom.toDouble() && myButtonMinus.contains<CursorStyleComponent>()) {
+                myButtonMinus.remove<CursorStyleComponent>()
+            } else if(zoom != myViewport.minZoom.toDouble() && !myButtonMinus.contains<CursorStyleComponent>()) {
+                myButtonMinus.add(CursorStyleComponent(CursorStyle.POINTER))
             }
 
-            if (zoom == myViewport.maxZoom.toDouble() && myButtonPlus.contains<CursorPointerComponent>()) {
-                myButtonPlus.remove<CursorPointerComponent>()
-            } else if(zoom != myViewport.maxZoom.toDouble() && !myButtonPlus.contains<CursorPointerComponent>()) {
-                myButtonPlus.add(CursorPointerComponent(myZoomPlus))
+            if (zoom == myViewport.maxZoom.toDouble() && myButtonPlus.contains<CursorStyleComponent>()) {
+                myButtonPlus.remove<CursorStyleComponent>()
+            } else if(zoom != myViewport.maxZoom.toDouble() && !myButtonPlus.contains<CursorStyleComponent>()) {
+                myButtonPlus.add(CursorStyleComponent(CursorStyle.POINTER))
             }
 
             myZoomMinus.snapshot = if (zoom == myViewport.minZoom.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]

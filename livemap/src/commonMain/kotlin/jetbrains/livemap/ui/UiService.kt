@@ -9,7 +9,8 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.input.ClickableComponent
-import jetbrains.livemap.core.input.CursorPointerComponent
+import jetbrains.livemap.core.input.CursorStyle
+import jetbrains.livemap.core.input.CursorStyleComponent
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
@@ -35,7 +36,7 @@ class UiService(private val myComponentManager: EcsComponentManager, val resourc
             myComponentManager
                 .createEntity("ui_button")
                 .addComponents {
-                    + CursorPointerComponent(renderBox)
+                    + CursorStyleComponent(CursorStyle.POINTER)
                     + ClickableComponent(renderBox)
                     + MouseInputComponent()
                     + EventListenerComponent()
@@ -49,7 +50,7 @@ class UiService(private val myComponentManager: EcsComponentManager, val resourc
             .createEntity("ui_link")
             .addComponents {
                 + ParentLayerComponent(myComponentManager.getEntity(UiLayerComponent::class).id)
-                + CursorPointerComponent(renderBox)
+                + CursorStyleComponent(CursorStyle.POINTER)
                 + ClickableComponent(renderBox)
                 + MouseInputComponent()
                 + EventListenerComponent()
