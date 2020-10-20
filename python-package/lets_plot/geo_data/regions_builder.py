@@ -94,13 +94,13 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
         counties = ensure_is_parent_list(counties)
 
 
-        if countries is not None and len(countries) == len(requests):
+        if countries is not None and len(countries) != len(requests):
             raise ValueError('Countries count({}) != names count({})'.format(len(countries), len(requests)))
 
-        if states is not None and len(states) == len(requests):
+        if states is not None and len(states) != len(requests):
             raise ValueError('States count({}) != names count({})'.format(len(states), len(requests)))
 
-        if counties is not None and len(counties) == len(requests):
+        if counties is not None and len(counties) != len(requests):
             raise ValueError('Counties count({}) != names count({})'.format(len(counties), len(requests)))
 
         queries = []
