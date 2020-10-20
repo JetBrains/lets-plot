@@ -1,0 +1,201 @@
+Country,Capital,Area,Population,Continent
+Abkhazia,Sukhumi,8 600,242 862,Asia
+Afghanistan,Kabul,647 500,33 397 058,Asia
+Albania,Tirana,28 748,2 831 741,Europe
+Algeria,Algiers,2 381 740,36 485 828,Africa
+Andorra,Andorra la Vella,468,78 115,Europe
+Angola,Luanda,1 246 700,20 162 517,Africa
+Antigua and Barbuda,St. John's,442,90 510,North America
+Argentina,Buenos Aires,2 766 890,41 281 631,South America
+Armenia,Yerevan,29 741,3 268 500,Asia
+Australia,Canberra,7 686 850,23 290 000,Australia and Oceania
+Austria,Vienna,83 858,8 452 835,Europe
+Azerbaijan,Baku,86 600,9 235 100,Asia
+Bahamas,Nassau,13 940,351 275,North America
+Bahrain,Manama,701,1 234 571,Asia
+Bangladesh,Dhaka,144 000,150 039 000,Asia
+Barbados,Bridgetown,430,274 530,North America
+Belarus,Minsk,207 595,9 457 500,Europe
+Belgium,Brussels,30 528,11 041 266,Europe
+Belize,Belmopan,22 966,322 100,North America
+Benin,Porto-Novo,112 620,9 351 838,Africa
+Bhutan,Thimphu,47 000,750 443,Asia
+Bolivia,Sucre,1 098 580,10 248 042,South America
+Bosnia and Herzegovina,Sarajevo,51 129,3 839 737,Europe
+Botswana,Gaborone,600 370,2 053 237,Africa
+Brazil,Brasilia,8 511 965,201 009 622,South America
+Brunei,Bandar Seri Begawan,5 770,412 892,Asia
+Bulgaria,Sofia,110 910,7 364 570,Europe
+Burkina Faso,Ouagadougou,274 200,17 481 984,Africa
+Burundi,Gitega,27 830,8 749 387,Africa
+Cambodia,Phnom Penh,181 040,14 478 320,Asia
+Cameroon,Yaounde,475 440,20 468 943,Africa
+Canada,Ottawa,9 976 139,33 660 000,North America
+Cape Verde,Praia,4 033,505 335,Africa
+Central African Republic,Bangui,622 984,4 575 586,Africa
+Chad,NDjamena,1 284 000,11 274 106,Africa
+Chile,Santiago,756 950,17 459 000,South America
+China,Beijing,9 640 821,1 366 499 000,Asia
+Colombia,Bogota,1 138 910,46 690 000,South America
+Comoros,Moroni,2 235,753 943,Africa
+Congo,Brazzaville,342 000,4 233 063,Africa
+Costa Rica,San Jose,51 100,4 301 712,North America
+Ivory Coast,Yamoussoukro,322 460,20 594 615,Africa
+Croatia,Zagreb,56 542,4 290 612,Europe
+Cuba,Havana,110 860,11 249 266,North America
+Cyprus,Nicosia,9 250,862 011,Asia
+Czech Republic,Prague,78 866,10 507 566,Europe
+Denmark,Copenhagen,43 094,5 579 204,Europe
+Djibouti,Djibouti,22 000,922 708,Africa
+Dominica,Roseau,754,67 665,North America
+Dominican Republic,Santo Domingo,48 730,10 183 339,North America
+Democratic Republic of the Congo,Kinshasa,2 345 410,77 433 744,Africa
+East Timor,Dili,14 874,1 066 409,Asia
+Ecuador,Quito,283 560,14 643 000,South America
+Egypt,Cairo,1 001 450,85 294 388,Africa
+El Salvador,San Salvador,21 040,6 264 129,North America
+Equatorial Guinea,Malabo,28 051,740 471,Africa
+Eritrea,Asmara,121 320,5 580 862,Africa
+Estonia,Tallinn,45 226,1 316 194,Europe
+Eswatini,Mbabane,17 363,1 220 408,Africa
+Ethiopia,Addis Ababa,1 127 127,93 877 025,Africa
+Federated States of Micronesia,Palikir,702,112 098,Australia and Oceania
+Fiji,Suva,18 270,875 822,Australia and Oceania
+Finland,Helsinki,337 030,5 417 800,Europe
+France,Paris,547 030,63 468 168,Europe
+Gabon,Libreville,267 667,1 563 873,Africa
+Gambia,Banjul,11 300,1 824 777,Africa
+Georgia,Tbilisi,69 700,4 497 600,Asia
+Germany,Berlin,357 021,81 843 809,Europe
+Ghana,Accra,238 540,25 545 939,Africa
+Greece,Athens,131 940,11 290 785,Europe
+Greenland,Nuuk,2 166 086,56 08,North America
+Grenada,Saint Georges,340,105 303,North America
+Guatemala,Guatemala City,108 890,15 137 569,North America
+Guinea,Conakry,245 857,10 480 710,Africa
+Guinea-Bissau,Bissau,36 120,1 579 632,Africa
+Guyana,Georgetown,214 970,761 510,South America
+Haiti,Port-au-Prince,27 750,10 255 644,North America
+Honduras,Tegucigalpa,112 090,7 466 000,North America
+Hungary,Budapest,93 030,9 962 000,Europe
+Iceland,Reykjavik,103 000,317 630,Europe
+India,New Delhi,3 287 590,1 223 442 000,Asia
+Indonesia,Jakarta,1 904 556,253 609 643,Asia
+Iran,Tehran,1 648 000,80 840 513,Asia
+Iraq,Baghdad,437 072,33 703 068,Asia
+Ireland,Dublin,70 273,4 581 269,Europe
+Israel,Jerusalem,22 072,7 836 000,Asia
+Italy,Rome,301 340,60 776 531,Europe
+Jamaica,Kingston,10 990,2 705 800,North America
+Japan,Tokyo,377 944,127 103 388,Asia
+Jordan,Amman,89 400,6 344 000,Asia
+Kazakhstan,Nur-Sultan,2 724 900,16 776 583,Asia
+Kenya,Nairobi,582 650,42 749 418,Africa
+Kosovo,Pristina,572,204 721,Europe
+Kiribati,Tarawa Atoll,717,102 660,Australia and Oceania
+Kuwait,Kuwait City,17 820,2 891 553,Asia
+Kyrgyzstan,Bishkek,198 500,5 477 600,Asia
+Laos,Vientiane,236 800,6 348 800,Asia
+Latvia,Riga,64 589,2 049 500,Europe
+Lebanon,Beirut,10 452,4 291 719,Asia
+Lesotho,Maseru,30 355,2 216 850,Africa
+Liberia,Monrovia,111 370,3 476 608,Africa
+Libya,Tripoli,1 759 540,6 469 497,Africa
+Liechtenstein,Vaduz,160,36 476,Europe
+Lithuania,Vilnius,65 200,3 195 702,Europe
+Luxembourg,Luxembourg,2 586,524 853,Europe
+Macedonia,Skopje,25 333,2 057 284,Europe
+Madagascar,Antananarivo,587 040,21 928 518,Africa
+Malawi,Lilongwe,118 480,15 882 815,Africa
+Malaysia,Kuala Lumpur,329 750,29 425 859,Asia
+Maldives,Male,300,324 313,Asia
+Mali,Bamako,1 240 000,14 517 176,Africa
+Malta,Valletta,316,420 085,Europe
+Marshall Islands,Majuro,181,55 717,Australia and Oceania
+Mauritania,Nouakchott,1 030 700,3 622 961,Africa
+Mauritius,Port Louis,2 040,1 280 294,Africa
+Mexico,Mexico City,1 972 550,120 286 655,North America
+Moldova,Chisinau,33 846,3 559 500,Europe
+Monaco,Monaco,2.02,35 444,Europe
+Mongolia,Ulaanbaatar,1 564 116,2 736 800,Asia
+Montenegro,Podgorica,14 026,632 796,Europe
+Morocco,Rabat,446 550,32 668 000,Africa
+Mozambique,Maputo,801 590,23 700 715,Africa
+Myanmar,Naypyidaw,678 500,48 724 387,Asia
+Namibia,Windhoek,825 418,2 364 433,Africa
+Nauru,[no capital],21.3,10 370,Australia and Oceania
+Nepal,Kathmandu,140 800,31 011 137,Asia
+Netherlands,Amsterdam,41 526,16 748 650,Europe
+New Zealand,Wellington,268 680,4 459 000,Australia and Oceania
+Nicaragua,Managua,129 494,5 815 524,North America
+Niger,Niamey,1 267 000,16 644 339,Africa
+Nigeria,Abuja,923 768,174 507 539,Africa
+North Korea,Pyongyang,120 540,24 553 672,Asia
+Norway,Oslo,385 186,5 027 600,Europe
+Oman,Muscat,309 500,2 773 479,Asia
+Pakistan,Islamabad,881 913,183 209 612,Asia
+Palau,Ngerulmud,458,20 609,Australia and Oceania
+Panama,Panama City,78 200,3 405 813,North America
+Papua New Guinea,Port Moresby,463 840,7 170 112,Australia and Oceania
+Paraguay,Asuncion,406 750,6 337 127,South America
+Peru,Lima,1 285 220,30 135 875,South America
+Philippines,Manila,300 000,105 720 644,Asia
+Poland,Warsaw,312 685,38 208 618,Europe
+Portugal,Lisbon,92 082,10 541 840,Europe
+Qatar,Doha,11 437,1 699 435,Asia
+Romania,Bucharest,237 500,21 355 849,Europe
+Russia,Moscow,17 102 345,146 270 033,Europe
+Rwanda,Kigali,26 338,10 718 379,Africa
+Saint Kitts and Nevis,Basseterre,261,53 697,North America
+Saint Lucia,Castries,620,177 794,North America
+Saint Vincent and the Grenadines,Kingstown,389,109 367,North America
+Samoa,Apia,2 860,184 772,Australia and Oceania
+San Marino,San Marino,61,31 945,Europe
+Sao Tome and Principe,Sao Tome,1 001,171 878,Africa
+Saudi Arabia,Riyadh,2 218 000,28 705 133,Asia
+Senegal,Dakar,196 190,13 107 945,Africa
+Serbia,Belgrade,88 361,9 846 582,Europe
+Seychelles,Victoria,455,87 169,Africa
+Sierra Leone,Freetown,71 740,6 126 450,Africa
+Singapore,Singapore,714,5 183 700,Asia
+Slovakia,Bratislava,48 845,5 445 324,Europe
+Slovenia,Ljubljana,20 253,2 060 400,Europe
+Solomon Islands,Honiara,28 450,566 481,Australia and Oceania
+Somalia,Mogadishu,637 657,9 797 445,Africa
+South Africa,Pretoria,1 219 912,50 586 757,Africa
+South Korea,Seoul,98 480,48 580 000,Asia
+South Ossetia,Tskhinvali,3 900,72 000,Asia
+South Sudan,Juba,619 745,8 260 490,Africa
+Spain,Madrid,497 304,46 163 116,Europe
+Sri Lanka,Sri Jayawardenepura Kotte,65 610,21 223 550,Asia
+State of Palestine,Jerusalem (Ramallah),6 020,4 550 368,Asia
+Sudan,Khartoum,1 886 068,30 894 000,Africa
+Suriname,Paramaribo,163 270,534 175,South America
+Sweden,Stockholm,449 964,9 495 113,Europe
+Switzerland,Bern,41 290,7 952 600,Europe
+Syria,Damascus,185 180,21 117 690,Asia
+Taiwan,Taipei,36 178,23 069 345,Asia
+Tajikistan,Dushanbe,143 100,7 800 000,Asia
+Tanzania,Dodoma,948 087,47 656 367,Africa
+Thailand,Bangkok,514 000,70 498 494,Asia
+Togo,Lome,56 785,5 753 324,Africa
+Tonga,Nukualofa,748,104 891,Australia and Oceania
+Trinidad and Tobago,Port-of-Spain,5 128,1 317 714,North America
+Tunisia,Tunis,163 610,10 673 800,Africa
+Turkey,Ankara,780 580,77 695 904,Asia
+Turkmenistan,Ashgabat,491 200,5 169 660,Asia
+Tuvalu,Funafuti,26,10 544,Australia and Oceania
+Uganda,Kampala,236 040,35 620 977,Africa
+Ukraine,Kyiv,576 604,42 759 300,Europe
+United Arab Emirates,Abu Dhabi,82 880,4 800 250,Asia
+United Kingdom,London,244 820,62 435 709,Europe
+United States of America,Washington,9 522 057,321 348 000,North America
+Uruguay,Montevideo,176 220,3 203 792,South America
+Uzbekistan,Tashkent,447 400,29 637 900,Asia
+Vanuatu,Port-Vila,12 200,251 674,Australia and Oceania
+Vatican,Vatican,0.44,842,Europe
+Venezuela,Caracas,912 050,28 972 000,South America
+Vietnam,Hanoi,329 560,92 477 857,Asia
+Yemen,Sanaa,527 970,25 569 263,Asia
+Zambia,Lusaka,752 614,13 883 577,Africa
+Zimbabwe,Harare,390 580,13 013 678,Africa
