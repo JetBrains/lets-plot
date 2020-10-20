@@ -712,4 +712,37 @@ class DropUnusedDataTest {
             .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
             .let(TestUtil::assertClientWontFail)
     }
+
+    @Test
+    fun `should not drop data variable used in tooltips`() {
+        val spec = """{
+                  "kind": "plot",
+                  "layers": [
+                    {
+                      "geom": "point",
+                      "data": {
+                        "x": [0,  1],
+                        "name": ["a", "b"]
+                      },
+                      "mapping": {
+                        "x": "x",
+                        "y": "x"
+                      },
+                      "tooltips": {
+                        "tooltip_lines": [
+                          "${'$'}var@name"
+                        ]
+                      }
+                    }
+                  ]
+        }"""
+
+        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        TestUtil.checkOptionsClientSide(opts, 1)
+
+        assertEmptyPlotData(opts)
+        checkSingleLayerData(
+            opts, 2, mapOf("x" to 2, "name" to 2)
+        )
+    }
 }
