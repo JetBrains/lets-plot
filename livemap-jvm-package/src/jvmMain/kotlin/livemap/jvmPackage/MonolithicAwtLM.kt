@@ -59,7 +59,6 @@ object MonolithicAwtLM {
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
 
-                LiveMapUtil.newCursorService()
                 injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
                 val plot = assembler.createPlot()
@@ -67,11 +66,9 @@ object MonolithicAwtLM {
                 val plotComponent = buildPlotComponent(plotContainer)
 
                 LiveMapUtil.setDefaultCursor {
-                    println("DEFAULT")
                     plotComponent.cursor = Cursor.getDefaultCursor()
                 }
                 LiveMapUtil.setPointerCursor {
-                    println("POINTER")
                     plotComponent.cursor = Cursor(HAND_CURSOR)
                 }
 

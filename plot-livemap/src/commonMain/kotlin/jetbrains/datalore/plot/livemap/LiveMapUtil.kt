@@ -25,10 +25,6 @@ object LiveMapUtil {
 
     private var myCursorService = CursorService({}, {})
 
-    fun newCursorService() {
-        myCursorService = CursorService({}, {})
-    }
-
     fun setDefaultCursor(default: () -> Unit) {
         myCursorService.default = default
     }
@@ -38,6 +34,8 @@ object LiveMapUtil {
     }
 
     fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
+        myCursorService = CursorService({}, {})
+
         plotTiles.forEach { tileLayers ->
             if (tileLayers.any(GeomLayer::isLiveMap)) {
                 require(tileLayers.count(GeomLayer::isLiveMap) == 1)
