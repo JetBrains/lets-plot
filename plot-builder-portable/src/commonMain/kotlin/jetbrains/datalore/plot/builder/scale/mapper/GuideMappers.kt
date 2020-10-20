@@ -36,7 +36,7 @@ object GuideMappers {
         )
     }
 
-    private fun <TargetT> discreteToDiscrete(
+    fun <TargetT> discreteToDiscrete(
         domainValues: Collection<*>,
         outputValues: List<TargetT>,
         naValue: TargetT
@@ -54,7 +54,7 @@ object GuideMappers {
     }
 
     fun <TargetT> discreteToDiscrete2(
-        domainValues: List<*>,
+        domainValues: Collection<*>,
         outputValues: List<TargetT>,
         naValue: TargetT
     ): GuideMapper<TargetT> {
@@ -66,6 +66,8 @@ object GuideMappers {
         //
         // UPDATE: All discrete mappers are index-based again due to: DP-4956 Discrete scale looks strange.
         // See MapperUtil#mapDiscreteDomainValuesToNumbers
+        @Suppress("NAME_SHADOWING")
+        val domainValues = domainValues.toList()
         val domainValuesAsNumbers = MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
         val mapperMap = HashMap<Double?, TargetT>()
         for (i in domainValues.indices) {

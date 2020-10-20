@@ -114,7 +114,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun discreteDomainReverse(b: Boolean) : ScaleProviderBuilder<T> {
+    fun discreteDomainReverse(b: Boolean): ScaleProviderBuilder<T> {
         myDiscreteDomainReverse = b
         return this
     }
@@ -133,12 +133,12 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = if (b.myLimits == null) null else ArrayList(b.myLimits!!)
-        private val myDiscreteDomain: Boolean = b.myDiscreteDomain
-        private val myDiscreteDomainReverse: Boolean = b.myDiscreteDomainReverse
+        private val discreteDomain: Boolean = b.myDiscreteDomain
+        private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         private val myContinuousTransform: Transform? = b.myTransform
 
         private val myAes: Aes<T> = b.myAes
-        private val myMapperProvider: MapperProvider<T>? = b.myMapperProvider
+        private val mapperProvider: MapperProvider<T> = b.myMapperProvider!!
 
         private fun scaleName(variable: DataFrame.Variable): String {
             return myName ?: variable.label
@@ -147,30 +147,30 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         override fun createScale(data: DataFrame, variable: DataFrame.Variable): Scale<T> {
             val name = scaleName(variable)
             var scale: Scale<T>
-            if (myDiscreteDomain || !data.isNumeric(variable)) {
+            if (discreteDomain || !data.isNumeric(variable)) {
                 // discrete domain
+                var domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
+
                 val mapper = if (data.isEmpty(variable)) {
                     absentMapper(variable)
                 } else {
-                    myMapperProvider!!.createDiscreteMapper(data, variable)::apply
+                    mapperProvider.createDiscreteMapper(domainValues)::apply
                 }
 
-                var domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
-
-                if (myDiscreteDomainReverse) {
+                if (discreteDomainReverse) {
                     domainValues = domainValues.reversed()
                 }
 
                 scale = Scales.discreteDomain(
-                        name,
-                        domainValues,
-                        mapper
+                    name,
+                    domainValues,
+                    mapper
                 )
 
                 if (myLimits != null) {
                     scale = scale.with()
-                            .limits(myLimits.filterNotNull())
-                            .build()
+                        .limits(myLimits.filterNotNull())
+                        .build()
                 }
 
             } else {
@@ -197,7 +197,13 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                 if (data.isEmpty(variable)) {
                     scale = Scales.continuousDomain(name, absentMapper(variable), false)
                 } else {
-                    val mapper = myMapperProvider!!.createContinuousMapper(data, variable, lowerLimit, upperLimit, myContinuousTransform)
+                    val mapper = mapperProvider.createContinuousMapper(
+                        data,
+                        variable,
+                        lowerLimit,
+                        upperLimit,
+                        myContinuousTransform
+                    )
                     val continuousRange = mapper.isContinuous || myAes.isNumeric
 
                     scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
@@ -211,16 +217,16 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                             labels.add(guideBreak.label)
                         }
                         scale = scale.with()
-                                .breaks(breaks)
-                                .labels(labels)
-                                .build()
+                            .breaks(breaks)
+                            .labels(labels)
+                            .build()
                     }
                 }
 
                 if (myContinuousTransform != null) {
                     scale = scale.with()
-                            .continuousTransform(myContinuousTransform)
-                            .build()
+                        .continuousTransform(myContinuousTransform)
+                        .build()
                 }
 
                 if (myLimits != null) {

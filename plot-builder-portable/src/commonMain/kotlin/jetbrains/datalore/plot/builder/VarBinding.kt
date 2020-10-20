@@ -10,8 +10,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-//import jetbrains.datalore.plot.builder.scale.ScaleProvider
-
 open class VarBinding(
     val variable: DataFrame.Variable,
     val aes: Aes<*>,

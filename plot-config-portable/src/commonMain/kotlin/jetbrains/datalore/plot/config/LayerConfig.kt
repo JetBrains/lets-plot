@@ -30,7 +30,7 @@ import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
-class LayerConfig(
+class LayerConfig constructor(
     layerOptions: Map<*, *>,
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
@@ -41,7 +41,6 @@ class LayerConfig(
     private val myClientSide: Boolean
 ) : OptionsAccessor(layerOptions, initDefaultOptions(layerOptions, geomProto, statProto)) {
 
-    //    val geomProvider: GeomProvider
     val stat: Stat
     val explicitGroupingVarName: String?
     val posProvider: PosProvider
@@ -151,14 +150,12 @@ class LayerConfig(
             TooltipSpecification.defaultTooltip()
         }
 
-        val varBindings = LayerConfigUtil.createBindings(
+        varBindings = LayerConfigUtil.createBindings(
             combinedData,
             aesMappings,
             scaleProviderByAes,
             consumedAesSet
         )
-
-        this.varBindings = varBindings
         ownData = layerData
         myCombinedData = combinedData
 

@@ -52,9 +52,9 @@ class ColorBrewerMapperProvider(
         }
     }
 
-    override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Color> {
-        val colors = getColors(data, variable)
-        return GuideMappers.discreteToDiscrete(data, variable, colors, naValue)
+    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
+        val colors = discreteColors(domainValues.size)
+        return GuideMappers.discreteToDiscrete(domainValues, colors, naValue)
     }
 
     override fun createContinuousMapper(
@@ -72,6 +72,15 @@ class ColorBrewerMapperProvider(
         )
     }
 
+    private fun discreteColors(count: Int): List<Color> {
+        val colorScheme = discreteColorScheme(count)
+        val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count)
+        return when (direction?.let { direction < 0 } ?: false) {
+            true -> Lists.reverse(colors)
+            false -> colors
+        }
+    }
+
     private fun getColors(data: DataFrame, variable: DataFrame.Variable): List<Color> {
         val colorScheme = colorScheme(data, variable)
         val colors: List<Color> = when {
@@ -85,6 +94,26 @@ class ColorBrewerMapperProvider(
         return when (direction?.let { direction < 0 } ?: false) {
             true -> Lists.reverse(colors)
             false -> colors
+        }
+    }
+
+    private fun discreteColorScheme(colorCount: Int): ColorScheme {
+        val paletteType = when {
+            paletteNameOrIndex is String -> {
+                val palType = PaletteUtil.paletteTypeByPaletteName(paletteNameOrIndex)
+                require(palType != null) { cantFindPaletteError(paletteNameOrIndex) }
+                palType
+            }
+            paletteTypeName != null -> paletteType(paletteTypeName)
+            else -> ColorPalette.Type.QUALITATIVE
+        }
+
+        return when {
+            paletteNameOrIndex is Number -> colorSchemeByIndex(paletteType, paletteNameOrIndex.toInt())
+            paletteNameOrIndex is String -> colorSchemeByName(paletteType, paletteNameOrIndex)
+            else -> {
+                defColorSchemeForPaletteType(paletteType, colorCount)
+            }
         }
     }
 

@@ -22,8 +22,8 @@ object DefaultMapperProviderUtil {
         val discrete = ColorBrewerMapperProvider(null, null, null, Color.GRAY)
         val continuous = ColorGradientMapperProvider.DEFAULT
         return object : MapperProvider<Color> {
-            override fun createDiscreteMapper(data: DataFrame, variable: Variable): GuideMapper<Color> {
-                return discrete.createDiscreteMapper(data, variable)
+            override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
+                return discrete.createDiscreteMapper(domainValues)
             }
 
             override fun createContinuousMapper(
@@ -40,8 +40,8 @@ object DefaultMapperProviderUtil {
 
     fun <T> createWithDiscreteOutput(outputValues: List<T>, naValue: T): MapperProvider<T> {
         return object : MapperProvider<T> {
-            override fun createDiscreteMapper(data: DataFrame, variable: Variable): GuideMapper<T> {
-                return GuideMappers.discreteToDiscrete(data, variable, outputValues, naValue)
+            override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
+                return GuideMappers.discreteToDiscrete(domainValues, outputValues, naValue)
             }
 
             override fun createContinuousMapper(

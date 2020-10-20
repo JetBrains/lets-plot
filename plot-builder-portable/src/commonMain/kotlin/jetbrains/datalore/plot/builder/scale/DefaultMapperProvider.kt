@@ -45,8 +45,8 @@ import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createWithDiscreteOutput
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -143,26 +143,28 @@ object DefaultMapperProvider {
 
         companion object {
             // For most of numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
-            private val NUMERIC_UNDEFINED: MapperProvider<Double> = object :
-                MapperProvider<Double> {
-                override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
+            private val NUMERIC_UNDEFINED: MapperProvider<Double> = object : MapperProvider<Double> {
+                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
             }
 
-            private val NUMERIC_IDENTITY: MapperProvider<Double> = object :
-                MapperProvider<Double> {
-                override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
+            private val NUMERIC_IDENTITY: MapperProvider<Double> = object : MapperProvider<Double> {
+                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
             }
