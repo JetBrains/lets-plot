@@ -846,7 +846,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=trans,
+                  trans=None,
                   #
                   values=values)
 
@@ -1387,21 +1387,17 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
                   direction=direction, scale_mapper_kind='color_hue')
 
 
-def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
+def scale_fill_discrete(direction=None,
                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Qualitative color scale with evenly spaced hues for fill aesthetic
+    Qualitative colors.
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
 
     Parameters
     ----------
-    h : list of two numerics
-        Range of hues, in [0,360]
-    c : numeric
-        Chroma (intensity of color), maximum value varies depending on.
-    l : numeric
-        Luminance (lightness), in [0,100]
     direction : numeric
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
+        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+        If -1, the order of colors is reversed.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1424,9 +1420,8 @@ def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
     >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_discrete(c=50, l=80, h=[0, 50])
+    ... scale_fill_discrete()
     """
-    # same as scale_fill_hue but always 'discrete'
     return _scale('fill',
                   name=name,
                   breaks=breaks,
@@ -1435,27 +1430,21 @@ def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=None,
                   #
-                  h=h, c=c, l=l, h_start=h_start,
                   direction=direction, discrete=True)
 
 
-def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
+def scale_color_discrete(direction=None,
                          name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Qualitative color scale with evenly spaced hues for color aesthetic
+    Qualitative colors.
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
 
     Parameters
     ----------
-    h : list of two numerics
-        Range of hues, in [0,360]
-    c : numeric
-        Chroma (intensity of color), maximum value varies depending on.
-    l : numeric
-        Luminance (lightness), in [0,100]
     direction : numeric
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
+        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+        If -1, the order of colors is reversed.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1478,9 +1467,8 @@ def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
     >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_discrete(c=20, l=90)
+    ... scale_color_discrete()
     """
-    # same as scale_color_hue but always 'discrete'
     return _scale('color',
                   name=name,
                   breaks=breaks,
@@ -1489,9 +1477,7 @@ def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=None,
                   #
-                  h=h, c=c, l=l, h_start=h_start,
                   direction=direction, discrete=True)
 
 
