@@ -85,10 +85,10 @@ Change format for the default tooltip:
 
 ## Outlier tooltips configuration
 
-The default outlier's tooltip contain a string like `“name: value”`: there is no label and no alignment. 
+The default outlier's tooltip contains a string like `'name: value'`: there is no label and no alignment.
 It's possible to change formatting of it with `format` function. The number format (`'1.f'` ) leaves 
-the string as is (`“name: value”`) and formats the value. The string template replaces the default string:
-`‘{.1f}` - with `“value”`,  `‘format text {.1f}’` - with `“format text value”`.
+the string as is (`'name: value'`) and formats the value. The string template replaces the default string:
+`‘{.1f}` - with `'value'`,  `‘format text {.1f}’` - with `“format text value”`.
 
 The specified `line` for outlier will move it to the general multi-line tooltip.
    
