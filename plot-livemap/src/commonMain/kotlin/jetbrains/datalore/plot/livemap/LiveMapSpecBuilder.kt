@@ -87,11 +87,6 @@ internal class LiveMapSpecBuilder {
         return this
     }
 
-    fun cursorProvider(cursorProvider: CursorProvider): LiveMapSpecBuilder {
-        myCursorProvider = cursorProvider
-        return this
-    }
-
     fun build(): LiveMapSpec {
         val projectionType = convertProjectionType(myLiveMapOptions.projection)
 

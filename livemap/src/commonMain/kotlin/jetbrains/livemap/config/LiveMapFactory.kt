@@ -62,8 +62,7 @@ class LiveMapFactory(
                         )
                     ),
                 myZoom = myLiveMapSpec.zoom,
-                myAttribution = myLiveMapSpec.attribution,
-                myCursorProvider = myLiveMapSpec.cursorProvider
+                myAttribution = myLiveMapSpec.attribution
             )
         )
     }

@@ -22,8 +22,6 @@ import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Color
-import java.awt.Cursor
-import java.awt.Cursor.HAND_CURSOR
 import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.JComponent
@@ -59,15 +57,11 @@ object MonolithicAwtLM {
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
 
-                LiveMapUtil.newCursorProvider()
                 injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
                 val plot = assembler.createPlot()
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
                 val plotComponent = buildPlotComponent(plotContainer)
-
-                LiveMapUtil.setDefaultCursor { plotComponent.cursor = Cursor.getDefaultCursor() }
-                LiveMapUtil.setPointerCursor { plotComponent.cursor = Cursor(HAND_CURSOR) }
 
                 return if (plotContainer.liveMapFigures.isNotEmpty()) {
                     @Suppress("UNCHECKED_CAST")

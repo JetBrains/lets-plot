@@ -13,7 +13,6 @@ import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.ui.CursorProvider
 
 class LiveMapSpec(
     val geocodingService: GeocodingService,
