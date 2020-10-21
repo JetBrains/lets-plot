@@ -12,7 +12,6 @@ object LiveMapConstants {
     const val MAX_ZOOM = 15
     val DEFAULT_LOCATION = GeoRectangle(-124.76, 25.52, -66.94, 49.39)
     const val TILE_PIXEL_SIZE = 256.0
-
 }
 
 
