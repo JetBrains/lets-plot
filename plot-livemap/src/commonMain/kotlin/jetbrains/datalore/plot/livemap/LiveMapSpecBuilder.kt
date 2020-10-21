@@ -128,7 +128,7 @@ internal class LiveMapSpecBuilder {
             return zoom
         }
 
-        error("Zoom must be in range [$minZoom, $maxZoom]")
+        error("Zoom must be in range [$minZoom, $maxZoom], but was $zoom")
     }
 
     companion object {
