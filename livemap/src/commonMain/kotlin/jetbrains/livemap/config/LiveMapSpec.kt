@@ -32,7 +32,6 @@ class LiveMapSpec(
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
     val tileSystemProvider: TileSystemProvider,
     val attribution: String?,
-    val cursorProvider: CursorProvider,
     val minZoom: Int = LiveMapConstants.MIN_ZOOM,
     val maxZoom: Int = LiveMapConstants.MAX_ZOOM,
     val devParams: DevParams
