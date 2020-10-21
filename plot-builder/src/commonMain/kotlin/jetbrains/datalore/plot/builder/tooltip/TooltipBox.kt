@@ -177,11 +177,11 @@ class TooltipBox : SvgComponent() {
         }
 
         internal fun update(lines: List<TooltipSpec.Line>, labelTextColor: Color, valueTextColor: Color) {
-            val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map {
+            val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
                 Triple(
-                    it.label,
-                    if (it.label.isNullOrEmpty()) null else TextLabel(it.label!!),
-                    TextLabel(it.value)
+                    line.label,
+                    if (line.label.isNullOrEmpty()) null else TextLabel(line.label!!),
+                    TextLabel(line.value)
                 )
             }
             // for labels
