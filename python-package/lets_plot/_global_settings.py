@@ -23,6 +23,19 @@ HTML_ISOLATED_FRAME = 'html_isolated_frame'
 MAX_WIDTH = 'max_width'
 MAX_HEIGHT = 'max_height'
 
+MAPTILES_KIND = 'maptiles_kind'
+MAPTILES_URL = 'maptiles_url'
+MAPTILES_THEME = 'maptiles_theme'
+MAPTILES_ATTRIBUTION = 'maptiles_attribution'
+MAPTILES_MIN_ZOOM = 'maptiles_min_zoom'
+MAPTILES_MAX_ZOOM = 'maptiles_max_zoom'
+TILES_VECTOR_LETS_PLOT = 'vector_lets_plot'
+TILES_RASTER_ZXY = 'raster_zxy'
+GEOCODING_PROVIDER_URL = 'geocoding_url'
+
+_DATALORE_TILES_SERVICE = 'wss://tiles.datalore.jetbrains.com'
+_DATALORE_GEOCODING_SERVICE = 'https://geo.datalore.jetbrains.com'
+
 
 def _init_value(actual_name: str, def_val: Any) -> Any:
     env_val = _get_env_val(actual_name)
@@ -38,12 +51,18 @@ _settings = {
     'offline': _init_value('offline', False),  # default: download from CDN
     'js_base_url': 'https://dl.bintray.com/jetbrains/lets-plot',
     'js_name': '',  # default: lets-plot-<version>.min.js
-    'geocoding_url': _init_value('geocoding_url', 'https://geo.datalore.jetbrains.com'),
+    'geocoding_url': _init_value('geocoding_url', _DATALORE_GEOCODING_SERVICE),
+    MAPTILES_KIND: _init_value(MAPTILES_KIND, TILES_VECTOR_LETS_PLOT),
+    MAPTILES_URL: _init_value(MAPTILES_URL, _DATALORE_TILES_SERVICE),
+    MAPTILES_THEME: _init_value(MAPTILES_THEME, 'color'),
 
     'dev_offline': _init_value('dev_offline', True),  # default: embed js into the notebook
     'dev_js_base_url': "http://0.0.0.0:8080",
     'dev_js_name': '',  # default: lets-plot-<version>.js
-    'dev_geocoding_url': _init_value('dev_geocoding_url', 'https://geo.datalore.jetbrains.com')
+    'dev_geocoding_url': _init_value('dev_geocoding_url', _DATALORE_GEOCODING_SERVICE),
+    'dev_' + MAPTILES_KIND: _init_value('dev_' + MAPTILES_KIND, TILES_VECTOR_LETS_PLOT),
+    'dev_' + MAPTILES_URL: _init_value('dev_' + MAPTILES_URL, _DATALORE_TILES_SERVICE),
+    'dev_' + MAPTILES_THEME: _init_value('dev_' + MAPTILES_THEME, 'color'),
 }
 
 

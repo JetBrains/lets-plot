@@ -8,8 +8,8 @@ from typing import Union, Optional, List
 from .geom import _geom
 from .util import is_geo_data_regions, map_join_regions
 from .._global_settings import has_global_value, get_global_val
-from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, GEOCODING_PROVIDER_URL, \
-    _RASTER_ZXY, _VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
+from .._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, GEOCODING_PROVIDER_URL, \
+    TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
 
 try:
     import pandas
@@ -151,28 +151,28 @@ def _prepare_geocoding():
     return {}
 
 
-def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
+def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
     if isinstance(tiles, str):
         return {
-            OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
+            OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
             OPTIONS_MAPTILES_URL: tiles
         }
 
     if isinstance(tiles, dict):
-        if tiles.get(MAPTILES_KIND, None) == _RASTER_ZXY:
+        if tiles.get(MAPTILES_KIND, None) == TILES_RASTER_ZXY:
             return {
-                OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
-                OPTIONS_MAPTILES_URL: tiles.get(MAPTILES_URL, None),
-                OPTIONS_MAPTILES_ATTRIBUTION: tiles.get(MAPTILES_ATTRIBUTION, None),
-                OPTIONS_MAPTILES_MIN_ZOOM: tiles.get(MAPTILES_MIN_ZOOM, None),
-                OPTIONS_MAPTILES_MAX_ZOOM: tiles.get(MAPTILES_MAX_ZOOM, None),
+                OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
+                OPTIONS_MAPTILES_URL: tiles[MAPTILES_URL],
+                OPTIONS_MAPTILES_ATTRIBUTION: tiles[MAPTILES_ATTRIBUTION],
+                OPTIONS_MAPTILES_MIN_ZOOM: tiles[MAPTILES_MIN_ZOOM],
+                OPTIONS_MAPTILES_MAX_ZOOM: tiles[MAPTILES_MAX_ZOOM],
             }
-        elif tiles.get(MAPTILES_KIND, None) == _VECTOR_LETS_PLOT:
+        elif tiles.get(MAPTILES_KIND, None) == TILES_VECTOR_LETS_PLOT:
             return {
-                OPTIONS_MAPTILES_KIND: _VECTOR_LETS_PLOT,
-                OPTIONS_MAPTILES_URL: tiles.get(MAPTILES_URL, None),
-                OPTIONS_MAPTILES_THEME: tiles.get(MAPTILES_THEME, None),
-                OPTIONS_MAPTILES_ATTRIBUTION: tiles.get(MAPTILES_ATTRIBUTION, None),
+                OPTIONS_MAPTILES_KIND: TILES_VECTOR_LETS_PLOT,
+                OPTIONS_MAPTILES_URL: tiles[MAPTILES_URL],
+                OPTIONS_MAPTILES_THEME: tiles[MAPTILES_THEME],
+                OPTIONS_MAPTILES_ATTRIBUTION: tiles[MAPTILES_ATTRIBUTION],
             }
         else:
             raise ValueError("Unsupported 'tiles' kind: " + tiles.get(MAPTILES_KIND, None))
@@ -180,20 +180,24 @@ def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
     if tiles is not None:
         raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
 
+    # tiles are not set for this livemap - try to get global tiles config
     if has_global_value(MAPTILES_KIND):
-        if get_global_val(MAPTILES_KIND) == _RASTER_ZXY:
+        if not has_global_value(MAPTILES_URL):
+            raise ValueError('URL for tiles service is not set')
+
+        if get_global_val(MAPTILES_KIND) == TILES_RASTER_ZXY:
             return {
-                OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
+                OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
                 OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
                 OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None,
                 OPTIONS_MAPTILES_MIN_ZOOM: get_global_val(MAPTILES_MIN_ZOOM) if has_global_value(MAPTILES_MIN_ZOOM) else None,
                 OPTIONS_MAPTILES_MAX_ZOOM: get_global_val(MAPTILES_MAX_ZOOM) if has_global_value(MAPTILES_MAX_ZOOM) else None,
             }
 
-        if get_global_val(MAPTILES_KIND) == _VECTOR_LETS_PLOT:
+        if get_global_val(MAPTILES_KIND) == TILES_VECTOR_LETS_PLOT:
             return {
-                OPTIONS_MAPTILES_KIND: _VECTOR_LETS_PLOT,
-                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL) if has_global_value(MAPTILES_URL) else None,
+                OPTIONS_MAPTILES_KIND: TILES_VECTOR_LETS_PLOT,
+                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
                 OPTIONS_MAPTILES_THEME: get_global_val(MAPTILES_THEME) if has_global_value(MAPTILES_THEME) else None,
                 OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None,
             }
