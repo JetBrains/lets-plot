@@ -730,7 +730,7 @@ class DropUnusedDataTest {
                       },
                       "tooltips": {
                         "tooltip_lines": [
-                          "${'$'}var@name"
+                          "@name"
                         ]
                       }
                     }

@@ -70,16 +70,17 @@ class TooltipConfigTest {
         )
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "\$shape",              // aes
-                "\$var@shape",          // variable with name that match to the name of aes
-                "\${var@model name}",   // space in the name
-                "\$var@foo$",           // with '$' at the end
-                "\$var@\$bar",          // with '$' at the beginning
-                "\$var@foo\$bar",       // with '$' at the middle
-                "\$var@foo$\\$",        // the second '$' is part of the result string
-                "\\\$text",             // '$' is part of the string (it's not the name)
-                "(\$var@foo\$)",        // with brackets as part of the result string
-                "\$shape, \$shape"      // result string comma separated
+                "\$shape",           // aes
+                "@shape",            // variable with name that match to the name of aes
+                "\\\$shape",         // '$' is part of the string (it's not the name) => string is "$shape"
+                "\\@shape",          // '@' is part of the string (it's not the name) => string is "@shape"
+                "@{model name}",     // space in the name
+                "@foo$",             // with '$' at the end
+                "@\$bar",            // with '$' at the beginning
+                "@foo\$bar",         // with '$' at the middle
+                "@foo$\\$",          // the second '$' is part of the result string
+                "(@foo\$)",          // with brackets as part of the result string
+                "\$shape, \$shape"   // result string comma separated
             )
         )
         val geomLayer = buildGeomPointLayer(myData, mapping, tooltips = tooltipConfig)
@@ -87,12 +88,13 @@ class TooltipConfigTest {
         val expectedLines = listOf(
             "suv",
             "shape",
+            "\$shape",
+            "@shape",
             "dodge",
             "foo",
             "bar",
             "foobar",
             "foo$",
-            "\$text",
             "(foo)",
             "suv, suv"
         )
@@ -161,10 +163,10 @@ class TooltipConfigTest {
         // redefine format for the 'year' variable
         val geomLayerWithVarInTooltip = buildGeomPointLayer(
             data, mappingWithColor, tooltips = mapOf(
-                Option.Layer.TOOLTIP_LINES to listOf("@|\$var@year"),
+                Option.Layer.TOOLTIP_LINES to listOf("@|@year"),
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "var@year",
+                        Option.TooltipFormat.FIELD to "@year",
                         Option.TooltipFormat.FORMAT to "{d}"
                     )
                 )
@@ -180,10 +182,10 @@ class TooltipConfigTest {
     fun configLabels() {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "\${var@model name}",             // no label
-                "|\${var@model name}",            // empty label
-                "@|\${var@model name}",           // default = the variable name
-                "the model|\${var@model name}"    // specified
+                "@{model name}",             // no label
+                "|@{model name}",            // empty label
+                "@|@{model name}",           // default = the variable name
+                "the model|@{model name}"    // specified
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
@@ -201,10 +203,10 @@ class TooltipConfigTest {
     fun userComplicatedTooltipLines() {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "mpg data set info",                        // static text
-                "\$color (mpg)",                            // formatted
-                "\${var@model name} car (\${var@origin})",  // multiple sources in the line
-                "x/y|\$x x \$y"                             // specify label
+                "mpg data set info",             // static text
+                "\$color (mpg)",                 // formatted
+                "@{model name} car (@origin)",   // multiple sources in the line
+                "x/y|\$x x \$y"                  // specify label
             ),
             Option.Layer.TOOLTIP_FORMATS to listOf(          //define formats
                 mapOf(Option.TooltipFormat.FIELD to "color", Option.TooltipFormat.FORMAT to ".1f"),
@@ -304,11 +306,11 @@ class TooltipConfigTest {
     fun `numeric format for non-numeric value will be ignored`() {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "class is \$var@class"
+                "class is @class"
             ),
             Option.Layer.TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "var@class",
+                    Option.TooltipFormat.FIELD to "@class",
                     Option.TooltipFormat.FORMAT to ".2f"
                 )
             )
