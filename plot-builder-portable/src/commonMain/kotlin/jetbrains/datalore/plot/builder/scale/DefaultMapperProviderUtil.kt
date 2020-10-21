@@ -71,11 +71,8 @@ object DefaultMapperProviderUtil {
     }
 
     internal fun createObjectIdentityDiscrete(aes: Aes<Any>): MapperProvider<Any> {
-        return createIdentityMapperProvider(
-            aes,
-            { it },
-            null
-        )
+        val converter: (Any?) -> Any? = { it }
+        return createIdentityMapperProvider(aes, converter, null)
     }
 
     internal fun createStringIdentity(aes: Aes<String>): MapperProvider<String> {

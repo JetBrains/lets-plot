@@ -38,7 +38,6 @@ object MapperUtil {
         upperLimit: Double?,
         trans: Transform?
     ): ClosedRange<Double> {
-//        val dataRange = ensureApplicableRange(dataRange.range(variable))
         val lower = lowerLimit ?: dataRange.lowerEnd
         val upper = upperLimit ?: dataRange.upperEnd
         val limits = listOf(lower, upper)

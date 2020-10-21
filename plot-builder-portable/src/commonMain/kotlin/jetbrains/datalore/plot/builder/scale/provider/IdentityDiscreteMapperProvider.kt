@@ -23,7 +23,6 @@ open class IdentityDiscreteMapperProvider<T>(
                 outputValues.add(outputValue)
             }
         }
-        // ToDo: get rid of xxx2
-        return GuideMappers.discreteToDiscrete2(domainValues, outputValues, naValue)
+        return GuideMappers.discreteToDiscrete(domainValues, outputValues, naValue)
     }
 }
