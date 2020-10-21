@@ -139,6 +139,7 @@ object Option {
 
         object Point {
             const val ANIMATION = "animation"
+            const val SIZE_UNIT = "size_unit"
         }
 
         object Image {
@@ -148,6 +149,7 @@ object Option {
         object Text {
             const val LABEL_FORMAT = "label_format"
             const val NA_VALUE = "na_value"
+            const val SIZE_UNIT = "size_unit"
         }
 
         object LiveMap {
@@ -165,6 +167,11 @@ object Option {
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
+        }
+
+        object SizeUnit {
+            const val X = "x"
+            const val Y = "y"
         }
     }
 

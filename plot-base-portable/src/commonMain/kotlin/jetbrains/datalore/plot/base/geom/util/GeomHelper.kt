@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.geom.util
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
@@ -162,11 +163,11 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             "mono" to "monospace"
         )
 
-        fun decorate(label: TextLabel, p: DataPointAesthetics) {
+        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0) {
 
             label.textColor().set(p.color())
             label.textOpacity().set(p.alpha())
-            label.setFontSize(AesScaling.textSize(p))
+            label.setFontSize(AesScaling.textSize(p) * scale)
 
             // family
             var family = p.family()
@@ -254,6 +255,19 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             shape.setFill(fill, fillAlpha)
             shape.setStroke(stroke, strokeAlpha)
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
+        }
+
+        fun getSizeUnitAes(sizeUnitName: String): Aes<Double> {
+            return when (sizeUnitName.toLowerCase()) {
+                "x" -> Aes.X
+                "y" -> Aes.Y
+                else -> error("Size unit value must be either 'x' or 'y', but was $sizeUnitName.")
+            }
+        }
+
+        fun getUnitResBySizeUnit( ctx: GeomContext, sizeUnitName: String ) : Double {
+            val aes = getSizeUnitAes(sizeUnitName)
+            return ctx.getUnitResolution(aes)
         }
     }
 }

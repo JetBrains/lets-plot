@@ -7,9 +7,15 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.getUnitResBySizeUnit
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColorValue
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
@@ -24,6 +30,7 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 open class PointGeom : GeomBase() {
 
     var animation: Any? = null
+    var sizeUnit: String? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -40,6 +47,8 @@ open class PointGeom : GeomBase() {
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
+        val sizeUnitRatio = getSizeUnitRatio(ctx)
+
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
             val x = p.x()
@@ -49,14 +58,26 @@ open class PointGeom : GeomBase() {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                targetCollector.addPoint(i, location, shape.size(p) / 2,
+
+                targetCollector.addPoint(
+                    i, location, sizeUnitRatio * shape.size(p) / 2,
                     tooltipParams(p)
                 )
-                val o = PointShapeSvg.create(shape, location, p)
+                val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)
             }
         }
         root.add(wrap(slimGroup))
+    }
+
+    private fun getSizeUnitRatio(ctx: GeomContext): Double {
+        sizeUnit?.let { sizeUnitValue ->
+            val unitRes = getUnitResBySizeUnit(ctx, sizeUnitValue)
+            val unitShapeSize = AesScaling.circleDiameter(1.0)
+            return unitRes / unitShapeSize
+        }
+
+        return 1.0
     }
 
     companion object {
