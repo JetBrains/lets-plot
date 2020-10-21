@@ -19,7 +19,7 @@ class layer_tooltips(FeatureSpec):
     Parameters
     ----------
     line() - line to show in the tooltip.
-        Adds line template to the tooltip.
+        Adds a line template to the tooltip with a label.
         Variables and aesthetics can be accessed via a special syntax:
             - $color for aes
             - $var@year for variable
@@ -28,6 +28,12 @@ class layer_tooltips(FeatureSpec):
             - $var@nameWith$ for the variable with dollar sign in its name
         Escaping a dollar sign with a backslash: \$text to get the string "$text".
         The specified 'line' for outlier will move it to the general multi-line tooltip.
+        The default tooltip has a label before the value, usually containing the name of the mapped variable.
+        It has it's own behaviour, like blank label for axis aesthetics.
+        This default label can be set in template using a pair of symbols '@|'.
+        The label can be overridden by specifying a string value before '|' symbol.
+        Within the tooltip line the label is left-aligned, the formed by template string is right-aligned.
+        If a label is not specified, the string will be centered in the tooltip.
 
     format() defines the format for displaying the value:
             .format(field = 'var@density', format = '.1f')
@@ -59,13 +65,14 @@ class layer_tooltips(FeatureSpec):
     >>> mpg_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/mpg.csv'
     >>> mpg = pd.read_csv(mpg_url)
     >>> ggplot(mpg, aes(x='displ', y='hwy')) +
-    ... geom_point(aes(color='cty', shape='drv'), size=4,
+    ... geom_point(aes(color='cty', shape='drv'),
     ...                tooltips=layer_tooltips()
-    ...                         .format('color', '.1f')                               # set the format for the aes value
-    ...                         .line('$color (miles per gallon)')                    # "15.0 (miles per gallon)"
-    ...                         .line('number of cylinders: $var@cyl')                # "number of cylinders: 4"
-    ...                         .line('${var@manufacturer} $var@model ($var@year)')   # "ford mustang (1999)"
-    ...                         .line('--[mpg dataset] --'))                          # "--[mpg dataset] --"
+    ...                         .format('var@hwy', '.1f')                # set the format for the variable value
+    ...                         .line('$var@manufacturer $var@model')    # "    ford mustang    "
+    ...                         .line('cty/hwy|$color/$var@hwy')         # "cty/hwy    17.0/26.0"
+    ...                         .line('@|$var@class')                    # "class     subcompact"
+    ...                         .line('|$var@year')                      # "                2008"
+    ...                         .line('--[mpg dataset] --'))             # " --[mpg dataset] -- "
     """
 
     def __init__(self):

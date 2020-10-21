@@ -30,7 +30,7 @@ class TooltipLine(
         return if (dataValues.size == 1) {
             val dataValue = dataValues.single()
             DataPoint(
-                label = label ?: dataValue.label,
+                label = chooseLabel(dataValue.label),
                 value = myLineFormatter.format(dataValue.value),
                 isContinuous = dataValue.isContinuous,
                 aes = dataValue.aes,
@@ -39,7 +39,7 @@ class TooltipLine(
             )
         } else {
             DataPoint(
-                label = label ?: dataValues.joinToString(", ") { it.label },
+                label = chooseLabel(dataValues.joinToString(", ") { it.label ?: "" }),
                 value = myLineFormatter.format(dataValues.map { it.value }),
                 isContinuous = false,
                 aes = null,
@@ -49,11 +49,19 @@ class TooltipLine(
         }
     }
 
+    private fun chooseLabel(dataLabel: String?): String? {
+        return when (label) {
+            DEFAULT_LABEL_SPECIFIER -> dataLabel    // use default label (from data)
+            else -> label                     // use the given label (can be null)
+        }
+    }
+
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
-            label = null,
+            label = DEFAULT_LABEL_SPECIFIER,
             pattern = StringFormat.valueInLinePattern(),
             fields = listOf(valueSource)
         )
+        private const val DEFAULT_LABEL_SPECIFIER = "@"
     }
 }

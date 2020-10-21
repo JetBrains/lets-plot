@@ -19,7 +19,7 @@ class MappingValue(
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
-    private lateinit var myDataLabel: String
+    private var myDataLabel: String? = null
     private var myIsContinuous: Boolean = false
     private val myFormatter = format?.let {
         StringFormat(format).also {
@@ -37,7 +37,7 @@ class MappingValue(
             .map(myDataAccess::getMappedDataLabel)
         val dataLabel = myDataAccess.getMappedDataLabel(aes)
         myDataLabel = when {
-            isAxis -> ""
+            isAxis -> null
             dataLabel.isEmpty() -> ""
             dataLabel in axisLabels -> ""
             else -> dataLabel
@@ -54,7 +54,7 @@ class MappingValue(
                 originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
 
             // for outliers: myDataLabel is a part of the value, but pattern format removes this part
-            val value = if (isOutlier && myDataLabel.isNotEmpty() &&
+            val value = if (isOutlier && !myDataLabel.isNullOrEmpty() &&
                 myFormatter?.formatType != StringFormat.FormatType.STRING_FORMAT
             ) {
                 "$myDataLabel: $formattedValue"
@@ -62,7 +62,7 @@ class MappingValue(
                 formattedValue
             }
             DataPoint(
-                label = if (isOutlier) "" else myDataLabel,
+                label = if (isOutlier) null else myDataLabel,
                 value = value,
                 isContinuous = myIsContinuous,
                 aes = aes,

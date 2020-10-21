@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.plot.builder.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
@@ -47,7 +48,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
         val hint = createHint()
         return MeasuredTooltip(jetbrains.datalore.plot.builder.interact.TooltipSpec(
             layoutHint = hint,
-            lines = makeText(myText!!),
+            lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
             fill = myFill!!,
             isOutlier = true
         ), mySize!!, TooltipBox())

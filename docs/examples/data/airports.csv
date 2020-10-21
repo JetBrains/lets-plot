@@ -1,0 +1,16 @@
+IATA,city,latitude,longitude,passengers,country,color
+ATH,Athens,37.9354,23.9437,24.13,GR,#30a2da
+HER,Heraklion,35.34,25.1753,8.0,GR,#30a2da
+SKG,Thessaloniki,40.523,22.9767,6.67,GR,#30a2da
+RHO,Rhodes,36.4041,28.0898,5.57,GR,#30a2da
+CFU,Corfu,39.6067,19.9133,3.36,GR,#30a2da
+CHQ,Chania,35.5335,24.1499,3.0,GR,#30a2da
+KGS,Kos,36.8,27.089,2.67,GR,#30a2da
+JTR,Santorini,36.3987,25.4793,2.26,GR,#30a2da
+ZTH,Zakinthos,37.753,20.885,1.8,GR,#30a2da
+JMK,Mikonos,37.4342,25.3484,1.4,GR,#30a2da
+ISL,Istanbul,40.983,28.8104,67.98,TR,#fc4f30
+SAW,Istanbul,40.9053,29.3172,34.13,TR,#fc4f30
+AYT,Antalya,36.9032,30.8008,31.7,TR,#fc4f30
+ADB,Izmir,38.2932,27.1516,13.41,TR,#fc4f30
+ESB,Ankara,40.1243,32.9918,16.74,TR,#fc4f30

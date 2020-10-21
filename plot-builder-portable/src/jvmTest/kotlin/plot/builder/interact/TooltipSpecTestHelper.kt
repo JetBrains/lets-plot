@@ -63,11 +63,11 @@ open class TooltipSpecTestHelper {
 
     private fun assertLines(index: Int, expectedLines: List<String>) {
         val tooltipSpec = myTooltipSpecs[index]
-        assertEquals(expectedLines, tooltipSpec.lines)
+        assertEquals(expectedLines, tooltipSpec.lines.map(TooltipSpec.Line::toString))
     }
 
     fun assertLines(expectedLines: List<String>, isOutlier: Boolean) {
-        val actualLines = myTooltipSpecs.filter { it.isOutlier == isOutlier }.flatMap { it.lines }
+        val actualLines = myTooltipSpecs.filter { it.isOutlier == isOutlier }.flatMap { it.lines.map(TooltipSpec.Line::toString) }
         assertEquals(expectedLines.size, actualLines.size)
         assertEquals(expectedLines, actualLines)
     }

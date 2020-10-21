@@ -20,7 +20,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
-    private var myTooltipLines: List<TooltipLine> = builder.tooltipLines
+    private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)

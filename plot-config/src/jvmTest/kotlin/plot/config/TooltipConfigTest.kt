@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,8 +42,8 @@ class TooltipConfigTest {
             "cty: 15.00",
             "class: suv"
         )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
 
         val axisTooltips = getAxisTooltips(geomLayer)
         assertEquals(2, axisTooltips.size, "Wrong number of axis tooltips")
@@ -52,8 +53,8 @@ class TooltipConfigTest {
     fun hideTooltips() {
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = "none")
 
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(emptyList(), lines)
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(emptyList(), lines)
 
         val axisTooltips = getAxisTooltips(geomLayer)
         assertEquals(0, axisTooltips.size, "Wrong number of axis tooltips")
@@ -95,8 +96,8 @@ class TooltipConfigTest {
             "(foo)",
             "suv, suv"
         )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
     }
 
     @Test
@@ -120,8 +121,8 @@ class TooltipConfigTest {
             "cty: 15.0000",
             "class: suv {type}"
         )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
     }
 
     @Test
@@ -134,11 +135,11 @@ class TooltipConfigTest {
 
         // default
         val defaultGeomLayer = buildGeomPointLayer(data, mappingWithColor, tooltips = null)
-        assertTooltipLines(
+        assertTooltipStrings(
             listOf(
                 "year: 1,998.00"
             ),
-            getGeneralTooltipLines(defaultGeomLayer)
+            getGeneralTooltipStrings(defaultGeomLayer)
         )
 
         // redefine format for the 'color' aes
@@ -152,9 +153,9 @@ class TooltipConfigTest {
                 )
             )
         )
-        assertTooltipLines(
+        assertTooltipStrings(
             listOf("year: 1998"),
-            getGeneralTooltipLines(geomLayerWithAesInTooltip)
+            getGeneralTooltipStrings(geomLayerWithAesInTooltip)
         )
 
         // redefine format for the 'year' variable
@@ -169,9 +170,9 @@ class TooltipConfigTest {
                 )
             )
         )
-        assertTooltipLines(
+        assertTooltipStrings(
             listOf("year: 1998"),
-            getGeneralTooltipLines(geomLayerWithVarInTooltip)
+            getGeneralTooltipStrings(geomLayerWithVarInTooltip)
         )
     }
 
@@ -180,7 +181,7 @@ class TooltipConfigTest {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
                 "\${var@model name}",             // no label
-                "|\${var@model name}",            // empty label (now it's the same as 'no label')
+                "|\${var@model name}",            // empty label
                 "@|\${var@model name}",           // default = the variable name
                 "the model|\${var@model name}"    // specified
             )
@@ -188,13 +189,12 @@ class TooltipConfigTest {
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
-            "dodge",
-            "dodge",
-            "model name: dodge",
-            "the model: dodge"
+            Line(null, "dodge"),
+            Line("", "dodge"),
+            Line("model name", "dodge"),
+            Line("the model", "dodge")
         )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        assertTooltipLines(expectedLines, getGeneralTooltipLines(geomLayer))
     }
 
     @Test
@@ -220,8 +220,8 @@ class TooltipConfigTest {
             "dodge car (US)",
             "x/y: 1.600 x 160.0"
         )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
     }
 
     // Outliers
@@ -296,8 +296,8 @@ class TooltipConfigTest {
             assertEquals(expectedLines[aes], outlierLines[aes], "Wrong line for ${aes.name} in the outliers")
         }
 
-        val generalLines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(listOf(generalExpectedLine), generalLines)
+        val generalLines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(listOf(generalExpectedLine), generalLines)
     }
 
     @Test
@@ -317,8 +317,7 @@ class TooltipConfigTest {
         val expectedLines = listOf(
             "class is suv"
         )
-        val lines = getGeneralTooltipLines(geomLayer)
-        assertTooltipLines(expectedLines, lines)
+        assertTooltipStrings(expectedLines, getGeneralTooltipStrings(geomLayer))
     }
 
     @Test
@@ -345,9 +344,9 @@ class TooltipConfigTest {
                 Option.Layer.TOOLTIP_LINES to listOf("\$label")
             )
         )
-        assertTooltipLines(
-            expectedLines = listOf("my text"),
-            actualLines = getGeneralTooltipLines(geomTextLayer)
+        assertTooltipStrings(
+            expected = listOf("my text"),
+            actual = getGeneralTooltipStrings(geomTextLayer)
         )
     }
 
@@ -454,9 +453,13 @@ class TooltipConfigTest {
             return PlotConfigClientSideUtil.createPlotAssembler(transformed).layersByTile.single().single()
         }
 
-        private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<String> {
+        private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
+            return getGeneralTooltipLines(geomLayer).map(Line::toString)
+        }
+
+        private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filterNot(DataPoint::isOutlier).map(DataPoint::line)
+            return dataPoints.filterNot(DataPoint::isOutlier).map { Line(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
@@ -466,13 +469,29 @@ class TooltipConfigTest {
 
         private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.line })
+            return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 
-        private fun assertTooltipLines(expectedLines: List<String>, actualLines: List<String>) {
+        private fun assertTooltipStrings(expected: List<String>, actual: List<String>) {
+            assertEquals(expected.size, actual.size, "Wrong number of lines in the general tooltip")
+            for (index in expected.indices) {
+                assertEquals(expected[index], actual[index], "Wrong line #$index in the general tooltip")
+            }
+        }
+
+        private fun assertTooltipLines(expectedLines: List<Line>, actualLines: List<Line>) {
             assertEquals(expectedLines.size, actualLines.size, "Wrong number of lines in the general tooltip")
             for (index in expectedLines.indices) {
-                assertEquals(expectedLines[index], actualLines[index], "Wrong line #$index in the general tooltip")
+                assertEquals(
+                    expectedLines[index].label,
+                    actualLines[index].label,
+                    "Wrong label in line #$index in the general tooltip"
+                )
+                assertEquals(
+                    expectedLines[index].value,
+                    actualLines[index].value,
+                    "Wrong value in line #$index in the general tooltip"
+                )
             }
         }
     }

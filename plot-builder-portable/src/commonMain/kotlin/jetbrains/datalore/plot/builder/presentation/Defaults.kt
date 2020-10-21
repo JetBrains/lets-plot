@@ -51,6 +51,7 @@ object Defaults {
             const val LINE_INTERVAL = 3.0
             const val H_CONTENT_PADDING = 4.0
             const val V_CONTENT_PADDING = 4.0
+            const val LABEL_VALUE_INTERVAL = 8.0
 
             const val BORDER_WIDTH = 4.0
 

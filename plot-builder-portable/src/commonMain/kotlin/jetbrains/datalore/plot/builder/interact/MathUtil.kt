@@ -97,26 +97,26 @@ object MathUtil {
         constructor(x: Double, y: Double) : this(DoubleVector(x, y))
 
         fun check(coord: DoubleVector): Boolean {
-            return compare(coord) == COMPARE_RESULT.NEW_CLOSER
+            return compare(coord) == COMPARISON_RESULT.NEW_CLOSER
         }
 
-        fun compare(coord: DoubleVector): COMPARE_RESULT {
+        fun compare(coord: DoubleVector): COMPARISON_RESULT {
             val newDistance = distance(target, coord)
             if (distance < 0) {
                 setNewClosestCoord(coord, newDistance)
-                return COMPARE_RESULT.NEW_CLOSER
+                return COMPARISON_RESULT.NEW_CLOSER
             }
 
             if (distance < newDistance) {
-                return COMPARE_RESULT.NEW_FARTHER
+                return COMPARISON_RESULT.NEW_FARTHER
             }
 
             if (distance == newDistance) {
-                return COMPARE_RESULT.EQUAL
+                return COMPARISON_RESULT.EQUAL
             }
 
             setNewClosestCoord(coord, newDistance)
-            return COMPARE_RESULT.NEW_CLOSER
+            return COMPARISON_RESULT.NEW_CLOSER
         }
 
         private fun setNewClosestCoord(coord: DoubleVector, distance: Double) {
@@ -124,7 +124,7 @@ object MathUtil {
             this.coord = coord
         }
 
-        enum class COMPARE_RESULT {
+        enum class COMPARISON_RESULT {
             NEW_CLOSER,
             NEW_FARTHER,
             EQUAL

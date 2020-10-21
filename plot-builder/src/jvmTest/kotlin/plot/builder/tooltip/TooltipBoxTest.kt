@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.vis.svg.*
@@ -36,7 +37,7 @@ class TooltipBoxTest {
 
         tooltipBox = TooltipBox().apply {
             root.children().add(rootGroup)
-            setContent(Color.BLACK, listOf(wordText), "anyStyle")
+            setContent(Color.BLACK, listOf(TooltipSpec.Line.withValue(wordText)), "anyStyle", isOutlier = false)
         }
     }
 
