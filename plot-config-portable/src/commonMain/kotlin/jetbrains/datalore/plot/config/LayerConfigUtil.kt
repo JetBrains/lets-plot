@@ -54,8 +54,7 @@ internal object LayerConfigUtil {
             for (aes in aesSet) {
                 val variable = mapping[aes]!!
                 val scaleProvider = ScaleProviderHelper.getOrCreateDefault(aes, scaleProviders)
-                val binding: VarBinding
-                binding = when {
+                val binding: VarBinding = when {
                     data.has(variable) -> VarBinding(
                         variable,
                         aes,

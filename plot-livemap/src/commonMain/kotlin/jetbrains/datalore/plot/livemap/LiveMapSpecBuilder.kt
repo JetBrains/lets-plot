@@ -31,6 +31,8 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.*
+import kotlin.math.max
+import kotlin.math.min
 
 
 internal class LiveMapSpecBuilder {
@@ -42,6 +44,8 @@ internal class LiveMapSpecBuilder {
     private lateinit var mySize: DoubleVector
     private lateinit var myDevParams: DevParams
     private lateinit var myMapLocationConsumer: ((DoubleRectangle) -> Unit)
+    var minZoom: Int = MIN_ZOOM
+    var maxZoom: Int = MAX_ZOOM
 
     fun aesthetics(aesthetics: Aesthetics): LiveMapSpecBuilder {
         myAesthetics = aesthetics
@@ -55,6 +59,9 @@ internal class LiveMapSpecBuilder {
 
     fun liveMapOptions(liveMapOptions: LiveMapOptions): LiveMapSpecBuilder {
         myLiveMapOptions = liveMapOptions
+        minZoom = (myLiveMapOptions.tileProvider[Tile.MIN_ZOOM] as Int?)?.let { max(it, minZoom) } ?: minZoom
+        maxZoom = (myLiveMapOptions.tileProvider[Tile.MAX_ZOOM] as Int?)?.let { min(it, maxZoom) } ?: maxZoom
+
         return this
     }
 
@@ -110,8 +117,18 @@ internal class LiveMapSpecBuilder {
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
             attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
+            minZoom = minZoom,
+            maxZoom = maxZoom,
             devParams = myDevParams
         )
+    }
+
+    private fun checkZoom(zoom: Int?): Int? {
+        if (zoom == null || zoom in IntRange(minZoom, maxZoom)) {
+            return zoom
+        }
+
+        error("Zoom must be in range [$minZoom, $maxZoom], but was $zoom")
     }
 
     companion object {
@@ -135,6 +152,8 @@ internal class LiveMapSpecBuilder {
             const val URL = "url"
             const val THEME = "theme"
             const val ATTRIBUTION = "attribution"
+            const val MIN_ZOOM = "min_zoom"
+            const val MAX_ZOOM = "max_zoom"
 
             const val VECTOR_LETS_PLOT = "vector_lets_plot"
             const val RASTER_ZXY = "raster_zxy"
@@ -168,14 +187,6 @@ internal class LiveMapSpecBuilder {
             @Suppress("UNCHECKED_CAST")
             val list = data as List<String>
             return MapRegion.withIdList(list)
-        }
-
-        private fun checkZoom(zoom: Int?): Int? {
-            if (zoom == null || zoom in IntRange(MIN_ZOOM, MAX_ZOOM)) {
-                return zoom
-            }
-
-            error("Zoom must be in range [$MIN_ZOOM, $MAX_ZOOM]")
         }
 
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {

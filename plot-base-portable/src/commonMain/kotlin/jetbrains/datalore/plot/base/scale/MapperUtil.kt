@@ -6,9 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,9 +33,11 @@ object MapperUtil {
     }
 
     fun rangeWithLimitsAfterTransform(
-        data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?
+        dataRange: ClosedRange<Double>,
+        lowerLimit: Double?,
+        upperLimit: Double?,
+        trans: Transform?
     ): ClosedRange<Double> {
-        val dataRange = ensureApplicableRange(data.range(variable))
         val lower = lowerLimit ?: dataRange.lowerEnd
         val upper = upperLimit ?: dataRange.upperEnd
         val limits = listOf(lower, upper)

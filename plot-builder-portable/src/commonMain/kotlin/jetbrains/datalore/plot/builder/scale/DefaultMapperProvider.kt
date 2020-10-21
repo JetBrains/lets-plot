@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
@@ -42,11 +43,10 @@ import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColor
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createWithDiscreteOutput
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -54,6 +54,7 @@ import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.AlphaMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.SizeMapperProvider
+
 
 object DefaultMapperProvider {
 
@@ -85,8 +86,8 @@ object DefaultMapperProvider {
             this.put(Z, NUMERIC_IDENTITY)
             this.put(YMIN, NUMERIC_IDENTITY)
             this.put(YMAX, NUMERIC_IDENTITY)
-            this.put(COLOR, createColor())
-            this.put(FILL, createColor())
+            this.put(COLOR, createColorMapperProvider())
+            this.put(FILL, createColorMapperProvider())
             this.put(ALPHA, AlphaMapperProvider.DEFAULT)
             this.put(SHAPE, createWithDiscreteOutput(ShapeMapper.allShapes(), ShapeMapper.NA_VALUE))
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
@@ -143,26 +144,32 @@ object DefaultMapperProvider {
 
         companion object {
             // For most of numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
-            private val NUMERIC_UNDEFINED: MapperProvider<Double> = object :
-                MapperProvider<Double> {
-                override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
+            private val NUMERIC_UNDEFINED: MapperProvider<Double> = object : MapperProvider<Double> {
+                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    domain: ClosedRange<Double>,
+                    lowerLimit: Double?,
+                    upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
             }
 
-            private val NUMERIC_IDENTITY: MapperProvider<Double> = object :
-                MapperProvider<Double> {
-                override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
+            private val NUMERIC_IDENTITY: MapperProvider<Double> = object : MapperProvider<Double> {
+                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    domain: ClosedRange<Double>,
+                    lowerLimit: Double?,
+                    upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
             }

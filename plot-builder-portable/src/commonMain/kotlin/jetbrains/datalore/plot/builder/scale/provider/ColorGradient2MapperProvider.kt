@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
@@ -17,7 +16,8 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.min
 
-class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpoint: Double?, naValue: Color) : MapperProviderBase<Color>(naValue) {
+class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpoint: Double?, naValue: Color) :
+    MapperProviderBase<Color>(naValue) {
 
     private val myLow: Color
     private val myMid: Color
@@ -31,8 +31,14 @@ class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpo
         myMidpoint = midpoint ?: 0.0
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
-        val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
+    override fun createContinuousMapper(
+        domain: ClosedRange<Double>,
+        lowerLimit: Double?,
+        upperLimit: Double?,
+        trans: Transform?
+    ): GuideMapper<Color> {
+        @Suppress("NAME_SHADOWING")
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
 
         val lowDomain = ClosedRange(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
         val highDomain = ClosedRange(min(myMidpoint, domain.upperEnd), domain.upperEnd)
@@ -41,8 +47,8 @@ class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpo
         val highMapper = ColorMapper.gradient(highDomain, myMid, myHigh, naValue)
 
         val rangeMap = mapOf(
-                lowDomain to lowMapper,
-                highDomain to highMapper
+            lowDomain to lowMapper,
+            highDomain to highMapper
         )
 
         fun getMapper(v: Double?): ((Double?) -> Color)? {

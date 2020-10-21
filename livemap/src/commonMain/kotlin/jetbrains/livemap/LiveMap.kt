@@ -25,7 +25,6 @@ import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
-import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
@@ -310,7 +309,7 @@ class LiveMap(
             }
 
         listeners.addDoubleClickListener { clickEvent ->
-            if (camera.contains<CameraScaleEffectComponent>() || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
+            if (camera.contains<CameraScaleEffectComponent>() || camera.getComponent<CameraComponent>().zoom == viewport.maxZoom.toDouble()) {
                 return@addDoubleClickListener
             }
 

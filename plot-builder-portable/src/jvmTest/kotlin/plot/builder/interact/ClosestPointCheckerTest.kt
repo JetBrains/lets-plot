@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
-import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT
-import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT.*
+import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARISON_RESULT
+import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARISON_RESULT.*
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -89,7 +89,7 @@ class ClosestPointCheckerTest {
         return Expectation { cp!!.check(coord) }
     }
 
-    private fun compare(coord: DoubleVector): Expectation<COMPARE_RESULT> {
+    private fun compare(coord: DoubleVector): Expectation<COMPARISON_RESULT> {
         return Expectation { cp!!.compare(coord) }
     }
 

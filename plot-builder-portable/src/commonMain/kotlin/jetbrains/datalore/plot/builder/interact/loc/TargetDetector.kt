@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.MathUtil
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
-import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT
+import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARISON_RESULT
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection.PathPoint
 
@@ -215,7 +215,7 @@ internal class TargetDetector(
                 //Too far
                 return if (!range.contains(cursorCoord.x - RECT_X_NEAREST_EPSILON) && !range.contains(cursorCoord.x + RECT_X_NEAREST_EPSILON)) {
                     false
-                } else closestPointChecker.compare(DoubleVector(range.start() + range.length() / 2, cursorCoord.y)) !== COMPARE_RESULT.NEW_FARTHER
+                } else closestPointChecker.compare(DoubleVector(range.start() + range.length() / 2, cursorCoord.y)) !== COMPARISON_RESULT.NEW_FARTHER
 
             }
 

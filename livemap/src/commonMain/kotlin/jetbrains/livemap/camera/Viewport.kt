@@ -19,7 +19,9 @@ import kotlin.math.min
 
 open class Viewport internal constructor(
     private val helper: ViewportHelper,
-    val size: ClientPoint
+    val size: ClientPoint,
+    val minZoom: Int,
+    val maxZoom: Int
 ) {
 
     private val zoomTransform = ProjectionUtil.square<World, Client>(ProjectionUtil.zoom { zoom })
@@ -36,7 +38,7 @@ open class Viewport internal constructor(
 
     var zoom: Int = 1
         set(zoom) {
-            field = max(LiveMapConstants.MIN_ZOOM, min(zoom, LiveMapConstants.MAX_ZOOM))
+            field = max(minZoom, min(zoom, maxZoom))
             windowSize = zoomTransform.invert(size)
             windowOrigin = viewportTransform.invert(Coordinates.ZERO_CLIENT_POINT)
             updateWindow()
@@ -89,8 +91,13 @@ open class Viewport internal constructor(
     }
 
     companion object {
-        fun create(helper: ViewportHelper, size: ClientPoint, position: WorldPoint): Viewport {
-            return Viewport(helper, size).apply {
+        fun create(helper: ViewportHelper, size: ClientPoint, position: WorldPoint, minZoom: Int, maxZoom: Int): Viewport {
+            return Viewport(
+                helper,
+                size,
+                minZoom,
+                maxZoom
+            ).apply {
                 this.position = position
             }
         }

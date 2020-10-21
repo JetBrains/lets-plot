@@ -65,7 +65,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
         return GeomTarget(
             IGNORED_HIT_INDEX,
-            createTipLayoutHint(myTargetHitCoord, myHintShape, myFill, detectTipLayoutHint(myHintShape.kind)),
+            createTipLayoutHint(myTargetHitCoord, myHintShape, myFill, detectTipLayoutHint(myHintShape.kind), TipLayoutHint.StemLength.NORMAL),
             myAesTipLayoutHints
         )
     }

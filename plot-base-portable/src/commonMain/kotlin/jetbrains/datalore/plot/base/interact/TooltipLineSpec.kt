@@ -11,14 +11,11 @@ interface TooltipLineSpec {
     fun getDataPoint(index: Int): DataPoint?
 
     class DataPoint(
-        val label: String,
+        val label: String?,
         val value: String,
         val isContinuous: Boolean,
         val aes: Aes<*>?,
         val isAxis: Boolean,
         val isOutlier: Boolean
-    ) {
-        val line: String
-            get() = if (label.isNotEmpty()) "$label: $value" else value
-    }
+    )
 }

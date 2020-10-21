@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.plot.builder.tooltip.TooltipLineFormatter.Companion.createTooltipLineFormatter
+import jetbrains.datalore.base.stringFormat.StringFormat
 
 class MappingValue(
     val aes: Aes<*>,
@@ -19,9 +19,13 @@ class MappingValue(
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
-    private lateinit var myDataLabel: String
+    private var myDataLabel: String? = null
     private var myIsContinuous: Boolean = false
-    private val myFormatter = format?.let { createTooltipLineFormatter(it) }
+    private val myFormatter = format?.let {
+        StringFormat(format).also {
+            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'. Expected 1 argument instead of ${it.argsNumber}" }
+        }
+    }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
@@ -33,15 +37,12 @@ class MappingValue(
             .map(myDataAccess::getMappedDataLabel)
         val dataLabel = myDataAccess.getMappedDataLabel(aes)
         myDataLabel = when {
-            isAxis -> ""
+            isAxis -> null
             dataLabel.isEmpty() -> ""
             dataLabel in axisLabels -> ""
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
-        if (myFormatter != null && myFormatter is NumberValueFormatter) {
-            require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric value" }
-        }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
@@ -52,14 +53,16 @@ class MappingValue(
             val formattedValue =
                 originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
 
-            // for outliers: line pattern removes "name:" part of the line
-            val value = if (isOutlier && myDataLabel.isNotEmpty() && myFormatter !is LinePatternFormatter) {
+            // for outliers: myDataLabel is a part of the value, but pattern format removes this part
+            val value = if (isOutlier && !myDataLabel.isNullOrEmpty() &&
+                myFormatter?.formatType != StringFormat.FormatType.STRING_FORMAT
+            ) {
                 "$myDataLabel: $formattedValue"
             } else {
                 formattedValue
             }
             DataPoint(
-                label = if (isOutlier) "" else myDataLabel,
+                label = if (isOutlier) null else myDataLabel,
                 value = value,
                 isContinuous = myIsContinuous,
                 aes = aes,

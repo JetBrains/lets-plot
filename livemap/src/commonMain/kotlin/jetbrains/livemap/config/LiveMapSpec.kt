@@ -8,6 +8,7 @@ package jetbrains.livemap.config
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.gis.geoprotocol.GeocodingService
+import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.core.projections.ProjectionType
@@ -31,5 +32,7 @@ class LiveMapSpec(
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
     val tileSystemProvider: TileSystemProvider,
     val attribution: String?,
+    val minZoom: Int = LiveMapConstants.MIN_ZOOM,
+    val maxZoom: Int = LiveMapConstants.MAX_ZOOM,
     val devParams: DevParams
 )

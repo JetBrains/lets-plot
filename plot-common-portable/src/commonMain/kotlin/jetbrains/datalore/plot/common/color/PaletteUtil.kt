@@ -22,6 +22,23 @@ object PaletteUtil {
         ColorPalette.Qualitative.Set3
     )
 
+    private val PAL_TYPE_BY_PAL_NAME: Map<String, ColorPalette.Type>
+
+    init {
+        val map = HashMap<String, ColorPalette.Type>()
+        ColorPalette.Sequential.values().map { it.name }.forEach {
+            map[it] = ColorPalette.Type.SEQUENTIAL
+        }
+        ColorPalette.Diverging.values().map { it.name }.forEach {
+            map[it] = ColorPalette.Type.DIVERGING
+        }
+        ColorPalette.Qualitative.values().map { it.name }.forEach {
+            map[it] = ColorPalette.Type.QUALITATIVE
+        }
+
+        PAL_TYPE_BY_PAL_NAME = map
+    }
+
     private fun isExtensibleScheme(colorScheme: ColorScheme): Boolean {
         return EXTENSIBLE_COLOR_SCHEMES.contains(colorScheme)
     }
@@ -40,13 +57,6 @@ object PaletteUtil {
         return colors
     }
 
-//    fun quantizedColorScale(colorScheme: ColorScheme, colorCount: Int, minValue: Double, maxValue: Double): QuantizeScale<Color> {
-//        val colors = schemeColors(colorScheme, colorCount)
-//        return QuantizeScale<Color>()
-//                .range(colors)
-//                .domain(minValue, maxValue)
-//    }
-
     private fun fromColorsHex(hexColors: Array<String>): List<Color> {
         val colors = ArrayList<Color>()
         for (hexColor in hexColors) {
@@ -58,5 +68,19 @@ object PaletteUtil {
 
         }
         return colors
+    }
+
+    fun paletteTypeByPaletteName(paletteName: String): ColorPalette.Type? =
+        PAL_TYPE_BY_PAL_NAME[paletteName]
+
+    fun colorSchemeByIndex(paletteType: ColorPalette.Type, index: Int): ColorScheme {
+        @Suppress("UNCHECKED_CAST")
+        val values: Array<ColorScheme> = when (paletteType) {
+            ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.values() as Array<ColorScheme>
+            ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.values() as Array<ColorScheme>
+            ColorPalette.Type.QUALITATIVE -> ColorPalette.Qualitative.values() as Array<ColorScheme>
+        }
+
+        return values[index % values.size]
     }
 }

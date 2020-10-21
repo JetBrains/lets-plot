@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Color.Companion.BLUE
 import jetbrains.datalore.base.values.Color.Companion.GREEN
 import jetbrains.datalore.base.values.Color.Companion.RED
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType.*
@@ -18,6 +19,7 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
+import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,14 +34,9 @@ class ScaleConfigTest {
     }
 
     private fun checkMappingDiscrete(expected: List<*>, input: List<*>, mapperProvider: MapperProvider<*>) {
-        val map = mapOf(
-                "var" to input
-        )
-        val data = DataFrameUtil.fromMap(map)
-
         val inputTransformed = MapperUtil.mapDiscreteDomainValuesToNumbers(input)
 
-        val mapper = mapperProvider.createDiscreteMapper(data, DataFrameUtil.findVariableOrFail(data, "var"))
+        val mapper = mapperProvider.createDiscreteMapper(input.distinct())
         for (i in input.indices) {
             assertEquals(expected[i], mapper.apply(inputTransformed[input[i]]))
         }
@@ -53,12 +50,15 @@ class ScaleConfigTest {
 
     private fun checkIdentityMappingContinuous(input: List<Double>, mapperProvider: MapperProvider<Double>) {
         val map = mapOf(
-                "var" to input
+            "var" to input
         )
         val data = DataFrameUtil.fromMap(map)
-
-        val mapper = mapperProvider.createContinuousMapper(data, DataFrameUtil.findVariableOrFail(data, "var"),
-                Double.NaN, Double.NaN, Transforms.IDENTITY)
+        val datavar = DataFrameUtil.findVariableOrFail(data, "var")
+        val mapper = mapperProvider.createContinuousMapper(
+            data.range(datavar)!!,
+            Double.NaN,
+            Double.NaN, Transforms.IDENTITY
+        )
         for (v in input) {
             assertEquals(v, mapper.apply(v))
         }
@@ -68,12 +68,12 @@ class ScaleConfigTest {
     @Test
     fun colorIdentityMapper() {
         val inputs = listOf(
-                listOf("red", "green", "blue"),
-                listOf("#ff0000", "#00ff00", "#0000ff"),
-                listOf("rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"),
-                listOf("rgba(255,0,0,1.0)", "rgba(0,255,0,1.0)", "rgba(0,0,255,1.0)"),
-                listOf(0xff0000, 0x00ff00, 0x0000ff),
-                listOf(0xff0000.toDouble(), 0x00ff00.toDouble(), 0x0000ff.toDouble())
+            listOf("red", "green", "blue"),
+            listOf("#ff0000", "#00ff00", "#0000ff"),
+            listOf("rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"),
+            listOf("rgba(255,0,0,1.0)", "rgba(0,255,0,1.0)", "rgba(0,0,255,1.0)"),
+            listOf(0xff0000, 0x00ff00, 0x0000ff),
+            listOf(0xff0000.toDouble(), 0x00ff00.toDouble(), 0x0000ff.toDouble())
         )
 
         for (aes in Aes.values()) {
@@ -114,7 +114,7 @@ class ScaleConfigTest {
     }
 
     @Test
-    fun colorHueMapperForDiscreteFillColorScale() {
+    fun colorBrewerMapperForDiscreteColorScale() {
         fun checkDiscreteScale(aes: Aes<Color>) {
 
             val scaleSpec = mapOf(
@@ -129,12 +129,14 @@ class ScaleConfigTest {
                 .createScale(dataFrame, dataFrame.variables().first { it.name == "a" })
                 .mapper
 
-            assertEquals(Color(160,229,114), scaleMapper(1.0))
-            assertEquals(Color(114,206,229), scaleMapper(2.0))
-            assertEquals(Color(206,114,229), scaleMapper(3.0))
+            val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }
+            assertEquals(expected[0], scaleMapper(0.0))
+            assertEquals(expected[1], scaleMapper(1.0))
+            assertEquals(expected[2], scaleMapper(2.0))
+            assertEquals(expected[3], scaleMapper(3.0))
         }
 
-        checkDiscreteScale(Aes.FILL)
+//        checkDiscreteScale(Aes.FILL)
         checkDiscreteScale(Aes.COLOR)
     }
 }

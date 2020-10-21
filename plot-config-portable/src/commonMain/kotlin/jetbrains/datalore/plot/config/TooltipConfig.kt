@@ -8,7 +8,10 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.builder.tooltip.*
+import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
+import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 
 class TooltipConfig(
     opts: Map<*, *>,
@@ -47,20 +50,20 @@ class TooltipConfig(
             val label = detachLabel(tooltipLine)
             val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
-            val usedValueSources = mutableListOf<ValueSource>()
-            val linePattern = SOURCE_RE_PATTERN.replace(valueString) { match ->
+            val fieldsInPattern = mutableListOf<ValueSource>()
+            val pattern: String = SOURCE_RE_PATTERN.replace(valueString) { match ->
                 if (match.value == "\\$VALUE_SOURCE_PREFIX") {
                     // it is a part of the text (not of the name)
                     VALUE_SOURCE_PREFIX
                 } else {
-                    usedValueSources += getValueSource(match.value)
-                    LinePatternFormatter.valueInLinePattern()
+                    fieldsInPattern += getValueSource(match.value)
+                    StringFormat.valueInLinePattern()
                 }
             }
             return TooltipLine(
                 label,
-                linePattern,
-                usedValueSources
+                pattern,
+                fieldsInPattern
             )
         }
 
@@ -88,10 +91,11 @@ class TooltipConfig(
         private fun prepareFormats(tooltipFormats: List<*>): Map<String, String> {
             val allFormats = mutableMapOf<String, String>()
             tooltipFormats.forEach { tooltipFormat ->
-                require(tooltipFormat is Map<*, *> ) { "Wrong tooltip 'format' arguments" }
+                require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
+                require(tooltipFormat.has(FIELD) && tooltipFormat.has(FORMAT)) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
 
-                val configName = tooltipFormat[Option.TooltipFormat.FIELD] as String
-                val configFormat = tooltipFormat[Option.TooltipFormat.FORMAT] as String
+                val configName = tooltipFormat[FIELD] as String
+                val configFormat = tooltipFormat[FORMAT] as String
 
                 if (configName.startsWith("$")) {
                     val positionals = when (configName.removePrefix("$")) {
@@ -121,15 +125,17 @@ class TooltipConfig(
         }
 
         private fun detachLabel(tooltipLine: String): String? {
-            val labelPart = tooltipLine.substringBefore(LABEL_SEPARATOR, "")
-            return if (labelPart == USE_DEFAULT_LABEL) null else labelPart
+            return if (LABEL_SEPARATOR in tooltipLine) {
+                tooltipLine.substringBefore(LABEL_SEPARATOR).trim()
+            } else {
+                null
+            }
         }
     }
 
     companion object {
         private const val VALUE_SOURCE_PREFIX = "$"
         private const val LABEL_SEPARATOR = "|"
-        private const val USE_DEFAULT_LABEL = "@"
 
         // \$ (dollar escaping) or $name or ${name with spaces}
         private val SOURCE_RE_PATTERN = Regex("""(?:\\\$)|\$(((\w*@)?([\w$]*[^\s\W]+\$?))|(\{(.*?)}))""")
