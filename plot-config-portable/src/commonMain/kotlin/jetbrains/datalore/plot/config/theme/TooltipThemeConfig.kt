@@ -16,17 +16,19 @@ internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : O
         return ThemeConfig.DEF.tooltip().isVisible()
     }
 
-    override fun anchor(): TooltipAnchor {
+    override fun anchor(): TooltipAnchor? {
         if (!has(Option.Theme.TOOLTIP_ANCHOR))
             return ThemeConfig.DEF.tooltip().anchor()
 
-        val anchorString = getString(Option.Theme.TOOLTIP_ANCHOR)
-        return when (anchorString) {
+        return when (val anchor = getString(Option.Theme.TOOLTIP_ANCHOR)) {
             "top_right" -> TooltipAnchor.TOP_RIGHT
-            "top_left"  -> TooltipAnchor.TOP_LEFT
+            "top_left" -> TooltipAnchor.TOP_LEFT
             "bottom_right" -> TooltipAnchor.BOTTOM_RIGHT
-            "bottom_left"  -> TooltipAnchor.BOTTOM_LEFT
-            else -> TooltipAnchor.NONE
+            "bottom_left" -> TooltipAnchor.BOTTOM_LEFT
+            "none" -> null
+            else -> throw IllegalArgumentException(
+                "Illegal value $anchor, ${Option.Theme.TOOLTIP_ANCHOR}, expected values are: 'top_right'/'top_left'/'bottom_right'/'bottom_left'/'none'"
+            )
         }
     }
 }

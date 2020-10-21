@@ -11,5 +11,5 @@ interface TooltipTheme {
 
     fun isVisible(): Boolean
 
-    fun anchor(): TooltipAnchor
+    fun anchor(): TooltipAnchor?
 }

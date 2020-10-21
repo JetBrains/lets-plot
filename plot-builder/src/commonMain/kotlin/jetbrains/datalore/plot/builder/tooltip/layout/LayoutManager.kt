@@ -21,7 +21,7 @@ import kotlin.math.min
 class LayoutManager(
     private val myViewport: DoubleRectangle,
     private val myPreferredHorizontalAlignment: HorizontalAlignment,
-    private val myTooltipAnchor: TooltipAnchor
+    private val myTooltipAnchor: TooltipAnchor?
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
@@ -368,7 +368,7 @@ class LayoutManager(
     }
 
     private fun useCornerTooltips(): Boolean {
-        return myTooltipAnchor != TooltipAnchor.NONE
+        return myTooltipAnchor != null
     }
 
     private fun isCorner(tooltipSpec: TooltipSpec): Boolean {
