@@ -60,4 +60,5 @@ def regions_builder2(level=None, names=None, scope=None, countries=None, states=
                           allow_ambiguous=False,
                           countries=countries,
                           states=states,
-                          counties=counties)
+                          counties=counties,
+                          new_api=True)

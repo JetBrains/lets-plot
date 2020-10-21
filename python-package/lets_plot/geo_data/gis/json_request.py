@@ -25,6 +25,7 @@ class Field(enum.Enum):
     region_query_states = 'region_query_states'
     region_query_counties = 'region_query_counties'
     region_query_parent = 'region_query_parent'
+    scope = 'scope'
     level = 'level'
     map_region_kind = 'kind'
     map_region_values = 'values'
@@ -66,6 +67,7 @@ class RequestFormatter:
         return RequestFormatter \
             ._common(RequestKind.geocoding, request) \
             .put(Field.region_queries, RequestFormatter._format_region_queries(request.region_queries)) \
+            .put(Field.scope, RequestFormatter._format_map_region(request.scope)) \
             .put(Field.level, request.level) \
             .put(Field.namesake_example_limit, request.namesake_example_limit) \
             .put(Field.allow_ambiguous, request.allow_ambiguous)

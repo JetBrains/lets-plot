@@ -68,6 +68,7 @@ def test_regions(mock_geocoding):
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          level=LEVEL_KIND,
+                         scope=MapRegion.with_name(REGION_NAME),
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False
                          )
@@ -85,6 +86,7 @@ def test_regions_with_highlights(mock_geocoding):
         GeocodingRequest(requested_payload=[PayloadKind.highlights],
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
+                         scope=MapRegion.with_name(REGION_NAME),
                          level=LEVEL_KIND,
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False

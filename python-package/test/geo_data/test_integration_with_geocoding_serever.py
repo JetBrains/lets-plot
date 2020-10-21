@@ -452,7 +452,7 @@ def test_empty_request_centroid():
            set(df['request'].tolist())
 
 
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_highlights():
     r = geodata.regions_builder(level='city', request='NYC', highlights=True).build()
     df = r.to_data_frame()

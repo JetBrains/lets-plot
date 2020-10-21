@@ -242,6 +242,7 @@ class GeocodingRequest(Request):
                  requested_payload: List[PayloadKind],
                  resolution: Optional[int],
                  region_queries: List[RegionQuery],
+                 scope: Optional[MapRegion],
                  level: Optional[LevelKind],
                  namesake_example_limit: int,
                  allow_ambiguous: bool
@@ -260,6 +261,7 @@ class GeocodingRequest(Request):
         assert namesake_example_limit is not None
 
         self.region_queries: List[RegionQuery] = region_queries
+        self.scope: Optional[MapRegion] = scope
         self.level: Optional[LevelKind] = level
         self.namesake_example_limit: int = namesake_example_limit
         self.allow_ambiguous: bool = allow_ambiguous
@@ -335,6 +337,7 @@ class RequestBuilder:
         self.resolution: Optional[int] = None
         self.ids: List[str] = []
         self.region_queries: List[RegionQuery] = []
+        self.scope: Optional[MapRegion] = None
         self.level: Optional[LevelKind] = None
         self.namesake_limit: int = 10
         self.allow_ambiguous: bool = False
@@ -378,6 +381,11 @@ class RequestBuilder:
         self.region_queries = v
         return self
 
+    def set_scope(self, v: Optional[MapRegion]) -> 'RequestBuilder':
+        assert_optional_type(v, MapRegion)
+        self.scope = v
+        return self
+
     def set_level(self, v: LevelKind) -> 'RequestBuilder':
         assert_optional_type(v, LevelKind)
         self.level = v
@@ -398,8 +406,8 @@ class RequestBuilder:
             return ExplicitRequest(self.requested_payload, self.ids, self.resolution)
 
         elif self.request_kind == RequestKind.geocoding:
-            return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.level,
-                                    self.namesake_limit, self.allow_ambiguous)
+            return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.scope,
+                                    self.level, self.namesake_limit, self.allow_ambiguous)
 
         elif self.request_kind == RequestKind.reverse:
             assert self.reverse_coordinates is not None

@@ -49,74 +49,85 @@ def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPo
 
     return None, GeoRect(min_lon=box.bounds[0], min_lat=box.bounds[1], max_lon=box.bounds[2], max_lat=box.bounds[3])
 
+def _create_new_queries(
+        request: request_types,
+        scope: scope_types,
+        ambiguity_resovler: AmbiguityResolver,
+        countries: parent_types = None,
+        states: parent_types = None,
+        counties: parent_types = None
+) -> List[RegionQuery]:
+    requests: Optional[List[str]] = _ensure_is_list(request)
+    def ensure_is_parent_list(obj):
+        if obj is None:
+            return None
 
-def _create_queries(request: request_types, scope: scope_types, ambiguity_resovler: AmbiguityResolver,
-                    countries: parent_types = None, states: parent_types = None, counties: parent_types = None) -> List[
-    RegionQuery]:
+        if isinstance(obj, str):
+            return [obj]
+        if isinstance(obj, Regions):
+            return obj.as_list()
+
+        if isinstance(obj, list):
+            return obj
+
+        return [obj]
+
+    countries = ensure_is_parent_list(countries)
+    states = ensure_is_parent_list(states)
+    counties = ensure_is_parent_list(counties)
+
+    if countries is not None and len(countries) != len(requests):
+        raise ValueError('Countries count({}) != names count({})'.format(len(countries), len(requests)))
+
+    if states is not None and len(states) != len(requests):
+        raise ValueError('States count({}) != names count({})'.format(len(states), len(requests)))
+
+    if counties is not None and len(counties) != len(requests):
+        raise ValueError('Counties count({}) != names count({})'.format(len(counties), len(requests)))
+
+    queries = []
+    for i in range(len(requests)):
+        name = requests[i] if requests is not None else None
+        country = _make_parent_region(countries[i]) if countries is not None else None
+        state = _make_parent_region(states[i]) if states is not None else None
+        county = _make_parent_region(counties[i]) if counties is not None else None
+
+        query = RegionQuery(request=name, scope=scope, ambiguity_resolver=ambiguity_resovler,
+                            country=country, state=state, county=county)
+
+        queries.append(query)
+
+    return queries
+
+
+def _create_queries(
+        request: request_types,
+        scope: scope_types,
+        ambiguity_resovler: AmbiguityResolver
+) -> List[RegionQuery]:
+
     requests: Optional[List[str]] = _ensure_is_list(request)
 
-    if (countries is None and states is None and counties is None) or requests is None:
-        scopes: Optional[Union[List[MapRegion], MapRegion]] = _to_scope(scope)
-        positional_matching = isinstance(scopes, list)
+    scopes: Optional[Union[List[MapRegion], MapRegion]] = _to_scope(scope)
+    positional_matching = isinstance(scopes, list)
 
-        if positional_matching:
-            if requests is not None and len(requests) != len(scopes):
-                raise ValueError('Length of request and scope is not equal')
+    if positional_matching:
+        if requests is not None and len(requests) != len(scopes):
+            raise ValueError('Length of request and scope is not equal')
 
-            return [
-                RegionQuery(r, s, ambiguity_resovler) for r, s in zip(requests, scopes)
-            ]
-        else:
-            # us-48 request - no requests, only scopes
-            if requests is None and scopes is not None:
-                return [RegionQuery(None, scopes, ambiguity_resovler)]
-
-            # countries request - no requests and scopes
-            if requests is None and scopes is None:
-                return []
-
-            return [RegionQuery(r, scopes, ambiguity_resovler) for r in requests]
+        return [
+            RegionQuery(r, s, ambiguity_resovler) for r, s in zip(requests, scopes)
+        ]
     else:
-        def ensure_is_parent_list(obj):
-            if obj is None:
-                return None
+        # us-48 request - no requests, only scopes
+        if requests is None and scopes is not None:
+            return [RegionQuery(None, scopes, ambiguity_resovler)]
 
-            if isinstance(obj, str):
-                return [obj]
-            if isinstance(obj, Regions):
-                return obj.as_list()
+        # countries request - no requests and scopes
+        if requests is None and scopes is None:
+            return []
 
-            if isinstance(obj, list):
-                return obj
-
-            return [obj]
-
-        countries = ensure_is_parent_list(countries)
-        states = ensure_is_parent_list(states)
-        counties = ensure_is_parent_list(counties)
-
-        if countries is not None and len(countries) != len(requests):
-            raise ValueError('Countries count({}) != names count({})'.format(len(countries), len(requests)))
-
-        if states is not None and len(states) != len(requests):
-            raise ValueError('States count({}) != names count({})'.format(len(states), len(requests)))
-
-        if counties is not None and len(counties) != len(requests):
-            raise ValueError('Counties count({}) != names count({})'.format(len(counties), len(requests)))
-
-        queries = []
-        for i in range(len(requests)):
-            name = requests[i] if requests is not None else None
-            country = _make_parent_region(countries[i]) if countries is not None else None
-            state = _make_parent_region(states[i]) if states is not None else None
-            county = _make_parent_region(counties[i]) if counties is not None else None
-
-            query = RegionQuery(request=name, scope=scope, ambiguity_resolver=ambiguity_resovler,
-                                country=country, state=state, county=county)
-
-            queries.append(query)
-
-        return queries
+        return [RegionQuery(r, scopes, ambiguity_resovler) for r in requests]
 
 
 class LazyShapely:
@@ -154,16 +165,23 @@ class RegionsBuilder:
                  allow_ambiguous=False,
                  countries=None,
                  states=None,
-                 counties=None
+                 counties=None,
+                 new_api=False
                  ):
 
         self._level: Optional[LevelKind] = _to_level_kind(level)
-        self._overridings: List[RegionQuery] = []
         self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()  # TODO rename to geohint
-        self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver, countries,
-                                                           states, counties)
         self._highlights: bool = highlights
         self._allow_ambiguous = allow_ambiguous
+        self._overridings: List[RegionQuery] = []
+
+        if new_api:
+            self._scope: Optional[MapRegion] = _to_scope(scope)
+            self._queries: List[RegionQuery] = _create_new_queries(request, scope, self._default_ambiguity_resolver, countries, states, counties)
+        else:
+            self._scope: Optional[MapRegion] = None
+            self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
+
 
     def drop_not_found(self) -> 'RegionsBuilder':
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
@@ -239,6 +257,7 @@ class RegionsBuilder:
             .set_request_kind(RequestKind.geocoding) \
             .set_requested_payload([PayloadKind.highlights] if self._highlights else []) \
             .set_queries(queries) \
+            .set_scope(self._scope) \
             .set_level(self._level) \
             .set_namesake_limit(NAMESAKE_MAX_COUNT) \
             .set_allow_ambiguous(self._allow_ambiguous) \
