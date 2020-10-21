@@ -23,7 +23,7 @@ def maptiles_lets_plot(url: str, theme: str = None) -> dict:
         Address of the tile server
 
     :param theme: ['color', 'light', 'dark', None]
-        Ttiles theme
+        Tiles theme
 
     :return:
         Tile provider settings
@@ -50,6 +50,13 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         Minimal zoom limit
     :param max_zoom:
         Maximal zoom limit
+    :param other_args
+        Any key-value pairs that can be substituted into the url template
+
+        maptiles_zxy(
+            url = 'http://{sub}.example.com/{z}/{x}/{y}.png'
+            sub = 'maps'
+        )
     :return:
         Tile provider settings
     """
