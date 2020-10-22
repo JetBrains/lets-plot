@@ -17,12 +17,7 @@ object AesScaling {
 
     fun circleDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return circleDiameter(p.size()!!)
-    }
-
-    fun circleDiameter(size: Double): Double {
-        // aes Units -> px
-        return size * CIRCLE_DIAMETER_FACTOR
+        return p.size()!! * 2.2
     }
 
     fun circleDiameterSmaller(p: DataPointAesthetics): Double {
@@ -32,14 +27,11 @@ object AesScaling {
 
     fun sizeFromCircleDiameter(diameter: Double): Double {
         // px -> aes Units
-        return diameter / CIRCLE_DIAMETER_FACTOR
+        return diameter / 2.2
     }
 
     fun textSize(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return textSize(p.size()!!)
+        return p.size()!! * 2
     }
-
-    fun textSize(size: Double) = size * 2
-
 }
