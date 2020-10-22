@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
 object AesScaling {
-
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
         return p.size()!! * 2.0
