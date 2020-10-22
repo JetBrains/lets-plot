@@ -42,11 +42,9 @@ class Resolution(enum.Enum):
     world_low = 1
 
 
-def contains_values(column):
-    return any(v is not None for v in column)
-
-
 def select_request(query: RegionQuery, answer: Answer, feature: GeocodedFeature) -> str:
+    # exploding answers (features count > 1) don't have exact request (like us-48, it can't be a proper
+    # request for 48 features/states) and so feature name should be used as request.
     return query.request if len(answer.features) <= 1 else feature.name
 
 
@@ -79,6 +77,9 @@ class PlacesDataFrameBuilder:
             self._country.append(MapRegion.name_or_none(query.country))
 
     def build_dict(self):
+        def contains_values(column):
+            return any(v is not None for v in column)
+
         data = {}
         data[DF_REQUEST] = self._request
         data[DF_FOUND_NAME] = self._found_name
@@ -128,7 +129,7 @@ class Regions(CanToDataFrame):
     def __len__(self):
         return len(self._geocoded_features)
 
-    def to_map_regions(self):
+    def to_map_regions(self) -> List[MapRegion]:
         regions: List[MapRegion] = []
         for answer, query in zip_answers(self._answers, self._queries):
             for feature in answer.features:

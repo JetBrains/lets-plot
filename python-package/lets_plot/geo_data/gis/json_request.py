@@ -67,7 +67,7 @@ class RequestFormatter:
         return RequestFormatter \
             ._common(RequestKind.geocoding, request) \
             .put(Field.region_queries, RequestFormatter._format_region_queries(request.region_queries)) \
-            .put(Field.scope, RequestFormatter._format_map_region(request.scope)) \
+            .put(Field.scope, RequestFormatter._format_scope(request.scope)) \
             .put(Field.level, request.level) \
             .put(Field.namesake_example_limit, request.namesake_example_limit) \
             .put(Field.allow_ambiguous, request.allow_ambiguous)
@@ -114,6 +114,10 @@ class RequestFormatter:
                     .to_dict()
             )
         return result
+
+    @staticmethod
+    def _format_scope(scope: List[MapRegion]) -> List[Dict]:
+        return [RequestFormatter._format_map_region(s) for s in scope]
 
     @staticmethod
     def _format_map_region(parent: Optional[MapRegion]) -> Optional[Dict]:

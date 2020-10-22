@@ -77,7 +77,6 @@ MOSCOW_LAT = 55.753960
     pytest.param('country', 'Россия', id='Russian Federeation')
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-@pytest.mark.skip
 def test_reverse_moscow(level, expected_name):
     r = geodata.regions_xy(lon=MOSCOW_LON, lat=MOSCOW_LAT, level=level)
     assert_row(r.to_data_frame(), found_name=expected_name)
@@ -129,15 +128,13 @@ NYC_LAT = 40.730610
     pytest.param([BOSTON_LON, NYC_LON], [BOSTON_LAT, NYC_LAT])
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-@pytest.mark.skip
 def test_reverse_geocoding_of_list_(lons, lats):
     r = geodata.regions_xy(lons, lats, 'city')
     assert_row(r.to_data_frame(), index=0, request='[-71.057083, 42.361145]', found_name='Boston')
-    assert_row(r.to_data_frame(), index=1, request='[-73.935242, 40.730610]', found_name='New York')
+    assert_row(r.to_data_frame(), index=1, request='[-73.935242, 40.73061]', found_name='New York')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-@pytest.mark.skip
 def test_reverse_geocoding_of_nyc():
     r = geodata.regions_xy(NYC_LON, NYC_LAT, 'city')
 
@@ -145,7 +142,6 @@ def test_reverse_geocoding_of_nyc():
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-@pytest.mark.skip
 def test_reverse_geocoding_of_nothing():
     try:
         geodata.regions_xy(-30.0, -30.0, 'city')
@@ -162,7 +158,6 @@ SEVASTOPOL_ID = '6061953'
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-@pytest.mark.skip
 def test_only_one_sevastopol():
     sevastopol = geodata.regions_xy(SEVASTOPOL_LON, SEVASTOPOL_LAT, 'city')
 

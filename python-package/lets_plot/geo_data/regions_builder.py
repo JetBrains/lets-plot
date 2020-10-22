@@ -51,7 +51,6 @@ def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPo
 
 def _create_new_queries(
         request: request_types,
-        scope: scope_types,
         ambiguity_resovler: AmbiguityResolver,
         countries: parent_types = None,
         states: parent_types = None,
@@ -92,7 +91,7 @@ def _create_new_queries(
         state = _make_parent_region(states[i]) if states is not None else None
         county = _make_parent_region(counties[i]) if counties is not None else None
 
-        query = RegionQuery(request=name, scope=scope, ambiguity_resolver=ambiguity_resovler,
+        query = RegionQuery(request=name, scope=None, ambiguity_resolver=ambiguity_resovler,
                             country=country, state=state, county=county)
 
         queries.append(query)
@@ -166,7 +165,8 @@ class RegionsBuilder:
                  countries=None,
                  states=None,
                  counties=None,
-                 new_api=False
+                 new_api=False,
+                 new_scope: List[MapRegion]=[]
                  ):
 
         self._level: Optional[LevelKind] = _to_level_kind(level)
@@ -176,10 +176,10 @@ class RegionsBuilder:
         self._overridings: List[RegionQuery] = []
 
         if new_api:
-            self._scope: Optional[MapRegion] = _to_scope(scope)
-            self._queries: List[RegionQuery] = _create_new_queries(request, scope, self._default_ambiguity_resolver, countries, states, counties)
+            self._scope: List[MapRegion] = new_scope
+            self._queries: List[RegionQuery] = _create_new_queries(request, self._default_ambiguity_resolver, countries, states, counties)
         else:
-            self._scope: Optional[MapRegion] = None
+            self._scope: List[MapRegion] = []
             self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
 
 

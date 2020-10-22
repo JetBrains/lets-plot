@@ -65,7 +65,7 @@ def regions_xy(lon, lat, level, within=None):
     if not isinstance(response, SuccessResponse):
         _raise_exception(response)
 
-    return Regions(response.level, response.answers, [RegionQuery(request=str(lon) + ', ' + str(lat))], False)
+    return Regions(response.level, response.answers, [RegionQuery(request='[{}, {}]'.format(pt.lon, pt.lat)) for pt in request.coordinates], False)
 
 
 def regions_builder(level=None, request=None, within=None, highlights=False) -> RegionsBuilder:

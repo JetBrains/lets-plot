@@ -7,7 +7,7 @@ from pandas import Series
 
 from .gis.geocoding_service import GeocodingService
 from .gis.geometry import GeoPoint
-from .gis.request import RequestBuilder, RequestKind
+from .gis.request import RequestBuilder, RequestKind, MapRegion, MapRegionKind
 from .gis.response import Response, SuccessResponse
 from .regions import Regions, _raise_exception, _to_level_kind, _to_scope
 from .regions_builder import RegionsBuilder
@@ -17,7 +17,30 @@ __all__ = [
     'regions_builder2'
 ]
 
-def regions_builder2(level=None, names=None, scope=None, countries=None, states=None, counties=None, highlights=False) -> RegionsBuilder:
+def _prepare_new_scope(scope) -> List[MapRegion]:
+    def obj_to_map_region(obj) -> List[MapRegion]:
+        if isinstance(obj, str):
+            return [MapRegion.with_name(obj)]
+        if isinstance(obj, Regions):
+            return obj.to_map_regions()
+        if isinstance(obj, MapRegion):
+            if scope.kind == MapRegionKind.id:
+                return [MapRegion.scope([id]) for id in obj.values] # flat_map ids
+            else:
+                assert len(obj.values) == 1 # only id have more than one value
+                return [obj]
+
+    flatten_regions = []
+    if isinstance(scope, (list, tuple)):
+        for obj in scope:
+            flatten_regions.extend(obj_to_map_region(obj))
+    else:
+        flatten_regions.extend(obj_to_map_region(scope))
+
+    return flatten_regions
+
+
+def regions_builder2(level=None, names=None, scope=[], countries=None, states=None, counties=None, highlights=False) -> RegionsBuilder:
     """
     Create a RegionBuilder class by level and request. Allows to refine ambiguous request with
     where method. build() method creates Regions object or shows details for ambiguous result.
@@ -56,9 +79,12 @@ def regions_builder2(level=None, names=None, scope=None, countries=None, states=
     >>> from lets_plot.geo_data import *
     >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
     """
+
+    new_scope = _prepare_new_scope(scope)
     return RegionsBuilder(level, names, scope, highlights,
                           allow_ambiguous=False,
                           countries=countries,
                           states=states,
                           counties=counties,
-                          new_api=True)
+                          new_api=True,
+                          new_scope=new_scope)
