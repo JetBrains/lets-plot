@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
 object AesScaling {
-    private const val CIRCLE_DIAMETER_FACTOR = 2.2
 
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
@@ -34,4 +33,5 @@ object AesScaling {
         // aes Units -> px
         return p.size()!! * 2
     }
+
 }
