@@ -36,8 +36,8 @@ class layer_tooltips(FeatureSpec):
         If a label is not specified, the string will be centered in the tooltip.
 
     format() defines the format for displaying the value:
-            .format(field = '@density', format = '.1f')
-            .format(field = 'color', format = 'value is {.1f}')
+            .format(field = 'density', format = '.1f')
+            .format(field = '$color', format = 'value is {.1f}')
         This format will be applied to the mapped value in the default tooltip or to the corresponding value
         specified in the 'line' template.
         The format contains a number format ('1.f') or a string template ('{.1f}').
@@ -67,7 +67,7 @@ class layer_tooltips(FeatureSpec):
     >>> ggplot(mpg, aes(x='displ', y='hwy')) +
     ... geom_point(aes(color='cty', shape='drv'),
     ...                tooltips=layer_tooltips()
-    ...                         .format('@hwy', '.1f')             # set the format for the variable value
+    ...                         .format('hwy', '.1f')             # set the format for the variable value
     ...                         .line('@manufacturer @model')      # "    ford mustang    "
     ...                         .line('cty/hwy|$color/@hwy')       # "cty/hwy    17.0/26.0"
     ...                         .line('@|@class')                  # "class     subcompact"

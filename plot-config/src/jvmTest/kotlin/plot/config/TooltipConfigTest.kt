@@ -66,7 +66,10 @@ class TooltipConfigTest {
             "shape" to listOf("shape"),
             "foo$" to listOf("foo"),
             "\$bar" to listOf("bar"),
-            "foo\$bar" to listOf("foobar")
+            "foo\$bar" to listOf("foobar"),
+            "foo@" to listOf("foo with @"),
+            "@bar" to listOf("bar with @"),
+            "foo@bar" to listOf("foobar with @")
         )
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
@@ -78,6 +81,9 @@ class TooltipConfigTest {
                 "@foo$",             // with '$' at the end
                 "@\$bar",            // with '$' at the beginning
                 "@foo\$bar",         // with '$' at the middle
+                "@foo@",             // with '@' at the end
+                "@@bar",             // with '@' at the beginning
+                "@foo@bar",          // with '@' at the middle
                 "@foo$\\$",          // the second '$' is part of the result string
                 "(@foo\$)",          // with brackets as part of the result string
                 "\$shape, \$shape"   // result string comma separated
@@ -94,6 +100,9 @@ class TooltipConfigTest {
             "foo",
             "bar",
             "foobar",
+            "foo with @",
+            "bar with @",
+            "foobar with @",
             "foo$",
             "(foo)",
             "suv, suv"
@@ -107,11 +116,11 @@ class TooltipConfigTest {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "color",
+                    Option.TooltipFormat.FIELD to "\$color",
                     Option.TooltipFormat.FORMAT to ".4f"         // number format
                 ),
                 mapOf(
-                    Option.TooltipFormat.FIELD to "shape",
+                    Option.TooltipFormat.FIELD to "\$shape",
                     Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with braces in the text
                 )
 
@@ -149,7 +158,7 @@ class TooltipConfigTest {
             data, mappingWithColor, tooltips = mapOf(
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FIELD to "\$color",
                         Option.TooltipFormat.FORMAT to "{d}"
                     )
                 )
@@ -166,7 +175,7 @@ class TooltipConfigTest {
                 Option.Layer.TOOLTIP_LINES to listOf("@|@year"),
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "@year",
+                        Option.TooltipFormat.FIELD to "year",
                         Option.TooltipFormat.FORMAT to "{d}"
                     )
                 )
@@ -209,9 +218,9 @@ class TooltipConfigTest {
                 "x/y|\$x x \$y"                  // specify label
             ),
             Option.Layer.TOOLTIP_FORMATS to listOf(          //define formats
-                mapOf(Option.TooltipFormat.FIELD to "color", Option.TooltipFormat.FORMAT to ".1f"),
-                mapOf(Option.TooltipFormat.FIELD to "x", Option.TooltipFormat.FORMAT to ".3f"),
-                mapOf(Option.TooltipFormat.FIELD to "y", Option.TooltipFormat.FORMAT to ".1f")
+                mapOf(Option.TooltipFormat.FIELD to "\$color", Option.TooltipFormat.FORMAT to ".1f"),
+                mapOf(Option.TooltipFormat.FIELD to "\$x", Option.TooltipFormat.FORMAT to ".3f"),
+                mapOf(Option.TooltipFormat.FIELD to "\$y", Option.TooltipFormat.FORMAT to ".1f")
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
@@ -269,8 +278,8 @@ class TooltipConfigTest {
                     Option.TooltipFormat.FIELD to "\$Y",
                     Option.TooltipFormat.FORMAT to ".1f"
                 ),       // all positionals
-                mapOf(Option.TooltipFormat.FIELD to "middle", Option.TooltipFormat.FORMAT to ".3f"),    // number format
-                mapOf(Option.TooltipFormat.FIELD to "ymax", Option.TooltipFormat.FORMAT to "{.1f}")     // line pattern
+                mapOf(Option.TooltipFormat.FIELD to "\$middle", Option.TooltipFormat.FORMAT to ".3f"),    // number format
+                mapOf(Option.TooltipFormat.FIELD to "\$ymax", Option.TooltipFormat.FORMAT to "{.1f}")     // line pattern
             )
         )
 
@@ -310,7 +319,7 @@ class TooltipConfigTest {
             ),
             Option.Layer.TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "@class",
+                    Option.TooltipFormat.FIELD to "class",
                     Option.TooltipFormat.FORMAT to ".2f"
                 )
             )
@@ -366,7 +375,7 @@ class TooltipConfigTest {
             tooltipConfig = mapOf(
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     listOf(
-                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FIELD to "\$color",
                         Option.TooltipFormat.FORMAT to ".2f"
                     )
                 )
@@ -376,27 +385,12 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun `wrong tooltip format (dollar in field name)`() {
-        assertFailTooltipSpec(
-            tooltipConfig = mapOf(
-                Option.Layer.TOOLTIP_FORMATS to listOf(
-                    mapOf(
-                        Option.TooltipFormat.FIELD to "\$color",
-                        Option.TooltipFormat.FORMAT to ".2f"
-                    )
-                )
-            ),
-            expectedMessage = "X or Y is expected before '\$' as positional aes"
-        )
-    }
-
-    @Test
     fun `wrong tooltip format (wrong number of arguments)`() {
         assertFailTooltipSpec(
             tooltipConfig = mapOf(
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FIELD to "\$color",
                         Option.TooltipFormat.FORMAT to "{.2f} {.2f}"
                     )
                 )

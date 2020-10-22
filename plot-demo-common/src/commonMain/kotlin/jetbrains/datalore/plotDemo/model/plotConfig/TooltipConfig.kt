@@ -56,8 +56,8 @@ class TooltipConfig : PlotConfigDemoBase() {
                                     '#mpg data set'
                                ],
                                'tooltip_formats': [
-                                    { 'field' : 'x', 'format' : '.1f' }, 
-                                    { 'field' : 'y', 'format' : '.2f' }, 
+                                    { 'field' : '$aesX', 'format' : '.1f' }, 
+                                    { 'field' : '$aesY', 'format' : '.2f' }, 
                                     { 'field' : '@{model year}', 'format' : '19{.0f}' }
                                ]
                            }
@@ -86,7 +86,7 @@ class TooltipConfig : PlotConfigDemoBase() {
                            'stat': 'density',
                            'tooltips' : {
                                 'tooltip_formats': [
-                                    { 'field' : 'color', 'format' : 'is {.4f} (cm)' }
+                                    { 'field' : '$aesColor', 'format' : 'is {.4f} (cm)' }
                                  ]
                             }
                         }
@@ -198,7 +198,7 @@ class TooltipConfig : PlotConfigDemoBase() {
           'geom': 'boxplot',
           'tooltips': {
             'tooltip_formats': [
-              { 'field' : 'middle', 'format' : '{{mid}} = {.3f}' },
+              { 'field' : '${'$'}middle', 'format' : '{{mid}} = {.3f}' },
               { 'field' : '${'$'}Y', 'format' : '.2f' }
             ],
             'tooltip_lines': [   
