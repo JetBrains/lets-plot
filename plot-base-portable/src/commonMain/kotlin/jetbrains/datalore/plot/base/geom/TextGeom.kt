@@ -63,7 +63,7 @@ class TextGeom : GeomBase() {
     }
 
     // This implementation is oversimplified.
-    // Current implementation works for label_format ='.2f', size = 1
+    // Current implementation works for label_format ='.2f'
     // and values between -1.0 and 1.0.
     private fun getSizeUnitRatio(ctx: GeomContext): Double {
         sizeUnit?.let { sizeUnitValue ->
