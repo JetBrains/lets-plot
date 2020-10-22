@@ -147,7 +147,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
                     if (naValue != null) {
                         geom.naValue = naValue
-                    } else {
+                    }else {
                         throw IllegalArgumentException("Expected: na_value = 'some string'")
                     }
                 }
