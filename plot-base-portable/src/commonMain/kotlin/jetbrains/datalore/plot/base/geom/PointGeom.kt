@@ -73,7 +73,8 @@ open class PointGeom : GeomBase() {
     private fun getSizeUnitRatio(ctx: GeomContext): Double {
         sizeUnit?.let { sizeUnitValue ->
             val unitRes = getUnitResBySizeUnit(ctx, sizeUnitValue)
-
+            // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
+            // but AesScaling.circleDiameter is used because Shape.size() takes DataPointAesthetics
             val unitShapeSize = 2.2
             return unitRes / unitShapeSize
         }
