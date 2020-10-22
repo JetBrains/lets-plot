@@ -75,7 +75,7 @@ open class PointGeom : GeomBase() {
             val unitRes = getUnitResBySizeUnit(ctx, sizeUnitValue)
 
             // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
-            //but  AesScaling.circleDiameter is used because Shape.size() takes DataPointAesthetics
+            // but AesScaling.circleDiameter is used because Shape.size() takes DataPointAesthetics
             val unitShapeSize = AesScaling.circleDiameter(1.0)
             return unitRes / unitShapeSize
         }
