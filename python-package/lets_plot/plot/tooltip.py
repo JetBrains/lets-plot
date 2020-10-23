@@ -29,6 +29,9 @@ class layer_tooltips(FeatureSpec):
             field = "$Y" - for all positional y.
         The format contains a number format ('1.f') or a string template ('{.1f}').
         The numeric format for non-numeric value will be ignored.
+        If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}, e.g.,
+            .format('$color', '{{ {.1f} }}') -> "{ 17.0 }"
+            .format('model', '{} {{text}}') -> "mustang {text}"
         The string template in format will allow to change lines for the default tooltip without 'line' specifying.
         Also the template will change the line for outliers.
         Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
@@ -41,23 +44,22 @@ class layer_tooltips(FeatureSpec):
             - @{number of cylinders} for variable with spaces in the name
             - @{income in $} for variable with spaces and dollar sign in the name
             - @nameWith$ for the variable with dollar sign in its name
-        Escaping a special signs with a backslash: \$text to get the string "$text" and \@text for "@text".
+        A dollar sign can be escaped with a backslash, a brace character in the literal text - by doubling:
+            .line('text') -> "text"
+            .line('{{text}}') -> "{text}"
+            .line('@model') -> "mustang"
+            .line('{{@model}}') -> "{mustang}"
         The specified 'line' for outlier will move it to the general multi-line tooltip.
         The default tooltip has a label before the value, usually containing the name of the mapped variable.
         It has it's own behaviour, like blank label for axis aesthetics.
         This default label can be set in template using a pair of symbols '@|'.
         The label can be overridden by specifying a string value before '|' symbol.
         Within the tooltip line the label is left-aligned, the formed by template string is right-aligned.
-        If a label is not specified, the string will be centered in the tooltip.
-
-    If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}, e.g.,
-        .line('text') -> "text"
-        .line('{{text}}') -> "{text}"
-        .line('@model') -> "mustang"
-        .line('{{@model}}') -> "{mustang}"
-        .format('model', '{{{}}}') -> "{mustang}"
-        .format('model', '{} {{text}}') -> "mustang {text}"
-
+        If a label is not specified, the string will be centered in the tooltip. For example:
+            - line('$color'): no label, value is centered;
+            - line('|$color'): label is empty, value is right-aligned;
+            - line('@|$color'): default label is used, value is right-aligned;
+            - line('my label|$color'): label is specified, value is right-aligned.
 
     Set tooltips = "none" to hide tooltips from this layer.
 
