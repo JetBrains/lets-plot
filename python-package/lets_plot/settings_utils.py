@@ -3,7 +3,7 @@
 
 from ._global_settings import has_global_value, get_global_val
 from ._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, MAPTILES_MIN_ZOOM, \
-    MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY
+    MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, _DATALORE_TILES_ATTRIBUTION
 from ._global_settings import GEOCODING_PROVIDER_URL
 
 __all__ = ['maptiles_zxy', 'maptiles_lets_plot']
@@ -41,7 +41,7 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
         MAPTILES_KIND: TILES_VECTOR_LETS_PLOT,
         MAPTILES_URL: url,
         MAPTILES_THEME: theme,
-        MAPTILES_ATTRIBUTION: 'Map data <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap</a> contributors'
+        MAPTILES_ATTRIBUTION: _DATALORE_TILES_ATTRIBUTION
     }
 
 
