@@ -52,12 +52,12 @@ class TooltipConfig(
             val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
             val fieldsInPattern = mutableListOf<ValueSource>()
-            val pattern: String = SOURCE_RE_PATTERN.replace(valueString) { match ->
-                if (match.value == "\\$AES_NAME_PREFIX" || match.value == "\\$VARIABLE_NAME_PREFIX") {
+            val pattern: String = SOURCE_RE_PATTERN.replace(valueString) {
+                if (it.value == "\\$AES_NAME_PREFIX" || it.value == "\\$VARIABLE_NAME_PREFIX") {
                     // it is a part of the text (not of the name)
-                    match.value.removePrefix("\\")
+                    it.value.removePrefix("\\")
                 } else {
-                    fieldsInPattern += getValueSource(match.value)
+                    fieldsInPattern += getValueSource(it.value)
                     StringFormat.valueInLinePattern()
                 }
             }
@@ -70,7 +70,7 @@ class TooltipConfig(
 
         private fun createValueSource(name: String, format: String? = null): ValueSource {
             fun getAesByName(aesName: String): Aes<*> {
-                return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
+                return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
             }
 
             return when {
@@ -83,12 +83,10 @@ class TooltipConfig(
                 }
                 name.startsWith(VARIABLE_NAME_PREFIX) -> {
                     val varName = detachVariableName(name)
-                    if (varName.isEmpty()) error("Variable name cannot be empty")
+                    require(varName.isNotEmpty()) { "Variable name cannot be empty" }
                     DataFrameValue(varName, format)
                 }
-                else -> {
-                    error("Unknown type of the field with name = \"$name\"")
-                }
+                else -> error("Unknown type of the field with name = \"$name\"")
             }
         }
 
@@ -98,27 +96,27 @@ class TooltipConfig(
                 require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
                 require(tooltipFormat.has(FIELD) && tooltipFormat.has(FORMAT)) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
 
-                val configName = tooltipFormat[FIELD] as String
-                val configFormat = tooltipFormat[FORMAT] as String
+                val field = tooltipFormat[FIELD] as String
+                val format = tooltipFormat[FORMAT] as String
 
-                if (configName.startsWith(AES_NAME_PREFIX)) {
-                    val positionals = when (configName.removePrefix(AES_NAME_PREFIX)) {
+                if (field.startsWith(AES_NAME_PREFIX)) {
+                    val positionals = when (field.removePrefix(AES_NAME_PREFIX)) {
                         "X" -> Aes.values().filter(::isPositionalX)
                         "Y" -> Aes.values().filter(::isPositionalY)
                         else -> {
                             // it is aes name
-                            allFormats[configName] = configFormat
+                            allFormats[field] = format
                             emptyList()
                         }
                     }
                     positionals.forEach { aes ->
                         val aesConfigName = AES_NAME_PREFIX + aes.name
                         if (aesConfigName !in allFormats)
-                            allFormats[aesConfigName] = configFormat
+                            allFormats[aesConfigName] = format
                     }
                 } else {
-                    val varConfigName = VARIABLE_NAME_PREFIX + detachVariableName(configName)
-                    allFormats[varConfigName] = configFormat
+                    val varConfigName = VARIABLE_NAME_PREFIX + detachVariableName(field)
+                    allFormats[varConfigName] = format
                 }
             }
             return allFormats

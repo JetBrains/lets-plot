@@ -58,7 +58,7 @@ class TooltipConfig : PlotConfigDemoBase() {
                                'tooltip_formats': [
                                     { 'field' : '$aesX', 'format' : '.1f' }, 
                                     { 'field' : '$aesY', 'format' : '.2f' }, 
-                                    { 'field' : '@{model year}', 'format' : '19{.0f}' }
+                                    { 'field' : 'model year', 'format' : '19{.0f}' }
                                ]
                            }
                         }
