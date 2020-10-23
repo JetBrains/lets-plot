@@ -83,7 +83,11 @@ import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.VectorTileSystemProvider
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
-import jetbrains.livemap.ui.*
+import jetbrains.livemap.ui.CursorService
+import jetbrains.livemap.ui.LiveMapUiSystem
+import jetbrains.livemap.ui.ResourceManager
+import jetbrains.livemap.ui.UiRenderingTaskSystem
+import jetbrains.livemap.ui.UiService
 
 class LiveMap(
     private val myMapRuler: MapRuler<World>,

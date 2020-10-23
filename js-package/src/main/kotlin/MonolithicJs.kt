@@ -146,8 +146,8 @@ private fun buildSinglePlotComponent(
     val plotContainer = PlotContainer(plot, plotBuildInfo.size)
     val svg = buildPlotSvg(plotContainer, parentElement)
 
-    LiveMapUtil.setDefaultCursor { svg.style.setCursor(CssCursor.CROSSHAIR) }
-    LiveMapUtil.setPointerCursor { svg.style.setCursor(CssCursor.POINTER) }
+    LiveMapUtil.defaultCursorSetter { svg.style.setCursor(CssCursor.CROSSHAIR) }
+    LiveMapUtil.pointerCursorSetter { svg.style.setCursor(CssCursor.POINTER) }
 
     parentElement.appendChild(svg)
 }

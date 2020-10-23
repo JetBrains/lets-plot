@@ -65,10 +65,10 @@ object MonolithicAwtLM {
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
                 val plotComponent = buildPlotComponent(plotContainer)
 
-                LiveMapUtil.setDefaultCursor {
+                LiveMapUtil.defaultCursorSetter {
                     plotComponent.cursor = Cursor.getDefaultCursor()
                 }
-                LiveMapUtil.setPointerCursor {
+                LiveMapUtil.pointerCursorSetter {
                     plotComponent.cursor = Cursor(HAND_CURSOR)
                 }
 

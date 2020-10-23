@@ -25,11 +25,11 @@ object LiveMapUtil {
 
     private var myCursorService = CursorService({}, {})
 
-    fun setDefaultCursor(default: () -> Unit) {
+    fun defaultCursorSetter(default: () -> Unit) {
         myCursorService.default = default
     }
 
-    fun setPointerCursor(pointer: () -> Unit) {
+    fun pointerCursorSetter(pointer: () -> Unit) {
         myCursorService.pointer = pointer
     }
 
