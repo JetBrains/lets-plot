@@ -27,9 +27,9 @@ class TooltipConfig : PlotConfigDemoBase() {
     private val aesY = "\$y"
     private val aesColor = "\$color"
     private val aesFill = "\$fill"
-    private val vehicleName = "\${var@vehicle name}"
-    private val modelYear = "\${var@model year}"
-    private val originCar = "\${var@origin of car}"
+    private val vehicleName = "@{vehicle name}"
+    private val modelYear = "@{model year}"
+    private val originCar = "@{origin of car}"
 
 
     private fun mpg(): Map<String, Any> {
@@ -56,9 +56,9 @@ class TooltipConfig : PlotConfigDemoBase() {
                                     '#mpg data set'
                                ],
                                'tooltip_formats': [
-                                    { 'field' : 'x', 'format' : '.1f' }, 
-                                    { 'field' : 'y', 'format' : '.2f' }, 
-                                    { 'field' : 'var@model year', 'format' : '19{.0f}' }
+                                    { 'field' : '$aesX', 'format' : '.1f' }, 
+                                    { 'field' : '$aesY', 'format' : '.2f' }, 
+                                    { 'field' : '@{model year}', 'format' : '19{.0f}' }
                                ]
                            }
                         }
@@ -86,7 +86,7 @@ class TooltipConfig : PlotConfigDemoBase() {
                            'stat': 'density',
                            'tooltips' : {
                                 'tooltip_formats': [
-                                    { 'field' : 'color', 'format' : 'is {.4f} (cm)' }
+                                    { 'field' : '$aesColor', 'format' : 'is {.4f} (cm)' }
                                  ]
                             }
                         }
@@ -198,8 +198,8 @@ class TooltipConfig : PlotConfigDemoBase() {
           'geom': 'boxplot',
           'tooltips': {
             'tooltip_formats': [
-              { 'field' : 'middle', 'format' : '{{mid}} = {.3f}' },
-              { 'field' : '${'$'}Y', 'format' : '.1f' }
+              { 'field' : '${'$'}middle', 'format' : '{{mid}} = {.3f}' },
+              { 'field' : '${'$'}Y', 'format' : '.2f' }
             ],
             'tooltip_lines': [   
                'min, max|${'$'}ymin, ${'$'}ymax'
