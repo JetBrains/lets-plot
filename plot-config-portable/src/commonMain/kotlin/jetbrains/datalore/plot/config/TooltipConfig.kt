@@ -110,32 +110,26 @@ class TooltipConfig(
                         }
                     }
                     positionals.forEach { aes ->
-                        val aesConfigName = AES_NAME_PREFIX + aes.name
-                        if (aesConfigName !in allFormats)
-                            allFormats[aesConfigName] = format
+                        val aesFieldName = AES_NAME_PREFIX + aes.name
+                        if (aesFieldName !in allFormats)
+                            allFormats[aesFieldName] = format
                     }
                 } else {
-                    val varConfigName = VARIABLE_NAME_PREFIX + detachVariableName(field)
-                    allFormats[varConfigName] = format
+                    allFormats[VARIABLE_NAME_PREFIX + field] = format
                 }
             }
             return allFormats
         }
 
-        private fun getValueSource(configName: String): ValueSource {
-            val name = if (configName.startsWith(VARIABLE_NAME_PREFIX)) {
-                VARIABLE_NAME_PREFIX + detachVariableName(configName)
-            } else {
-                configName
+        private fun getValueSource(field: String): ValueSource {
+            if (field !in myValueSources) {
+                myValueSources[field] = createValueSource(field)
             }
-            if (name !in myValueSources) {
-                myValueSources[name] = createValueSource(name)
-            }
-            return myValueSources[name]!!
+            return myValueSources[field]!!
         }
 
-        private fun detachVariableName(configName: String) =
-            configName.removePrefix(VARIABLE_NAME_PREFIX).removeSurrounding("{", "}")
+        private fun detachVariableName(field: String) =
+            field.removePrefix(VARIABLE_NAME_PREFIX).removeSurrounding("{", "}")
 
         private fun detachLabel(tooltipLine: String): String? {
             return if (LABEL_SEPARATOR in tooltipLine) {
