@@ -18,6 +18,21 @@ class layer_tooltips(FeatureSpec):
 
     Parameters
     ----------
+    format() defines the format for displaying the value:
+            .format(field = 'density', format = '.1f')
+            .format(field = '$color', format = 'value is {.1f}')
+        This format will be applied to the mapped value in the default tooltip or to the corresponding value
+        specified in the 'line' template.
+        The field name starts with a '$' prefix for aesthetics, variable names are specified without prefix.
+        It's possible to set the format for all positional aesthetics:
+            field = "$X" - for all positional x;
+            field = "$Y" - for all positional y.
+        The format contains a number format ('1.f') or a string template ('{.1f}').
+        The numeric format for non-numeric value will be ignored.
+        The string template in format will allow to change lines for the default tooltip without 'line' specifying.
+        Also the template will change the line for outliers.
+        Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
+
     line() - line to show in the tooltip.
         Adds a line template to the tooltip with a label.
         Variables and aesthetics can be accessed via a special syntax:
@@ -35,21 +50,14 @@ class layer_tooltips(FeatureSpec):
         Within the tooltip line the label is left-aligned, the formed by template string is right-aligned.
         If a label is not specified, the string will be centered in the tooltip.
 
-    format() defines the format for displaying the value:
-            .format(field = 'density', format = '.1f')
-            .format(field = '$color', format = 'value is {.1f}')
-        This format will be applied to the mapped value in the default tooltip or to the corresponding value
-        specified in the 'line' template.
-        The format contains a number format ('1.f') or a string template ('{.1f}').
-        The numeric format for non-numeric value will be ignored.
-        The string template in format will allow to change lines for the default tooltip without 'line' specifying.
-        Also the template will change the line for outliers.
-        If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}, e.g.,
-             'text' -> "text"
-             '{{text}}' -> "{text}"
-             '@model' -> "mustang"
-             '{{@model}}' -> "{mustang}"
-        Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
+    If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}, e.g.,
+        .line('text') -> "text"
+        .line('{{text}}') -> "{text}"
+        .line('@model') -> "mustang"
+        .line('{{@model}}') -> "{mustang}"
+        .format('model', '{{{}}}') -> "{mustang}"
+        .format('model', '{} {{text}}') -> "mustang {text}"
+
 
     Set tooltips = "none" to hide tooltips from this layer.
 
@@ -67,7 +75,7 @@ class layer_tooltips(FeatureSpec):
     >>> ggplot(mpg, aes(x='displ', y='hwy')) +
     ... geom_point(aes(color='cty', shape='drv'),
     ...                tooltips=layer_tooltips()
-    ...                         .format('hwy', '.1f')             # set the format for the variable value
+    ...                         .format('hwy', '.1f')              # set the format for the variable value
     ...                         .line('@manufacturer @model')      # "    ford mustang    "
     ...                         .line('cty/hwy|$color/@hwy')       # "cty/hwy    17.0/26.0"
     ...                         .line('@|@class')                  # "class     subcompact"

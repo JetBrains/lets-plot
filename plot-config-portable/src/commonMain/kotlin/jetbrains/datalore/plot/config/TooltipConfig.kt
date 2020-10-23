@@ -117,7 +117,7 @@ class TooltipConfig(
                             allFormats[aesConfigName] = configFormat
                     }
                 } else {
-                    val varConfigName = VARIABLE_NAME_PREFIX + detachVariableName(configName)
+                    val varConfigName = VARIABLE_NAME_PREFIX + configName
                     allFormats[varConfigName] = configFormat
                 }
             }
