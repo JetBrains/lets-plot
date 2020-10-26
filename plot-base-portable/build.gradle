@@ -3,20 +3,30 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-repositories {
-    mavenCentral()
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
     jvm()
-    js()
-    macosX64()
-    linuxX64()
+    js {
+        browser()
+    }
+
+    if (project.buildSettings.build_python_extension) {
+        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
+        if (currentOs.isMacOsX()) {
+            macosX64()
+        } else if (currentOs.isLinux()) {
+            linuxX64()
+        } else if (currentOs.isWindows()) {
+            mingwX64()
+        }
+    }
 
     sourceSets {
         commonMain {
@@ -24,6 +34,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
                 implementation project(':base-portable')
+                implementation project(':vis-svg-portable')
                 implementation project(':plot-common-portable')
             }
         }
@@ -37,7 +48,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }

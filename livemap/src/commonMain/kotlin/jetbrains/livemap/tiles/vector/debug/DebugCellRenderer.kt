@@ -9,12 +9,12 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.cells.CellComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.placement.ScreenDimensionComponent
+import jetbrains.livemap.rendering.Renderer
 import jetbrains.livemap.projection.ClientPoint
 import jetbrains.livemap.projection.Coordinates.ZERO_CLIENT_POINT
-import jetbrains.livemap.tiles.components.DebugDataComponent
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LINES_ORDER
+import jetbrains.livemap.tiles.DebugDataComponent
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.LINES_ORDER
 
 class DebugCellRenderer : Renderer {
     private var myOffset: Double = 0.0

@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class ContourFillHelperTest {
 
     private val myTest =
-        ContourFillHelper(ClosedRange.closed(0.0, 1.0), ClosedRange.closed(0.0, 1.0))
+        ContourFillHelper(ClosedRange(0.0, 1.0), ClosedRange(0.0, 1.0))
     private val myLevels = listOf(0.5)
     private val myFillLevels = listOf(0.0, 1.0)
     private val myPathByLevels = HashMap<Double, List<List<DoubleVector>>>()

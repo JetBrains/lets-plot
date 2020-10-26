@@ -12,14 +12,15 @@ import jetbrains.datalore.base.registration.Registration
 
 abstract class SimpleCollectionProperty<ItemT, ValueT>
 protected constructor(
-        protected val collection: ObservableCollection<ItemT>,
-        initialValue: ValueT) :
+    protected val collection: ObservableCollection<ItemT>,
+    initialValue: ValueT) :
         BaseDerivedProperty<ValueT>(initialValue) {
     //        BaseDerivedProperty<ValueT>() {
     private var myRegistration: Registration? = null
 
     override fun doAddListeners() {
-        myRegistration = collection.addListener(object : CollectionListener<ItemT> {
+        myRegistration = collection.addListener(object :
+            CollectionListener<ItemT> {
             override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }

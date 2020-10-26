@@ -32,7 +32,7 @@ interface Aesthetics {
 
     fun resolution(aes: Aes<Double>, naValue: Double): Double
 
-    fun numericValues(aes: Aes<Double>): Iterable<Double>
+    fun numericValues(aes: Aes<Double>): Iterable<Double?>
 
     fun groups(): Iterable<Int>
 }

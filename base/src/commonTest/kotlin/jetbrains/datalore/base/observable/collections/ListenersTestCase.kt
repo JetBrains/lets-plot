@@ -105,7 +105,8 @@ abstract class ListenersTestCase {
         }
     }
 
-    protected interface MyCollection : ObservableCollection<Int> {
+    protected interface MyCollection :
+        ObservableCollection<Int> {
         val beforeItemAddedCallsNumber: Int
         val beforeItemRemovedCallsNumber: Int
         fun verifyLastSuccess(expected: Boolean)

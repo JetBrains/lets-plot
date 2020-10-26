@@ -9,13 +9,13 @@ import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Meta.KIND
 import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
-import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.transform.encode.DataSpecEncodeTransforms
 import jetbrains.datalore.plot.parsePlotSpec
 
@@ -28,7 +28,7 @@ object ServerSideTestUtil {
     internal fun parseOptionsServerSide(spec: String, dataOption: Map<String, List<*>>? = null): Map<String, Any> {
         val opts = parsePlotSpec(spec)
         if (dataOption != null) {
-            opts[Plot.DATA] = dataOption
+            opts[DATA] = dataOption
         }
         return serverTransformWithoutEncoding(opts)
     }

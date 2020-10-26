@@ -5,13 +5,18 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
+import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.base.util.SamplingUtil
+import kotlin.random.Random
+
 
 /**
  * See doc for stat_smooth / geom_smooth
@@ -57,15 +62,15 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
  */
 class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var smootherPointCount = DEF_EVAL_POINT_COUNT
+
     // checkArgument(smoothingMethod == Method.LM or Method.LOESS, "Linear and loess models are supported only, use: method='lm' or 'loess'");
     var smoothingMethod = DEF_SMOOTHING_METHOD
     var confidenceLevel = DEF_CONFIDENCE_LEVEL
-    var isDisplayConfidenceInterval =
-        DEF_DISPLAY_CONFIDENCE_INTERVAL
-
-    override fun requires(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.Y)
-    }
+    var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
+    var span = DEF_SPAN
+    var deg: Int = DEF_DEG // default degree for polynomial regression
+    var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
+    var seed: Long = DEF_SAMPLING_SEED
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
@@ -99,11 +104,48 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         private val DEF_SMOOTHING_METHOD = Method.LM
         private const val DEF_CONFIDENCE_LEVEL = 0.95    // 95 %
         private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
+        private const val DEF_SPAN = 0.5
+        private const val DEF_DEG = 1
+        private const val DEF_LOESS_CRITICAL_SIZE = 1_000
+        private const val DEF_SAMPLING_SEED = 37L
     }
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (!data.has(TransformVar.Y)) {
+
+
+    override fun consumes(): List<Aes<*>> {
+        return listOf<Aes<*>>(Aes.Y)
+    }
+
+    fun needSampling(rowCount: Int): Boolean {
+        if (smoothingMethod != Method.LOESS) {
+            return false
+        }
+
+        if (rowCount <= loessCriticalSize) {
+            return false
+        }
+
+        return true
+    }
+
+    fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
+        val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$seed"
+        messageConsumer(msg)
+
+        return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(seed), data)
+    }
+
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
+
+        @Suppress("NAME_SHADOWING")
+        var data = data
+
+        if (needSampling(data.rowCount())) {
+            data = applySampling(data, messageConsumer)
+        }
+
         val valuesY = data.getNumeric(TransformVar.Y)
         if (valuesY.size < 3) {  // at least 3 data points required
             return withEmptyStatValues()
@@ -138,13 +180,13 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         statSE = statValues[Stats.SE]!!
 
         val statData = DataFrame.Builder()
-                .putNumeric(Stats.X, statX)
-                .putNumeric(Stats.Y, statY)
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.Y, statY)
 
         if (isDisplayConfidenceInterval) {
             statData.putNumeric(Stats.Y_MIN, statMinY)
-                    .putNumeric(Stats.Y_MAX, statMaxY)
-                    .putNumeric(Stats.SE, statSE)
+                .putNumeric(Stats.Y_MAX, statMaxY)
+                .putNumeric(Stats.SE, statSE)
         }
 
         return statData.build()
@@ -159,13 +201,6 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
    * */
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
-        val regression = when (smoothingMethod) {
-            Method.LM    -> LinearRegression(valuesX, valuesY, confidenceLevel)
-            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel)
-            else -> throw IllegalArgumentException(
-                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
-            )
-        }
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         val statMinY = ArrayList<Double>()
@@ -179,15 +214,37 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         result[Stats.Y_MAX] = statMaxY
         result[Stats.SE] = statSE
 
+        val regression = when (smoothingMethod) {
+            Method.LM -> {
+                Preconditions.checkArgument(
+                    deg >= 1,
+                    "Degree of polynomial regression must be at least 1"
+                )
+                if (deg == 1) {
+                    LinearRegression(valuesX, valuesY, confidenceLevel)
+                } else {
+                    if (PolynomialRegression.canBeComputed(valuesX, valuesY, deg)) {
+                        PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
+                    } else {
+                        return result   // empty stat data
+                    }
+                }
+            }
+            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+            else -> throw IllegalArgumentException(
+                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
+            )
+        }
+
         val rangeX = SeriesUtil.range(valuesX) ?: return result
 
-        val startX = rangeX.lowerEndpoint()
-        val spanX = rangeX.upperEndpoint() - startX
+        val startX = rangeX.lowerEnd
+        val spanX = rangeX.upperEnd - startX
         val stepX = spanX / (smootherPointCount - 1)
 
         for (i in 0 until smootherPointCount) {
             val x = startX + i * stepX
-            val eval = regression.evalX(x)
+            val eval = regression.evalX(x.coerceIn(rangeX.lowerEnd, rangeX.upperEnd))
             statX.add(x)
             statY.add(eval.y)
             statMinY.add(eval.ymin)

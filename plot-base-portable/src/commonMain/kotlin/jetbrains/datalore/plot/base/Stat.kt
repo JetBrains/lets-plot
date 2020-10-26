@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.base
 
 interface Stat {
-    fun apply(data: DataFrame, statCtx: StatContext): DataFrame
+    fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit = {}): DataFrame
 
-    fun requires(): List<Aes<*>>
+    fun consumes(): List<Aes<*>>
 
     fun hasDefaultMapping(aes: Aes<*>): Boolean
 

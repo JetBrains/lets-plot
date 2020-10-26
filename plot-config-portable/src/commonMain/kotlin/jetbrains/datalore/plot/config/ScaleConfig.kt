@@ -76,7 +76,8 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             // False - show only hollow shapes, otherwise - all (default)
             if (solid is Boolean && solid == false) {
                 mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(
-                    ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE)
+                    ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE
+                )
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {
             mapperProvider =
@@ -86,53 +87,67 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
                 SizeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
-        if (has(SCALE_MAPPER_KIND)) {
-            when (val mapperKind = getString(SCALE_MAPPER_KIND)) {
-                IDENTITY ->
-                    mapperProvider =
-                        createIdentityMapperProvider(aes, naValue)
-                COLOR_GRADIENT ->
-                    mapperProvider = ColorGradientMapperProvider(
-                        getColor(LOW),
-                        getColor(HIGH),
-                        (naValue as Color)
-                    )
-                COLOR_GRADIENT2 ->
-                    mapperProvider = ColorGradient2MapperProvider(
-                        getColor(LOW),
-                        getColor(MID),
-                        getColor(HIGH),
-                        getDouble(MIDPOINT), naValue as Color
-                    )
-                COLOR_HUE ->
-                    mapperProvider = ColorHueMapperProvider(
-                        getDoubleList(HUE_RANGE),
-                        getDouble(CHROMA),
-                        getDouble(LUMINANCE),
-                        getDouble(START_HUE),
-                        getDouble(DIRECTION), naValue as Color
-                    )
-                COLOR_GREY ->
-                    mapperProvider = ColorLuminanceMapperProvider(
-                        getDouble(START),
-                        getDouble(END),
-                        naValue as Color
-                    )
-                COLOR_BREWER ->
-                    mapperProvider = ColorBrewerMapperProvider(
-                        getString(PALETTE_TYPE),
-                        get(PALETTE),
-                        getDouble(DIRECTION),
-                        naValue as Color
-                    )
-                SIZE_AREA ->
-                    mapperProvider = SizeAreaMapperProvider(
-                        getDouble(MAX_SIZE),
-                        naValue as Double
-                    )
-                else ->
-                    throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + mapperKind + "'")
+        // used in scale_x_discrete, scale_y_discrete
+        val discreteDomain = getBoolean(Option.Scale.DISCRETE_DOMAIN)
+        val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
+
+        val scaleMapperKind =
+            getString(SCALE_MAPPER_KIND) ?: if (!has(OUTPUT_VALUES) && discreteDomain && aes in setOf<Aes<*>>(
+                    Aes.FILL,
+                    Aes.COLOR
+                )
+            )
+            // Default palette type for discrete colors
+                COLOR_BREWER
+            else
+                null
+
+        when (scaleMapperKind) {
+            null -> {
             }
+            IDENTITY ->
+                mapperProvider = createIdentityMapperProvider(aes, naValue)
+            COLOR_GRADIENT ->
+                mapperProvider = ColorGradientMapperProvider(
+                    getColor(LOW),
+                    getColor(HIGH),
+                    (naValue as Color)
+                )
+            COLOR_GRADIENT2 ->
+                mapperProvider = ColorGradient2MapperProvider(
+                    getColor(LOW),
+                    getColor(MID),
+                    getColor(HIGH),
+                    getDouble(MIDPOINT), naValue as Color
+                )
+            COLOR_HUE ->
+                mapperProvider = ColorHueMapperProvider(
+                    getDoubleList(HUE_RANGE),
+                    getDouble(CHROMA),
+                    getDouble(LUMINANCE),
+                    getDouble(START_HUE),
+                    getDouble(DIRECTION), naValue as Color
+                )
+            COLOR_GREY ->
+                mapperProvider = GreyscaleLightnessMapperProvider(
+                    getDouble(START),
+                    getDouble(END),
+                    naValue as Color
+                )
+            COLOR_BREWER ->
+                mapperProvider = ColorBrewerMapperProvider(
+                    getString(PALETTE_TYPE),
+                    get(PALETTE),
+                    getDouble(DIRECTION),
+                    naValue as Color
+                )
+            SIZE_AREA ->
+                mapperProvider = SizeAreaMapperProvider(
+                    getDouble(MAX_SIZE),
+                    naValue as Double
+                )
+            else ->
+                throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + scaleMapperKind + "'")
         }
 
         val b = ScaleProviderBuilder(aes)
@@ -141,9 +156,8 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             b.mapperProvider(mapperProvider as MapperProvider<T>)
         }
 
-        // used in scale_x_discrete, scale_y_discrete
-        val discreteDomain = getBoolean(Option.Scale.DISCRETE_DOMAIN)
         b.discreteDomain(discreteDomain)
+        b.discreteDomainReverse(reverse)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             // ToDo: add support for 'date_breaks', 'date_labels' (see: https://ggplot2.tidyverse.org/current/scale_date.html)

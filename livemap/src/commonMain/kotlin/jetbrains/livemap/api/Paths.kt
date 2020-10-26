@@ -19,24 +19,26 @@ import jetbrains.livemap.core.projections.ProjectionUtil.transformMultiPolygon
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
-import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedLocationComponent
-import jetbrains.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.livemap.entities.placement.ScreenLoopComponent
-import jetbrains.livemap.entities.placement.ScreenOriginComponent
-import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.RendererComponent
-import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
-import jetbrains.livemap.entities.rendering.StyleComponent
-import jetbrains.livemap.entities.rendering.setStrokeColor
+import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.geocoding.NeedLocationComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
+import jetbrains.livemap.placement.ScreenLoopComponent
+import jetbrains.livemap.placement.ScreenOriginComponent
+import jetbrains.livemap.placement.WorldDimensionComponent
+import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.rendering.RendererComponent
+import jetbrains.livemap.rendering.Renderers.PathRenderer
+import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.rendering.setStrokeColor
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PathLocatorHelper
 
 @LiveMapDsl
 class Paths(
-    val factory: Entities.MapEntityFactory,
+    val factory: MapEntityFactory,
     val mapProjection: MapProjection
 )
 
@@ -49,7 +51,7 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
         }
 
     Paths(
-        Entities.MapEntityFactory(layerEntity),
+        MapEntityFactory(layerEntity),
         mapProjection
     ).apply(block)
 }
@@ -62,11 +64,11 @@ fun Paths.path(block: PathBuilder.() -> Unit) {
 
 @LiveMapDsl
 class PathBuilder(
-    private val myFactory: Entities.MapEntityFactory,
+    private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
-    var index: Int = 0
-    var mapId: String = ""
+    var layerIndex: Int? = null
+    var index: Int? = null
     var regionId: String = ""
 
     var lineDash: List<Double> = emptyList()
@@ -79,7 +81,7 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
-    fun build(): EcsEntity? {
+    fun build(nonInteractive: Boolean = false): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
         return coord
@@ -88,6 +90,9 @@ class PathBuilder(
                 val entity = myFactory
                     .createMapEntity("map_ent_path")
                     .addComponents {
+                        if (layerIndex != null && index != null) {
+                            + IndexComponent(layerIndex!!, index!!)
+                        }
                         + RendererComponent(PathRenderer())
                         + WorldOriginComponent(bbox.origin)
                         + WorldGeometryComponent().apply { geometry = coord }
@@ -99,8 +104,11 @@ class PathBuilder(
                             strokeWidth = this@PathBuilder.strokeWidth
                             lineDash = this@PathBuilder.lineDash.toDoubleArray()
                         }
-                        + NeedLocationComponent()
-                        + NeedCalculateLocationComponent()
+                        + NeedLocationComponent
+                        + NeedCalculateLocationComponent
+                        if (!nonInteractive) {
+                            + LocatorComponent(PathLocatorHelper())
+                        }
                     }
 
                 if (animation == 2) {

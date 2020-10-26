@@ -5,33 +5,36 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.*
-import jetbrains.gis.tileprotocol.TileLayer
+import jetbrains.gis.geoprotocol.FeatureLevel
+import jetbrains.gis.geoprotocol.GeoTransportImpl
+import jetbrains.gis.geoprotocol.GeocodingService
+import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.gis.tileprotocol.socket.Socket
-import jetbrains.gis.tileprotocol.socket.SocketBuilder
-import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
-import jetbrains.livemap.LayerProvider
-import jetbrains.livemap.LayerProvider.EmptyLayerProvider
-import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.MapLocation
+import jetbrains.livemap.camera.CameraListenerComponent
+import jetbrains.livemap.camera.CenterChangedComponent
+import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.core.projections.createArcPath
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
+import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.tiles.TileSystemProvider
 import kotlin.math.abs
 
 @DslMarker
@@ -41,38 +44,33 @@ annotation class LiveMapDsl
 class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
-    lateinit var tileService: TileService
-    var layerProvider: LayerProvider = EmptyLayerProvider()
+    lateinit var tileSystemProvider: TileSystemProvider
+
+    var layers: List<LayersBuilder.() -> Unit> = emptyList()
 
     var zoom: Int? = null
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
-    var level: FeatureLevel? = null
-    var parent: MapRegion? = null
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
     var isLoopX: Boolean = true
     var isLoopY: Boolean = false
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
+
+    var attribution: String? = null
+
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
-
-
-    fun params(vararg values: Pair<String, Any>) {
-        devParams = DevParams(mapOf(*values))
-    }
 
     fun build(): LiveMapSpec {
         return LiveMapSpec(
             size = size,
             zoom = zoom,
             isInteractive = interactive,
-            layerProvider = layerProvider,
+            layers = layers,
 
-            level = level,
             location = mapLocation,
-            parent = parent,
 
             projectionType = projectionType,
             isLoopX = isLoopX,
@@ -82,11 +80,14 @@ class LiveMapBuilder {
 
             mapLocationConsumer = mapLocationConsumer,
 
+            tileSystemProvider = tileSystemProvider,
+
             devParams = devParams,
+
+            attribution = attribution,
 
             // deprecated
             isClustering = false,
-            isEnableMagnifier = false,
             isLabels = true,
             isScaled = false,
             isTiles = true,
@@ -100,13 +101,14 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
+    val mapRuler: MapRuler<World>,
     val pointScaling: Boolean,
     val textMeasurer: TextMeasurer
 )
 
 @LiveMapDsl
 class ChartSource {
-    var mapId: String? = null
+    var layerIndex: Int? = null
     var point: Vec<LonLat>? = null
 
     var radius: Double = 0.0
@@ -222,37 +224,57 @@ class Projection {
 
 @LiveMapDsl
 class LiveMapTileServiceBuilder {
-    var host = "localhost"
-    var port: Int? = null
+    lateinit var url: String
     var theme = TileService.Theme.COLOR
 
     fun build(): TileService {
-        return TileService(TileWebSocketBuilder(host, port), theme)
+        return TileService(TileWebSocketBuilder(url), theme)
     }
 }
 
 @LiveMapDsl
 class LiveMapGeocodingServiceBuilder {
-    private val subUrl = "/map_data/geocoding"
-
-    var host = "localhost"
-    var port: Int? = null
+    lateinit var url: String
 
     fun build(): GeocodingService {
-        return GeocodingService(GeoTransportImpl(host, port, subUrl))
+        return GeocodingService(GeoTransportImpl(url))
+    }
+}
+
+fun mapEntity(
+    componentManager: EcsComponentManager,
+    parentLayerComponent: ParentLayerComponent,
+    name: String
+): EcsEntity {
+    return componentManager
+        .createEntity(name)
+        .addComponents {
+            + parentLayerComponent
+            + CameraListenerComponent()
+            + CenterChangedComponent()
+            + ZoomChangedComponent()
+        }
+}
+
+class MapEntityFactory(layerEntity: EcsEntity) {
+    private val myComponentManager: EcsComponentManager = layerEntity.componentManager
+    private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
+    private val myLayerEntityComponent: LayerEntitiesComponent = layerEntity.get()
+
+    fun createMapEntity(name: String): EcsEntity {
+        return mapEntity(myComponentManager, myParentLayerComponent, name)
+            .also { myLayerEntityComponent.add(it.id) }
     }
 }
 
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
-    layerProvider = LayerProviderImpl(devParams, block)
+    layers = listOf(block)
 }
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {
     Location().apply(block).let { location ->
-        level = location.hint?.level
-        parent = location.hint?.parent
         mapLocation = location.mapLocation
     }
 }
@@ -271,50 +293,9 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     }
 }
 
-fun internalTiles(): TileService {
-    return liveMapTiles {
-            theme = TileService.Theme.COLOR
-            host = "10.0.0.127"
-            port = 3933
-        }
-}
-
-fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
+fun liveMapVectorTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
     LiveMapTileServiceBuilder().apply(block).build()
 
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
     return LiveMapGeocodingServiceBuilder().apply(block).build()
 }
-
-val dummyGeocodingService: GeocodingService = GeocodingService(
-    object : GeoTransport {
-        override fun send(request: GeoRequest): Async<GeoResponse> {
-            UNSUPPORTED("dummyGeocodingService.send")
-        }
-    }
-)
-
-val dummyTileService: TileService = object : TileService(DummySocketBuilder(), Theme.COLOR) {
-    override fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
-        return constant(emptyList())
-    }
-}
-
-internal class DummySocketBuilder : SocketBuilder {
-    override fun build(handler: SocketHandler): Socket {
-        return object : Socket {
-            override fun connect() {
-                UNSUPPORTED("DummySocketBuilder.connect")
-            }
-
-            override fun close() {
-                UNSUPPORTED("DummySocketBuilder.close")
-            }
-
-            override fun send(msg: String) {
-                UNSUPPORTED("DummySocketBuilder.send")
-            }
-        }
-    }
-}
-

@@ -8,16 +8,16 @@ package jetbrains.datalore.plot.config.transform
 import jetbrains.datalore.plot.config.Option.GGBunch
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Plot
-import jetbrains.datalore.plot.config.Option.Plot.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.transform.SpecSelector.Companion.from
 
 object PlotSpecTransformUtil {
     val GGBUNCH_KEY_PARTS = arrayOf(GGBunch.ITEMS, GGBunch.Item.FEATURE_SPEC)
     private val PLOT_WITH_LAYERS_TARGETS = listOf(
-        PlotSpecTransformUtil.TargetSpec.PLOT,
-        PlotSpecTransformUtil.TargetSpec.LAYER,
-        PlotSpecTransformUtil.TargetSpec.GEOM,
-        PlotSpecTransformUtil.TargetSpec.STAT
+        TargetSpec.PLOT,
+        TargetSpec.LAYER,
+        TargetSpec.GEOM,
+        TargetSpec.STAT
     )
 
     fun getDataSpecFinders(isGGBunch: Boolean): List<SpecFinder> {
@@ -78,10 +78,10 @@ object PlotSpecTransformUtil {
     private fun selectorKeys(target: TargetSpec, isGGBunch: Boolean): Array<String> {
         var keys: Array<String>
         when (target) {
-            PlotSpecTransformUtil.TargetSpec.PLOT -> keys = arrayOf()
-            PlotSpecTransformUtil.TargetSpec.LAYER -> keys = arrayOf(Plot.LAYERS)
-            PlotSpecTransformUtil.TargetSpec.GEOM -> keys = arrayOf(Plot.LAYERS, Layer.GEOM)
-            PlotSpecTransformUtil.TargetSpec.STAT -> keys = arrayOf(Plot.LAYERS, Layer.STAT)
+            TargetSpec.PLOT -> keys = arrayOf()
+            TargetSpec.LAYER -> keys = arrayOf(Plot.LAYERS)
+            TargetSpec.GEOM -> keys = arrayOf(Plot.LAYERS, Layer.GEOM)
+            TargetSpec.STAT -> keys = arrayOf(Plot.LAYERS, Layer.STAT)
         }
 
         if (isGGBunch) {

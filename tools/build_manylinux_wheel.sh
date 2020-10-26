@@ -7,8 +7,9 @@ set -e -x
 
 
 working_dir="/tmp/python-package/"
+build_dir="build/"
 dist_dir="dist/"
-python_bin_version="cp3[7-8]*"
+python_bin_version="cp3[6-8]*"
 
 
 cd $working_dir
@@ -19,7 +20,7 @@ for pybin in /opt/python/${python_bin_version}/bin; do
 done
 
 # Bundle external shared libraries into the wheels
-for whl in ${dist_dir}/*.whl; do
+for whl in ${dist_dir}/lets_plot*.whl; do
     auditwheel repair "$whl" --plat ${PLAT} -w ${dist_dir}
 done
 
@@ -27,5 +28,6 @@ done
 shopt -s extglob
 rm ${dist_dir}*-linux_*
 
-# Change folder ownership to user (uid: 1000)
-chown -R 1000:1000 ${working_dir}${dist_dir}
+# Change folder ownership to user
+chown -R $USER_ID:$GROUP_ID ${working_dir}${dist_dir}
+chown -R $USER_ID:$GROUP_ID ${working_dir}${build_dir}

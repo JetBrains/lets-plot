@@ -14,7 +14,7 @@ object GGBunchBrowser {
         with(GGBunch()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
+            PlotConfigBrowserDemoUtil.show(
                 "GGBunch",
                 plotSpecList,
                 DoubleVector(600.0, 600.0)

@@ -8,8 +8,8 @@ package jetbrains.gis.geoprotocol
 import jetbrains.datalore.base.typedGeometry.*
 
 object GeometryUtil {
-    fun <TypeT> bbox(multipolygon: MultiPolygon<TypeT>): Rect<TypeT>? {
-        val rects = multipolygon.limit()
+    fun <TypeT> bbox(multiPolygon: MultiPolygon<TypeT>): Rect<TypeT>? {
+        val rects = multiPolygon.limit()
         return if (rects.isEmpty()) {
             null
         } else {

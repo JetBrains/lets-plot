@@ -22,7 +22,7 @@ abstract class SwingDemoFrame(
             val frame = JFrame(title)
 
             val panel = JPanel()
-            panel.background = Color.WHITE
+//            panel.background = Color.WHITE
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(MARGIN_LEFT, 0)))
             panel.add(Box.createRigidArea(Dimension(0,
@@ -63,7 +63,7 @@ abstract class SwingDemoFrame(
     abstract fun createSvgComponent(svgRoot: SvgSvgElement): JComponent
 
     companion object {
-        val FRAME_SIZE = Dimension(800, 600)
+        val FRAME_SIZE = Dimension(800, 1200)
         private const val MARGIN_LEFT = 50
         const val SPACE_V = 5
 

@@ -12,7 +12,8 @@ def theme(*,
           axis_text=None, axis_text_x=None, axis_text_y=None,
           axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
           axis_line=None, axis_line_x=None, axis_line_y=None,
-          legend_position=None,
+          legend_position=None, legend_justification=None, legend_direction=None,
+          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
           **kwargs):
     """
     Use theme() to modify individual components of a theme,
@@ -20,7 +21,6 @@ def theme(*,
 
     Parameters
     ----------
-
     axis_title : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
         label of axes
 
@@ -58,15 +58,28 @@ def theme(*,
         line along y axis
 
     legend_position : ['none' | 'left' | 'right' | 'bottom' | 'top'] or two-element numeric vector.
-        the position of legends
+        The position of legends. "none" - remove the plot legend.
 
+    legend_justification :  "center" or two-element numeric vector.
+        Anchor point for positioning legend.
+
+    legend_direction : ["horizontal" | "vertical"]
+        Layout of items in legends.
+
+    axis_tooltip : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+        axes tooltips
+
+    axis_tooltip_x : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+        x axis tooltips
+
+    axis_tooltip_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+        y axis tooltips
 
     Returns
     -------
         theme specification
 
-
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from sklearn.datasets import make_blobs
@@ -75,10 +88,9 @@ def theme(*,
     >>> dat = pd.DataFrame(dat)
     >>> colors = {0:'red', 1: 'blue', 2: 'green'}
     >>> dat['color'] = [colors[variable] for variable in dat['variable']]
-    >>> ggplot(dat, aes(x='x', y='y')) \
-    >>>     + geom_point(aes(color='y'))\
-    >>>     + scale_color_gradient(guide=guide_colorbar(nbin=10,barheight= 8, barwidth=300))\
-    >>>     + theme(legend_position='top')
+    >>> ggplot(dat, aes(x='x', y='y')) + geom_point(aes(color='y')) +
+    ... scale_color_gradient(guide=guide_colorbar(nbin=10,barheight= 8, barwidth=300)) +
+    ... theme(legend_position='top')
     """
     return FeatureSpec('theme', name=None,
                        axis_title=axis_title,
@@ -94,6 +106,11 @@ def theme(*,
                        axis_line_x=axis_line_x,
                        axis_line_y=axis_line_y,
                        legend_position=legend_position,
+                       legend_justification=legend_justification,
+                       legend_direction=legend_direction,
+                       axis_tooltip=axis_tooltip,
+                       axis_tooltip_x=axis_tooltip_x,
+                       axis_tooltip_y=axis_tooltip_y,
                        **kwargs)
 
 

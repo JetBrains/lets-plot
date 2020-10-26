@@ -78,9 +78,7 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> : RoleSynchronizer<SourceT
         if (mapperFactories != null) {
             for (f in mapperFactories) {
                 result = f.createMapper(source)
-                if (result != null) {
-                    break
-                }
+                break
             }
         }
         return result

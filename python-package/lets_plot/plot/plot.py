@@ -7,6 +7,7 @@ import numbers
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.util import as_annotated_data
+from .._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
 
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
@@ -22,10 +23,12 @@ def ggplot(data=None, mapping=None):
     mapping : dictionary, optional
         Default list of aesthetic mappings to use for the plot. If not specified, must be supplied in each layer
         added to the plot.
-     Returns
+
+    Returns
     -------
         plot specification
-    Notes
+
+    Note
     -----
         ggplot() initializes a ggplot object. It can be used to declare the input data frame for a graphic and to
         specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically
@@ -35,19 +38,22 @@ def ggplot(data=None, mapping=None):
         and the order in which they are added. For complex graphics with multiple layers, initialization with
         ggplot() is recommended.
         There are three common ways to invoke ggplot (see examples below):
-        - ggplot(dat,aes(x,y)) :
-            This method is recommended if all layers use the same data and the same set of aesthetics, although
-            this method can also be used to add a layer using data from another data frame.
-        - ggplot(dat) :
-             This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
-             This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
-             from one layer to another.
-        - ggplot() :
-            This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
-            useful when multiple data frames are used to produce different layers, as is often the case in complex
-            graphics.
+
+            - ggplot(dat,aes(x,y)) :
+                This method is recommended if all layers use the same data and the same set of aesthetics, although
+                this method can also be used to add a layer using data from another data frame.
+            - ggplot(dat) :
+                This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
+                This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
+                from one layer to another.
+            - ggplot() :
+                This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
+                useful when multiple data frames are used to produce different layers, as is often the case in complex
+                graphics.
+
         ggplot() with no layers defined will produce an error message: "No layers in plot"
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -68,7 +74,7 @@ def ggplot(data=None, mapping=None):
     if isinstance(data, FeatureSpec):
         raise ValueError("Object {!r} is not acceptable as 'data' argument in ggplot()".format(data.kind))
 
-    data, data_meta = as_annotated_data(data)
+    data, mapping, data_meta = as_annotated_data(data, mapping)
 
     return PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 
@@ -82,12 +88,14 @@ def ggsize(width, height):
     ----------
     width  : number
         Width of plot in px.
-    height :
+    height : number
         Height of plot in px.
-     Returns
+
+    Returns
     -------
         plot size specification
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -99,6 +107,13 @@ def ggsize(width, height):
     """
     assert isinstance(width, numbers.Number), "'width' must be numeric"
     assert isinstance(height, numbers.Number), "'height' must be numeric"
+
+    max_width = get_global_val(MAX_WIDTH) if has_global_value(MAX_WIDTH) else 10_000
+    max_height = get_global_val(MAX_HEIGHT) if has_global_value(MAX_HEIGHT) else 10_000
+
+    assert width <= max_width, "'width' must be less than or equal to " + str(max_width)
+    assert height <= max_height, "'height' must be less than or equal to " + str(max_height)
+
     return FeatureSpec('ggsize', name=None, width=width, height=height)
 
 
@@ -175,12 +190,12 @@ class GGBunch(FeatureSpec):
         """
         Special method discovered and invoked by IPython.display.display
         """
-        from ..frontend_context.frontend_context import _as_html
+        from ..frontend_context._configuration import _as_html
         return _as_html(self.as_dict())
 
     def show(self):
         """
         Draw all plots currently in this 'bunch'
         """
-        from ..frontend_context.frontend_context import _display_plot
+        from ..frontend_context._configuration import _display_plot
         _display_plot(self)

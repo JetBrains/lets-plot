@@ -33,20 +33,20 @@ private fun <T> findRingIntervals(path: List<T>): List<ClosedRange<Int>> {
     val n = path.size
     while (i < n) {
         if (startIndex != i && path[startIndex] == path[i]) {
-            intervals.add(ClosedRange.closed(startIndex, i + 1))
+            intervals.add(ClosedRange(startIndex, i + 1))
             startIndex = i + 1
         }
         i++
     }
 
     if (startIndex != path.size) {
-        intervals.add(ClosedRange.closed(startIndex, path.size))
+        intervals.add(ClosedRange(startIndex, path.size))
     }
     return intervals
 }
 
 private fun <T> List<T>.sublist(range: ClosedRange<Int>): List<T> {
-    return this.subList(range.lowerEndpoint(), range.upperEndpoint())
+    return this.subList(range.lowerEnd, range.upperEnd)
 }
 
 

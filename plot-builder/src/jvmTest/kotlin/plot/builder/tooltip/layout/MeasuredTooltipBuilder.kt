@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.plot.builder.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
@@ -45,7 +46,12 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
 
     fun buildTooltip(): MeasuredTooltip {
         val hint = createHint()
-        return MeasuredTooltip(jetbrains.datalore.plot.builder.interact.TooltipSpec(hint, makeText(myText!!), myFill!!), mySize!!, TooltipBox())
+        return MeasuredTooltip(jetbrains.datalore.plot.builder.interact.TooltipSpec(
+            layoutHint = hint,
+            lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
+            fill = myFill!!,
+            isOutlier = true
+        ), mySize!!, TooltipBox())
     }
 
     private fun createHint(): TipLayoutHint {
@@ -90,23 +96,23 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
         }
 
         fun vertical(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
-            return setDefaults(MeasuredTooltipBuilder.verticalTooltip(targetCoord).text(key))
+            return setDefaults(verticalTooltip(targetCoord).text(key))
         }
 
         fun horizontal(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
-            return setDefaults(MeasuredTooltipBuilder.horizontalTooltip(targetCoord).text(key))
+            return setDefaults(horizontalTooltip(targetCoord).text(key))
         }
 
         fun cursor(key: String): MeasuredTooltipBuilder {
-            return setDefaults(MeasuredTooltipBuilder.cursorTooltip().text(key))
+            return setDefaults(cursorTooltip().text(key))
         }
 
         fun xAxisTip(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
-            return setDefaults(MeasuredTooltipBuilder.xAxisTooltip(targetCoord).text(key))
+            return setDefaults(xAxisTooltip(targetCoord).text(key))
         }
 
         fun yAxisTip(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
-            return setDefaults(MeasuredTooltipBuilder.yAxisTooltip(targetCoord).text(key))
+            return setDefaults(yAxisTooltip(targetCoord).text(key))
         }
 
         private fun setDefaults(builder: MeasuredTooltipBuilder): MeasuredTooltipBuilder {

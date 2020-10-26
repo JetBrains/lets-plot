@@ -12,7 +12,7 @@ object AreaBrowser {
     fun main(args: Array<String>) {
         with(Area()) {
             @Suppress("UNCHECKED_CAST")
-            (PlotConfigDemoUtil.show(
+            (PlotConfigBrowserDemoUtil.show(
                 "Area plot",
                 plotSpecList() as List<MutableMap<String, Any>>,
                 demoComponentSize

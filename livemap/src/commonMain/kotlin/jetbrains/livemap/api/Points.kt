@@ -18,11 +18,13 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
+import jetbrains.livemap.placement.*
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.PointRenderer
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PointLocatorHelper
 
 @LiveMapDsl
 class Points(
@@ -68,8 +70,8 @@ fun Points.point(block: PointBuilder.() -> Unit) {
 class PointBuilder(
     private val myFactory: MapEntityFactory
 ) {
-    var index: Int = 0
-    var mapId: String? = null
+    var layerIndex: Int? = null
+    var index: Int? = null
     var point: Vec<LonLat>? = null
 
     var radius: Double = 4.0
@@ -83,20 +85,21 @@ class PointBuilder(
 
     fun build(
         pointScaling: Boolean,
-        animationBuilder: AnimationBuilder
+        animationBuilder: AnimationBuilder,
+        nonInteractive: Boolean = false
     ): EcsEntity {
 
         val size = radius * 2.0
 
         return when {
-                point != null ->
-                    myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
-                mapId != null ->
-                    myFactory.createDynamicEntityWithLocation("map_ent_d_point_$mapId", mapId!!)
-                else ->
-                    error("Can't create point entity. [point] and [mapId] is null.")
+                point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
+                else -> error("Can't create point entity. Coord is null.")
             }.run {
                 setInitializer { worldPoint ->
+                    if (layerIndex != null && index != null) {
+                        + IndexComponent(layerIndex!!, index!!)
+                    }
+
                     + ShapeComponent().apply { shape = this@PointBuilder.shape }
                     + createStyle()
                     + if (pointScaling) {
@@ -110,6 +113,10 @@ class PointBuilder(
                     + RendererComponent(PointRenderer())
                     + ScreenLoopComponent()
                     + ScreenOriginComponent()
+
+                    if (!nonInteractive) {
+                        + LocatorComponent(PointLocatorHelper())
+                    }
 
                     if (animation == 2) {
                         val transformComponent = TransformComponent()

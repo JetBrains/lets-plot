@@ -6,6 +6,10 @@ from enum import Enum
 from typing import Union, Optional, List
 
 from .geom import _geom
+from .util import is_geo_data_regions, map_join_regions
+from .._global_settings import has_global_value, get_global_val
+from .._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, GEOCODING_PROVIDER_URL, \
+    TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
 
 try:
     import pandas
@@ -14,16 +18,17 @@ except ImportError:
 
 # from ..geo_data.livemap_helper import _prepare_location
 # from ..geo_data.livemap_helper import _prepare_parent
+# from ..geo_data.livemap_helper import _prepare_tiles
 
 __all__ = ['geom_livemap']
 
 
-def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None, level=None,
-                 interactive=None, location=None,
-                 zoom=None, within=None, magnifier=None, clustering=None, scaled=None, labels=None, theme=None,
-                 projection=None, geodesic=None, **other_args):
+def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, sampling=None,
+                 location=None, zoom=None, projection=None, geodesic=None, tiles=None,
+                 map=None, map_join=None, **other_args):
     """
     Display a live map.
+
     Parameters
     ----------
     mapping : set of aesthetic mappings created by aes() function.
@@ -32,47 +37,28 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     data : dictionary or pandas DataFrame, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    geom : string, optional
-        The mode of the displayed data. There are:
-        - 'polygon' for colored areas (default).
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
+        Data containing coordinates of points.
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
+        second value in pair - column in map
+    symbol : string, optional
+        The marker used for displaying the data. There are:
         - 'point' for circles of different size and color.
         - 'pie' for pie charts.
-        - 'heatmap' for heatmap (color spots).
         - 'bar' for bar charts.
-    level : string, optional
-        The administrative level of the displayed data.
-        There are 'country', 'state', 'county', 'city', None (default).
-    within : string, optional
-        Data can be filtered by within name, for example 'USA'.
-    interactive : True (default) or False, optional
-        Enables user interaction with the map.
-    magnifier : True or False (default), optional
-        Enables a magnifier when you click on overlapping point. Applicable for 'point'.
-    location : string or array, optional
+    location : array, optional
         Initial position of the map. If not set, displays the United States.
-        There are id | [lon1, lat1, lon2, lat2,..., lonN, latN].
-        - id (string, for example 'Texas').
+        There are [lon1, lat1, lon2, lat2,..., lonN, latN].
         - lon1, lon2,..., lonN are longitudes in degrees (positive in the Eastern hemisphere).
         - lat1, lat2,..., latN are latitudes in degrees (positive in the Northern hemisphere).
     zoom : integer, optional
         Zoom of the map in the range 1 - 15.
-    clustering : True or False (default), optional
-        Enables a clustering for overlapping points. Applicable for 'point'.
-    scaled : True or False (default), optional
-        Enables a scaling for heatmap.
-        If True, the specified size is equal to the size at zero zoom.
-    labels : True (default) or False, optional
-        Enables a drawing labels on map.
-    theme : string, optional
-        Theme for the map.
-        There are:
-        - 'color' for default mode.
-        - 'light' for less colored mode.
+    tiles: string, optional
+        Tiles provider, either as a string - URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
+        (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') or the result of a call to a maptiles_xxx functions
     projection : string, optional
         The map projection. There are:
         - 'epsg3857' for Mercator projection (default).
@@ -83,33 +69,30 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3, stroke = 2 or shape = 21. They may also be parameters to
         the paired geom/stat.
+
     Returns
     -------
         geom object specification
-    Notes
+
+    Note
     -----
     geom_livemap draws map, which can be moved and zoomed.
     geom_livemap understands the following aesthetics mappings:
-    - map_id : geographical id or string in format 'lon, lat' used to join data with map coordinates.
-               You can use function lon_lat('lon', 'lat') to concatenate coordinates.
+
     - alpha : transparency level of a layer
         Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill  : color of a geometry internals
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : line width for polygon, radius for point, pie chart and color spot (heatmap).
-    - x : value order for pie chart and bar chart.
-    - y : value specifying the sector size for pie chart and the heigth for bar chart.
-    - frame : timestamp for time-varying heatmap.
-    - group : how to group points into polygons (grouping tag). Default: all points belong to one polygon.
+    - size : radius for point, pie chart.
+    - sym_x : value order for pie chart and bar chart.
+    - sym_y : value specifying the sector size for pie chart and the heigth for bar chart.
 
     Examples
     --------
     >>> from lets_plot import *
-    >>> data = {'state': ['Nevada', 'TEXAS', 'FL'], 'val': [2000, 2200, 1800]}
-    >>> p = ggplot(data) + geom_livemap(aes(map_id='state', fill='val'), within='USA')
-    >>> p += scale_fill_gradient(low='red')
+    >>> p = ggplot() + geom_livemap()
     >>> p += ggtitle('Live Map')
     """
     # if within is not None:
@@ -118,16 +101,22 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     if location is not None:
         location = _prepare_location(location)
 
+    tiles = _prepare_tiles(tiles)
+    geocoding = _prepare_geocoding()
+
     _display_mode = 'display_mode'
 
     if _display_mode in other_args.keys():
         other_args.pop(_display_mode)
 
-    return _geom('livemap', mapping, data, stat, None, show_legend, sampling=sampling,
-                 display_mode=geom, level=level,
-                 within=within, interactive=interactive, location=location, zoom=zoom, magnifier=magnifier,
-                 clustering=clustering, scaled=scaled, labels=labels, theme=theme, projection=projection,
-                 geodesic=geodesic, **other_args)
+    if is_geo_data_regions(map):
+        map = map.centroids()
+        map_join = map_join_regions(map_join)
+
+    return _geom('livemap', mapping, data, map=map, map_join=map_join, show_legend=show_legend, sampling=sampling,
+                 display_mode=symbol, location=location, zoom=zoom,
+                 projection=projection, geodesic=geodesic, tiles=tiles, geocoding=geocoding,
+                 **other_args)
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}
@@ -137,11 +126,83 @@ LOCATION_DATAFRAME_ERROR_MESSAGE = "Expected: location = DataFrame with [{}] or 
     .format(', '.join(LOCATION_COORDINATE_COLUMNS), ', '.join(LOCATION_RECTANGLE_COLUMNS))
 
 
+OPTIONS_MAPTILES_KIND = 'kind'
+OPTIONS_MAPTILES_URL = 'url'
+OPTIONS_MAPTILES_THEME = 'theme'
+OPTIONS_MAPTILES_ATTRIBUTION = 'attribution'
+OPTIONS_MAPTILES_MIN_ZOOM = 'min_zoom'
+OPTIONS_MAPTILES_MAX_ZOOM = 'max_zoom'
+OPTIONS_GEOCODING_PROVIDER_URL = 'url'
+
+
 class RegionKind(Enum):
     region_ids = 'region_ids'
     region_name = 'region_name'
     coordinates = 'coordinates'
     data_frame = 'data_frame'
+
+
+def _prepare_geocoding():
+    if has_global_value(GEOCODING_PROVIDER_URL):
+        return {
+            OPTIONS_GEOCODING_PROVIDER_URL: get_global_val(GEOCODING_PROVIDER_URL)
+        }
+
+    return {}
+
+
+def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
+    if isinstance(tiles, str):
+        return {
+            OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
+            OPTIONS_MAPTILES_URL: tiles
+        }
+
+    if isinstance(tiles, dict):
+        if tiles.get(MAPTILES_KIND, None) == TILES_RASTER_ZXY:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
+                OPTIONS_MAPTILES_URL: tiles[MAPTILES_URL],
+                OPTIONS_MAPTILES_ATTRIBUTION: tiles[MAPTILES_ATTRIBUTION],
+                OPTIONS_MAPTILES_MIN_ZOOM: tiles[MAPTILES_MIN_ZOOM],
+                OPTIONS_MAPTILES_MAX_ZOOM: tiles[MAPTILES_MAX_ZOOM],
+            }
+        elif tiles.get(MAPTILES_KIND, None) == TILES_VECTOR_LETS_PLOT:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_VECTOR_LETS_PLOT,
+                OPTIONS_MAPTILES_URL: tiles[MAPTILES_URL],
+                OPTIONS_MAPTILES_THEME: tiles[MAPTILES_THEME],
+                OPTIONS_MAPTILES_ATTRIBUTION: tiles[MAPTILES_ATTRIBUTION],
+            }
+        else:
+            raise ValueError("Unsupported 'tiles' kind: " + tiles.get(MAPTILES_KIND, None))
+
+    if tiles is not None:
+        raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
+
+    # tiles are not set for this livemap - try to get global tiles config
+    if has_global_value(MAPTILES_KIND):
+        if not has_global_value(MAPTILES_URL):
+            raise ValueError('URL for tiles service is not set')
+
+        if get_global_val(MAPTILES_KIND) == TILES_RASTER_ZXY:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
+                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
+                OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None,
+                OPTIONS_MAPTILES_MIN_ZOOM: get_global_val(MAPTILES_MIN_ZOOM) if has_global_value(MAPTILES_MIN_ZOOM) else None,
+                OPTIONS_MAPTILES_MAX_ZOOM: get_global_val(MAPTILES_MAX_ZOOM) if has_global_value(MAPTILES_MAX_ZOOM) else None,
+            }
+
+        if get_global_val(MAPTILES_KIND) == TILES_VECTOR_LETS_PLOT:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_VECTOR_LETS_PLOT,
+                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
+                OPTIONS_MAPTILES_THEME: get_global_val(MAPTILES_THEME) if has_global_value(MAPTILES_THEME) else None,
+                OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None,
+            }
+
+    raise ValueError('Tile provider is not set.')
 
 
 def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:

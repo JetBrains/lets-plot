@@ -18,24 +18,32 @@ import jetbrains.datalore.plot.builder.sampling.Samplings.vertexDp
       image
  */
 object DefaultSampling {
-    val SAFETY_SAMPLING = random(200000, 1L)
+    private const val SEED = 37L
+
+    val SAFETY_SAMPLING = random(200000, SEED)
 
     // point-like
-    val POINT = random(50000, null)   // optimized
-    val TILE = random(50000, null)    // optimized
-    val AB_LINE = random(5000, null)
-    val H_LINE = random(5000, null)
-    val V_LINE = random(5000, null)
-    val JITTER = random(5000, null)
-    val RECT = random(5000, null)
-    val SEGMENT = random(5000, null)
-    val TEXT = random(500, null)
+    val POINT = random(50000, SEED)   // optimized
+    val TILE = random(50000, SEED)    // optimized
+    val BIN_2D = TILE
+    val AB_LINE = random(5000, SEED)
+    val H_LINE = random(5000, SEED)
+    val V_LINE = random(5000, SEED)
+    val JITTER = random(5000, SEED)
+    val RECT = random(5000, SEED)
+    val SEGMENT = random(5000, SEED)
+    val TEXT = random(500, SEED)
+
+    // range
+    val ERROR_BAR = random(500, SEED)
+    val CROSS_BAR = random(500, SEED)
+    val BOX_PLOT = random(500, SEED)
+    val LINE_RANGE = random(500, SEED)
+    val POINT_RANGE = random(500, SEED)
 
     // bars
     val BAR = pick(50)
     val HISTOGRAM = systematic(500)
-    val ERROR_BAR = pick(50)
-    val BOX_PLOT = pick(50)
 
     // lines
     val LINE = systematic(5000)

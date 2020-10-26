@@ -16,7 +16,7 @@ class SizeMapperProvider(
 ) : LinearNormalizingMapperProvider(range, naValue) {
 
     companion object {
-        private val DEF_RANGE = ClosedRange.closed(
+        private val DEF_RANGE = ClosedRange(
             AesScaling.sizeFromCircleDiameter(3.0),
             AesScaling.sizeFromCircleDiameter(21.0)
         )

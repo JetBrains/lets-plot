@@ -63,7 +63,7 @@ class ObservableArrayListTest {
 
     @Test
     fun addAtInvalidIndex() {
-        assertFailsWith<DataloreIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             try {
                 list.add(1, "xyz")
             } finally {

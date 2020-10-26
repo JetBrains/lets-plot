@@ -1,204 +1,85 @@
+
 plugins {
-    id 'kotlin-multiplatform'
-    id "com.moowork.node"
-}
-
-kotlin {
-    js() {
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
-        }
-    }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation kotlin('stdlib-common')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
-                implementation project(':base-portable')
-                implementation project(':base')
-                implementation project(':mapper-core')
-                implementation project(':vis-svg')
-                implementation project(':vis-canvas')
-                implementation project(':vis-svg-mapper')
-                implementation project(':plot-base-portable')
-                implementation project(':plot-base')
-                implementation project(':plot-common-portable')
-                implementation project(':plot-common')
-                implementation project(':plot-builder-portable')
-                implementation project(':plot-builder')
-                implementation project(':plot-config-portable')
-                implementation project(':plot-config')
-
-                if (project.buildSettings.enable_livemap) {
-                    implementation project(':gis')
-                    implementation project(':plot-livemap')
-                } else {
-                    implementation project(':plot-livemap-stub')
-                }
-            }
-        }
-
-        jsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-
-                implementation project(':mapper-core')
-                implementation project(':vis-svg-mapper')
-            }
-        }
-        jsTest {
-            dependencies {
-                implementation kotlin('test-js')
-            }
-        }
-    }
-}
-
-node {
-    version = '10.16.3'
-    npmVersion = '6.9.0'
-    download = true
-}
-
-
-def artifact_version = project.js_artifact_version
-
-
-repositories.whenObjectAdded {
-    if (it instanceof IvyArtifactRepository) {
-        metadataSources {
-            artifact()
-        }
-    }
-}
-
-/*
- * Copyright (c) 2019. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
-// ---------------------------------
-// Trick to copy kotlin.js etc. to `output`
-configurations {
-    libraryDependenciesJs
-    projectDependenciesJs
+    id "org.jetbrains.kotlin.js"
 }
 
 dependencies {
-    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-    libraryDependenciesJs "io.ktor:ktor-client-websockets:$ktor_version"
-    libraryDependenciesJs "io.ktor:ktor-client-core-js:$ktor_version"
-    libraryDependenciesJs "io.ktor:ktor-client-js:$ktor_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 
-    projectDependenciesJs project(':base-portable')
-    projectDependenciesJs project(':base')
-    projectDependenciesJs project(':mapper-core')
-    projectDependenciesJs project(':vis-svg')
-    projectDependenciesJs project(':vis-svg-mapper')
+    implementation project(':base-portable')
+    implementation project(':base')
+    implementation project(':mapper-core')
+    implementation project(':vis-svg-portable')
+    implementation project(':vis-canvas')
+    implementation project(':vis-svg-mapper')
+    implementation project(':plot-base-portable')
+    implementation project(':plot-base')
+    implementation project(':plot-common-portable')
+    implementation project(':plot-common')
+    implementation project(':plot-builder-portable')
+    implementation project(':plot-builder')
+    implementation project(':plot-config-portable')
+    implementation project(':plot-config')
+    implementation project(':gis')
+    implementation project(':plot-livemap')
+    implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+}
 
-    if (project.buildSettings.enable_livemap) {
-        projectDependenciesJs project(':gis')
-        projectDependenciesJs project(':livemap')
-        projectDependenciesJs project(':plot-livemap')
-    } else {
-        projectDependenciesJs project(':plot-livemap-stub')
+kotlin {
+    target {
+        browser {
+            dceTask {
+                keep.addAll(
+                        "lets-plot-js-package.buildPlotFromRawSpecs",
+                        "lets-plot-js-package.buildPlotFromProcessedSpecs",
+                        "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
+                )
+            }
+        }
     }
-
-    projectDependenciesJs project(':vis-canvas')         // required by plot-builder (get rid?)
-
-    projectDependenciesJs project(':plot-common-portable')
-    projectDependenciesJs project(':plot-common')
-    projectDependenciesJs project(':plot-base-portable')
-    projectDependenciesJs project(':plot-base')
-    projectDependenciesJs project(':plot-builder-portable')
-    projectDependenciesJs project(':plot-builder')
-    projectDependenciesJs project(':plot-config-portable')
-    projectDependenciesJs project(':plot-config')
 }
 
-// ---------------------------------
-def js_package_libs_dir = "${project.buildDir}/js"
+def artifact_version = project.js_artifact_version
+def dist_dir = "${project.buildDir}/distributions"
 
-def task_group = 'datalore plot'
+task copyProduction() {
+    group = "lets-plot"
 
-task copyLibraryDependenciesJs(type: Copy) {
-    configurations.libraryDependenciesJs.each {
-        println "library dependency: ${it.absolutePath}"
-        from zipTree(it.absolutePath).matching { include '*.js' }
+    doLast {
+        def prodTargets = ["lets-plot-latest.min.js", "lets-plot-${artifact_version}.min.js"]
+
+        prodTargets.each { target ->
+            copy {
+                from "${dist_dir}/js-package.js"
+                rename "js-package.js", target
+                into dist_dir
+            }
+        }
     }
-    into js_package_libs_dir
 }
 
-task copyProjectDependenciesJs(type: Copy) {
-    configurations.projectDependenciesJs.each {
-        def jarJs = it.absolutePath.replace("-metadata-", "-js-")
-        println "project dependency: $jarJs"
-        from zipTree(jarJs).matching { include '*.js' }
+task copyDevelopment() {
+    group = "lets-plot"
+
+    doLast {
+        def devTargets = ["lets-plot-latest.js", "lets-plot-${artifact_version}.js"]
+
+        devTargets.each { target ->
+            copy {
+                from "${project.buildDir}/distributions/js-package.js"
+                rename "js-package.js", target
+                into "${project.buildDir}/distributions"
+            }
+        }
     }
-    into js_package_libs_dir
 }
 
-task copyJsPackage(type: Copy) {
-    from "${project.buildDir}/classes/kotlin/js/main/js-package.js"
-    into js_package_libs_dir
-}
+browserProductionWebpack.finalizedBy copyProduction
+browserDevelopmentWebpack.finalizedBy copyDevelopment
 
-def output_dir = "${project.buildDir}/dist/"
-def input_dir = "${project.buildDir}/js/"
+//copyProduction.dependsOn(browserProductionWebpack)
+//copyProduction.dependsOn(browserDevelopmentWebpack)
+//build.dependsOn += copyProduction
+build.dependsOn += browserDevelopmentWebpack
 
-task webpackBuildReleaseVersion(type: NpmTask) {
-    inputs.dir(input_dir)
-    inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}lets-plot-${artifact_version}.min.js")
-    args = ['run', 'webpack-build-release', '--', "--output-filename=lets-plot-${artifact_version}.min.js"]
-}
-
-task webpackBuildReleaseLatest(type: NpmTask) {
-    inputs.dir(input_dir)
-    inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}lets-plot-latest.min.js")
-    args = ['run', 'webpack-build-release', '--', "--output-filename=lets-plot-latest.min.js"]
-}
-
-task webpackBuildDebugVersion(type: NpmTask) {
-    inputs.dir(input_dir)
-    inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}lets-plot-${artifact_version}.js")
-    args = ['run', 'webpack-build-debug', '--', "--output-filename=lets-plot-${artifact_version}.js"]
-}
-
-task webpackBuildDebugLatest(type: NpmTask) {
-    inputs.dir(input_dir)
-    inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}lets-plot-latest.js")
-    args = ['run', 'webpack-build-debug', '--', "--output-filename=lets-plot-latest.js"]
-}
-
-task webpackBuildDebug {
-    group = task_group
-    dependsOn webpackBuildDebugVersion
-    dependsOn webpackBuildDebugLatest
-}
-
-task webpackBuildRelease {
-    group = task_group
-    dependsOn webpackBuildReleaseVersion
-    dependsOn webpackBuildReleaseLatest
-}
-
-webpackBuildRelease.dependsOn += copyLibraryDependenciesJs
-webpackBuildRelease.dependsOn += copyProjectDependenciesJs
-webpackBuildRelease.dependsOn += copyJsPackage
-webpackBuildRelease.dependsOn += npmInstall
-webpackBuildDebug.dependsOn += copyLibraryDependenciesJs
-webpackBuildDebug.dependsOn += copyProjectDependenciesJs
-webpackBuildDebug.dependsOn += copyJsPackage
-webpackBuildDebug.dependsOn += npmInstall
-
-build.dependsOn += webpackBuildDebug
-build.dependsOn += webpackBuildRelease

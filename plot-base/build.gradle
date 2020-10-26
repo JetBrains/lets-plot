@@ -4,17 +4,15 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
-
-repositories {
-    mavenCentral()
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
     jvm()
-    js()
+    js {
+        browser()
+    }
     
     sourceSets {
         commonMain {
@@ -22,7 +20,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
                 implementation project(':vis-canvas')
                 implementation project(':plot-common-portable')
                 implementation project(':plot-common')
@@ -40,7 +38,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }

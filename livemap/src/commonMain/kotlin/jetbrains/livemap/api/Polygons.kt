@@ -8,36 +8,36 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.MapIdComponent
-import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedGeocodeLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedLocationComponent
-import jetbrains.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.livemap.entities.placement.ScreenLoopComponent
-import jetbrains.livemap.entities.placement.ScreenOriginComponent
-import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.regions.RegionFragmentsComponent
-import jetbrains.livemap.entities.regions.RegionRenderer
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.PolygonRenderer
-import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projection.Coordinates
+import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.geocoding.NeedLocationComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
+import jetbrains.livemap.placement.ScreenLoopComponent
+import jetbrains.livemap.placement.ScreenOriginComponent
+import jetbrains.livemap.placement.WorldDimensionComponent
+import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.MapProjection
-
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.PolygonRenderer
+import jetbrains.livemap.scaling.ScaleComponent
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PolygonLocatorHelper
 
 @LiveMapDsl
 class Polygons(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection
-)
+    val mapProjection: MapProjection,
+    val mapRuler: MapRuler<World>
+    )
 
 fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
@@ -50,12 +50,13 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
     Polygons(
         MapEntityFactory(layerEntity),
-        mapProjection
+        mapProjection,
+        mapRuler
     ).apply(block)
 }
 
 fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    PolygonsBuilder(factory, mapProjection)
+    PolygonsBuilder(factory, mapProjection, mapRuler)
         .apply(block)
         .build()
 }
@@ -63,10 +64,11 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
 @LiveMapDsl
 class PolygonsBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myMapProjection: MapProjection,
+    private val myMapRuler: MapRuler<World>
 ) {
-    var index: Int = 0
-    var mapId: String? = null
+    var layerIndex: Int? = null
+    var index: Int? = null
 
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
@@ -79,7 +81,6 @@ class PolygonsBuilder(
 
         return when {
             multiPolygon != null -> createStaticEntity()
-            mapId != null -> createDynamicEntity()
             else -> null
         }
     }
@@ -88,11 +89,14 @@ class PolygonsBuilder(
         val geometry = multiPolygon!!
             .run { ProjectionUtil.transformMultiPolygon(this, myMapProjection::project) }
 
-        val bbox = GeometryUtil.bbox(geometry) ?: error("")
+        val bbox = GeometryUtil.bbox(geometry) ?: error("Polygon bbox can't be null")
 
         return myFactory
             .createMapEntity("map_ent_s_polygon")
             .addComponents {
+                if (layerIndex != null && index != null) {
+                    + IndexComponent(layerIndex!!, index!!)
+                }
                 + RendererComponent(PolygonRenderer())
                 + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { this.geometry = geometry }
@@ -105,27 +109,9 @@ class PolygonsBuilder(
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
-                + NeedLocationComponent()
-                + NeedCalculateLocationComponent()
-            }
-    }
-
-    private fun createDynamicEntity(): EcsEntity {
-        return myFactory
-            .createMapEntity("map_ent_d_polygon_$mapId")
-            .addComponents {
-                + MapIdComponent(mapId!!)
-                + RegionFragmentsComponent()
-                + RendererComponent(RegionRenderer())
-                + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }
-                + ScreenOriginComponent()
-                + StyleComponent().apply {
-                    setFillColor(this@PolygonsBuilder.fillColor)
-                    setStrokeColor(this@PolygonsBuilder.strokeColor)
-                    setStrokeWidth(this@PolygonsBuilder.strokeWidth)
-                }
-                + NeedLocationComponent()
-                + NeedGeocodeLocationComponent()
+                + NeedLocationComponent
+                + NeedCalculateLocationComponent
+                + LocatorComponent(PolygonLocatorHelper())
             }
     }
 }

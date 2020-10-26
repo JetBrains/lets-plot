@@ -241,7 +241,7 @@ class NumberTickFormatTest {
         }
 
         private fun format(number: Number, domain: Double, step: Double): String {
-            val range = ClosedRange.closed(Math.min(0.0, domain), Math.max(0.0, domain))
+            val range = ClosedRange(Math.min(0.0, domain), Math.max(0.0, domain))
             return TICK_FORMATTER_FACTORY_DEF.getFormatter(range, step)(number)
         }
 
@@ -254,7 +254,7 @@ class NumberTickFormatTest {
         }
 
         private fun formatScientific(number: Number, domain: Double, step: Double): String {
-            val range = ClosedRange.closed(Math.min(0.0, domain), Math.max(0.0, domain))
+            val range = ClosedRange(Math.min(0.0, domain), Math.max(0.0, domain))
             return TICK_FORMATTER_FACTORY_NO_METRIC_PREFIX.getFormatter(range, step)(number)
         }
     }

@@ -100,7 +100,7 @@ class PolynomialSplineFunction(_knots: DoubleArray?, _polynomials: Array<Polynom
      */
     init {
 
-        if (_knots == null || _polynomials == null) {
+        if (_knots == null) {
             error("Null argument ")
         }
         if (_knots.size < 2) {

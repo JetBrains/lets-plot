@@ -6,6 +6,7 @@
 package jetbrains.datalore.base.encoding
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class Base64Test {
@@ -35,7 +36,15 @@ class Base64Test {
         )
     }
 
-
+    @Test
+    fun encode() {
+        assertEquals(
+            "AQIDBA==",
+            Base64.encode(
+                byteArrayOf(0x01, 0x02, 0x03, 0x04)
+            )
+        )
+    }
 
     fun assertEquals(a: ByteArray, b: ByteArray) {
         val diff = a

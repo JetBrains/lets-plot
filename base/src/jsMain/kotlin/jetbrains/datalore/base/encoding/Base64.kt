@@ -12,4 +12,9 @@ actual object Base64 {
         val bin = window.atob(s)
         return ByteArray(bin.length) { i -> bin[i].toByte()}
     }
+
+    actual fun encode(data: ByteArray): String {
+        val binStr = data.fold(StringBuilder()) { str, byte -> str.append(byte.toChar()) }.toString()
+        return window.btoa(binStr)
+    }
 }

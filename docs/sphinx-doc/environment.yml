@@ -1,0 +1,13 @@
+name: lets-plot-sphinx
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - sphinx
+  - jupyter_sphinx
+  - matplotlib
+  - geopandas
+  - numpy
+  - scipy
+#  - pip:
+#      - lets-plot==1.5.3.dev1

@@ -77,8 +77,8 @@ object ObservableCollections {
     }
 
     fun <ItemT> count(
-            collection: ObservableCollection<ItemT>,
-            predicate: Predicate<in ItemT?>): ReadableProperty<out Int> {
+        collection: ObservableCollection<ItemT>,
+        predicate: Predicate<in ItemT?>): ReadableProperty<out Int> {
 
         return object : BaseDerivedProperty<Int>(simpleCount(predicate, collection)) {
             private var myCollectionRegistration: Registration? = null
@@ -129,8 +129,8 @@ object ObservableCollections {
     }
 
     fun <ItemT> all(
-            collection: ObservableCollection<out ItemT>,
-            predicate: Predicate<in ItemT?>):
+        collection: ObservableCollection<out ItemT>,
+        predicate: Predicate<in ItemT?>):
 
             ReadableProperty<out Boolean?> {
 
@@ -139,8 +139,8 @@ object ObservableCollections {
     }
 
     fun <ItemT> any(
-            collection: ObservableCollection<ItemT>,
-            predicate: Predicate<in ItemT?>):
+        collection: ObservableCollection<ItemT>,
+        predicate: Predicate<in ItemT?>):
             ReadableProperty<out Boolean?> {
 
         val prop = count(collection, predicate)
@@ -149,7 +149,8 @@ object ObservableCollections {
 
     fun <ValueT, ItemT> selectCollection(
             p: ReadableProperty<out ValueT>,
-            s: (ValueT) -> ObservableCollection<ItemT>):
+            s: (ValueT) -> ObservableCollection<ItemT>
+    ):
             ObservableCollection<ItemT> {
 
         val myWrappedCollection: ObservableCollection<ItemT> = SelectorDerivedCollection(p, s)
@@ -168,7 +169,8 @@ object ObservableCollections {
 
     private class SelectorDerivedCollection<ValueT, ItemT>(
             source: ReadableProperty<ValueT>,
-            `fun`: (ValueT) -> ObservableCollection<ItemT>) :
+            `fun`: (ValueT) -> ObservableCollection<ItemT>
+    ) :
             SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>>(source, `fun`) {
 
         override fun empty(): ObservableCollection<ItemT> {

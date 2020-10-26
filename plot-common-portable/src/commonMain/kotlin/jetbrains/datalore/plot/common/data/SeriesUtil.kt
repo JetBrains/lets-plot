@@ -17,12 +17,16 @@ import kotlin.math.min
 object SeriesUtil {
     const val TINY = 1e-50
 
-    private val REAL_NUMBER = { it: Double -> isFinite(it) }
+    private val REAL_NUMBER = { it: Double? -> isFinite(it) }
 
     val NEGATIVE_NUMBER = { input: Double -> input < 0 }
 
     fun isSubTiny(value: Double): Boolean {
         return value < TINY
+    }
+
+    fun isSubTiny(range: ClosedRange<Double>): Boolean {
+        return isFinite(range) && span(range) < TINY
     }
 
     fun checkedDoubles(values: Iterable<*>): CheckedDoubleIterable {
@@ -49,9 +53,7 @@ object SeriesUtil {
     }
 
     fun allFinite(v0: Double?, v1: Double?): Boolean {
-        return isFinite(v0) && isFinite(
-            v1
-        )
+        return isFinite(v0) && isFinite(v1)
     }
 
     fun allFinite(v0: Double?, v1: Double?, v2: Double?): Boolean {
@@ -86,12 +88,12 @@ object SeriesUtil {
             }
         }
         return if (inited)
-            ClosedRange.closed(min, max)
+            ClosedRange(min, max)
         else
             null
     }
 
-    fun resolution(values: Iterable<Double>, naValue: Double): Double {
+    fun resolution(values: Iterable<Double?>, naValue: Double): Double {
 
         // check if this is a row of a regular grid
         val rowDetector = RegularMeshDetector.tryRow(values)
@@ -103,13 +105,15 @@ object SeriesUtil {
         val columnDetector = RegularMeshDetector.tryColumn(values)
         return if (columnDetector.isMesh) {
             columnDetector.resolution
-        } else resolutionFullScan(values, naValue)
-
-        // use brut force method to find data resolution
+        } else {
+            // use brut force method to find data resolution
+            resolutionFullScan(values, naValue)
+        }
     }
 
-    private fun resolutionFullScan(values: Iterable<Double>, naValue: Double): Double {
-        val goodDataVector = filter(values, REAL_NUMBER)
+    private fun resolutionFullScan(values: Iterable<Double?>, naValue: Double): Double {
+        @Suppress("UNCHECKED_CAST")
+        val goodDataVector = filter(values, REAL_NUMBER) as Iterable<Double>
         if (Iterables.isEmpty(goodDataVector)) {
             return naValue
         }
@@ -137,19 +141,20 @@ object SeriesUtil {
         return resolution
     }
 
-    fun ensureNotZeroRange(range: ClosedRange<Double>?): ClosedRange<Double> {
+    fun ensureApplicableRange(range: ClosedRange<Double>?): ClosedRange<Double> {
         if (range == null) {
-            return ClosedRange.closed(-1.0, 1.0)
+            return ClosedRange(-0.5, 0.5)
         }
-        if (range.lowerEndpoint() == range.upperEndpoint()) {
-            val median = range.lowerEndpoint()
-            return ClosedRange.closed(median - 1, median + 1)
+        if (isSubTiny(range)) {
+            val median = range.lowerEnd
+            return ClosedRange(median - 0.5, median + 0.5)
         }
         return range
     }
 
     fun span(range: ClosedRange<Double>): Double {
-        return range.upperEndpoint() - range.lowerEndpoint()
+        require(isFinite(range)) { "range must be finite: $range" }
+        return range.upperEnd - range.lowerEnd
     }
 
     fun span(range0: ClosedRange<Double>?, range1: ClosedRange<Double>?): ClosedRange<Double>? {
@@ -163,14 +168,11 @@ object SeriesUtil {
     }
 
     fun expand(range: ClosedRange<Double>, lowerExpand: Double, upperExpand: Double): ClosedRange<Double> {
-        return ClosedRange.closed(range.lowerEndpoint() - lowerExpand, range.upperEndpoint() + upperExpand)
+        return ClosedRange(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
     }
 
-    fun isFinite(range: ClosedRange<Double>?): Boolean {
-        return range != null &&
-                isFinite(range.lowerEndpoint()) && isFinite(
-            range.upperEndpoint()
-        )
+    fun isFinite(range: ClosedRange<Double>): Boolean {
+        return !(range.lowerEnd.isInfinite() || range.upperEnd.isInfinite())
     }
 
     fun matchingIndices(list: List<*>, matchedValue: Any?): MutableList<Int> {
@@ -274,10 +276,10 @@ object SeriesUtil {
         private val myCanBeCast: Boolean
 
         init {
-            if (myEmpty) {
-                myCanBeCast = true
+            myCanBeCast = if (myEmpty) {
+                true
             } else {
-                myCanBeCast = all(filter(myIterable) { it != null }) { input -> input is Double }
+                all(filter(myIterable) { it != null }) { input -> input is Double }
             }
         }
 

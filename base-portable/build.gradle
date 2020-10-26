@@ -3,31 +3,37 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-    id 'groovy'   // add 'test' task
-    id 'com.moowork.node'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+    id "groovy"   // add 'test' task
 }
 
 kotlin {
     jvm()
     js() {
-        browser {}   // required for js tests running (?)
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
-//            kotlinOptions.moduleKind = "umd"
+        browser()
+    }
+
+    if (project.buildSettings.build_python_extension) {
+        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
+        if (currentOs.isMacOsX()) {
+            macosX64()
+        } else if (currentOs.isLinux()) {
+            linuxX64()
+        } else if (currentOs.isWindows()) {
+            mingwX64()
         }
     }
-    macosX64()
-    linuxX64()
 
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
             }
         }
@@ -41,7 +47,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                api "com.google.code.gson:gson:$gson_version"
 //                compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
 //                compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }

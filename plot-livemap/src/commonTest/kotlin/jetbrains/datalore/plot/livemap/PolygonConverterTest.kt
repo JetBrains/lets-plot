@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.MULTIPOLYGON
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
@@ -28,15 +27,6 @@ class PolygonConverterTest {
 
     @Test
     fun multiPathShouldBeConvertedProperlyIntoMercator() {
-
-        matcher.geometry(geometryEq(Boundary.create(MULTIPOLYGON)))
-
-        assertMapObject()
-    }
-
-    @Test
-    fun withMapIdAndGeometry_ShouldUseGeometry() {
-        aesData.builder().mapId(constant("New York City"))
 
         matcher.geometry(geometryEq(Boundary.create(MULTIPOLYGON)))
 

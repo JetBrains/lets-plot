@@ -20,23 +20,29 @@ def facet_grid(x=None, y=None):
         Feature, which defines columns of the facet grid to be displayed.
     y : string, optional
         Feature, which defines rows of the facet grid to be displayed.
-     Returns
+
+    Returns
     -------
         facet grid specification
-    Notes
+
+    Note
     -----
     Lay out panels in a grid.
 
-     Examples
+    Examples
     ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from scipy.stats import multivariate_normal
-    >>> from scipy.stats import norm
-    >>> mean=norm(loc=0, scale=5).rvs(size=3)
-    >>> X = multivariate_normal(mean=mean, cov=0.1).rvs(1000)
-    >>> df=pd.melt(pd.DataFrame(X))
-    >>> ggplot(df)+geom_histogram()+facet_grid(y='variable')
+    .. jupyter-execute::
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from scipy.stats import multivariate_normal
+        >>> from scipy.stats import norm
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> mean = norm(loc=0, scale=5).rvs(size=3)
+        >>> X = multivariate_normal(mean=mean, cov=0.1).rvs(1000)
+        >>> df=pd.melt(pd.DataFrame(X))
+        >>> ggplot(df) + geom_histogram(aes('value')) + facet_grid(y='variable')
     """
     return _facet('grid', x=x, y=y)
 

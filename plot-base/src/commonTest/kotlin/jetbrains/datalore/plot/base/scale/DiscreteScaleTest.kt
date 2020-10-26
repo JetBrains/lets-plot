@@ -18,9 +18,9 @@ class DiscreteScaleTest {
         val additiveExpand = 777.0
         var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
-                .multiplicativeExpand(multiplicativeExpand)
-                .additiveExpand(additiveExpand)
-                .build()
+            .multiplicativeExpand(multiplicativeExpand)
+            .additiveExpand(additiveExpand)
+            .build()
 
         assertEquals(multiplicativeExpand, scale.multiplicativeExpand, 0.0)
         assertEquals(additiveExpand, scale.additiveExpand, 0.0)
@@ -45,8 +45,8 @@ class DiscreteScaleTest {
     fun withDomainLimits() {
         var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
-                .limits(setOf("b", "c", "d"))
-                .build()
+            .limits(listOf("b", "c", "d"))
+            .build()
 
         assertTrue(scale.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
@@ -60,8 +60,8 @@ class DiscreteScaleTest {
     fun withEmptyDomainLimits() {
         var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
-                .limits(emptySet<Any>())
-                .build()
+            .limits(emptyList())
+            .build()
 
         assertFalse(scale.hasDomainLimits())
         assertValuesInLimits(scale, "a", "b", "c")
@@ -72,8 +72,8 @@ class DiscreteScaleTest {
     fun withDomainLimits_SameInCopy() {
         var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
-                .limits(setOf("b", "c", "d"))
-                .build()
+            .limits(listOf("b", "c", "d"))
+            .build()
 
         val copy = scale.with().build()
         assertTrue(copy.hasDomainLimits())
@@ -85,8 +85,8 @@ class DiscreteScaleTest {
     fun withDomainLimits_asNumbers() {
         var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
-                .limits(setOf("b", "c", "d"))
-                .build()
+            .limits(listOf("b", "c", "d"))
+            .build()
 
         assertTrue(scale.hasBreaks())
         assertEquals(listOf("b", "c"), scale.breaks)
@@ -94,11 +94,37 @@ class DiscreteScaleTest {
     }
 
     @Test
+    fun withDomainLimits_labels() {
+        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
+        scale = scale.with()
+            .limits(listOf("b", "c", "d"))
+            .labels(listOf("a-lab", "b-lab", "c-lab"))
+            .build()
+
+        assertTrue(scale.hasBreaks())
+        assertEquals(listOf("b", "c"), scale.breaks)
+        assertEquals(listOf("b-lab", "c-lab"), scale.labels)
+    }
+
+    @Test
+    fun withDomainLimits_reversed() {
+        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
+        scale = scale.with()
+            .limits(listOf("d", "c", "b"))
+            .labels(listOf("a-lab", "b-lab", "c-lab"))
+            .build()
+
+        assertTrue(scale.hasBreaks())
+        assertEquals(listOf("c", "b"), scale.breaks)
+        assertEquals(listOf("c-lab", "b-lab"), scale.labels)
+    }
+
+    @Test
     fun withDomainLimits_inverseTransform() {
         var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
-                .limits(setOf("b", "c", "d"))
-                .build()
+            .limits(listOf("b", "c", "d"))
+            .build()
 
         assertEquals("b", scale.transform.applyInverse(-1.0))
         assertEquals("b", scale.transform.applyInverse(0.0))
@@ -116,8 +142,8 @@ class DiscreteScaleTest {
 
         var scale = Scales.discreteDomain<String>("Test scale", domainValues)
         scale = scale.with()
-                .mapper(Mappers.discrete(distinctDomainValues, "?"))
-                .build()
+            .mapper(Mappers.discrete(distinctDomainValues, "?"))
+            .build()
 
         val transform = scale.transform
         val transformedValues = transform.apply(domainValues)

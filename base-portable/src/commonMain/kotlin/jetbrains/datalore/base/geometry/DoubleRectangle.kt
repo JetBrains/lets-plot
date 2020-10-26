@@ -43,11 +43,11 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
     constructor(x: Double, y: Double, w: Double, h: Double) : this(DoubleVector(x, y), DoubleVector(w, h))
 
     fun xRange(): ClosedRange<Double> {
-        return ClosedRange.closed(origin.x, origin.x + dimension.x)
+        return ClosedRange(origin.x, origin.x + dimension.x)
     }
 
     fun yRange(): ClosedRange<Double> {
-        return ClosedRange.closed(origin.y, origin.y + dimension.y)
+        return ClosedRange(origin.y, origin.y + dimension.y)
     }
 
     operator fun contains(v: DoubleVector): Boolean {

@@ -1,0 +1,177 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+    id "maven-publish"
+    id "com.jfrog.bintray"
+}
+
+project.ext {
+    batikGroupId = "org.apache.xmlgraphics"
+    batikArtifacts = [
+            "batik-transcoder",
+            "batik-codec"
+    ]
+
+    tiffioGroupId = "com.twelvemonkeys.imageio"
+    tiffioArtifact = "imageio-tiff"
+    tiffioVersion = twelvemonkeys_imageio_version
+}
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+
+                implementation project(':base-portable')
+                implementation project(':plot-config-portable')
+                implementation project(':plot-config')
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+                implementation project(':vis-svg-mapper')
+
+                batikArtifacts.forEach {
+                    api "$batikGroupId:$it:$batik_version"
+                }
+
+                // TIFF support
+                implementation "$tiffioGroupId:$tiffioArtifact:$tiffioVersion"
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
+                implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
+
+                implementation project(':test-common')
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}
+
+// Publishing
+
+def artifactBaseName = 'lets-plot-image-export'
+def artifactGroupId = project.group
+def artifactVersion = project.version
+
+jvmJar {
+    archiveName "$artifactBaseName-${artifactVersion}.jar"
+}
+
+jvmSourcesJar {
+    archiveName "$artifactBaseName-$artifactVersion-sources.jar"
+}
+
+publishing {
+    publications {
+        letsPlotImageExport(MavenPublication) {
+            groupId artifactGroupId
+            artifactId artifactBaseName
+            version artifactVersion
+
+            artifact jvmJar
+            artifact jvmSourcesJar
+
+            pom {
+                name = "Lets-Plot raster image export"
+                description = "Exporting a plot to a raster image (PNG,JPG or TIFF)."
+                url = "https://github.com/JetBrains/lets-plot"
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "jetbrains"
+                        name = "JetBrains"
+                        email = "lets-plot@jetbrains.com"
+                    }
+                }
+                scm {
+                    url = "https://github.com/JetBrains/lets-plot"
+                }
+                // Dependencies
+                withXml {
+                    def deps = asNode().appendNode('dependencies')
+                    // Apache Batik dependencies
+                    batikArtifacts.forEach {
+                        def dep = deps.appendNode('dependency')
+                        dep.appendNode('groupId', batikGroupId)
+                        dep.appendNode('artifactId', it)
+                        dep.appendNode('version', batik_version)
+                    }
+
+                    def dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', tiffioGroupId)
+                    dep.appendNode('artifactId', tiffioArtifact)
+                    dep.appendNode('version', tiffioVersion)
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://jetbrains.bintray.com/lets-plot-maven")
+        }
+    }
+}
+
+// Provide Bintray-specific Information
+def bintray_user = project.buildSettings?.bintray?.user
+def bintray_key = project.buildSettings?.bintray?.key
+
+if (bintray_user != null && bintray_key != null) {
+    bintray {
+        publications = ['letsPlotImageExport']
+        override = true
+
+        user = bintray_user
+        key = bintray_key
+        publish = project.bintraySettings.publish
+
+        pkg {
+            repo = project.bintraySettings.mvn_repo
+            name = project.bintraySettings.mvn_pkg_name
+            userOrg = project.bintraySettings.userOrg
+            licenses = project.bintraySettings.licenses
+            vcsUrl = project.bintraySettings.vcsUrl
+            version {
+                name = artifactVersion
+            }
+        }
+    }
+}
+
+

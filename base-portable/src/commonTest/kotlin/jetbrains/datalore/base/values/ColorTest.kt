@@ -17,34 +17,34 @@ class ColorTest {
     }
 
     @Test
-    fun parseRgba() {
-        assertEquals(Color.RED, Color.parseColor("rgba(255,0,0,255)"))
+    fun parseRGB() {
+        assertEquals(Color.RED, Color.parseRGB("rgb(255,0,0)"))
     }
 
     @Test
-    fun parseRgb() {
-        assertEquals(Color.RED, Color.parseColor("rgb(255,0,0)"))
+    fun parseRGBA() {
+        assertEquals(Color.RED, Color.parseRGB("rgba(255,0,0,1.0)"))
     }
 
     @Test
-    fun parseColor() {
-        assertEquals(Color.BLUE, Color.parseColor("color(0,0,255,255)"))
+    fun parseColRGB() {
+        assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255)"))
     }
 
     @Test
-    fun parseColorRgb() {
-        assertEquals(Color.BLUE, Color.parseColor("color(0,0,255)"))
+    fun parseColRGBA() {
+        assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255,1.0)"))
     }
 
     @Test
     fun parseRgbWithSpaces() {
-        assertEquals(Color.RED, Color.parseColor("rgb(255, 0, 0)"))
+        assertEquals(Color.RED, Color.parseRGB("rgb(255, 0, 0)"))
     }
 
     @Test
     fun noLastNumber() {
         assertFailsWith<IllegalArgumentException> {
-            Color.parseColor("rgb(255, 0, )")
+            Color.parseRGB("rgb(255, 0, )")
         }
 
     }
@@ -52,7 +52,7 @@ class ColorTest {
     @Test
     fun unknownPrefix() {
         assertFailsWith<IllegalArgumentException> {
-            Color.parseColor("rbg(255, 0, )")
+            Color.parseRGB("rbg(255, 0, )")
         }
     }
 }

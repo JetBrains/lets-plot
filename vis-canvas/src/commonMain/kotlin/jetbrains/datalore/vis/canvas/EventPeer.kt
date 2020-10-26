@@ -14,7 +14,9 @@ import kotlin.reflect.KClass
 
 
 abstract class EventPeer<SpecT : Enum<SpecT>, EventT>
-protected constructor(specClass: KClass<SpecT>) { // originally `specClass` was used to create EnumMap
+protected constructor(
+    @Suppress("UNUSED_PARAMETER") specClass: KClass<SpecT> // originally `specClass` was used to create EnumMap
+) {
     private val myEventHandlers: MutableMap<SpecT, Listeners<EventHandler<EventT>>> = HashMap()
 
     fun addEventHandler(eventSpec: SpecT, handler: EventHandler<EventT>): Registration {
@@ -35,7 +37,7 @@ protected constructor(specClass: KClass<SpecT>) { // originally `specClass` was 
         })
     }
 
-    protected fun dispatch(eventSpec: SpecT, event: EventT) {
+    fun dispatch(eventSpec: SpecT, event: EventT) {
         myEventHandlers[eventSpec]?.fire(object : ListenerCaller<EventHandler<EventT>> {
             override fun call(l: EventHandler<EventT>) {
                 l.onEvent(event)

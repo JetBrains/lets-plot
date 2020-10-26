@@ -11,13 +11,15 @@ enum class StatKind {
     IDENTITY,
     COUNT,
     BIN,
+    BIN2D,
     SMOOTH,
     CONTOUR,
     CONTOURF,
     BOXPLOT,
     DENSITY,
     DENSITY2D,
-    DENSITY2DF;
+    DENSITY2DF,
+    CORR;
 
 
     companion object {

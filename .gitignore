@@ -6,8 +6,10 @@
 .gradle
 .DS_Store
 **/build
+build-idea
 #**/out-repo  - no longer used
 .maven-publish-dev-repo
+.ipynb_checkpoints
 
 node_modules/
 
@@ -19,3 +21,7 @@ __pycache__/
 /python-package/*.ipynb
 
 build_settings.yml
+
+# Sphinx-doc directories
+docs/sphinx-doc/build
+docs/sphinx-doc/jupyter_execute

@@ -9,13 +9,12 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.TreeMap
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.abs
 
 internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private val myNumberByDomainValue = LinkedHashMap<Any, Double>()
-    private var myDomainLimits: Set<Any?> = emptySet()
-    private var myDomainValueByNumber: TreeMap<Double, Any>? = null
+    private var myDomainValueByNumber: TreeMap<Double, Any> = TreeMap()
+    private val myDomainLimits: MutableList<Any> = ArrayList<Any>()
 
     override var breaks: List<Any?>
         get() {
@@ -23,8 +22,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             if (!hasDomainLimits()) {
                 return breaks
             }
-            val indices = SeriesUtil.matchingIndices(breaks, myDomainLimits)
-            return SeriesUtil.pickAtIndices(breaks, indices)
+
+            // filter domain and preserve the order defined by limits
+            val intersect = myDomainLimits.intersect(breaks)
+            return myDomainLimits.filter { it in intersect }
         }
         set(breaks) {
             super.breaks = breaks
@@ -33,19 +34,23 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     override val labels: List<String>
         get() {
             val labels = super.labels
-            if (!hasDomainLimits() || !hasBreaks()) {
+            if (!hasDomainLimits()) {
                 return labels
             }
             if (labels.isEmpty()) {
                 return labels
             }
 
-            val indices = SeriesUtil.matchingIndices(breaks, myDomainLimits)
-            val labelsFiltered = ArrayList<String>()
-            for (i in indices) {
-                labelsFiltered.add(labels[i % labels.size])
+            val breaks = super.breaks
+            val labelByValue = HashMap<Any?, String>()
+            for ((i, v) in breaks.withIndex()) {
+                labelByValue[v] = labels[i % labels.size]
             }
-            return labelsFiltered
+
+            // filter domain and preserve the order defined by limits
+            val intersect = myDomainLimits.intersect(breaks)
+            return myDomainLimits.filter { it in intersect }
+                .map { labelByValue[it]!! }
         }
 
     override val defaultTransform: Transform
@@ -63,11 +68,11 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             }
         }
 
-    override val domainLimits: ClosedRange<Double>
+    override val domainLimits: ClosedRange<Double>?
         get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
     constructor(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)) : super(name, mapper) {
-        updateDomain(domainValues, emptySet<Any>())
+        updateDomain(domainValues, emptyList())
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for discrete scale.
@@ -76,25 +81,23 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     }
 
     private constructor(b: MyBuilder<T>) : super(b) {
-        updateDomain(b.myIndexByValue.keys, b.myDomainLimits)
+        updateDomain(b.myDomainValues, b.myDomainLimits)
     }
 
-    private fun updateDomain(domainValues: Collection<Any?>, domainLimits: Set<Any?>) {
-        val effectiveDomain: MutableList<Any?>
+    private fun updateDomain(domainValues: Collection<Any?>, domainLimits: List<Any>) {
+        val effectiveDomain = ArrayList<Any?>()
         if (domainLimits.isEmpty()) {
-            effectiveDomain = ArrayList(domainValues)
+            effectiveDomain.addAll(domainValues)
         } else {
-            effectiveDomain = ArrayList()
-            for (domainValue in domainValues) {
-                if (domainLimits.contains(domainValue)) {
-                    effectiveDomain.add(domainValue)
-                }
-            }
+            effectiveDomain.addAll(domainLimits.intersect(domainValues))
         }
 
         if (!hasBreaks()) {
             breaks = effectiveDomain
         }
+
+        myDomainLimits.clear()
+        myDomainLimits.addAll(domainLimits)
 
         myNumberByDomainValue.clear()
         myNumberByDomainValue.putAll(
@@ -102,8 +105,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
                 effectiveDomain
             )
         )
-        myDomainLimits = HashSet(domainLimits)
-        myDomainValueByNumber = null
+        myDomainValueByNumber = TreeMap()
+        for (domainValue in myNumberByDomainValue.keys) {
+            myDomainValueByNumber.put(myNumberByDomainValue[domainValue]!!, domainValue)
+        }
     }
 
     override fun hasDomainLimits(): Boolean {
@@ -123,8 +128,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         if (myNumberByDomainValue.containsKey(input)) {
             return myNumberByDomainValue[input]
         }
-        throw IllegalArgumentException("'" + name
-                + "' : value {" + input + "} is not in scale domain: " + myNumberByDomainValue)
+        throw IllegalArgumentException(
+            "'" + name
+                    + "' : value {" + input + "} is not in scale domain: " + myNumberByDomainValue
+        )
     }
 
     private fun fromNumber(v: Double?): Any? {
@@ -132,19 +139,12 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             return null
         }
 
-        if (myDomainValueByNumber == null) {
-            myDomainValueByNumber = TreeMap()
-            for (domainValue in myNumberByDomainValue.keys) {
-                myDomainValueByNumber!!.put(myNumberByDomainValue[domainValue]!!, domainValue)
-            }
-        }
-
-        if (myDomainValueByNumber!!.containsKey(v)) {
-            return myDomainValueByNumber!![v]
+        if (myDomainValueByNumber.containsKey(v)) {
+            return myDomainValueByNumber[v]
         }
         // look-up the closest key (number)
-        val ceilingKey = myDomainValueByNumber!!.ceilingKey(v)
-        val floorKey = myDomainValueByNumber!!.floorKey(v)
+        val ceilingKey = myDomainValueByNumber.ceilingKey(v)
+        val floorKey = myDomainValueByNumber.floorKey(v)
         var keyNumber: Double? = null
         if (ceilingKey != null || floorKey != null) {
             keyNumber = when {
@@ -157,7 +157,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
                 }
             }
         }
-        return if (keyNumber != null) myDomainValueByNumber!![keyNumber] else null
+        return if (keyNumber != null) myDomainValueByNumber[keyNumber] else null
     }
 
     override fun with(): Scale.Builder<T> {
@@ -165,12 +165,12 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     }
 
     private class MyBuilder<T> internal constructor(scale: DiscreteScale<T>) : AbstractBuilder<Any, T>(scale) {
-        internal val myIndexByValue: Map<Any, Double>
+        internal val myDomainValues: Collection<Any>
         private var myNewBreaks: List<Any?>? = null
-        internal var myDomainLimits: Set<Any?> = emptySet()
+        internal var myDomainLimits: List<Any> = emptyList()
 
         init {
-            myIndexByValue = scale.myNumberByDomainValue
+            myDomainValues = scale.myNumberByDomainValue.keys  // ordered (from LinkedHashMap)
             myDomainLimits = scale.myDomainLimits
         }
 
@@ -182,7 +182,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             throw IllegalArgumentException("Not applicable to scale with discrete domain")
         }
 
-        override fun limits(domainValues: Set<*>): Scale.Builder<T> {
+        override fun limits(domainValues: List<Any>): Scale.Builder<T> {
             myDomainLimits = domainValues
             return this
         }
@@ -208,11 +208,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             scale.breaks = myNewBreaks!!
 
             // re-validate domain values
-            val domainValues = myIndexByValue.keys
-            if (!domainValues.containsAll(myNewBreaks!!)) {
+            if (!myDomainValues.containsAll(myNewBreaks!!)) {
                 // extend domain to make sure all breaks are visible
                 val newDomainValues = LinkedHashSet(myNewBreaks!!)
-                newDomainValues.addAll(domainValues)
+                newDomainValues.addAll(myDomainValues)
                 scale.updateDomain(newDomainValues, scale.myDomainLimits)
             }
             return scale

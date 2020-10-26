@@ -29,8 +29,8 @@ object ScaleBreaksUtil {
 
     private fun <TargetT> withLinearBreaks(scale: Scale<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale<TargetT> {
         val breaksHelper = LinearBreaksHelper(
-            scaleDomain.lowerEndpoint(),
-            scaleDomain.upperEndpoint(),
+            scaleDomain.lowerEnd,
+            scaleDomain.upperEnd,
             breakCount
         )
         val breaks = breaksHelper.breaks

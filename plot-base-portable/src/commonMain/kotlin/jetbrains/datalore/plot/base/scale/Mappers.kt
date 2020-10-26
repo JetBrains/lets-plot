@@ -30,7 +30,7 @@ object Mappers {
     fun constant(v: Double): (Double?) -> Double = { v }
 
     fun mul(domain: ClosedRange<Double>, rangeSpan: Double): (Double?) -> Double? {
-        val factor = rangeSpan / (domain.upperEndpoint() - domain.lowerEndpoint())
+        val factor = rangeSpan / (domain.upperEnd - domain.lowerEnd)
         checkState(!(factor.isInfinite() || factor.isNaN()), "Can't create mapper with ratio: $factor")
         return mul(factor)
     }
@@ -46,8 +46,8 @@ object Mappers {
     fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>): (Double?) -> Double {
         return linear(
             domain,
-            range.lowerEndpoint(),
-            range.upperEndpoint(),
+            range.lowerEnd,
+            range.upperEnd,
             Double.NaN
         )
     }
@@ -55,20 +55,25 @@ object Mappers {
     fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, defaultValue: Double): (Double?) -> Double {
         return linear(
             domain,
-            range.lowerEndpoint(),
-            range.upperEndpoint(),
+            range.lowerEnd,
+            range.upperEnd,
             defaultValue
         )
     }
 
-    fun linear(domain: ClosedRange<Double>, rangeLow: Double, rangeHigh: Double, defaultValue: Double): (Double?) -> Double {
-        val slop = (rangeHigh - rangeLow) / (domain.upperEndpoint() - domain.lowerEndpoint())
+    fun linear(
+        domain: ClosedRange<Double>,
+        rangeLow: Double,
+        rangeHigh: Double,
+        defaultValue: Double
+    ): (Double?) -> Double {
+        val slop = (rangeHigh - rangeLow) / (domain.upperEnd - domain.lowerEnd)
         if (!SeriesUtil.isFinite(slop)) {
             // no slop
             val v = (rangeHigh - rangeLow) / 2 + rangeLow
             return constant(v)
         }
-        val intersect = rangeLow - domain.lowerEndpoint() * slop
+        val intersect = rangeLow - domain.lowerEnd * slop
         return { input ->
             if (SeriesUtil.isFinite(input))
                 input!! * slop + intersect
@@ -77,7 +82,11 @@ object Mappers {
         }
     }
 
-    fun discreteToContinuous(domainValues: Collection<*>, outputRange: ClosedRange<Double>, naValue: Double): (Double?) -> Double? {
+    fun discreteToContinuous(
+        domainValues: Collection<*>,
+        outputRange: ClosedRange<Double>,
+        naValue: Double
+    ): (Double?) -> Double? {
         val numberByDomainValue =
             MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
         val dataRange = SeriesUtil.range(numberByDomainValue.values) ?: return IDENTITY
@@ -85,25 +94,32 @@ object Mappers {
     }
 
     fun <T> discrete(outputValues: List<T?>, defaultOutputValue: T): (Double?) -> T? {
-        return { DiscreteFun(outputValues, defaultOutputValue).apply(it) }
+        val f = DiscreteFun(outputValues, defaultOutputValue)
+        return { f.apply(it) }
     }
 
-    fun <T> quantized(domain: ClosedRange<Double>?, outputValues: Collection<T>, defaultOutputValue: T): (Double?) -> T {
+    fun <T> quantized(
+        domain: ClosedRange<Double>?,
+        outputValues: Collection<T>,
+        defaultOutputValue: T
+    ): (Double?) -> T {
         if (domain == null) {
             return { defaultOutputValue }
         }
 
         // todo: extract quantizer
         val quantizer = QuantizeScale<T>()
-        quantizer.domain(domain.lowerEndpoint(), domain.upperEndpoint())
+        quantizer.domain(domain.lowerEnd, domain.upperEnd)
         quantizer.range(outputValues)
 
-        return { QuantizedFun(quantizer, defaultOutputValue).apply(it) }
+        val f = QuantizedFun(quantizer, defaultOutputValue)
+        return { f.apply(it) }
     }
 
-    private class DiscreteFun<T> (
-            private val myOutputValues: List<T?>,
-            private val myDefaultOutputValue: T) : Function<Double?, T?> {
+    private class DiscreteFun<T>(
+        private val myOutputValues: List<T?>,
+        private val myDefaultOutputValue: T
+    ) : Function<Double?, T?> {
 
         override fun apply(value: Double?): T? {
             if (!SeriesUtil.isFinite(value)) {
@@ -119,7 +135,10 @@ object Mappers {
         }
     }
 
-    private class QuantizedFun<T> internal constructor(private val myQuantizer: QuantizeScale<T>, private val myDefaultOutputValue: T) : Function<Double?, T> {
+    private class QuantizedFun<T> internal constructor(
+        private val myQuantizer: QuantizeScale<T>,
+        private val myDefaultOutputValue: T
+    ) : Function<Double?, T> {
         override fun apply(value: Double?): T {
             return if (!SeriesUtil.isFinite(value)) myDefaultOutputValue else myQuantizer.quantize(value!!)
         }

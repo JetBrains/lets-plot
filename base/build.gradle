@@ -4,20 +4,16 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-    id 'groovy'   // add 'test' task
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+    id "groovy"   // add 'test' task
 }
+
 
 kotlin {
     jvm()
     js() {
-        browser {}   // required for js tests running (?)
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
-//            kotlinOptions.moduleKind = "umd"
-        }
+        browser {}
     }
 
     sourceSets {
@@ -40,7 +36,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                api "com.google.code.gson:gson:$gson_version"
                 compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }

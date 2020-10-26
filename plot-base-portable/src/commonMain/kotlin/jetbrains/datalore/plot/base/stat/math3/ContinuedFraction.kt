@@ -129,6 +129,7 @@ protected constructor() {
                  * of p2, q2 still overflow.
                  */
                 var scaleFactor = 1.0
+                @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
                 var lastScaleFactor = 1.0
                 val maxPower = 5
                 val scale = max(a, b)

@@ -6,9 +6,6 @@ build_python_extension: no
 # enable tasks responsible for building and publishing of lets-plot python package
 enable_python_package: no
 
-# enable geom_livemap
-enable_livemap: no
-
 # -------------------------------------------------------------------
 # Python settings
 # -------------------------------------------------------------------

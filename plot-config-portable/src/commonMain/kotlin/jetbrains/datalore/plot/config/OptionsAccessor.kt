@@ -63,56 +63,97 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getList(option: String): List<*> {
         val v = get(option) ?: return ArrayList<Any>()
-        if (v is List<*>) {
-            return v
-        }
-        throw IllegalArgumentException("Not a List: " + option + ": " + v::class.simpleName)
+
+        require(v is List<*>) { "Not a List: $option: ${v::class.simpleName}" }
+
+        return v
     }
 
     fun getDoubleList(option: String): List<Double> {
-        val list = getList(option)
-        val predicate: (Any?) -> Boolean = { v -> v != null && v is Double }
-        if (list.all(predicate)) {
-            @Suppress("UNCHECKED_CAST")
-            return list as List<Double>
-        }
+        val list = getNumList(option)
+        return list.map { it.toDouble() }
+    }
 
-        throw IllegalArgumentException("Expected numeric value but was : ${list.find(predicate)}")
+    @Suppress("UNCHECKED_CAST")
+    fun getNumPair(option: String): Pair<Number, Number> {
+        val list = getNumList(option) { it is Number }
+        return pickTwo(option, list) as Pair<Number, Number>
+    }
+
+    fun getNumQPair(option: String): Pair<Number?, Number?> {
+        val list = getNumList(option) { it == null || it is Number }
+        require(list.size >= 2) { "$option requires a list of 2 but was ${list.size}" }
+        return Pair(list[0], list[1])
+    }
+
+    private fun <T> pickTwo(option: String, list: List<T>): Pair<T, T> {
+        require(list.size >= 2) { "$option requires a list of 2 but was ${list.size}" }
+        return Pair(list[0], list[1])
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getNumList(option: String): List<Number> = getNumList(option) { it is Number } as List<Number>
+
+    fun getNumQList(option: String): List<Number?> = getNumList(option) { it == null || it is Number }
+
+    private fun getNumber(option: String): Number? {
+        val v = get(option) ?: return null
+
+        require(v is Number) { "Parameter '$option' expected to be a Number, but was ${v::class.simpleName}" }
+
+        return v;
+    }
+
+    private fun getNumList(option: String, predicate: (Any?) -> Boolean): List<Number?> {
+        val list = getList(option)
+
+        requireAll(list, predicate) { "$option requires a list of numbers but not numeric encountered: $it" }
+
+        @Suppress("UNCHECKED_CAST")
+        return list as List<Number?>
     }
 
     fun getStringList(option: String): List<String> {
         val list = getList(option)
-        val predicate: (Any?) -> Boolean = { v -> v != null && v is String }
-        if (list.all(predicate)) {
-            @Suppress("UNCHECKED_CAST")
-            return list as List<String>
-        }
 
-        throw IllegalArgumentException("Expected string value but was : ${list.find(predicate)}")
+        requireAll(list, { it is String }) { "$option requires a list of strings but not string encountered: $it" }
+
+        @Suppress("UNCHECKED_CAST")
+        return list as List<String>
     }
 
     internal fun getRange(option: String): ClosedRange<Double> {
-        val error =
-            { v: Any? -> throw IllegalArgumentException("'range' value is expected in form: [min, max] but was: $v") }
-        val v = get(option)
-        if (v is List<*> && v.isNotEmpty()) {
-            val lower = asDouble(v[0]) ?: error(v)
-            var upper = lower
-            if (v.size > 1) {
-                upper = asDouble(v[1]) ?: error(v)
-            }
-            return ClosedRange.closed(lower, upper)
+        require(has(option)) { "'Range' value is expected in form: [min, max]" }
+
+        val range = getRangeOrNull(option)
+
+        requireNotNull(range) { "'range' value is expected in form: [min, max] but was: ${get(option)}" }
+
+        return range
+    }
+
+    fun getRangeOrNull(option: String): ClosedRange<Double>? {
+        val pair = get(option)
+        if ((pair is List<*> && pair.size == 2 && pair.all { it is Number }) != true) {
+            return null
         }
 
-        throw IllegalArgumentException("'Range' value is expected in form: [min, max]")
+        val lower = (pair.first() as Number).toDouble()
+        val upper = (pair.last() as Number).toDouble()
+
+        return try {
+            ClosedRange(lower, upper)
+        } catch (ex: Throwable) {
+            null
+        }
     }
 
     fun getMap(option: String): Map<*, *> {
         val v = get(option) ?: return emptyMap<Any, Any>()
-        if (v is Map<*, *>) {
-            return v
-        }
-        throw IllegalArgumentException("Not a Map: " + option + ": " + v::class.simpleName)
+
+        require(v is Map<*, *>) { "Not a Map: " + option + ": " + v::class.simpleName }
+
+        return v
     }
 
     @JvmOverloads
@@ -122,15 +163,15 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     fun getDouble(option: String): Double? {
-        return getValueOrNull(option) { asDouble(it) }
+        return getNumber(option)?.toDouble()
     }
 
     fun getInteger(option: String): Int? {
-        return getValueOrNull(option) { v -> (v as? Number)?.toInt() }
+        return getNumber(option)?.toInt()
     }
 
     fun getLong(option: String): Long? {
-        return getValueOrNull(option) { v -> (v as? Number)?.toLong() }
+        return getNumber(option)?.toLong()
     }
 
     private fun <T> getValueOrNull(option: String, mapper: (Any?) -> T?): T? {
@@ -156,8 +197,8 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
             return OptionsAccessor(map, emptyMap<Any, Any>())
         }
 
-        private fun asDouble(value: Any?): Double? {
-            return (value as? Number)?.toDouble()
+        private fun <T> requireAll(items: Iterable<T>, predicate: (T) -> Boolean, lazy: (T) -> Any) {
+            items.filterNot { predicate(it) }.firstOrNull()?.let { require(false) { lazy(it) } }
         }
     }
 }

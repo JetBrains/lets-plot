@@ -21,6 +21,8 @@ class StatProto {
     internal fun createStat(statKind: StatKind, options: Map<*, *>): Stat {
         // ToDo: pass 'option accessor'
         // ToDo: get rid of 'if'-s: everything must be present in the 'defaults'
+        // ToDo: get rid of XXXStatBuilder
+        // ToDo: see BIN2D
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
@@ -39,6 +41,20 @@ class StatProto {
                     binStat.boundary((options["boundary"] as Number).toDouble())
                 }
                 return binStat.build()
+            }
+
+            StatKind.BIN2D -> {
+                val opts = OptionsAccessor.over(options)
+                val (binCountX, binCountY) = opts.getNumPair(Bin2dStat.P_BINS)
+                val (binWidthX, binWidthY) = opts.getNumQPair(Bin2dStat.P_BINWIDTH)
+
+                return Bin2dStat(
+                    binCountX = binCountX.toInt(),
+                    binCountY = binCountY.toInt(),
+                    binWidthX = binWidthX?.toDouble(),
+                    binWidthY = binWidthY?.toDouble(),
+                    drop = opts.getBoolean(Bin2dStat.P_BINWIDTH, def = Bin2dStat.DEF_DROP)
+                )
             }
 
             StatKind.CONTOUR -> {
@@ -64,6 +80,8 @@ class StatProto {
             }
 
             StatKind.SMOOTH -> return configureSmoothStat(options)
+
+            StatKind.CORR -> return configureCorrStat(options)
 
             StatKind.BOXPLOT -> {
                 val boxplotStat = Stats.boxplot()
@@ -116,6 +134,9 @@ class StatProto {
         //  n (80) - number of points to evaluate smoother at
         //  se (TRUE ) - display confidence interval around smooth?
         //  level (0.95) - level of confidence interval to use
+        //  deg ( >= 1 ) - degree of polynomial for regression
+        // seed  - random seed for LOESS sampling
+        // max_n (1000)  - maximum points in DF for LOESS
         val stat = Stats.smooth()
 
         if (options.containsKey("n")) {
@@ -145,8 +166,40 @@ class StatProto {
             }
         }
 
+        options["span"]?.let { stat.span = it.asDouble() }
+        options["deg"]?.let { stat.deg = it.asInt() }
+
+        options["seed"]?.let { stat.seed = it.asLong() }
+        options["max_n"]?.let { stat.loessCriticalSize = it.asInt() }
+
+
         return stat
     }
+
+    private fun configureCorrStat(options: Map<*, *>): Stat {
+        val stat = Stats.corr()
+
+        if (options.containsKey("method")) {
+            val method = options["method"] as String
+            stat.correlationMethod = when (method) {
+                "pearson" -> CorrelationStat.Method.PEARSON
+                else -> throw IllegalArgumentException("Unsupported correlation method: $method")
+            }
+        }
+
+        if (options.containsKey("type")) {
+            val type = options["type"] as String
+            stat.type = when (type) {
+                "full" -> CorrelationStat.Type.FULL
+                "upper" -> CorrelationStat.Type.UPPER
+                "lower" -> CorrelationStat.Type.LOWER
+                else -> throw IllegalArgumentException("Unsupported matrix type: $type. Only 'full', 'upper' and 'lower' are supported.")
+            }
+        }
+
+        return stat
+    }
+
 
     private fun configureDensity2dStat(stat: AbstractDensity2dStat, options: Map<*, *>): Stat {
         if (options.containsKey("kernel")) {
@@ -204,6 +257,12 @@ class StatProto {
         return stat
     }
 
+    private fun Any?.asDouble() = (this as Number).toDouble()
+
+    private fun Any?.asInt() = (this as Number).toInt()
+
+    private fun Any?.asLong() = (this as Number).toLong()
+
     companion object {
         private val DEFAULTS = HashMap<String, Map<String, Any>>()
 
@@ -211,26 +270,29 @@ class StatProto {
         init {
             DEFAULTS["identity"] = emptyMap()
             DEFAULTS["count"] = emptyMap()
-            DEFAULTS["bin"] =
-                createBinDefaults()
+            DEFAULTS["bin"] = createBinDefaults()
+            DEFAULTS["bin2d"] = createBin2dDefaults()
             DEFAULTS["smooth"] = emptyMap()
-            DEFAULTS["contour"] =
-                createContourDefaults()
-            DEFAULTS["contourf"] =
-                createContourfDefaults()
-            DEFAULTS["boxplot"] =
-                createBoxplotDefaults()
-            DEFAULTS["density"] =
-                createDensityDefaults()
-            DEFAULTS["density2d"] =
-                createDensity2dDefaults()
-            DEFAULTS["density2df"] =
-                createDensity2dDefaults()
+            DEFAULTS["contour"] = createContourDefaults()
+            DEFAULTS["contourf"] = createContourfDefaults()
+            DEFAULTS["boxplot"] = createBoxplotDefaults()
+            DEFAULTS["density"] = createDensityDefaults()
+            DEFAULTS["density2d"] = createDensity2dDefaults()
+            DEFAULTS["density2df"] = createDensity2dDefaults()
+            DEFAULTS["corr"] = emptyMap()
         }
 
         private fun createBinDefaults(): Map<String, Any> {
             return mapOf(
                 "bins" to BinStatBuilder.DEF_BIN_COUNT
+            )
+        }
+
+        private fun createBin2dDefaults(): Map<String, Any> {
+            return mapOf(
+                Bin2dStat.P_BINS to listOf(Bin2dStat.DEF_BINS, Bin2dStat.DEF_BINS),
+                Bin2dStat.P_BINWIDTH to listOf(Bin2dStat.DEF_BINWIDTH, Bin2dStat.DEF_BINWIDTH),
+                Bin2dStat.P_DROP to Bin2dStat.DEF_DROP
             )
         }
 

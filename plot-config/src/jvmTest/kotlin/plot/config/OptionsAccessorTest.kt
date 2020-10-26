@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.test.*
 import jetbrains.datalore.base.assertion.assertEquals as assertDoubleEquals
 
@@ -60,5 +61,30 @@ class OptionsAccessorTest {
             assertEquals(i.toLong(), OptionsAccessor.over(options).getLong(option))
             assertDoubleEquals(i.toDouble(), OptionsAccessor.over(options).getDouble(option), 0.0)
         }
+    }
+
+    @Test
+    fun numPair() {
+        val options = mapOf(
+            "a" to listOf(1, 2, 3)
+        )
+        assertEquals(Pair(1, 2), OptionsAccessor.over(options).getNumPair("a"))
+    }
+
+    @Test
+    fun numQPair() {
+        val options = mapOf(
+            "a" to listOf(1, null, 3)
+        )
+        assertEquals(Pair(1, null), OptionsAccessor.over(options).getNumQPair("a"))
+    }
+
+    @Test
+    fun intRangeTest() {
+        val options = mapOf(
+            "a" to listOf(1, 2)
+        )
+
+        assertEquals(ClosedRange<Double>(1.0, 2.0), OptionsAccessor.over(options).getRangeOrNull("a"))
     }
 }

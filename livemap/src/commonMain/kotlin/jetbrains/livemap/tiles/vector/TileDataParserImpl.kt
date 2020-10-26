@@ -17,7 +17,7 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.entities.geometry.GeometryTransform
+import jetbrains.livemap.geometry.GeometryTransform
 import jetbrains.livemap.projection.Client
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.WorldProjection

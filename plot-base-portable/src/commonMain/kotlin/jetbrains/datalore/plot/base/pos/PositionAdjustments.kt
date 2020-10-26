@@ -24,7 +24,7 @@ object PositionAdjustments {
             }
 
             override fun handlesGroups(): Boolean {
-                return PositionAdjustments.Meta.IDENTITY.handlesGroups()
+                return Meta.IDENTITY.handlesGroups()
             }
         }
     }
@@ -40,14 +40,9 @@ object PositionAdjustments {
     }
 
     fun stack(aes: Aesthetics, strategy: StackingStrategy): PositionAdjustment {
-        when (strategy) {
-            PositionAdjustments.StackingStrategy.SPLIT_POSITIVE_NEGATIVE -> return StackPos.splitPositiveNegative(
-                aes
-            )
-            PositionAdjustments.StackingStrategy.SUM_POSITIVE_NEGATIVE -> return StackPos.sumPositiveNegative(
-                aes
-            )
-            else -> throw IllegalArgumentException("strategy: $strategy")
+        return when (strategy) {
+            StackingStrategy.SPLIT_POSITIVE_NEGATIVE -> StackPos.splitPositiveNegative(aes)
+            StackingStrategy.SUM_POSITIVE_NEGATIVE -> StackPos.sumPositiveNegative(aes)
         }
     }
 
@@ -63,7 +58,13 @@ object PositionAdjustments {
         return NudgePos(width, height)
     }
 
-    fun jitterDodge(aesthetics: Aesthetics, groupCount: Int, width: Double?, jitterWidth: Double?, jitterHeight: Double?): PositionAdjustment {
+    fun jitterDodge(
+        aesthetics: Aesthetics,
+        groupCount: Int,
+        width: Double?,
+        jitterWidth: Double?,
+        jitterHeight: Double?
+    ): PositionAdjustment {
         return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight)
     }
 

@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.isSubTiny
 import kotlin.math.max
 import kotlin.math.min
 
@@ -47,28 +48,24 @@ object ContourStatUtil {
         return Pair(colCount, rowCount)
     }
 
-    fun computeLevels(data: DataFrame, binOptions: StatUtil.BinOptions): List<Double>? {
+    fun computeLevels(data: DataFrame, binOptions: BinStatUtil.BinOptions): List<Double>? {
         if (!(data.has(TransformVar.X) && data.has(TransformVar.Y) && data.has(
-                TransformVar.Z))) {
+                TransformVar.Z
+            ))
+        ) {
             return null
         }
         val zRange = data.range(TransformVar.Z)
         return computeLevels(zRange, binOptions)
     }
 
-    fun computeLevels(zRange: ClosedRange<Double>?, binOptions: StatUtil.BinOptions): List<Double>? {
-        if (zRange == null) {
-            return null
-        }
-        val spanZ = SeriesUtil.span(zRange)
-        if (spanZ == 0.0) {
-            return null
-        }
+    fun computeLevels(zRange: ClosedRange<Double>?, binOptions: BinStatUtil.BinOptions): List<Double>? {
+        if (zRange == null || isSubTiny(zRange)) return null
 
-        val b = StatUtil.binCountAndWidth(spanZ, binOptions)
+        val b = BinStatUtil.binCountAndWidth(SeriesUtil.span(zRange), binOptions)
         val levels = ArrayList<Double>()
         for (i in 0 until b.count) {
-            var level = i * b.width + zRange.lowerEndpoint()
+            var level = i * b.width + zRange.lowerEnd
             level += b.width / 2   // shift all levels half-step to make 1-st level contour visible
             levels.add(level)
         }
@@ -97,16 +94,17 @@ object ContourStatUtil {
     }
 
     fun computeContours(
-            xRange: ClosedRange<Double>,
-            yRange: ClosedRange<Double>,
-            colCount: Int,
-            rowCount: Int,
-            data: List<Double?>,
-            levels: List<Double>): Map<Double, List<List<DoubleVector>>> {
+        xRange: ClosedRange<Double>,
+        yRange: ClosedRange<Double>,
+        colCount: Int,
+        rowCount: Int,
+        data: List<Double?>,
+        levels: List<Double>
+    ): Map<Double, List<List<DoubleVector>>> {
 
         val xStep = SeriesUtil.span(xRange) / (colCount - 1)
         val yStep = SeriesUtil.span(yRange) / (rowCount - 1)
-        val origin = DoubleVector(xRange.lowerEndpoint(), yRange.lowerEndpoint())
+        val origin = DoubleVector(xRange.lowerEnd, yRange.lowerEnd)
 
         val pathListByLevel = HashMap<Double, List<List<DoubleVector>>>()
         for (level in levels) {
@@ -182,7 +180,13 @@ object ContourStatUtil {
         return pathList
     }
 
-    private fun convertPaths(paths: List<List<Edge>>, xStep: Double, yStep: Double, origin: DoubleVector, level: Double?): List<List<DoubleVector>> {
+    private fun convertPaths(
+        paths: List<List<Edge>>,
+        xStep: Double,
+        yStep: Double,
+        origin: DoubleVector,
+        level: Double?
+    ): List<List<DoubleVector>> {
         val result = ArrayList<List<DoubleVector>>()
 
         for (path in paths) {
@@ -272,7 +276,10 @@ object ContourStatUtil {
         return result
     }
 
-    internal fun <T : List<DoubleVector>> removePathByEndpoints(path: List<DoubleVector>?, pathByEndPoint: MutableMap<DoubleVector, T>) {
+    internal fun <T : List<DoubleVector>> removePathByEndpoints(
+        path: List<DoubleVector>?,
+        pathByEndPoint: MutableMap<DoubleVector, T>
+    ) {
         if (path != null) {
             pathByEndPoint.remove(path[0])
             pathByEndPoint.remove(path[path.size - 1])
@@ -296,7 +303,12 @@ object ContourStatUtil {
         }
     }
 
-    private fun computeSegments(colCount: Int, rowCount: Int, data: List<Double?>, level: Double): List<Pair<Edge, Edge>> {
+    private fun computeSegments(
+        colCount: Int,
+        rowCount: Int,
+        data: List<Double?>,
+        level: Double
+    ): List<Pair<Edge, Edge>> {
 
         val segments = ArrayList<Pair<Edge, Edge>>()
         for (row in 0 until rowCount - 1) {
@@ -339,7 +351,12 @@ object ContourStatUtil {
         return segments
     }
 
-    private fun computeSegmentsForGridCell(level: Double?, value5: DoubleArray, col: Int, row: Int): List<Pair<Edge, Edge>> {
+    private fun computeSegmentsForGridCell(
+        level: Double?,
+        value5: DoubleArray,
+        col: Int,
+        row: Int
+    ): List<Pair<Edge, Edge>> {
         // triangles:
         // [0] 0-1-4
         // [1] 1-2-4

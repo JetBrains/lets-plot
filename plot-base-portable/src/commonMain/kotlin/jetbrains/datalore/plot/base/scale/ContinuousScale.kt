@@ -12,16 +12,16 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuous: Boolean
-    override val domainLimits: ClosedRange<Double>
-
     override val isContinuousDomain: Boolean = true
+    override val domainLimits: ClosedRange<Double>?
+
 
     override val defaultTransform: Transform
         get() = Transforms.IDENTITY
 
     constructor(name: String, mapper: ((Double?) -> T?), continuousOutput: Boolean) : super(name, mapper) {
         isContinuous = continuousOutput
-        domainLimits = ClosedRange.closed(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        domainLimits = null
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -31,15 +31,25 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private constructor(b: MyBuilder<T>) : super(b) {
         isContinuous = b.myContinuousOutput
-        domainLimits = ClosedRange.closed(b.myLowerLimit, b.myUpperLimit)
+        val lower = b.myLowerLimit
+        val upper = b.myUpperLimit
+        domainLimits = if (lower != null || upper != null) {
+            ClosedRange(
+                lower ?: Double.NEGATIVE_INFINITY,
+                upper ?: Double.POSITIVE_INFINITY
+            )
+        } else null
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
-        return v is Number && domainLimits.contains(v.toDouble())
+        return (v as? Number)?.run {
+            // undefined domain limits - contains all
+            return domainLimits?.contains(v.toDouble()) ?: true
+        } ?: false
     }
 
     override fun hasDomainLimits(): Boolean {
-        return domainLimits.lowerEndpoint() > Double.NEGATIVE_INFINITY || domainLimits.upperEndpoint() < Double.POSITIVE_INFINITY
+        return domainLimits != null
     }
 
     override fun asNumber(input: Any?): Double? {
@@ -56,25 +66,27 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
         internal val myContinuousOutput: Boolean = scale.isContinuous
-        internal var myLowerLimit: Double = 0.0
-        internal var myUpperLimit: Double = 0.0
+        internal var myLowerLimit: Double?
+        internal var myUpperLimit: Double?
 
         init {
-            myLowerLimit = scale.domainLimits.lowerEndpoint()
-            myUpperLimit = scale.domainLimits.upperEndpoint()
+            myLowerLimit = scale.domainLimits?.lowerEnd
+            myUpperLimit = scale.domainLimits?.upperEnd
         }
 
         override fun lowerLimit(v: Double): Scale.Builder<T> {
+            require(!v.isNaN()) { "`lower` can't be $v" }
             myLowerLimit = v
             return this
         }
 
         override fun upperLimit(v: Double): Scale.Builder<T> {
+            require(!v.isNaN()) { "`upper` can't be $v" }
             myUpperLimit = v
             return this
         }
 
-        override fun limits(domainValues: Set<*>): Scale.Builder<T> {
+        override fun limits(domainValues: List<Any>): Scale.Builder<T> {
             throw IllegalArgumentException("Can't apply discrete limits to scale with continuous domain")
         }
 

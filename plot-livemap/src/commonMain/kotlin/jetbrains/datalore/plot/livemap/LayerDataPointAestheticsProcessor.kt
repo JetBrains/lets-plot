@@ -30,7 +30,7 @@ internal class LayerDataPointAestheticsProcessor(
     private val myGeodesic: Boolean
 ) {
 
-    internal fun createConfigurator(layerData: LiveMapLayerData): LayersBuilder.() -> Unit {
+    internal fun createConfigurator(layerIndex: Int, layerData: LiveMapLayerData): LayersBuilder.() -> Unit {
         val geomKind = layerData.geomKind
 
 //        if (isDebugLogEnabled()) {
@@ -69,7 +69,7 @@ internal class LayerDataPointAestheticsProcessor(
                 layerKind = MapLayerKind.POLYGON
             }
 
-            TILE -> {
+            TILE, BIN_2D -> {
                 mapEntityBuilders = dataPointsConverter.toTile()
                 layerKind = MapLayerKind.POLYGON
             }
@@ -91,6 +91,8 @@ internal class LayerDataPointAestheticsProcessor(
 
             else -> throw IllegalArgumentException("Layer '" + geomKind.name + "' is not supported on Live Map.")
         }
+
+        mapEntityBuilders.forEach { it.layerIndex = layerIndex + 1 }
 
         return createLayersConfigurator(layerKind, mapEntityBuilders)
     }

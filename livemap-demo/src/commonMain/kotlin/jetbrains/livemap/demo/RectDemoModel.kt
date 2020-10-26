@@ -20,7 +20,8 @@ class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
             layers {
                 polygons {
                     polygon {
-                        geometry(rect(-104.032789, 35.309947, -80.237456, 48.979166), isGeodesic = false)
+//                        geometry(rect(-104.032789, 35.309947, -80.237456, 48.979166), isGeodesic = false)
+                        geometry(rect(25.0, 69.0, 26.0, 70.0), isGeodesic = false)
 
                         fillColor = Color(255, 175, 175, 153)
                         strokeColor = Color(128, 0, 128, 153)
@@ -32,7 +33,12 @@ class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     }
 
     private fun rect(minLongitude: Double, minLatitude: Double, maxLongitude: Double, maxLatitude: Double): List<LonLatPoint> {
-        return GeoRectangle(minLongitude, minLatitude, maxLongitude, maxLatitude)
+        return GeoRectangle(
+            minLongitude,
+            minLatitude,
+            maxLongitude,
+            maxLatitude
+        )
             .splitByAntiMeridian()
             .flatMap {
                 listOf(

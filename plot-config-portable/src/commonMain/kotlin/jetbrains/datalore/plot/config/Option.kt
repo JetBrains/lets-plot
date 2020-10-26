@@ -13,6 +13,7 @@ object Option {
 
     object Meta {
         const val KIND = "kind"
+        const val NAME = "name"
         const val DATA_META = "data_meta"
         const val MAP_DATA_META = "map_data_meta"
 
@@ -29,12 +30,21 @@ object Option {
         }
 
         object GeoDataFrame {
-            const val TAG = "geodataframe"
+            const val GDF = "geodataframe"
             const val GEOMETRY = "geometry"
         }
 
-        object GeoReference {
-            const val TAG = "georeference"
+        object GeoDict {
+            const val TAG = "geodict"
+        }
+
+        object MappingAnnotation {
+            const val TAG = "mapping_annotations"
+            const val AES = "aes"
+            const val ANNOTATION = "annotation"
+            const val AS_DISCRETE = "as_discrete"
+            const val PARAMETERS = "parameters"
+            const val LABEL = "label"
         }
     }
 
@@ -50,10 +60,12 @@ object Option {
         }
     }
 
-    object Plot {
+    object PlotBase {
         const val DATA = "data"
-        // ToDo: merge 'data' options
         const val MAPPING = "mapping"
+    }
+
+    object Plot {
         const val LAYERS = "layers"
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
@@ -67,17 +79,37 @@ object Option {
     object Layer {
         const val GEOM = "geom"
         const val STAT = "stat"
-        const val DATA = "data"
-        const val MAPPING = "mapping"
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val TOOLTIPS = "tooltips"
+        const val TOOLTIP_LINES = "tooltip_lines"
+        const val TOOLTIP_FORMATS = "tooltip_formats"
+        const val NONE = "none"
+        const val MAP_JOIN = "map_join"
+    }
+
+    object TooltipFormat {
+        const val FIELD = "field"
+        const val FORMAT = "format"
     }
 
     object Geom {
 
         object Choropleth {
             const val GEO_POSITIONS = "map"
+        }
+
+        object CrossBar {
+            const val FATTEN = "fatten"
+        }
+
+        object PointRange {
+            const val FATTEN = "fatten"
+        }
+
+        object Boxplot {
+            const val FATTEN = "fatten"
         }
 
         object BoxplotOutlier {
@@ -111,16 +143,16 @@ object Option {
 
         object Image {
             const val HREF = "href"
+        }
 
-
+        object Text {
+            const val LABEL_FORMAT = "label_format"
+            const val NA_VALUE = "na_value"
         }
 
         object LiveMap {
-            const val PARENT = "within"
             const val DISPLAY_MODE = "display_mode"
-            const val FEATURE_LEVEL = "level"
             const val INTERACTIVE = "interactive"
-            const val MAGNIFIER = "magnifier"
             const val LOCATION = "location"
             const val ZOOM = "zoom"
             const val STROKE = "stroke"
@@ -130,18 +162,21 @@ object Option {
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
+            const val TILES = "tiles"
+            const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
         }
     }
 
     object Scale {
-        const val NAME = "name"
+        const val NAME = Meta.NAME
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
         const val LABELS = "labels"
         const val EXPAND = "expand"
         const val LIMITS = "limits"
         const val DISCRETE_DOMAIN = "discrete"
+        const val DISCRETE_DOMAIN_REVERSE = "reverse"
         const val DATE_TIME = "datetime"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
@@ -171,7 +206,6 @@ object Option {
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
-
         // range
         const val RANGE = "range"
         // max_size for scale_size_area
@@ -181,23 +215,19 @@ object Option {
     }
 
     object Facet {
-        const val NAME = "name"
+        const val NAME = Meta.NAME
         const val X = "x"
         const val Y = "y"
     }
 
     object Mapping {
         const val GROUP = "group"
-        val MAP_ID =
-            toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
         init {
-            for (aes in Aes.values()) {
-                AES_BY_OPTION[toOption(
-                    aes
-                )] = aes
+            Aes.values().forEach { aes ->
+                AES_BY_OPTION[toOption(aes)] = aes
             }
             // aliases
             AES_BY_OPTION["colour"] = Aes.COLOR
@@ -253,11 +283,15 @@ object Option {
         const val AXIS_LINE = "axis_line"
         const val AXIS_TICKS = "axis_ticks"
         const val AXIS_TEXT = "axis_text"
+        const val AXIS_TOOLTIP = "axis_tooltip"
+
         // tick labels
         const val AXIS_TITLE = "axis_title"
         const val LEGEND_POSITION = "legend_position"
         const val LEGEND_JUSTIFICATION = "legend_justification"
         const val LEGEND_DIRECTION = "legend_direction"
+
+        const val TOOLTIP_ANCHOR = "tooltip_anchor"
     }
 
     object GeomName {
@@ -267,8 +301,12 @@ object Option {
         private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
         private const val TILE = "tile"
+        private const val BIN_2D = "bin2d"
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
+        private const val CROSS_BAR = "crossbar"
+        private const val LINE_RANGE = "linerange"
+        private const val POINT_RANGE = "pointrange"
         const val POLYGON = "polygon"
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
@@ -302,8 +340,12 @@ object Option {
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
             map[TILE] = GeomKind.TILE
+            map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
+            map[CROSS_BAR] = GeomKind.CROSS_BAR
+            map[LINE_RANGE] = GeomKind.LINE_RANGE
+            map[POINT_RANGE] = GeomKind.POINT_RANGE
             map[POLYGON] = GeomKind.POLYGON
             map[AB_LINE] = GeomKind.AB_LINE
             map[H_LINE] = GeomKind.H_LINE

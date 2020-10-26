@@ -162,7 +162,8 @@ class SelectTest {
     }
 
     private fun testNonListened(src: Property<Boolean>,
-                                selected: ObservableCollection<String>, res: ObservableCollection<String>) {
+                                selected: ObservableCollection<String>, res: ObservableCollection<String>
+    ) {
         assertEquals(0, res.size)
 
         selected.add("1")
@@ -179,7 +180,8 @@ class SelectTest {
     }
 
     private fun testListened(src: Property<Boolean>,
-                             selected: ObservableCollection<String>, res: ObservableCollection<String>) {
+                             selected: ObservableCollection<String>, res: ObservableCollection<String>
+    ) {
         @Suppress("UNCHECKED_CAST")
         val mock = mock(CollectionListener::class.java) as CollectionListener<in String>
         res.addListener(mock)
@@ -239,7 +241,8 @@ class SelectTest {
     }
 
     private fun testCollection(src: ReadableProperty<out Boolean>,
-                               selected: ObservableCollection<String>): ObservableCollection<String> {
+                               selected: ObservableCollection<String>
+    ): ObservableCollection<String> {
 
         return ObservableCollections.selectCollection(src) { value -> if (value) selected else ObservableCollections.emptyList() }
     }

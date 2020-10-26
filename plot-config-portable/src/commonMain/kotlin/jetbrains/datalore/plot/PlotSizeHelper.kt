@@ -1,0 +1,157 @@
+/*
+ * Copyright (c) 2020. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package jetbrains.datalore.plot
+
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.config.BunchConfig
+import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.OptionsAccessor
+import jetbrains.datalore.plot.config.PlotConfig
+
+object PlotSizeHelper {
+    private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
+    private const val DEF_PLOT_WIDTH = 500.0
+    private const val DEF_LIVE_MAP_WIDTH = 800.0
+    private val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
+    private val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
+
+
+    fun singlePlotSize(
+        plotSpec: Map<*, *>,
+        plotSize: DoubleVector?,
+        facets: PlotFacets,
+        containsLiveMap: Boolean
+    ): DoubleVector {
+        return if (plotSize != null) {
+            plotSize
+        } else {
+            var plotSizeSpec = getSizeOptionOrNull(plotSpec)
+            if (plotSizeSpec != null) {
+                plotSizeSpec
+            } else {
+                defaultSinglePlotSize(facets, containsLiveMap)
+            }
+        }
+    }
+
+    private fun bunchItemBoundsList(bunchSpec: Map<*, *>): List<DoubleRectangle> {
+        val bunchConfig = BunchConfig(bunchSpec)
+        if (bunchConfig.bunchItems.isEmpty()) {
+            throw IllegalArgumentException("No plots in the bunch")
+        }
+
+        val plotBounds = ArrayList<DoubleRectangle>()
+        for (bunchItem in bunchConfig.bunchItems) {
+            plotBounds.add(
+                DoubleRectangle(
+                    DoubleVector(bunchItem.x, bunchItem.y),
+                    bunchItemSize(bunchItem)
+                )
+            )
+        }
+        return plotBounds
+    }
+
+    internal fun bunchItemSize(bunchItem: BunchConfig.BunchItem): DoubleVector {
+        return if (bunchItem.hasSize()) {
+            bunchItem.size
+        } else {
+            singlePlotSize(
+                bunchItem.featureSpec,
+                null,
+                PlotFacets.undefined(), false
+            )
+        }
+    }
+
+    private fun defaultSinglePlotSize(facets: PlotFacets, containsLiveMap: Boolean): DoubleVector {
+        var plotSize = DEF_PLOT_SIZE
+        if (facets.isDefined) {
+            val xLevels = facets.xLevels!!
+            val yLevels = facets.yLevels!!
+            val columns = if (xLevels.isEmpty()) 1 else xLevels.size
+            val rows = if (yLevels.isEmpty()) 1 else yLevels.size
+            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
+            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
+            plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
+        } else if (containsLiveMap) {
+            plotSize = DEF_LIVE_MAP_SIZE
+        }
+        return plotSize
+    }
+
+    private fun getSizeOptionOrNull(singlePlotSpec: Map<*, *>): DoubleVector? {
+        if (!singlePlotSpec.containsKey(Option.Plot.SIZE)) {
+            return null
+        }
+        val map = OptionsAccessor.over(singlePlotSpec).getMap(Option.Plot.SIZE)
+        val sizeSpec = OptionsAccessor.over(map)
+        val width = sizeSpec.getDouble("width")
+        val height = sizeSpec.getDouble("height")
+        if (width == null || height == null) {
+            return null
+        }
+        return DoubleVector(width, height)
+    }
+
+    /**
+     * @param figureFpec Plot or plot bunch specification (can be 'raw' or processed).
+     * @return Figure dimatsions width/height ratio.
+     */
+    fun figureAspectRatio(figureFpec: Map<*, *>): Double {
+        return when {
+            PlotConfig.isPlotSpec(figureFpec) -> {
+                // single plot
+                getSizeOptionOrNull(figureFpec)?.let { it.x / it.y } ?: ASPECT_RATIO
+            }
+            PlotConfig.isGGBunchSpec(figureFpec) -> {
+                // bunch
+                val bunchSize = plotBunchSize(figureFpec)
+                bunchSize.x / bunchSize.y
+            }
+            else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(figureFpec))
+        }
+    }
+
+    fun plotBunchSize(plotBunchFpec: Map<*, *>): DoubleVector {
+        require(PlotConfig.isGGBunchSpec(plotBunchFpec)) {
+            "Plot Bunch is expected but was kind: ${PlotConfig.specKind(plotBunchFpec)}"
+        }
+        return plotBunchSize(bunchItemBoundsList(plotBunchFpec))
+    }
+
+    private fun plotBunchSize(bunchItemBoundsIterable: Iterable<DoubleRectangle>): DoubleVector {
+        return bunchItemBoundsIterable
+            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
+                acc.union(bounds)
+            }
+            .dimension
+    }
+
+    fun fetchPlotSizeFromSvg(svg: String): DoubleVector {
+        val svgTagMatch = Regex("<svg (.*)>").find(svg)
+        require(svgTagMatch != null && svgTagMatch.groupValues.size == 2) {
+            "Couldn't find 'svg' tag"
+        }
+
+        val svgTag = svgTagMatch.groupValues[1]
+
+        val width = extractDouble(Regex(".*width=\"(\\d+)\\.?(\\d+)?\""), svgTag)
+        val height = extractDouble(Regex(".*height=\"(\\d+)\\.?(\\d+)?\""), svgTag)
+        return DoubleVector(width, height)
+    }
+
+    private fun extractDouble(regex: Regex, text: String): Double {
+        val matchResult = regex.find(text)!!
+        val values = matchResult.groupValues
+        return if (values.size < 3)
+            "${values[1]}".toDouble()
+        else
+            "${values[1]}.${values[2]}".toDouble()
+    }
+}

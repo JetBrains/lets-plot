@@ -8,7 +8,7 @@ package jetbrains.livemap.camera
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
 import jetbrains.datalore.base.spatial.calculateQuadKeys
-import jetbrains.datalore.base.spatial.rectsBBox
+import jetbrains.datalore.base.spatial.union
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.core.projections.MapRuler
@@ -49,7 +49,7 @@ class ViewportHelper(
 
 
     private fun length(mapRange: ClosedRange<Double>): Double {
-        return mapRange.upperEndpoint() - mapRange.lowerEndpoint()
+        return mapRange.upperEnd - mapRange.lowerEnd
     }
 
     override fun deltaX(x1: Double, x2: Double): Double {
@@ -69,7 +69,7 @@ class ViewportHelper(
     }
 
     override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
-        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).rectsBBox(xyRects)
+        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
     }
 
     private fun normalizeX(x: Double): Double {
@@ -88,20 +88,20 @@ class ViewportHelper(
             loop: Boolean
         ): List<Double> {
             if (!loop) {
-                return if (objRange.isConnected(viewRange)) listOf(objRange.lowerEndpoint()) else emptyList()
+                return if (objRange.isConnected(viewRange)) listOf(objRange.lowerEnd) else emptyList()
             }
 
             val mapRangeLen = length(mapRange)
 
-            val n = floor((viewRange.lowerEndpoint() - mapRange.lowerEndpoint()) / mapRangeLen).toInt()
-            var origin = mapRange.lowerEndpoint() + n * mapRangeLen + objRange.lowerEndpoint()
+            val n = floor((viewRange.lowerEnd - mapRange.lowerEnd) / mapRangeLen).toInt()
+            var origin = mapRange.lowerEnd + n * mapRangeLen + objRange.lowerEnd
 
-            if (origin + length(objRange) < viewRange.lowerEndpoint()) {
+            if (origin + length(objRange) < viewRange.lowerEnd) {
                 origin += mapRangeLen
             }
 
             val result = ArrayList<Double>()
-            while (origin < viewRange.upperEndpoint()) {
+            while (origin < viewRange.upperEnd) {
                 result.add(origin)
                 origin += mapRangeLen
             }
@@ -133,26 +133,26 @@ class ViewportHelper(
             loop: Boolean
         ): List<ClosedRange<Double>> {
             val xRanges = ArrayList<ClosedRange<Double>>()
-            var lower = range.lowerEndpoint()
-            var upper = range.upperEndpoint()
+            var lower = range.lowerEnd
+            var upper = range.upperEnd
 
-            if (lower < mapRange.lowerEndpoint()) {
-                if (loop && upper < mapRange.upperEndpoint()) {
+            if (lower < mapRange.lowerEnd) {
+                if (loop && upper < mapRange.upperEnd) {
                     val newLeft = max(lower + length(mapRange), upper)
-                    xRanges.add(ClosedRange.closed(newLeft, mapRange.upperEndpoint()))
+                    xRanges.add(ClosedRange(newLeft, mapRange.upperEnd))
                 }
-                lower = mapRange.lowerEndpoint()
+                lower = mapRange.lowerEnd
             }
 
-            if (mapRange.upperEndpoint() < upper) {
-                if (loop && mapRange.lowerEndpoint() < lower) {
+            if (mapRange.upperEnd < upper) {
+                if (loop && mapRange.lowerEnd < lower) {
                     val newRight = min(upper - length(mapRange), lower)
-                    xRanges.add(ClosedRange.closed(mapRange.lowerEndpoint(), newRight))
+                    xRanges.add(ClosedRange(mapRange.lowerEnd, newRight))
                 }
-                upper = mapRange.upperEndpoint()
+                upper = mapRange.upperEnd
             }
 
-            xRanges.add(ClosedRange.closed(lower, upper))
+            xRanges.add(ClosedRange(lower, upper))
             return xRanges
         }
 
@@ -164,8 +164,8 @@ class ViewportHelper(
             yRanges.forEach { yRange ->
                 rects.add(
                     Rect<World>(
-                        xRange.lowerEndpoint(),
-                        yRange.lowerEndpoint(),
+                        xRange.lowerEnd,
+                        yRange.lowerEnd,
                         length(xRange),
                         length(yRange)
                     )

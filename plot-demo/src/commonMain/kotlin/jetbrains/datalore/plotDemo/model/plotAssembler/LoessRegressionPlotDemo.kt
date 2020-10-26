@@ -9,10 +9,12 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.stat.SmoothStat
+import jetbrains.datalore.plot.base.stat.SmoothStat.Method
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -20,20 +22,24 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.plotDemo.model.AutoMpg
-import jetbrains.datalore.plotDemo.model.Diamonds
-import jetbrains.datalore.plotDemo.model.Iris
+import jetbrains.datalore.plotDemo.data.AutoMpg
+import jetbrains.datalore.plotDemo.data.Diamonds
+import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
+import kotlin.math.PI
+import kotlin.math.sin
+import kotlin.random.Random
 
 open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
+    fun createPlots(): List<Plot> {
         return listOf(
-            createPlot()
+            createPlot(),
+            sinPlot()
         )
     }
 
-    private fun createPlot(): jetbrains.datalore.plot.builder.Plot {
+    private fun createPlot(): Plot {
         // Plot
 
         val layers = getLayersMpg()
@@ -94,7 +100,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         // Smooth stat (regression)
 
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth().apply { smoothingMethod = SmoothStat.Method.LOESS })
+            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
             .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
@@ -164,7 +170,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         // Smooth stat (regression)
 
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth().apply { smoothingMethod = SmoothStat.Method.LOESS })
+            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
             .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
@@ -236,7 +242,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         // Smooth stat (regression)
 
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth().apply { smoothingMethod = SmoothStat.Method.LOESS })
+            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
             .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
@@ -271,4 +277,78 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
     }
 
+    private fun sinPlot(): Plot {
+        val dx = 0.01
+
+        val valuesX = generateSequence(0.0) { it + dx }.takeWhile { it < 3 * PI }.toList()
+        val valuesY = valuesX.map(::sin).map { it + Random.nextDouble(-0.6, 0.6) }
+
+        val varX = DataFrame.Variable("x")
+        val varY = DataFrame.Variable("y")
+
+        val data = DataFrame.Builder()
+            .putNumeric(varX, valuesX)
+            .putNumeric(varY, valuesY)
+            .build()
+
+        val scatterLayer = GeomLayerBuilder.demoAndTest()
+            .stat(Stats.IDENTITY)
+            .geom(GeomProvider.point())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(
+                VarBinding(
+                    varX,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("x")
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varY,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("y")
+                )
+            )
+            .addConstantAes(Aes.SHAPE, NamedShape.FILLED_CIRCLE)
+            .addConstantAes(Aes.FILL, Color.parseHex("#ffffbf"))
+            .addConstantAes(Aes.COLOR, Color.LIGHT_GRAY)
+            .build(data)
+
+
+        val regressionLayerBuilder = GeomLayerBuilder.demoAndTest()
+            .geom(GeomProvider.smooth())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(
+                VarBinding(
+                    varX,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("x")
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varY,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("y")
+                )
+            )
+            .addConstantAes(Aes.SIZE, 2.0)
+
+        val defaultLoessLayer = regressionLayerBuilder
+            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
+            .addConstantAes(Aes.COLOR, Color.BLUE)
+            .build(data)
+
+        val accurateLoessLayer = regressionLayerBuilder
+            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS; span = 0.3 })
+            .addConstantAes(Aes.COLOR, Color.DARK_GREEN)
+            .build(data)
+
+
+        val layers = listOf(scatterLayer, defaultLoessLayer, accurateLoessLayer)
+        val assembler = PlotAssembler.singleTile(layers, CoordProviders.cartesian(), DefaultTheme())
+        assembler.setTitle("loess span=0.5(blue) and span=0.3(green)")
+        assembler.disableInteractions()
+        return assembler.createPlot()
+    }
 }

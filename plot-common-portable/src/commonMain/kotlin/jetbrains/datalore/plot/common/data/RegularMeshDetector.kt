@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.common.data
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.collect.Iterables
+import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import kotlin.math.abs
 
 abstract class RegularMeshDetector protected constructor(private val myError: Double) {
@@ -28,13 +29,17 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
     }
 
 
-    private class MyRowDetector internal constructor(private val myMinRowSize: Int, error: Double, values: Iterable<Double>) : RegularMeshDetector(error) {
+    private class MyRowDetector internal constructor(
+        private val myMinRowSize: Int,
+        error: Double,
+        values: Iterable<Double?>
+    ) : RegularMeshDetector(error) {
 
         init {
             init(values)
         }
 
-        private fun init(values: Iterable<Double>) {
+        private fun init(values: Iterable<Double?>) {
             // check if first N elements are equally spaced
             isMesh = false
             var distance = 0.0
@@ -42,11 +47,11 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
             var prevValue: Double? = null
             var count = myMinRowSize
             for (value in values) {
-                if (value == null) {
+                if (!isFinite(value)) {
                     return
                 }
                 if (prevValue != null) {
-                    val dist = value - prevValue
+                    val dist = value!! - prevValue
                     if (nearZero(dist)) {
                         return
                     }
@@ -73,13 +78,17 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
         }
     }
 
-    private class MyColumnDetector internal constructor(private val myMinRowSize: Int, error: Double, values: Iterable<Double>) : RegularMeshDetector(error) {
+    private class MyColumnDetector internal constructor(
+        private val myMinRowSize: Int,
+        error: Double,
+        values: Iterable<Double?>
+    ) : RegularMeshDetector(error) {
 
         init {
             init(values)
         }
 
-        private fun init(values: Iterable<Double>) {
+        private fun init(values: Iterable<Double?>) {
             // check if there are at least 2 sets of elements where:
             // 1. sets are equal in size;
             // 2. all elements in each set are equal
@@ -88,14 +97,13 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
             val rowValue = arrayOf<Double?>(null, null)
             var rowIndex = 0
             for (value in values) {
-                if (value == null) {
-                    isMesh = false
-                    return
+                if (!isFinite(value)) {
+                    break
                 }
                 if (rowValue[rowIndex] == null) {
                     rowValue[rowIndex] = value
                     rowSize[rowIndex]++
-                } else if (equalsEnough(rowValue[rowIndex]!!, value)) {
+                } else if (equalsEnough(rowValue[rowIndex]!!, value!!)) {
                     rowSize[rowIndex]++
                 } else {
                     if (rowIndex == 0) {
@@ -125,7 +133,7 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
                 }
         }
 
-        fun tryRow(values: Iterable<Double>): RegularMeshDetector {
+        fun tryRow(values: Iterable<Double?>): RegularMeshDetector {
             // choose 'error' value
             val v0 = Iterables[values, 0, null]
             val v1 = Iterables[values, 1, null]
@@ -140,11 +148,11 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
             return tryRow(50, error, values)
         }
 
-        fun tryRow(minRowSize: Int, error: Double, values: Iterable<Double>): RegularMeshDetector {
+        fun tryRow(minRowSize: Int, error: Double, values: Iterable<Double?>): RegularMeshDetector {
             return MyRowDetector(minRowSize, error, values)
         }
 
-        fun tryColumn(values: Iterable<Double>): RegularMeshDetector {
+        fun tryColumn(values: Iterable<Double?>): RegularMeshDetector {
             return tryColumn(
                 50,
                 SeriesUtil.TINY,
@@ -152,7 +160,7 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
             )
         }
 
-        fun tryColumn(minRowSize: Int, error: Double, values: Iterable<Double>): RegularMeshDetector {
+        fun tryColumn(minRowSize: Int, error: Double, values: Iterable<Double?>): RegularMeshDetector {
             return MyColumnDetector(minRowSize, error, values)
         }
     }

@@ -1,61 +1,22 @@
 buildscript {
     dependencies {
-        classpath("org.yaml:snakeyaml:1.25")
+        classpath "org.yaml:snakeyaml:1.25"
     }
 }
 
 plugins {
-    id 'kotlin-multiplatform' version '1.3.61' apply false
-//    id "org.jetbrains.kotlin.jvm" version "1.3.50" apply false
-    id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5' apply false
-    // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
-    id 'com.moowork.node' version '1.3.1' apply false
-    id "com.jfrog.bintray" version '1.8.4' apply false
-    id 'com.github.johnrengelman.shadow' version '5.1.0' apply false
-}
-
-group 'org.jetbrains.lets-plot'
-version "1.1.1-SNAPSHOT"
-project.ext.js_artifact_version = "1.1.dev1"
-
-/*
- * Copyright (c) 2019. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
-import org.yaml.snakeyaml.Yaml
-
-def build_settings_file = new File(rootDir, "build_settings.yml")
-if (!build_settings_file.canRead()) {
-    throw new GradleException("Couldn't read build_settings.yml")
-}
-def settings = new Yaml().load(build_settings_file.newInputStream())
-if (settings.build_python_extension) {
-    assert settings.python.include_path != null
-}
-if (settings.enable_python_package) {
-    assert settings.build_python_extension
-    assert settings.python.bin_path != null
-}
-
-settings.putIfAbsent("enable_livemap", false)
-
-project.ext.buildSettings = settings
-
-
-allprojects {
-//    println "--- project ---: $project.name $project.depth ${if(project.depth > 0) project.parent.rootDir else ''}"
-//    println "--- project ---: $project.name $project.rootDir"
+    id "org.jetbrains.kotlin.multiplatform" apply false
+    id "org.jetbrains.kotlin.js" apply false
+    id "org.jetbrains.gradle.plugin.idea-ext" apply false
+    id "com.jfrog.bintray" apply false
+    id "com.github.johnrengelman.shadow" apply false
 }
 
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
-//        'mapper-core',
         'vis-canvas',
-        'vis-svg',
-//        'vis-svg-mapper',
-//        'vis-svg-mapper-jfx',
+        'vis-svg-portable',
         'plot-base-portable',
         'plot-base',
         'plot-common-portable',
@@ -64,8 +25,6 @@ def include_sources_letsPlotJvmCommon = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
-//        'vis-demo-common',
-//        'vis-demo-common-jfx',
 ]
 
 def include_sources_letsPlotJvmJfx = [
@@ -76,32 +35,34 @@ def include_sources_letsPlotJvmJfx = [
         'vis-demo-common-jfx',
 ]
 
+def include_sources_letsPlotJvmBatik = [
+        'mapper-core',
+        'vis-svg-mapper',
+        'vis-svg-mapper-batik',
+        'vis-demo-common',
+        'vis-demo-common-batik',
+]
+
 configurations {
     letsPlotJvmCommonSources
     letsPlotJvmJfxSources
+    letsPlotJvmBatikSources
 }
 
-subprojects {
-    group = rootProject.group
-    version = rootProject.version
+allprojects {
+    group = 'org.jetbrains.lets-plot'
+    version = "1.5.3-SNAPSHOT"
+    project.ext.js_artifact_version = "1.5.3.dev1"
+    // see also: python-package/lets_plot/_version.py
 
     repositories {
         mavenCentral()
         jcenter()
     }
 
-    tasks.all {
-        if (name in ['compileKotlinJvm', 'compileTestKotlinJvm']) {
-            kotlinOptions.jvmTarget = "1.8"
-
-        }
-//        if (name == 'compileKotlinJs') {
-//        }
-    }
-
     // jar jvm sources of this project
-    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx) {
-        apply plugin: 'kotlin-multiplatform'
+    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx || name in include_sources_letsPlotJvmBatik) {
+        apply plugin: "org.jetbrains.kotlin.multiplatform"
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
     }
@@ -118,22 +79,49 @@ subprojects {
             letsPlotJvmJfxSources files(sources_jar_path)
         }
     }
+    if (name in include_sources_letsPlotJvmBatik) {
+        rootProject.dependencies {
+            letsPlotJvmBatikSources files(sources_jar_path)
+        }
+    }
 }
 
+import org.yaml.snakeyaml.Yaml
+
+def build_settings_file = new File(rootDir, "build_settings.yml")
+if (!build_settings_file.canRead()) {
+    throw new GradleException("Couldn't read build_settings.yml")
+}
+def settings = new Yaml().load(build_settings_file.newInputStream())
+if (settings.build_python_extension) {
+    assert settings.python.include_path != null
+}
+if (settings.enable_python_package) {
+    assert settings.build_python_extension
+    assert settings.python.bin_path != null
+}
+
+project.ext.buildSettings = settings
 
 // Bintray settings
 
-project.ext["bintraySettings"] = [
-        userOrg: 'jetbrains',
-        licenses: ['MIT'],
-        vcsUrl: 'https://github.com/JetBrains/lets-plot',
-        publish: true,
+// define the package name in the Bintray Maven repository depending on the version name
+def bintray_mvn_pkg_name = 'lets-plot-jars'
+if (version.contains('SNAPSHOT') || version.contains('rc')) {
+    bintray_mvn_pkg_name = 'lets-plot-jars-dev'
+}
 
-        js_repo: "lets-plot",
-        js_pkg_name: 'lets-plot-js',
+project.ext["bintraySettings"] = [
+        userOrg            : 'jetbrains',
+        licenses           : ['MIT'],
+        vcsUrl             : 'https://github.com/JetBrains/lets-plot',
+        publish            : true,
+
+        js_repo            : "lets-plot",
+        js_pkg_name        : 'lets-plot-js',
         js_artifact_version: js_artifact_version,
 
-        mvn_repo: 'lets-plot-maven',
-        mvn_pkg_name: 'lets-plot-jars',
+        mvn_repo           : 'lets-plot-maven',
+        mvn_pkg_name       : bintray_mvn_pkg_name,
 ]
 

@@ -29,7 +29,7 @@ internal class LoessRegressionTest {
           val xs = data.first
           val ys = data.second
 
-          val loessRegression = LocalPolynomialRegression(xs, ys, confidenceLevel)
+          val loessRegression = newLocalPolynomialRegression(xs, ys, confidenceLevel)
 
           RegressionTestUtil.logRegression(xs, ys, loessRegression)
       }
@@ -391,7 +391,7 @@ internal class LoessRegressionTest {
 
     private fun assertRegression(inX: List<Double>, inY: List<Double>, expectedX: List<Double>, expectedResult: List<EvalResult>) {
 
-        val loessRegression = LocalPolynomialRegression(inX, inY, confidenceLevel)
+        val loessRegression = newLocalPolynomialRegression(inX, inY, confidenceLevel)
 
         // Compare Y only, other properties are random
         expectedX.zip(expectedResult).forEach { (x, r) ->
@@ -406,45 +406,49 @@ internal class LoessRegressionTest {
     @Test(expected = IllegalArgumentException::class)
     fun testSizeDifference() {
         // Exception "X/Y must have same size" is expected
-        LocalPolynomialRegression(xss.dropLast(1), yss, confidenceLevel)
+        newLocalPolynomialRegression(xss.dropLast(1), yss, confidenceLevel)
     }
 
     @Test
     fun testXNull() {
         val xs = xss.apply { set(lastIndex, null) }
-        LocalPolynomialRegression(xs, yss, confidenceLevel)
+        newLocalPolynomialRegression(xs, yss, confidenceLevel)
     }
 
     @Test
     fun testYNull() {
         val ys = yss.apply { set(lastIndex, null) }
-        LocalPolynomialRegression(xss, ys, confidenceLevel)
+        newLocalPolynomialRegression(xss, ys, confidenceLevel)
     }
 
     @Test
     fun testXYNullSame() {
         val xs = xss.apply { set(3, null) }
         val ys = yss.apply { set(3, null) }
-        LocalPolynomialRegression(xs, ys, confidenceLevel)
+        newLocalPolynomialRegression(xs, ys, confidenceLevel)
     }
 
     @Test
     fun testXYNullDiff() {
         val xs = xss.apply { set(lastIndex, null); set(0, null) }
         val ys = yss.apply { set(3, null) }
-        LocalPolynomialRegression(xs, ys, confidenceLevel)
+        newLocalPolynomialRegression(xs, ys, confidenceLevel)
     }
 
     @Test
     fun testNaN() {
         val xs = xss.apply { set(0, Double.NaN) }
-        LocalPolynomialRegression(xs, yss, confidenceLevel)
+        newLocalPolynomialRegression(xs, yss, confidenceLevel)
     }
 
    @Test
     fun testInfinite() {
         val xs = xss.apply { set(0, Double.POSITIVE_INFINITY) }
-        LocalPolynomialRegression(xs, yss, confidenceLevel)
+        newLocalPolynomialRegression(xs, yss, confidenceLevel)
+    }
+
+    private fun newLocalPolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LocalPolynomialRegression {
+        return LocalPolynomialRegression(xs, ys, confidenceLevel, 0.5)
     }
 
 }

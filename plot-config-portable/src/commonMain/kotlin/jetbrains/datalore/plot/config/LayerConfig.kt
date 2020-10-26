@@ -9,33 +9,38 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.plot.builder.assemble.geom.DefaultAesAutoMapper
 import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.config.Option.Layer.DATA
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
+import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
+import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
+import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Layer.NONE
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 class LayerConfig constructor(
     layerOptions: Map<*, *>,
     sharedData: DataFrame,
-    plotMapping: Map<*, *>,
+    plotMappings: Map<*, *>,
+    plotDiscreteAes: Set<*>,
     val geomProto: GeomProto,
     statProto: StatProto,
     scaleProviderByAes: TypedScaleProviderMap,
     private val myClientSide: Boolean
-) : OptionsAccessor(
-    layerOptions,
-    initDefaultOptions(layerOptions, geomProto, statProto)
-) {
+) : OptionsAccessor(layerOptions, initDefaultOptions(layerOptions, geomProto, statProto)) {
 
-    //    val geomProvider: GeomProvider
     val stat: Stat
     val explicitGroupingVarName: String?
     val posProvider: PosProvider
@@ -44,6 +49,7 @@ class LayerConfig constructor(
     val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
+    val tooltips: TooltipSpecification
 
     var ownData: DataFrame? = null
         private set
@@ -67,13 +73,21 @@ class LayerConfig constructor(
         }
 
     init {
+        val (layerMappings, layerData) = createDataFrame(
+            options = this,
+            commonData = sharedData,
+            commonDiscreteAes = plotDiscreteAes,
+            commonMappings = plotMappings,
+            isClientSide = myClientSide
+        )
 
-        // mapping (inherit from plot)
-        val mappingOptions = HashMap(plotMapping)
-        // update with 'layer' mapping
-        mappingOptions.putAll(getMap(MAPPING) as Map<Any, Any>)
+        if (!myClientSide) {
+            update(MAPPING, layerMappings)
+        }
 
-        val layerData = ConfigUtil.createDataFrame(get(DATA))
+        // mapping (inherit from plot) + 'layer' mapping
+        val combinedMappings = plotMappings + layerMappings
+
         var combinedData: DataFrame
         if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
             combinedData = DataFrameUtil.appendReplace(sharedData, layerData)
@@ -83,47 +97,28 @@ class LayerConfig constructor(
             combinedData = sharedData
         }
 
-        var aesMapping: Map<Aes<*>, DataFrame.Variable>?
-        if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {
-            // join dataset and geo-positions data
-            val dataAndMapping = GeoPositionsDataUtil.initDataAndMappingForGeoPositions(
+
+        var aesMappings: Map<Aes<*>, DataFrame.Variable>?
+        if (myClientSide && GeoConfig.isApplicable(layerOptions)) {
+            val geoConfig = GeoConfig(
                 geomProto.geomKind,
                 combinedData,
-                GeoPositionsDataUtil.getGeoPositionsData(this),
-                mappingOptions
+                layerOptions,
+                combinedMappings
             )
-            combinedData = dataAndMapping.first
-            aesMapping = dataAndMapping.second
-        } else {
-            aesMapping = ConfigUtil.createAesMapping(combinedData, mappingOptions)
-        }
+            combinedData = geoConfig.dataAndCoordinates
+            aesMappings = geoConfig.mappings
 
-        // auto-map variables if necessary
-        if (aesMapping.isEmpty()) {
-            aesMapping = DefaultAesAutoMapper.forGeom(geomProto.geomKind).createMapping(combinedData)
-            if (!myClientSide) {
-                // store used mapping options to pass to client.
-                val autoMappingOptions = HashMap<String, Any>()
-                for (aes in aesMapping.keys) {
-                    val option = Option.Mapping.toOption(aes)
-                    val variable = aesMapping[aes]!!.name
-                    autoMappingOptions[option] = variable
-                }
-                update(MAPPING, autoMappingOptions)
-            }
+        } else {
+            aesMappings = createAesMapping(combinedData, combinedMappings)
         }
 
         // exclude constant aes from mapping
-        val constants = LayerConfigUtil.initConstants(this)
-        if (constants.isNotEmpty()) {
-            aesMapping = HashMap(aesMapping)
-            for (aes in constants.keys) {
-                aesMapping.remove(aes)
-            }
-        }
+        constantsMap = LayerConfigUtil.initConstants(this)
+        aesMappings = aesMappings - constantsMap.keys
 
         // grouping
-        explicitGroupingVarName = initGroupingVarName(combinedData, mappingOptions)
+        explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappings)
 
         statKind = StatKind.safeValueOf(getString(STAT)!!)
         stat = statProto.createStat(statKind, mergedOptions)
@@ -131,21 +126,36 @@ class LayerConfig constructor(
             this,
             geomProto.preferredPositionAdjustments(this)
         )
-        constantsMap = constants
 
         val consumedAesSet = HashSet(geomProto.renders())
         if (!myClientSide) {
-            consumedAesSet.addAll(stat.requires())
+            consumedAesSet.addAll(stat.consumes())
         }
 
-        val varBindings = LayerConfigUtil.createBindings(
+        // tooltip list
+        tooltips = if (has(TOOLTIPS)) {
+            when (get(TOOLTIPS)) {
+                is Map<*, *> -> {
+                    TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
+                }
+                NONE -> {
+                    // not show tooltips
+                    TooltipSpecification.withoutTooltip()
+                }
+                else -> {
+                    error("Incorrect tooltips specification")
+                }
+            }
+        } else {
+            TooltipSpecification.defaultTooltip()
+        }
+
+        varBindings = LayerConfigUtil.createBindings(
             combinedData,
-            aesMapping,
+            aesMappings,
             scaleProviderByAes,
             consumedAesSet
         )
-
-        this.varBindings = varBindings
         ownData = layerData
         myCombinedData = combinedData
 
@@ -162,9 +172,9 @@ class LayerConfig constructor(
         else
             null
 
-        if (fieldName == null && GeoPositionsDataUtil.hasGeoPositionsData(this)) {
+        if (fieldName == null && has(GEO_POSITIONS)) {
             // 'default' group is important for 'geom_map'
-            val groupVar = DataFrameUtil.variables(data)["group"]
+            val groupVar = variables(data)["group"]
             if (groupVar != null) {
                 fieldName = groupVar.name
             }
@@ -195,6 +205,28 @@ class LayerConfig constructor(
 
     fun isExplicitGrouping(varName: String): Boolean {
         return explicitGroupingVarName != null && explicitGroupingVarName == varName
+    }
+
+    fun getVariableForAes(aes: Aes<*>): DataFrame.Variable? {
+        return varBindings.find { it.aes == aes }?.variable
+    }
+
+    fun getScaleForAes(aes: Aes<*>): Scale<*>? {
+        return varBindings.find { it.aes == aes }?.scale
+    }
+
+    fun getMapJoin(): Pair<String, String>? {
+        if (!hasOwn(MAP_JOIN)) {
+            return null
+        }
+
+        val mapJoin = getList(MAP_JOIN)
+        require(mapJoin.size == 2) { "map_join require 2 parameters" }
+
+        val (dataVar, mapVar) = mapJoin
+        require(dataVar is String && mapVar is String) { "map_join parameters type should be a String" }
+
+        return Pair(dataVar, mapVar)
     }
 
     private companion object {

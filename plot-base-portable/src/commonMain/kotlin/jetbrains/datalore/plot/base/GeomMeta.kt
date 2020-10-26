@@ -7,7 +7,11 @@ package jetbrains.datalore.plot.base
 
 import kotlin.native.concurrent.ThreadLocal
 
-@ThreadLocal  // objects a frozen by default but we are going to mutate `renderedAesByGeom` map
+// In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
+// See:  https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
+// Required mutations:
+//      -   `renderedAesByGeom` map
+@ThreadLocal
 object GeomMeta {
     private val renderedAesByGeom = HashMap<GeomKind, List<Aes<*>>>()
 
@@ -25,8 +29,7 @@ object GeomMeta {
         Aes.COLOR,
         Aes.FILL,
         Aes.ALPHA,
-        Aes.SHAPE,
-        Aes.MAP_ID
+        Aes.SHAPE
         // strokeWidth
     )
 
@@ -36,7 +39,6 @@ object GeomMeta {
         Aes.LINETYPE,
         Aes.COLOR,
         Aes.ALPHA,
-        Aes.MAP_ID,
         Aes.SPEED,
         Aes.FLOW
     )
@@ -47,8 +49,7 @@ object GeomMeta {
         Aes.LINETYPE,
         Aes.COLOR,
         Aes.FILL,
-        Aes.ALPHA,
-        Aes.MAP_ID
+        Aes.ALPHA
     )
 
     private val AREA = listOf(
@@ -98,13 +99,14 @@ object GeomMeta {
                 Aes.SIZE
             )
 
-            GeomKind.TILE -> listOf(
+            GeomKind.TILE,
+            GeomKind.BIN_2D -> listOf(
                 Aes.X, Aes.Y,
                 Aes.WIDTH,
                 Aes.HEIGHT,
+                Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
                 Aes.LINETYPE,
                 Aes.SIZE
             )
@@ -113,10 +115,43 @@ object GeomMeta {
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
                 Aes.WIDTH,
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
+                Aes.ALPHA,
                 Aes.COLOR,
-                Aes.ALPHA
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
+            GeomKind.CROSS_BAR -> listOf(
+                Aes.X,
+                Aes.YMIN, Aes.YMAX, Aes.MIDDLE,
+                Aes.WIDTH,
+
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SHAPE,
+                Aes.SIZE
+            )
+
+            GeomKind.LINE_RANGE -> listOf(
+                Aes.X,
+                Aes.YMIN, Aes.YMAX,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
+            GeomKind.POINT_RANGE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.YMIN, Aes.YMAX,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SHAPE,
+                Aes.SIZE
             )
 
             GeomKind.CONTOUR -> PATH
@@ -129,8 +164,7 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
-                Aes.MAP_ID
+                Aes.ALPHA
             )
 
             GeomKind.AB_LINE -> listOf(
@@ -162,7 +196,7 @@ object GeomMeta {
                 Aes.UPPER, // NaN for 'outlier' data-point
 
                 Aes.X,
-                Aes.Y, // NaN for 'box' data-point
+                Aes.Y, // NaN for 'box' data-point (used for outliers)
                 Aes.YMAX,
                 Aes.YMIN,
 
@@ -171,7 +205,7 @@ object GeomMeta {
                 Aes.FILL,
                 Aes.LINETYPE,
                 Aes.SHAPE,
-                Aes.SIZE, // path width
+                Aes.SIZE, // line width
                 Aes.WIDTH
             )
 
@@ -199,8 +233,7 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
-                Aes.MAP_ID
+                Aes.ALPHA
             )
 
             GeomKind.SEGMENT -> listOf(
@@ -228,7 +261,6 @@ object GeomMeta {
             )
 
             GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'
-                Aes.MAP_ID,
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
@@ -236,7 +268,9 @@ object GeomMeta {
                 Aes.SHAPE,
                 Aes.FRAME,
                 Aes.X,
-                Aes.Y
+                Aes.Y,
+                Aes.SYM_X,
+                Aes.SYM_Y
             )
 
             GeomKind.RASTER -> listOf(

@@ -41,8 +41,8 @@ abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
     protected var kernel: ((Double) -> Double)? = null
         private set
 
-    protected val binOptions: StatUtil.BinOptions
-        get() = StatUtil.BinOptions(myBinCount, myBinWidth)
+    protected val binOptions: BinStatUtil.BinOptions
+        get() = BinStatUtil.BinOptions(myBinCount, myBinWidth)
 
     init {
         setKernel(DensityStat.Kernel.GAUSSIAN)
@@ -71,12 +71,13 @@ abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
         this.kernel = DensityStatUtil.kernel(kernel)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        throw IllegalStateException("'density2d' statistic can't be executed on the client side")
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
-    override fun requires(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+        // ToDo: ???
+        throw IllegalStateException("'density2d' statistic can't be executed on the client side")
     }
 
     companion object {
@@ -87,8 +88,8 @@ abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
         const val DEF_CONTOUR = true
         const val DEF_BIN_COUNT = 10
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-                Aes.X to Stats.X,
-                Aes.Y to Stats.Y
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
         )
         private const val MAX_N = 999
     }

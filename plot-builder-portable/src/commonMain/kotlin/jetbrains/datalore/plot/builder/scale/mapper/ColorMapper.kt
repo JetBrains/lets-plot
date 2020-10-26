@@ -8,11 +8,13 @@ package jetbrains.datalore.plot.builder.scale.mapper
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.base.values.HSV
 import jetbrains.datalore.plot.base.scale.Mappers
 import kotlin.math.abs
 
 object ColorMapper {
     val NA_VALUE = Color.GRAY
+
     // https://ggplot2.tidyverse.org/current/scale_gradient.html
     val DEF_GRADIENT_LOW = Color.parseHex("#132B43")
     val DEF_GRADIENT_HIGH = Color.parseHex("#56B1F7")
@@ -36,14 +38,38 @@ object ColorMapper {
         )
     }
 
+    /**
+     * @deprecated
+     */
     fun gradientHSV(
-            domain: ClosedRange<Double>, lowHSV: DoubleArray, highHSV: DoubleArray, autoHueDirection: Boolean, naColor: Color): (Double?) -> Color {
+        domain: ClosedRange<Double>,
+        lowHSV: DoubleArray,
+        highHSV: DoubleArray,
+        autoHueDirection: Boolean,
+        naColor: Color
+    ): (Double?) -> Color {
+        return gradientHSV(
+            domain,
+            HSV(lowHSV[0], lowHSV[1], lowHSV[2]),
+            HSV(highHSV[0], highHSV[1], highHSV[2]),
+            autoHueDirection,
+            naColor
+        )
+    }
 
-        var lowHue = lowHSV[0]
-        var highHue = highHSV[0]
+    fun gradientHSV(
+        domain: ClosedRange<Double>,
+        lowHSV: HSV,
+        highHSV: HSV,
+        autoHueDirection: Boolean,
+        naColor: Color
+    ): (Double?) -> Color {
 
-        val lowS = lowHSV[1]
-        val highS = highHSV[1]
+        var lowHue = lowHSV.h
+        var highHue = highHSV.h
+
+        val lowS = lowHSV.s
+        val highS = highHSV.s
 
         // No hue if saturation is near zero
         if (lowS < 0.0001) {
@@ -66,13 +92,14 @@ object ColorMapper {
 
         val mapperH = Mappers.linear(domain, lowHue, highHue, Double.NaN)
         val mapperS = Mappers.linear(domain, lowS, highS, Double.NaN)
-        val mapperV = Mappers.linear(domain, lowHSV[2], highHSV[2], Double.NaN)
+        val mapperV = Mappers.linear(domain, lowHSV.v, highHSV.v, Double.NaN)
 
         return { input ->
             if (input == null || !domain.contains(input)) {
                 naColor
             } else {
-                val H = mapperH(input) % 360
+                val hue = mapperH(input) % 360
+                val H = if (hue >= 0) hue else 360 + hue
                 val S = mapperS(input)
                 val V = mapperV(input)
                 Colors.rgbFromHsv(H, S, V)

@@ -17,10 +17,10 @@ class ContourFillHelper(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>
     private val myUpRight: DoubleVector
 
     init {
-        val xMin = xRange.lowerEndpoint()
-        val xMax = xRange.upperEndpoint()
-        val yMin = yRange.lowerEndpoint()
-        val yMax = yRange.upperEndpoint()
+        val xMin = xRange.lowerEnd
+        val xMax = xRange.upperEnd
+        val yMin = yRange.lowerEnd
+        val yMax = yRange.upperEnd
         myLowLeft = DoubleVector(xMin, yMin)
         myLowRight = DoubleVector(xMax, yMin)
         myUpLeft = DoubleVector(xMin, yMax)
@@ -272,11 +272,11 @@ class ContourFillHelper(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>
 
         fun computeFillLevels(zRange: ClosedRange<Double>, levels: List<Double>): List<Double> {
             val fillLevels = ArrayList<Double>()
-            fillLevels.add(zRange.lowerEndpoint())
+            fillLevels.add(zRange.lowerEnd)
             for (i in 0 until levels.size - 1) {
                 fillLevels.add((levels[i] + levels[i + 1]) / 2.0)
             }
-            fillLevels.add(zRange.upperEndpoint())
+            fillLevels.add(zRange.upperEnd)
             return fillLevels
         }
 

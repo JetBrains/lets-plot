@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.sampling.Samplings
+import jetbrains.datalore.plot.config.Option.Meta
 
 open class GeomProto constructor(val geomKind: GeomKind) {
 
@@ -32,7 +33,11 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             BAR -> DefaultSampling.BAR
             HISTOGRAM -> DefaultSampling.HISTOGRAM
             TILE -> DefaultSampling.TILE
+            BIN_2D -> DefaultSampling.BIN_2D
             ERROR_BAR -> DefaultSampling.ERROR_BAR
+            CROSS_BAR -> DefaultSampling.CROSS_BAR
+            LINE_RANGE -> DefaultSampling.LINE_RANGE
+            POINT_RANGE -> DefaultSampling.POINT_RANGE
             CONTOUR -> DefaultSampling.CONTOUR
             CONTOURF -> DefaultSampling.CONTOURF
             POLYGON -> DefaultSampling.POLYGON
@@ -78,146 +83,129 @@ open class GeomProto constructor(val geomKind: GeomKind) {
 
     private companion object {
         private val DEFAULTS = HashMap<GeomKind, Map<String, Any>>()
-        private val COMMON = createCommonDefaults()
+        private val COMMON = commonDefaults()
 
         init {
-            DEFAULTS[POINT] =
-                COMMON
-            DEFAULTS[PATH] =
-                COMMON
-            DEFAULTS[LINE] =
-                COMMON
+            for (geomKind in values()) {
+                DEFAULTS[geomKind] = COMMON
+            }
+
             DEFAULTS[SMOOTH] =
-                createSmoothDefaults()
+                smoothDefaults()
             DEFAULTS[BAR] =
-                createBarDefaults()
+                barDefaults()
             DEFAULTS[HISTOGRAM] =
-                createHistogramDefaults()
-            DEFAULTS[TILE] =
-                COMMON
-            DEFAULTS[ERROR_BAR] =
-                COMMON
+                histogramDefaults()
             DEFAULTS[CONTOUR] =
-                createContourDefaults()
+                contourDefaults()
             DEFAULTS[CONTOURF] =
-                createContourfDefaults()
-            DEFAULTS[POLYGON] =
-                COMMON
-            DEFAULTS[MAP] =
-                COMMON
-            DEFAULTS[AB_LINE] =
-                COMMON
-            DEFAULTS[H_LINE] =
-                COMMON
-            DEFAULTS[V_LINE] =
-                COMMON
+                contourfDefaults()
+            DEFAULTS[CROSS_BAR] =
+                crossBarDefaults()
             DEFAULTS[BOX_PLOT] =
-                createBoxplotDefaults()
-            DEFAULTS[LIVE_MAP] =
-                COMMON
-            DEFAULTS[RIBBON] =
-                COMMON
+                boxplotDefaults()
             DEFAULTS[AREA] =
-                createAreaDefaults()
+                areaDefaults()
             DEFAULTS[DENSITY] =
-                createDensityDefaults()
+                densityDefaults()
             DEFAULTS[DENSITY2D] =
-                createDensity2dDefaults()
+                density2dDefaults()
             DEFAULTS[DENSITY2DF] =
-                createDensity2dfDefaults()
-            DEFAULTS[JITTER] =
-                COMMON
+                density2dfDefaults()
             DEFAULTS[FREQPOLY] =
-                createFreqpolyDefaults()
-            DEFAULTS[STEP] =
-                COMMON
-            DEFAULTS[RECT] =
-                COMMON
-            DEFAULTS[SEGMENT] =
-                COMMON
-            DEFAULTS[TEXT] =
-                COMMON
-            DEFAULTS[RASTER] =
-                COMMON
-            DEFAULTS[IMAGE] =
-                COMMON
+                freqpolyDefaults()
+            DEFAULTS[BIN_2D] =
+                bin2dDefaults()
         }
 
-        private fun createCommonDefaults(): Map<String, Any> {
+        private fun commonDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "identity"
             return defaults
         }
 
-        private fun createSmoothDefaults(): Map<String, Any> {
+        private fun smoothDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "smooth"
             return defaults
         }
 
-        private fun createBarDefaults(): Map<String, Any> {
+        private fun barDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "count"
             defaults["position"] = "stack"
             return defaults
         }
 
-        private fun createHistogramDefaults(): Map<String, Any> {
+        private fun histogramDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "bin"
             defaults["position"] = "stack"
             return defaults
         }
 
-        private fun createContourDefaults(): Map<String, Any> {
+        private fun contourDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "contour"
             return defaults
         }
 
-        private fun createContourfDefaults(): Map<String, Any> {
+        private fun contourfDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "contourf"
             return defaults
         }
 
 
-        private fun createBoxplotDefaults(): Map<String, Any> {
+        private fun crossBarDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
-            defaults["stat"] = "boxplot"
-            defaults["position"] = "dodge"
+            defaults["stat"] = "identity"
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
             return defaults
         }
 
-        private fun createAreaDefaults(): Map<String, Any> {
+        private fun boxplotDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "boxplot"
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
+            return defaults
+        }
+
+        private fun areaDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "identity"
             defaults["position"] = "stack"
             return defaults
         }
 
-        private fun createDensityDefaults(): Map<String, Any> {
+        private fun densityDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "density"
             return defaults
         }
 
-        private fun createDensity2dDefaults(): Map<String, Any> {
+        private fun density2dDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "density2d"
             return defaults
         }
 
-        private fun createDensity2dfDefaults(): Map<String, Any> {
+        private fun density2dfDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "density2df"
             return defaults
         }
 
-        private fun createFreqpolyDefaults(): Map<String, Any> {
+        private fun freqpolyDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "bin"
             return defaults
+        }
+
+        private fun bin2dDefaults(): Map<String, Any> {
+            return mapOf(
+                "stat" to "bin2d"
+            )
         }
     }
 }

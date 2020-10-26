@@ -6,6 +6,8 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.Node
+import javafx.scene.shape.Rectangle
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svgMapper.jfx.unScaleTransforms
 import jetbrains.datalore.vis.svgToScene.parseSvgTransform
@@ -13,8 +15,10 @@ import jetbrains.datalore.vis.svgToScene.parseSvgTransform
 internal abstract class SvgAttrMapping<in TargetT : Node> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
-            SvgGraphicsElement.VISIBILITY.name -> target.visibleProperty().set(visibilityAsBoolean(value))
-            SvgGraphicsElement.OPACITY.name -> target.opacityProperty().set(asDouble(value))
+            SvgGraphicsElement.VISIBILITY.name -> target.isVisible = visibilityAsBoolean(value)
+            SvgGraphicsElement.OPACITY.name -> target.opacity = asDouble(value)
+            SvgGraphicsElement.CLIP_BOUNDS_JFX.name -> target.clip = (value as? DoubleRectangle)?.run { Rectangle(left, top, width, height) }
+            SvgGraphicsElement.CLIP_PATH.name -> Unit // TODO: ignored
 
             SvgConstants.SVG_STYLE_ATTRIBUTE -> setStyle(value as? String ?: "", target)
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
@@ -36,7 +40,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
 
     companion object {
         private fun setStyle(value: String, target: Node) {
-            val valueFx = value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-$it" else it }
+            val valueFx = value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-${it.trim()}" else it }
             target.style = valueFx
         }
 

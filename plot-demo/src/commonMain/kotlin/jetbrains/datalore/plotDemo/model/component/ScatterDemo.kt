@@ -26,6 +26,8 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
+import jetbrains.datalore.plot.builder.guide.AxisComponent
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
@@ -97,9 +99,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+            val axis = AxisComponent(
                 rangeX,
-                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+                Orientation.BOTTOM
             )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
             axis.labels.set(scaleX.labels)
@@ -120,9 +122,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+            val axis = AxisComponent(
                 rangeY,
-                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+                Orientation.LEFT
             )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
             axis.labels.set(scaleY.labels)
@@ -216,6 +218,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // see 'OutputColors'
         var scaleColor = Scales.continuousDomain("C", Aes.COLOR)
         run {
+            @Suppress("UNCHECKED_CAST")
             val rawC = data.getNumeric(varC) as List<Double>
             val minC = Ordering.natural<Double>().min(rawC)
             val maxC = Ordering.natural<Double>().max(rawC)
@@ -243,7 +246,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val breaks = ArrayList<Double>()
             val labels = ArrayList<String>()
             for (range in mappedValuesQuantized) {
-                val br = (range.lowerEndpoint() + range.upperEndpoint()) / 2
+                val br = (range.lowerEnd + range.upperEnd) / 2
                 breaks.add(br)
                 labels.add("" + br)
             }
@@ -273,9 +276,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+            val axis = AxisComponent(
                 rangeX,
-                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+                Orientation.BOTTOM
             )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
             axis.labels.set(ScaleUtil.labels(scaleX))
@@ -298,9 +301,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+            val axis = AxisComponent(
                 rangeY,
-                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+                Orientation.LEFT
             )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
             axis.labels.set(ScaleUtil.labels(scaleY))
@@ -405,9 +408,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+            val axis = AxisComponent(
                 rangeX,
-                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+                Orientation.BOTTOM
             )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
             axis.labels.set(ScaleUtil.labels(scaleX))
@@ -430,9 +433,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+            val axis = AxisComponent(
                 rangeY,
-                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+                Orientation.LEFT
             )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
             axis.labels.set(ScaleUtil.labels(scaleY))

@@ -28,12 +28,11 @@ or just run shell command (if the changes are only in the Python code):
 
 ## Installing locally
 
+* change dir to `lets-plot/python-package`
 * create / activate Python environment (if needed)
-* run shell commands: 
+* run shell command: 
 
-`pip uninstall lets-plot`
-
-`pip install --no-index --find-links=dist/ lets-plot --no-deps`
+`pip install --no-index --find-links=dist/ lets-plot --no-deps --force-reinstall`
  
 ## Test in Jupyter
 
@@ -45,7 +44,7 @@ The "dev" version of js library can be served from `dist` folder of **js-package
 
 ```shell script
 # Start local web-server to serve dev js script:
-$ cd lets-plot/js-package/build/dist
+$ cd lets-plot/js-package/build/distributions
 $ python -m http.server 8080
 ```
  

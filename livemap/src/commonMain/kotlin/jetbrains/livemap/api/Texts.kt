@@ -12,10 +12,9 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
+import jetbrains.livemap.placement.*
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.TextRenderer
 
 @LiveMapDsl
 class Texts(
@@ -48,7 +47,6 @@ class TextBuilder(
     private val myFactory: MapEntityFactory
 ) {
     var index: Int = 0
-    var mapId: String? = null
     var point: Vec<LonLat>? = null
 
     var fillColor: Color = Color.BLACK
@@ -69,12 +67,8 @@ class TextBuilder(
         val textSpec = createTextSpec(textMeasurer)
 
         return when {
-            point != null ->
-                myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
-            mapId != null ->
-                myFactory.createDynamicEntityWithLocation("map_ent_d_text_$mapId", mapId!!)
-            else ->
-                error("Can't create text entity. [point] and [mapId] is null.")
+            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
+            else -> error("Can't create text entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
                 + WorldOriginComponent(worldPoint)

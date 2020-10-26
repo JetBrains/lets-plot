@@ -1,0 +1,39 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+}
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation project(':base-portable')
+                implementation project(':plot-base-portable')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-builder')
+                implementation project(':plot-config-portable')
+                implementation project(':plot-config')
+                implementation project(':plot-livemap')
+                implementation project(':vis-svg-portable')
+                implementation project(':vis-canvas')
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}

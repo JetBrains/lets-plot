@@ -40,34 +40,31 @@ internal class ConfiguredStatContext(
     private fun overallRange(aes: Aes<*>): ClosedRange<Double>? {
         val variable = DataFrameUtil.transformVarFor(aes)
 
-        var domainLimits: ClosedRange<Double>? = null
+        var scaleLimits: ClosedRange<Double>? = null
         if (myScaleProviderMap.containsKey(aes)) {
             // We only need to access 'limits' so no 'real' data required
             val emptyData = DataFrame.Builder()
-                    .putNumeric(TransformVar.X, ArrayList())
-                    .putNumeric(TransformVar.Y, ArrayList())
-                    .build()
+                .putNumeric(TransformVar.X, ArrayList())
+                .putNumeric(TransformVar.Y, ArrayList())
+                .build()
             val scale = myScaleProviderMap[aes].createScale(emptyData, variable)
             if (scale.isContinuousDomain && scale.hasDomainLimits()) {
-                domainLimits = scale.domainLimits
-                if (SeriesUtil.isFinite(domainLimits)) {
-                    return domainLimits
+                scaleLimits = scale.domainLimits!!
+                if (SeriesUtil.isFinite(scaleLimits)) {
+                    return scaleLimits
                 }
             }
         }
 
-        var range = overallRange(variable, myDataFrames)
-        if (domainLimits != null) {
-            val lowerEnd = if (domainLimits.lowerEndpoint().isFinite())
-                domainLimits.lowerEndpoint()
-            else
-                range!!.lowerEndpoint()
-            val upperEnd = if (domainLimits.upperEndpoint().isFinite())
-                domainLimits.upperEndpoint()
-            else
-                range!!.upperEndpoint()
-            range = ClosedRange.closed(lowerEnd, upperEnd)
+        var dataRange = overallRange(variable, myDataFrames)
+        return if (scaleLimits == null) {
+            dataRange
+        } else if (dataRange == null) {
+            scaleLimits
+        } else {
+            val lower = if (scaleLimits.lowerEnd.isFinite()) scaleLimits.lowerEnd else dataRange.lowerEnd
+            val upper = if (scaleLimits.upperEnd.isFinite()) scaleLimits.upperEnd else dataRange.upperEnd
+            ClosedRange(lower, upper)
         }
-        return range
     }
 }

@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapperDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgDemoModel.a.DemoModelA
 

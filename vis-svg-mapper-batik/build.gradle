@@ -4,11 +4,15 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
-repositories {
-    mavenCentral()
+
+rootProject.ext {
+    batikGroupId = "org.apache.xmlgraphics"
+    batikArtifacts = [
+            "batik-codec",
+    ]
 }
 
 kotlin {
@@ -22,7 +26,9 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
+
+                implementation project(':test-common')
             }
         }
         jvmMain {
@@ -30,28 +36,18 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation project(':vis-svg-mapper')
-                implementation project(':vis-demo-common')
 
-                api "org.apache.xmlgraphics:batik-anim:$batik_version"
-                api "org.apache.xmlgraphics:batik-awt-util:$batik_version"
-                api "org.apache.xmlgraphics:batik-bridge:$batik_version"
-                api "org.apache.xmlgraphics:batik-codec:$batik_version"
-                api "org.apache.xmlgraphics:batik-css:$batik_version"
-                api "org.apache.xmlgraphics:batik-dom:$batik_version"
-                api "org.apache.xmlgraphics:batik-ext:$batik_version"
-                api "org.apache.xmlgraphics:batik-gvt:$batik_version"
-                api "org.apache.xmlgraphics:batik-parser:$batik_version"
-                api "org.apache.xmlgraphics:batik-script:$batik_version"
-                api "org.apache.xmlgraphics:batik-svg-dom:$batik_version"
-                api "org.apache.xmlgraphics:batik-swing:$batik_version"
-                api "org.apache.xmlgraphics:batik-util:$batik_version"
-                api "org.apache.xmlgraphics:batik-xml:$batik_version"
+                batikArtifacts.forEach {
+                    api "$batikGroupId:$it:$batik_version"
+                }
             }
         }
         jvmTest {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
+
+                implementation project(':plot-config')
             }
         }
     }

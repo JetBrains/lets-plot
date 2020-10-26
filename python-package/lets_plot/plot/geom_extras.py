@@ -26,11 +26,11 @@ def arrow(angle=None, length=None, ends=None, type=None):
     type : ['open' | 'closed']
         Indicating whether the arrow head should be a closed triangle.
         
-     Returns
+    Returns
     -------
         arrow object specification
         
-     Examples
+    Examples
     ---------
     >>> from lets_plot import *
     >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]), arrow=arrow(type='closed'))

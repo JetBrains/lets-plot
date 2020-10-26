@@ -5,18 +5,22 @@
 
 package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
+import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
 
 object DataProcessing {
 
@@ -41,13 +45,10 @@ object DataProcessing {
 
     fun buildStatData(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>, groupingContext: GroupingContext,
-        facetXVar: String?, facetYVar: String?, statCtx: StatContext
+        facetXVar: String?, facetYVar: String?, statCtx: StatContext, messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
-            return DataAndGroupingContext(
-                Builder.emptyFrame(),
-                groupingContext
-            )
+            return DataAndGroupingContext(emptyFrame(), groupingContext)
         }
 
         val groups = groupingContext.groupMapper
@@ -57,30 +58,17 @@ object DataProcessing {
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
-            val sd = applyStat(
-                data,
-                stat,
-                bindings,
-                facetXVar,
-                facetYVar,
-                statCtx
-            )
+            val sd = applyStat(data, stat, bindings, facetXVar, facetYVar, statCtx, messageConsumer)
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
+                @Suppress("UNCHECKED_CAST")
                 val list = sd[variable] as List<Any>
                 resultSeries[variable] = list
             }
         } else { // add offset to each group
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
-                var sd = applyStat(
-                    d,
-                    stat,
-                    bindings,
-                    facetXVar,
-                    facetYVar,
-                    statCtx
-                )
+                var sd = applyStat(d, stat, bindings, facetXVar, facetYVar, statCtx, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
@@ -92,8 +80,8 @@ object DataProcessing {
                     val range = sd.range(Stats.GROUP)
                     if (range != null) {
                         val start = lastStatGroupEnd + 1
-                        val offset = start - range.lowerEndpoint().toInt()
-                        lastStatGroupEnd = range.upperEndpoint().toInt() + offset
+                        val offset = start - range.lowerEnd.toInt()
+                        lastStatGroupEnd = range.upperEnd.toInt() + offset
                         if (offset != 0) {
                             val newG = ArrayList<Double>()
                             for (g in sd.getNumeric(Stats.GROUP)) {
@@ -105,7 +93,7 @@ object DataProcessing {
                 } else { // if stat has ..group.. then groupingVar won't be checked, so no need to update
                     val groupingVar = groupingContext.optionalGroupingVar
                     if (groupingVar != null) {
-                        val size = sd[sd.variables().iterator().next()].size
+                        val size = sd[sd.variables().first()].size
                         val v = d[groupingVar][0]
                         sd = sd.builder().put(groupingVar, List(size) { v }).build()
                     }
@@ -116,6 +104,7 @@ object DataProcessing {
                     if (!resultSeries.containsKey(variable)) {
                         resultSeries[variable] = ArrayList()
                     }
+                    @Suppress("UNCHECKED_CAST")
                     (resultSeries[variable] as MutableList).addAll(sd[variable] as List<Any>)
                 }
             }
@@ -147,34 +136,28 @@ object DataProcessing {
     }
 
     private fun splitByGroup(data: DataFrame, groups: (Int) -> Int): List<DataFrame> {
-        val dataSize = data.rowCount()
-
-        val result = ArrayList<DataFrame>()
-        val indicesByGroup = GroupUtil.indicesByGroup(dataSize, groups)
-        for (group in indicesByGroup.keys) {
-            val indices = indicesByGroup[group]!!
-            val b = Builder()
-
-            for (`var` in data.variables()) {
-                val serie = data[`var`]
-                b.put(`var`, SeriesUtil.pickAtIndices(serie, indices))
+        return indicesByGroup(data.rowCount(), groups).values.map { indices ->
+            data.variables().fold(Builder()) { b, variable ->
+                when (data.isNumeric(variable)) {
+                    true -> b.putNumeric(variable, pickAtIndices(data.getNumeric(variable), indices))
+                    false -> b.putDiscrete(variable, pickAtIndices(data[variable], indices))
+                }
             }
-
-            result.add(b.build())
-        }
-
-        return result
+        }.map(Builder::build)
     }
 
     /**
      * Server-side only
      */
+
     private fun applyStat(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>,
-        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext
+        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext,
+        compMessageConsumer: Consumer<String>
     ): DataFrame {
 
-        var statData = stat.apply(data, statCtx)
+        var statData = stat.apply(data, statCtx, compMessageConsumer)
+
         val statVariables = statData.variables()
         if (statVariables.isEmpty()) {
             return statData
@@ -199,7 +182,7 @@ object DataProcessing {
             if (!isNullOrEmpty(facetVarName)) {
                 val facetVar = DataFrameUtil.findVariableOrFail(data, facetVarName!!)
                 facetVars.add(facetVar)
-                if (!data[facetVar].isEmpty()) {
+                if (data[facetVar].isNotEmpty()) {
                     val facetLevel = data[facetVar][0]
                     // generate series for 'facet' variable
                     statData = statData
@@ -237,11 +220,9 @@ object DataProcessing {
             } else {
                 // Do not override series obtained via 'default stat var'
                 if (!newInputSeries.containsKey(variable)) {
-                    val value: Any?
-                    if (data.isNumeric(variable)) {
-                        value = SeriesUtil.mean(data.getNumeric(variable), null)
-                    } else {
-                        value = SeriesUtil.firstNotNull(data[variable], null)
+                    val value = when (data.isNumeric(variable)) {
+                        true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
+                        false -> SeriesUtil.firstNotNull(data[variable], defaultValue = null)
                     }
                     val newInputSerie = List(statDataSize) { value }
                     newInputSeries[variable] = newInputSerie
@@ -323,8 +304,8 @@ object DataProcessing {
         return inverseTransformedStatSeries
     }
 
-    internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?): (Int) -> Int {
-        val groupingVariables = getGroupingVariables(data, bindings, groupingVar)
+    internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?, pathIdVar: Variable?): (Int) -> Int {
+        val groupingVariables = getGroupingVariables(data, bindings, groupingVar) + listOfNotNull(pathIdVar)
 
         var currentGroups: List<Int>? = null
         if (groupingVar != null) {
@@ -354,11 +335,11 @@ object DataProcessing {
 
     private fun computeGroups(values: List<*>): List<Int> {
         val groups = ArrayList<Int>()
-        val groupByVal = HashMap<Any, Int>()
+        val groupByVal = HashMap<Any?, Int>()
         var count = 0
         for (v in values) {
             if (!groupByVal.containsKey(v)) {
-                groupByVal[v!!] = count++
+                groupByVal[v] = count++
             }
             groups.add(groupByVal.get(v)!!)
         }

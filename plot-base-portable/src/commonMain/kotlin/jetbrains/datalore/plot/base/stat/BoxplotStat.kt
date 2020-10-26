@@ -30,7 +30,7 @@ import kotlin.math.sqrt
  */
 class BoxplotStat : BaseStat(DEF_MAPPING) {
 
-    private var myWhiskerIQRRatio: Double = 0.toDouble()          // ggplot: 'coef'
+    private var myWhiskerIQRRatio: Double = 0.0          // ggplot: 'coef'
     private var myComputeWidth = false    // ggplot: 'varWidth'
 
     /**
@@ -48,10 +48,6 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
         myComputeWidth = b
     }
 
-    override fun requires(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
-    }
-
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) || aes == WIDTH && myComputeWidth
     }
@@ -62,8 +58,12 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
         } else super.getDefaultMapping(aes)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (!(data.has(TransformVar.X) && data.has(TransformVar.Y))) {
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y)
+    }
+
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+        if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }
 
@@ -104,13 +104,13 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
         const val P_VARWIDTH = "varwidth"
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-                Aes.X to Stats.X,
-                Aes.Y to Stats.Y,
-                Aes.YMIN to Stats.Y_MIN,
-                Aes.YMAX to Stats.Y_MAX,
-                Aes.LOWER to Stats.LOWER,
-                Aes.MIDDLE to Stats.MIDDLE,
-                Aes.UPPER to Stats.UPPER
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
+            Aes.YMIN to Stats.Y_MIN,
+            Aes.YMAX to Stats.Y_MAX,
+            Aes.LOWER to Stats.LOWER,
+            Aes.MIDDLE to Stats.MIDDLE,
+            Aes.UPPER to Stats.UPPER
         )
     }
 }

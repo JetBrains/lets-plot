@@ -36,6 +36,7 @@ class DateTimeFormatUtilTest {
     }
 
     companion object {
+        @Suppress("DEPRECATION")
         private val baseDate = Date(Date.UTC(
                 2013 - 1900, // 2013
                 7, // Aug

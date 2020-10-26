@@ -20,8 +20,8 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
-import jetbrains.livemap.api.*
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
+import jetbrains.livemap.api.*
 import kotlin.math.ceil
 
 internal class MapEntityBuilder {
@@ -50,6 +50,7 @@ internal class MapEntityBuilder {
     var point: Vec<LonLat>? = null
     var animation = 0
     var geodesic: Boolean = false
+    var layerIndex: Int? = null
 
     val index get() = myP.index()
     val shape get() = myP.shape()!!.code
@@ -57,34 +58,33 @@ internal class MapEntityBuilder {
     val speed get() = myP.speed()!!
     val flow get() = myP.flow()!!
     val fillColor get() = colorWithAlpha(myP.fill()!!)
-    val strokeColor get() = colorWithAlpha(myP.color()!!)
-    val label get() = myP.label()
+    val strokeColor get() = when (myLayerKind) {
+            POLYGON -> myP.color()!!
+            else -> colorWithAlpha(myP.color()!!)
+        }
+
+    val label get() = myP.label()?.toString() ?: "n/a"
     val family get() = myP.family()
     val hjust get() = hjust(myP.hjust())
     val vjust get() = vjust(myP.vjust())
     val angle get() = myP.angle()!!
 
-    private val mapId get() = when (val mapId = myP.mapId()) {
-        AesInitValue[Aes.MAP_ID] -> null
-        else -> mapId.toString()
-    }
-
     val fontface get() = when (val fontface = myP.fontface()) {
-        AesInitValue[Aes.FONTFACE] -> ""
-        else -> fontface
-    }
+            AesInitValue[Aes.FONTFACE] -> ""
+            else -> fontface
+        }
 
     val radius: Double get() = when (myLayerKind) {
-        POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
-        HEATMAP -> myP.size()!!
-        TEXT -> 0.0
-    }
+            POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
+            HEATMAP -> myP.size()!!
+            TEXT -> 0.0
+        }
 
     val strokeWidth get() = when (myLayerKind) {
-        POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
-        POINT, PIE, BAR -> 1.0
-        TEXT, HEATMAP -> 0.0
-    }
+            POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
+            POINT, PIE, BAR -> 1.0
+            TEXT, HEATMAP -> 0.0
+        }
 
 //    val frame: String
 //        get() = myP.frame()
@@ -109,7 +109,7 @@ internal class MapEntityBuilder {
         }
 
     private fun allZeroes(values: List<Double>): Boolean {
-        return values.all { value -> value == 0.0 }
+        return values.all(0.0::equals)
     }
 
     private fun createNaColorList(size: Int): List<Color> {
@@ -122,8 +122,8 @@ internal class MapEntityBuilder {
 
     fun toPointBuilder(): (PointBuilder.() -> Unit)? {
         return {
+            layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index
-            mapId =this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             label = this@MapEntityBuilder.label
             animation = this@MapEntityBuilder.animation
@@ -137,8 +137,8 @@ internal class MapEntityBuilder {
 
     fun createPolygonConfigurator(): PolygonsBuilder.() -> Unit {
         return {
+            layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index
-            mapId = this@MapEntityBuilder.mapId
 
             multiPolygon = this@MapEntityBuilder.geometry
 
@@ -152,6 +152,7 @@ internal class MapEntityBuilder {
     fun toPathBuilder(): (PathBuilder.() -> Unit)? {
         return geometry?.let {
             {
+                layerIndex = this@MapEntityBuilder.layerIndex
                 index = this@MapEntityBuilder.index
 
                 multiPolygon = it
@@ -169,8 +170,6 @@ internal class MapEntityBuilder {
 
     fun toLineBuilder(): (LineBuilder.() -> Unit)? {
         return {
-            index = this@MapEntityBuilder.index
-            mapId = this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             lineDash = this@MapEntityBuilder.lineDash
             strokeColor = this@MapEntityBuilder.strokeColor
@@ -180,7 +179,7 @@ internal class MapEntityBuilder {
 
     fun toChartBuilder(): (ChartSource.() -> Unit)? {
         return {
-            mapId = this@MapEntityBuilder.mapId
+            layerIndex = this@MapEntityBuilder.layerIndex
             point = this@MapEntityBuilder.point
 
             radius = this@MapEntityBuilder.radius
@@ -197,7 +196,6 @@ internal class MapEntityBuilder {
     fun toTextBuilder(): (TextBuilder.() -> Unit)? {
         return {
             index = this@MapEntityBuilder.index
-            mapId =this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             fillColor = this@MapEntityBuilder.strokeColor // Text is filled by strokeColor
             strokeColor = this@MapEntityBuilder.strokeColor

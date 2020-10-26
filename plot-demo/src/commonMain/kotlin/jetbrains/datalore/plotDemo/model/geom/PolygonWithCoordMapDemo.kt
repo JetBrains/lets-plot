@@ -16,10 +16,11 @@ import jetbrains.datalore.plot.base.geom.PolygonGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plotDemo.model.KansasPolygon.KANSAS_X
-import jetbrains.datalore.plotDemo.model.KansasPolygon.KANSAS_Y
+import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_X
+import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_Y
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import kotlin.math.*
 
@@ -54,8 +55,8 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         val coordsY = KANSAS_Y.toList()
         val domainX = SeriesUtil.range(coordsX)!!
         val domainY = SeriesUtil.range(coordsY)!!
-        val spanX = domainX.upperEndpoint() - domainX.lowerEndpoint()
-        val spanY = domainY.upperEndpoint() - domainY.lowerEndpoint()
+        val spanX = domainX.upperEnd - domainX.lowerEnd
+        val spanY = domainY.upperEnd - domainY.lowerEnd
         val clientW = demoInnerSize.x
         val clientH = demoInnerSize.y
         val ratioX = spanX / clientW
@@ -79,7 +80,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
                 .color(constant(Color.DARK_MAGENTA))
                 .alpha(constant(0.5))
                 .build()
-        val coord = jetbrains.datalore.plot.builder.coord.CoordProviders.map()
+        val coord = CoordProviders.map()
                 .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
         val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
             aes,

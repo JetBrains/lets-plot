@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
@@ -13,18 +14,21 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
+import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
 import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
-
-//import mu.KotlinLogging
 
 open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     override fun createLayerConfig(
         layerOptions: Map<*, *>,
-        sharedData: DataFrame?,
-        plotMapping: Map<*, *>,
+        sharedData: DataFrame,
+        plotMappings: Map<*, *>,
+        plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
@@ -32,8 +36,9 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         val geomKind = Option.GeomName.toGeomKind(geomName)
         return LayerConfig(
             layerOptions,
-            sharedData!!,
-            plotMapping,
+            sharedData,
+            plotMappings,
+            plotDiscreteAes,
             GeomProto(geomKind),
             StatProto(),
             scaleProviderByAes,
@@ -102,7 +107,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
         var plotData = sharedData
-        val plotVars = DataFrameUtil.variables(plotData!!)
+        val plotVars = DataFrameUtil.variables(plotData)
         val plotVarsToKeep = HashSet<String>()
         for (varName in plotVars.keys) {
             var dropPlotVar = true
@@ -110,21 +115,32 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 val layerData = layerConfig.ownData
 
                 if (!DataFrameUtil.variables(layerData!!).containsKey(varName)) {
-                    // don't drop if used in mapping
-                    if (layerConfig.hasVarBinding(varName) || layerConfig.isExplicitGrouping(varName)) {
-                        dropPlotVar = false
-                    }
-                    // don't drop if used for facets
-                    val facets = facets
-                    if (varName == facets.xVar) {
-                        dropPlotVar = false
-                    }
-                    if (varName == facets.yVar) {
-                        dropPlotVar = false
+                    dropPlotVar = when {
+                        layerConfig.hasVarBinding(varName) -> false // don't drop if used in mapping
+                        layerConfig.isExplicitGrouping(varName) -> false
+                        varName == facets.xVar -> false // don't drop if used for facets
+                        varName == facets.yVar -> false // don't drop if used for facets
+                        else -> true
                     }
                     if (!dropPlotVar) {
                         break
                     }
+                }
+
+                // keep vars used in tooltips
+                val userTooltipVars = layerConfig.tooltips.valueSources
+                    .filterIsInstance<DataFrameValue>()
+                    .map(DataFrameValue::getVariableName)
+
+                // keep vars used in map_join
+                if (layerConfig.getMapJoin()?.first == varName) {
+                    dropPlotVar = false
+                    break
+                }
+
+                if (userTooltipVars.contains(varName)) {
+                    dropPlotVar = false
+                    break
                 }
             }
 
@@ -172,22 +188,15 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
-            val varNamesToKeep = HashSet<String>()
-            for (`var` in varsToKeep) {
-                varNamesToKeep.add(`var`.name)
-            }
-            varNamesToKeep.add(Stats.GROUP.name)
-            val facets = facets
-            if (facets.xVar != null) {
-                varNamesToKeep.add(facets.xVar!!)
-            }
-            if (facets.yVar != null) {
-                varNamesToKeep.add(facets.yVar!!)
-            }
-
-            if (layerConfig.hasExplicitGrouping()) {
-                varNamesToKeep.add(layerConfig.explicitGroupingVarName!!)
-            }
+            val varNamesToKeep = HashSet<String>() +
+                    varsToKeep.map(Variable::name) +
+                    Stats.GROUP.name +
+                    listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
+                    listOfNotNull(layerConfig.getMapJoin()?.first) +
+                    listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName) +
+                    layerConfig.tooltips.valueSources
+                        .filterIsInstance<DataFrameValue>()
+                        .map(DataFrameValue::getVariableName)
 
             layerData = DataFrameUtil.removeAllExcept(layerData!!, varNamesToKeep)
             layerConfig.replaceOwnData(layerData)
@@ -223,8 +232,11 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
                 val varBindings = layerConfig.varBindings
                 val groupingContext = GroupingContext(
-                    tileLayerInputData,
-                    varBindings, layerConfig.explicitGroupingVarName, true
+                    myData = tileLayerInputData,
+                    bindings = varBindings,
+                    groupingVarName = layerConfig.explicitGroupingVarName,
+                    pathIdVarName = null, // only on client side
+                    myExpectMultiple = true
                 )
 
                 val groupingContextAfterStat: GroupingContext
@@ -241,7 +253,13 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets.xVar,
                         facets.yVar,
-                        statCtx
+                        statCtx,
+                        { message ->
+                            layerIndexAndSamplingMessage(
+                                layerIndex,
+                                createStatMessage(message, layerConfig)
+                            )
+                        }
                     )
 
                     tileLayerDataAfterStat = tileLayerDataAndGroupingContextAfterStat.data
@@ -267,18 +285,30 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         return result
     }
 
-    private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
-        val geomKind = layerConfig.geomProto.geomKind
-
+    private fun getStatName(layerConfig: LayerConfig): String {
         var stat: String = layerConfig.stat::class.simpleName!!
         stat = stat.replace("Stat", " stat")
         stat = stat.replace("([a-z])([A-Z]+)".toRegex(), "$1_$2").toLowerCase()
 
-        return samplingExpression + " was applied to [" + geomKind.name.toLowerCase() + "/" + stat + "] layer"
+        return stat
+    }
+
+    private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
+        val geomKind = layerConfig.geomProto.geomKind.name.toLowerCase()
+        val stat = getStatName(layerConfig)
+
+        return "$samplingExpression was applied to [$geomKind/$stat] layer"
+    }
+
+    private fun createStatMessage(statInfo: String, layerConfig: LayerConfig): String {
+        val geomKind = layerConfig.geomProto.geomKind.name.toLowerCase()
+        val stat = getStatName(layerConfig)
+
+        return "$statInfo in [$geomKind/$stat] layer"
     }
 
     companion object {
-//        private val LOG = KotlinLogging.logger {}
+        private val LOG = PortableLogging.logger(PlotConfigServerSide::class)
 
         fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
             return try {
@@ -290,9 +320,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             } catch (e: RuntimeException) {
                 val failureInfo = FailureHandler.failureInfo(e)
                 if (failureInfo.isInternalError) {
-                    // ToDo: print to STDERR
-//                    LOG.error(e) {}
-                    println(e)
+                    LOG.error(e) { failureInfo.message }
                 }
                 HashMap(failure(failureInfo.message))
             }

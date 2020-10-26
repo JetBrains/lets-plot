@@ -15,44 +15,35 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.abs
 
 /**
- * see doc for geom_histogram
+ * Default stat for geom_histogram
  *
+ * @param binCount Number of bins (overridden by binWidth)
+ * @param binWidth Used to compute binCount such that bins covers the range of the data
+ * @param xPosKind Specifies a way in which bin x-position is interpreted (center, boundary)
+ * @param xPos Bin x-position.
  *
- * Defaults:
- *
- *
- * geom = "bar"
- * position = "stack"
- *
- *
- * Other params:
- *
- *
- * bins (def - 30) - Number of bins (overridden by binwidth)
- * binwidth = such that bins covers the range of the data
- * center - The center of one of the bins.
- * boundary - A boundary between two bins.
- *
- *
- *
- *
- * Adds columns:
- *
+ * Computed values:
  *
  * count - number of points in bin
  * density - density of points in bin, scaled to integrate to 1
  * ncount - count, scaled to maximum of 1
  * ndensity - density, scaled to maximum of 1
  */
-internal class BinStat(binCount: Int, binWidth: Double?, private val myXPosKind: XPosKind, private val myXPos: Double) : BaseStat(
-    DEF_MAPPING
-) {
-    private val myBinOptions: StatUtil.BinOptions =
-        StatUtil.BinOptions(binCount, binWidth)
+internal class BinStat(
+    binCount: Int,
+    binWidth: Double?,
+    private val xPosKind: XPosKind,
+    private val xPos: Double
+) : BaseStat(DEF_MAPPING) {
+    private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (data.hasNoOrEmpty(TransformVar.X)) {
-            return DataFrame.Builder.emptyFrame()
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.WEIGHT)
+    }
+
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+        if (!hasRequiredValues(data, Aes.X)) {
+            return withEmptyStatValues()
         }
 
         val statX = ArrayList<Double>()
@@ -68,37 +59,40 @@ internal class BinStat(binCount: Int, binWidth: Double?, private val myXPosKind:
         }
 
         return DataFrame.Builder()
-                .putNumeric(Stats.X, statX)
-                .putNumeric(Stats.COUNT, statCount)
-                .putNumeric(Stats.DENSITY, statDensity)
-                .build()
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.COUNT, statCount)
+            .putNumeric(Stats.DENSITY, statDensity)
+            .build()
     }
 
-    private fun computeStatSeries(data: DataFrame, rangeX: ClosedRange<Double>, valuesX: List<Double?>): StatUtil.BinsData {
-        var startX: Double? = rangeX.lowerEndpoint()
-        var spanX = rangeX.upperEndpoint() - startX!!
+    private fun computeStatSeries(
+        data: DataFrame,
+        rangeX: ClosedRange<Double>,
+        valuesX: List<Double?>
+    ): BinStatUtil.BinsData {
+        var startX: Double? = rangeX.lowerEnd
+        var spanX = rangeX.upperEnd - startX!!
 
         // initial bin count/width
-        var b: StatUtil.CountAndWidth =
-            StatUtil.binCountAndWidth(spanX, myBinOptions)
+        var b: BinStatUtil.CountAndWidth = BinStatUtil.binCountAndWidth(spanX, binOptions)
 
         // adjusted bin count/width
         // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
         startX -= b.width * 0.7
         spanX += b.width * 1.4
-        b = StatUtil.binCountAndWidth(spanX, myBinOptions)
+        b = BinStatUtil.binCountAndWidth(spanX, binOptions)
         val binCount = b.count
         val binWidth = b.width
 
         // optional horizontal adjustment (+/-0.5 bin width max)
-        if (myXPosKind != XPosKind.NONE) {
+        if (xPosKind != XPosKind.NONE) {
             var minDelta = Double.MAX_VALUE
-            val x = myXPos
+            val x = xPos
 
             for (i in 0 until binCount) {
                 val binLeft = startX + i * binWidth
                 val delta: Double
-                if (myXPosKind == XPosKind.CENTER) {
+                if (xPosKind == XPosKind.CENTER) {
                     delta = x - (binLeft + binWidth / 2)
                 } else {       // BOUNDARY
                     if (i == 0) {
@@ -126,20 +120,19 @@ internal class BinStat(binCount: Int, binWidth: Double?, private val myXPosKind:
 
         // compute bins
 
-        val binsData = StatUtil.computeBins(
+        val binsData = BinStatUtil.computeBins(
             valuesX,
             startX,
             binCount,
             binWidth,
-            StatUtil.weightAtIndex(data),
+            BinStatUtil.weightAtIndex(data),
             densityNormalizingFactor
         )
-        checkState(binsData.x.size === binCount, "Internal: stat data size=" + binsData.x.size + " expected bin count=" + binCount)
+        checkState(
+            binsData.x.size == binCount,
+            "Internal: stat data size=" + binsData.x.size + " expected bin count=" + binCount
+        )
         return binsData
-    }
-
-    override fun requires(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.X)
     }
 
     enum class XPosKind {
@@ -148,8 +141,8 @@ internal class BinStat(binCount: Int, binWidth: Double?, private val myXPosKind:
 
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-                Aes.X to Stats.X,
-                Aes.Y to Stats.COUNT
+            Aes.X to Stats.X,
+            Aes.Y to Stats.COUNT
         )
     }
 }

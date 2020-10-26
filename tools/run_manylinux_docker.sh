@@ -27,12 +27,17 @@ docker_image="quay.io/pypa/${platform_name}"
 python_extension_path="${root_path}/python-extension"
 python_package_path="${root_path}/python-package"
 build_script="build_manylinux_wheel.sh"
+sys_user_id=$(id -u)
+sys_group_id=$(id -g)
 
 
 docker pull $docker_image
 
+
 docker run --rm \
   -e PLAT=$platform_name \
+  -e USER_ID=$sys_user_id \
+  -e GROUP_ID=$sys_group_id \
   -v $python_package_path:/tmp/python-package \
   -v $python_extension_path:/tmp/python-extension \
   -v ${root_path}/tools/$build_script:/tmp/$build_script \

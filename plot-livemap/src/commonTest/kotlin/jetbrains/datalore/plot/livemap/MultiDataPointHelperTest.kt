@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
@@ -98,7 +101,7 @@ class MultiDataPointHelperTest {
     ) {
         val points = myMultiDataBuilder
             .sortingMode(sortingMode)
-            .multiData("TX", dataPointBuilders)
+            .multiData(explicitVec(0.0, 0.0), dataPointBuilders)
             .points
 
         assertPointsOrder(
@@ -118,17 +121,18 @@ class MultiDataPointHelperTest {
         private fun build(): Aesthetics {
             val values = ArrayList<Double>()
             val order = ArrayList<Double>()
-            val mapId = ArrayList<Any>()
+            val coord = ArrayList<Vec<LonLat>>()
             for (pointBuilder in myPoints) {
                 values.add(pointBuilder.myValue)
                 order.add(pointBuilder.myOrder)
-                mapId.add(pointBuilder.myMapId)
+                coord.add(pointBuilder.myCoord)
             }
 
             myBuilder
-                .mapId(collection(mapId))
-                .x(collection(order))
-                .y(collection(values))
+                .x(collection(coord.map(Vec<LonLat>::x)))
+                .y(collection(coord.map(Vec<LonLat>::y)))
+                .symX(collection(order))
+                .symY(collection(values))
                 .dataPointCount(order.size)
 
             return myBuilder.build()
@@ -139,9 +143,9 @@ class MultiDataPointHelperTest {
             return this
         }
 
-        fun multiData(mapId: Any, v: List<DataPointBuilder>): MultiDataBuilder {
+        fun multiData(coord: Vec<LonLat>, v: List<DataPointBuilder>): MultiDataBuilder {
             for (point in v) {
-                point.mapId(mapId)
+                point.coord(coord)
                 myPoints.add(point)
             }
             return this
@@ -150,7 +154,7 @@ class MultiDataPointHelperTest {
         internal class DataPointBuilder {
             var myValue: Double = 0.0
             var myOrder: Double = 0.0
-            lateinit var myMapId: Any
+            lateinit var myCoord: Vec<LonLat>
 
             fun value(v: Double): DataPointBuilder {
                 myValue = v
@@ -162,8 +166,8 @@ class MultiDataPointHelperTest {
                 return this
             }
 
-            fun mapId(v: Any): DataPointBuilder {
-                myMapId = v
+            fun coord(v: Vec<LonLat>): DataPointBuilder {
+                myCoord = v
                 return this
             }
         }

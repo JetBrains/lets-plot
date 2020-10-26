@@ -15,6 +15,7 @@ class DataFrame private constructor(builder: Builder) {
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
+    private val myDistinctValues = HashMap<Variable, Set<*>>()
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -83,6 +84,11 @@ class DataFrame private constructor(builder: Builder) {
         return list as List<Double?>
     }
 
+    fun distinctValues(variable: Variable): Collection<Any?> {
+        assertDefined(variable)
+        return myDistinctValues.getOrPut(variable) { LinkedHashSet(get(variable)) }
+    }
+
     fun variables(): Set<Variable> {
         return myVectorByVar.keys
     }
@@ -146,7 +152,8 @@ class DataFrame private constructor(builder: Builder) {
     class Variable @JvmOverloads constructor(
         val name: String,
         val source: Source = Source.ORIGIN,
-        val label: String = name) {
+        val label: String = name
+    ) {
 
         val isOrigin: Boolean
             get() = source == Source.ORIGIN
@@ -202,6 +209,12 @@ class DataFrame private constructor(builder: Builder) {
         fun putNumeric(variable: Variable, v: List<Double?>): Builder {
             putIntern(variable, v)
             myIsNumeric[variable] = true
+            return this
+        }
+
+        fun putDiscrete(variable: Variable, v: List<*>): Builder {
+            putIntern(variable, v)
+            myIsNumeric[variable] = false
             return this
         }
 

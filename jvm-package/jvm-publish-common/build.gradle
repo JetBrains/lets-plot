@@ -1,7 +1,7 @@
 plugins {
-    id 'kotlin-multiplatform'
-    id 'maven-publish'
-    id 'com.github.johnrengelman.shadow'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow"
     id "com.jfrog.bintray"
 }
 
@@ -16,11 +16,8 @@ kotlin {
 
                 api project(':base-portable')
                 api project(':base')
-//                api project(':mapper-core')
                 api project(':vis-canvas')
-                api project(':vis-svg')
-//                api project(':vis-svg-mapper')
-//                api project(':vis-svg-mapper-jfx')
+                api project(':vis-svg-portable')
                 api project(':plot-base-portable')
                 api project(':plot-base')
                 api project(':plot-common-portable')
@@ -29,8 +26,6 @@ kotlin {
                 api project(':plot-builder')
                 api project(':plot-config-portable')
                 api project(':plot-config')
-//                api project(':vis-demo-common')
-//                api project(':vis-demo-common-jfx')
             }
         }
         jvmMain {
@@ -62,13 +57,19 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 // https://discuss.kotlinlang.org/t/kotlin-1-3-m2-new-multiplatform-projects-model/9264/107
 task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
     group task_group
-    baseName artifactBaseName
-    version artifactVersion
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
     configurations = [project.configurations.jvmRuntimeClasspath]
 
     exclude '**/*.kotlin_metadata'
     exclude '**/*.kotlin_module'
     exclude '**/*.kotlin_builtins'
+
+    exclude 'kotlin/**/*'
+    exclude 'mu/**/*'      // kotlin logging
+    exclude 'org/slf4j/**/*'
+    exclude 'org/intellij/lang/annotations/**/*'
+    exclude 'org/jetbrains/annotations/**/*'
 
 //    relocate 'com', 'shade.com'
 //    relocate 'org', 'shade.org'
@@ -78,8 +79,8 @@ task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
 
 task jarLetsPlotJvmCommonSources(type: ShadowJar) {
     group task_group
-    baseName artifactBaseName
-    version artifactVersion
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
     classifier 'sources'
     configurations = [rootProject.configurations.letsPlotJvmCommonSources]
 }
@@ -114,6 +115,39 @@ publishing {
                 }
                 scm {
                     url = "https://github.com/JetBrains/lets-plot"
+                }
+                // Dependencies
+                withXml {
+                    def deps = asNode().appendNode('dependencies')
+                    // Kotlin std lib
+                    def dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
+                    dep.appendNode('artifactId', 'kotlin-stdlib-jdk8')
+                    dep.appendNode('version', kotlin_version)
+                    // Kotlin reflection
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
+                    dep.appendNode('artifactId', 'kotlin-reflect')
+                    dep.appendNode('version', kotlin_version)
+                    // Kotlin test
+//                    dep = deps.appendNode('dependency')
+//                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
+//                    dep.appendNode('artifactId', 'kotlin-test')
+//                    dep.appendNode('version', kotlin_version)
+//                    dep = deps.appendNode('dependency')
+//                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
+//                    dep.appendNode('artifactId', 'kotlin-test-junit')
+//                    dep.appendNode('version', kotlin_version)
+                    // Kotlin logging
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'io.github.microutils')
+                    dep.appendNode('artifactId', 'kotlin-logging')
+                    dep.appendNode('version', kotlinLogging_version)
+                    // Console logging
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'org.slf4j')
+                    dep.appendNode('artifactId', 'slf4j-simple')
+                    dep.appendNode('version', slf4j_version)
                 }
             }
         }

@@ -6,25 +6,27 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 
 open class LinearNormalizingMapperProvider(
-        private val outputRange: ClosedRange<Double>,
-        naValue: Double) :
-        MapperProviderBase<Double>(naValue) {
+    private val outputRange: ClosedRange<Double>,
+    naValue: Double
+) : MapperProviderBase<Double>(naValue) {
 
-    override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
-        val values = DataFrameUtil.distinctValues(data, variable)
-        return GuideMappers.discreteToContinuous(values, outputRange, naValue)
+    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
+        return GuideMappers.discreteToContinuous(domainValues, outputRange, naValue)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Double> {
-        val dataRange = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
+    override fun createContinuousMapper(
+        domain: ClosedRange<Double>,
+        lowerLimit: Double?,
+        upperLimit: Double?,
+        trans: Transform?
+    ): GuideMapper<Double> {
+        val dataRange = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
         return GuideMappers.continuousToContinuous(dataRange, outputRange, naValue)
     }
 }

@@ -20,7 +20,7 @@ object FailureHandler {
         } else {
             val className = e::class.simpleName ?: "<Anonymous exception>"
             FailureInfo(
-                "Internal error occurred in datalore plot: $className : ${e.message ?: "<no message>"}",
+                "Internal error occurred in lets-plot: $className : ${e.message ?: "<no message>"}",
                 true
             )
         }

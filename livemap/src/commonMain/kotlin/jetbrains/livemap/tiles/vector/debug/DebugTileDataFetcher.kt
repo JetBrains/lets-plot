@@ -9,10 +9,10 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.core.SystemTime
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.BIGGEST_LAYER
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.CELL_DATA_SIZE
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LOADING_TIME
-import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.BIGGEST_LAYER
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.CELL_DATA_SIZE
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.LOADING_TIME
+import jetbrains.livemap.tiles.StatisticsComponent
 import jetbrains.livemap.tiles.vector.TileDataFetcher
 
 internal class DebugTileDataFetcher(

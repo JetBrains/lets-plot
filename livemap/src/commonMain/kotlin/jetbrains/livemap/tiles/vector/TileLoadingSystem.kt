@@ -23,9 +23,9 @@ import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.WorldRectangle
 import jetbrains.livemap.tiles.Tile.SnapshotTile
-import jetbrains.livemap.tiles.components.RequestTilesComponent
-import jetbrains.livemap.tiles.components.StatisticsComponent
-import jetbrains.livemap.tiles.components.TileComponent
+import jetbrains.livemap.tiles.RequestTilesComponent
+import jetbrains.livemap.tiles.StatisticsComponent
+import jetbrains.livemap.tiles.TileComponent
 import jetbrains.livemap.tiles.vector.debug.DebugTileDataFetcher
 import jetbrains.livemap.tiles.vector.debug.DebugTileDataParser
 import jetbrains.livemap.tiles.vector.debug.DebugTileDataRenderer

@@ -1,40 +1,28 @@
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-//    id "com.moowork.node"
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
-repositories {
-    mavenCentral()
-}
+
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-//node {
-//    version = '10.16.3'
-//    npmVersion = '6.9.0'
-//    download = true
-//}
-
-//repositories.whenObjectAdded {
-//    if (it instanceof IvyArtifactRepository) {
-//        metadataSources {
-//            artifact()
-//        }
-//    }
-//}
-
 kotlin {
     jvm()
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
-    js() {
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
+    js {
+        browser {
+            dceTask {
+                keep.addAll(
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.component.axisComponentDemo",
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.linearRegressionDemo",
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.loessRegressionDemo",
+                )
+            }
         }
     }
 
@@ -47,7 +35,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
                 implementation project(':vis-svg-mapper')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-base')
@@ -57,6 +45,8 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
+//                implementation project(':plot-image-export')
+                implementation project(':plot-demo-common')
                 implementation project(':vis-demo-common')
             }
         }
@@ -75,15 +65,14 @@ kotlin {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':vis-svg-mapper-batik')
+                implementation project(':vis-demo-common-batik')
             }
         }
         jvmJfxMain {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')

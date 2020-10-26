@@ -17,7 +17,6 @@ import java.awt.FlowLayout
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.util.concurrent.atomic.AtomicInteger
-import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
 import javax.swing.border.LineBorder
@@ -72,11 +71,12 @@ object PlotResizeDemoUtil {
                             plotSizeProp.set(newPlotSize)
                             if (!plotCreated) {
                                 plotCreated = true
-                                createPlot(
-                                    demoModel,
-                                    plotSizeProp,
-                                    container,
-                                    swingFactory
+                                container.add(
+                                    createPlot(
+                                        demoModel,
+                                        plotSizeProp,
+                                        swingFactory
+                                    )
                                 )
                             }
 
@@ -92,16 +92,14 @@ object PlotResizeDemoUtil {
     private fun createPlot(
         demo: BarPlotResizeDemo,
         plotSizeProp: ReadableProperty<DoubleVector>,
-        container: JComponent,
         factory: SwingDemoFactory
-    ) {
+    ): JComponent {
         val plot = demo.createPlot(plotSizeProp)
-        val component = MonolithicAwt.buildPlotSvgComponent(
+
+        return MonolithicAwt.buildPlotComponent(
             plot,
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()
         )
-        component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-        container.add(component)
     }
 }

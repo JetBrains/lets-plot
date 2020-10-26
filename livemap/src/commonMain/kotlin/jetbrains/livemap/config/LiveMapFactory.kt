@@ -14,10 +14,8 @@ import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
 import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.projection.*
-import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.services.MapLocationGeocoder
 import jetbrains.livemap.services.newFragmentProvider
-import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
 
 class LiveMapFactory(
     private val myLiveMapSpec: LiveMapSpec
@@ -27,17 +25,17 @@ class LiveMapFactory(
     private val myMapRuler: MapRuler<World>
 
     init {
-        val mapRect =
-            WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
-        myMapProjection =
-            createMapProjection(myLiveMapSpec.projectionType, mapRect)
+        val mapRect = WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
+        myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
         val multiMapHelper = ViewportHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
         myMapRuler = multiMapHelper
 
         myViewport = Viewport.create(
             multiMapHelper,
             myLiveMapSpec.size.toClientPoint(),
-            mapRect.center
+            mapRect.center,
+            myLiveMapSpec.minZoom,
+            myLiveMapSpec.maxZoom
         )
     }
 
@@ -46,19 +44,16 @@ class LiveMapFactory(
 
         return Asyncs.constant(
             LiveMap(
-                myMapProjection,
-                myViewport,
-                myLiveMapSpec.layerProvider,
-                createTileLoadingFactory(myLiveMapSpec.devParams),
-                newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
-                myLiveMapSpec.devParams,
-                myLiveMapSpec.mapLocationConsumer,
-                GeocodingProvider(
-                    myLiveMapSpec.geocodingService,
-                    myLiveMapSpec.level,
-                    myLiveMapSpec.parent
-                ),
-                myLiveMapSpec.location
+                myMapRuler = myMapRuler,
+                myMapProjection = myMapProjection,
+                viewport = myViewport,
+                layers = myLiveMapSpec.layers,
+                myTileSystemProvider = myLiveMapSpec.tileSystemProvider,
+                myFragmentProvider = newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
+                myDevParams = myLiveMapSpec.devParams,
+                myMapLocationConsumer = myLiveMapSpec.mapLocationConsumer,
+                myGeocodingService = myLiveMapSpec.geocodingService,
+                myMapLocationRect = myLiveMapSpec.location
                     ?.getBBox(
                         MapLocationGeocoder(
                             myLiveMapSpec.geocodingService,
@@ -66,7 +61,8 @@ class LiveMapFactory(
                             myMapProjection
                         )
                     ),
-                myLiveMapSpec.zoom
+                myZoom = myLiveMapSpec.zoom,
+                myAttribution = myLiveMapSpec.attribution
             )
         )
     }

@@ -8,8 +8,6 @@ package jetbrains.livemap.ui
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
-import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.camera.CameraComponent
@@ -22,19 +20,24 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
+import jetbrains.livemap.core.openLink
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
+import jetbrains.livemap.core.rendering.primitives.Attribution
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
+import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
+import jetbrains.livemap.makegeometrywidget.createFormattedGeometryString
+import jetbrains.livemap.rendering.LayerEntitiesComponent
 
 class LiveMapUiSystem(
     private val myUiService: UiService,
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myLayerManager: LayerManager
+    private val myLayerManager: LayerManager,
+    private val myAttribution: String?
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
@@ -77,11 +80,11 @@ class LiveMapUiSystem(
 
         myZoomPlus = MutableImage(plusOrigin, size)
         val buttonPlus = myUiService.addButton(myZoomPlus)
-        addListenersToZoomButton(buttonPlus, MAX_ZOOM, 1.0)
+        addListenersToZoomButton(buttonPlus, myViewport.maxZoom, 1.0)
 
         myZoomMinus = MutableImage(minusOrigin, size)
         val buttonMinus = myUiService.addButton(myZoomMinus)
-        addListenersToZoomButton(buttonMinus, MIN_ZOOM, -1.0)
+        addListenersToZoomButton(buttonMinus, myViewport.minZoom, -1.0)
 
         myGetCenter = MutableImage(getCenterOrigin, size)
         val buttonGetCenter = myUiService.addButton(myGetCenter)
@@ -91,20 +94,39 @@ class LiveMapUiSystem(
         val buttonMakeGeometry = myUiService.addButton(myMakeGeometry)
         addListenersToMakeGeometryButton(buttonMakeGeometry)
 
-        val osm = Text().apply {
-            color = Color.BLACK
-            fontFamily = CONTRIBUTORS_FONT_FAMILY
-            fontHeight = 11.0
-            text = listOf(LINK_TO_OSM_CONTRIBUTORS)
-        }
+        if (myAttribution != null) {
+            val parts = AttributionParser(myAttribution).parse()
+            val texts = ArrayList<Text>()
 
-        val contributors = Label(DoubleVector(myViewport.size.x, 0.0), osm).apply {
-            background = Color(200, 200, 200, 179)
-            this.padding = 2.0
-            position = Label.LabelPosition.LEFT
-        }
+            for (part in parts) {
+                val c = if (part is AttributionParts.SimpleLink) Color(26, 13, 171) else Color.BLACK
 
-        myUiService.addRenderable(contributors)
+                val attributionText = Text().apply {
+                    color = c
+                    fontFamily = CONTRIBUTORS_FONT_FAMILY
+                    fontHeight = 11.0
+                    text = listOf(part.text)
+                }
+
+                if (part is AttributionParts.SimpleLink) {
+                    myUiService.addLink(attributionText).let {
+                        addListenerToLink(it) {
+                            openLink(part.href)
+                        }
+                    }
+                }
+
+                texts.add(attributionText)
+            }
+
+            Attribution(DoubleVector(myViewport.size.x, 0.0), texts).apply {
+                background = Color(200, 200, 200, 179)
+                this.padding = 2.0
+                position = Label.LabelPosition.LEFT
+            }.run {
+                myUiService.addRenderable(this)
+            }
+        }
     }
 
     private fun addListenersToGetCenterButton(button: EcsEntity) {
@@ -148,6 +170,15 @@ class LiveMapUiSystem(
         }
 
         listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
+    }
+
+    private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
+        val listeners = link.getComponent<EventListenerComponent>()
+
+        listeners.addClickListener {
+            it.stopPropagation()
+            hrefConsumer()
+        }
     }
 
     private fun finishDrawing() {
@@ -225,8 +256,8 @@ class LiveMapUiSystem(
         internal fun updateZoomButtons(zoom: Double) {
             val res = myUiService.resourceManager
 
-            myZoomMinus.snapshot = if (zoom == MIN_ZOOM.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
-            myZoomPlus.snapshot = if (zoom == MAX_ZOOM.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]
+            myZoomMinus.snapshot = if (zoom == myViewport.minZoom.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
+            myZoomPlus.snapshot = if (zoom == myViewport.maxZoom.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]
         }
     }
 
@@ -276,7 +307,6 @@ class LiveMapUiSystem(
                     + "XOCvF3bjfOJyAiRAAiRAv4wb94ohdcx3dRx6dEkcEiABEiAB+n9qCrfk+FVVdb5KCR4RwVrbnATv3tmq7CEBEiAB+vdA965tV16X1LabWFOow7bu8aSmIMe2ANUM9Mg36JuAiGgJAMYY"
                     + "ZyGKoihfV4qZlwCQ57mTf8lai/1+X3rZgpIkCdvt9reyvSwIAif6fqy1OB6PyPP80l42HA6jZjYAlkrTdHZuN5u4QMHMSyJaGmM+R1GUA8B3Hdvtjp1TGh0AAAAASUVORK5CYII=")
 
-        private const val LINK_TO_OSM_CONTRIBUTORS = "Map data \u00a9 OpenStreetMap contributors"
         private const val CONTRIBUTORS_FONT_FAMILY =
             "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, " + "\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
 

@@ -5,8 +5,14 @@
 
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
+import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
+import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.TestUtil
+import jetbrains.datalore.plot.config.assertBinding
+import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -73,7 +79,8 @@ class DropUnusedDataTest {
         }
     }
 
-    init {
+    @Test
+    fun specialVariables() {
         val x = listOf(0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0)
         val group = listOf("0", "0", "1", "0", "0", "1", "1", "0", "1", "1")
         val facetX = listOf("a", "a", "b", "a", "a", "b", "b", "a", "b", "b")
@@ -141,30 +148,6 @@ class DropUnusedDataTest {
                 "                                          'z': 'x'" +   // aes Z is not rendered by point but var 'x' must not be dropped
 
                 "                                        }" +
-                "                           }" +
-                "               }" +
-                "           ]" +
-                "}"
-
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
-
-        assertEmptyPlotData(opts)
-        checkSingleLayerData(opts, 1, mapOf("x" to 4))
-    }
-
-    @Test
-    fun defaultMapping_point() {
-        val data = "{" +
-                "  'x': [0,0,1,1]" +
-                "}"
-
-        val spec = "{" +
-                "   'layers': [" +
-                "               {" +
-                "                  'geom':  {" +
-                "                             'name': 'point'," +
-                "                             'data': " + data +
                 "                           }" +
                 "               }" +
                 "           ]" +
@@ -578,38 +561,188 @@ class DropUnusedDataTest {
     }
 
     @Test
-    fun shouldNotDropMapIdMappingData() {
-        val spec = "{" +
-                "   'layers': [" +
-                "               {" +
-                "                  'data': {" +
-                "                             'name': ['New York']" +
-                "                          }," +
-                "                  'geom':  {" +
-                "                             'name': 'polygon'," +
-                "                             'mapping': {" +
-                "                                        'map_id': 'name'" +
-                "                                      }" +
-                "                           }" +
-                "               }" +
-                "           ]" +
-                "}"
+    fun `map_join with GeoDataFrame should not drop data variable`() {
+        val spec = """
+{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "polygon",
+      "data": {
+        "name": ["A", "B", "C"],
+        "value": [42, 23, 87]
+      },
+      "mapping": { "fill": "value" },
+      "map_data_meta": {
+        "geodataframe": {
+          "geometry": "coord"
+        }
+      },
+      "map": {
+        "id": ["A", "B", "C"],
+        "coord": [
+          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+        ]
+      },
+      "map_join": ["name", "id"]
+    }
+  ]
+}
+}"""
 
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec,
-                mapOf(
-                        "name" to listOf("New York"))
-        )
+        parsePlotSpec(spec)
+            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
+            .let(TestUtil::assertClientWontFail)
 
+    }
+
+    @Test
+    fun `map_join with GeoDataFrame should not drop ggplot data variable`() {
+        val spec = """
+{
+  "kind": "plot",
+    "data": {
+    "name": ["A", "B", "C"],
+    "value": [42, 23, 87]
+  },
+  "layers": [
+    {
+      "geom": "polygon",
+
+      "mapping": { "fill": "value" },
+      "map_data_meta": {
+        "geodataframe": {
+          "geometry": "coord"
+        }
+      },
+      "map": {
+        "id": ["A", "B", "C"],
+        "coord": [
+          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+        ]
+      },
+      "map_join": ["name", "id"]
+    }
+  ]
+}
+}"""
+
+        parsePlotSpec(spec)
+            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
+            .let(TestUtil::assertClientWontFail)
+
+    }
+
+    @Test
+    fun `should not drop geometry column when GeoDataFrame in data`() {
+        val spec = """
+{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "polygon",
+      "data": {
+        "id": ["A", "B", "C"],
+        "coord": [
+          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+        ]
+      },
+      "mapping": { "fill": "id" },
+      "data_meta": {
+        "geodataframe": {
+          "geometry": "coord"
+        }
+      } 
+    }
+  ]
+}
+}"""
+
+
+        parsePlotSpec(spec)
+            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
+            .let(TestUtil::assertClientWontFail)
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+
+    }
+
+    @Test
+    fun `map_join with GeoDict should not drop data variable`() {
+        val spec = """
+{
+  "ggsize": {
+    "width": 500,
+    "height": 300
+  },
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "polygon",
+      "data": {
+        "Country": ["UK", "Germany", "France"],
+        "Population": [66650000.0, 83020000.0, 66990000.0]
+      },
+      "mapping": {"fill": "Population"},
+      "map": {
+        "lon": [-2.598046, -2.37832, -2.46621, -3.169335, -1.938867, -0.576562, -0.31289, 0.873632, 0.082617, -2.598046, 7.685156, 9.926367, 13.661718, 14.101171, 11.464453, 12.870703, 8.564062, 8.651953, 6.80625, 6.938085, 7.685156, -2.246484, 2.367773, 7.245703, 5.268164, 6.586523, 2.895117, 2.279882, -0.532617, -0.356835, -2.246484],
+        "lat": [ 51.030349, 51.797754, 53.94575, 54.561879, 55.193929, 53.816229, 52.924809, 52.525588, 51.113188, 51.030349, 53.294124, 54.049078, 53.60816, 51.305902, 50.221916, 48.679365, 48.007575, 49.485266, 50.024691, 51.552493, 53.294124, 48.095702, 50.586036, 48.795295, 46.365136, 44.169607, 43.663114, 43.088157, 43.631315, 46.51655, 48.095702],
+        "country": [ "UK", "UK", "UK", "UK", "UK", "UK", "UK", "UK", "UK", "UK", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "France", "France", "France", "France", "France", "France", "France", "France", "France", "France"]
+      },
+      "map_join": ["Country", "country"],
+      "map_data_meta": {"geodict": {}},
+      "alpha": 0.3
+    }
+  ]
+}                
+            """.trimIndent()
+
+        parsePlotSpec(spec)
+            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
+            .let(TestUtil::assertClientWontFail)
+    }
+
+    @Test
+    fun `should not drop data variable used in tooltips`() {
+        val spec = """{
+                  "kind": "plot",
+                  "layers": [
+                    {
+                      "geom": "point",
+                      "data": {
+                        "x": [0,  1],
+                        "name": ["a", "b"]
+                      },
+                      "mapping": {
+                        "x": "x",
+                        "y": "x"
+                      },
+                      "tooltips": {
+                        "tooltip_lines": [
+                          "@name"
+                        ]
+                      }
+                    }
+                  ]
+        }"""
+
+        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
-        val unknownSize = -1
-        val droppedVars = emptyList<String>()
-        checkSingleLayerData(opts, 1,
-                mapOf(
-                        "name" to unknownSize
-                ),
-                droppedVars
+        assertEmptyPlotData(opts)
+        checkSingleLayerData(
+            opts, 2, mapOf("x" to 2, "name" to 2)
         )
     }
 }

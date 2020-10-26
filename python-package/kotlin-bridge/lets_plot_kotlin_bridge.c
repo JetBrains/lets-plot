@@ -18,14 +18,35 @@
 #define TLSVAR __thread
 #endif
 
-static PyObject* generate_html(PyObject* self, PyObject* plotSpecDict) {
-    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
-    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy.applyToRawSpecs(htmlGen, plotSpecDict);
+static PyObject* generate_html(PyObject* self, PyObject* rawPlotSpecDict) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator._instance();
+    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateDynamicDisplayHtml(reprGen, rawPlotSpecDict);
+    return html;
+}
+
+static PyObject* export_svg(PyObject* self, PyObject* rawPlotSpecDict) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator._instance();
+    PyObject* svg = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict);
+    return svg;
+}
+
+static PyObject* export_html(PyObject* self, PyObject* args) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator._instance();
+
+    // parse arguments
+    PyObject *rawPlotSpecDict;
+    const char *version;
+    int iframe;          // 0 - false, 1 - true
+    PyArg_ParseTuple(args, "Osp", &rawPlotSpecDict, &version, &iframe);
+
+    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateStaticHtmlPage(reprGen, rawPlotSpecDict, version, iframe);
     return html;
 }
 
 static PyMethodDef module_methods[] = {
-   { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML representing plot" },
+   { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },
+   { "export_svg", (PyCFunction)export_svg, METH_O, "Generates SVG representing plot." },
+   { "export_html", (PyCFunction)export_html, METH_VARARGS, "Generates HTML page showing plot." },
    { NULL }
 };
 

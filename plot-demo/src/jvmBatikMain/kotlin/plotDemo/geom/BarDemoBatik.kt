@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.geom
 
 import jetbrains.datalore.plotDemo.model.geom.BarDemo
-import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
 
 class BarDemoBatik : BarDemo() {
 

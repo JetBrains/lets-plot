@@ -13,64 +13,53 @@ import java.io.FileWriter
 import java.io.StringWriter
 
 object BrowserDemoUtil {
-    val KOTLIN_LIBS = listOf(
-        "kotlin.js",
-        "kotlin-logging.js"
-    )
-
-    val BASE_MAPPER_LIBS = listOf(
-        "lets-plot-base-portable.js",          // base-portable
-        "lets-plot-base.js",                   // base
-        "mapper-core.js",
-        "vis-svg.js",
-        "vis-svg-mapper.js"
-    )
-
-    val PLOT_LIBS = listOf(
-        "vis-canvas.js",     // required by plot-builder (get rid?)
-        "plot-common-portable.js",
-        "plot-common.js",
-        "plot-base-portable.js",
-        "plot-base.js",
-        "plot-builder-portable.js",
-        "plot-builder.js",
-        "kotlinx-io.js",
-        "kotlinx-coroutines-core.js",
-        "kotlinx-coroutines-io.js",
-        "ktor-ktor-utils.js",
-        "ktor-ktor-http.js",
-        "ktor-ktor-http-cio.js",
-        "ktor-ktor-client-core.js",
-        "gis.js",
-        "livemap.js",
-        "plot-config-portable.js",
-        "livemap-geom.js",
-        "plot-config.js"
-    )
-
-    val DEMO_COMMON_LIBS = listOf(
-        "vis-demo-common.js"
-    )
-
     private const val ROOT_PROJECT = "lets-plot"
-    private const val JS_PATH = "js-package/build/js"
     private const val ROOT_ELEMENT_ID = "root"
+    private const val JS_DIST_PATH = "js-package/build/distributions"
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
+        val file = createDemoFile(
+            demoProjectRelativePath,
+            "index", "html"
+        )
 
-        val rootPath = getRootPath()
-        println("Project root: $rootPath")
-        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
-        val file = File.createTempFile("index", ".html", tmpDir)
-        println(file.canonicalFile)
-
+        val content = html()
         FileWriter(file).use {
-            it.write(html())
+            it.write(content)
         }
 
         val desktop = Desktop.getDesktop()
         desktop.browse(file.toURI())
     }
+
+    fun createDemoFile(
+        demoProjectRelativePath: String,
+        filenamePrefix: String,
+        filenameExtension: String
+    ): File {
+        val rootPath = getRootPath()
+        println("Project root: $rootPath")
+        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
+        val file = File.createTempFile(filenamePrefix, ".$filenameExtension", tmpDir)
+        println(file.canonicalFile)
+        return file
+    }
+
+//    private fun openInBrowser(demoProjectRelativePath: String, filePref: String, fileSuff: String, html: () -> String) {
+//
+//        val rootPath = getRootPath()
+//        println("Project root: $rootPath")
+//        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
+//        val file = File.createTempFile(filePref, fileSuff, tmpDir)
+//        println(file.canonicalFile)
+//
+//        FileWriter(file).use {
+//            it.write(html())
+//        }
+//
+//        val desktop = Desktop.getDesktop()
+//        desktop.browse(file.toURI())
+//    }
 
     fun getRootPath(): String {
         // works when launching from IDEA
@@ -82,18 +71,43 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
-    fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
-        val mainScript = "${getRootPath()}/$demoProject/build/classes/kotlin/js/main/$demoProject.js"
+    private fun getPlotLibPath(): String {
+        val name = "lets-plot-latest.js"
+        return "${getRootPath()}/$JS_DIST_PATH/$name"
+    }
+
+    private fun projectJs(projectName: String) =
+        "${getRootPath()}/$projectName/build/distributions/$projectName.js"
+
+    fun mapperDemoHtml(demoProject: String, callFun: String, title: String): String {
+        return mapperDemoHtml(demoProject, callFun, null, title)
+    }
+
+    fun mapperDemoHtml(
+        demoProject: String,
+        callFun: String,
+        projectDeps: List<String>?,
+        title: String
+    ): String {
+        val mainScript = projectJs(demoProject)
         val writer = StringWriter().appendHTML().html {
             lang = "en"
             head {
                 title(title)
             }
             body {
-                for (lib in libs) {
-                    script {
-                        type = "text/javascript"
-                        src = "${getRootPath()}/$JS_PATH/$lib"
+
+                script {
+                    type = "text/javascript"
+                    src = getPlotLibPath()
+                }
+
+                if (projectDeps != null) {
+                    for (projectDep in projectDeps) {
+                        script {
+                            type = "text/javascript"
+                            src = projectJs(projectDep)
+                        }
                     }
                 }
 

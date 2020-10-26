@@ -12,7 +12,7 @@ object Density2dfBrowser {
     fun main(args: Array<String>) {
         with(Density2df()) {
             @Suppress("UNCHECKED_CAST")
-            (PlotConfigDemoUtil.show(
+            (PlotConfigBrowserDemoUtil.show(
                 "Density2df plot",
                 plotSpecList() as List<MutableMap<String, Any>>,
                 demoComponentSize

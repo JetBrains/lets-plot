@@ -35,9 +35,16 @@ class BunchConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
         }
     }
 
-    class BunchItem(private val myFeatureSpec: Map<*, *>, val x: Double, val y: Double, private val myWidth: Double?, private val myHeight: Double?) {
+    class BunchItem(
+        private val myFeatureSpec: Map<*, *>,
+        val x: Double,
+        val y: Double,
+        private val myWidth: Double?,
+        private val myHeight: Double?
+    ) {
 
         val featureSpec: Map<String, Any>
+            @Suppress("UNCHECKED_CAST")
             get() = myFeatureSpec as Map<String, Any>
 
         val size: DoubleVector

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.data
 
 object GroupUtil {
-    internal val SINGLE_GROUP = { index: Int -> 0 }
+    internal val SINGLE_GROUP = { _: Int -> 0 }
 
     fun wrap(l: List<Number?>): (Int) -> Int {
         return { index ->

@@ -24,9 +24,7 @@ class DomImmediatePolyfill {
 
     fun setImmediate(runnable: () -> Unit) {
         if (myRegistration == null) {
-            myRegistration = DomWindow.getWindow().on(DomEventType.MESSAGE, { value: DomMessageEvent ->
-                onMessage(value)
-            } as ((DomMessageEvent) -> Unit))
+            myRegistration = DomWindow.getWindow().on(DomEventType.MESSAGE, this::onMessage as ((DomMessageEvent) -> Unit))
         }
         myQueue.add(runnable)
         DomWindow.getWindow().postMessage(myId, "*")

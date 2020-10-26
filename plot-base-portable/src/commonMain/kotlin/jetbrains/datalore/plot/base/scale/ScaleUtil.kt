@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -89,11 +88,13 @@ object ScaleUtil {
 
             axisBreaks.add(axisBr)
             if (!axisBr.isFinite()) {
-                throw IllegalStateException("Illegal axis '" + scale.name + "' break position " + axisBr +
-                        " at index " + (axisBreaks.size - 1) +
-                        "\nsource breaks    : " + scale.breaks +
-                        "\ntranslated breaks: " + scaleBreaks +
-                        "\naxis breaks      : " + axisBreaks)
+                throw IllegalStateException(
+                    "Illegal axis '" + scale.name + "' break position " + axisBr +
+                            " at index " + (axisBreaks.size - 1) +
+                            "\nsource breaks    : " + scale.breaks +
+                            "\ntranslated breaks: " + scaleBreaks +
+                            "\naxis breaks      : " + axisBreaks
+                )
             }
         }
         return axisBreaks
@@ -130,6 +131,7 @@ object ScaleUtil {
 
     fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale<*>): List<Double?> {
         checkState(scale.isContinuousDomain, "Not continuous numeric domain: $scale")
+        @Suppress("UNCHECKED_CAST")
         return inverseTransform(l, scale) as List<Double?>
     }
 
@@ -143,32 +145,15 @@ object ScaleUtil {
     }
 
     fun transformedDefinedLimits(scale: Scale<*>): List<Double> {
-        val result = ArrayList<Double>()
-        val domainLimits = transform(
-            definedLimits(scale), scale
-        )
-        for (x in domainLimits) {
-            if (x!!.isFinite()) {
-                result.add(x)
-            }
+        return if (scale.hasDomainLimits()) {
+            val l = listOf(scale.domainLimits!!.lowerEnd, scale.domainLimits!!.upperEnd)
+            transform(l, scale).filterNotNull().filter { it.isFinite() }.toList()
+        } else {
+            emptyList()
         }
-        return result
     }
 
-    private fun definedLimits(scale: Scale<*>): List<Double> {
-        checkArgument(scale.isContinuousDomain, "Continuous scale is expected (" + scale.name + ")")
-        val result = ArrayList<Double>()
-        val domainLimits = scale.domainLimits
-        if (domainLimits.lowerEndpoint().isFinite()) {
-            result.add(domainLimits.lowerEndpoint())
-        }
-        if (domainLimits.upperEndpoint().isFinite()) {
-            result.add(domainLimits.upperEndpoint())
-        }
-        return result
-    }
-
-    fun getBreaksGenerator(scale: Scale<*>) =  when {
+    fun getBreaksGenerator(scale: Scale<*>) = when {
         scale.hasBreaksGenerator() -> scale.breaksGenerator
         else -> LinearBreaksGen()
     }

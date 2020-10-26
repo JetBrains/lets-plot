@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.awt.Desktop
@@ -13,49 +14,12 @@ import java.io.FileWriter
 import java.io.StringWriter
 
 object BrowserDemoUtil {
-    val KOTLIN_LIBS = listOf(
-        "kotlin.js",
-        "kotlin-logging.js",
-        "kotlin-test.js",
-        "kotlinx-io.js",
-        "kotlinx-coroutines-core.js",
-        "kotlinx-coroutines-io.js",
-        "ktor-ktor-utils.js",
-        "ktor-ktor-http.js",
-        "ktor-ktor-http-cio.js",
-        "ktor-ktor-client-core.js"
-    )
-
-    val BASE_MAPPER_LIBS = listOf(
-//        "base.js",
-        "lets-plot-base-portable.js",
-        "lets-plot-base.js",
-        "mapper-core.js",
-        "vis-svg.js",
-        "vis-canvas.js"
-    )
-
-    val PLOT_LIBS = listOf(
-        "base-canvas.js",     // required by plot-builder (get rid?)
-        "plot-common-portable.js",
-        "plot-common.js",
-        "plot-base-portable.js",
-        "plot-base.js",
-        "plot-builder-portable.js",
-        "plot-builder.js",
-        "plot-config-portable.js",
-        "gis.js",
-        "livemap.js"
-    )
-
-    val DEMO_COMMON_LIBS = listOf(
-        "package jetbrains.datalore.vis.js"
-    )
 
     private const val ROOT_PROJECT = "lets-plot"
+    private const val JS_DIST_PATH = "js-package/build/distributions"
 
     fun openInBrowser(demoProject: String, html: () -> String) {
-        val outputDir = "$demoProject/build/demoWeb"
+        val outputDir = "$demoProject/build/distributions"
 
         val projectRoot = getProjectRoot()
         println("Project root: $projectRoot")
@@ -68,7 +32,7 @@ object BrowserDemoUtil {
         }
 
         val desktop = Desktop.getDesktop()
-        desktop.browse(file.toURI());
+        desktop.browse(file.toURI())
     }
 
     private fun getProjectRoot(): String {
@@ -81,8 +45,12 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
+    private fun getPlotLibPath(): String {
+        val name = "lets-plot-latest.js"
+        return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
+    }
 
-    fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
+    fun mapperDemoHtml(demoProject: String, callFun: String, title: String): String {
         val mainScript = "$demoProject.js"
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -92,11 +60,9 @@ object BrowserDemoUtil {
             body {
                 div { id = "root" }
 
-                for (lib in libs) {
-                    script {
-                        type = "text/javascript"
-                        src = "lib/$lib"
-                    }
+                script {
+                    type = "text/javascript"
+                    src = getPlotLibPath()
                 }
 
                 script {

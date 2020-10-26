@@ -11,8 +11,10 @@ from .util import as_boolean
 
 __all__ = ['scale_shape',
            'scale_x_discrete', 'scale_y_discrete',
+           'scale_x_discrete_reversed', 'scale_y_discrete_reversed',
            'scale_x_continuous', 'scale_y_continuous',
            'scale_x_log10', 'scale_y_log10',
+           'scale_x_reverse', 'scale_y_reverse',
            'scale_color_manual', 'scale_fill_manual', 'scale_size_manual',
            'scale_shape_manual', 'scale_linetype_manual', 'scale_alpha_manual',
            'scale_fill_gradient', 'scale_fill_continuous', 'scale_color_gradient', 'scale_color_continuous',
@@ -25,7 +27,7 @@ __all__ = ['scale_shape',
            ]
 
 
-def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None):
+def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Scale for shapes
 
@@ -42,15 +44,16 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, ex
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Scale for shapes. A continuous variable cannot be mapped to shape.
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -61,7 +64,17 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, ex
     >>> ggplot(dat, aes(x='x', y='y', shape='class')) + geom_point(size=5) + scale_shape(solid=False)
     """
     solid = as_boolean(solid, default=True)
-    return _scale('shape', name, breaks, labels, limits, expand, na_value, guide, None, solid=solid)
+    return _scale('shape',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  solid=solid)
 
 
 #
@@ -87,16 +100,18 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
-    trans :
-        Name of built-in transformation. ('identity', 'log10')
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Continuous position scales.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -108,10 +123,18 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
     >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(N)]
     >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
     >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
-    >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') \
-    ...     + scale_x_continuous(name='discretised x', breaks=breaks, labels=labels)
+    >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') +
+    ... scale_x_continuous(name='discretised x', breaks=breaks, labels=labels)
     """
-    return _scale('x', name, breaks, labels, limits, expand, na_value, None, trans)
+    return _scale('x',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=trans)
 
 
 def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None):
@@ -131,16 +154,18 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
-    trans :
-        Name of built-in transformation. ('identity', 'log10')
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Continuous position scales.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -154,10 +179,18 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
     >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
     >>> y_breaks = [1500, 3000]
     >>> y_labels = ['one', 'two']
-    >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') \
-    ...     + scale_y_continuous(breaks=y_breaks, labels=y_labels)
+    >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') +
+    ... scale_y_continuous(breaks=y_breaks, labels=y_labels)
     """
-    return _scale('y', name, breaks, labels, limits, expand, na_value, None, trans)
+    return _scale('y',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=trans)
 
 
 def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
@@ -179,12 +212,15 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Continuous position scales.
+
     Examples
     --------
     >>> import pandas as pd
@@ -195,8 +231,8 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
     >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
     >>> ### Linear scales (default)
-    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) + \
-    ...     scale_size_manual(values=[7, 3])
+    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
+    ... scale_size_manual(values=[7, 3])
     >>> ### Log10 scale on Y axis
     >>> p + scale_y_log10()
     >>> ### Log10 scale on both axis
@@ -224,12 +260,15 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Continuous position scales.
+
     Examples
     --------
     >>> import pandas as pd
@@ -240,8 +279,8 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
     >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
     >>> ### Linear scales (default)
-    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) + \
-    ...     scale_size_manual(values=[7, 3])
+    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
+    ... scale_size_manual(values=[7, 3])
     >>> ### Log10 scale on Y axis
     >>> p + scale_y_log10()
     >>> ### Log10 scale on both axis
@@ -250,11 +289,105 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'log10')
 
 
+def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Continuous position scales (x) where trans='reverse'
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list of numerics
+        A numeric vector of length two providing limits of the scale.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+    na_value :
+        Missing values will be replaced with this value.
+
+    Returns
+    -------
+        scale specification
+
+    Note
+    -----
+        Continuous position scales.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> N = 21
+    >>> x = [v for v in range(N)]
+    >>> y0 = [pow(10, v / 10.) for v in range(N)]
+    >>> y1 = [v * 5 for v in range(N)]
+    >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
+    >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
+    >>> ### Linear scales (default)
+    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
+    ... scale_size_manual(values=[7, 3])
+    >>> ### reverse scale on X axis
+    >>> p + scale_x_reverse()
+    """
+
+    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'reverse')
+
+
+def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Continuous position scales (y) where trans='reverse'
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list of numerics
+        A numeric vector of length two providing limits of the scale.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+    na_value :
+        Missing values will be replaced with this value.
+
+    Returns
+    -------
+        scale specification
+
+    Note
+    -----
+        Continuous position scales.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> N = 21
+    >>> x = [v for v in range(N)]
+    >>> y0 = [pow(10, v / 10.) for v in range(N)]
+    >>> y1 = [v * 5 for v in range(N)]
+    >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
+    >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
+    >>> ### Linear scales (default)
+    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
+    ... scale_size_manual(values=[7, 3])
+    >>> ### reverse scale on Y axis
+    >>> p + scale_y_reverse()
+    """
+
+    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'reverse')
+
+
 #
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
     """
     Discrete position scales (x)
 
@@ -271,14 +404,18 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+    reverse: boolean
+        When True the scale reversed.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Discrete position scales.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -290,13 +427,55 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(N)]
     >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
     >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
-    >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') \
-    ...     + scale_x_continuous(name='discretised x', breaks=breaks, labels=labels)
+    >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') +
+    ... scale_x_discrete(name='discretised x', breaks=breaks, labels=labels)
     """
-    return _scale('x', name, breaks, labels, limits, expand, na_value, None, None, discrete=True)
+
+    reverse = as_boolean(reverse, default=False)
+    return _scale('x',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=None,
+                  #
+                  discrete=True, reverse=reverse)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Reversed discrete position scales (x)
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list
+        A vector specifying the data range for the scale. and the default order of their display in guides.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+
+    Returns
+    -------
+        scale specification
+
+    Note
+    -----
+        Reversed discrete position scales.
+    """
+
+    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True)
+
+
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
     """
     Discrete position scales (y)
 
@@ -313,14 +492,18 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+    reverse: boolean
+        When True the scale reversed.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Discrete position scales.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -334,18 +517,58 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
     >>> y_breaks = [1500, 3000]
     >>> y_labels = ['one', 'two']
-    >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') \
-    ...     + scale_y_discrete(breaks=y_breaks, labels=y_labels)
+    >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') +
+    ... scale_y_discrete(breaks=y_breaks, labels=y_labels)
     """
-    return _scale('y', name, breaks, labels, limits, expand, na_value, None, None, discrete=True)
+    reverse = as_boolean(reverse, default=False)
+    return _scale('y',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=None,
+                  #
+                  discrete=True, reverse=reverse)
+
+
+def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Reversed discrete position scales (y)
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list
+        A vector specifying the data range for the scale. and the default order of their display in guides.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+
+    Returns
+    -------
+        scale specification
+
+    Note
+    -----
+        Reversed discrete position scales.
+    """
+
+    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, reverse=True)
 
 
 #
 # Manual Scales
 #
 
-def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                       guide=None):
+def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for color aesthetic
 
@@ -365,16 +588,16 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Create your own discrete scale for color aesthetic. Values are strings, encoding colors.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -399,13 +622,23 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     >>> X_reduced = kpca.fit_transform(X_train)
     >>> # (4) Kernel PCA reduction: plot
     >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target'), size=3) \
-    ...     + scale_color_manual(values=['red', 'blue', 'green'])
+    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target'), size=3) +
+    ... scale_color_manual(values=['red', 'blue', 'green'])
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, None, values=values)
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  values=values)
 
 
-def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None):
+def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for fill aesthetic
 
@@ -425,16 +658,16 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Create your own discrete scale for fill aesthetic. Values are strings, encoding filling colors.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -459,14 +692,24 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     >>> X_reduced = kpca.fit_transform(X_train)
     >>> # (4) Kernel PCA reduction: plot
     >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', fill='target'), size=3, shape=21) \
-    ...     + scale_color_manual(values=['black', 'black', 'black']) \
-    ...     + scale_fill_manual(values=['red', 'blue', 'green'])
+    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', fill='target'), size=3, shape=21) +
+    ... scale_color_manual(values=['black', 'black', 'black']) +
+    ... scale_fill_manual(values=['red', 'blue', 'green'])
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, None, values=values)
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  values=values)
 
 
-def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None):
+def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for size aesthetic
 
@@ -486,16 +729,16 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Create your own discrete scale for size aesthetic. Values are numbers, defining sizes.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -520,15 +763,24 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     >>> X_reduced = kpca.fit_transform(X_train)
     >>> # (4) Kernel PCA reduction: plot
     >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', size='target')) \
-    ...     + scale_color_manual(values=['red', 'blue', 'green']) \
-    ...     + scale_size_manual(values=[2, 4, 6])
+    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', size='target')) +
+    ... scale_color_manual(values=['red', 'blue', 'green']) +
+    ... scale_size_manual(values=[2, 4, 6])
     """
-    return _scale('size', name, breaks, labels, limits, expand, na_value, guide, None, values=values)
+    return _scale('size',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  values=values)
 
 
-def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                       guide=None):
+def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for shape aesthetic
 
@@ -548,16 +800,16 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Create your own discrete scale for size aesthetic. Values are numbers, encoding shapes.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -582,15 +834,24 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     >>> X_reduced = kpca.fit_transform(X_train)
     >>> # (4) Kernel PCA reduction: plot
     >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train, 'tgt': y_train.astype(str)})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', shape='tgt'), size=3) \
-    ...     + scale_color_manual(values=['red', 'blue', 'green']) \
-    ...     + scale_shape_manual(values=[0, 1, 2])
+    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', shape='tgt'), size=3) +
+    ... scale_color_manual(values=['red', 'blue', 'green']) +
+    ... scale_shape_manual(values=[0, 1, 2])
     """
-    return _scale('shape', name, breaks, labels, limits, expand, na_value, guide, None, values=values)
+    return _scale('shape',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  values=values)
 
 
-def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                          guide=None):
+def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for line type aesthetic
 
@@ -610,18 +871,18 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Create your own discrete scale for line type aesthetic. Values are strings or numbers, encoding linetypes.
         Available codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -646,15 +907,24 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     >>> X_reduced = kpca.fit_transform(X_train)
     >>> # (4) Kernel PCA reduction: plot
     >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train, 'tgt': y_train.astype(str)})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_line(aes(color='target', linetype='tgt'), size=1) \
-    ...     + scale_color_manual(values=['red', 'blue', 'green']) \
-    ...     + scale_linetype_manual(values=['dotted', 'solid', 'dashed'])
+    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_line(aes(color='target', linetype='tgt'), size=1) +
+    ... scale_color_manual(values=['red', 'blue', 'green']) +
+    ... scale_linetype_manual(values=['dotted', 'solid', 'dashed'])
     """
-    return _scale('linetype', name, breaks, labels, limits, expand, na_value, guide, None, values=values)
+    return _scale('linetype',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  values=values)
 
 
-def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                       guide=None):
+def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for alpha (transparency) aesthetic
 
@@ -674,16 +944,16 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Create your own discrete scale for alpha (transparency) aesthetic. Values should be taken from [0,1] interval.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -708,20 +978,29 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     >>> X_reduced = kpca.fit_transform(X_train)
     >>> # (4) Kernel PCA reduction: plot
     >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train, 'tgt': y_train.astype(str)})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', alpha='target'), size=3) \
-    ...     + scale_color_manual(values=['red', 'blue', 'green']) \
-    ...     + scale_alpha_manual(values=[0.2, 0.5, 0.9])
+    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', alpha='target'), size=3) +
+    ... scale_color_manual(values=['red', 'blue', 'green']) +
+    ... scale_alpha_manual(values=[0.2, 0.5, 0.9])
     """
-    return _scale('alpha', name, breaks, labels, limits, expand, na_value, guide, None, values=values)
+    return _scale('alpha',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  values=values)
 
 
 #
 # Gradient (continuous) Color Scales
 #
 
-def scale_fill_gradient(low=None, high=None,
-                        name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                        trans=None, ):
+def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
+                        limits=None, na_value=None, guide=None, trans=None):
     """
     Defines smooth color gradient between two colors for fill aesthetic
 
@@ -741,27 +1020,28 @@ def scale_fill_gradient(low=None, high=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines smooth gradient between two colors (defined by low and high) for filling color.
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_gradient(low='green', high='red')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_gradient(low='green', high='red')
     """
-    return scale_fill_continuous(low, high, name, breaks, labels, limits, expand, na_value, guide, trans)
+    return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
 
-def scale_fill_continuous(low=None, high=None,
-                          name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                          trans=None):
+def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
+                          limits=None, na_value=None, guide=None, trans=None):
     """
     Defines smooth color gradient between two colors for fill aesthetic
 
@@ -780,28 +1060,39 @@ def scale_fill_continuous(low=None, high=None,
         A vector of labels (on ticks)
     limits : list of numerics
         A numeric vector of length two providing limits of the scale.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines smooth gradient between two colors (defined by low and high) for filling color.
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_continuous(low='green', high='red')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_continuous(low='green', high='red')
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, trans, low=low, high=high,
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  low=low, high=high,
                   scale_mapper_kind='color_gradient')
 
 
-def scale_color_gradient(low=None, high=None,
-                         name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                         trans=None):
+def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
+                         na_value=None, guide=None, trans=None):
     """
     Defines smooth color gradient between two colors for color aesthetic
 
@@ -821,27 +1112,28 @@ def scale_color_gradient(low=None, high=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines smooth gradient between two colors (defined by low and high) for color aesthetic.
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_gradient(low='green', high='red')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
+    ... scale_color_gradient(low='green', high='red')
     """
-    return scale_color_continuous(low, high, name, breaks, labels, limits, expand, na_value, guide, trans)
+    return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
 
-def scale_color_continuous(low=None, high=None,
-                           name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                           trans=None):
+def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
+                           na_value=None, guide=None, trans=None):
     """
     Defines smooth color gradient between two colors for color aesthetic
 
@@ -860,28 +1152,39 @@ def scale_color_continuous(low=None, high=None,
         A vector of labels (on ticks)
     limits : list of numerics
         A numeric vector of length two providing limits of the scale.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines smooth gradient between two colors (defined by low and high) for color aesthetic.
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_continuous(low='green', high='red')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
+    ... scale_color_continuous(low='green', high='red')
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, trans, low=low, high=high,
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  low=low, high=high,
                   scale_mapper_kind='color_gradient')
 
 
-def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0,
-                         name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                         trans=None):
+def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+                         na_value=None, guide=None, trans=None):
     """
     Defines diverging color gradient for fill aesthetic
 
@@ -903,28 +1206,39 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines diverging color gradient for filling color. Default mid point is set to white color.
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_gradient2(low='green', high='red')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_gradient2(low='green', high='red')
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, trans, low=low, mid=mid, high=high,
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  low=low, mid=mid, high=high,
                   midpoint=midpoint, scale_mapper_kind='color_gradient2')
 
 
-def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0,
-                          name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                          trans=None):
+def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+                          na_value=None, guide=None, trans=None):
     """
     Defines diverging color gradient for color aesthetic
 
@@ -946,34 +1260,44 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines diverging color gradient for color aesthetic. Default mid point is set to white color.
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_color_gradient2(low='green', high='red')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_color_gradient2(low='green', high='red')
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, trans, low=low, mid=mid, high=high,
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  low=low, mid=mid, high=high,
                   midpoint=midpoint, scale_mapper_kind='color_gradient2')
 
 
-def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None,
-                   name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                   trans=None):
+def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+                   limits=None, na_value=None, guide=None, trans=None):
     """
     Qualitative color scale with evenly spaced hues for fill aesthetic
 
     Parameters
     ----------
-
     h : list of two numerics
         Range of hues, in [0,360]
     c : numeric
@@ -992,34 +1316,44 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines qualitative color scale with evenly spaced hues for filling color aesthetic
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_hue(c=50, l=80, h=[0, 50])
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_hue(c=50, l=80, h=[0, 50])
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, trans, h=h, c=c, l=l, h_start=h_start,
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  h=h, c=c, l=l, h_start=h_start,
                   direction=direction, scale_mapper_kind='color_hue')
 
 
-def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None,
-                    name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                    trans=None):
+def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+                    limits=None, na_value=None, guide=None, trans=None):
     """
     Qualitative color scale with evenly spaced hues for color aesthetic
 
     Parameters
     ----------
-
     h : list of two numerics
         Range of hues, in [0,360]
     c : numeric
@@ -1038,42 +1372,48 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines qualitative color scale with evenly spaced hues for color aesthetic
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_hue(c=20, l=90)
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
+    ... scale_color_hue(c=20, l=90)
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, trans, h=h, c=c, l=l, h_start=h_start,
-                  direction=direction,
-                  scale_mapper_kind='color_hue')
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  h=h, c=c, l=l, h_start=h_start,
+                  direction=direction, scale_mapper_kind='color_hue')
 
 
-def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
-                        name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None):
+def scale_fill_discrete(direction=None,
+                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Qualitative color scale with evenly spaced hues for fill aesthetic
+    Qualitative colors.
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
 
     Parameters
     ----------
-
-    h : list of two numerics
-        Range of hues, in [0,360]
-    c : numeric
-        Chroma (intensity of color), maximum value varies depending on.
-    l : numeric
-        Luminance (lightness), in [0,100]
     direction : numeric
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
+        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+        If -1, the order of colors is reversed.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1083,44 +1423,44 @@ def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines qualitative color scale with evenly spaced hues for filling color aesthetic
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_discrete(c=50, l=80, h=[0, 50])
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_discrete()
     """
-    # same as scale_fill_hue but always 'discrete'
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, None, h=h, c=c, l=l, h_start=h_start,
-                  direction=direction,
-                  scale_mapper_kind='color_hue',
-                  discrete=True)
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  #
+                  direction=direction, discrete=True)
 
 
-def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
-                         name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None):
+def scale_color_discrete(direction=None,
+                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Qualitative color scale with evenly spaced hues for color aesthetic
+    Qualitative colors.
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
 
     Parameters
     ----------
-
-    h : list of two numerics
-        Range of hues, in [0,360]
-    c : numeric
-        Chroma (intensity of color), maximum value varies depending on.
-    l : numeric
-        Luminance (lightness), in [0,100]
     direction : numeric
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
+        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+        If -1, the order of colors is reversed.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1130,41 +1470,45 @@ def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines qualitative color scale with evenly spaced hues for color aesthetic
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_discrete(c=20, l=90)
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
+    ... scale_color_discrete()
     """
-    # same as scale_color_hue but always 'discrete'
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, None, h=h, c=c, l=l, h_start=h_start,
-                  direction=direction,
-                  scale_mapper_kind='color_hue',
-                  discrete=True)
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  #
+                  direction=direction, discrete=True)
 
 
-def scale_fill_grey(start=None, end=None, direction=None,
-                    name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                    trans=None):
+def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                    na_value=None, guide=None, trans=None):
     """
-    Sequential grey color scale for fill aesthetic
+    Sequential grey color scale for fill aesthetic.
+    The palette is computed using HSV (hue, saturation, value) color model.
 
     Parameters
     ----------
-
     start : numeric
-        Gray value at low end of palette in range (0,100)
+        Gray value at low end of palette in range [0,1]
     end : numeric
-        Gray value at high end of palette in range (0,100)
+        Gray value at high end of palette in range [0,1]
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1175,39 +1519,52 @@ def scale_fill_grey(start=None, end=None, direction=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines sequential grey color scale for filling color aesthetic
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_grey(start=50, end=10)
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_grey(start=0.5, end=0.1)
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, trans, start=start, end=end,
+    start, end = _greyscale_check_parameters(start, end)
+
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  start=start, end=end,
                   direction=direction,
                   scale_mapper_kind='color_grey')
 
 
-def scale_color_grey(start=None, end=None, direction=None,
-                     name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                     trans=None):
+def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                     na_value=None, guide=None, trans=None):
     """
-    Sequential grey color scale for color aesthetic
+    Sequential grey color scale for color aesthetic.
+    The palette is computed using HSV (hue, saturation, value) color model.
 
     Parameters
     ----------
-
     start : numeric
-        Gray value at low end of palette in range (0,100)
+        Gray value at low end of palette in range [0,1]
     end : numeric
-        Gray value at high end of palette in range (0,100)
+        Gray value at high end of palette in range [0,1]
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1218,36 +1575,69 @@ def scale_color_grey(start=None, end=None, direction=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines sequential grey color scale for color aesthetic
 
-     Examples
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_grey(start=50, end=10)
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
+    ... scale_color_grey(start=0.5, end=0.1)
+
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, trans, start=start, end=end,
+    start, end = _greyscale_check_parameters(start, end)
+
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  start=start, end=end,
                   direction=direction,
                   scale_mapper_kind='color_grey')
 
 
-def scale_fill_brewer(type=None, palette=None, direction=None,
-                      name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                      trans=None):
+def _greyscale_check_parameters(start=None, end=None):
+    # Up to v.1.4.2 start/end values were in range [0,100]
+    # Since v.1.4.3 start/end values are in range [0,1]
+    if start != None and not (0 <= start <= 1):
+        start = start / 100
+        print("WARN: Value of 'start' has been scaled down to range: [0,1] : {}".format(start))
+
+    if end != None and not (0 <= end <= 1):
+        end = end / 100
+        print("WARN: Value of 'end' has been scaled down to range: [0,1] : {}".format(end))
+
+    if start != None and not (0 <= start <= 1):
+        raise ValueError("Value of 'start' must be in range: [0,1] : {}".format(start))
+
+    if end != None and not (0 <= end <= 1):
+        raise ValueError("Value of 'end' must be in range: [0,1] : {}".format(end))
+
+    return (start, end)
+
+
+def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                      na_value=None, guide=None, trans=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer.org for fill aesthetic. Color schemes provided
     are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
     ----------
-
     type : string
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
     palette : string or number
@@ -1265,12 +1655,14 @@ def scale_fill_brewer(type=None, palette=None, direction=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines sequential, diverging and qualitative color scales from colorbrewer.org for filling color aesthetic.
         ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
@@ -1280,36 +1672,45 @@ def scale_fill_brewer(type=None, palette=None, direction=None,
         However, the original color schemes (particularly the qualitative ones) were not intended for this and the
         perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
-    Palettes
-    --------
-    - Diverging :
-        BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    - Qualitative :
-        Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
-    - Sequential :
-        Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
-     Examples
+
+    Palettes:
+     - Diverging :
+         BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
+     - Qualitative :
+         Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
+     - Sequential :
+         Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
+         PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
+
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_brewer(type='seq', palette='Oranges')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
+    ... scale_fill_brewer(type='seq', palette='Oranges')
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, trans, type=type, palette=palette,
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  type=type, palette=palette,
                   direction=direction,
                   scale_mapper_kind='color_brewer')
 
 
-def scale_color_brewer(type=None, palette=None, direction=None,
-                       name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-                       trans=None):
+def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                       na_value=None, guide=None, trans=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer.org for color aesthetic. Color schemes provided
     are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
     ----------
-
     type : string
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
     palette : string or number
@@ -1327,12 +1728,14 @@ def scale_color_brewer(type=None, palette=None, direction=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Defines sequential, diverging and qualitative color scales from colorbrewer.org for color aesthetic.
         ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
@@ -1342,22 +1745,34 @@ def scale_color_brewer(type=None, palette=None, direction=None,
         However, the original color schemes (particularly the qualitative ones) were not intended for this and the
         perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
-    Palettes
-    --------
-    - Diverging :
-        BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    - Qualitative :
-        Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
-    - Sequential :
-        Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
-     Examples
+
+    Palettes:
+     - Diverging :
+         BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
+     - Qualitative :
+         Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
+     - Sequential :
+         Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
+         PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
+
+    Examples
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_brewer(type='seq', palette='Oranges')
+    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
+    ... scale_color_brewer(type='seq', palette='Oranges')
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, trans, type=type, palette=palette,
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  type=type,
+                  palette=palette,
                   direction=direction,
                   scale_mapper_kind='color_brewer')
 
@@ -1385,14 +1800,16 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Continuous position scales.
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from datetime import datetime
@@ -1401,11 +1818,20 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> economics['date'] = pd.to_datetime(economics['date'])
     >>> start = datetime(2000, 1, 1)
     >>> economics = economics.loc[economics['date'] >= start]
-    >>> ggplot(economics, aes('date', 'unemploy')) \
-    ...     + geom_step() \
-    ...     + scale_x_datetime()
+    >>> ggplot(economics, aes('date', 'unemploy')) +
+    ... geom_step() + scale_x_datetime()
     """
-    return _scale('x', name, breaks, labels, limits, expand, na_value, None, None, datetime=True)
+    return _scale('x',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=None,
+                  #
+                  datetime=True)
 
 
 def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
@@ -1427,26 +1853,33 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         Continuous position scales.
-
-     Examples
-    ---------
-        To-do
     """
-    return _scale('y', name, breaks, labels, limits, expand, na_value, None, None, datetime=True)
+    return _scale('y',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=None,
+                  #
+                  datetime=True)
 
 
 #
 # Range Scale (alpha and size)
 #
 
-def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                guide=None, trans=None):
+def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None):
     """
     Scales for alpha
 
@@ -1461,19 +1894,18 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, ex
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
     range : list of numerics of length 2
         The range of the mapped aesthetics result.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
-    -----
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> data = {}
@@ -1481,19 +1913,30 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, ex
     >>> data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
     >>> data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
     >>> q = ggplot(data, aes('x', 'y'))
-    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) \
-    ...     + scale_alpha(range=[0.5, 1])
+    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) +
+    ... scale_alpha(range=[0.5, 1])
     """
-    return _scale('alpha', name, breaks, labels, limits, expand, na_value, guide, trans, range=range)
+    return _scale('alpha',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  range=range)
 
 
-def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-               guide=None, trans=None):
+def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None):
     """
     Scales for size
 
     Parameters
     ----------
+    range : list of numerics of length 2
+        The range of the mapped aesthetics result.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1503,19 +1946,16 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, exp
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
-    range : list of numerics of length 2
-        The range of the mapped aesthetics result.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
-    -----
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> data = {}
@@ -1523,14 +1963,24 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, exp
     >>> data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
     >>> data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
     >>> q = ggplot(data, aes('x', 'y'))
-    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) \
-    ...     + scale_size(range=[1, 6])
+    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) +
+    ... scale_size(range=[1, 6])
     """
-    return _scale('size', name, breaks, labels, limits, expand, na_value, guide, trans, range=range)
+    return _scale('size',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  range=range)
 
 
-def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                    guide=None, trans=None):
+def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=None,
+                    na_value=None, guide=None, trans=None):
     """
     Continuous scales for size that maps 0 to 0
 
@@ -1545,20 +1995,22 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     na_value :
         Missing values will be replaced with this value.
     max_size : numeric
         The max size that is mapped to.
+    trans : string
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+
     Returns
     -------
         scale specification
-    Notes
+
+    Note
     -----
         This method maps 0 data to 0 size. Useful in some stats such as count.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> data = {}
@@ -1566,10 +2018,20 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
     >>> data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
     >>> data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
     >>> q = ggplot(data, aes('x', 'y'))
-    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) \
-    ...     + scale_size_area(max_size=10)
+    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) +
+    ... scale_size_area(max_size=10)
     """
-    return _scale('size', name, breaks, labels, limits, expand, na_value, guide, trans, max_size=max_size,
+    return _scale('size',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  #
+                  max_size=max_size,
                   scale_mapper_kind='size_area')
 
 
@@ -1595,7 +2057,7 @@ def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=N
     :param guide
         Type of legend. Use 'colorbar' for continuous color bar, or 'legend' for discrete values.
     :param trans
-        Type of transformation applied to raw data
+        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
     :return:
     """
 

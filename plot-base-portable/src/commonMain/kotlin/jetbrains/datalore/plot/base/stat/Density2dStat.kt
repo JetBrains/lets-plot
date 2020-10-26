@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -13,9 +14,9 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class Density2dStat internal constructor() : AbstractDensity2dStat() {
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (!(data.has(TransformVar.X) && data.has(TransformVar.Y))) {
-            return DataFrame.Builder.emptyFrame()
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+        if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
+            return withEmptyStatValues()
         }
 
         val xVector = data.getNumeric(TransformVar.X)
@@ -52,8 +53,7 @@ class Density2dStat internal constructor() : AbstractDensity2dStat() {
         val stepsY = DensityStatUtil.createStepValues(yRange!!, ny)
 
         // weight aesthetics
-        //Function<Integer, Double> weightAtIndex = StatUtil.weightAtIndex(data);
-        val groupWeight = StatUtil.weightVector(xVector.size, data)
+        val groupWeight = BinStatUtil.weightVector(xVector.size, data)
 
         val matrixX = BlockRealMatrix(
             DensityStatUtil.createRawMatrix(
@@ -104,11 +104,11 @@ class Density2dStat internal constructor() : AbstractDensity2dStat() {
             return Contour.getPathDataFrame(levels, pathListByLevel)
         } else {
             return DataFrame.Builder()
-                    .putNumeric(Stats.X, statX)
-                    .putNumeric(Stats.Y, statY)
-                    .putNumeric(Stats.DENSITY, statDensity)
-                    //.putNumericVar(Stats.GROUP, newGroups)
-                    .build()
+                .putNumeric(Stats.X, statX)
+                .putNumeric(Stats.Y, statY)
+                .putNumeric(Stats.DENSITY, statDensity)
+                //.putNumericVar(Stats.GROUP, newGroups)
+                .build()
         }
     }
 }

@@ -89,8 +89,8 @@ object DensityStatUtil {
 
     fun createStepValues(range: ClosedRange<Double>, n: Int): List<Double> {
         val x = ArrayList<Double>()
-        var min = range.lowerEndpoint()
-        var max = range.upperEndpoint()
+        var min = range.lowerEnd
+        var max = range.upperEnd
         val step: Double
 
         if (max == min) {

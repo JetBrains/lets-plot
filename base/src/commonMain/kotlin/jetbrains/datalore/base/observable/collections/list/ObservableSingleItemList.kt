@@ -7,7 +7,8 @@ package jetbrains.datalore.base.observable.collections.list
 
 import jetbrains.datalore.base.observable.collections.DataloreIndexOutOfBoundsException
 
-class ObservableSingleItemList<ItemT> : AbstractObservableList<ItemT> {
+class ObservableSingleItemList<ItemT> :
+    AbstractObservableList<ItemT> {
     private var myItem: ItemT? = null
     private var myEmpty = true
 
@@ -36,6 +37,7 @@ class ObservableSingleItemList<ItemT> : AbstractObservableList<ItemT> {
         if (myEmpty || index != 0) {
             throw DataloreIndexOutOfBoundsException(index)
         }
+        @Suppress("UNCHECKED_CAST")
         return myItem as ItemT
     }
 

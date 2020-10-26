@@ -4,12 +4,14 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
 kotlin {
     jvm()
-    js ()
+    js() {
+        browser {}
+    }
 
     sourceSets {
         commonMain {

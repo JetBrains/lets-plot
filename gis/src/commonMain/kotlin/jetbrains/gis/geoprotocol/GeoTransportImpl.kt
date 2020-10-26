@@ -7,20 +7,18 @@ package jetbrains.gis.geoprotocol
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
-import io.ktor.http.DEFAULT_PORT
-import io.ktor.http.URLProtocol
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.ThreadSafeAsync
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.json.JsonSupport.parseJson
+import jetbrains.gis.geoprotocol.json.RequestJsonFormatter
 import jetbrains.gis.geoprotocol.json.RequestJsonFormatter.format
+import jetbrains.gis.geoprotocol.json.ResponseJsonParser
 import jetbrains.gis.geoprotocol.json.ResponseJsonParser.parse
 import kotlinx.coroutines.launch
 
 class GeoTransportImpl(
-    private val myHost: String,
-    private val myPort: Int?,
-    private val myRoute: String
+    private val myUrl: String
 ): GeoTransport {
     private val myClient = HttpClient()
 
@@ -29,18 +27,17 @@ class GeoTransportImpl(
 
         myClient.launch {
             try {
-                val response = myClient.post<String> {
-                    url {
-                        protocol = URLProtocol.HTTPS
-                        host = myHost
-                        port = myPort ?: DEFAULT_PORT
-                        encodedPath = myRoute
-                    }
-
-                    body = JsonSupport.formatJson(format(request))
+                val response = myClient.post<String>(myUrl) {
+                    body = request
+                        .let(RequestJsonFormatter::format)
+                        .let(JsonSupport::formatJson)
                 }
 
-                async.success(parse(parseJson(response)))
+                response
+                    .let(JsonSupport::parseJson)
+                    .let(ResponseJsonParser::parse)
+                    .let(async::success)
+
             } catch (c: Throwable) {
                 async.failure(c)
             }

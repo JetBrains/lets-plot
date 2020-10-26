@@ -13,8 +13,9 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.plotDemo.model.Iris
+import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class AreaPlotDemo: SimpleDemoBase() {
@@ -58,7 +59,7 @@ open class AreaPlotDemo: SimpleDemoBase() {
             .addConstantAes(Aes.ALPHA, 0.7)
             .build(data)
 
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
         assembler.disableInteractions()
         return assembler.createPlot()
     }

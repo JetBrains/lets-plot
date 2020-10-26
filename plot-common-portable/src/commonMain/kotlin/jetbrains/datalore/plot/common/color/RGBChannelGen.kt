@@ -48,7 +48,7 @@ class RGBChannelGen(private val myBaseValues: List<Int>) {
             for (baseValue in baseValues) {
                 var genValue = baseValue + inc
                 if (!myRange!!.contains(genValue)) {
-                    genValue = myRange!!.lowerEndpoint() + (genValue - myRange!!.upperEndpoint())
+                    genValue = myRange!!.lowerEnd + (genValue - myRange!!.upperEnd)
                 }
                 values.add(genValue)
                 nextBaseValues.add(genValue)
@@ -64,16 +64,16 @@ class RGBChannelGen(private val myBaseValues: List<Int>) {
     }
 
     private fun maxValueCount(): Int {
-        return myRange!!.upperEndpoint() - myRange!!.lowerEndpoint() + 1
+        return myRange!!.upperEnd - myRange!!.lowerEnd + 1
     }
 
     companion object {
         private val RANGES = arrayOf(
-                ClosedRange.closed(0, 37),
-                ClosedRange.closed(38, 97),
-                ClosedRange.closed(98, 157),
-                ClosedRange.closed(158, 217),
-                ClosedRange.closed(218, 255)
+                ClosedRange(0, 37),
+                ClosedRange(38, 97),
+                ClosedRange(98, 157),
+                ClosedRange(158, 217),
+                ClosedRange(218, 255)
         )
     }
 }

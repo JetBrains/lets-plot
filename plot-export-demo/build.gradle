@@ -1,0 +1,55 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+}
+
+
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+kotlin {
+    jvm()
+    jvm("jvmBrowser")
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+                implementation project(':base-portable')
+                implementation project(':plot-image-export')
+                implementation project(':plot-demo-common')
+                implementation project(':vis-demo-common')
+            }
+        }
+
+        allJvm {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
+            }
+        }
+        jvmMain {
+            dependsOn allJvm
+        }
+        jvmBrowserMain {
+            dependsOn allJvm
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmBrowserMain/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}

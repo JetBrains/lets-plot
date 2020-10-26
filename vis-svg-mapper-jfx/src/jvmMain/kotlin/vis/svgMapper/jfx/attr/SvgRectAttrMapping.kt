@@ -13,9 +13,22 @@ internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
         when (name) {
             SvgRectElement.X.name -> target.x = asDouble(value)
             SvgRectElement.Y.name -> target.y = asDouble(value)
-            SvgRectElement.WIDTH.name -> target.width = asDouble(value)
-            SvgRectElement.HEIGHT.name -> target.height = asDouble(value)
+            SvgRectElement.WIDTH.name -> {
+                if (!ignoredSizeValue(value)) {
+                    target.width = asDouble(value)
+                }
+            }
+            SvgRectElement.HEIGHT.name -> {
+                if (!ignoredSizeValue(value)) {
+                    target.height = asDouble(value)
+                }
+            }
             else -> super.setAttribute(target, name, value)
         }
+    }
+
+    private fun ignoredSizeValue(value: Any?): Boolean {
+        // Do not fail on persentages, just ignore.
+        return value is String && value.endsWith("%")
     }
 }

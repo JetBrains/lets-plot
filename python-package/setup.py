@@ -11,13 +11,13 @@ root_dir = os.path.dirname(this_dir)
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
 
 this_system = platform.system()
-binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'debugStatic')
+binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'releaseStatic')
 
 python_package = "lets_plot"
 
 
 def update_js():
-    js_relative_path = ['js-package', 'build', 'dist']
+    js_relative_path = ['js-package', 'build', 'distributions']
     js_libs = [
         'lets-plot-latest.min',
     ]
@@ -55,6 +55,15 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
 with open(os.path.join(root_dir, 'README_PYTHON.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+if this_system == 'Windows':
+    import distutils.cygwinccompiler
+    distutils.cygwinccompiler.get_msvcr = lambda: []
+
+if this_system == 'Darwin':
+    stdc_lib = 'c++'
+else:
+    stdc_lib = 'stdc++'
+
 setup(name='lets-plot',
       license="MIT",
       version=version_locals['__version__'],
@@ -68,12 +77,15 @@ setup(name='lets-plot',
       long_description_content_type='text/markdown',
       classifiers=[
           "License :: OSI Approved :: MIT License",
-          "Development Status :: 4 - Beta",
+          "Development Status :: 5 - Production/Stable",
+          "Programming Language :: Python :: 3.6",
           "Programming Language :: Python :: 3.7",
           "Programming Language :: Python :: 3.8",
+          "Framework :: IPython",
           "Framework :: Jupyter",
           "Operating System :: MacOS",
           "Operating System :: POSIX :: Linux",
+          "Operating System :: Microsoft :: Windows",
           "Programming Language :: Python :: Implementation :: CPython",
           "Topic :: Scientific/Engineering :: Visualization",
           "Intended Audience :: Science/Research",
@@ -91,7 +103,7 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', 'stdc++'],
+                    libraries=['lets_plot_python_extension', stdc_lib],
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],

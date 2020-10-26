@@ -1,25 +1,27 @@
 pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "kotlin-multiplatform") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
-            }
-            if (requested.id.id == "kotlinx-serialization") {
-                useModule("org.jetbrains.kotlin:kotlin-serialization:${requested.version}")
-            }
-        }
+    plugins {
+        id "org.jetbrains.kotlin.multiplatform" version "$kotlin_version"
+        id "org.jetbrains.kotlin.js" version "$kotlin_version"
+        id "org.jetbrains.gradle.plugin.idea-ext" version "$idea_ext_version"
+        id "com.jfrog.bintray" version "1.8.4"
+        id "com.github.johnrengelman.shadow" version "5.1.0"
+//    id "com.moowork.node" version "1.3.1"
+        //classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
     }
 }
+
+rootProject.name = "lets-plot"
 
 include 'base-portable',
         'base',
         'gis',
         'livemap',
         'livemap-demo',
+        'livemap-jvm-package',
         'plot-livemap',
         'plot-livemap-stub',
         'mapper-core',
-        'vis-svg',
+        'vis-svg-portable',
         'vis-svg-mapper',
         'vis-svg-mapper-jfx',
         'vis-svg-mapper-batik',
@@ -32,10 +34,14 @@ include 'base-portable',
         'plot-builder',
         'plot-config-portable',
         'plot-config',
+        'plot-image-export',
         'vis-demo-common',
         'vis-demo-common-jfx',
+        'vis-demo-common-batik',
         'vis-demo-svg-mapper',
         'plot-demo',
+        'plot-demo-common',
+        'plot-export-demo',
         'python-extension',
         'python-package-build',
         'js-package',
@@ -43,7 +49,9 @@ include 'base-portable',
         'js-package:js-publish-version',
         'jvm-package:jvm-publish-common',
         'jvm-package:jvm-publish-jfx',
+        'jvm-package:jvm-publish-batik',
         'test-common'
+
 
 
 /*

@@ -4,16 +4,15 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
-repositories {
-    mavenCentral()
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
     jvm()
-    js()
+    js {
+        browser()
+    }
     sourceSets {
         commonMain {
             dependencies {
@@ -21,7 +20,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
             }
         }
         jvmMain {
@@ -39,7 +38,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
             }
         }
     }

@@ -12,51 +12,67 @@ import kotlin.random.Random
 object Colors {
     private const val DEFAULT_FACTOR = 0.7
 
-    private val colorsList = createColorsList()
+    private val variantColors = mapOf<String, Color>(
+        "dark_blue" to Color.DARK_BLUE,
+        "dark_green" to Color.DARK_GREEN,
+        "dark_magenta" to Color.DARK_MAGENTA,
+        "light_blue" to Color.LIGHT_BLUE,
+        "light_gray" to Color.LIGHT_GRAY,
+        "light_green" to Color.LIGHT_GREEN,
+        "light_yellow" to Color.LIGHT_YELLOW,
+        "light_magenta" to Color.LIGHT_MAGENTA,
+        "light_cyan" to Color.LIGHT_CYAN,
+        "light_pink" to Color.LIGHT_PINK,
+        "very_light_gray" to Color.VERY_LIGHT_GRAY,
+        "very_light_yellow" to Color.VERY_LIGHT_YELLOW
+    )
+    private val namedColors = mapOf<String, Color>(
+        "white" to Color.WHITE,
+        "black" to Color.BLACK,
+        "gray" to Color.GRAY,
+        "red" to Color.RED,
+        "green" to Color.GREEN,
+        "blue" to Color.BLUE,
+        "yellow" to Color.YELLOW,
+        "magenta" to Color.MAGENTA,
+        "cyan" to Color.CYAN,
+        "orange" to Color.ORANGE,
+        "pink" to Color.PINK
+    ) +
+            // light_gray
+            variantColors +
+            // light-gray
+            variantColors.mapKeys { it.key.replace('_', '-') } +
+            // lightgray
+            variantColors.mapKeys { it.key.replace("_", "") }
 
-    private fun createColorsList(): Map<String, Color> {
-        val colorList = HashMap<String, Color>()
-        colorList["white"] = Color.WHITE
-        colorList["black"] = Color.BLACK
-        colorList["light-gray"] = Color.LIGHT_GRAY
-        colorList["very-light-gray"] = Color.VERY_LIGHT_GRAY
-        colorList["gray"] = Color.GRAY
-        colorList["red"] = Color.RED
-        colorList["light-green"] = Color.LIGHT_GREEN
-        colorList["green"] = Color.GREEN
-        colorList["dark-green"] = Color.DARK_GREEN
-        colorList["blue"] = Color.BLUE
-        colorList["dark-blue"] = Color.DARK_BLUE
-        colorList["light-blue"] = Color.LIGHT_BLUE
-        colorList["yellow"] = Color.YELLOW
-        colorList["light-yellow"] = Color.LIGHT_YELLOW
-        colorList["very-light-yellow"] = Color.VERY_LIGHT_YELLOW
-        colorList["magenta"] = Color.MAGENTA
-        colorList["light-magenta"] = Color.LIGHT_MAGENTA
-        colorList["dark-magenta"] = Color.DARK_MAGENTA
-        colorList["cyan"] = Color.CYAN
-        colorList["light-cyan"] = Color.LIGHT_CYAN
-        colorList["orange"] = Color.ORANGE
-        colorList["pink"] = Color.PINK
-        colorList["light-pink"] = Color.LIGHT_PINK
-        return colorList
-    }
 
-    fun isColorName(colorName: String): Boolean {
-        return colorsList.containsKey(colorName.toLowerCase())
-    }
-
-    fun forName(colorName: String): Color {
-        val res = colorsList[colorName.toLowerCase()]
-        return if (res != null) {
-            res
-        } else {
-            throw IllegalArgumentException()
+    /**
+     * @param c color string to parse. Accepted formats:
+     *     - rgb(r, g, b)
+     *     - rgba(r, g, b, a)
+     *     - color(r, g, b, a)
+     *     - #rrggbb
+     *     - white, green etc.
+     */
+    fun parseColor(c: String): Color {
+        return when {
+            c.indexOf('(') > 0 -> Color.parseRGB(c)
+            c.startsWith("#") -> Color.parseHex(c)
+            isColorName(c) -> forName(c)
+            else -> throw IllegalArgumentException("Error persing color value: $c")
         }
     }
 
+    fun isColorName(colorName: String): Boolean {
+        return namedColors.containsKey(colorName.toLowerCase())
+    }
+
+    fun forName(colorName: String): Color {
+        return namedColors[colorName.toLowerCase()] ?: throw IllegalArgumentException()
+    }
+
     fun generateHueColor(): Double {
-//        return 360 * Math.random()
         return 360 * Random.nextDouble()
     }
 
@@ -64,6 +80,11 @@ object Colors {
         return rgbFromHsv(360 * Random.nextDouble(), s, v)
     }
 
+    /**
+     * @param h hue, [0, 360] degree
+     * @param s saturation, [0, 1]
+     * @param v value, [0, 1]
+     */
     @JvmOverloads
     fun rgbFromHsv(h: Double, s: Double, v: Double = 1.0): Color {
         val hd = h / 60
@@ -74,24 +95,31 @@ object Colors {
         var g = 0.0
         var b = 0.0
 
-        if (hd < 1) {
-            r = c
-            g = x
-        } else if (hd < 2) {
-            r = x
-            g = c
-        } else if (hd < 3) {
-            g = c
-            b = x
-        } else if (hd < 4) {
-            g = x
-            b = c
-        } else if (hd < 5) {
-            r = x
-            b = c
-        } else {
-            r = c
-            b = x
+        when {
+            hd < 1 -> {
+                r = c
+                g = x
+            }
+            hd < 2 -> {
+                r = x
+                g = c
+            }
+            hd < 3 -> {
+                g = c
+                b = x
+            }
+            hd < 4 -> {
+                g = x
+                b = c
+            }
+            hd < 5 -> {
+                r = x
+                b = c
+            }
+            else -> {
+                r = c
+                b = x
+            }
         }
 
         val m = v - c
@@ -110,14 +138,14 @@ object Colors {
         val h: Double
         val div = 1f / (6 * (max - min))
 
-        if (max == min) {
-            h = 0.0
+        h = if (max == min) {
+            0.0
         } else if (max == r) {
-            h = if (g >= b) (g - b) * div else 1 + (g - b) * div
+            if (g >= b) (g - b) * div else 1 + (g - b) * div
         } else if (max == g) {
-            h = 1f / 3 + (b - r) * div
+            1f / 3 + (b - r) * div
         } else {
-            h = 2f / 3 + (r - g) * div
+            2f / 3 + (r - g) * div
         }
 
         return doubleArrayOf(360 * h, v, max)
@@ -125,20 +153,19 @@ object Colors {
 
     @JvmOverloads
     fun darker(c: Color?, factor: Double = DEFAULT_FACTOR): Color? {
-        return if (c != null) {
+        return c?.let {
             Color(
-                    max((c.red * factor).toInt(), 0),
-                    max((c.green * factor).toInt(), 0),
-                    max((c.blue * factor).toInt(), 0),
-                    c.alpha)
-        } else {
-            null
+                max((c.red * factor).toInt(), 0),
+                max((c.green * factor).toInt(), 0),
+                max((c.blue * factor).toInt(), 0),
+                c.alpha
+            )
         }
     }
 
     @JvmOverloads
     fun lighter(c: Color?, factor: Double = DEFAULT_FACTOR): Color? {
-        if (c != null) {
+        return c?.let {
             var r = c.red
             var g = c.green
             var b = c.blue
@@ -153,12 +180,11 @@ object Colors {
             if (b > 0 && b < i) b = i
 
             return Color(
-                    min((r / factor).toInt(), 255),
-                    min((g / factor).toInt(), 255),
-                    min((b / factor).toInt(), 255),
-                    alpha)
-        } else {
-            return null
+                min((r / factor).toInt(), 255),
+                min((g / factor).toInt(), 255),
+                min((b / factor).toInt(), 255),
+                alpha
+            )
         }
     }
 
@@ -199,27 +225,6 @@ object Colors {
             result[i] = rgbFromHsv((sector * i).toDouble(), saturation)
         }
         @Suppress("UNCHECKED_CAST")
-        val colors = result as Array<Color>
-        return colors
+        return result as Array<Color>
     }
-
-//    fun colorPersister(defaultValue: Color): Persister<Color> {
-//        return object : Persister<Color>() {
-//            fun deserialize(value: String?): Color {
-//                return if (value == null) {
-//                    defaultValue
-//                } else Color.parseColor(value)
-//            }
-//
-//            fun serialize(value: Color): String? {
-//                return if (value == defaultValue) {
-//                    null
-//                } else value.toString()
-//            }
-//
-//            fun toString(): String {
-//                return "colorPersister"
-//            }
-//        }
-//    }
 }

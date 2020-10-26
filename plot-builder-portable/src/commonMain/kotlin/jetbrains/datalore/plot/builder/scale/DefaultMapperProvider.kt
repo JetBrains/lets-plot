@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
@@ -20,12 +21,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -41,9 +43,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColor
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createWithDiscreteOutput
@@ -52,6 +54,7 @@ import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.AlphaMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.SizeMapperProvider
+
 
 object DefaultMapperProvider {
 
@@ -74,35 +77,25 @@ object DefaultMapperProvider {
 
         init {
             for (aes in Aes.allPositional()) {
-                put(aes,
-                    NUMERIC_UNDEFINED
-                )
+                put(aes, NUMERIC_UNDEFINED)
             }
 
             this.put(X, NUMERIC_IDENTITY)
             this.put(Y, NUMERIC_IDENTITY)
 
-            this.put(Z,
-                NUMERIC_IDENTITY
-            )
+            this.put(Z, NUMERIC_IDENTITY)
             this.put(YMIN, NUMERIC_IDENTITY)
             this.put(YMAX, NUMERIC_IDENTITY)
-            this.put(COLOR, createColor())
-            this.put(FILL, createColor())
+            this.put(COLOR, createColorMapperProvider())
+            this.put(FILL, createColorMapperProvider())
             this.put(ALPHA, AlphaMapperProvider.DEFAULT)
             this.put(SHAPE, createWithDiscreteOutput(ShapeMapper.allShapes(), ShapeMapper.NA_VALUE))
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
 
             this.put(SIZE, SizeMapperProvider.DEFAULT)
-            this.put(WIDTH,
-                NUMERIC_IDENTITY
-            )
-            this.put(HEIGHT,
-                NUMERIC_IDENTITY
-            )
-            this.put(WEIGHT,
-                NUMERIC_IDENTITY
-            )
+            this.put(WIDTH, NUMERIC_IDENTITY)
+            this.put(HEIGHT, NUMERIC_IDENTITY)
+            this.put(WEIGHT, NUMERIC_IDENTITY)
             this.put(INTERCEPT, NUMERIC_IDENTITY)
             this.put(SLOPE, NUMERIC_IDENTITY)
             this.put(XINTERCEPT, NUMERIC_IDENTITY)
@@ -111,22 +104,17 @@ object DefaultMapperProvider {
             this.put(MIDDLE, NUMERIC_IDENTITY)
             this.put(UPPER, NUMERIC_IDENTITY)
 
-            this.put(MAP_ID, createObjectIdentityDiscrete(MAP_ID))
             this.put(FRAME, createStringIdentity(FRAME))
 
-            this.put(SPEED,
-                NUMERIC_IDENTITY
-            )
-            this.put(FLOW,
-                NUMERIC_IDENTITY
-            )
+            this.put(SPEED, NUMERIC_IDENTITY)
+            this.put(FLOW, NUMERIC_IDENTITY)
 
             this.put(XMIN, NUMERIC_IDENTITY)
             this.put(XMAX, NUMERIC_IDENTITY)
             this.put(XEND, NUMERIC_IDENTITY)
             this.put(YEND, NUMERIC_IDENTITY)
 
-            this.put(LABEL, createStringIdentity(LABEL))
+            this.put(LABEL, createObjectIdentity(LABEL))
             this.put(FAMILY, createStringIdentity(FAMILY))
             this.put(FONTFACE, createStringIdentity(FONTFACE))
 
@@ -135,9 +123,10 @@ object DefaultMapperProvider {
 
             // text vertical justification (numbers [0..1] or predefined strings, not positional)
             this.put(VJUST, createObjectIdentityDiscrete(VJUST))
-            this.put(ANGLE,
-                NUMERIC_IDENTITY
-            )
+            this.put(ANGLE, NUMERIC_IDENTITY)
+
+            this.put(SYM_X, NUMERIC_IDENTITY)
+            this.put(SYM_Y, NUMERIC_IDENTITY)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {
@@ -155,26 +144,32 @@ object DefaultMapperProvider {
 
         companion object {
             // For most of numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
-            private val NUMERIC_UNDEFINED: MapperProvider<Double> = object :
-                MapperProvider<Double> {
-                override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
+            private val NUMERIC_UNDEFINED: MapperProvider<Double> = object : MapperProvider<Double> {
+                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    domain: ClosedRange<Double>,
+                    lowerLimit: Double?,
+                    upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
             }
 
-            private val NUMERIC_IDENTITY: MapperProvider<Double> = object :
-                MapperProvider<Double> {
-                override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
+            private val NUMERIC_IDENTITY: MapperProvider<Double> = object : MapperProvider<Double> {
+                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    domain: ClosedRange<Double>,
+                    lowerLimit: Double?,
+                    upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
             }

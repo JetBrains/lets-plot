@@ -131,11 +131,11 @@ class LinearBreaksHelperTest {
             return result
         }
 
-        private fun print(values: Array<Double>) {
+        private fun print(@Suppress("UNUSED_PARAMETER") values: Array<Double>) {
             //    System.out.println(listOf(values));
         }
 
-        private fun print(values: DoubleArray) {
+        private fun print(@Suppress("UNUSED_PARAMETER") values: DoubleArray) {
             //    StringBuffer sb = new StringBuffer("[");
             //    boolean first = true;
             //    for (double value : values) {

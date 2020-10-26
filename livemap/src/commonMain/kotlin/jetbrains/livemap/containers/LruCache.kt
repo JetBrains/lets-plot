@@ -8,35 +8,71 @@ package jetbrains.livemap.containers
 class LruCache<K, E>(private val limit: Int) {
     val values: List<E>
         get() {
-            return linked.toList().map { map[it]!! }
+            val resultList = ArrayList<E>()
+
+            var node: Node<K, E>? = head ?: return emptyList()
+            while (node != null) {
+                resultList.add(node.myItem)
+
+                node = node.myNext
+            }
+
+            return resultList
         }
 
-    val map = HashMap<K, E>()
-    private val linked = LinkedList<K>()
+    private val map = HashMap<K, Node<K, E>>()
+    private var head: Node<K, E>? = null
+    private var tail: Node<K, E>? = null
+
+    private fun nodeToHead(node: Node<K, E>) {
+        if (node !== head) {
+            if (node === tail) {
+                tail = node.myPrev
+            }
+
+            node.myPrev?.myNext = node.myNext
+            node.myNext?.myPrev = node.myPrev
+
+            node.myNext = head
+            head!!.myPrev = node
+
+            head = node
+        }
+    }
 
     operator fun get(key: K): E? {
-        val index = linked.indexOf(key)
-        if (index == -1) {
-            return null
+
+        return map[key]?.let { node ->
+            nodeToHead(node)
+            node.myItem
         }
-
-        linked.remove(index)
-        linked.prepend(key)
-
-        return map[key]
     }
 
     fun put(key: K, value: E) {
-        linked.prepend(key)
+        map[key]
+            ?.let {
+                it.myItem = value
+                nodeToHead(it)
+            }
+            ?:let {
+                head = if (map.isNotEmpty()) {
+                    head!!.myPrev = Node(key, value, null, head)
+                    head!!.myPrev
+                } else {
+                    tail = Node(key, value, null, null)
+                    tail
+                }
 
-        if (linked.size > limit) {
-            linked.subList(limit, linked.size).forEach {
-                linked.removeLast()
-                map.remove(it)
+                map[key] = head!!
+            }
+
+        if (map.size > limit) {
+            tail?.let {
+                tail = it.myPrev
+                tail!!.myNext = null
+                map.remove(it.myKey)
             }
         }
-
-        map[key] = value
     }
 
     fun getOrPut(key: K, defaultValue: () -> E): E {
@@ -53,4 +89,11 @@ class LruCache<K, E>(private val limit: Int) {
     }
 
     fun containsKey(key: K): Boolean = map.containsKey(key)
+
+    private class Node<K, E> internal constructor(
+        internal val myKey: K,
+        internal var myItem: E,
+        internal var myPrev: Node<K, E>?,
+        internal var myNext: Node<K, E>?
+    )
 }

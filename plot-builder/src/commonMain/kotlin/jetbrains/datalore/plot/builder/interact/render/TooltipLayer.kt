@@ -8,6 +8,8 @@ package jetbrains.datalore.plot.builder.interact.render
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
@@ -16,20 +18,24 @@ import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTool
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 
-internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle) {
-    private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
+internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle, tooltipAnchor: TooltipAnchor) {
+    private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, tooltipAnchor)
     private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
 
-    fun showTooltips(cursor: DoubleVector, tooltipSpecs: List<jetbrains.datalore.plot.builder.interact.TooltipSpec>) {
+    fun showTooltips(
+        cursor: DoubleVector,
+        tooltipSpecs: List<TooltipSpec>,
+        geomBounds: DoubleRectangle?
+    ) {
         clearTooltips()
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec -> spec
                 .run { newTooltipBox().apply { visible = false } } // to not flicker on arrange
-                .apply { setContent(spec.fill, spec.lines, spec.style) }
+                .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor) }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds = geomBounds) }
             .map { arranged ->
                 arranged.tooltipBox.apply {
                     setPosition(
@@ -50,7 +56,7 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
         return TooltipBox().apply { myTooltipLayer.children().add(rootGroup) }
     }
 
-    private val jetbrains.datalore.plot.builder.interact.TooltipSpec.style get() = when (this.layoutHint.kind) {
+    private val TooltipSpec.style get() = when (this.layoutHint.kind) {
         X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
         else -> Style.PLOT_DATA_TOOLTIP
     }

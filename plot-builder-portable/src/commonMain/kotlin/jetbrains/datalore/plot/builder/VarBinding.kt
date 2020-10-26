@@ -10,8 +10,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-//import jetbrains.datalore.plot.builder.scale.ScaleProvider
-
 open class VarBinding(
     val variable: DataFrame.Variable,
     val aes: Aes<*>,
@@ -27,14 +25,7 @@ open class VarBinding(
         throw IllegalStateException("Not a deferred var binding")
     }
 
-    override fun toString(): String {
-        return "VarBinding{" +
-                "variable=" + variable +
-                ", aes=" + aes +
-                ", scale=" + scale +
-                ", deferred=" + isDeferred +
-                '}'.toString()
-    }
+    override fun toString() = "VarBinding{variable=${variable}, aes=${aes}, scale=$scale, deferred=$isDeferred}"
 
     companion object {
         fun deferred(variable: DataFrame.Variable, aes: Aes<*>, scaleProvider: ScaleProvider<*>): VarBinding {

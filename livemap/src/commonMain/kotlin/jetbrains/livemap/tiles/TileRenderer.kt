@@ -10,12 +10,11 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.placement.ScreenDimensionComponent
 import jetbrains.livemap.projection.Client
 import jetbrains.livemap.projection.Coordinates.ZERO_CLIENT_POINT
+import jetbrains.livemap.rendering.Renderer
 import jetbrains.livemap.tiles.Tile.*
-import jetbrains.livemap.tiles.components.TileComponent
 
 class TileRenderer : Renderer {
     private lateinit var myCellRect: Rect<Client>

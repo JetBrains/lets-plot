@@ -6,13 +6,23 @@
 package jetbrains.datalore.base.values
 
 import kotlin.jvm.JvmOverloads
+import kotlin.math.roundToInt
 
+// ToDo: ubyte?
 class Color @JvmOverloads constructor(
-        val red: Int,
-        val green: Int,
-        val blue: Int,
-        val alpha: Int = 255
+    val red: Int,
+    val green: Int,
+    val blue: Int,
+    val alpha: Int = 255
 ) {
+    init {
+        require(
+            0 <= red && red <= 255 &&
+                    0 <= green && green <= 255 &&
+                    0 <= blue && blue <= 255 &&
+                    0 <= alpha && alpha <= 255
+        ) { "Color components out of range: $this" }
+    }
 
     fun changeAlpha(newAlpha: Int): Color {
         return Color(red, green, blue, newAlpha)
@@ -95,7 +105,7 @@ class Color @JvmOverloads constructor(
         private const val COLOR = "color"
         private const val RGBA = "rgba"
 
-        fun parseColor(text: String): Color {
+        fun parseRGB(text: String): Color {
             val firstParen = findNext(text, "(", 0)
             val prefix = text.substring(0, firstParen)
 
@@ -121,7 +131,7 @@ class Color @JvmOverloads constructor(
                 alpha = 255
             } else {
                 blue = text.substring(secondComma + 1, thirdComma).trim { it <= ' ' }.toInt()
-                alpha = text.substring(thirdComma + 1, lastParen).trim { it <= ' ' }.toInt()
+                alpha = (text.substring(thirdComma + 1, lastParen).trim { it <= ' ' }.toFloat() * 255).roundToInt()
             }
 
             return Color(red, green, blue, alpha)
@@ -139,11 +149,11 @@ class Color @JvmOverloads constructor(
             @Suppress("NAME_SHADOWING")
             var hexColor = hexColor
             if (!hexColor.startsWith("#")) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("Not a HEX value: $hexColor")
             }
             hexColor = hexColor.substring(1)
             if (hexColor.length != 6) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("Not a HEX value: $hexColor")
             }
             val r = hexColor.substring(0, 2).toInt(16)
             val g = hexColor.substring(2, 4).toInt(16)
@@ -153,7 +163,7 @@ class Color @JvmOverloads constructor(
 
         private fun toColorPart(value: Int): String {
             if (value < 0 || value > 255) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("RGB color part must be in range [0..255] but was $value")
             }
 
             val result = value.toString(16)

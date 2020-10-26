@@ -23,12 +23,14 @@ def ggtitle(label):
     label: string
         The text for the plot title.
 
-     Returns
+    Returns
     --------
         Plot title specification.
-     Notes
-    ------
+
+    Note
+    -----
         Changes plot title.
+
     Examples
     ---------
     >>> import numpy as np
@@ -42,9 +44,9 @@ def ggtitle(label):
     >>> X = X.astype(int) # comment this line to make variables continuous back
     >>> dat = pd.DataFrame(X)
     >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) \
-    >>>     + geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) \
-    >>>     + ggtitle('Plot title') + xlab('x axis label') + ylab('y axis label')
+    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) +
+    ... geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) +
+    ... ggtitle('Plot title') + xlab('x axis label') + ylab('y axis label')
     """
     return labs(title=label)
 
@@ -58,12 +60,14 @@ def xlab(label):
     label: string
         The text for the x axis label
 
-     Returns
+    Returns
     --------
         Axis label specification.
-     Notes
-    ------
+
+    Note
+    -----
         Changes axis label.
+
     Examples
     ---------
     >>> import numpy as np
@@ -77,9 +81,9 @@ def xlab(label):
     >>> X = X.astype(int) # comment this line to make variables continuous back
     >>> dat = pd.DataFrame(X)
     >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) \
-    >>>     + geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) \
-    >>>     + ggtitle('Plot title') + xlab('x axis label') + ylab('y axis label')
+    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) +
+    ... geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) +
+    ... ggtitle('Plot title') + xlab('x axis label') + ylab('y axis label')
     """
     return labs(x=label)
 
@@ -93,12 +97,14 @@ def ylab(label):
     label: string
         The text for the y axis label
 
-     Returns
+    Returns
     --------
         Axis label specification.
-     Notes
-    ------
+
+    Note
+    -----
         Changes axis label.
+
     Examples
     ---------
     >>> import numpy as np
@@ -112,16 +118,16 @@ def ylab(label):
     >>> X = X.astype(int) # comment this line to make variables continuous back
     >>> dat = pd.DataFrame(X)
     >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) \
-    >>>     + geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) \
-    >>>     + ggtitle('Plot title') + xlab('x axis label') + ylab('y axis label')
+    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) +
+    ... geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) +
+    ... ggtitle('Plot title') + xlab('x axis label') + ylab('y axis label')
     """
     return labs(y=label)
 
 
 def labs(**kwargs):
     """
-    Change axis labels and legend titles
+    Change plot title, axis labels and legend titles.
 
     Parameters
     ----------
@@ -129,12 +135,12 @@ def labs(**kwargs):
         A list of new names in the form aesthetic='new name',
         e.g. title='Plot title' or aes-name='Scale label'
 
-     Returns
+    Returns
     --------
         Axis label specification.
 
-     Notes
-    ------
+    Note
+    -----
         Change axis labels and legend titles.
 
     Examples
@@ -150,9 +156,9 @@ def labs(**kwargs):
     >>> X = X.astype(int) # comment this line to make variables continuous back
     >>> dat = pd.DataFrame(X)
     >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) \
-    >>>     + geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) \
-    >>>     + labs(title='New plot title', x='New x axis label', y='New y axis label')
+    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) +
+    ... geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8) +
+    ... labs(title='New plot title', x='New x axis label', y='New y axis label')
     """
     specs = []
     for k, v in kwargs.items():

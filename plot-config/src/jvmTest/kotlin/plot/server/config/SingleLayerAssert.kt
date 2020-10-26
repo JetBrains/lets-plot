@@ -7,9 +7,6 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import org.assertj.core.api.AbstractAssert
@@ -33,7 +30,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
+    private fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
         for (aes in expectedBindings.keys) {
             assertBinding(aes, expectedBindings[aes]!!)
         }
@@ -45,7 +42,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveDataVectors(expectedDataVectors: Map<String, List<*>>): SingleLayerAssert {
+    private fun haveDataVectors(expectedDataVectors: Map<String, List<*>>): SingleLayerAssert {
         val df = myLayer.combinedData
         val layerData = DataFrameUtil.toMap(df)
         for (`var` in expectedDataVectors.keys) {
@@ -60,18 +57,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     internal fun haveMapVectors(expectedMapVectors: Map<String, List<*>>): SingleLayerAssert {
         Assertions.assertThat(expectedMapVectors).isEqualTo(myLayer[GEO_POSITIONS])
         return this
-    }
-
-    internal fun haveMapIds(expectedIds: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_JOIN_KEY_COLUMN, expectedIds)
-    }
-
-    internal fun haveMapGeometries(expectedGeometries: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_GEOMETRY_COLUMN, expectedGeometries)
-    }
-
-    internal fun haveMapGeocode(expectedGeocode: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_OSM_ID_COLUMN, expectedGeocode)
     }
 
     private fun haveMapValues(key: String, expectedMapValues: List<*>): SingleLayerAssert {

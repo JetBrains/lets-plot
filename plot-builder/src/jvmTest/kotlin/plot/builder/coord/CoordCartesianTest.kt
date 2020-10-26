@@ -19,12 +19,12 @@ internal class CoordCartesianTest : jetbrains.datalore.plot.builder.coord.CoordT
 
     @Test
     fun adjustDomains() {
-        val dataBounds = dataBounds!!
+        val dataBounds = dataBounds
         // domains not changed
         tryAdjustDomains(2.0,
-            jetbrains.datalore.plot.builder.coord.CoordCartesianTest.Companion.PROVIDER, dataBounds.xRange(), dataBounds.yRange())
+            PROVIDER, dataBounds.xRange(), dataBounds.yRange())
         tryAdjustDomains(0.5,
-            jetbrains.datalore.plot.builder.coord.CoordCartesianTest.Companion.PROVIDER, dataBounds.xRange(), dataBounds.yRange())
+            PROVIDER, dataBounds.xRange(), dataBounds.yRange())
     }
 
     @Test
@@ -36,16 +36,16 @@ internal class CoordCartesianTest : jetbrains.datalore.plot.builder.coord.CoordT
     private fun tryApplyScales(ratio: Double) {
         val displayMin = DoubleVector.ZERO
         val displayMax = displayMin.add(
-            jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.unitDisplaySize(
+            unitDisplaySize(
                 ratio
             )
         )
         // data will fit to the display
         tryApplyScales(ratio,
-            jetbrains.datalore.plot.builder.coord.CoordCartesianTest.Companion.PROVIDER, displayMin, displayMax, DoubleVector.ZERO)
+            PROVIDER, displayMin, displayMax, DoubleVector.ZERO)
     }
 
     companion object {
-        private val PROVIDER = jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian()
+        private val PROVIDER = CoordProviders.cartesian(null, null)
     }
 }

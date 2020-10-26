@@ -27,8 +27,8 @@ class DateTimeBreaksGen : BreaksGenerator {
         targetCount: Int
     ): DateTimeBreaksHelper {
         return DateTimeBreaksHelper(
-            domainAfterTransform.lowerEndpoint(),
-            domainAfterTransform.upperEndpoint(),
+            domainAfterTransform.lowerEnd,
+            domainAfterTransform.upperEnd,
             targetCount
         )
     }

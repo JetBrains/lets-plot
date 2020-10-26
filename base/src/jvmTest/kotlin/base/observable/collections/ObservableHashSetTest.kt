@@ -13,6 +13,7 @@ import kotlin.test.*
 
 class ObservableHashSetTest {
     private var set: ObservableSet<String?> = ObservableHashSet()
+    @Suppress("UNCHECKED_CAST")
     private val listener = Mockito.mock(CollectionAdapter::class.java) as CollectionListener<in String?>
 
     @BeforeTest

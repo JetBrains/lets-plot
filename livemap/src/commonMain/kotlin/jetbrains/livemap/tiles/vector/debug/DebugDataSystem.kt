@@ -12,8 +12,8 @@ import jetbrains.livemap.cells.DebugCellLayerComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
-import jetbrains.livemap.tiles.components.DebugDataComponent
-import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.DebugDataComponent
+import jetbrains.livemap.tiles.StatisticsComponent
 
 class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 

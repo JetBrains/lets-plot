@@ -14,7 +14,7 @@ import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.entities.placement.WorldOriginComponent
+import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.WorldPoint
 import org.junit.Before
@@ -79,7 +79,7 @@ abstract class LiveMapTestBase {
         val entity = componentManager.createEntity(name)
         componentTypes.forEach { aType ->
             try {
-                entity.addComponents{ + aType.newInstance() }
+                entity.addComponents{ + aType.getDeclaredConstructor().newInstance() }
             } catch (e: InstantiationException) {
                 throw IllegalStateException(e)
             } catch (e: IllegalAccessException) {

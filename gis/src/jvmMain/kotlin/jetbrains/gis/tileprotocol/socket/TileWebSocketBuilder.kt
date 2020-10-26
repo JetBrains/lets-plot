@@ -12,8 +12,7 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 actual class TileWebSocketBuilder actual constructor(
-    private val myHost: String,
-    private val myPort: Int?
+    private val myUrl: String
 ) : SocketBuilder {
     @ObsoleteCoroutinesApi
     @KtorExperimentalAPI
@@ -22,6 +21,6 @@ actual class TileWebSocketBuilder actual constructor(
             install(WebSockets)
         }
 
-        return TileWebSocket(client, handler, myHost, myPort)
+        return TileWebSocket(client, handler, myUrl)
     }
 }

@@ -3,16 +3,30 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
     jvm()
-    js()
-    macosX64()
-    linuxX64()
+    js {
+        browser()
+    }
+
+    if (project.buildSettings.build_python_extension) {
+        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
+        if (currentOs.isMacOsX()) {
+            macosX64()
+        } else if (currentOs.isLinux()) {
+            linuxX64()
+        } else if (currentOs.isWindows()) {
+            mingwX64()
+        }
+    }
 
     sourceSets {
         commonMain {
@@ -22,6 +36,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
                 implementation project(':base-portable')
+                implementation project(':vis-svg-portable')
                 implementation project(':plot-common-portable')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-builder-portable')
@@ -31,16 +46,17 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+
+                implementation project(':test-common')
             }
         }
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "com.google.code.gson:gson:$gson_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
             }
         }
         jvmTest {

@@ -13,7 +13,7 @@ import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.CellStateSpec
 import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.regions.*
+import jetbrains.livemap.regions.*
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -185,10 +185,6 @@ object Mocks {
         fun none(): DownloadingFragmentsSpec {
             myDownloaded = HashMap()
             return this
-        }
-
-        fun downloading(fragmentFoo0: FragmentSpec): MockSpec? {
-            return null
         }
     }
 

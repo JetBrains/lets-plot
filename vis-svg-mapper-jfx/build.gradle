@@ -4,11 +4,8 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
-repositories {
-    mavenCentral()
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
@@ -22,8 +19,10 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
                 implementation project(':vis-svg-mapper')
+
+                implementation project(':test-common')
             }
         }
         jvmMain {
@@ -37,6 +36,9 @@ kotlin {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
+
+                implementation project(':plot-config')
+                implementation project(':plot-builder-portable')
             }
         }
     }

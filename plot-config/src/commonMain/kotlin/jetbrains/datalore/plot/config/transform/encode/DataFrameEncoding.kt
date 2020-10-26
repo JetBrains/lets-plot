@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.common.base64.BinaryUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object DataFrameEncoding {
-    internal const val DATA_FRAME_KEY = "__data_frame_encoded" // depricated
-    internal const val DATA_SPEC_KEY = "__data_spec_encoded"
+    private const val DATA_FRAME_KEY = "__data_frame_encoded" // depricated
+    private const val DATA_SPEC_KEY = "__data_spec_encoded"
 
     // deprecated
     fun isEncodedDataFrame(map: Map<*, *>): Boolean {
@@ -106,6 +106,7 @@ object DataFrameEncoding {
             val v = data[variable]
             if (numeric) {
                 // Safe cast: will fail in encoder
+                @Suppress("UNCHECKED_CAST")
                 val b64 = BinaryUtil.encodeList(v as List<Double>)
                 encodedData.add(b64)
             } else {

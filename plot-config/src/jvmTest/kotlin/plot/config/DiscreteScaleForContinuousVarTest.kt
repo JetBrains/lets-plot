@@ -65,6 +65,7 @@ class DiscreteScaleForContinuousVarTest {
                 break
             }
         }
+        @Suppress("UNCHECKED_CAST")
         val scale = fillBinding!!.scale as Scale<Color>?
         // this is discrete scale so input value for mapper is index
         // ..count.. [0] = 2   (two lunched)

@@ -8,9 +8,9 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object DemoAndTest {
@@ -22,7 +22,7 @@ object DemoAndTest {
             }
         }
         if (andBuildComponent) {
-            val rootGroup = plot.rootGroup
+            plot.ensureBuilt()
         }
         return plot
     }
@@ -36,16 +36,16 @@ object DemoAndTest {
 
         @Suppress("NAME_SHADOWING")
         val plotSpec = transformPlotSpec(plotSpec)
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            throw IllegalArgumentException(errorMessage)
+        }
+
         if (computationMessagesHandler != null) {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
             if (!computationMessages.isEmpty()) {
                 computationMessagesHandler(computationMessages)
             }
-        }
-
-        if (PlotConfig.isFailure(plotSpec)) {
-            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
-            throw IllegalArgumentException(errorMessage)
         }
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
@@ -56,7 +56,7 @@ object DemoAndTest {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
         plotSpec = PlotConfigServerSide.processTransform(plotSpec)
-        return PlotConfigClientSide.processTransform(plotSpec)
+        return PlotConfigClientSideJvmJs.processTransform(plotSpec)
     }
 
 

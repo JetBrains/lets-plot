@@ -54,8 +54,6 @@ interface DataPointAesthetics {
 
     fun upper(): Double?
 
-    fun mapId(): Any
-
     fun frame(): String
 
     fun speed(): Double?
@@ -70,7 +68,7 @@ interface DataPointAesthetics {
 
     fun yend(): Double?
 
-    fun label(): String
+    fun label(): Any?
 
     fun family(): String
 
@@ -81,6 +79,10 @@ interface DataPointAesthetics {
     fun vjust(): Any
 
     fun angle(): Double?
+
+    fun symX(): Double?
+
+    fun symY(): Double?
 
     fun group(): Int?
 

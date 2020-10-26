@@ -99,8 +99,8 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.lineTo(scaled(x), scaled(y))
     }
 
-    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double) {
-        myContext2d.arc(scaled(x), scaled(y), scaled(radius), startAngle, endAngle)
+    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        myContext2d.arc(scaled(x), scaled(y), scaled(radius), startAngle, endAngle, anticlockwise)
     }
 
     override fun save() {

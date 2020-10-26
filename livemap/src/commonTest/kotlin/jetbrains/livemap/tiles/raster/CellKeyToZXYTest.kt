@@ -14,7 +14,7 @@ class CellKeyToZXYTest {
 
     @Test
     fun foo() {
-        val format = "/\${z}/\${x}/\${y}.png"
+        val format = "/{z}/{x}/{y}.png"
 
         assertEquals("/1/0/0.png", getZXY(CellKey("0"), format))
         assertEquals("/2/0/0.png", getZXY(CellKey("00"), format))

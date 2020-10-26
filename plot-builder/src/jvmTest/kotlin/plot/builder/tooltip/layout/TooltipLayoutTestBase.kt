@@ -8,9 +8,10 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import kotlin.test.assertEquals
@@ -103,16 +104,16 @@ internal open class TooltipLayoutTestBase {
         return when (verticalAlignment) {
 
             VerticalAlignment.TOP ->
-                tooltip.cfgHintCoord().y - tooltip.size().y - SHORT_STEM_LENGTH
+                tooltip.cfgHintCoord().y - tooltip.size().y - AXIS_STEM_LENGTH
             VerticalAlignment.BOTTOM ->
-                tooltip.cfgHintCoord().y + SHORT_STEM_LENGTH
+                tooltip.cfgHintCoord().y + AXIS_STEM_LENGTH
 
             else -> throw IllegalArgumentException("Placement is not supported: $verticalAlignment")
         }
     }
 
     fun expectedAxisTipX(tooltipKey: String, alignment: HorizontalAlignment): Double {
-        return expectedHorizontalX(tooltipKey, alignment, SHORT_STEM_LENGTH)
+        return expectedHorizontalX(tooltipKey, alignment, AXIS_STEM_LENGTH)
     }
 
     private fun <T> shouldCheck(v: T?): Boolean {
@@ -189,7 +190,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     internal interface TooltipDataProvider {
-        operator fun get(text: List<String>): MeasuredTooltip?
+        operator fun get(lines: List<TooltipSpec.Line>): MeasuredTooltip?
     }
 
     internal class TipLayoutManagerBuilder(private val myViewport: DoubleRectangle) : TooltipDataProvider {
@@ -210,13 +211,14 @@ internal open class TooltipLayoutTestBase {
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
-                    LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
+                    LayoutManager(myViewport, myHorizontalAlignment, TooltipAnchor.NONE)
+                        .arrange(myTooltipData, myCursor, geomBounds = null)
             }
         }
 
-        override fun get(text: List<String>): MeasuredTooltip? {
+        override fun get(lines: List<TooltipSpec.Line>): MeasuredTooltip? {
             for (measuredTooltip in myTooltipData) {
-                if (measuredTooltip.tooltipSpec.lines == text) {
+                if (measuredTooltip.tooltipSpec.lines == lines) {
                     return measuredTooltip
                 }
             }
@@ -228,7 +230,7 @@ internal open class TooltipLayoutTestBase {
         private val myHintRadius: Double = myMeasuredTooltip.hintRadius
         private val myTooltipRect: DoubleRectangle = DoubleRectangle(myTooltipEntry.tooltipCoord, myMeasuredTooltip.size)
 
-        val text get() = myTooltipEntry.tooltipSpec.lines
+        val text get() = myTooltipEntry.tooltipSpec.lines.map(TooltipSpec.Line::toString)
         val fill get() = myTooltipEntry.tooltipSpec.fill
         fun coord() = myTooltipEntry.tooltipCoord
         fun stemCoord() = myTooltipEntry.stemCoord
@@ -300,10 +302,11 @@ internal open class TooltipLayoutTestBase {
         const val DEFAULT_OBJECT_RADIUS = 40.0
         private const val DOUBLE_COMPARE_EPSILON = 0.01
 
+        val NORMAL_STEM_LENGTH = TipLayoutHint.StemLength.NORMAL.value
+        val AXIS_STEM_LENGTH = TipLayoutHint.StemLength.NONE.value
+
         fun makeText(text: String): List<String> {
-            val textList = ArrayList<String>()
-            textList.add(text)
-            return textList
+            return listOf(text)
         }
     }
 }
