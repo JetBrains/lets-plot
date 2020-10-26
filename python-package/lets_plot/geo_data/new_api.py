@@ -30,17 +30,20 @@ def _prepare_new_scope(scope) -> List[MapRegion]:
                 assert len(obj.values) == 1 # only id have more than one value
                 return [obj]
 
-    flatten_regions = []
+    if scope is None:
+        return []
+
+    flatten_scope = []
     if isinstance(scope, (list, tuple)):
         for obj in scope:
-            flatten_regions.extend(obj_to_map_region(obj))
+            flatten_scope.extend(obj_to_map_region(obj))
     else:
-        flatten_regions.extend(obj_to_map_region(scope))
+        flatten_scope.extend(obj_to_map_region(scope))
 
-    return flatten_regions
+    return flatten_scope
 
 
-def regions_builder2(level=None, names=None, scope=[], countries=None, states=None, counties=None, highlights=False) -> RegionsBuilder:
+def regions_builder2(level=None, names=None, countries=None, states=None, counties=None, scope=None, highlights=False) -> RegionsBuilder:
     """
     Create a RegionBuilder class by level and request. Allows to refine ambiguous request with
     where method. build() method creates Regions object or shows details for ambiguous result.
@@ -81,6 +84,7 @@ def regions_builder2(level=None, names=None, scope=[], countries=None, states=No
     """
 
     new_scope = _prepare_new_scope(scope)
+
     return RegionsBuilder(level, names, scope, highlights,
                           allow_ambiguous=False,
                           countries=countries,
@@ -88,3 +92,28 @@ def regions_builder2(level=None, names=None, scope=[], countries=None, states=No
                           counties=counties,
                           new_api=True,
                           new_scope=new_scope)
+
+def regions2(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> Regions:
+    """
+    Returns regions object.
+
+    Parameters
+    ----------
+    level : ['country' | 'state' | 'county' | 'city' | None]
+        The level of administrative division. Autodetection by default.
+    names : [array | string | None]
+        Names of objects to be geocoded.
+        For 'state' level:
+        -'US-48' returns continental part of United States (48 states) in a compact form.
+    countries : [array | None]
+        Parent countries. Should have same size as names. Can contain strings or Regions objects.
+    states : [array | None]
+        Parent states. Should have same size as names. Can contain strings or Regions objects.
+    counties : [array | None]
+        Parent counties. Should have same size as names. Can contain strings or Regions objects.
+    scope : [array | string | Regions | None]
+        Limits area of geocoding. Applyed to a highest admin level of parents that are set or to names, if no parents given.
+        If all parents are set (including countries) then the scope parameter is ignored.
+        If scope is an array then geocoding will try to search objects in all scopes.
+    """
+    return regions_builder2(level, names, countries, states, counties, scope).build()
