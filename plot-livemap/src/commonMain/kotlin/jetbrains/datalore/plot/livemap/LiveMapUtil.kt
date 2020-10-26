@@ -23,24 +23,13 @@ import jetbrains.livemap.ui.CursorService
 
 object LiveMapUtil {
 
-    private var myCursorService = CursorService({}, {})
-
-    fun defaultCursorSetter(default: () -> Unit) {
-        myCursorService.default = default
-    }
-
-    fun pointerCursorSetter(pointer: () -> Unit) {
-        myCursorService.pointer = pointer
-    }
-
-    fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
-        myCursorService = CursorService({}, {})
+    fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions, cursorServiceConfig: CursorServiceConfig) {
 
         plotTiles.forEach { tileLayers ->
             if (tileLayers.any(GeomLayer::isLiveMap)) {
                 require(tileLayers.count(GeomLayer::isLiveMap) == 1)
                 require(tileLayers.first().isLiveMap)
-                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions, myCursorService))
+                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions, cursorServiceConfig.cursorService))
             }
         }
     }

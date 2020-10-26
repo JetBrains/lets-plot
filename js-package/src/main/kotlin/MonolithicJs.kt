@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
@@ -140,27 +141,30 @@ private fun buildSinglePlotComponent(
 ) {
 
     val assembler = plotBuildInfo.plotAssembler
-    injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
+    val cursorServiceConfig = CursorServiceConfig()
+    injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec, cursorServiceConfig)
 
     val plot = assembler.createPlot()
     val plotContainer = PlotContainer(plot, plotBuildInfo.size)
     val svg = buildPlotSvg(plotContainer, parentElement)
 
-    LiveMapUtil.defaultCursorSetter { svg.style.setCursor(CssCursor.CROSSHAIR) }
-    LiveMapUtil.pointerCursorSetter { svg.style.setCursor(CssCursor.POINTER) }
+    cursorServiceConfig.defaultSetter { svg.style.setCursor(CssCursor.CROSSHAIR) }
+    cursorServiceConfig.pointerSetter { svg.style.setCursor(CssCursor.POINTER) }
 
     parentElement.appendChild(svg)
 }
 
 private fun injectLivemapProvider(
     plotAssembler: PlotAssembler,
-    processedPlotSpec: MutableMap<String, Any>
+    processedPlotSpec: MutableMap<String, Any>,
+    cursorServiceConfig: CursorServiceConfig
 ) {
     LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
         ?.let {
             LiveMapUtil.injectLiveMapProvider(
                 plotAssembler.layersByTile,
-                it
+                it,
+                cursorServiceConfig
             )
         }
 }

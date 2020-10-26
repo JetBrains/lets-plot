@@ -93,7 +93,7 @@ class LiveMapBuilder {
             isScaled = false,
             isTiles = true,
             isUseFrame = true,
-            cursorService = CursorService({}, {})
+            cursorService = CursorService()
         )
     }
 }

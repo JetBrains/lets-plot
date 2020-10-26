@@ -5,4 +5,7 @@
 
 package jetbrains.livemap.ui
 
-class CursorService(var default: () -> Unit, var pointer: () -> Unit)
+class CursorService {
+    var default: () -> Unit = {}
+    var pointer: () -> Unit = {}
+}
