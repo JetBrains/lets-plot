@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
@@ -28,8 +27,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         layerOptions: Map<*, *>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
-        scaleProviderByAes: TypedScaleProviderMap
+        plotDiscreteAes: Set<*>
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -41,7 +39,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             plotDiscreteAes,
             GeomProto(geomKind),
             StatProto(),
-            scaleProviderByAes,
             false
         )
     }
@@ -173,7 +170,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             }
 
             // drop var if aes is not rendered by geom
-//            val renderedAes = HashSet(layerConfig.geomProvider.renders())
             val renderedAes = HashSet(layerConfig.geomProto.renders())
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
@@ -209,7 +205,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         val dataByLayer = ArrayList<DataFrame>()
         for (layerConfig in layerConfigs) {
             var layerData = layerConfig.combinedData
-            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings)
+            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, scaleMap)
             dataByLayer.add(layerData)
         }
 
@@ -223,11 +219,9 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             result.add(ArrayList())
         }
 
-        val scaleProvidersMap = scaleProvidersMap
-
         for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
 
-            val statCtx = ConfiguredStatContext(dataByLayer, scaleProvidersMap)
+            val statCtx = ConfiguredStatContext(dataByLayer, scaleMap)
             for (tileIndex in inputDataByTileByLayer.indices) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
                 val varBindings = layerConfig.varBindings
@@ -249,7 +243,9 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 } else {
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
-                        stat, varBindings,
+                        stat,
+                        varBindings,
+                        scaleMap,
                         groupingContext,
                         facets.xVar,
                         facets.yVar,

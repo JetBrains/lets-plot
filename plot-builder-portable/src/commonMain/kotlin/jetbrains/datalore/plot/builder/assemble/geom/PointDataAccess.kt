@@ -13,14 +13,17 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.scale.ScaleUtil.getBreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleUtil.labelByBreak
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 internal class PointDataAccess(
     private val data: DataFrame,
-    bindings: Map<Aes<*>, VarBinding>
+    bindings: Map<Aes<*>, VarBinding>,
+    scaleMap: TypedScaleMap
 ) : MappedDataAccess {
 
     override val mappedAes: Set<Aes<*>> = HashSet(bindings.keys)
+    override val scaleByAes: (Aes<*>) -> Scale<*> = { scaleMap[it] }
     private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
     private val myFormatters = HashMap<Aes<*>, (Any?) -> String>()
 
@@ -53,7 +56,7 @@ internal class PointDataAccess(
     override fun isMappedDataContinuous(aes: Aes<*>): Boolean = getScale(aes).isContinuous
 
     private fun getScale(aes: Aes<*>): Scale<*> {
-        return myBindings.getValue(aes).scale ?: error("getScale() - scale is null")
+        return scaleByAes(aes)
     }
 
     private fun <T> formatter(aes: Aes<T>): (Any?) -> String {

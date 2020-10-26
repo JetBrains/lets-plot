@@ -6,10 +6,13 @@
 package jetbrains.datalore.plot.base.interact
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Scale
 
 interface MappedDataAccess {
 
     val mappedAes: Set<Aes<*>>
+
+    val scaleByAes: (Aes<*>) -> Scale<*>
 
     fun isMapped(aes: Aes<*>): Boolean
 
@@ -24,5 +27,6 @@ interface MappedDataAccess {
     class MappedData<T>(
         val label: String,
         val value: String,
-        val isContinuous: Boolean)
+        val isContinuous: Boolean
+    )
 }

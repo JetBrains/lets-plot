@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
@@ -134,117 +134,120 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = if (b.myLimits == null) null else ArrayList(b.myLimits!!)
-        private val discreteDomain: Boolean = b.myDiscreteDomain
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         private val myContinuousTransform: Transform? = b.myTransform
 
         private val myAes: Aes<T> = b.myAes
         private val mapperProvider: MapperProvider<T> = b.myMapperProvider!!
 
+        override val discreteDomain: Boolean = b.myDiscreteDomain
+
         private fun scaleName(variable: DataFrame.Variable): String {
             return myName ?: variable.label
         }
 
-        override fun createScale(data: DataFrame, variable: DataFrame.Variable): Scale<T> {
-            val name = scaleName(variable)
+        override fun createScale(defaultName: String, discreteDomain: Collection<*>): Scale<T> {
+            val name = myName ?: defaultName
             var scale: Scale<T>
-            if (discreteDomain || !data.isNumeric(variable)) {
-                // discrete domain
-                var domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
 
-                val mapper = if (data.isEmpty(variable)) {
-                    absentMapper(variable)
-                } else {
-                    mapperProvider.createDiscreteMapper(domainValues)::apply
-                }
+            // discrete domain
+            var domainValues = discreteDomain.filterNotNull()
 
-                if (discreteDomainReverse) {
-                    domainValues = domainValues.reversed()
-                }
-
-                scale = Scales.discreteDomain(
-                    name,
-                    domainValues,
-                    mapper
-                )
-
-                if (myLimits != null) {
-                    scale = scale.with()
-                        .limits(myLimits.filterNotNull())
-                        .build()
-                }
-
+            val mapper = if (discreteDomain.isEmpty()) {
+                absentMapper(defaultName)
             } else {
-                // continuous (numeric) domain
-                val dataRange = ensureApplicableRange(data.range(variable))
+                mapperProvider.createDiscreteMapper(domainValues)::apply
+            }
 
-                var lowerLimit: Double? = null
-                var upperLimit: Double? = null
-                if (myLimits != null) {
-                    var lower = true
-                    for (limit in myLimits) {
-                        if (limit is Number) {
-                            val v = limit.toDouble()
-                            if (v.isFinite()) {
-                                if (lower) {
-                                    lowerLimit = v
-                                } else {
-                                    upperLimit = v
-                                }
-                            }
-                        }
-                        lower = false
-                    }
-                }
+            if (discreteDomainReverse) {
+                domainValues = domainValues.reversed()
+            }
 
-                if (data.isEmpty(variable)) {
-                    scale = Scales.continuousDomain(name, absentMapper(variable), false)
-                } else {
-                    val mapper = mapperProvider.createContinuousMapper(
-                        dataRange,
-                        lowerLimit,
-                        upperLimit,
-                        myContinuousTransform
-                    )
-                    val continuousRange = mapper.isContinuous || myAes.isNumeric
+            scale = Scales.discreteDomain(
+                name,
+                domainValues,
+                mapper
+            )
 
-                    scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
-
-                    if (mapper is WithGuideBreaks) {
-                        val guideBreaks = (mapper as WithGuideBreaks).guideBreaks
-                        val breaks = ArrayList<Any>()
-                        val labels = ArrayList<String>()
-                        for (guideBreak in guideBreaks) {
-                            breaks.add(guideBreak.domainValue!!)
-                            labels.add(guideBreak.label)
-                        }
-                        scale = scale.with()
-                            .breaks(breaks)
-                            .labels(labels)
-                            .build()
-                    }
-                }
-
-                if (myContinuousTransform != null) {
-                    scale = scale.with()
-                        .continuousTransform(myContinuousTransform)
-                        .build()
-                }
-
-                if (myLimits != null) {
-                    val with = scale.with()
-                    if (lowerLimit != null) {
-                        with.lowerLimit(lowerLimit)
-                    }
-                    if (upperLimit != null) {
-                        with.upperLimit(upperLimit)
-                    }
-                    scale = with.build()
-                }
+            if (myLimits != null) {
+                scale = scale.with()
+                    .limits(myLimits.filterNotNull())
+                    .build()
             }
 
             return completeScale(scale)
         }
+
+        override fun createScale(defaultName: String, continuousDomain: ClosedRange<Double>): Scale<T> {
+            val name = myName ?: defaultName
+            var scale: Scale<T>
+
+            // continuous (numeric) domain
+            val dataRange = ensureApplicableRange(continuousDomain)
+
+            var lowerLimit: Double? = null
+            var upperLimit: Double? = null
+            if (myLimits != null) {
+                var lower = true
+                for (limit in myLimits) {
+                    if (limit is Number) {
+                        val v = limit.toDouble()
+                        if (v.isFinite()) {
+                            if (lower) {
+                                lowerLimit = v
+                            } else {
+                                upperLimit = v
+                            }
+                        }
+                    }
+                    lower = false
+                }
+            }
+
+            val mapper = mapperProvider.createContinuousMapper(
+                dataRange,
+                lowerLimit,
+                upperLimit,
+                myContinuousTransform
+            )
+            val continuousRange = mapper.isContinuous || myAes.isNumeric
+
+            scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
+
+            if (mapper is WithGuideBreaks) {
+                val guideBreaks = (mapper as WithGuideBreaks).guideBreaks
+                val breaks = ArrayList<Any>()
+                val labels = ArrayList<String>()
+                for (guideBreak in guideBreaks) {
+                    breaks.add(guideBreak.domainValue!!)
+                    labels.add(guideBreak.label)
+                }
+                scale = scale.with()
+                    .breaks(breaks)
+                    .labels(labels)
+                    .build()
+            }
+
+            if (myContinuousTransform != null) {
+                scale = scale.with()
+                    .continuousTransform(myContinuousTransform)
+                    .build()
+            }
+
+            if (myLimits != null) {
+                val with = scale.with()
+                if (lowerLimit != null) {
+                    with.lowerLimit(lowerLimit)
+                }
+                if (upperLimit != null) {
+                    with.upperLimit(upperLimit)
+                }
+                scale = with.build()
+            }
+
+            return completeScale(scale)
+        }
+
 
         private fun completeScale(scale: Scale<T>): Scale<T> {
             val with = scale.with()
@@ -267,6 +270,11 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private fun absentMapper(`var`: DataFrame.Variable): (Double?) -> T {
             // mapper for empty data is a special case - should never be used
             return { v -> throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v) }
+        }
+
+        private fun absentMapper(label: String): (Double?) -> T {
+            // mapper for empty data is a special case - should never be used
+            return { v -> throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v) }
         }
     }
 }

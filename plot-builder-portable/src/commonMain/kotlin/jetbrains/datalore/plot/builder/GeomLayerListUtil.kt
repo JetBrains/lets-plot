@@ -7,20 +7,23 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 
 object GeomLayerListUtil {
 
-    fun anyBoundXScale(layersByTile: List<List<GeomLayer>>): Scale<Double>? {
+    fun anyBoundXScale(
+        scaleMap: TypedScaleMap,
+        layersByTile: List<List<GeomLayer>>
+    ): Scale<Double>? {
         for (layer in layersByTile[0]) {
             if (layer.hasBinding(Aes.X)) {
-                @Suppress("UNCHECKED_CAST")
-                return layer.getBinding(Aes.X).scale as Scale<Double>?
+                return scaleMap[Aes.X]
             }
             for (aes in layer.renderedAes()) {
                 if (Aes.isPositionalX(aes)) {
                     if (layer.hasBinding(aes)) {
                         @Suppress("UNCHECKED_CAST")
-                        return layer.getBinding(aes).scale as Scale<Double>?
+                        return scaleMap[aes as Aes<Double>]
                     }
                 }
             }
@@ -28,17 +31,19 @@ object GeomLayerListUtil {
         return null
     }
 
-    fun anyBoundYScale(layersByTile: List<List<GeomLayer>>): Scale<Double>? {
+    fun anyBoundYScale(
+        scaleByAes: TypedScaleMap,
+        layersByTile: List<List<GeomLayer>>
+    ): Scale<Double>? {
         for (layer in layersByTile[0]) {
             if (layer.hasBinding(Aes.Y)) {
-                @Suppress("UNCHECKED_CAST")
-                return layer.getBinding(Aes.Y).scale as Scale<Double>?
+                return scaleByAes[Aes.Y]
             }
             for (aes in layer.renderedAes()) {
                 if (Aes.isPositionalY(aes)) {
                     if (layer.hasBinding(aes)) {
                         @Suppress("UNCHECKED_CAST")
-                        return layer.getBinding(aes).scale as Scale<Double>?
+                        return scaleByAes[aes as Aes<Double>]
                     }
                 }
             }

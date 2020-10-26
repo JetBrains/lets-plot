@@ -414,7 +414,8 @@ class GeoConfigTest {
 
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
         assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
-        assertEquals(variable, getBinding(aes).scale!!.name)
+//        assertEquals(variable, getBinding(aes).scale!!.name)
+        assertEquals(variable, scaleMap[aes].name)
         return this
     }
 

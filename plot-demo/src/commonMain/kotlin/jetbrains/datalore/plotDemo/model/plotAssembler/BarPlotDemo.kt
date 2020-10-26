@@ -14,14 +14,13 @@ import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil
-import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
-import kotlin.math.round
 
 open class BarPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
@@ -29,10 +28,10 @@ open class BarPlotDemo : SimpleDemoBase() {
 
     fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
         return listOf(
-                simple(),
-                grouped(false),         // grouped, dodged
-                grouped(true),          // grouped, stacked
-                countStat()
+            simple(),
+            grouped(false),         // grouped, dodged
+            grouped(true)          // grouped, stacked
+//            countStat()
         )
     }
 
@@ -44,32 +43,37 @@ open class BarPlotDemo : SimpleDemoBase() {
         val varA = DataFrame.Variable("A")
         val varB = DataFrame.Variable("B")
         val data = DataFrame.Builder()
-                .putNumeric(varA, a)
-                .putNumeric(varB, b)
-                .build()
+            .putNumeric(varA, a)
+            .putNumeric(varB, b)
+            .build()
+
+        val scaleByAes = TypedScaleMap(
+            mapOf(
+                Aes.X to Scales.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.continuousDomainNumericRange("B")
+            )
+        )
 
         val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
-                .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .stat(Stats.IDENTITY)
+            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
 //                .groupingVar(null)
-                .addBinding(
-                    VarBinding(
-                        varA,
-                        Aes.X,
-                        Scales.continuousDomainNumericRange("A")
-                    )
+            .addBinding(
+                VarBinding(
+                    varA,
+                    Aes.X
                 )
-                .addBinding(
-                    VarBinding(
-                        varB,
-                        Aes.Y,
-                        Scales.continuousDomainNumericRange("B")
-                    )
+            )
+            .addBinding(
+                VarBinding(
+                    varB,
+                    Aes.Y
                 )
-                .addConstantAes(Aes.WIDTH, 0.75)
-                .build(data)
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+            )
+            .addConstantAes(Aes.WIDTH, 0.75)
+            .build(data, scaleByAes)
+        val assembler = PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), DefaultTheme())
 
         assembler.disableInteractions()
         return assembler.createPlot()
@@ -91,92 +95,122 @@ open class BarPlotDemo : SimpleDemoBase() {
         val varB = DataFrame.Variable("B")
         val varC = DataFrame.Variable("C")
         val data = DataFrame.Builder()
-                .putNumeric(varA, a)
-                .putNumeric(varB, b)
-                .put(varC, c)
-                .build()
+            .putNumeric(varA, a)
+            .putNumeric(varB, b)
+            .put(varC, c)
+            .build()
 
         val pos = if (stacked)
             PosProvider.barStack()
         else
             PosProvider.dodge()
 
-        val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
-                .pos(pos)
-                .groupingVar(varC)
-                .addBinding(
-                    VarBinding(
-                        varA,
-                        Aes.X,
-                        Scales.continuousDomainNumericRange("A")
-                    )
+        val scaleByAes = TypedScaleMap(
+            mapOf(
+                Aes.X to Scales.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.continuousDomainNumericRange("B"),
+                Aes.FILL to colorScale(
+                    "C",
+                    listOf("F", "M"),
+                    listOf(Color.RED, Color.BLUE)
                 )
-                .addBinding(
-                    VarBinding(
-                        varB,
-                        Aes.Y,
-                        Scales.continuousDomainNumericRange("B")
-                    )
-                )
-                .addBinding(
-                    VarBinding(
-                        varC,
-                        Aes.FILL,
-                        colorScale(
-                            "C",
-                            listOf("F", "M"),
-                            listOf(Color.RED, Color.BLUE)
-                        )
-                    )
-                )
-                .addConstantAes(Aes.WIDTH, if (stacked) 0.75 else 0.9)
-                .build(data)
+            )
+        )
 
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+        val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+            .stat(Stats.IDENTITY)
+            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
+            .pos(pos)
+            .groupingVar(varC)
+            .addBinding(
+                VarBinding(
+                    varA,
+                    Aes.X
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varB,
+                    Aes.Y
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varC,
+                    Aes.FILL
+                )
+            )
+            .addConstantAes(Aes.WIDTH, if (stacked) 0.75 else 0.9)
+            .build(data, scaleByAes)
+
+        val assembler = PlotAssembler.singleTile(
+            scaleByAes,
+            listOf(layer),
+            CoordProviders.cartesian(),
+            DefaultTheme()
+        )
         assembler.disableInteractions()
         return assembler.createPlot()
     }
 
-    private fun countStat(): jetbrains.datalore.plot.builder.Plot {
-        val count = 100
-        // gen normally distributed numbers in range 0..9 (approximately)
-        val gauss0_9 = DemoUtil.gauss(count, 24, 4.0, 2.0)
-        val a = ArrayList<Double>()
-        for (d in gauss0_9) {
-            a.add(round(d))
-        }
-
-        val varA = DataFrame.Variable("A")
-        val data = DataFrame.Builder()
-                .putNumeric(varA, a)
-                .build()
-
-        val fillScaleProvider = ScaleProviderHelper.create(
-                "count (fill color)",
-                Aes.COLOR,
-                DefaultMapperProviderUtil.createWithDiscreteOutput(listOf(Color.DARK_BLUE, Color.DARK_GREEN, Color.DARK_MAGENTA), Color.GRAY))
-
-        val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
-                .stat(Stats.count())
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
-                .pos(PosProvider.wrap(PositionAdjustments.identity()))
-                .addBinding(
-                    VarBinding(
-                        varA,
-                        Aes.X,
-                        Scales.continuousDomainNumericRange("A")
-                    )
-                )
-                .addBinding(VarBinding.deferred(Stats.COUNT, Aes.FILL, fillScaleProvider))
-                .addConstantAes(Aes.WIDTH, .3)
-                .build(data)
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
-
-        assembler.disableInteractions()
-        return assembler.createPlot()
-    }
+    // No more deferred bindings
+//    private fun countStat(): jetbrains.datalore.plot.builder.Plot {
+//        val count = 100
+//        // gen normally distributed numbers in range 0..9 (approximately)
+//        val gauss0_9 = DemoUtil.gauss(count, 24, 4.0, 2.0)
+//        val a = ArrayList<Double>()
+//        for (d in gauss0_9) {
+//            a.add(round(d))
+//        }
+//
+//        val varA = DataFrame.Variable("A")
+//        val data = DataFrame.Builder()
+//            .putNumeric(varA, a)
+//            .build()
+//
+//        val fillScaleProvider = ScaleProviderHelper.create(
+//            "count (fill color)",
+//            Aes.COLOR,
+//            DefaultMapperProviderUtil.createWithDiscreteOutput(
+//                listOf(
+//                    Color.DARK_BLUE,
+//                    Color.DARK_GREEN,
+//                    Color.DARK_MAGENTA
+//                ), Color.GRAY
+//            )
+//        )
+//
+//        val scaleByAes = TypedScaleMap(
+//            mapOf(
+//                Aes.X to Scales.continuousDomainNumericRange("A"),
+//                Aes.Y to Scales.continuousDomainNumericRange(""),
+//                Aes.FILL to scaleTargetColor
+//            )
+//        )
+//
+//        val layer = GeomLayerBuilder.demoAndTest()
+//            .stat(Stats.count())
+//            .geom(GeomProvider.bar())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+//            .addBinding(
+//                VarBinding(
+//                    varA,
+//                    Aes.X,
+//                    Scales.continuousDomainNumericRange("A")
+//                )
+//            )
+//            .addBinding(VarBinding.deferred(Stats.COUNT, Aes.FILL, fillScaleProvider))
+//            .addConstantAes(Aes.WIDTH, .3)
+//            .build(data)
+//        val assembler = PlotAssembler.singleTile(
+//            listOf(layer),
+//            CoordProviders.cartesian(),
+//            DefaultTheme()
+//        )
+//
+//        assembler.disableInteractions()
+//        return assembler.createPlot()
+//    }
 
 
     companion object {

@@ -245,7 +245,7 @@ object PlotUtil {
                 }
             }
             if (mapper == null && layer.hasBinding(aes)) {
-                mapper = layer.getBinding(aes).scale!!.mapper
+                mapper = layer.scaleMap[aes].mapper
             }
 
             if (mapper != null) {
@@ -388,14 +388,14 @@ object PlotUtil {
 
     private fun findBoundScale(layer: GeomLayer, aes: Aes<*>): Scale<*>? {
         if (layer.hasBinding(aes)) {
-            return layer.getBinding(aes).scale
+            return layer.scaleMap[aes]
         }
         if (Aes.isPositional(aes)) {
             val horizontal = Aes.isPositionalX(aes)
             for (rendered in layer.renderedAes()) {
                 if (layer.hasBinding(rendered)) {
                     if (horizontal && Aes.isPositionalX(rendered) || !horizontal && Aes.isPositionalY(rendered)) {
-                        return layer.getBinding(rendered).scale
+                        return layer.scaleMap[aes]
                     }
                 }
             }

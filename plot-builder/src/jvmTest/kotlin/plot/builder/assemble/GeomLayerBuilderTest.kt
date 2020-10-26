@@ -40,46 +40,49 @@ class GeomLayerBuilderTest {
         val X = DataFrame.Variable("x")
         val cat = DataFrame.Variable("cat")
         val data = DataFrame.Builder()
-                .put(X, listOf(0.0, 1.0, 0.0, 1.0))
-                .put(cat, listOf("a", "a", "b", "b"))
-                .build()
+            .put(X, listOf(0.0, 1.0, 0.0, 1.0))
+            .put(cat, listOf("a", "a", "b", "b"))
+            .build()
 
         val geomProvider = GeomProvider.histogram()
         val stat = Stats.bin().build()
         val posProvider = PosProvider.barStack()
 
-        val bindings = ArrayList<VarBinding>()
-        bindings.add(VarBinding(X, Aes.X, Scales.continuousDomain("x", Aes.X)))
-        bindings.add(
-            VarBinding(
-                cat,
-                Aes.FILL,
-                ScaleProviderHelper.createDefault(Aes.FILL).createScale(data, cat)
+        val scaleByAes = TypedScaleMap(
+            mapOf(
+                Aes.X to Scales.continuousDomain("x", Aes.X),
+                Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale("cat", data.distinctValues(cat))
             )
         )
 
+        val bindings = ArrayList<VarBinding>()
+        bindings.add(VarBinding(X, Aes.X))
+        bindings.add(VarBinding(cat, Aes.FILL))
+
         val histogramLayer = GeomLayerBuilder.demoAndTest()
-                .stat(stat)
-                .geom(geomProvider)
-                .pos(posProvider)
+            .stat(stat)
+            .geom(geomProvider)
+            .pos(posProvider)
 //                .addConstantAes(Aes.ALPHA, 0.5)
-                .addBinding(bindings[0])
-                .addBinding(bindings[1])
-                .build(data)
+            .addBinding(bindings[0])
+            .addBinding(bindings[1])
+            .build(data, scaleByAes)
 
 
         assertTrue(histogramLayer.hasBinding(Aes.X))
-        assertTrue(histogramLayer.hasBinding(Aes.Y))
+        // GeomLayerBuilder is no more responsible for creating 'stst' bindings
+        // ToDo: this should be a plot test
+//        assertTrue(histogramLayer.hasBinding(Aes.Y))
         assertTrue(histogramLayer.hasBinding(Aes.FILL))
 
         val layerData = histogramLayer.dataFrame
 
         checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.X), 60)
-        checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.Y), 60)
+//        checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.Y), 60)
         checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.FILL), 60)
 
         checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.X))
-        checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.Y))
+//        checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.Y))
         checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.FILL))
     }
 }

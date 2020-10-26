@@ -138,12 +138,12 @@ internal object PlotAssemblerUtil {
             for (aes in aesList) {
                 var colorBar = false
                 val binding = stitchedLayers.getBinding(aes)
-                val scale = binding.scale
-                val scaleName = scale!!.name
+                val scale = stitchedLayers.getScale(aes)
+                val scaleName = scale.name
                 if (guideOptionsMap.containsKey(aes)) {
                     val guideOptions = guideOptionsMap[aes]
                     if (guideOptions is ColorBarOptions) {
-                        checkFitsColorBar(binding)
+                        checkFitsColorBar(binding.aes, scale)
                         colorBar = true
                         @Suppress("UNCHECKED_CAST")
                         val colorScale = scale as Scale<Color>
@@ -152,7 +152,7 @@ internal object PlotAssemblerUtil {
                             dataRangeByAes, colorScale, guideOptions, theme
                         )
                     }
-                } else if (fitsColorBar(binding)) {
+                } else if (fitsColorBar(binding.aes, scale)) {
                     colorBar = true
                     @Suppress("UNCHECKED_CAST")
                     val colorScale = scale as Scale<Color>
@@ -189,6 +189,7 @@ internal object PlotAssemblerUtil {
                     varBindings,
                     layerConstantByAes,
                     aestheticsDefaults,
+                    stitchedLayers.getScaleMap(),
                     dataRangeByAes
                 )
             }
@@ -267,7 +268,7 @@ internal object PlotAssemblerUtil {
                     // - scales domain if defined
                     // - scales breaks if defined
                     if (layer.hasBinding(aes)) {
-                        val scale = layer.getBinding(aes).scale!!
+                        val scale = layer.scaleMap[aes]
                         if (scale.isContinuousDomain) {
                             layerAesRange =
                                 updateRange(

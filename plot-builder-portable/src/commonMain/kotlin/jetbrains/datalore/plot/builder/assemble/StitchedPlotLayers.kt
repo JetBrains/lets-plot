@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.VarBinding
@@ -19,19 +20,19 @@ internal class StitchedPlotLayers(layers: List<jetbrains.datalore.plot.builder.G
 
     val legendKeyElementFactory: LegendKeyElementFactory
         get() {
-            checkState(!myLayers.isEmpty())
+            checkState(myLayers.isNotEmpty())
             return myLayers[0].legendKeyElementFactory
         }
 
     val aestheticsDefaults: AestheticsDefaults
         get() {
-            checkState(!myLayers.isEmpty())
+            checkState(myLayers.isNotEmpty())
             return myLayers[0].aestheticsDefaults
         }
 
     val isLegendDisabled: Boolean
         get() {
-            checkState(!myLayers.isEmpty())
+            checkState(myLayers.isNotEmpty())
             return myLayers[0].isLegendDisabled
         }
 
@@ -46,21 +47,31 @@ internal class StitchedPlotLayers(layers: List<jetbrains.datalore.plot.builder.G
     }
 
     fun hasBinding(aes: Aes<*>): Boolean {
-        return !myLayers.isEmpty() && myLayers[0].hasBinding(aes)
+        return myLayers.isNotEmpty() && myLayers[0].hasBinding(aes)
     }
 
     fun hasConstant(aes: Aes<*>): Boolean {
-        return !myLayers.isEmpty() && myLayers[0].hasConstant(aes)
+        return myLayers.isNotEmpty() && myLayers[0].hasConstant(aes)
     }
 
     fun <T> getConstant(aes: Aes<T>): T {
-        checkState(!myLayers.isEmpty())
+        checkState(myLayers.isNotEmpty())
         return myLayers[0].getConstant(aes)
     }
 
     fun getBinding(aes: Aes<*>): VarBinding {
-        checkState(!myLayers.isEmpty())
+        checkState(myLayers.isNotEmpty())
         return myLayers[0].getBinding(aes)
+    }
+
+    fun getScale(aes: Aes<*>): Scale<*> {
+        checkState(myLayers.isNotEmpty())
+        return myLayers[0].scaleMap[aes]
+    }
+
+    fun getScaleMap(): TypedScaleMap {
+        checkState(myLayers.isNotEmpty())
+        return myLayers[0].scaleMap
     }
 
     fun getDataRange(`var`: DataFrame.Variable): ClosedRange<Double>? {
@@ -74,7 +85,7 @@ internal class StitchedPlotLayers(layers: List<jetbrains.datalore.plot.builder.G
     }
 
     fun isNumericData(`var`: DataFrame.Variable): Boolean {
-        checkState(!myLayers.isEmpty())
+        checkState(myLayers.isNotEmpty())
         for (layer in myLayers) {
             if (!layer.dataFrame.isNumeric(`var`)) {
                 return false

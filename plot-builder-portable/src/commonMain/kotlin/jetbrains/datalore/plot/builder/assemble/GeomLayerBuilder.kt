@@ -39,7 +39,7 @@ class GeomLayerBuilder {
     private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
-    private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
+    private var myDataPreprocessor: ((DataFrame, TypedScaleMap) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
@@ -105,36 +105,38 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun build(data: DataFrame): GeomLayer {
+    fun build(data: DataFrame, scaleMap: TypedScaleMap): GeomLayer {
         @Suppress("NAME_SHADOWING")
         var data = data
         if (myDataPreprocessor != null) {
-            data = myDataPreprocessor!!(data)
+            data = myDataPreprocessor!!(data, scaleMap)
         }
 
         // make sure 'original' series are transformed
-        data = DataProcessing.transformOriginals(data, myBindings)
+        data = DataProcessing.transformOriginals(data, myBindings, scaleMap)
 
-        // create missing bindings for 'stat' variables
-        // and other adjustments in bindings.
-        val replacementBindings =
-            GeomLayerBuilderUtil.rewireBindingsAfterStat(
-                data,
-                myStat,
-                myBindings,
-                TypedScaleProviderMap(myScaleProviderByAes)
-            )
+        val replacementBindings = HashMap(
+            // No 'origin' variables beyond this point.
+            // Replace all 'origin' variables in bindings with 'transform' variables
+            myBindings.map {
+                it.aes to if (it.variable.isOrigin) {
+                    val transformVar = DataFrameUtil.transformVarFor(it.aes)
+                    VarBinding(transformVar, it.aes)
+                } else {
+                    it
+                }
+            }.toMap()
+        )
 
         // add 'transform' variable for each 'stat' variable
         val bindingsToPut = ArrayList<VarBinding>()
         for (binding in replacementBindings.values) {
-            val `var` = binding.variable
-            if (`var`.isStat) {
+            val variable = binding.variable
+            if (variable.isStat) {
                 val aes = binding.aes
-                val scale = binding.scale
-                data = DataFrameUtil.applyTransform(data, `var`, aes, scale!!)
-
-                bindingsToPut.add(VarBinding(TransformVar.forAes(aes), aes, scale))
+                val scale = scaleMap[aes]
+                data = DataFrameUtil.applyTransform(data, variable, aes, scale)
+                bindingsToPut.add(VarBinding(TransformVar.forAes(aes), aes))
             }
         }
 
@@ -146,17 +148,17 @@ class GeomLayerBuilder {
         // (!) Positional aes scales have undefined `mapper` at this time because
         // dimensions of plot are not yet known.
         // Data Access shouldn't use aes mapper (!)
-        val dataAccess = PointDataAccess(data, replacementBindings)
+        val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
 
         return MyGeomLayer(
             data,
             myGeomProvider,
             myPosProvider,
-//            handledAes(),
             myGeomProvider.renders(),
             GroupingContext(data, myBindings, myGroupingVarName, myPathIdVarName, handlesGroups()).groupMapper,
             replacementBindings.values,
             myConstantByAes,
+            scaleMap,
             dataAccess,
             myLocatorLookupSpec,
             myContextualMappingProvider.createContextualMapping(dataAccess, data),
@@ -165,24 +167,19 @@ class GeomLayerBuilder {
     }
 
     private fun handlesGroups(): Boolean {
-//        return DataProcessing.groupsHandled(myGeomProvider, myPosProvider)
         return myGeomProvider.handlesGroups() || myPosProvider.handlesGroups()
     }
-
-//    private fun handledAes(): List<Aes<*>> {
-//        return GeomLayerBuilderUtil.handledAes(myGeomProvider, myStat)
-//    }
 
 
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
         private val myPosProvider: PosProvider,
-//        handledAes: List<Aes<*>>,
         renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
         varBindings: Collection<VarBinding>,
         constantByAes: TypedKeyHashMap,
+        override val scaleMap: TypedScaleMap,
         override val dataAccess: MappedDataAccess,
         override val locatorLookupSpec: LookupSpec,
         override val contextualMapping: ContextualMapping,
@@ -193,7 +190,6 @@ class GeomLayerBuilder {
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults
 
-        //        private val myHandledAes: List<Aes<*>>
         private val myRenderedAes: List<Aes<*>>
         private val myConstantByAes: TypedKeyHashMap
         private val myVarBindingsByAes = HashMap<Aes<*>, VarBinding>()
@@ -205,7 +201,6 @@ class GeomLayerBuilder {
             get() = geom is LiveMapGeom
 
         init {
-//            myHandledAes = ArrayList(handledAes)
             myRenderedAes = ArrayList(renderedAes)
 
             // constant value by aes (default + specified)
@@ -220,10 +215,6 @@ class GeomLayerBuilder {
                 myVarBindingsByAes[varBinding.aes] = varBinding
             }
         }
-
-//        override fun handledAes(): List<Aes<*>> {
-//            return myHandledAes
-//        }
 
         override fun renderedAes(): List<Aes<*>> {
             return myRenderedAes
@@ -271,8 +262,8 @@ class GeomLayerBuilder {
 
         fun demoAndTest(): GeomLayerBuilder {
             val builder = GeomLayerBuilder()
-            builder.myDataPreprocessor = { data ->
-                val transformedData = DataProcessing.transformOriginals(data, builder.myBindings)
+            builder.myDataPreprocessor = { data, scaleMap ->
+                val transformedData = DataProcessing.transformOriginals(data, builder.myBindings, scaleMap)
                 when (val stat = builder.myStat) {
                     Stats.IDENTITY -> transformedData
                     else -> {
@@ -289,6 +280,7 @@ class GeomLayerBuilder {
                             transformedData,
                             stat,
                             builder.myBindings,
+                            scaleMap,
                             groupingContext, null, null, statCtx, ::println
                         )
 
