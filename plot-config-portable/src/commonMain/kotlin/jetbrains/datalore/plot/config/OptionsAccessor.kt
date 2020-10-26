@@ -96,6 +96,14 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getNumQList(option: String): List<Number?> = getNumList(option) { it == null || it is Number }
 
+    private fun getNumber(option: String): Number? {
+        val v = get(option) ?: return null
+
+        require(v is Number) { "Parameter '$option' expected to be a Number, but was ${v::class.simpleName}" }
+
+        return v;
+    }
+
     private fun getNumList(option: String, predicate: (Any?) -> Boolean): List<Number?> {
         val list = getList(option)
 
@@ -155,15 +163,15 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     fun getDouble(option: String): Double? {
-        return getValueOrNull(option) { asDouble(it) }
+        return getNumber(option)?.toDouble()
     }
 
     fun getInteger(option: String): Int? {
-        return getValueOrNull(option) { v -> (v as? Number)?.toInt() }
+        return getNumber(option)?.toInt()
     }
 
     fun getLong(option: String): Long? {
-        return getValueOrNull(option) { v -> (v as? Number)?.toLong() }
+        return getNumber(option)?.toLong()
     }
 
     private fun <T> getValueOrNull(option: String, mapper: (Any?) -> T?): T? {
@@ -187,10 +195,6 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     companion object {
         fun over(map: Map<*, *>): OptionsAccessor {
             return OptionsAccessor(map, emptyMap<Any, Any>())
-        }
-
-        private fun asDouble(value: Any?): Double? {
-            return (value as? Number)?.toDouble()
         }
 
         private fun <T> requireAll(items: Iterable<T>, predicate: (T) -> Boolean, lazy: (T) -> Any) {
