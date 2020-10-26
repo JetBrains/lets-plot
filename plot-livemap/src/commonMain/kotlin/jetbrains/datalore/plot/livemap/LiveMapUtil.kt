@@ -19,15 +19,17 @@ import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapCanvasFigure
 import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.ui.Clipboard
+import jetbrains.livemap.ui.CursorService
 
 object LiveMapUtil {
 
-    fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
+    fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions, cursorServiceConfig: CursorServiceConfig) {
+
         plotTiles.forEach { tileLayers ->
             if (tileLayers.any(GeomLayer::isLiveMap)) {
                 require(tileLayers.count(GeomLayer::isLiveMap) == 1)
                 require(tileLayers.first().isLiveMap)
-                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions))
+                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions, cursorServiceConfig.cursorService))
             }
         }
     }
@@ -73,7 +75,8 @@ object LiveMapUtil {
 
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
-        private val myLiveMapOptions: LiveMapOptions
+        private val myLiveMapOptions: LiveMapOptions,
+        cursorService: CursorService
     ) : LiveMapProvider {
 
         private val liveMapSpecBuilder: LiveMapSpecBuilder
@@ -125,6 +128,7 @@ object LiveMapUtil {
                     .mapLocationConsumer { locationRect ->
                         Clipboard.copy(LiveMapLocation.getLocationString(locationRect))
                     }
+                    .cursorService(cursorService)
             }
         }
 

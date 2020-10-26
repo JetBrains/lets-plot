@@ -31,6 +31,7 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.*
+import jetbrains.livemap.ui.CursorService
 import kotlin.math.max
 import kotlin.math.min
 
@@ -44,6 +45,7 @@ internal class LiveMapSpecBuilder {
     private lateinit var mySize: DoubleVector
     private lateinit var myDevParams: DevParams
     private lateinit var myMapLocationConsumer: ((DoubleRectangle) -> Unit)
+    private lateinit var myCursorService: CursorService
     var minZoom: Int = MIN_ZOOM
     var maxZoom: Int = MAX_ZOOM
 
@@ -85,6 +87,11 @@ internal class LiveMapSpecBuilder {
         return this
     }
 
+    fun cursorService(cursorService: CursorService): LiveMapSpecBuilder {
+        myCursorService = cursorService
+        return this
+    }
+
     fun build(): LiveMapSpec {
         val projectionType = convertProjectionType(myLiveMapOptions.projection)
 
@@ -117,6 +124,7 @@ internal class LiveMapSpecBuilder {
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
             attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
+            cursorService = myCursorService,
             minZoom = minZoom,
             maxZoom = maxZoom,
             devParams = myDevParams

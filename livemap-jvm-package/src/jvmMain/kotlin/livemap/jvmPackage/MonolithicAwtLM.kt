@@ -16,12 +16,15 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
+import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Color
+import java.awt.Cursor
+import java.awt.Cursor.HAND_CURSOR
 import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.JComponent
@@ -57,11 +60,15 @@ object MonolithicAwtLM {
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
 
-                injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
+                val cursorServiceConfig = CursorServiceConfig()
+                injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec, cursorServiceConfig)
 
                 val plot = assembler.createPlot()
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
                 val plotComponent = buildPlotComponent(plotContainer)
+
+                cursorServiceConfig.defaultSetter { plotComponent.cursor = Cursor.getDefaultCursor() }
+                cursorServiceConfig.pointerSetter { plotComponent.cursor = Cursor(HAND_CURSOR) }
 
                 return if (plotContainer.liveMapFigures.isNotEmpty()) {
                     @Suppress("UNCHECKED_CAST")
@@ -135,13 +142,15 @@ object MonolithicAwtLM {
 
     private fun injectLiveMapProvider(
         plotAssembler: PlotAssembler,
-        processedPlotSpec: MutableMap<String, Any>
+        processedPlotSpec: MutableMap<String, Any>,
+        cursorServiceConfig: CursorServiceConfig
     ) {
         LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
             ?.let {
                 LiveMapUtil.injectLiveMapProvider(
                     plotAssembler.layersByTile,
-                    it
+                    it,
+                    cursorServiceConfig
                 )
             }
     }
