@@ -33,10 +33,10 @@ class TooltipConfig(
         private val tooltipLines: List<String>?,
         tooltipFormats: List<*>
     ) {
-        // String key has prefix '$' for aes and '@' for variables
-        private val myValueSources: MutableMap<String, ValueSource> = prepareFormats(tooltipFormats)
-            .mapValues {
-                createValueSource(it.key, it.value)
+        // Key is Pair: <field name> + <isAes flag>
+        private val myValueSources: MutableMap<Pair<String, Boolean>, ValueSource> = prepareFormats(tooltipFormats)
+            .mapValues { (field, format) ->
+                createValueSource(fieldName = field.first, isAes = field.second, format = format)
             }.toMutableMap()
 
         internal fun parse(): TooltipSpecification {
@@ -68,30 +68,24 @@ class TooltipConfig(
             )
         }
 
-        private fun createValueSource(name: String, format: String? = null): ValueSource {
+        private fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
             fun getAesByName(aesName: String): Aes<*> {
                 return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
             }
 
-            return when {
-                name.startsWith(AES_NAME_PREFIX) -> {
-                    val aes = getAesByName(name.removePrefix(AES_NAME_PREFIX))
-                    when (val constant = constantsMap[aes]) {
-                        null -> MappingValue(aes, format = format)
-                        else -> ConstantValue(constant, format)
-                    }
+            return if (isAes) {
+                val aes = getAesByName(fieldName)
+                when (val constant = constantsMap[aes]) {
+                    null -> MappingValue(aes, format = format)
+                    else -> ConstantValue(constant, format)
                 }
-                name.startsWith(VARIABLE_NAME_PREFIX) -> {
-                    val varName = detachVariableName(name)
-                    require(varName.isNotEmpty()) { "Variable name cannot be empty" }
-                    DataFrameValue(varName, format)
-                }
-                else -> error("Unknown type of the field with name = \"$name\"")
+            } else {
+                DataFrameValue(fieldName, format)
             }
         }
 
-        private fun prepareFormats(tooltipFormats: List<*>): Map<String, String> {
-            val allFormats = mutableMapOf<String, String>()
+        private fun prepareFormats(tooltipFormats: List<*>): Map<Pair<String, Boolean>, String> {
+            val allFormats = mutableMapOf<Pair<String, Boolean>, String>()
             tooltipFormats.forEach { tooltipFormat ->
                 require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
                 require(tooltipFormat.has(FIELD) && tooltipFormat.has(FORMAT)) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
@@ -105,25 +99,37 @@ class TooltipConfig(
                         "Y" -> Aes.values().filter(::isPositionalY)
                         else -> {
                             // it is aes name
-                            allFormats[field] = format
+                            val aesField = aesField(field.removePrefix(AES_NAME_PREFIX))
+                            allFormats[aesField] = format
                             emptyList()
                         }
                     }
                     positionals.forEach { aes ->
-                        val aesFieldName = AES_NAME_PREFIX + aes.name
-                        if (aesFieldName !in allFormats)
-                            allFormats[aesFieldName] = format
+                        val aesField = aesField(aes.name)
+                        if (aesField !in allFormats)
+                            allFormats[aesField] = format
                     }
                 } else {
-                    allFormats[VARIABLE_NAME_PREFIX + field] = format
+                    val varField = varField(detachVariableName(field))
+                    allFormats[varField] = format
                 }
             }
             return allFormats
         }
 
-        private fun getValueSource(field: String): ValueSource {
+        private fun getValueSource(fieldString: String): ValueSource {
+            val field = when {
+                fieldString.startsWith(AES_NAME_PREFIX) -> {
+                    aesField(fieldString.removePrefix(AES_NAME_PREFIX))
+                }
+                fieldString.startsWith(VARIABLE_NAME_PREFIX) -> {
+                    varField(detachVariableName(fieldString))
+                }
+                else -> error("Unknown type of the field with name = \"$fieldString\"")
+            }
+
             if (field !in myValueSources) {
-                myValueSources[field] = createValueSource(field)
+                myValueSources[field] = createValueSource(fieldName = field.first, isAes = field.second)
             }
             return myValueSources[field]!!
         }
@@ -138,6 +144,10 @@ class TooltipConfig(
                 null
             }
         }
+
+        private fun aesField(aesName: String) = Pair(aesName, true)
+
+        private fun varField(aesName: String) = Pair(aesName, false)
     }
 
     companion object {
