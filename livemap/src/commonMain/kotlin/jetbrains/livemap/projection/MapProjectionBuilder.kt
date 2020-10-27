@@ -36,6 +36,7 @@ internal class MapProjectionBuilder(
 
         val scale = min(mapRect.width / rect.width, mapRect.height / rect.height)
 
+        @Suppress("UNCHECKED_CAST")
         val projSize = (mapRect.dimension * (1.0 / scale)) as Vec<Geographic>
         val projRect = Rect(rect.center - projSize * 0.5, projSize)
 
