@@ -101,6 +101,8 @@ class Color @JvmOverloads constructor(
         val PINK = Color(255, 175, 175)
         val LIGHT_PINK = Color(255, 210, 210)
 
+        val PACIFIC_BLUE = parseHex("#118ED8")
+
         private const val RGB = "rgb"
         private const val COLOR = "color"
         private const val RGBA = "rgba"
