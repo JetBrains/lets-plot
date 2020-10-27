@@ -25,6 +25,7 @@ object GeomInteractionUtil {
         return createGeomInteractionBuilder( layerConfig, scaleMap, multilayer, isLiveMap, theme).build()
     }
 
+    // For tests
     internal fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
         scaleMap: TypedScaleMap,
