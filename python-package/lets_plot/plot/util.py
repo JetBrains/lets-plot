@@ -111,7 +111,7 @@ def get_geo_data_frame_meta(geo_data_frame) -> dict:
     }
 
 
-def geo_data_frame_to_lon_lat(data):
+def geo_data_frame_to_wgs84(data):
     if data.crs is not None:
         return data.to_crs(epsg=4326)
     else:

@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, geo_data_frame_to_lon_lat, as_pair
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, geo_data_frame_to_wgs84, as_pair
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -2427,10 +2427,10 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
     data, mapping, data_meta = as_annotated_data(data, mapping)
 
     if is_geo_data_frame(data):
-        data = geo_data_frame_to_lon_lat(data)
+        data = geo_data_frame_to_wgs84(data)
 
     if is_geo_data_frame(kwargs.get('map', None)):
-        kwargs['map'] = geo_data_frame_to_lon_lat(kwargs['map'])
+        kwargs['map'] = geo_data_frame_to_wgs84(kwargs['map'])
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 
