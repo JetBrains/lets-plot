@@ -66,13 +66,13 @@ class TextGeom : GeomBase() {
     // Current implementation works for label_format ='.2f'
     // and values between -1.0 and 1.0.
     private fun getSizeUnitRatio(ctx: GeomContext): Double {
-        sizeUnit?.let { sizeUnitValue ->
+        return if ( sizeUnit != null)  {
             val textWidth = 6.0
-            val unitRes = GeomHelper.getUnitResBySizeUnit(ctx, sizeUnitValue)
-            return unitRes / textWidth
+            val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
+            unitRes / textWidth
+        } else {
+            1.0
         }
-
-        return 1.0
     }
 
     private fun toString(label: Any?): String {

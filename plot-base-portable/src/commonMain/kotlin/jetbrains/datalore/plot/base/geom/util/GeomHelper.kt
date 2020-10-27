@@ -264,10 +264,5 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
                 else -> error("Size unit value must be either 'x' or 'y', but was $sizeUnitName.")
             }
         }
-
-        fun getUnitResBySizeUnit( ctx: GeomContext, sizeUnitName: String ) : Double {
-            val aes = getSizeUnitAes(sizeUnitName)
-            return ctx.getUnitResolution(aes)
-        }
     }
 }

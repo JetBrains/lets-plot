@@ -12,9 +12,9 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.getUnitResBySizeUnit
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColorValue
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
@@ -70,15 +70,14 @@ open class PointGeom : GeomBase() {
     }
 
     private fun getSizeUnitRatio(ctx: GeomContext): Double {
-        sizeUnit?.let { sizeUnitValue ->
-            val unitRes = getUnitResBySizeUnit(ctx, sizeUnitValue)
+        return if (sizeUnit != null) {
+            val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
             // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
             // but Shape.size() can't be used because it takes DataPointAesthetics as param
-            val unitShapeSize = 2.2
-            return unitRes / unitShapeSize
+            unitRes / AesScaling.UNIT_SHAPE_SIZE
+        } else {
+            1.0
         }
-
-        return 1.0
     }
 
     companion object {
