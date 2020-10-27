@@ -8,6 +8,8 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
 object AesScaling {
+    const val UNIT_SHAPE_SIZE = 2.2
+
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
         return p.size()!! * 2.0
@@ -15,7 +17,7 @@ object AesScaling {
 
     fun circleDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * 2.2
+        return p.size()!! * UNIT_SHAPE_SIZE
     }
 
     fun circleDiameterSmaller(p: DataPointAesthetics): Double {
@@ -25,7 +27,7 @@ object AesScaling {
 
     fun sizeFromCircleDiameter(diameter: Double): Double {
         // px -> aes Units
-        return diameter / 2.2
+        return diameter / UNIT_SHAPE_SIZE
     }
 
     fun textSize(p: DataPointAesthetics): Double {
