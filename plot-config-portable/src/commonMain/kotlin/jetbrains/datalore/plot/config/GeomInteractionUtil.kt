@@ -22,6 +22,16 @@ object GeomInteractionUtil {
         isLiveMap: Boolean,
         theme: Theme
     ): GeomInteraction {
+        return createGeomInteractionBuilder( layerConfig, scaleMap, multilayer, isLiveMap, theme).build()
+    }
+
+    internal fun createGeomInteractionBuilder(
+        layerConfig: LayerConfig,
+        scaleMap: TypedScaleMap,
+        multilayer: Boolean,
+        isLiveMap: Boolean,
+        theme: Theme
+    ): GeomInteractionBuilder {
         val axisWithoutTooltip = HashSet<Aes<*>>()
         if (isLiveMap || !theme.axisX().showTooltip()) axisWithoutTooltip.add(Aes.X)
         if (isLiveMap || !theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
@@ -42,7 +52,6 @@ object GeomInteractionUtil {
             .tooltipOutliers(outlierAesList)
             .tooltipLinesSpec(layerConfig.tooltips)
             .showAxisTooltip(!isLiveMap)
-            .build()
     }
 
     private fun createGeomInteractionBuilder(
