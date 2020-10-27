@@ -172,6 +172,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.BOX_PLOT -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
+            GeomKind.TILE,
             GeomKind.TEXT,
             GeomKind.SMOOTH,
             GeomKind.POINT,
@@ -191,7 +192,6 @@ object GeomInteractionUtil {
                 return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
             }
             GeomKind.H_LINE,
-            GeomKind.TILE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
