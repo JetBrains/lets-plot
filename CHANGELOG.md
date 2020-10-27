@@ -7,17 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
- - corner tooltips.
+ - Facilities for customization of tooltip contents and its position (see <link>).
  - CorrelationStat
  - label_format
  - scale_x_discrete_reversed / scale_y_discrete_reversed
  - `ggsave()` function (only SVG, HTML)
 
 ### Fixed
- - Mercator projection (`geom_map(), coord_map()`)
+ - Mercator projection computes coordinates incorrectly (`geom_map(), coord_map()`)
  - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`
  - Colorbars: take in account limits defined in continuous color/fill scales.
- - 'scale_color_hue' incorrectly interprets chroma range [[#206](https://github.com/JetBrains/lets-plot/issues/206)]
+ - `scale_color_hue` incorrectly interprets chroma range [[#206](https://github.com/JetBrains/lets-plot/issues/206)].
+ - `scale_color_brewer` shouldn't fail if 'type' is not specified [[#203](https://github.com/JetBrains/lets-plot/issues/203)].
+ - `scale_fill_discrete` should not replace the default discrete scale (Brewer) with 'HUE' scale [[#172](https://github.com/JetBrains/lets-plot/issues/172)].
+ 
+### Changed
+ - PACIFIC_BLUE color (#118ED8) replaced DARK_BLUE as a default color/fill value on plots.
+ - Default discrete color scheme is now ColorBrewer's Set2 (was Dark2)
  
 ### Deprecated
 
