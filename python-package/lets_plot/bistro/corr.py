@@ -111,7 +111,7 @@ class corr_plot_builder:
         self._labels_layer = geom_text(stat='corr', show_legend=self._show_legend,
                                        tooltips=self._tooltip_spec(None),
                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
-                                       na_value='', label_format=self._get_format(None),
+                                       na_value='', label_format=self.format,
                                        size_unit = 'x', **other_args)
 
         return self
@@ -326,12 +326,9 @@ class corr_plot_builder:
 
         return plot
 
-    def _get_format(self, format):
-        return format if format else self._format
-
-    def _tooltip_spec(self, format):
+    def _tooltip_spec(self):
         return layer_tooltips(). \
-            format(field='@..corr..', format=self._get_format(format)). \
+            format(field='@..corr..', format=self.format). \
             line('@..corr..')
 
     def _get_type(self, type):
