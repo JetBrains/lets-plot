@@ -47,7 +47,7 @@ class corr_plot_builder:
         self._data = data
         self._show_legend = show_legend
         self._format = '.2f'
-        self._reverse_y = flip if flip else False
+        self._reverse_y = flip if flip is not None else True
         self._text_color = None
         self._tiles_layer = None
         self._points_layer = None
@@ -373,7 +373,7 @@ def corr_plot_scatter(data, palette=None):
         PlotSpec for correlation matrix.
     """
 
-    plot_builder = corr_plot_builder(data=data, flip=True)
+    plot_builder = corr_plot_builder(data=data)
     plot_builder.points()
 
     if palette:
@@ -397,7 +397,7 @@ def corr_plot_tiles(data, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data,flip=True)
+    plot_builder = corr_plot_builder(data=data)
     plot_builder.tiles()
 
     if palette:
@@ -421,7 +421,7 @@ def corr_plot_tileslab(data, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data, flip=True)
+    plot_builder = corr_plot_builder(data=data)
     plot_builder.tiles()
     plot_builder.labels()
 
@@ -446,7 +446,7 @@ def corr_plot_scatterlab(data, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data, flip=True)
+    plot_builder = corr_plot_builder(data=data)
     plot_builder.points(type='lower')
     plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
 
