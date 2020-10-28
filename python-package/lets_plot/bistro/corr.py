@@ -74,7 +74,7 @@ class corr_plot_builder:
         """
 
         self._points_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                                        tooltips=self._tooltip_spec(None),
+                                        tooltips=self._tooltip_spec(),
                                         type=self._get_type(type), fill_diagonal=fill_diagonal)
 
         return self
@@ -109,9 +109,9 @@ class corr_plot_builder:
             other_args['color'] = self._text_color
 
         self._labels_layer = geom_text(stat='corr', show_legend=self._show_legend,
-                                       tooltips=self._tooltip_spec(None),
+                                       tooltips=self._tooltip_spec(),
                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
-                                       na_value='', label_format=self.format,
+                                       na_value='', label_format=self._format,
                                        size_unit = 'x', **other_args)
 
         return self
@@ -135,7 +135,7 @@ class corr_plot_builder:
         self._text_color = 'white'
 
         self._tiles_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                                       tooltips=self._tooltip_spec(None),
+                                       tooltips=self._tooltip_spec(),
                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
                                        size=1.0, shape=15)
 
@@ -328,7 +328,7 @@ class corr_plot_builder:
 
     def _tooltip_spec(self):
         return layer_tooltips(). \
-            format(field='@..corr..', format=self.format). \
+            format(field='@..corr..', format=self._format). \
             line('@..corr..')
 
     def _get_type(self, type):
