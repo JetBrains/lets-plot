@@ -32,7 +32,7 @@ class corr_plot_builder:
     This class is intended to build correlation matrix plots.
     """
 
-    def __init__(self, data, show_legend=None, format=None, flip=None):
+    def __init__(self, data, show_legend=None, flip=None):
         """
         Parameters
         ----------
@@ -40,16 +40,13 @@ class corr_plot_builder:
             Correlation will be calculated for each variable pair.
         show_legend : Boolean
             If True legend is shown. Default - True.
-        format : string
-            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-            Default - '.2f'.
         flip : Boolean
             If True the y axis is flipped.
         """
 
         self._data = data
         self._show_legend = show_legend
-        self._format = format if format else '.2f'
+        self._format = '.2f'
         self._reverse_y = flip if flip else False
         self._text_color = None
         self._tiles_layer = None
@@ -60,7 +57,7 @@ class corr_plot_builder:
                                                   breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
                                                   limits=[-1.0, 1.0])
 
-    def points(self, type=None, fill_diagonal=None, format=None):
+    def points(self, type=None, fill_diagonal=None):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -70,9 +67,6 @@ class corr_plot_builder:
             Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
         fill_diagonal : Boolean
             If True the main diagonal is filled with values. Default - True.
-        format : string
-            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-            Default - '.2f'.
 
         Returns
         -------
@@ -80,12 +74,12 @@ class corr_plot_builder:
         """
 
         self._points_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                                        tooltips=self._tooltip_spec(format),
+                                        tooltips=self._tooltip_spec(None),
                                         type=self._get_type(type), fill_diagonal=fill_diagonal)
 
         return self
 
-    def labels(self, type=None, fill_diagonal=None, format=None, map_size=False, color=None):
+    def labels(self, type=None, fill_diagonal=None, map_size=False, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -95,9 +89,6 @@ class corr_plot_builder:
             Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
         fill_diagonal : Boolean
             If True the main diagonal is filled with values. Default - True.
-        format : string
-            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-            Default - '.2f'.
         map_size : Boolean
             If True, then absolute value of correlation is mapped to text size. Default - False.
         color: string
@@ -118,14 +109,14 @@ class corr_plot_builder:
             other_args['color'] = self._text_color
 
         self._labels_layer = geom_text(stat='corr', show_legend=self._show_legend,
-                                       tooltips=self._tooltip_spec(format),
+                                       tooltips=self._tooltip_spec(None),
                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
-                                       na_value='', label_format=self._get_format(format),
+                                       na_value='', label_format=self._get_format(None),
                                        size_unit = 'x', **other_args)
 
         return self
 
-    def tiles(self, type=None, fill_diagonal=None, format=None):
+    def tiles(self, type=None, fill_diagonal=None):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -135,9 +126,6 @@ class corr_plot_builder:
             Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
         fill_diagonal : Boolean
             If True the main diagonal is filled with values. Default - True.
-        format : string
-            The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-            Default - '.2f'.
 
         Returns
         -------
@@ -147,7 +135,7 @@ class corr_plot_builder:
         self._text_color = 'white'
 
         self._tiles_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                                       tooltips=self._tooltip_spec(format),
+                                       tooltips=self._tooltip_spec(None),
                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
                                        size=1.0, shape=15)
 
@@ -372,7 +360,7 @@ class corr_plot_builder:
         return self
 
 
-def corr_plot_scatter(data, format=None, palette=None):
+def corr_plot_scatter(data, palette=None):
     """
     Draws correlation matrix as scatterplot.
 
@@ -380,9 +368,6 @@ def corr_plot_scatter(data, format=None, palette=None):
     ----------
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
-    format : string
-        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -391,7 +376,7 @@ def corr_plot_scatter(data, format=None, palette=None):
         PlotSpec for correlation matrix.
     """
 
-    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder = corr_plot_builder(data=data, flip=True)
     plot_builder.points()
 
     if palette:
@@ -400,7 +385,7 @@ def corr_plot_scatter(data, format=None, palette=None):
     return plot_builder.build()
 
 
-def corr_plot_tiles(data, format=None, palette=None):
+def corr_plot_tiles(data, palette=None):
     """
     Draws correlation matrix as tiles.
 
@@ -408,9 +393,6 @@ def corr_plot_tiles(data, format=None, palette=None):
     ----------
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
-    format : string
-        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -418,7 +400,7 @@ def corr_plot_tiles(data, format=None, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder = corr_plot_builder(data=data,flip=True)
     plot_builder.tiles()
 
     if palette:
@@ -427,7 +409,7 @@ def corr_plot_tiles(data, format=None, palette=None):
     return plot_builder.build()
 
 
-def corr_plot_tileslab(data, format=None, palette=None):
+def corr_plot_tileslab(data, palette=None):
     """
     Draws correlation matrix as tiles with labels.
 
@@ -435,9 +417,6 @@ def corr_plot_tileslab(data, format=None, palette=None):
     ----------
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
-    format : string
-        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -445,7 +424,7 @@ def corr_plot_tileslab(data, format=None, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder = corr_plot_builder(data=data, flip=True)
     plot_builder.tiles()
     plot_builder.labels()
 
@@ -455,7 +434,7 @@ def corr_plot_tileslab(data, format=None, palette=None):
     return plot_builder.build()
 
 
-def corr_plot_scatterlab(data, format=None, palette=None):
+def corr_plot_scatterlab(data, palette=None):
     """
     Draws correlation matrix as mix of scattrplot and labels.
 
@@ -463,9 +442,6 @@ def corr_plot_scatterlab(data, format=None, palette=None):
     ----------
     data : dictionary or pandas DataFrame.
         Correlation will be calculated for each variable pair. Required.
-    format : string
-        The format to apply to the field. The format contains a number format (1.f) or a string template ({.1f}).
-        Default - '.2f'.
     palette : string
         Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
 
@@ -473,7 +449,7 @@ def corr_plot_scatterlab(data, format=None, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder = corr_plot_builder(data=data, flip=True)
     plot_builder.points(type='lower')
     plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
 
