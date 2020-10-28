@@ -33,10 +33,10 @@ class TooltipConfig(
         private val tooltipLines: List<String>?,
         tooltipFormats: List<*>
     ) {
-        // String key has prefix '$' for aes and '@' for variables
-        private val myValueSources: MutableMap<String, ValueSource> = prepareFormats(tooltipFormats)
-            .mapValues {
-                createValueSource(it.key, it.value)
+        // Key is Pair: <field name> + <isAes flag>
+        private val myValueSources: MutableMap<Pair<String, Boolean>, ValueSource> = prepareFormats(tooltipFormats)
+            .mapValues { (field, format) ->
+                createValueSource(fieldName = field.first, isAes = field.second, format = format)
             }.toMutableMap()
 
         internal fun parse(): TooltipSpecification {
@@ -52,12 +52,12 @@ class TooltipConfig(
             val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
             val fieldsInPattern = mutableListOf<ValueSource>()
-            val pattern: String = SOURCE_RE_PATTERN.replace(valueString) { match ->
-                if (match.value == "\\$AES_NAME_PREFIX" || match.value == "\\$VARIABLE_NAME_PREFIX") {
+            val pattern: String = SOURCE_RE_PATTERN.replace(valueString) {
+                if (it.value == "\\$AES_NAME_PREFIX" || it.value == "\\$VARIABLE_NAME_PREFIX") {
                     // it is a part of the text (not of the name)
-                    match.value.removePrefix("\\")
+                    it.value.removePrefix("\\")
                 } else {
-                    fieldsInPattern += getValueSource(match.value)
+                    fieldsInPattern += getValueSource(it.value)
                     StringFormat.valueInLinePattern()
                 }
             }
@@ -68,76 +68,74 @@ class TooltipConfig(
             )
         }
 
-        private fun createValueSource(name: String, format: String? = null): ValueSource {
+        private fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
             fun getAesByName(aesName: String): Aes<*> {
-                return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
+                return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
             }
 
-            return when {
-                name.startsWith(AES_NAME_PREFIX) -> {
-                    val aes = getAesByName(name.removePrefix(AES_NAME_PREFIX))
-                    when (val constant = constantsMap[aes]) {
-                        null -> MappingValue(aes, format = format)
-                        else -> ConstantValue(constant, format)
-                    }
+            return if (isAes) {
+                val aes = getAesByName(fieldName)
+                when (val constant = constantsMap[aes]) {
+                    null -> MappingValue(aes, format = format)
+                    else -> ConstantValue(constant, format)
                 }
-                name.startsWith(VARIABLE_NAME_PREFIX) -> {
-                    val varName = detachVariableName(name)
-                    if (varName.isEmpty()) error("Variable name cannot be empty")
-                    DataFrameValue(varName, format)
-                }
-                else -> {
-                    error("Unknown type of the field with name = \"$name\"")
-                }
+            } else {
+                DataFrameValue(fieldName, format)
             }
         }
 
-        private fun prepareFormats(tooltipFormats: List<*>): Map<String, String> {
-            val allFormats = mutableMapOf<String, String>()
+        private fun prepareFormats(tooltipFormats: List<*>): Map<Pair<String, Boolean>, String> {
+            val allFormats = mutableMapOf<Pair<String, Boolean>, String>()
             tooltipFormats.forEach { tooltipFormat ->
                 require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
                 require(tooltipFormat.has(FIELD) && tooltipFormat.has(FORMAT)) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
 
-                val configName = tooltipFormat[FIELD] as String
-                val configFormat = tooltipFormat[FORMAT] as String
+                val field = tooltipFormat[FIELD] as String
+                val format = tooltipFormat[FORMAT] as String
 
-                if (configName.startsWith(AES_NAME_PREFIX)) {
-                    val positionals = when (configName.removePrefix(AES_NAME_PREFIX)) {
+                if (field.startsWith(AES_NAME_PREFIX)) {
+                    val positionals = when (field.removePrefix(AES_NAME_PREFIX)) {
                         "X" -> Aes.values().filter(::isPositionalX)
                         "Y" -> Aes.values().filter(::isPositionalY)
                         else -> {
                             // it is aes name
-                            allFormats[configName] = configFormat
+                            val aesField = aesField(field.removePrefix(AES_NAME_PREFIX))
+                            allFormats[aesField] = format
                             emptyList()
                         }
                     }
                     positionals.forEach { aes ->
-                        val aesConfigName = AES_NAME_PREFIX + aes.name
-                        if (aesConfigName !in allFormats)
-                            allFormats[aesConfigName] = configFormat
+                        val aesField = aesField(aes.name)
+                        if (aesField !in allFormats)
+                            allFormats[aesField] = format
                     }
                 } else {
-                    val varConfigName = VARIABLE_NAME_PREFIX + detachVariableName(configName)
-                    allFormats[varConfigName] = configFormat
+                    val varField = varField(detachVariableName(field))
+                    allFormats[varField] = format
                 }
             }
             return allFormats
         }
 
-        private fun getValueSource(configName: String): ValueSource {
-            val name = if (configName.startsWith(VARIABLE_NAME_PREFIX)) {
-                VARIABLE_NAME_PREFIX + detachVariableName(configName)
-            } else {
-                configName
+        private fun getValueSource(fieldString: String): ValueSource {
+            val field = when {
+                fieldString.startsWith(AES_NAME_PREFIX) -> {
+                    aesField(fieldString.removePrefix(AES_NAME_PREFIX))
+                }
+                fieldString.startsWith(VARIABLE_NAME_PREFIX) -> {
+                    varField(detachVariableName(fieldString))
+                }
+                else -> error("Unknown type of the field with name = \"$fieldString\"")
             }
-            if (name !in myValueSources) {
-                myValueSources[name] = createValueSource(name)
+
+            if (field !in myValueSources) {
+                myValueSources[field] = createValueSource(fieldName = field.first, isAes = field.second)
             }
-            return myValueSources[name]!!
+            return myValueSources[field]!!
         }
 
-        private fun detachVariableName(configName: String) =
-            configName.removePrefix(VARIABLE_NAME_PREFIX).removeSurrounding("{", "}")
+        private fun detachVariableName(field: String) =
+            field.removePrefix(VARIABLE_NAME_PREFIX).removeSurrounding("{", "}")
 
         private fun detachLabel(tooltipLine: String): String? {
             return if (LABEL_SEPARATOR in tooltipLine) {
@@ -146,6 +144,10 @@ class TooltipConfig(
                 null
             }
         }
+
+        private fun aesField(aesName: String) = Pair(aesName, true)
+
+        private fun varField(aesName: String) = Pair(aesName, false)
     }
 
     companion object {
@@ -153,7 +155,7 @@ class TooltipConfig(
         private const val VARIABLE_NAME_PREFIX = "@"
         private const val LABEL_SEPARATOR = "|"
 
-        // escaping ('\$', '\@') or aes name ('$aesName') or variable name ('@varName', '@{var name with spaces}')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$|\\@)|(\$\w+)|@(([\w$@]+)|(\{(.*?)}))""")
+        // escaping ('\$', '\@') or aes name ('$aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$|\\@)|(\$\w+)|@(([\w$@]+)|(\{(.*?)})|\.{2}\w+\.{2})""")
     }
 }

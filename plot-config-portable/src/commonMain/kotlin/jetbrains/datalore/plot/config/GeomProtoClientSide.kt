@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
 import jetbrains.datalore.plot.config.Option.Geom.Step
 
+
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
     private val preferredCoordinateSystem: CoordProvider? = when (geomKind) {
         GeomKind.TILE,
@@ -115,9 +116,12 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.POINT -> return GeomProvider.point {
                 val geom = PointGeom()
+
                 if (opts.has(Point.ANIMATION)) {
                     geom.animation = opts[Point.ANIMATION]
                 }
+
+                geom.sizeUnit = opts.getString(Point.SIZE_UNIT)?.toLowerCase()
                 geom
             }
 
@@ -147,6 +151,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                         throw IllegalArgumentException("Expected: na_value = 'some string'")
                     }
                 }
+
+                geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.toLowerCase()
 
                 geom
             }

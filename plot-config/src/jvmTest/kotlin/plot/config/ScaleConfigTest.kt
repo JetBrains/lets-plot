@@ -122,11 +122,9 @@ class ScaleConfigTest {
                 "aesthetic" to toOption(aes)
             )
 
-            val dataFrame = DataFrameUtil.fromMap(mapOf("a" to listOf(1.0, 2.0, 3.0, 4.0)))
-
             val scaleMapper = ScaleConfig<Color>(scaleSpec)
                 .createScaleProvider()
-                .createScale(dataFrame, dataFrame.variables().first { it.name == "a" })
+                .createScale("a", listOf(1.0, 2.0, 3.0, 4.0))
                 .mapper
 
             val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }

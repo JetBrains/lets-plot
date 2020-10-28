@@ -58,8 +58,8 @@ object AesInitValue {
         VALUE_MAP[Z] = 0.0
         VALUE_MAP[YMIN] = Double.NaN
         VALUE_MAP[YMAX] = Double.NaN
-        VALUE_MAP[COLOR] = Color.DARK_BLUE
-        VALUE_MAP[FILL] = Color.DARK_BLUE
+        VALUE_MAP[COLOR] = Color.PACIFIC_BLUE
+        VALUE_MAP[FILL] = Color.PACIFIC_BLUE
         VALUE_MAP[ALPHA] = 1.0
         VALUE_MAP[SHAPE] = NamedShape.SOLID_CIRCLE
         VALUE_MAP[LINETYPE] = NamedLineType.SOLID

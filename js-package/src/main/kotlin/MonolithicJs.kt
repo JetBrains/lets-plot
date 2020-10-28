@@ -10,6 +10,7 @@ import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.css.*
+import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
@@ -24,6 +25,7 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
@@ -139,23 +141,30 @@ private fun buildSinglePlotComponent(
 ) {
 
     val assembler = plotBuildInfo.plotAssembler
-    injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
+    val cursorServiceConfig = CursorServiceConfig()
+    injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec, cursorServiceConfig)
 
     val plot = assembler.createPlot()
     val plotContainer = PlotContainer(plot, plotBuildInfo.size)
     val svg = buildPlotSvg(plotContainer, parentElement)
+
+    cursorServiceConfig.defaultSetter { svg.style.setCursor(CssCursor.CROSSHAIR) }
+    cursorServiceConfig.pointerSetter { svg.style.setCursor(CssCursor.POINTER) }
+
     parentElement.appendChild(svg)
 }
 
 private fun injectLivemapProvider(
     plotAssembler: PlotAssembler,
-    processedPlotSpec: MutableMap<String, Any>
+    processedPlotSpec: MutableMap<String, Any>,
+    cursorServiceConfig: CursorServiceConfig
 ) {
     LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
         ?.let {
             LiveMapUtil.injectLiveMapProvider(
                 plotAssembler.layersByTile,
-                it
+                it,
+                cursorServiceConfig
             )
         }
 }

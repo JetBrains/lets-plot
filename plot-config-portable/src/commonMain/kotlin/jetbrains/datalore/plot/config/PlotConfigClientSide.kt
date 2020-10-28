@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
@@ -48,8 +47,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<*, *>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
-        scaleProviderByAes: TypedScaleProviderMap
+        plotDiscreteAes: Set<*>
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -61,7 +59,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             plotDiscreteAes,
             GeomProtoClientSide(geomKind),
             StatProto(),
-            scaleProviderByAes, true
+            true
         )
     }
 
@@ -84,13 +82,13 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
                     MoveGeomPropertiesToLayerMigration()
                 )
                 .build()
-            plotSpec = migrations.apply(plotSpec)
 
+            plotSpec = migrations.apply(plotSpec)
             return plotSpec
         }
 
         /**
-         * Tests only
+         * Tests only (?)
          */
         fun create(plotSpec: Map<String, Any>): PlotConfigClientSide {
             return PlotConfigClientSide(plotSpec)

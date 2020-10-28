@@ -11,7 +11,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 import kotlin.math.max
@@ -47,9 +46,8 @@ internal object PlotGuidesAssemblerUtil {
                 }
             }
 
-            val binding = layerTiles.getBinding(aes)
-            val scale = binding.scale
-            val scaleName = scale!!.name
+            val scale = layerTiles.getScale(aes)
+            val scaleName = scale.name
             if (isNullOrEmpty(scaleName)) {
                 continue
             }
@@ -75,7 +73,7 @@ internal object PlotGuidesAssemblerUtil {
             if (stitchedLayers.isNumericData(binding.variable)) {
                 val dataRange = stitchedLayers.getDataRange(binding.variable)
                 if (dataRange != null) {
-                    val scale = stitchedLayers.getBinding(aes).scale!!
+                    val scale = stitchedLayers.getScale(aes)
 
                     val guideDomain =
                         if (scale.isContinuousDomain && scale.hasDomainLimits()) {
@@ -115,15 +113,14 @@ internal object PlotGuidesAssemblerUtil {
         return result
     }
 
-    fun fitsColorBar(binding: VarBinding): Boolean {
-        return binding.aes.isColor && binding.scale!!.isContinuous
+    fun fitsColorBar(aes: Aes<*>, scale: Scale<*>): Boolean {
+        return aes.isColor && scale.isContinuous
     }
 
-    fun checkFitsColorBar(binding: VarBinding) {
-        val aes = binding.aes
+    fun checkFitsColorBar(aes: Aes<*>, scale: Scale<*>) {
         checkState(aes.isColor, "Color-bar is not applicable to $aes aesthetic")
         checkState(
-            binding.scale!!.isContinuous,
+            scale.isContinuous,
             "Color-bar is only applicable when both domain and color palette are continuous"
         )
     }

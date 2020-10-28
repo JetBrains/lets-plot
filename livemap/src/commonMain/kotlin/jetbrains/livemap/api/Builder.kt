@@ -35,6 +35,7 @@ import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.tiles.TileSystemProvider
+import jetbrains.livemap.ui.CursorService
 import kotlin.math.abs
 
 @DslMarker
@@ -91,7 +92,8 @@ class LiveMapBuilder {
             isLabels = true,
             isScaled = false,
             isTiles = true,
-            isUseFrame = true
+            isUseFrame = true,
+            cursorService = CursorService()
         )
     }
 }

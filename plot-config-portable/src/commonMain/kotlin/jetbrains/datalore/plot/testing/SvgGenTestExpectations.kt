@@ -168,9 +168,9 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </rect>
         |          </clipPath>
         |        </defs>
-        |        <rect x="175.94838709677418" y="4.114754098360635" height="246.88524590163937" width="98.97096774193545" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(0,0,128)" fill-opacity="1.0" stroke-width="1.0">
+        |        <rect x="175.94838709677418" y="4.114754098360635" height="246.88524590163937" width="98.97096774193545" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
         |        </rect>
-        |        <rect x="65.98064516129033" y="86.40983606557376" height="164.59016393442624" width="98.97096774193547" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(0,0,128)" fill-opacity="1.0" stroke-width="1.0">
+        |        <rect x="65.98064516129033" y="86.40983606557376" height="164.59016393442624" width="98.97096774193547" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
         |        </rect>
         |      </g>
         |    </g>
@@ -429,8 +429,8 @@ val EXPECTED_BUNCH_SVG = """
         |        <g>
         |          
         |          <g >
-        |            <circle fill="#000080" stroke="#000080" stroke-opacity="0.0" stroke-width="0.0" cx="4.3495867768595105" cy="96.40909090909092" r="2.2" />
-        |            <circle fill="#000080" stroke="#000080" stroke-opacity="0.0" stroke-width="0.0" cx="91.34132231404958" cy="4.5909090909090935" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="4.3495867768595105" cy="96.40909090909092" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="91.34132231404958" cy="4.5909090909090935" r="2.2" />
         |          </g>
         |        </g>
         |      </g>
@@ -525,8 +525,8 @@ val EXPECTED_BUNCH_SVG = """
         |        <g>
         |          
         |          <g >
-        |            <circle fill="#000080" stroke="#000080" stroke-opacity="0.0" stroke-width="0.0" cx="4.3495867768595105" cy="96.40909090909092" r="2.2" />
-        |            <circle fill="#000080" stroke="#000080" stroke-opacity="0.0" stroke-width="0.0" cx="91.34132231404958" cy="4.5909090909090935" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="4.3495867768595105" cy="96.40909090909092" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="91.34132231404958" cy="4.5909090909090935" r="2.2" />
         |          </g>
         |        </g>
         |      </g>

@@ -18,13 +18,18 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
 
 object DataProcessing {
 
-    fun transformOriginals(data: DataFrame, bindings: List<VarBinding>): DataFrame {
+    fun transformOriginals(
+        data: DataFrame,
+        bindings: List<VarBinding>,
+        scaleMap: TypedScaleMap
+    ): DataFrame {
         @Suppress("NAME_SHADOWING")
         var data = data
         for (binding in bindings) {
@@ -35,7 +40,7 @@ object DataProcessing {
                     data,
                     variable,
                     binding.aes,
-                    binding.scale!!
+                    scaleMap[binding.aes]
                 )
             }
         }
@@ -44,8 +49,15 @@ object DataProcessing {
     }
 
     fun buildStatData(
-        data: DataFrame, stat: Stat, bindings: List<VarBinding>, groupingContext: GroupingContext,
-        facetXVar: String?, facetYVar: String?, statCtx: StatContext, messageConsumer: Consumer<String>
+        data: DataFrame,
+        stat: Stat,
+        bindings: List<VarBinding>,
+        scaleMap: TypedScaleMap,
+        groupingContext: GroupingContext,
+        facetXVar: String?,
+        facetYVar: String?,
+        statCtx: StatContext,
+        messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
             return DataAndGroupingContext(emptyFrame(), groupingContext)
@@ -58,7 +70,7 @@ object DataProcessing {
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
-            val sd = applyStat(data, stat, bindings, facetXVar, facetYVar, statCtx, messageConsumer)
+            val sd = applyStat(data, stat, bindings, scaleMap, facetXVar, facetYVar, statCtx, messageConsumer)
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
                 @Suppress("UNCHECKED_CAST")
@@ -68,7 +80,7 @@ object DataProcessing {
         } else { // add offset to each group
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
-                var sd = applyStat(d, stat, bindings, facetXVar, facetYVar, statCtx, messageConsumer)
+                var sd = applyStat(d, stat, bindings, scaleMap, facetXVar, facetYVar, statCtx, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
@@ -121,7 +133,6 @@ object DataProcessing {
             groupSizeListAfterStat
         )
 
-        //return dataAfterStat;
         return DataAndGroupingContext(
             dataAfterStat,
             groupingContextAfterStat
@@ -151,8 +162,13 @@ object DataProcessing {
      */
 
     private fun applyStat(
-        data: DataFrame, stat: Stat, bindings: List<VarBinding>,
-        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext,
+        data: DataFrame,
+        stat: Stat,
+        bindings: List<VarBinding>,
+        scaleMap: TypedScaleMap,
+        facetXVarName: String?,
+        facetYVarName: String?,
+        statCtx: StatContext,
         compMessageConsumer: Consumer<String>
     ): DataFrame {
 
@@ -171,7 +187,8 @@ object DataProcessing {
             inverseTransformContinuousStatData(
                 statData,
                 stat,
-                bindings
+                bindings,
+                scaleMap
             )
 
         // generate new series for facet variables
@@ -209,13 +226,13 @@ object DataProcessing {
             val aes = binding.aes
             if (stat.hasDefaultMapping(aes)) {
                 val defaultStatVar = stat.getDefaultMapping(aes)
-                val newInputSerie: List<*>
-                if (inverseTransformedStatSeries.containsKey(defaultStatVar)) {
-                    newInputSerie = inverseTransformedStatSeries[defaultStatVar]!!
-                } else {
-                    val statSerie = statData.getNumeric(defaultStatVar)
-                    newInputSerie = ScaleUtil.inverseTransform(statSerie, binding.scale!!)
-                }
+                val newInputSerie: List<*> =
+                    if (inverseTransformedStatSeries.containsKey(defaultStatVar)) {
+                        inverseTransformedStatSeries.getValue(defaultStatVar)
+                    } else {
+                        val statSerie = statData.getNumeric(defaultStatVar)
+                        ScaleUtil.inverseTransform(statSerie, scaleMap[aes])
+                    }
                 newInputSeries[variable] = newInputSerie
             } else {
                 // Do not override series obtained via 'default stat var'
@@ -236,7 +253,7 @@ object DataProcessing {
         }
         // also update stat series
         for (variable in inverseTransformedStatSeries.keys) {
-            b.putNumeric(variable, inverseTransformedStatSeries[variable]!!)
+            b.putNumeric(variable, inverseTransformedStatSeries.getValue(variable))
         }
 
         return b.build()
@@ -245,10 +262,11 @@ object DataProcessing {
     private fun inverseTransformContinuousStatData(
         statData: DataFrame,
         stat: Stat,
-        bindings: List<VarBinding>
+        bindings: List<VarBinding>,
+        scaleMap: TypedScaleMap
     ): Map<Variable, List<Double?>> {
         // inverse transform stat data with continuous domain.
-        val scaleByAes = HashMap<Aes<*>, Scale<*>>()
+        val continuousScaleByAes = HashMap<Aes<*>, Scale<*>>()
         val aesByMappedStatVar = HashMap<Variable, Aes<*>>()
         for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
@@ -259,38 +277,38 @@ object DataProcessing {
 
         for (binding in bindings) {
             val aes = binding.aes
-            val `var` = binding.variable
-            if (`var`.isStat) {
-                aesByMappedStatVar[`var`] = aes
-            } else if (stat.hasDefaultMapping(aes)) {
-                val defaultStatVar = stat.getDefaultMapping(aes)
-                aesByMappedStatVar[defaultStatVar] = aes
+            val variable = binding.variable
+            if (variable.isStat) {
+                aesByMappedStatVar[variable] = aes
+                // ignore 'stat' var becaue ..?
+                continue
             }
+//            else if (stat.hasDefaultMapping(aes)) {
+//                val defaultStatVar = stat.getDefaultMapping(aes)
+//                aesByMappedStatVar[defaultStatVar] = aes
+//            }
 
-            if (!binding.isDeferred) {
-                val scale = binding.scale
-                if (scale!!.isContinuousDomain) {
-                    scaleByAes[aes] = scale
-                    if (Aes.isPositionalX(aes) && !scaleByAes.containsKey(Aes.X)) {
-                        scaleByAes[Aes.X] = scale
-                    } else if (Aes.isPositionalY(aes) && !scaleByAes.containsKey(Aes.Y)) {
-                        scaleByAes[Aes.Y] = scale
-                    }
+            val scale = scaleMap[aes]
+            if (scale.isContinuousDomain) {
+                continuousScaleByAes[aes] = scale
+                if (Aes.isPositionalX(aes) && !continuousScaleByAes.containsKey(Aes.X)) {
+                    continuousScaleByAes[Aes.X] = scale
+                } else if (Aes.isPositionalY(aes) && !continuousScaleByAes.containsKey(Aes.Y)) {
+                    continuousScaleByAes[Aes.Y] = scale
                 }
             }
         }
 
-
         val inverseTransformedStatSeries = HashMap<Variable, List<Double?>>()
         for (statVar in statData.variables()) {
             if (aesByMappedStatVar.containsKey(statVar)) {
-                val aes = aesByMappedStatVar[statVar]!!
-                var scale: Scale<*>? = scaleByAes[aes]
+                val aes = aesByMappedStatVar.getValue(statVar)
+                var scale: Scale<*>? = continuousScaleByAes[aes]
                 if (scale == null) {
                     if (Aes.isPositionalX(aes)) {
-                        scale = scaleByAes[Aes.X]
+                        scale = continuousScaleByAes[Aes.X]
                     } else if (Aes.isPositionalY(aes)) {
-                        scale = scaleByAes[Aes.Y]
+                        scale = continuousScaleByAes[Aes.Y]
                     }
                 }
 
@@ -304,7 +322,12 @@ object DataProcessing {
         return inverseTransformedStatSeries
     }
 
-    internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?, pathIdVar: Variable?): (Int) -> Int {
+    internal fun computeGroups(
+        data: DataFrame,
+        bindings: List<VarBinding>,
+        groupingVar: Variable?,
+        pathIdVar: Variable?
+    ): (Int) -> Int {
         val groupingVariables = getGroupingVariables(data, bindings, groupingVar) + listOfNotNull(pathIdVar)
 
         var currentGroups: List<Int>? = null

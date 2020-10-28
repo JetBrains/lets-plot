@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 
 interface GeomLayer {
     val dataFrame: DataFrame
@@ -21,6 +22,8 @@ interface GeomLayer {
     val geomKind: GeomKind
 
     val geom: Geom
+
+    val scaleMap: TypedScaleMap
 
     val dataAccess: MappedDataAccess
 
@@ -35,8 +38,6 @@ interface GeomLayer {
     val locatorLookupSpec: LookupSpec
 
     val contextualMapping: ContextualMapping
-
-//    fun handledAes(): List<Aes<*>>
 
     fun renderedAes(): List<Aes<*>>
 

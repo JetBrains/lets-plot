@@ -18,6 +18,6 @@ class ScaleProviderHelperTest {
             .put(region, listOf("Europe", "Asia", null, "Australia"))
             .build()
 
-        ScaleProviderHelper.createDefault(Aes.HJUST).createScale(df, region)
+        ScaleProviderHelper.createDefault(Aes.HJUST).createScale("region", df.distinctValues(region))
     }
 }

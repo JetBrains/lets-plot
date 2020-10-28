@@ -21,15 +21,6 @@ open class AestheticsDefaults {
     }
     private val myDefaultsInLegend = TypedKeyHashMap()
 
-//    init {
-//        myDefaults = TypedKeyHashMap()
-//        for (aes in Aes.values()) {
-//            // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
-//            @Suppress("UNCHECKED_CAST")
-//            myDefaults.put(aes as Aes<Any>, AesInitValue[aes])
-//        }
-//    }
-
     protected fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)
         return this

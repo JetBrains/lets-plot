@@ -5,9 +5,19 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Scale
 
 interface ScaleProvider<T> {
-    fun createScale(data: DataFrame, variable: DataFrame.Variable): Scale<T>
+    val discreteDomain: Boolean
+
+    /**
+     * Create scale for discrete input (domain)
+     */
+    fun createScale(defaultName: String, discreteDomain: Collection<*>): Scale<T>
+
+    /**
+     * Create scale for continuous (numeric) input (domain)
+     */
+    fun createScale(defaultName: String, continuousDomain: ClosedRange<Double>): Scale<T>
 }

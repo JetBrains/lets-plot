@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
@@ -39,21 +40,28 @@ class BarPlotResizeDemo private constructor(
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
         val fillScale = Scales.pureDiscrete("C", categories, colors, Color.GRAY)
 
+        val scaleByAes = TypedScaleMap(
+            mapOf(
+                Aes.X to xScale,
+                Aes.Y to Scales.continuousDomain("sin, cos, line", Aes.Y),
+                Aes.FILL to fillScale
+            )
+        )
+
 
         val layerBuilder = GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
             .geom(GeomProvider.bar())
             .pos(PosProvider.dodge())
             .groupingVar(varCat)
-            .addBinding(VarBinding(varX, Aes.X, xScale))
+            .addBinding(VarBinding(varX, Aes.X))
             .addBinding(
                 VarBinding(
                     varY,
-                    Aes.Y,
-                    Scales.continuousDomain("sin, cos, line", Aes.Y)
+                    Aes.Y
                 )
             )
-            .addBinding(VarBinding(varCat, Aes.FILL, fillScale))
+            .addBinding(VarBinding(varCat, Aes.FILL))
             .addConstantAes(Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
@@ -69,7 +77,7 @@ class BarPlotResizeDemo private constructor(
         val layer = layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
-            .build(data)
+            .build(data, scaleByAes)
 
 
         //Theme t = new DefaultTheme() {
@@ -83,7 +91,10 @@ class BarPlotResizeDemo private constructor(
         //    };
         //  }
         //};
-        val assembler = PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+        val assembler = PlotAssembler.singleTile(
+            scaleByAes,
+            listOf(layer), CoordProviders.cartesian(), DefaultTheme()
+        )
 //        assembler.disableInteractions()
         return PlotContainer(assembler.createPlot(), plotSizeProp)
     }

@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
@@ -29,7 +29,8 @@ abstract class PlotConfig(
 ) : OptionsAccessor(opts, DEF_OPTIONS) {
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
-    val scaleProvidersMap: TypedScaleProviderMap
+
+    val scaleMap: TypedScaleMap
     protected val scaleConfigs: List<ScaleConfig<*>>
 
     protected var sharedData: DataFrame
@@ -57,10 +58,13 @@ abstract class PlotConfig(
             update(MAPPING, plotMappings)
         }
 
-        scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
+        layerConfigs = createLayerConfigs(sharedData)
 
-        layerConfigs = createLayerConfigs(sharedData, scaleProvidersMap)
+        // build all scales
+        scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
+        val scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
+
+        scaleMap = PlotConfigUtil.createScales(layerConfigs, scaleProvidersMap, isClientSide)
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
@@ -97,8 +101,7 @@ abstract class PlotConfig(
     }
 
     private fun createLayerConfigs(
-        sharedData: DataFrame,
-        scaleProviderByAes: TypedScaleProviderMap
+        sharedData: DataFrame
     ): List<LayerConfig> {
 
         val layerConfigs = ArrayList<LayerConfig>()
@@ -112,8 +115,7 @@ abstract class PlotConfig(
                 layerOptions as Map<*, *>,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
-                scaleProviderByAes
+                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
             )
             layerConfigs.add(layerConfig)
         }
@@ -124,8 +126,7 @@ abstract class PlotConfig(
         layerOptions: Map<*, *>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
-        scaleProviderByAes: TypedScaleProviderMap
+        plotDiscreteAes: Set<*>
     ): LayerConfig
 
 

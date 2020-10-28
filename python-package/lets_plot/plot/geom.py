@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, geo_data_frame_to_lon_lat, as_pair
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, geo_data_frame_to_wgs84, as_pair
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -2323,7 +2323,7 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
 
 
 def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-              map=None, map_join=None, tooltips=None,
+              map=None, map_join=None, tooltips=None, label_format=None,
               **other_args):
     """
     Adds text directly to the plot.
@@ -2351,6 +2351,12 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    label_format : str, optional
+        Format used to transform label mapping values to a string.
+        Examples:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2396,7 +2402,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         map_join = map_join_regions(map_join)
 
     return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, tooltips=tooltips,
+                 map=map, map_join=map_join, tooltips=tooltips, label_format=label_format,
                  **other_args)
 
 
@@ -2427,10 +2433,10 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
     data, mapping, data_meta = as_annotated_data(data, mapping)
 
     if is_geo_data_frame(data):
-        data = geo_data_frame_to_lon_lat(data)
+        data = geo_data_frame_to_wgs84(data)
 
     if is_geo_data_frame(kwargs.get('map', None)):
-        kwargs['map'] = geo_data_frame_to_lon_lat(kwargs['map'])
+        kwargs['map'] = geo_data_frame_to_wgs84(kwargs['map'])
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 
