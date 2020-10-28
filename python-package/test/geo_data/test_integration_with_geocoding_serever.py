@@ -1,15 +1,13 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from typing import List
-
 import pytest
 import shapely
 from pandas import DataFrame
 from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
-from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST, DF_PARENT_COUNTRY, DF_PARENT_STATE, DF_PARENT_COUNTY
+from lets_plot.geo_data import DF_FOUND_NAME
 from .geo_data import run_intergration_tests, assert_row, assert_found_names
 
 ShapelyPoint = shapely.geometry.Point
@@ -33,7 +31,6 @@ NOT_FOUND = None
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_missing_address(address, drop_not_found, found, error):
-    # use_local_server()
     builder = geodata.regions_builder(level='city', request=address, within='usa')
     if drop_not_found:
         builder.drop_not_found()

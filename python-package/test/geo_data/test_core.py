@@ -17,7 +17,7 @@ from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _pr
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
 from lets_plot.geo_data.regions import _to_scope, _coerce_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
     DF_FOUND_NAME
-from .geo_data import make_geocode_region, make_region, make_success_response, features_to_answers, features_to_queries
+from .geo_data import make_geocode_region, make_success_response, features_to_answers, features_to_queries
 
 DATAFRAME_COLUMN_NAME = 'name'
 DATAFRAME_NAME_LIST = ['usa', 'russia']

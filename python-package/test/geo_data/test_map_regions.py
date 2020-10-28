@@ -11,7 +11,7 @@ from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint
 from lets_plot.geo_data.regions import _coerce_resolution, _parse_resolution, Regions, Resolution, DF_ID, DF_FOUND_NAME, \
     DF_REQUEST
 from lets_plot.plot import ggplot, geom_polygon
-from .geo_data import make_region, make_success_response, get_map_data_meta, features_to_queries, features_to_answers
+from .geo_data import make_success_response, get_map_data_meta, features_to_queries, features_to_answers
 
 USA_REQUEST = 'united states'
 USA_NAME = 'USA'

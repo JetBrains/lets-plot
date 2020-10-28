@@ -53,10 +53,6 @@ def run_intergration_tests() -> bool:
     return False
 
 
-def use_local_server():
-    old = os.environ.copy()
-    os.environ.update({'GEOSERVER_URL': 'http://localhost:3012', **old})
-
 NO_COLUMN = '<no column>'
 IGNORED = '__value_ignored__'
 
@@ -97,16 +93,15 @@ def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_na
 def assert_found_names(df: DataFrame, names: List[str]):
     assert names == df[DF_FOUND_NAME].tolist()
 
-
 def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Regions:
     return Regions(
         level_kind=level_kind,
         queries=[RegionQuery(request=request)],
-        answers=[make_region(name, geo_object_id, highlights)]
+        answers=[make_answer(name, geo_object_id, highlights)]
     )
 
 
-def make_region(name: str, geo_object_id: str, highlights: List[str]) -> Answer:
+def make_answer(name: str, geo_object_id: str, highlights: List[str]) -> Answer:
     return Answer([FeatureBuilder() \
                   .set_name(name) \
                   .set_id(geo_object_id) \
@@ -267,21 +262,6 @@ def assert_limit(limit: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND
     assert GEO_RECT_MAX_LON == max_lon
     assert GEO_RECT_MAX_LAT == max_lat
 
-
-def assert_centroid(centroid: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
-    assert_names(centroid, index, name, found_name)
-    assert_point(centroid, index, lon, lat)
-
-
-def assert_boundary(boundary: DataFrame, index: int, points: List[GJPoint], name=FOUND_NAME, found_name=FOUND_NAME):
-    assert_names(boundary, index, name, found_name)
-    for i, point in enumerate(points):
-        assert_point(boundary, index + i, lon(point), lat(point))
-
-
-def assert_point(df: DataFrame, index: int, lon: float, lat: float):
-    assert lon == df[DF_LON][index]
-    assert lat == df[DF_LAT][index]
 
 def feature_to_answer(feature: GeocodedFeature) -> Answer:
     return Answer([feature])
