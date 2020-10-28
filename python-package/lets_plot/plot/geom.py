@@ -53,6 +53,8 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -140,6 +142,8 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -228,6 +232,8 @@ def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -319,6 +325,8 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
     seed : random seed for LOESS sampling.
     max_n : maximum number of data-points for LOESS method. If this quantity exceeded random sampling
         is applied to data. Default - 1000
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -401,6 +409,8 @@ def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -482,6 +492,8 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
         Specifies x-value to align bin centers to.
     boundary : number, optional
         Specifies x-value to align bin boundary (i.e. point berween bins) to.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -559,6 +571,8 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
         The default is to use bin widths that cover the entire range of the data.
     drop : bool, optional, default: True
         Specifies whether to remove all bins with 0 counts.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -629,6 +643,8 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -704,6 +720,8 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -772,6 +790,8 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -842,6 +862,8 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
         position adjustment function.
     fatten : number, default: 2.5
         A multiplicative factor applied to size of the middle bar
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -912,6 +934,8 @@ def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_lege
         position adjustment function.
     fatten : number, default: 5.0
         A multiplicative factor applied to size of the middle bar
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -980,6 +1004,8 @@ def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legen
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1051,6 +1077,8 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
         Number of levels.
     binwidth: double, optional
         Distance between levels.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1135,6 +1163,8 @@ def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend
         Number of levels.
     binwidth: double, optional
         Distance between levels.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1218,6 +1248,8 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1297,6 +1329,8 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1384,6 +1418,8 @@ def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=N
         The line slope.
     intercept:
         The value of y at the point where the line crosses the y axis.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1443,6 +1479,8 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     yintercept:
         The value of y at the point where the line crosses the y axis.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1501,6 +1539,8 @@ def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     xintercept:
         The value of x at the point where the line crosses the x axis.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1569,6 +1609,8 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
         if FALSE (default) make a standard box plot.
         If TRUE, boxes are drawn with widths proportional to the square-roots of the number of
         observations in the groups.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1640,6 +1682,8 @@ def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=N
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1706,6 +1750,8 @@ def geom_area(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1778,6 +1824,8 @@ def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
     n: int, optional
         The number of sampled points for plotting the function
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1854,6 +1902,8 @@ def geom_density2d(mapping=None, data=None, stat=None, position=None, show_legen
         Number of levels.
     binwidth: double, optional
         Distance between levels.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1930,6 +1980,8 @@ def geom_density2df(mapping=None, data=None, stat=None, position=None, show_lege
         Number of levels.
     binwidth: double, optional
         Distance between levels.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1990,6 +2042,8 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
         width for jitter, default=0.4
     height : double, optional
         height for jitter, default=0.4
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2054,6 +2108,8 @@ def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2124,6 +2180,8 @@ def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     direction: string, optional
         "hv" or "HV" stands for horizontal then vertical (default); "vh" or "VH" stands for vertical then horizontal
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2208,6 +2266,8 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2280,6 +2340,8 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
         Specification for arrow head, as created by arrow() function.
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2351,6 +2413,8 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     label_format : str, optional
         Format used to transform label mapping values to a string.
         Examples:
