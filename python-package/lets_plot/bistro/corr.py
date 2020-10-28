@@ -32,7 +32,7 @@ class corr_plot_builder:
     This class is intended to build correlation matrix plots.
     """
 
-    def __init__(self, data, show_legend=None, flip=None):
+    def __init__(self, data, show_legend=None, flip=True):
         """
         Parameters
         ----------
@@ -112,7 +112,7 @@ class corr_plot_builder:
                                        tooltips=self._tooltip_spec(),
                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
                                        na_value='', label_format=self._format,
-                                       size_unit = 'x', **other_args)
+                                       size_unit='x', **other_args)
 
         return self
 
