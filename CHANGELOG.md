@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
  - Facilities for customization of tooltip contents and its position (see <link to doc>).
- - `attribution` and other parameters in the `maptiles_zxy()` function. 
+ - `attribution` and other new parameters in the `maptiles_zxy()` function. 
  - `label_format` parameter in the `geom_text()` function.
  - `scale_x_discrete_reversed()` / `scale_y_discrete_reversed()`
  - `ggsave()` function (only SVG, HTML)
