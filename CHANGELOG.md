@@ -27,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Default discrete color scheme is now ColorBrewer's Set2 (was Dark2)
  
 ### Deprecated
-
  - Function `gg_image_matrix()`. The new function is: `image_matrix()` in the `lets_plot.bistro.im` module.
     The new function is not any longer displaying matrix by itself but returns a GGBunch object instead. 
     Unlike the depricated `gg_image_matrix()` function, it is not imported by `from lets_plot import *` statement.
