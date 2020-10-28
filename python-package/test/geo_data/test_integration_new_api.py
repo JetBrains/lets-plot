@@ -126,3 +126,8 @@ def test_simple_scope():
     florida_with_scope = geodata.regions_builder2('state', names=['florida'], scope='Uruguay').build().to_data_frame()
 
     assert florida_with_country[DF_ID][0] == florida_with_scope[DF_ID][0]
+
+
+def test_where():
+    geodata.regions_builder2('city', names='warwick')\
+        .where('warwick', scope='oklahoma').build()

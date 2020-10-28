@@ -169,13 +169,14 @@ class RegionsBuilder:
                  new_scope: List[MapRegion]=[]
                  ):
 
+        self._new_api: bool = new_api
         self._level: Optional[LevelKind] = _to_level_kind(level)
         self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()  # TODO rename to geohint
         self._highlights: bool = highlights
         self._allow_ambiguous = allow_ambiguous
         self._overridings: List[RegionQuery] = []
 
-        if new_api:
+        if self._new_api:
             self._scope: List[MapRegion] = new_scope
             self._queries: List[RegionQuery] = _create_new_queries(request, self._default_ambiguity_resolver, countries, states, counties)
         else:
@@ -199,7 +200,11 @@ class RegionsBuilder:
     def where(self,
               request: request_types = None,
               within: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPolygonType]] = None,
-              near: Optional[Union[Regions, ShapelyPointType]] = None) -> 'RegionsBuilder':
+              near: Optional[Union[Regions, ShapelyPointType]] = None,
+              country: Optional[str] = None,
+              state: Optional[str] = None,
+              county: Optional[str] = None,
+              ) -> 'RegionsBuilder':
         """
         If request is not exist - append it to a list with specified scope.
         If request is already exist in the list - specify scope exactly for that request.
@@ -236,19 +241,19 @@ class RegionsBuilder:
         """
 
         scope, box = _split(within)
+        if self._new_api:
+            if scope is not None:
+                raise ValueError('Parameter scope is not available in new version of where function')
+        else:
+            ambiguity_resolver = AmbiguityResolver(None, _to_near_coord(near), box)
 
-        ambiguity_resolver = AmbiguityResolver(
-            None,
-            _to_near_coord(near),
-            box
-        )
+            new_overridings = _create_queries(request, scope, ambiguity_resolver)
+            for overriding in self._overridings:
+                if overriding.request in set([overriding.request for overriding in new_overridings]):
+                    self._overridings.remove(overriding)
 
-        new_overridings = _create_queries(request, scope, ambiguity_resolver)
-        for overriding in self._overridings:
-            if overriding.request in set([overriding.request for overriding in new_overridings]):
-                self._overridings.remove(overriding)
+            self._overridings.extend(new_overridings)
 
-        self._overridings.extend(new_overridings)
         return self
 
     def build(self) -> Regions:
