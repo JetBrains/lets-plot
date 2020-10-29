@@ -29,7 +29,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
                tooltips=None,
                **other_args):
     """
-    Points, as for a scatter plot.
+    Draw points defined by an x and y coordinate, as for a scatter plot.
 
     Parameters
     ----------
@@ -214,7 +214,8 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
 def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               **other_args):
     """
-    Connect points in order of the variable on the x-axis
+    Connect points in the order of the variable on the x axis.
+    In case points need to be connected in the order in which they appear in the data, use 'geom_path'.
 
     Parameters
     ----------
@@ -391,7 +392,7 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
 def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              **other_args):
     """
-    Bar chart which makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
+    Display a bar chart which makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
 
     Parameters
     ----------
@@ -625,7 +626,7 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
 
 def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, **other_args):
     """
-    Rectangles with x, y values mapped to center
+    Display rectangles with x, y values mapped to the center of the tile.
 
     Parameters
     ----------
@@ -701,7 +702,8 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
 def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=None, tooltips=None, **other_args):
     """
-    Rectangles with x, y values mapped to center.
+    Display rectangles with x, y values mapped to the center of the tile.
+    This is a high performance special function for same-sized tiles.
     Much faster than geom_tile but doesn't support width/height and color.
 
     Parameters
@@ -772,7 +774,7 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
 def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   **other_args):
     """
-    Error bars
+    Display error bars defined by the upper and lower values.
 
     Parameters
     ----------
@@ -845,7 +847,7 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
 def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, fatten=None,
                   tooltips=None, **other_args):
     """
-    Bar with horizontal median line
+    Display bars with horizontal median line.
 
     Parameters
     ----------
@@ -917,7 +919,7 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
 def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, fatten=None,
                     tooltips=None, **other_args):
     """
-    Vertical line defined by upper and lower value with mid-point at Y-location.
+    Add a vertical line defined by upper and lower value with midpoint at y location.
 
     Parameters
     ----------
@@ -989,7 +991,7 @@ def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_lege
 def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                    **other_args):
     """
-    Line range, defined by an upper and lower value
+    Display a line range defined by an upper and lower value.
 
     Parameters
     ----------
@@ -1223,7 +1225,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
                  map=None, map_join=None, tooltips=None,
                  **other_args):
     """
-    Display a polygon (filled path).
+    Display a filled closed path defined by the vertex coordinates of individual polygons.
 
     Parameters
     ----------
@@ -1396,7 +1398,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
 def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, slope=None,
                 intercept=None, tooltips=None, **other_args):
     """
-    Add straight lines to a plot specified by slope and intercept.
+    Add a straight line with specified slope and intercept to the plot.
 
     Parameters
     ----------
@@ -1459,7 +1461,7 @@ def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=N
 def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, yintercept=None,
                tooltips=None, **other_args):
     """
-    Add straight horizontal lines to a plot
+    Add a straight horizontal line to the plot.
 
     Parameters
     ----------
@@ -1519,7 +1521,7 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
 def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, xintercept=None,
                tooltips=None, **other_args):
     """
-    Add straight vertical lines to a plot
+    Add a straight vertical line to the plot.
 
     Parameters
     ----------
@@ -1583,6 +1585,8 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
                  tooltips=None,
                  **other_args):
     """
+    Display the distribution of data based on a five number summary ("minimum", first quartile (Q1), median, 
+    third quartile (Q3), and "maximum"), and "outlying" points individually.
 
     Parameters
     ----------
@@ -1664,7 +1668,7 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
 def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 **other_args):
     """
-    Display a ribbon.
+    Display a y interval defined by ymin and ymax.
 
     Parameters
     ----------
@@ -1732,7 +1736,7 @@ def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=N
 def geom_area(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               **other_args):
     """
-    Display an area.
+    Display the development of quantitative values over an interval. This is the continuous analog of geom_bar.
 
     Parameters
     ----------
@@ -1797,7 +1801,7 @@ def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=
                  adjust=None, bw=None, n=None, tooltips=None,
                  **other_args):
     """
-    Display density function.
+    Display a density estimate, which is a smoothed version of the histogram.
 
     Parameters
     ----------
@@ -2020,7 +2024,7 @@ def geom_density2df(mapping=None, data=None, stat=None, position=None, show_lege
 def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, width=None,
                 height=None, tooltips=None, **other_args):
     """
-    Jittered Points, especially for discrete plots or dense plots.
+    Display jittered points, especially for discrete plots or dense plots.
 
     Parameters
     ----------
@@ -2090,7 +2094,7 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
 def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   **other_args):
     """
-    Line chart which makes the y value proportional to the number of observed variable values, mapped to x axis.
+    Display a line chart which makes the y value proportional to the number of observed variable values, mapped to x axis.
 
     Parameters
     ----------
@@ -2160,7 +2164,7 @@ def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend
 def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, direction=None,
               tooltips=None, **other_args):
     """
-    Connects observations in the order, how they appear in the data.
+    Connect observations in the order in which they appear in the data by stairs.
 
     Parameters
     ----------
@@ -2241,7 +2245,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
               map=None, map_join=None, tooltips=None,
               **other_args):
     """
-    Draws rectangles
+    Display an axis-aligned rectangle defined by two corners.
 
     Parameters
     ----------
@@ -2318,7 +2322,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
 def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, arrow=None,
                  animation=None, tooltips=None, **other_args):
     """
-    Draws segments
+    Draw a straight line segment between two points.
 
     Parameters
     ----------
@@ -2388,7 +2392,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
               map=None, map_join=None, tooltips=None, label_format=None,
               **other_args):
     """
-    Adds text directly to the plot.
+    Add a text directly to the plot.
 
     Parameters
     ----------
