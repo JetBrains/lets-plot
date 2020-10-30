@@ -16,7 +16,8 @@ class Attribution(override var origin: DoubleVector, private val texts: List<Tex
     private val rectangle: Rectangle = Rectangle()
     var padding: Double = 0.0
     var background: Color = Color.TRANSPARENT
-    var position = Label.LabelPosition.RIGHT
+    var horizontalPosition = Label.LabelHorizontalPosition.RIGHT
+    var verticalPosition = Label.LabelVerticalPosition.TOP
 
     override fun render(ctx: Context2d) {
         if (isDirty()) {
@@ -36,11 +37,19 @@ class Attribution(override var origin: DoubleVector, private val texts: List<Tex
 
             dimension = dimension.add(DoubleVector(padding * 2, padding * 2))
 
-            origin += when (position) {
-                Label.LabelPosition.LEFT -> DoubleVector(-dimension.x, 0.0)
-                Label.LabelPosition.CENTER -> DoubleVector(-dimension.x / 2, 0.0)
-                Label.LabelPosition.RIGHT -> DoubleVector.ZERO
+            val horizontalShift = when (horizontalPosition) {
+                Label.LabelHorizontalPosition.LEFT -> -dimension.x
+                Label.LabelHorizontalPosition.CENTER -> -dimension.x / 2
+                Label.LabelHorizontalPosition.RIGHT -> 0.0
             }
+
+            val verticalShift = when (verticalPosition) {
+                Label.LabelVerticalPosition.TOP -> 0.0
+                Label.LabelVerticalPosition.CENTER -> -dimension.y / 2
+                Label.LabelVerticalPosition.BOTTOM -> -dimension.y
+            }
+
+            origin += DoubleVector(horizontalShift, verticalShift)
 
             rectangle.apply {
                 rect = DoubleRectangle(this@Attribution.origin, this@Attribution.dimension)

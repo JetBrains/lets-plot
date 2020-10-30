@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.core.rendering.primitives.Label.LabelPosition.*
+import jetbrains.livemap.core.rendering.primitives.Label.LabelHorizontalPosition.*
 
 class Label(override var origin: DoubleVector, private var text: Text) : RenderBox {
     private var frame: Frame? = null
@@ -17,7 +17,8 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
     private val rectangle: Rectangle = Rectangle()
     var padding: Double = 0.0
     var background: Color = Color.TRANSPARENT
-    var position = RIGHT
+    var horizontalPosition = RIGHT
+    var verticalPosition = LabelVerticalPosition.TOP
 
     override fun render(ctx: Context2d) {
         if (text.isDirty) {
@@ -28,11 +29,19 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
                 color = background
             }
 
-            origin += when (position) {
-                LEFT -> DoubleVector(-dimension.x, 0.0)
-                CENTER -> DoubleVector(-dimension.x / 2, 0.0)
-                RIGHT -> DoubleVector.ZERO
+            val horizontalShift = when (horizontalPosition) {
+                LEFT -> -dimension.x
+                CENTER -> -dimension.x / 2
+                RIGHT -> 0.0
             }
+
+            val verticalShift = when (verticalPosition) {
+                LabelVerticalPosition.TOP -> 0.0
+                LabelVerticalPosition.CENTER -> -dimension.y / 2
+                LabelVerticalPosition.BOTTOM -> -dimension.y
+            }
+
+            origin += DoubleVector(horizontalShift, verticalShift)
 
             text.origin = DoubleVector(padding, padding)
             frame = Frame.create(origin, rectangle, text)
@@ -41,10 +50,16 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
         frame?.render(ctx)
     }
 
-    enum class LabelPosition {
+    enum class LabelHorizontalPosition {
         RIGHT,
         CENTER,
         LEFT
+    }
+
+    enum class LabelVerticalPosition {
+        TOP,
+        CENTER,
+        BOTTOM
     }
 }
 

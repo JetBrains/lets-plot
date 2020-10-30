@@ -124,10 +124,11 @@ class LiveMapUiSystem(
                 texts.add(attributionText)
             }
 
-            Attribution(DoubleVector(myViewport.size.x, 0.0), texts).apply {
+            Attribution(DoubleVector(myViewport.size.x, myViewport.size.y), texts).apply {
                 background = Color(200, 200, 200, 179)
                 this.padding = 2.0
-                position = Label.LabelPosition.LEFT
+                horizontalPosition = Label.LabelHorizontalPosition.LEFT
+                verticalPosition = Label.LabelVerticalPosition.BOTTOM
             }.run {
                 myUiService.addRenderable(this)
             }
