@@ -13,9 +13,6 @@ from ...settings_utils import GEOCODING_PROVIDER_URL
 
 class GeocodingService:
     def do_request(self, request: Request) -> Response:
-        return self._execute(request)
-
-    def _execute(self, request: Request) -> Response:
         if not has_global_value(GEOCODING_PROVIDER_URL):
             raise ValueError('Geocoding server url is not defined')
 

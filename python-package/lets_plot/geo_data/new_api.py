@@ -30,8 +30,6 @@ def _ensure_is_parent_list(obj):
     if obj is None:
         return None
 
-    if isinstance(obj, str):
-        return [obj]
     if isinstance(obj, Regions):
         return obj.as_list()
 
@@ -40,7 +38,7 @@ def _ensure_is_parent_list(obj):
 
     return [obj]
 
-def _make_parents(values) -> List[Optional[MapRegion]]:
+def _make_parents(values: parent_types) -> List[Optional[MapRegion]]:
     values = _ensure_is_parent_list(values)
 
     if values is None:
@@ -76,15 +74,15 @@ class RegionsBuilder2:
         self._highlights = v
         return self
 
-    def countries(self, countries) -> 'RegionsBuilder2':
+    def countries(self, countries: parent_types) -> 'RegionsBuilder2':
         self._countries = _make_parents(countries)
         return self
 
-    def states(self, states) -> 'RegionsBuilder2':
+    def states(self, states: parent_types) -> 'RegionsBuilder2':
         self._states = _make_parents(states)
         return self
 
-    def counties(self, counties) -> 'RegionsBuilder2':
+    def counties(self, counties: parent_types) -> 'RegionsBuilder2':
         self._counties = _make_parents(counties)
         return self
 
@@ -165,15 +163,19 @@ class RegionsBuilder2:
 
         return request
 
+    def _build_regions(self, response: Response, queries: List[RegionQuery]) -> Regions:
+        if not isinstance(response, SuccessResponse):
+            _raise_exception(response)
+
+        return Regions(response.level, response.answers, queries, self._highlights)
+
+
     def build(self) -> Regions:
         request: GeocodingRequest = self._build_request()
 
         response: Response = GeocodingService().do_request(request)
 
-        if not isinstance(response, SuccessResponse):
-            _raise_exception(response)
-
-        return Regions(response.level, response.answers, request.region_queries, self._highlights)
+        return self._build_regions(response, request.region_queries)
 
 
     def __eq__(self, o):

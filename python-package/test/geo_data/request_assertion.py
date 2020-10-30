@@ -1,18 +1,23 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-from typing import TypeVar, Generic, Optional, List
+from typing import TypeVar, Generic, Optional, List, Union
 
-from lets_plot.geo_data.gis.request import Request, GeocodingRequest, RegionQuery, MapRegion, AmbiguityResolver, PayloadKind
+from lets_plot.geo_data.regions import _ensure_is_list
+from lets_plot.geo_data.gis.request import Request, GeocodingRequest, RegionQuery, MapRegion, AmbiguityResolver, \
+    PayloadKind, MapRegionKind
 
 T = TypeVar('T')
+
 
 class ValueMatcher(Generic[T]):
     def check(self, value):
         raise ValueError('abstract')
 
+
 class any(ValueMatcher[T]):
     def check(self, value):
         return
+
 
 class eq(ValueMatcher[T]):
     def __init__(self, v):
@@ -21,18 +26,29 @@ class eq(ValueMatcher[T]):
     def check(self, value):
         assert self.expected == value, '{} != {}'.format(self.expected, value)
 
-class eq_map_region_with_name(eq):
+
+class eq_map_region_with_name(eq[MapRegion]):
     def __init__(self, name: str):
         self.expected = MapRegion.with_name(name)
 
-class eq_map_region_with_id(eq):
-    def __init__(self, ids: List[str]):
+
+class eq_map_region_with_id(ValueMatcher[MapRegion]):
+    """
+    Checks only id
+    """
+    def __init__(self, ids: Union[str, List[str]]):
+        ids = _ensure_is_list(ids)
         self.expected = MapRegion.scope(ids)
+
+    def check(self, value):
+        assert value.kind == MapRegionKind.id or value.kind == MapRegionKind.place
+        assert self.expected.values == value.values
 
 
 class empty(ValueMatcher[T]):
     def check(self, value):
         assert value is None, '{} is not None'.format(value)
+
 
 class item_exists(ValueMatcher[T]):
     def __init__(self, value):
@@ -55,6 +71,7 @@ class ScopeMatcher:
     Scope with ids should have length exactly 1.
 
     '''
+
     def __init__(self):
         self._names: Optional[List[str]] = None
         self._ids: Optional[List[str]] = None
@@ -127,6 +144,7 @@ class QueryMatcher:
         self._country.check(q.country)
         self._state.check(q.state)
         self._county.check(q.county)
+
 
 class GeocodingRequestAssertion:
     def __init__(self, request: Request):

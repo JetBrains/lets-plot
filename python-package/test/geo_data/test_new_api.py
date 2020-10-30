@@ -8,7 +8,7 @@ from lets_plot.geo_data.new_api import RegionsBuilder2
 from lets_plot.geo_data.regions import Regions
 from .geo_data import make_answer
 from .request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \
-    eq_map_region_with_name
+    eq_map_region_with_name, eq_map_region_with_id
 
 
 def test_simple():
@@ -30,23 +30,49 @@ def test_no_parents_where_should_override_scope():
         .has_query(0, no_parents(request=eq('foo'), scope=eq_map_region_with_name('bar')))
 
 
+def test_when_regions_in_parent_should_take_region_id():
+    builder = RegionsBuilder2(request='foo') \
+        .states(make_simple_region('bar'))
+
+    assert_that(builder) \
+        .has_query(0, QueryMatcher()
+                   .with_name('foo')\
+                   .state(eq_map_region_with_id('bar_id'))
+                   )
+
+
+def test_parents_can_contain_nulls():
+    builder = RegionsBuilder2(request=['foo', 'bar'])\
+        .states([None, 'baz'])
+
+    assert_that(builder) \
+        .has_query(0, QueryMatcher()
+                   .with_name('foo') \
+                   .state(empty())
+                   ) \
+        .has_query(1, QueryMatcher()
+                   .with_name('bar') \
+                   .state(eq_map_region_with_name('baz'))
+                   )
+
+
 def test_where_with_given_parents_and_duplicated_names():
     # should update scope only for matching name and parents - query with index 1
 
     request = RegionsBuilder2(request=['foo', 'foo']) \
-        .counties(['bar', 'baz']) \
-        .where(name='foo', county='baz', scope='spam') \
+        .states(['bar', 'baz']) \
+        .where(name='foo', state='baz', scope='spam') \
         ._build_request()
 
     assert_that(request) \
         .has_query(0, QueryMatcher()
                    .with_name('foo')
-                   .county(eq_map_region_with_name('bar'))
+                   .state(eq_map_region_with_name('bar'))
                    .scope(empty())
                    ) \
         .has_query(1, QueryMatcher()
                    .with_name('foo')
-                   .county(eq_map_region_with_name('baz'))
+                   .state(eq_map_region_with_name('baz'))
                    .scope(eq_map_region_with_name('spam'))
                    )
 
@@ -114,7 +140,7 @@ def test_error_where_scope_len_is_invalid():
     )
 
 
-def make_simple_region(requests: Union[str, List[str]], geo_object_ids: Union[str, List[str]] = None) -> Regions:
+def make_simple_region(requests: Union[str, List[str]], geo_object_ids: Union[str, List[str]] = None, level_kind: LevelKind = LevelKind.county) -> Regions:
     requests = requests if isinstance(requests, (list, tuple)) else [requests]
     geo_object_ids = geo_object_ids if geo_object_ids is not None else [request + '_id' for request in requests]
     geo_object_ids = geo_object_ids if isinstance(geo_object_ids, (list, tuple)) else [geo_object_ids]
@@ -125,7 +151,7 @@ def make_simple_region(requests: Union[str, List[str]], geo_object_ids: Union[st
         queries.append(RegionQuery(request=request))
         answers.append(make_answer(request, id, []))
 
-    return Regions(LevelKind.county, answers, queries)
+    return Regions(level_kind, answers, queries)
 
 
 def no_parents(request: ValueMatcher[Optional[str]],
@@ -136,7 +162,7 @@ def no_parents(request: ValueMatcher[Optional[str]],
                         country=empty(), state=empty(), county=empty())
 
 
-def assert_that(request):
+def assert_that(request: Union[RegionsBuilder2, GeocodingRequest]):
     if isinstance(request, RegionsBuilder2):
         return GeocodingRequestAssertion(request._build_request())
     elif isinstance(request, GeocodingRequest):

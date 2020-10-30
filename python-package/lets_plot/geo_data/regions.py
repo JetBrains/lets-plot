@@ -335,7 +335,7 @@ class Regions(CanToDataFrame):
 
 request_types = Optional[Union[str, List[str], Series]]
 scope_types = Optional[Union[str, List[str], Regions, List[Regions]]]
-parent_types = Optional[Union[str, Regions]]
+parent_types = Optional[Union[str, Regions, MapRegion, List]] # list of same types
 
 
 def _raise_exception(response: Response):
