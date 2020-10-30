@@ -69,8 +69,8 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         Any key-value pairs that can be substituted into the url template
 
         maptiles_zxy(
-            url = 'http://{sub}.example.com/{z}/{x}/{y}.png'
-            sub = 'maps'
+            url = 'http://maps.example.com/{z}/{x}/{y}.png?access_key={key}'
+            key = 'MY_ACCESS_KEY'
         )
 
     Returns
