@@ -180,7 +180,7 @@ class TooltipBox : SvgComponent() {
             val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
                 Triple(
                     line.label,
-                    if (line.label.isNullOrEmpty()) null else TextLabel(line.label!!),
+                    line.label.takeUnless(String?::isNullOrEmpty)?.let(::TextLabel),
                     TextLabel(line.value)
                 )
             }
