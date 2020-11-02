@@ -399,7 +399,7 @@ Examples:
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_datalore.svg" width="20" height="20">
 </a>
 <span>&nbsp;&nbsp;</span>
-<a href="https://www.kaggle.com/alshan/lets-plot-titanic" title="View at Kaggle"> 
+<a href="https://www.kaggle.com/alshan/visualization-of-the-titanic-s-voyage" title="View at Kaggle"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
 </a>
 <span>&nbsp;&nbsp;</span>
