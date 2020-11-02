@@ -14,6 +14,22 @@ ShapelyPointType = 'shapely.geometry.Point'
 ShapelyPolygonType = 'shapely.geometry.Polygon'
 
 
+def _make_ambiguity_resolver(ignoring_strategy: Optional[IgnoringStrategyKind] = None,
+                             within: ShapelyPolygonType = None,
+                             near: Optional[Union[Regions, ShapelyPointType]] = None):
+    box = None
+    if LazyShapely.is_polygon(within):
+        box = GeoRect(min_lon=within.bounds[0], min_lat=within.bounds[1], max_lon=within.bounds[2], max_lat=within.bounds[3])
+
+    near = _to_near_coord(near)
+
+    return AmbiguityResolver(
+        ignoring_strategy=ignoring_strategy,
+        closest_coord=near,
+        box=box
+    )
+
+
 def _to_near_coord(near: Optional[Union[Regions, ShapelyPointType]]) -> Optional[GeoPoint]:
     if near is None:
         return None
@@ -39,15 +55,15 @@ def _to_near_coord(near: Optional[Union[Regions, ShapelyPointType]]) -> Optional
     if LazyShapely.is_point(near):
         return GeoPoint(lon=near.x, lat=near.y)
 
-    raise ValueError('Not supported type')
+    raise ValueError('Not supported type: {}'.format(type(near)))
 
 
 def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPolygonType]]) -> Tuple[
     scope_types, Optional[GeoRect]]:
     if not LazyShapely.is_polygon(box):
         return box, None
-
-    return None, GeoRect(min_lon=box.bounds[0], min_lat=box.bounds[1], max_lon=box.bounds[2], max_lat=box.bounds[3])
+    else:
+        return None, GeoRect(min_lon=box.bounds[0], min_lat=box.bounds[1], max_lon=box.bounds[2], max_lat=box.bounds[3])
 
 def _create_new_queries(
         request: request_types,
@@ -201,9 +217,6 @@ class RegionsBuilder:
               request: request_types = None,
               within: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPolygonType]] = None,
               near: Optional[Union[Regions, ShapelyPointType]] = None,
-              country: Optional[str] = None,
-              state: Optional[str] = None,
-              county: Optional[str] = None,
               ) -> 'RegionsBuilder':
         """
         If request is not exist - append it to a list with specified scope.

@@ -2,8 +2,13 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from typing import Optional, Union, List, Callable
+from unittest import mock
 
-from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, GeocodingRequest, LevelKind, RegionQuery, PayloadKind
+import shapely
+
+from lets_plot.geo_data import GeocodingService, SuccessResponse, Answer, GeocodedFeature
+from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
+from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, GeocodingRequest, LevelKind, RegionQuery
 from lets_plot.geo_data.new_api import RegionsBuilder2
 from lets_plot.geo_data.regions import Regions
 from .geo_data import make_answer
@@ -16,7 +21,7 @@ def test_simple():
         ._build_request()
 
     assert_that(request) \
-        .has_query(0, no_parents(request=eq('foo')))
+        .has_query(no_parents(request=eq('foo')))
 
 
 def test_no_parents_where_should_override_scope():
@@ -27,7 +32,7 @@ def test_no_parents_where_should_override_scope():
         ._build_request()
 
     assert_that(request) \
-        .has_query(0, no_parents(request=eq('foo'), scope=eq_map_region_with_name('bar')))
+        .has_query(no_parents(request=eq('foo'), scope=eq_map_region_with_name('bar')))
 
 
 def test_when_regions_in_parent_should_take_region_id():
@@ -35,7 +40,7 @@ def test_when_regions_in_parent_should_take_region_id():
         .states(make_simple_region('bar'))
 
     assert_that(builder) \
-        .has_query(0, QueryMatcher()
+        .has_query(QueryMatcher()
                    .with_name('foo')\
                    .state(eq_map_region_with_id('bar_id'))
                    )
@@ -46,11 +51,11 @@ def test_parents_can_contain_nulls():
         .states([None, 'baz'])
 
     assert_that(builder) \
-        .has_query(0, QueryMatcher()
+        .has_query(QueryMatcher()
                    .with_name('foo') \
                    .state(empty())
                    ) \
-        .has_query(1, QueryMatcher()
+        .has_query(QueryMatcher()
                    .with_name('bar') \
                    .state(eq_map_region_with_name('baz'))
                    )
@@ -65,15 +70,75 @@ def test_where_with_given_parents_and_duplicated_names():
         ._build_request()
 
     assert_that(request) \
-        .has_query(0, QueryMatcher()
+        .has_query(QueryMatcher()
                    .with_name('foo')
                    .state(eq_map_region_with_name('bar'))
                    .scope(empty())
                    ) \
-        .has_query(1, QueryMatcher()
+        .has_query(QueryMatcher()
                    .with_name('foo')
                    .state(eq_map_region_with_name('baz'))
                    .scope(eq_map_region_with_name('spam'))
+                   )
+
+def test_where_within_box():
+    request = RegionsBuilder2(request=['foo']) \
+        .states(['bar']) \
+        .where(name='foo', state='bar', within=shapely.geometry.box(1, 2, 3, 4)) \
+        ._build_request()
+
+    assert_that(request) \
+        .has_query(QueryMatcher()
+                   .with_name('foo')
+                   .state(eq_map_region_with_name('bar'))
+                   .ambiguity_resolver(eq(AmbiguityResolver(box=GeoRect(1, 2, 3, 4))))
+                   )
+
+
+def test_where_near_point():
+    request = RegionsBuilder2(request=['foo']) \
+        .states(['bar']) \
+        .where(name='foo', state='bar', near=shapely.geometry.Point(1, 2)) \
+        ._build_request()
+
+    assert_that(request) \
+        .has_query(QueryMatcher()
+                   .with_name('foo')
+                   .state(eq_map_region_with_name('bar'))
+                   .ambiguity_resolver(eq(AmbiguityResolver(closest_coord=GeoPoint(1, 2))))
+                   )
+
+
+@mock.patch.object(GeocodingService, 'do_request', lambda self, reqest: SuccessResponse(
+    message='',
+    level=LevelKind.city,
+    answers=[
+        Answer(
+            features=[
+                GeocodedFeature(
+                    id='foo_id',
+                    name='foo',
+                    highlights=None,
+                    boundary=None,
+                    centroid=GeoPoint(1, 2),
+                    limit=None,
+                    position=None
+                )
+            ])
+    ]
+))
+def test_where_near_region():
+    request = RegionsBuilder2(request=['foo']) \
+        .states(['bar']) \
+        .where(name='foo', state='bar', near=make_simple_region('foo', 'foo_id')) \
+        ._build_request()
+
+
+    assert_that(request) \
+        .has_query(QueryMatcher()
+                   .with_name('foo')
+                   .state(eq_map_region_with_name('bar'))
+                   .ambiguity_resolver(eq(AmbiguityResolver(closest_coord=GeoPoint(1, 2))))
                    )
 
 
@@ -85,27 +150,27 @@ def test_global_scope():
     # single str scope
     assert_that(builder.scope('bar')) \
         .has_scope(ScopeMatcher().with_names(['bar'])) \
-        .has_query(0, QueryMatcher().with_name('foo').scope(empty()))
+        .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
     # two strings scope - should flatten to two MapRegions with single name in each
     assert_that(builder.scope(['bar', 'baz'])) \
         .has_scope(ScopeMatcher().with_names(['bar', 'baz'])) \
-        .has_query(0, QueryMatcher().with_name('foo').scope(empty()))
+        .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
     # single regions scope
     assert_that(builder.scope(make_simple_region('bar', 'bar_id'))) \
         .has_scope(ScopeMatcher().with_ids(['bar_id'])) \
-        .has_query(0, QueryMatcher().with_name('foo').scope(empty()))
+        .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
     # single region with entries scope
     assert_that(builder.scope([make_simple_region(['bar', 'baz'], ['bar_id', 'baz_id'])])) \
         .has_scope(ScopeMatcher().with_ids(['bar_id', 'baz_id'])) \
-        .has_query(0, QueryMatcher().with_name('foo').scope(empty()))
+        .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
     # two regions scope - flatten ids
     assert_that(builder.scope([make_simple_region('bar', 'bar_id'), make_simple_region('baz', 'baz_id')])) \
         .has_scope(ScopeMatcher().with_ids(['bar_id', 'baz_id'])) \
-        .has_query(0, QueryMatcher().with_name('foo').scope(empty()))
+        .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
 
 def test_error_when_country_and_scope_set_should_show_error():

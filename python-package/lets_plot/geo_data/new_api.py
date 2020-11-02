@@ -10,14 +10,16 @@ from .gis.response import Response, SuccessResponse
 from .regions import _make_parent_region
 from .regions import _to_level_kind, request_types, parent_types, scope_types, Regions, _raise_exception, \
     _ensure_is_list
-from .regions_builder import NAMESAKE_MAX_COUNT
+from .regions_builder import NAMESAKE_MAX_COUNT, ShapelyPointType, ShapelyPolygonType, _to_near_coord, \
+    _make_ambiguity_resolver
 
 __all__ = [
-    'regions_builder2'
+    'regions2', 'regions_builder2', 'city_regions_builder', 'county_regions_builder', 'state_regions_builder',
+    'country_regions_builder'
 ]
 
 QuerySpec = namedtuple('QuerySpec', 'name, county, state, country')
-WithinSpec = namedtuple('WithinSpec', 'scope, polygon')
+WhereSpec = namedtuple('WithinSpec', 'scope, ambiguity_resolver')
 
 
 def _get_or_none(list, index):
@@ -37,6 +39,7 @@ def _ensure_is_parent_list(obj):
         return obj
 
     return [obj]
+
 
 def _make_parents(values: parent_types) -> List[Optional[MapRegion]]:
     values = _ensure_is_parent_list(values)
@@ -61,7 +64,7 @@ class RegionsBuilder2:
         self._countries: List[Optional[MapRegion]] = []
         self._states: List[Optional[MapRegion]] = []
         self._counties: List[Optional[MapRegion]] = []
-        self._overridings: Dict[QuerySpec, WithinSpec] = {}  # query to scope
+        self._overridings: Dict[QuerySpec, WhereSpec] = {}  # query to scope
 
         requests: Optional[List[str]] = _ensure_is_list(request)
         self._names: List[Optional[str]] = list(map(lambda name: name if requests is not None else None, requests))
@@ -103,24 +106,65 @@ class RegionsBuilder2:
               county: Optional[parent_types] = None,
               state: Optional[parent_types] = None,
               country: Optional[parent_types] = None,
-              scope: scope_types = None):
-        new_scope: List[MapRegion] = _prepare_new_scope(scope)
-        if len(new_scope) != 1:
-            raise ValueError('Invalid request: where functions scope should have length of 1, but was {}'.format(len(new_scope)))
+              scope: scope_types = None,
+              within: ShapelyPolygonType = None,
+              near: Optional[Union[Regions, ShapelyPointType]] = None
+              ):
+        """
+        If name is not exist - error will be generated.
+        If name is exist in the RegionsBuilder - specify extra parameters for geocoding.
 
-        county_region = _make_parent_region(county)
-        state_region = _make_parent_region(state)
-        country_region = _make_parent_region(country)
 
-        self._overridings[QuerySpec(name, county_region, state_region, country_region)] = WithinSpec(new_scope[0],
-                                                                                                     AmbiguityResolver.empty())
+        Parameters
+        ----------
+        name : string
+            Name in RegionsBuilder that needs better qualificationfrom request Data can be filtered by full names at any level (only exact matching).
+        county : [string | None]
+            When RegionsBuilder built with parents this field is used to identify a row for the name
+        state : [string | None]
+            When RegionsBuilder built with parents this field is used to identify a row for the name
+        country : [string | None]
+            When RegionsBuilder built with parents this field is used to identify a row for the name
+        scope : [string | Regions | None]
+            Resolve ambiguity by setting scope as parent. If parent country is set then error will be shown.
+             If type is string - scope will be geocoded and used as parent.
+             If type is Regions  - scope will be used as parent.
+        within : [shapely.Polygon | None]
+            Resolve ambihuity by limiting area in which centroid be located.
+        near: [Regions | shapely.geometry.Point | None]
+            Resolve ambiguity by taking object closest to a 'near' object.
+
+        Returns
+        -------
+            RegionsBuilder object
+        """
+        query_spec = QuerySpec(
+            name,
+            _make_parent_region(county),
+            _make_parent_region(state),
+            _make_parent_region(country)
+        )
+
+        if scope is None:
+            new_scope = None
+        else:
+            new_scopes: List[MapRegion] = _prepare_new_scope(scope)
+            if len(new_scopes) != 1:
+                raise ValueError(
+                    'Invalid request: where functions scope should have length of 1, but was {}'.format(len(new_scopes)))
+            new_scope = new_scopes[0]
+
+        ambiguity_resolver = _make_ambiguity_resolver(within=within, near=near)
+
+        self._overridings[query_spec] = WhereSpec(new_scope, ambiguity_resolver)
         return self
-
 
     def _build_request(self) -> GeocodingRequest:
         def _validate_parents_size(parents: List, parents_level: str):
             if len(parents) > 0 and len(parents) != len(self._names):
-                raise ValueError('Invalid request: {} count({}) != names count({})'.format(parents_level, len(parents), len(self._names)))
+                raise ValueError('Invalid request: {} count({}) != names count({})'.format(parents_level, len(parents),
+                                                                                           len(self._names)))
+
         _validate_parents_size(self._countries, 'countries')
         _validate_parents_size(self._states, 'states')
         _validate_parents_size(self._counties, 'counties')
@@ -137,7 +181,7 @@ class RegionsBuilder2:
 
             scope, ambiguity_resolver = self._overridings.get(
                 QuerySpec(name, county, state, country),
-                WithinSpec(None, self._default_ambiguity_resolver)
+                WhereSpec(None, self._default_ambiguity_resolver)
             )
 
             query = RegionQuery(
@@ -169,14 +213,12 @@ class RegionsBuilder2:
 
         return Regions(response.level, response.answers, queries, self._highlights)
 
-
     def build(self) -> Regions:
         request: GeocodingRequest = self._build_request()
 
         response: Response = GeocodingService().do_request(request)
 
         return self._build_regions(response, request.region_queries)
-
 
     def __eq__(self, o):
         return isinstance(o, RegionsBuilder2) \
@@ -246,7 +288,7 @@ def regions_builder2(level=None, names=None, countries=None, states=None, counti
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
+    >>> r = regions_builder2(level='city', names=['moscow', 'york']).where('york', regions_state('New York')).build()
     """
     return RegionsBuilder2(level, names) \
         .scope(scope) \
@@ -280,3 +322,115 @@ def regions2(level=None, names=None, countries=None, states=None, counties=None,
         If scope is an array then geocoding will try to search objects in all scopes.
     """
     return regions_builder2(level, names, countries, states, counties, scope).build()
+
+
+def city_regions_builder(names=None) -> RegionsBuilder2:
+    """
+    Create a RegionBuilder object for cities. Allows to refine ambiguous request with
+    where method. build() method creates Regions object or shows details for ambiguous result.
+
+    regions_builder(level, request, within)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    RegionsBuilder object :
+
+    Note
+    -----
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = city_regions_builder(names=['moscow', 'york']).where('york', regions_state('New York')).build()
+    """
+    return RegionsBuilder2('city', names)
+
+
+def county_regions_builder(names=None) -> RegionsBuilder2:
+    """
+    Create a RegionBuilder object for counties. Allows to refine ambiguous request with
+    where method. build() method creates Regions object or shows details for ambiguous result.
+
+    regions_builder(level, request, within)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    RegionsBuilder object :
+
+    Note
+    -----
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = county_regions_builder(names='suffolk').build()
+    """
+    return RegionsBuilder2('county', names)
+
+
+def state_regions_builder(names=None) -> RegionsBuilder2:
+    """
+    Create a RegionBuilder object for states. Allows to refine ambiguous request with
+    where method. build() method creates Regions object or shows details for ambiguous result.
+
+    regions_builder(level, request, within)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    RegionsBuilder object :
+
+    Note
+    -----
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = state_regions_builder(names='texas').build()
+    """
+    return RegionsBuilder2('state', names)
+
+
+def country_regions_builder(names=None) -> RegionsBuilder2:
+    """
+    Create a RegionBuilder object for countries. Allows to refine ambiguous request with
+    where method. build() method creates Regions object or shows details for ambiguous result.
+
+    regions_builder(level, request, within)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    RegionsBuilder object :
+
+    Note
+    -----
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = country_regions_builder(names='USA').build()
+    """
+    return RegionsBuilder2('country', names)

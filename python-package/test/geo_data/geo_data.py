@@ -56,7 +56,18 @@ def run_intergration_tests() -> bool:
 NO_COLUMN = '<no column>'
 IGNORED = '__value_ignored__'
 
-def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_name: Union[str, List] = IGNORED, id: Union[str, List] = IGNORED, county: Union[str, List] = IGNORED, state: Union[str, List] = IGNORED, country: Union[str, List] = IGNORED, lon=None, lat=None):
+def assert_row(
+        df,
+        index: int = 0,
+        request: Union[str, List] = IGNORED,
+        found_name: Union[str, List] = IGNORED,
+        id: Union[str, List] = IGNORED,
+        county: Union[str, List] = IGNORED,
+        state: Union[str, List] = IGNORED,
+        country: Union[str, List] = IGNORED,
+        lon=None,
+        lat=None
+):
     def assert_str(column, expected):
         if expected == IGNORED:
             return
@@ -66,12 +77,12 @@ def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_na
             return
 
         if isinstance(expected, str):
-            assert expected == df[column][index]
+            assert expected == df[column][index], '{} != {}'.format(expected, df[column][index])
             return
 
         if isinstance(expected, list):
             actual = df[column][index:index + len(expected)].tolist()
-            assert actual == expected, str(expected) + '!=' + str(actual)
+            assert actual == expected, '{} != {}'.format(expected, actual)
             return
 
         raise ValueError('Not support type of expected: {}'.format(str(type(expected))))
@@ -84,10 +95,10 @@ def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_na
     assert_str(DF_PARENT_STATE, state)
     assert_str(DF_PARENT_COUNTRY, country)
     if lon is not None:
-        assert Point(df.geometry[index]).x == lon
+        assert Point(df.geometry[index]).x == lon, 'lon {} != {}'.format(lon, Point(df.geometry[index]).x)
 
     if lat is not None:
-        assert Point(df.geometry[index]).y == lat
+        assert Point(df.geometry[index]).y == lat, 'lat {} != {}'.format(lat, Point(df.geometry[index]).y)
 
 
 def assert_found_names(df: DataFrame, names: List[str]):

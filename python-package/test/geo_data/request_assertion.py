@@ -2,9 +2,11 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from typing import TypeVar, Generic, Optional, List, Union
 
+from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
+
 from lets_plot.geo_data.regions import _ensure_is_list
 from lets_plot.geo_data.gis.request import Request, GeocodingRequest, RegionQuery, MapRegion, AmbiguityResolver, \
-    PayloadKind, MapRegionKind
+    PayloadKind, MapRegionKind, IgnoringStrategyKind
 
 T = TypeVar('T')
 
@@ -36,6 +38,7 @@ class eq_map_region_with_id(ValueMatcher[MapRegion]):
     """
     Checks only id
     """
+
     def __init__(self, ids: Union[str, List[str]]):
         ids = _ensure_is_list(ids)
         self.expected = MapRegion.scope(ids)
@@ -97,6 +100,18 @@ class ScopeMatcher:
             raise ValueError('Invalid matcher state')
 
 
+class AmbiguityResolverMatcher(ValueMatcher[AmbiguityResolver]):
+    def __init__(self):
+        self._ignoring_strategy: ValueMatcher[IgnoringStrategyKind] = any()
+        self._box: ValueMatcher[GeoRect] = any()
+        self._near: ValueMatcher[GeoPoint] = any()
+
+    def check(self, value):
+        self._ignoring_strategy.check(value.ignoring_strategy)
+        self._box.check(value.box)
+        self._near.check(value.closest_coord)
+
+
 class QueryMatcher:
     def __init__(self,
                  name: ValueMatcher[Optional[str]] = any(),
@@ -148,13 +163,18 @@ class QueryMatcher:
 
 class GeocodingRequestAssertion:
     def __init__(self, request: Request):
+        self._i = 0
         assert isinstance(request, GeocodingRequest)
         self._request: GeocodingRequest = request
 
     def allows_ambiguous(self):
         assert self._request.allow_ambiguous
 
-    def has_query(self, i: int, query_matcher: QueryMatcher) -> 'GeocodingRequestAssertion':
+    def has_query(self, query_matcher: QueryMatcher, i: Optional[int] = None) -> 'GeocodingRequestAssertion':
+        if i is None:
+            i = self._i
+            self._i += 1
+
         query_matcher.check(self._request.region_queries[i])
         return self
 
