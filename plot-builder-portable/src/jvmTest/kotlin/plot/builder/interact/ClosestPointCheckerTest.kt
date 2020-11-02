@@ -32,10 +32,10 @@ class ClosestPointCheckerTest {
     }
 
     @Test
-    fun whenCheckSameCoordTwice_ShouldReturnTrueFirstTimeFalseSecondTime() {
+    fun whenCheckSameCoordTwice_ShouldReturnAlwaysTrue() {
         assertCall(
-                check(dist10).assertResult(true),
-                check(dist10).assertResult(false)
+            check(dist10).assertResult(true),
+            check(dist10).assertResult(true)
         )
     }
 
