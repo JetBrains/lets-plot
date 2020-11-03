@@ -9,15 +9,26 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.core.rendering.Alignment
 import kotlin.math.max
 
 class Attribution(override var origin: DoubleVector, private val texts: List<Text>) : RenderBox {
     override var dimension = DoubleVector.ZERO
     private val rectangle: Rectangle = Rectangle()
+    private val alignment = Alignment()
     var padding: Double = 0.0
     var background: Color = Color.TRANSPARENT
-    var horizontalPosition = Label.LabelHorizontalPosition.RIGHT
-    var verticalPosition = Label.LabelVerticalPosition.TOP
+    var horizontalAlignment
+        set(value) {
+            alignment.horizontal = value
+        }
+        get() = alignment.horizontal
+
+    var verticalAlignment
+        set(value) {
+            alignment.vertical = value
+        }
+        get() = alignment.vertical
 
     override fun render(ctx: Context2d) {
         if (isDirty()) {
@@ -37,19 +48,7 @@ class Attribution(override var origin: DoubleVector, private val texts: List<Tex
 
             dimension = dimension.add(DoubleVector(padding * 2, padding * 2))
 
-            val horizontalShift = when (horizontalPosition) {
-                Label.LabelHorizontalPosition.LEFT -> -dimension.x
-                Label.LabelHorizontalPosition.CENTER -> -dimension.x / 2
-                Label.LabelHorizontalPosition.RIGHT -> 0.0
-            }
-
-            val verticalShift = when (verticalPosition) {
-                Label.LabelVerticalPosition.TOP -> 0.0
-                Label.LabelVerticalPosition.CENTER -> -dimension.y / 2
-                Label.LabelVerticalPosition.BOTTOM -> -dimension.y
-            }
-
-            origin += DoubleVector(horizontalShift, verticalShift)
+            origin = alignment.calculatePosition(origin, dimension)
 
             rectangle.apply {
                 rect = DoubleRectangle(this@Attribution.origin, this@Attribution.dimension)
