@@ -15,11 +15,17 @@ open class TooltipAnchor : PlotConfigDemoBase() {
         return listOf(
             top_right(),
             top_left(),
+            top_center(),
             bottom_right(),
             bottom_left(),
+            bottom_center(),
+            middle_right(),
+            middle_left(),
+            middle_center(),
             overCursor()
         )
     }
+
     companion object {
         private fun data(): Map<String, List<*>> {
             val count1 = 20
@@ -28,77 +34,62 @@ open class TooltipAnchor : PlotConfigDemoBase() {
             val ratingB = DemoUtil.gauss(count2, 24, 0.0, 1.0)
             val rating = DemoUtil.zip(ratingA, ratingB)
             val cond = DemoUtil.zip(DemoUtil.fill("a", count1), DemoUtil.fill("b", count2))
-            val fill = DemoUtil.zip(ratingB, ratingA)
-            val color = DemoUtil.zip(DemoUtil.fill("red", count1), DemoUtil.fill("blue", count2))
             val map = HashMap<String, List<*>>()
             map["cond"] = cond
             map["rating"] = rating
-            map["fill"] = fill
-            map["color"] = color
             return map
         }
 
-        private const val OUR_DATA =
-            "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'," +
-                    "             'fill': 'fill'," +
-                    "             'color': 'color'" +
-                    "           }," +
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'" +
-                    "               }" +
-                    "           ]"
-
-        fun top_right(): Map<String, Any> {
-            val spec =
-                "{" + OUR_DATA + "," +
-                        "   'ggtitle': {'text': 'top_right'}," +
-                        "   'theme':   {'tooltip_anchor': 'top_right'}" +
-                        "}"
-
-            val plotSpec = HashMap(parsePlotSpec(spec))
-            plotSpec["data"] = data()
-            return plotSpec
-        }
-
-        fun top_left(): Map<String, Any> {
-            val spec =
-                "{" + OUR_DATA + "," +
-                        "   'ggtitle': {'text': 'top_left'}," +
-                        "   'theme':   {'tooltip_anchor': 'top_left'}" +
-                        "}"
+        private fun withTooltipAnchor(anchor: String): Map<String, Any> {
+            val spec = """{
+                    'kind': 'plot',
+                    'ggtitle': {'text': '$anchor'},
+                    'theme':   {'tooltip_anchor': '$anchor'},
+                    'mapping': {
+                        'x': 'cond',
+                        'y': 'rating',
+                        'fill': 'cond'
+                    },
+                    'layers':  [
+                        {
+                             'geom': 'boxplot',
+                             'tooltips' : {
+                                 'tooltip_formats': [
+                                    { 'field' : '${'$'}Y', 'format' : '.0f' },
+                                    { 'field' : '${'$'}middle', 'format' : '.2f' }
+                                 ],
+                                 'tooltip_lines': [
+                                    'min/max|${'$'}ymin/${'$'}ymax',
+                                    'lower/upper|${'$'}lower/${'$'}upper',
+                                    '@|${'$'}middle'
+                                 ]
+                             }
+                        }
+                    ]
+            }"""
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
 
-        fun bottom_right(): Map<String, Any> {
-            val spec =
-                "{" + OUR_DATA + "," +
-                        "   'ggtitle': {'text': 'bottom_right'}," +
-                        "   'theme':   {'tooltip_anchor': 'bottom_right'}" +
-                        "}"
+        private fun middle_right(): Map<String, Any> = withTooltipAnchor("middle_right")
 
-            val plotSpec = HashMap(parsePlotSpec(spec))
-            plotSpec["data"] = data()
-            return plotSpec
-        }
+        private fun middle_center(): Map<String, Any> = withTooltipAnchor("middle_center")
 
-        fun bottom_left(): Map<String, Any> {
-            val spec =
-                "{" + OUR_DATA + "," +
-                        "   'ggtitle': {'text': 'bottom_left'}," +
-                        "   'theme':   {'tooltip_anchor': 'bottom_left'}" +
-                        "}"
+        private fun middle_left(): Map<String, Any> = withTooltipAnchor("middle_left")
 
-            val plotSpec = HashMap(parsePlotSpec(spec))
-            plotSpec["data"] = data()
-            return plotSpec
-        }
+        private fun top_right(): Map<String, Any> = withTooltipAnchor("top_right")
+
+        private fun top_left(): Map<String, Any> = withTooltipAnchor("top_left")
+
+        private fun top_center(): Map<String, Any> = withTooltipAnchor("top_center")
+
+        private fun bottom_right(): Map<String, Any> = withTooltipAnchor("bottom_right")
+
+        private fun bottom_left(): Map<String, Any> = withTooltipAnchor("bottom_left")
+
+        private fun bottom_center(): Map<String, Any> = withTooltipAnchor("bottom_center")
 
         private fun overCursor(): Map<String, Any> {
             val spec = "{" +
