@@ -21,7 +21,7 @@ import kotlin.math.min
 class LayoutManager(
     private val myViewport: DoubleRectangle,
     private val myPreferredHorizontalAlignment: HorizontalAlignment,
-    private val myTooltipAnchor: TooltipAnchor
+    private val myTooltipAnchor: TooltipAnchor?
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
@@ -130,9 +130,17 @@ class LayoutManager(
         val verticalTooltipRange = when (myTooltipAnchor) {
             //top
             TooltipAnchor.TOP_LEFT,
-            TooltipAnchor.TOP_RIGHT -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
+            TooltipAnchor.TOP_RIGHT,
+            TooltipAnchor.TOP_CENTER -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
             // bottom
-            else -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+            TooltipAnchor.BOTTOM_LEFT,
+            TooltipAnchor.BOTTOM_RIGHT,
+            TooltipAnchor.BOTTOM_CENTER -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+            // middle
+            else -> centered(
+                (myVerticalGeomSpace.start() + myVerticalGeomSpace.end()) / 2,
+                tooltipsHeight
+            )
         }
 
         var tooltipY = verticalTooltipRange.start()
@@ -325,7 +333,8 @@ class LayoutManager(
     private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
         return when (horizontalAlignment) {
             HorizontalAlignment.RIGHT -> myHorizontalGeomSpace.end() - measuredTooltip.size.x
-            else -> myHorizontalSpace.start() + myHorizontalGeomSpace.start() + MARGIN_BETWEEN_TOOLTIPS
+            HorizontalAlignment.LEFT -> myHorizontalSpace.start() + myHorizontalGeomSpace.start() + MARGIN_BETWEEN_TOOLTIPS
+            HorizontalAlignment.CENTER -> (myHorizontalGeomSpace.start() + myHorizontalGeomSpace.end() - measuredTooltip.size.x) / 2
         }
     }
 
@@ -336,8 +345,9 @@ class LayoutManager(
     ): PositionedTooltip {
 
         val horizontalAlignment = when (myTooltipAnchor) {
-            TooltipAnchor.TOP_RIGHT, TooltipAnchor.BOTTOM_RIGHT -> HorizontalAlignment.RIGHT
-            else -> HorizontalAlignment.LEFT
+            TooltipAnchor.TOP_RIGHT, TooltipAnchor.BOTTOM_RIGHT, TooltipAnchor.MIDDLE_RIGHT -> HorizontalAlignment.RIGHT
+            TooltipAnchor.TOP_LEFT, TooltipAnchor.BOTTOM_LEFT, TooltipAnchor.MIDDLE_LEFT -> HorizontalAlignment.LEFT
+            else -> HorizontalAlignment.CENTER
         }
 
         var tooltipX = calculateAnchorX(measuredTooltip, horizontalAlignment)
@@ -368,7 +378,7 @@ class LayoutManager(
     }
 
     private fun useCornerTooltips(): Boolean {
-        return myTooltipAnchor != TooltipAnchor.NONE
+        return myTooltipAnchor != null
     }
 
     private fun isCorner(tooltipSpec: TooltipSpec): Boolean {

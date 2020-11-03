@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.*
 import jetbrains.datalore.plot.builder.theme.TooltipTheme
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
@@ -16,17 +17,28 @@ internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : O
         return ThemeConfig.DEF.tooltip().isVisible()
     }
 
-    override fun anchor(): TooltipAnchor {
+    override fun anchor(): TooltipAnchor? {
         if (!has(Option.Theme.TOOLTIP_ANCHOR))
             return ThemeConfig.DEF.tooltip().anchor()
 
-        val anchorString = getString(Option.Theme.TOOLTIP_ANCHOR)
-        return when (anchorString) {
-            "top_right" -> TooltipAnchor.TOP_RIGHT
-            "top_left"  -> TooltipAnchor.TOP_LEFT
-            "bottom_right" -> TooltipAnchor.BOTTOM_RIGHT
-            "bottom_left"  -> TooltipAnchor.BOTTOM_LEFT
-            else -> TooltipAnchor.NONE
+        return when (val anchor = getString(Option.Theme.TOOLTIP_ANCHOR)) {
+            "top_left" -> TOP_LEFT
+            "top_center" -> TOP_CENTER
+            "top_right" -> TOP_RIGHT
+            "middle_left" -> MIDDLE_LEFT
+            "middle_center" -> MIDDLE_CENTER
+            "middle_right" -> MIDDLE_RIGHT
+            "bottom_left" -> BOTTOM_LEFT
+            "bottom_center" -> BOTTOM_CENTER
+            "bottom_right" -> BOTTOM_RIGHT
+            "none" -> null
+            else -> throw IllegalArgumentException(
+                "Illegal value $anchor, ${Option.Theme.TOOLTIP_ANCHOR}, expected values are: " +
+                        "'top_left'/'top_center'/'top_right'/" +
+                        "'middle_left'/'middle_center'/'middle_right'/" +
+                        "'bottom_left'/'bottom_center'/'bottom_right'/" +
+                        "'none'"
+            )
         }
     }
 }

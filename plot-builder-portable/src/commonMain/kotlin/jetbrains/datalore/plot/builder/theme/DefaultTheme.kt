@@ -67,8 +67,8 @@ class DefaultTheme : Theme {
                 return true
             }
 
-            override fun anchor(): TooltipAnchor {
-                return TooltipAnchor.NONE
+            override fun anchor(): TooltipAnchor? {
+                return null
             }
         }
     }

@@ -18,7 +18,7 @@ import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTool
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 
-internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle, tooltipAnchor: TooltipAnchor) {
+internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle, tooltipAnchor: TooltipAnchor?) {
     private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, tooltipAnchor)
     private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
 
