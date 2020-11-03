@@ -125,30 +125,39 @@ def test_simple_scope():
 
 
 def test_where():
-    geodata.city_regions_builder('warwick').where('warwick', scope='oklahoma').build()
+    worcester = geodata.city_regions_builder('worcester').where('worcester', scope='massachusetts').build()
+
+    assert_row(worcester.to_data_frame(), request='worcester', found_name='Worcester', id='3688419')
 
 
 def test_where_near_point():
-    warwick = geodata.city_regions_builder('warwick').states('massachusetts')\
-        .where('warwick', state='massachusetts', near=Point(-71.43, 41.71)).build()
+    worcester = geodata.city_regions_builder('worcester')\
+        .where('worcester', near=Point(-71.00, 42.00)).build()
 
-    assert_row(warwick.centroids(), lon=-72.3365538645007, lat=42.667919844389)
-    assert_row(warwick.to_data_frame(), request='warwick', state='massachusetts', id='3679247')
+    assert_row(worcester.centroids(), lon=-71.8154652712922, lat=42.2678737342358)
+    assert_row(worcester.to_data_frame(), request='worcester', found_name='Worcester', id='3688419')
 
 
 def test_where_near_regions():
     boston = geodata.city_regions_builder('boston').build()
-    warwick = geodata.city_regions_builder('warwick').states('massachusetts').where('warwick', near=boston).build()
+    worcester = geodata.city_regions_builder('worcester').where('worcester', near=boston).build()
 
-    assert_row(warwick.to_data_frame(), request='warwick', state='massachusetts', found_name='Warwick', id='3679247')
-    assert_row(warwick.centroids(), lon=-72.3365538645007, lat=42.667919844389)
+    assert_row(worcester.to_data_frame(), request='worcester', found_name='Worcester', id='3688419')
+    assert_row(worcester.centroids(), lon=-71.8154652712922, lat=42.2678737342358)
 
 
 def test_where_within():
-    warwick = geodata.city_regions_builder('warwick').states('massachusetts')\
-        .where('warwick', within=box(-72.32, 42.65, -72.34, 42.67))\
+    worcester = geodata.city_regions_builder('worcester')\
+        .where('worcester', within=box(-71.00, 42.00, -72.00, 43.00))\
         .build()
 
-    assert_row(warwick.to_data_frame(), request='warwick', state='massachusetts', found_name='Warwick', id='3679247')
-    assert_row(warwick.centroids(), lon=-72.3365538645007, lat=42.667919844389)
+    assert_row(worcester.to_data_frame(), request='worcester', found_name='Worcester', id='3688419')
+    assert_row(worcester.centroids(), lon=-71.8154652712922, lat=42.2678737342358)
 
+
+def test_where_west_warwick():
+    warwick = geodata.city_regions_builder('west warwick').states('rhode island') \
+        .build()
+
+    assert_row(warwick.to_data_frame(), request='west warwick', state='rhode island', found_name='West Warwick', id='382429')
+    assert_row(warwick.centroids(), lon=-71.5257788638961, lat=41.6969098895788)

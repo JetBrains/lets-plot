@@ -148,6 +148,9 @@ class RegionsBuilder2:
         if scope is None:
             new_scope = None
         else:
+            if country is not None:
+                raise ValueError("Invalid request: countries and scope can't be used simultaneously")
+
             new_scopes: List[MapRegion] = _prepare_new_scope(scope)
             if len(new_scopes) != 1:
                 raise ValueError(

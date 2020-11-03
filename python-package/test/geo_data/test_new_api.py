@@ -205,6 +205,13 @@ def test_error_where_scope_len_is_invalid():
     )
 
 
+def test_error_for_where_with_scope_if_country_already_set():
+    check_validation_error(
+        "Invalid request: countries and scope can't be used simultaneously",
+        lambda: RegionsBuilder2(request='foo').countries('bar').where('foo', country='bar', scope='baz')
+    )
+
+
 def make_simple_region(requests: Union[str, List[str]], geo_object_ids: Union[str, List[str]] = None, level_kind: LevelKind = LevelKind.county) -> Regions:
     requests = requests if isinstance(requests, (list, tuple)) else [requests]
     geo_object_ids = geo_object_ids if geo_object_ids is not None else [request + '_id' for request in requests]
