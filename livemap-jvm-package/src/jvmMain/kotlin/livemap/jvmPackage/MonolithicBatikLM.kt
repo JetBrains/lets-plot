@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
+import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
@@ -21,6 +22,7 @@ import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Color
+import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.EventQueue.invokeLater
 import java.awt.Graphics
@@ -61,11 +63,15 @@ object MonolithicBatikLM {
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
 
-                injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
+                val cursorServiceConfig = CursorServiceConfig()
+                injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec, cursorServiceConfig)
 
                 val plot = assembler.createPlot()
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
                 val plotComponent = buildPlotComponent(plotContainer)
+
+                cursorServiceConfig.defaultSetter { plotComponent.cursor = Cursor.getDefaultCursor() }
+                cursorServiceConfig.pointerSetter { plotComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
 
                 // Move tooltip when map moved
                 plotComponent.addMouseMotionListener(object : MouseAdapter() {
@@ -155,13 +161,15 @@ object MonolithicBatikLM {
 
     private fun injectLiveMapProvider(
         plotAssembler: PlotAssembler,
-        processedPlotSpec: MutableMap<String, Any>
+        processedPlotSpec: MutableMap<String, Any>,
+        cursorServiceConfig: CursorServiceConfig
     ) {
         LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
             ?.let {
                 LiveMapUtil.injectLiveMapProvider(
                     plotAssembler.layersByTile,
-                    it
+                    it,
+                    cursorServiceConfig
                 )
             }
     }

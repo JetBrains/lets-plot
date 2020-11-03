@@ -12,7 +12,7 @@ import kotlin.random.Random
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            multiLayerTooltips(),
+            multiLayerTooltips()
 //            mapJoinBar(),
 //            antiMeridian(),
 //            tooltips(),
