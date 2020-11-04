@@ -1,5 +1,6 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+from typing import Callable, Any
 
 from shapely.geometry import Point, box
 import lets_plot.geo_data as geodata
@@ -161,3 +162,40 @@ def test_where_west_warwick():
 
     assert_row(warwick.to_data_frame(), request='west warwick', state='rhode island', found_name='West Warwick', id='382429')
     assert_row(warwick.centroids(), lon=-71.5257788638961, lat=41.6969098895788)
+
+
+def test_query_scope_with_different_level_should_work():
+    geodata.city_regions_builder(['moscow', 'worcester'])\
+        .where('moscow', scope='russia')\
+        .where('worcester', scope='massachusetts')\
+        .build()
+
+
+def test_error_level_detection_not_available():
+    check_validation_error(
+        "Level detection is not available with new API. Please, specify the level.",
+        lambda: geodata.regions_builder2(names='boston', countries='usa').build()
+    )
+
+def test_error_us48_in_request_not_available():
+    check_validation_error(
+        "us-48 can't be used in requests with new API.",
+        lambda: geodata.state_regions_builder('us-48').countries('usa').build()
+    )
+
+
+def test_error_us48_in_parent_not_available():
+    check_validation_error(
+        "us-48 can't be used in parents with new API.",
+        lambda: geodata.state_regions_builder('boston').states('us-48').build()
+    )
+
+
+def check_validation_error(message: str, action: Callable[[], Any]):
+    assert isinstance(message, str)
+    try:
+        action()
+        assert False, 'Validation error expected'
+    except Exception as e:
+        assert message == str(e)
+
