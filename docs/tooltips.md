@@ -1,4 +1,4 @@
-# Tooltip configuration
+# Tooltip Customization
 
 - [Formatting tooltip fields](#formatting)
 - [Customizing tooltip lines](#lines)
@@ -9,6 +9,7 @@
 - [Hiding tooltips](#hiding-tooltips)
 - [Corner tooltips](#corner-tooltips)
     - [Example](#example-corners)
+- [Example Notebooks](#example-notebooks)    
     
 ------
 It is possible to customize the content of tooltips for the layer. The parameter `tooltips` of `geom` functions is responsible for this.
@@ -99,7 +100,7 @@ ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=
                                     .line('drive train|@drv')
                                     .line('@|@year')) 
 ```
-![](ref/assets/tooltips_1.png)
+![](examples/images/tooltips_1.png)
 
 
 Change format for the default tooltip:
@@ -109,7 +110,7 @@ ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=
                            tooltips=layer_tooltips().format('$color', '{.2f} (mpg)'))
 ```
 
-![](ref/assets/tooltips_2.png)
+![](examples/images/tooltips_2.png)
 
 
 
@@ -138,13 +139,13 @@ p2 + geom_boxplot(tooltips=layer_tooltips()
                         .format('$middle', '{.3f}')   # use line format --> "value"
                         .format('$ymin', 'ymin is {.3f}'))
 ```                        
-![](ref/assets/tooltips_3.png)
+![](examples/images/tooltips_3.png)
 
                   
 Move outliers to the general tooltip:
 
 `p2 + geom_boxplot(tooltips=layer_tooltips().line('lower/upper|$lower, $upper'))`
-![](ref/assets/tooltips_4.png)
+![](examples/images/tooltips_4.png)
                  
 
 
@@ -171,4 +172,14 @@ The parameter `tooltip_anchor` of `theme` specifies the corner of the plot to pl
                  .line('length|$x')
                  .line('density|$y'))
 ```                 
- ![](ref/assets/tooltips_5.png)
+ ![](examples/images/tooltips_5.png)
+ 
+ 
+<a id="example-notebooks"></a> 
+ ## Example Notebooks
+ 
+* [tooltip_config.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/tooltip_config.ipynb)
+* Visualization of Airport Data on Map: <a href="https://www.kaggle.com/alshan/visualization-of-airport-data-on-map" title="View at Kaggle"> 
+                                               <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+                                        </a>
+                                        <br>

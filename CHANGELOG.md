@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
- - Facilities for customization of tooltip contents and its position (see <link to doc>).
+ - Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
  - `attribution` and other new parameters in the `maptiles_zxy()` function. 
  - `label_format` parameter in the `geom_text()` function.
  - `scale_x_discrete_reversed()` / `scale_y_discrete_reversed()`
