@@ -9,14 +9,26 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.core.rendering.Alignment
 import kotlin.math.max
 
 class Attribution(override var origin: DoubleVector, private val texts: List<Text>) : RenderBox {
     override var dimension = DoubleVector.ZERO
     private val rectangle: Rectangle = Rectangle()
+    private val alignment = Alignment()
     var padding: Double = 0.0
     var background: Color = Color.TRANSPARENT
-    var position = Label.LabelPosition.RIGHT
+    var horizontalAlignment
+        set(value) {
+            alignment.horizontal = value
+        }
+        get() = alignment.horizontal
+
+    var verticalAlignment
+        set(value) {
+            alignment.vertical = value
+        }
+        get() = alignment.vertical
 
     override fun render(ctx: Context2d) {
         if (isDirty()) {
@@ -36,11 +48,7 @@ class Attribution(override var origin: DoubleVector, private val texts: List<Tex
 
             dimension = dimension.add(DoubleVector(padding * 2, padding * 2))
 
-            origin += when (position) {
-                Label.LabelPosition.LEFT -> DoubleVector(-dimension.x, 0.0)
-                Label.LabelPosition.CENTER -> DoubleVector(-dimension.x / 2, 0.0)
-                Label.LabelPosition.RIGHT -> DoubleVector.ZERO
-            }
+            origin = alignment.calculatePosition(origin, dimension)
 
             rectangle.apply {
                 rect = DoubleRectangle(this@Attribution.origin, this@Attribution.dimension)

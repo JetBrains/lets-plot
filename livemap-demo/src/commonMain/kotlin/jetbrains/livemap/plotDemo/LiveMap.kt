@@ -101,8 +101,8 @@ class LiveMap : PlotConfigDemoBase() {
       "display_mode": "pie",
       "tiles": {
         "kind": "raster_zxy",
-        "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}@2x.png",
-        "attribution": "© wikimedia.org"
+        "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "attribution": "<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>"
       },
       "geocoding": {
         "url": "http://10.0.0.127:3020"
@@ -360,7 +360,7 @@ class LiveMap : PlotConfigDemoBase() {
                     "layers": [
                         {
                             "geom": "livemap",
-                            "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}                            
+                            "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}                            
                         }
                     ]
                 }
@@ -403,7 +403,7 @@ class LiveMap : PlotConfigDemoBase() {
                 "layers": [
                     {
                         "geom": "livemap", 
-                        "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}
+                        "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                     }, 
                     {
                         "geom": "point", 
@@ -428,7 +428,7 @@ class LiveMap : PlotConfigDemoBase() {
                             "layers": [
                                 {
                                     "geom": "livemap", 
-                                    "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}
+                                    "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                                 }
                             ]
                         }
@@ -441,7 +441,7 @@ class LiveMap : PlotConfigDemoBase() {
                             "layers": [
                                 {
                                     "geom": "livemap", 
-                                    "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}
+                                    "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                                 }
                             ]
                         }
@@ -477,7 +477,7 @@ class LiveMap : PlotConfigDemoBase() {
                 "layers":[
                     {
                         "geom":"livemap",
-                        "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}
+                        "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                     },
                     {
                         "geom":"point",
@@ -548,7 +548,7 @@ class LiveMap : PlotConfigDemoBase() {
                     {
                         "geom": "livemap",
                         "zoom": 4,
-                        "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}
+                        "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                     }
                 ]
             }"""
@@ -587,7 +587,7 @@ class LiveMap : PlotConfigDemoBase() {
                             "color":"label"
                         },
                         "display_mode":"point",
-                        "tiles":{ "kind":"raster_zxy", "url":"https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"},
+                        "tiles":{ "kind":"raster_zxy", "url":"https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"},
                         "shape":19,
                         "size":21
                     },
@@ -623,7 +623,7 @@ class LiveMap : PlotConfigDemoBase() {
                 "layers":[
                     {
                         "geom":"livemap",
-                        "tiles": {"kind": "raster_zxy", "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"}
+                        "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                     },
                     {
                         "geom":"point",
