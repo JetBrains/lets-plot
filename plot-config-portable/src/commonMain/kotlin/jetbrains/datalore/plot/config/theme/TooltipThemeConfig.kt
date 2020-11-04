@@ -31,13 +31,11 @@ internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : O
             "bottom_left" -> BOTTOM_LEFT
             "bottom_center" -> BOTTOM_CENTER
             "bottom_right" -> BOTTOM_RIGHT
-            "none" -> null
             else -> throw IllegalArgumentException(
                 "Illegal value $anchor, ${Option.Theme.TOOLTIP_ANCHOR}, expected values are: " +
                         "'top_left'/'top_center'/'top_right'/" +
                         "'middle_left'/'middle_center'/'middle_right'/" +
-                        "'bottom_left'/'bottom_center'/'bottom_right'/" +
-                        "'none'"
+                        "'bottom_left'/'bottom_center'/'bottom_right'/"
             )
         }
     }

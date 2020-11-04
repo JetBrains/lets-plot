@@ -76,10 +76,9 @@ def theme(*,
     axis_tooltip_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
         y axis tooltips
 
-    tooltip_anchor : ['none' |
-            'top_left' | 'top_center' | 'top_right' |
-            'middle_left' | 'middle_center' | 'middle_right' |
-            'bottom_left' | 'bottom_center' | 'bottom_right']
+    tooltip_anchor : ['top_left' | 'top_center' | 'top_right' |
+                      'middle_left' | 'middle_center' | 'middle_right' |
+                      'bottom_left' | 'bottom_center' | 'bottom_right']
         Move the general tooltip to the specified corner of the plot.
 
     Returns
