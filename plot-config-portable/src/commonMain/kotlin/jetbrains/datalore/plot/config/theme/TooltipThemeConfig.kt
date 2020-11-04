@@ -39,4 +39,10 @@ internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : O
             )
         }
     }
+
+    override fun minWidth(): Double? {
+        if (!has(Option.Theme.TOOLTIP_WIDTH))
+            return ThemeConfig.DEF.tooltip().minWidth()
+        return getDouble(Option.Theme.TOOLTIP_WIDTH)
+    }
 }

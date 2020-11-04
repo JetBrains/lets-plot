@@ -99,6 +99,7 @@ class PlotBuilder(private val myTheme: Theme) {
         private val myAxisXTitleEnabled: Boolean = b.myTheme.axisX().showTitle()
         private val myAxisYTitleEnabled: Boolean = b.myTheme.axisY().showTitle()
         private val myTooltipAnchor: TooltipAnchor? = b.myTheme.tooltip().anchor()
+        private val myTooltipMinWidth: Double? = b.myTheme.tooltip().minWidth()
 
         override val coordProvider: CoordProvider = b.myCoordProvider
 
@@ -133,6 +134,9 @@ class PlotBuilder(private val myTheme: Theme) {
 
         override val tooltipAnchor: TooltipAnchor?
             get() = myTooltipAnchor
+
+        override val tooltipMinWidth: Double?
+            get() = myTooltipMinWidth
 
         init {
             myLayersByTile = ArrayList(b.myLayersByTile)

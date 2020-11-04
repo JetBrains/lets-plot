@@ -32,7 +32,9 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 import kotlin.math.max
 import kotlin.math.min
 
-class TooltipBox : SvgComponent() {
+class TooltipBox(
+    private val tooltipMinWidth: Double? = null
+): SvgComponent() {
     enum class Orientation {
         VERTICAL,
         HORIZONTAL
@@ -71,7 +73,12 @@ class TooltipBox : SvgComponent() {
             fillColor = Color.WHITE
             textColor = color.takeIf { color.isDark() } ?: darker(color) ?: DARK_TEXT_COLOR
         }
-        myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, valueTextColor = textColor)
+        myTextBox.update(
+            lines,
+            labelTextColor = DARK_TEXT_COLOR,
+            valueTextColor = textColor,
+            tooltipMinWidth =  if (!isOutlier) tooltipMinWidth else null
+        )
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -176,7 +183,12 @@ class TooltipBox : SvgComponent() {
             add(myContent)
         }
 
-        internal fun update(lines: List<TooltipSpec.Line>, labelTextColor: Color, valueTextColor: Color) {
+        internal fun update(
+            lines: List<TooltipSpec.Line>,
+            labelTextColor: Color,
+            valueTextColor: Color,
+            tooltipMinWidth: Double?
+        ) {
             val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
                 Triple(
                     line.label,
@@ -201,7 +213,7 @@ class TooltipBox : SvgComponent() {
                 .mapNotNull { (_, labelComponent, _) -> labelComponent }
                 .map { it.rootGroup.bBox.width }
                 .max() ?: 0.0
-            var maxLineWidth = 0.0
+            var maxLineWidth = tooltipMinWidth ?: 0.0
             linesInfo.forEach { (_, labelComponent, valueComponent) ->
                 val valueWidth = valueComponent.rootGroup.bBox.width
                 maxLineWidth = max(

@@ -14,7 +14,7 @@ def theme(*,
           axis_line=None, axis_line_x=None, axis_line_y=None,
           legend_position=None, legend_justification=None, legend_direction=None,
           axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
-          tooltip_anchor=None,
+          tooltip_anchor=None, tooltip_width=None,
           **kwargs):
     """
     Use theme() to modify individual components of a theme,
@@ -81,6 +81,9 @@ def theme(*,
                       'bottom_left' | 'bottom_center' | 'bottom_right']
         Move the general tooltip to the specified corner of the plot.
 
+    tooltip_width : number.
+        Minimum width of the general multiline tooltip.
+
     Returns
     -------
         theme specification
@@ -118,6 +121,7 @@ def theme(*,
                        axis_tooltip_x=axis_tooltip_x,
                        axis_tooltip_y=axis_tooltip_y,
                        tooltip_anchor=tooltip_anchor,
+                       tooltip_width=tooltip_width,
                        **kwargs)
 
 

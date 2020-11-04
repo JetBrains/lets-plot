@@ -70,6 +70,10 @@ class DefaultTheme : Theme {
             override fun anchor(): TooltipAnchor? {
                 return null
             }
+
+            override fun minWidth(): Double? {
+                return null
+            }
         }
     }
 }

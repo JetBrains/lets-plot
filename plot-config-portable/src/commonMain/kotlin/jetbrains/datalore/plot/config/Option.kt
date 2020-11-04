@@ -299,6 +299,7 @@ object Option {
         const val LEGEND_DIRECTION = "legend_direction"
 
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
+        const val TOOLTIP_WIDTH = "tooltip_width"
     }
 
     object GeomName {
