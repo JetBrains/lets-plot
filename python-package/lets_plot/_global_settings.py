@@ -34,7 +34,7 @@ TILES_RASTER_ZXY = 'raster_zxy'
 GEOCODING_PROVIDER_URL = 'geocoding_url'
 
 _DATALORE_TILES_SERVICE = 'wss://tiles.datalore.jetbrains.com'
-_DATALORE_TILES_ATTRIBUTION = 'Map data <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap</a> contributors'
+_DATALORE_TILES_ATTRIBUTION = 'Map: <a href="https://github.com/JetBrains/lets-plot">\u00a9 Lets-Plot</a>, map data <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap</a> contributors'
 _DATALORE_TILES_THEME = 'color'
 _DATALORE_GEOCODING_SERVICE = 'https://geo.datalore.jetbrains.com'
 
