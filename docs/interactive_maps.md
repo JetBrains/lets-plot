@@ -1,4 +1,4 @@
-# Interactive maps
+# Interactive Maps
 
 *Lets-Plot* supports interactive maps via the `geom_livemap()` geom layer which
 enables a researcher to visualize geospatial information on a zoomable and paneble map. 
@@ -34,3 +34,26 @@ Examples:
 
 * [map_quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_quickstart.ipynb)
 * [map_california_housing.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map-california-housing/map_california_housing.ipynb)
+* Visualization of the Titanic's Voyage: <a href="https://view.datalore.jetbrains.com/notebook/1h4h0HMctRKJLY64PBe63a?force_sso=true" title="View in Datalore"> 
+                                             <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_datalore.svg" width="20" height="20">
+                                         </a>
+                                         <span>&nbsp;&nbsp;</span>
+                                         <a href="https://www.kaggle.com/alshan/visualization-of-the-titanic-s-voyage" title="View at Kaggle"> 
+                                             <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+                                         </a>
+                                         <span>&nbsp;&nbsp;</span>
+                                         <a href="https://colab.research.google.com/drive/1PerUfSCyStcbnlXnxBj-JVI25-cXB_N5?usp=sharing" title="View at Colab"> 
+                                             <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
+                                         </a>
+* Visualization of Airport Data on Map:  <a href="https://www.kaggle.com/alshan/visualization-of-airport-data-on-map" title="View at Kaggle"> 
+                                             <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+                                         </a>
+* The Gallery of Base-maps:              <a href="https://www.kaggle.com/alshan/the-gallery-of-basemaps" title="View at Kaggle"> 
+                                           <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+                                         </a>
+                                         <span>&nbsp;&nbsp;</span>
+                                         <a href="https://colab.research.google.com/drive/1lwOyQx0UMBHFiLtXQZhXQpv5Z3M2XJI4?usp=sharing" title="View at Colab"> 
+                                           <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
+                                         </a>
+                                         
+ 
