@@ -81,6 +81,28 @@ def test_where_with_given_parents_and_duplicated_names():
                    .scope(eq_map_region_with_name('spam'))
                    )
 
+
+def test_where_with_given_country_should_be_used():
+    # should update scope only for matching name and parents - query with index 1
+
+    request = RegionsBuilder2(request=['foo', 'foo']) \
+        .countries(['bar', 'baz']) \
+        .where(name='foo', country='baz', scope='spam') \
+        ._build_request()
+
+    assert_that(request) \
+        .has_query(QueryMatcher()
+                   .with_name('foo')
+                   .country(eq_map_region_with_name('bar'))
+                   .scope(empty())
+                   ) \
+        .has_query(QueryMatcher()
+                   .with_name('foo')
+                   .country(eq_map_region_with_name('baz'))
+                   .scope(eq_map_region_with_name('spam'))
+                   )
+
+
 def test_where_within_box():
     request = RegionsBuilder2(request=['foo']) \
         .states(['bar']) \
@@ -205,10 +227,17 @@ def test_error_where_scope_len_is_invalid():
     )
 
 
-def test_error_for_where_with_scope_if_country_already_set():
+def test_error_for_where_with_unknown_name():
     check_validation_error(
-        "Invalid request: countries and scope can't be used simultaneously",
-        lambda: RegionsBuilder2(request='foo').countries('bar').where('foo', country='bar', scope='baz')
+        "bar is not found in names",
+        lambda: RegionsBuilder2(request='foo').where('bar', scope='baz')
+    )
+
+
+def test_error_for_where_with_unknown_name_and_parents():
+    check_validation_error(
+        "bar(country=baz) is not found in names",
+        lambda: RegionsBuilder2(request='foo').where('bar', country='baz', scope='spam')
     )
 
 

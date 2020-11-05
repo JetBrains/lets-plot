@@ -191,6 +191,18 @@ def test_error_us48_in_parent_not_available():
     )
 
 
+def test_asderror_us48_in_parent_not_available():
+    geodata.regions_builder('city', 'boston').where('boston', within='us-48').build()
+    geodata.city_regions_builder('boston').where('boston', scope='us-48').build()
+
+
+def test_where_scope_with_existing_country():
+    washington_county=geodata.county_regions_builder('Washington county').states('iowa').countries('usa').build()
+    geodata.city_regions_builder('Washington').countries('United States of America')\
+        .where('Washington', country='United States of America', scope=washington_county)\
+        .build()
+
+
 def check_validation_error(message: str, action: Callable[[], Any]):
     assert isinstance(message, str)
     try:

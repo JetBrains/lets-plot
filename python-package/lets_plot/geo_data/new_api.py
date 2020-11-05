@@ -145,12 +145,35 @@ class RegionsBuilder2:
             _make_parent_region(country)
         )
 
+        def query_exist(query):
+            for i in range(len(self._names)):
+                if query.name == self._names[i] and \
+                        query.country == _get_or_none(self._countries, i) and \
+                        query.state == _get_or_none(self._states, i) and \
+                        query.county == _get_or_none(self._counties, i):
+                    return True
+            return False
+
+        if not query_exist(query_spec):
+            parents: List[str] = []
+            if query_spec.county is not None:
+                parents.append('county={}'.format(str(query_spec.county)))
+
+            if query_spec.state is not None:
+                parents.append('state={}'.format(str(query_spec.state)))
+
+            if query_spec.country is not None:
+                parents.append('country={}'.format(str(query_spec.country)))
+
+            parents_str = ", ".join(parents)
+            if len(parents_str) == 0:
+                raise ValueError("{} is not found in names".format(name))
+            else:
+                raise ValueError("{}({}) is not found in names".format(name, parents_str))
+
         if scope is None:
             new_scope = None
         else:
-            if country is not None:
-                raise ValueError("Invalid request: countries and scope can't be used simultaneously")
-
             new_scopes: List[MapRegion] = _prepare_new_scope(scope)
             if len(new_scopes) != 1:
                 raise ValueError(

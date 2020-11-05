@@ -127,6 +127,12 @@ class MapRegion:
         if self.kind == MapRegionKind.place:
             return '{} {} {}'.format(str(self.values), self._request, self._level_kind)
 
+        if self.kind == MapRegionKind.name:
+            return self.values[0]
+
+        if self.kind == MapRegionKind.id:
+            return ",".join(self.values)
+
         return str(self.values)
 
     def __hash__(self):
