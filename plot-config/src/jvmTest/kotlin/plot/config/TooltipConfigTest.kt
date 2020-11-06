@@ -39,8 +39,7 @@ class TooltipConfigTest {
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = null)
 
         val expectedLines = listOf(
-            "cty: 15.00",
-            "class: suv"
+            "cty: 15.00"
         )
         val lines = getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(expectedLines, lines)
@@ -118,19 +117,13 @@ class TooltipConfigTest {
                 mapOf(
                     Option.TooltipFormat.FIELD to "\$color",
                     Option.TooltipFormat.FORMAT to ".4f"         // number format
-                ),
-                mapOf(
-                    Option.TooltipFormat.FIELD to "\$shape",
-                    Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with braces in the text
                 )
-
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
-            "cty: 15.0000",
-            "class: suv {type}"
+            "cty: 15.0000"
         )
         val lines = getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(expectedLines, lines)

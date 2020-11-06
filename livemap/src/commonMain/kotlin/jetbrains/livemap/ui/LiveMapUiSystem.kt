@@ -17,15 +17,17 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.input.CursorStyle
+import jetbrains.livemap.core.input.CursorStyleComponent
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.core.openLink
+import jetbrains.livemap.core.rendering.Alignment
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.primitives.Attribution
-import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
@@ -45,6 +47,9 @@ class LiveMapUiSystem(
     private lateinit var myGetCenter: MutableImage
     private lateinit var myMakeGeometry: MutableImage
     private lateinit var myViewport: Viewport
+    private lateinit var myButtonPlus: EcsEntity
+    private lateinit var myButtonMinus: EcsEntity
+
     private var myUiState: UiState = ResourcesLoading()
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -79,12 +84,12 @@ class LiveMapUiSystem(
         val getMakeGeometryOrigin = getCenterOrigin.add(DoubleVector(0.0, side + padding))
 
         myZoomPlus = MutableImage(plusOrigin, size)
-        val buttonPlus = myUiService.addButton(myZoomPlus)
-        addListenersToZoomButton(buttonPlus, myViewport.maxZoom, 1.0)
+        myButtonPlus = myUiService.addButton(myZoomPlus)
+        addListenersToZoomButton(myButtonPlus, myViewport.maxZoom, 1.0)
 
         myZoomMinus = MutableImage(minusOrigin, size)
-        val buttonMinus = myUiService.addButton(myZoomMinus)
-        addListenersToZoomButton(buttonMinus, myViewport.minZoom, -1.0)
+        myButtonMinus = myUiService.addButton(myZoomMinus)
+        addListenersToZoomButton(myButtonMinus, myViewport.minZoom, -1.0)
 
         myGetCenter = MutableImage(getCenterOrigin, size)
         val buttonGetCenter = myUiService.addButton(myGetCenter)
@@ -119,10 +124,11 @@ class LiveMapUiSystem(
                 texts.add(attributionText)
             }
 
-            Attribution(DoubleVector(myViewport.size.x, 0.0), texts).apply {
+            Attribution(DoubleVector(myViewport.size.x, myViewport.size.y), texts).apply {
                 background = Color(200, 200, 200, 179)
                 this.padding = 2.0
-                position = Label.LabelPosition.LEFT
+                horizontalAlignment = Alignment.HorizontalAlignment.LEFT
+                verticalAlignment = Alignment.VerticalAlignment.BOTTOM
             }.run {
                 myUiService.addRenderable(this)
             }
@@ -255,6 +261,18 @@ class LiveMapUiSystem(
 
         internal fun updateZoomButtons(zoom: Double) {
             val res = myUiService.resourceManager
+
+            if (zoom == myViewport.minZoom.toDouble() && myButtonMinus.contains<CursorStyleComponent>()) {
+                myButtonMinus.remove<CursorStyleComponent>()
+            } else if(zoom != myViewport.minZoom.toDouble() && !myButtonMinus.contains<CursorStyleComponent>()) {
+                myButtonMinus.add(CursorStyleComponent(CursorStyle.POINTER))
+            }
+
+            if (zoom == myViewport.maxZoom.toDouble() && myButtonPlus.contains<CursorStyleComponent>()) {
+                myButtonPlus.remove<CursorStyleComponent>()
+            } else if(zoom != myViewport.maxZoom.toDouble() && !myButtonPlus.contains<CursorStyleComponent>()) {
+                myButtonPlus.add(CursorStyleComponent(CursorStyle.POINTER))
+            }
 
             myZoomMinus.snapshot = if (zoom == myViewport.minZoom.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
             myZoomPlus.snapshot = if (zoom == myViewport.maxZoom.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]

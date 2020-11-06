@@ -83,6 +83,7 @@ import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.VectorTileSystemProvider
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
+import jetbrains.livemap.ui.CursorService
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -100,7 +101,8 @@ class LiveMap(
     private val myGeocodingService: GeocodingService,
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
-    private val myAttribution: String?
+    private val myAttribution: String?,
+    private val myCursorService: CursorService
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -221,6 +223,7 @@ class LiveMap(
                 MouseInputDetectionSystem(componentManager),
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
+                CursorStyleSystem(componentManager, myCursorService),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 

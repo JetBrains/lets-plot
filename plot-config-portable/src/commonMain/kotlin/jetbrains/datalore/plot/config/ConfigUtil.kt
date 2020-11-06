@@ -50,7 +50,7 @@ object ConfigUtil {
             throw IllegalArgumentException("Can't join data: right key not found '$rightKey'")
         }
 
-        val leftKeyValues = leftMap[leftKey]!!
+        val leftKeyValues = leftMap.getValue(leftKey)
         val indexByKeyValueLeft = HashMap<Any, Int>()
         var index = 0
         for (keyValue in leftKeyValues) {
@@ -67,17 +67,17 @@ object ConfigUtil {
                 continue
             }
 
-            val values = rightMap[key]!!
+            val values = rightMap.getValue(key)
             jointMap[key] = values
         }
 
-        for (keyValue in rightMap[rightKey]!!) {
+        for (keyValue in rightMap.getValue(rightKey)) {
             val leftIndex = indexByKeyValueLeft[keyValue]
             for (key in leftMap.keys) {
                 val fillValue = if (leftIndex == null)
                     null
                 else
-                    leftMap[key]!!.get(leftIndex)
+                    leftMap.getValue(key).get(leftIndex)
 
                 val list = jointMap[key]
                 if (list is ArrayList) {
@@ -168,11 +168,8 @@ object ConfigUtil {
         for (option in options) {
             val value = mapping[option]
             if (value is String) {
-                val variable: DataFrame.Variable
-                if (dfVariables.containsKey(value)) {
-                    variable = dfVariables[value]!!
-                } else {
-                    variable = DataFrameUtil.createVariable(value)
+                val variable = dfVariables.getOrElse(value) {
+                    DataFrameUtil.createVariable(value)
                 }
                 val aes = Option.Mapping.toAes(option)
                 result[aes] = variable

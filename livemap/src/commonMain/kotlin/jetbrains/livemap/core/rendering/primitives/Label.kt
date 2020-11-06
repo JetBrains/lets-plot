@@ -9,15 +9,26 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.core.rendering.primitives.Label.LabelPosition.*
+import jetbrains.livemap.core.rendering.Alignment
 
 class Label(override var origin: DoubleVector, private var text: Text) : RenderBox {
     private var frame: Frame? = null
     override var dimension = DoubleVector.ZERO
     private val rectangle: Rectangle = Rectangle()
+    private val alignment = Alignment()
     var padding: Double = 0.0
     var background: Color = Color.TRANSPARENT
-    var position = RIGHT
+    var horizontalAlignment
+        set(value) {
+            alignment.horizontal = value
+        }
+        get() = alignment.horizontal
+
+    var verticalAlignment
+        set(value) {
+            alignment.vertical = value
+        }
+        get() = alignment.vertical
 
     override fun render(ctx: Context2d) {
         if (text.isDirty) {
@@ -28,23 +39,13 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
                 color = background
             }
 
-            origin += when (position) {
-                LEFT -> DoubleVector(-dimension.x, 0.0)
-                CENTER -> DoubleVector(-dimension.x / 2, 0.0)
-                RIGHT -> DoubleVector.ZERO
-            }
+            origin = alignment.calculatePosition(origin, dimension)
 
             text.origin = DoubleVector(padding, padding)
             frame = Frame.create(origin, rectangle, text)
         }
 
         frame?.render(ctx)
-    }
-
-    enum class LabelPosition {
-        RIGHT,
-        CENTER,
-        LEFT
     }
 }
 

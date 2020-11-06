@@ -60,10 +60,9 @@ fun PlotConfigClientSide.assertScale(
     name: String? = null,
     msg: () -> String = { "" }
 ): PlotConfigClientSide {
-    val layer = layerConfigs.single()
-    val binding = layer.varBindings.firstOrNull { it.aes == aes } ?: fail("$aes not found. ${msg()}")
-    assertEquals(!isDiscrete, binding.scale!!.isContinuous)
-    name?.let { assertEquals(it, binding.scale!!.name) }
+    val scale = scaleMap[aes]
+    assertEquals(!isDiscrete, scale.isContinuous, msg())
+    name?.let { assertEquals(it, scale.name, msg()) }
     return this
 }
 

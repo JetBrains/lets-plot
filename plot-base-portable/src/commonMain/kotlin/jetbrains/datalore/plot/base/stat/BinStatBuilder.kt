@@ -54,6 +54,6 @@ class BinStatBuilder {
     }
 
     companion object {
-        val DEF_BIN_COUNT = 30
+        const val DEF_BIN_COUNT = 30
     }
 }

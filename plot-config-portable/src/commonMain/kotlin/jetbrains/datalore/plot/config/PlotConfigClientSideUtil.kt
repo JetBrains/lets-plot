@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 
 object PlotConfigClientSideUtil {
@@ -34,26 +33,24 @@ object PlotConfigClientSideUtil {
 
     fun createPlotAssembler(opts: Map<String, Any>): PlotAssembler {
         val config = PlotConfigClientSide.create(opts)
-        val coordProvider = config.coordProvider
         val layersByTile = buildPlotLayers(config)
         val assembler =
-            PlotAssembler.multiTile(layersByTile, coordProvider, config.theme)
+            PlotAssembler.multiTile(config.scaleMap, layersByTile, config.coordProvider, config.theme)
         assembler.setTitle(config.title)
         assembler.setGuideOptionsMap(config.guideOptionsMap)
         assembler.facets = config.facets
         return assembler
     }
 
-    private fun buildPlotLayers(cfg: PlotConfigClientSide): List<List<GeomLayer>> {
+    private fun buildPlotLayers(plotConfig: PlotConfigClientSide): List<List<GeomLayer>> {
         val dataByLayer = ArrayList<DataFrame>()
-        for (layerConfig in cfg.layerConfigs) {
+        for (layerConfig in plotConfig.layerConfigs) {
             val layerData = layerConfig.combinedData
             dataByLayer.add(layerData)
         }
 
-        val layersDataByTile = PlotConfigUtil.toLayersDataByTile(dataByLayer, cfg.facets).iterator()
+        val layersDataByTile = PlotConfigUtil.toLayersDataByTile(dataByLayer, plotConfig.facets).iterator()
 
-        val scaleProvidersMap = cfg.scaleProvidersMap
         val layerBuilders = ArrayList<GeomLayerBuilder>()
         val layersByTile = ArrayList<List<GeomLayer>>()
         while (layersDataByTile.hasNext()) {
@@ -61,20 +58,21 @@ object PlotConfigClientSideUtil {
             val tileDataByLayer = layersDataByTile.next()
 
             val isMultilayer = tileDataByLayer.size > 1
-            val isLiveMap = cfg.layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
+            val isLiveMap = plotConfig.layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
 
             for (layerIndex in tileDataByLayer.indices) {
                 checkState(layerBuilders.size >= layerIndex)
 
                 if (layerBuilders.size == layerIndex) {
-                    val layerConfig = cfg.layerConfigs[layerIndex]
-                    val geomInteraction = GeomInteractionUtil.configGeomTargets(layerConfig, isMultilayer, isLiveMap, cfg.theme)
+                    val layerConfig = plotConfig.layerConfigs[layerIndex]
+                    val geomInteraction =
+                        GeomInteractionUtil.configGeomTargets(layerConfig, plotConfig.scaleMap, isMultilayer, isLiveMap, plotConfig.theme)
 
-                    layerBuilders.add(createLayerBuilder(layerConfig, scaleProvidersMap, geomInteraction))
+                    layerBuilders.add(createLayerBuilder(layerConfig, /*scaleProvidersMap,*/ geomInteraction))
                 }
 
                 val layerTileData = tileDataByLayer[layerIndex]
-                val layer = layerBuilders[layerIndex].build(layerTileData)
+                val layer = layerBuilders[layerIndex].build(layerTileData, plotConfig.scaleMap)
                 panelLayers.add(layer)
             }
             layersByTile.add(panelLayers)
@@ -85,7 +83,6 @@ object PlotConfigClientSideUtil {
 
     private fun createLayerBuilder(
         layerConfig: LayerConfig,
-        scaleProvidersMap: TypedScaleProviderMap,
         geomInteraction: GeomInteraction
     ): GeomLayerBuilder {
         val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
@@ -121,12 +118,6 @@ object PlotConfigClientSideUtil {
         val bindings = layerConfig.varBindings
         for (binding in bindings) {
             layerBuilder.addBinding(binding)
-        }
-
-        // scale providers
-        for (aes in scaleProvidersMap.keySet()) {
-            @Suppress("UNCHECKED_CAST")
-            layerBuilder.addScaleProvider(aes as Aes<Any>, scaleProvidersMap[aes])
         }
 
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)

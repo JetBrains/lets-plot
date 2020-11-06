@@ -24,11 +24,18 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 class TextGeom : GeomBase() {
     var formatter: StringFormat? = null
     var naValue = DEF_NA_VALUE
+    var sizeUnit: String? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         for (p in aesthetics.dataPoints()) {
@@ -37,7 +44,7 @@ class TextGeom : GeomBase() {
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
-                GeomHelper.decorate(label, p)
+                GeomHelper.decorate(label, p, getSizeUnitRatio(ctx))
 
                 val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
@@ -52,6 +59,19 @@ class TextGeom : GeomBase() {
                         .setStemLength(TipLayoutHint.StemLength.NONE)
                 )
             }
+        }
+    }
+
+    // This implementation is oversimplified.
+    // Current implementation works for label_format ='.2f'
+    // and values between -1.0 and 1.0.
+    private fun getSizeUnitRatio(ctx: GeomContext): Double {
+        return if ( sizeUnit != null)  {
+            val textWidth = 6.0
+            val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
+            unitRes / textWidth
+        } else {
+            1.0
         }
     }
 

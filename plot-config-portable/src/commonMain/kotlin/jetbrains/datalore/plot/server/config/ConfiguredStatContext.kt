@@ -10,13 +10,12 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ConfiguredStatContext(
-    private val myDataFrames: List<DataFrame>,
-    private val myScaleProviderMap: TypedScaleProviderMap
+    private val dataFrames: List<DataFrame>,
+    private val scaleByAes: TypedScaleMap
 ) : StatContext {
 
     private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): ClosedRange<Double>? {
@@ -41,13 +40,14 @@ internal class ConfiguredStatContext(
         val variable = DataFrameUtil.transformVarFor(aes)
 
         var scaleLimits: ClosedRange<Double>? = null
-        if (myScaleProviderMap.containsKey(aes)) {
+        if (scaleByAes.containsKey(aes)) {
             // We only need to access 'limits' so no 'real' data required
-            val emptyData = DataFrame.Builder()
-                .putNumeric(TransformVar.X, ArrayList())
-                .putNumeric(TransformVar.Y, ArrayList())
-                .build()
-            val scale = myScaleProviderMap[aes].createScale(emptyData, variable)
+//            val emptyData = DataFrame.Builder()
+//                .putNumeric(TransformVar.X, ArrayList())
+//                .putNumeric(TransformVar.Y, ArrayList())
+//                .build()
+//            val scale = scaleByAes[aes].createScale(emptyData, variable)
+            val scale = scaleByAes[aes]
             if (scale.isContinuousDomain && scale.hasDomainLimits()) {
                 scaleLimits = scale.domainLimits!!
                 if (SeriesUtil.isFinite(scaleLimits)) {
@@ -56,7 +56,7 @@ internal class ConfiguredStatContext(
             }
         }
 
-        var dataRange = overallRange(variable, myDataFrames)
+        var dataRange = overallRange(variable, dataFrames)
         return if (scaleLimits == null) {
             dataRange
         } else if (dataRange == null) {

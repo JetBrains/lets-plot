@@ -36,6 +36,7 @@ class LegendAssembler(
         varBindings: List<VarBinding>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
+        scaleByAes: TypedScaleMap,
         dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
@@ -45,6 +46,7 @@ class LegendAssembler(
                 varBindings,
                 constantByAes,
                 aestheticsDefaults,
+                scaleByAes,
                 dataRangeByAes
             )
         )
@@ -112,6 +114,7 @@ class LegendAssembler(
         private val varBindings: List<VarBinding>,
         private val constantByAes: Map<Aes<*>, Any>,
         private val aestheticsDefaults: AestheticsDefaults,
+        private val scaleMap: TypedScaleMap,
         dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
@@ -135,8 +138,8 @@ class LegendAssembler(
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
             for (varBinding in varBindings) {
                 val aes = varBinding.aes
-                var scale = varBinding.scale
-                if (!scale!!.hasBreaks()) {
+                var scale = scaleMap[aes]
+                if (!scale.hasBreaks()) {
                     if (dataRangeByAes.containsKey(aes)) {
                         scale = ScaleBreaksUtil.withBreaks(scale, dataRangeByAes[aes]!!, 5)
                     } else {

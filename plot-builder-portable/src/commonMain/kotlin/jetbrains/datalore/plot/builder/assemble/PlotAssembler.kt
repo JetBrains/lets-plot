@@ -19,12 +19,12 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class PlotAssembler private constructor(
-    layersByTile: List<List<GeomLayer>>,
+    private val scaleByAes: TypedScaleMap,
+    val layersByTile: List<List<GeomLayer>>,
     private val myCoordProvider: CoordProvider,
     private val myTheme: Theme
 ) {
 
-    private val myLayersByTile = ArrayList<List<GeomLayer>>()
     val containsLiveMap: Boolean
 
     var facets: PlotFacets = PlotFacets.undefined()
@@ -34,17 +34,11 @@ class PlotAssembler private constructor(
     private var myLegendsEnabled = true
     private var myInteractionsEnabled = true
 
-    val layersByTile: List<List<GeomLayer>>
-        get() = myLayersByTile
-
     private val isFacetLayout: Boolean
         get() = hasFacets()
 
     init {
-        for (plotLayers in layersByTile) {
-            myLayersByTile.add(ArrayList(plotLayers))
-        }
-        containsLiveMap = myLayersByTile.flatten().any(GeomLayer::isLiveMap)
+        containsLiveMap = layersByTile.flatten().any(GeomLayer::isLiveMap)
         myAxisEnabled = !containsLiveMap  // no axis on livemap
     }
 
@@ -57,7 +51,7 @@ class PlotAssembler private constructor(
     }
 
     private fun hasLayers(): Boolean {
-        for (tileLayers in myLayersByTile) {
+        for (tileLayers in layersByTile) {
             if (tileLayers.isNotEmpty()) {
                 return true
             }
@@ -70,7 +64,7 @@ class PlotAssembler private constructor(
 
         val legendsBoxInfos = if (myLegendsEnabled)
             PlotAssemblerUtil.createLegends(
-                myLayersByTile,
+                layersByTile,
                 myGuideOptionsMap,
                 myTheme.legend()
             )
@@ -79,12 +73,12 @@ class PlotAssembler private constructor(
 
         // share first X/Y scale among all layers
         @Suppress("UNCHECKED_CAST")
-        var xScaleProto = GeomLayerListUtil.anyBoundXScale(myLayersByTile)
+        var xScaleProto = GeomLayerListUtil.anyBoundXScale(scaleByAes, layersByTile)
         if (xScaleProto == null) {
             xScaleProto = Scales.continuousDomain("x", Aes.X)
         }
         @Suppress("UNCHECKED_CAST")
-        var yScaleProto = GeomLayerListUtil.anyBoundYScale(myLayersByTile)
+        var yScaleProto = GeomLayerListUtil.anyBoundYScale(scaleByAes, layersByTile)
         if (yScaleProto == null) {
             yScaleProto = Scales.continuousDomain("y", Aes.Y)
         }
@@ -103,7 +97,7 @@ class PlotAssembler private constructor(
         }
 
         // train scales
-        val rangeByAes = PlotAssemblerUtil.rangeByNumericAes(myLayersByTile)
+        val rangeByAes = PlotAssemblerUtil.rangeByNumericAes(layersByTile)
 
         val xDomain = rangeByAes.get(Aes.X)
         val yDomain = rangeByAes[Aes.Y]
@@ -154,7 +148,7 @@ class PlotAssembler private constructor(
         for (legendBoxInfo in legendBoxInfos) {
             plotBuilder.addLegendBoxInfo(legendBoxInfo)
         }
-        for (panelLayers in myLayersByTile) {
+        for (panelLayers in layersByTile) {
             plotBuilder.addTileLayers(panelLayers)
         }
 
@@ -183,6 +177,7 @@ class PlotAssembler private constructor(
 
     companion object {
         fun singleTile(
+            scaleByAes: TypedScaleMap,
             plotLayers: List<GeomLayer>,
             coordProvider: CoordProvider,
             theme: Theme
@@ -190,6 +185,7 @@ class PlotAssembler private constructor(
             val layersByTile = ArrayList<List<GeomLayer>>()
             layersByTile.add(plotLayers)
             return multiTile(
+                scaleByAes,
                 layersByTile,
                 coordProvider,
                 theme
@@ -197,11 +193,12 @@ class PlotAssembler private constructor(
         }
 
         fun multiTile(
+            scaleByAes: TypedScaleMap,
             layersByTile: List<List<GeomLayer>>,
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
-            return PlotAssembler(layersByTile, coordProvider, theme)
+            return PlotAssembler(scaleByAes, layersByTile, coordProvider, theme)
         }
     }
 }

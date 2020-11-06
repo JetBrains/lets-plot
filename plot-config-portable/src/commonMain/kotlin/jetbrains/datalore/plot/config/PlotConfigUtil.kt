@@ -6,12 +6,17 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
 
 object PlotConfigUtil {
@@ -108,5 +113,78 @@ object PlotConfigUtil {
             scaleProviderByAes[scaleConfig.aes] = scaleProvider
         }
         return TypedScaleProviderMap(scaleProviderByAes)
+    }
+
+    internal fun createScales(
+        layerConfigs: List<LayerConfig>,
+        scaleProvidersMap: TypedScaleProviderMap,
+        isClientSide: Boolean
+    ): TypedScaleMap {
+        val dataByVarBinding = layerConfigs
+            .flatMap { layer ->
+                layer.varBindings
+                    .filter { isClientSide || !it.variable.isStat }
+                    .map { it to layer.combinedData }
+            }.toMap()
+
+        val scaleProvidersByMappedAes = dataByVarBinding.keys.map {
+            val scaleProvider = ScaleProviderHelper.getOrCreateDefault(it.aes, scaleProvidersMap)
+            it.aes to scaleProvider
+        }.toMap()
+
+        val discreteMappedAes = HashSet<Aes<*>>()
+        for ((varBinding, data) in dataByVarBinding) {
+            val variable = varBinding.variable
+            require(data.has(variable)) {
+                "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables()}"
+            }
+
+            val aes = varBinding.aes
+            val scaleProvider = scaleProvidersByMappedAes[aes]!!
+            if (scaleProvider.discreteDomain || !data.isNumeric(variable)) {
+                discreteMappedAes.add(aes)
+            }
+        }
+
+        val discreteDomainByAes = HashMap<Aes<*>, Collection<*>>()
+        val continuousDomainByAesRaw = HashMap<Aes<*>, ClosedRange<Double>?>()
+        for ((varBinding, data) in dataByVarBinding) {
+            val aes = varBinding.aes
+            val variable = varBinding.variable
+            if (discreteMappedAes.contains(aes)) {
+                // update discrete domain
+                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any?>() } +
+                        data.distinctValues(variable)
+            } else {
+                // update continuous domain
+                continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
+            }
+        }
+
+        // make sure all continuous domains are 'applicable range' (not emprty and not null)
+        val continuousDomainByAes = continuousDomainByAesRaw.mapValues {
+            SeriesUtil.ensureApplicableRange(it.value)
+        }
+
+        val variablesByMappedAes = HashMap<Aes<*>, MutableList<DataFrame.Variable>>()
+        for (varBinding in dataByVarBinding.keys) {
+            val aes = varBinding.aes
+            val variable = varBinding.variable
+            variablesByMappedAes.getOrPut(aes) { ArrayList<DataFrame.Variable>() }.add(variable)
+        }
+
+        val scaleByMappedAes = HashMap<Aes<*>, Scale<*>>()
+        for ((aes, discreteDomain) in discreteDomainByAes) {
+            val defaultName = variablesByMappedAes[aes]!!.map { it.label }.distinct().joinToString()
+            val scaleProvider = scaleProvidersByMappedAes[aes]!!
+            scaleByMappedAes[aes] = scaleProvider.createScale(defaultName, discreteDomain)
+        }
+        for ((aes, continuousDomain) in continuousDomainByAes) {
+            val defaultName = variablesByMappedAes[aes]!!.map { it.label }.distinct().joinToString()
+            val scaleProvider = scaleProvidersByMappedAes[aes]!!
+            scaleByMappedAes[aes] = scaleProvider.createScale(defaultName, continuousDomain)
+        }
+
+        return TypedScaleMap(scaleByMappedAes)
     }
 }

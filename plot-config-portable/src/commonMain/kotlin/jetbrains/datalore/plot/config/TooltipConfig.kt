@@ -155,7 +155,7 @@ class TooltipConfig(
         private const val VARIABLE_NAME_PREFIX = "@"
         private const val LABEL_SEPARATOR = "|"
 
-        // escaping ('\$', '\@') or aes name ('$aesName') or variable name ('@varName', '@{var name with spaces}')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$|\\@)|(\$\w+)|@(([\w$@]+)|(\{(.*?)}))""")
+        // escaping ('\$', '\@') or aes name ('$aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$|\\@)|(\$\w+)|@(([\w$@]+)|(\{(.*?)})|\.{2}\w+\.{2})""")
     }
 }
