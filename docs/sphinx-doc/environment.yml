@@ -3,11 +3,14 @@ channels:
   - conda-forge
 dependencies:
   - python=3.7
-  - sphinx
+  - geopandas
   - jupyter_sphinx
   - matplotlib
-  - geopandas
   - numpy
+  - pip
   - scipy
-#  - pip:
-#      - lets-plot==1.5.3.dev1
+  - sphinx
+  - sphinx-panels
+  - sphinx-gallery
+  - pip:
+    - sphinx_bootstrap_theme
