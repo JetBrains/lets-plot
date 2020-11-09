@@ -22,15 +22,19 @@ internal class LocatedTargetsPicker {
             return
         }
 
-        if (myPicked.isEmpty() || myMinDistance > distance) {
-            myPicked.clear()
-            myPicked.add(lookupResult)
-            myMinDistance = distance
-        } else if (
-            myMinDistance == distance
-            && sameGeomKind(myPicked[0], lookupResult)
-        ) {
-            myPicked.add(lookupResult)
+        when {
+            myPicked.isEmpty() || myMinDistance > distance -> {
+                myPicked.clear()
+                myPicked.add(lookupResult)
+                myMinDistance = distance
+            }
+            myMinDistance == distance && sameGeomKind(myPicked[0], lookupResult) -> {
+                myPicked.add(lookupResult)
+            }
+            myMinDistance == distance -> {
+                myPicked.clear()
+                myPicked.add(lookupResult)
+            }
         }
     }
 
