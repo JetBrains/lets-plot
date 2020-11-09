@@ -605,6 +605,7 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
         >>> cov=[[1, 0],
         >>>      [0, 1]]
@@ -827,6 +828,7 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
         >>> N = 10
         >>> M = 10
