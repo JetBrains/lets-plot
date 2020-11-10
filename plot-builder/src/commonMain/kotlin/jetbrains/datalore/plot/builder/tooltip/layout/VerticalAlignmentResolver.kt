@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment
+import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment.BOTTOM
+import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment.TOP
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
-import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment
-import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
-import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 
 internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleRange) {
 

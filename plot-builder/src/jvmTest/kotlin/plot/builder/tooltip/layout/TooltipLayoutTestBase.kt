@@ -9,11 +9,12 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
-import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment.LEFT
+import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

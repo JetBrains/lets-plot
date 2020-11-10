@@ -5,14 +5,10 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-enum class TooltipAnchor {
-    TOP_LEFT,
-    TOP_CENTER,
-    TOP_RIGHT,
-    MIDDLE_LEFT,
-    MIDDLE_CENTER,
-    MIDDLE_RIGHT,
-    BOTTOM_LEFT,
-    BOTTOM_CENTER,
-    BOTTOM_RIGHT
-}
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment
+import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment
+
+class TooltipAnchor(
+    val verticalAlignment: VerticalAlignment,
+    val horizontalAlignment: HorizontalAlignment
+)
