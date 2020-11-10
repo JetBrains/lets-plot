@@ -15,7 +15,6 @@ except ImportError:
 
 from lets_plot._type_utils import is_number
 from lets_plot.plot.plot import ggsize
-from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.geom import geom_point, geom_text
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer
 from lets_plot.plot.scale_identity import scale_size_identity
@@ -348,7 +347,6 @@ class corr_plot_builder:
 
     def _set_brewer_palette(self, palette):
         self._color_scale = scale_color_brewer(name='Correlation',
-                                               type='div',
                                                palette=palette,
                                                breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
                                                limits=[-1.0, 1.0])
