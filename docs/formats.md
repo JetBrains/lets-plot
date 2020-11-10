@@ -1,4 +1,4 @@
-#Formatting
+# Formatting
 
 Formatting provides the ability to do complex variable substitutions and value formatting.
 
@@ -10,7 +10,7 @@ Formatting provides the ability to do complex variable substitutions and value f
     - [Examples](#examples-datetime)
 ------
 <a id="number-format"></a>
-##Number format
+## Number format
 Provides a wide variety of formats for numbers.
 
 Class `NumberFormat` implements number format: `NumberFormat(spec: String)`, where `spec` - string format specifier.
@@ -91,7 +91,7 @@ The following SI prefixes are supported for `s` type:
 
 
 <a id="examples-number-format"></a>
-###Examples
+### Examples
 
 Apply NumberFormat to `number = 42`:
 ```
@@ -119,7 +119,7 @@ NumberFormat("+$,.2f").apply(1e4) --> "+$10,000.00"
 ```
 
 <a id="string-template"></a>
-##String template
+## String template
 
 The number format can be used in a template to create a string with variable substitution.
 The string template contains “replacement fields” surrounded by curly braces `{}`. 
@@ -131,7 +131,7 @@ See: [Tooltip Customization in Lets-Plot](https://github.com/JetBrains/lets-plot
 
 
 <a id="datetime"></a>
-##Date and time format
+## Date and time format
 Provides formats for date and time values.
 
 
@@ -170,7 +170,7 @@ The list of supported directives to format date/time values:
 * `%S` - second as a zero-padded decimal number (00, 01, …, 59).
 
 <a id="examples-datetime"></a>
-###Examples
+### Examples
 
 
 Apply format to `DateTime(date, time)`, 
