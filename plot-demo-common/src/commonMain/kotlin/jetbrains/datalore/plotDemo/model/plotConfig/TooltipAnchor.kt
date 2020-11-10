@@ -41,6 +41,12 @@ open class TooltipAnchor : PlotConfigDemoBase() {
         }
 
         private fun withTooltipAnchor(anchor: String): Map<String, Any> {
+            val allPositionals = "\$Y"
+            val aesYMin = "\$ymin"
+            val aesYMax = "\$ymax"
+            val aesMiddle = "\$middle"
+            val aesLower = "\$lower"
+            val aesUpper = "\$upper"
             val spec = """{
                     'kind': 'plot',
                     'ggtitle': {'text': '$anchor'},
@@ -55,13 +61,13 @@ open class TooltipAnchor : PlotConfigDemoBase() {
                              'geom': 'boxplot',
                              'tooltips' : {
                                  'tooltip_formats': [
-                                    { 'field' : '${'$'}Y', 'format' : '.0f' },
-                                    { 'field' : '${'$'}middle', 'format' : '.2f' }
+                                    { 'field' : '$allPositionals', 'format' : '.0f' },
+                                    { 'field' : '$aesMiddle', 'format' : '.2f' }
                                  ],
                                  'tooltip_lines': [
-                                    'min/max|${'$'}ymin/${'$'}ymax',
-                                    'lower/upper|${'$'}lower/${'$'}upper',
-                                    '@|${'$'}middle'
+                                    'min/max|$aesYMin/$aesYMax',
+                                    'lower/upper|$aesLower/$aesUpper',
+                                    '@|$aesMiddle'
                                  ]
                              }
                         }
