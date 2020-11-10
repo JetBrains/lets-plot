@@ -48,14 +48,13 @@ class corr_plot_builder:
         self._show_legend = show_legend
         self._format = '.2f'
         self._reverse_y = flip if flip else False
-        self._text_color = None
-        self._tiles_layer = None
-        self._points_layer = None
-        self._labels_layer = None
         self._color_scale = scale_color_gradient2(name='Correlation',
                                                   low='red', mid='light_gray', high='blue',
                                                   breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
                                                   limits=[-1.0, 1.0])
+        self._points_params = None
+        self._tiles_params = None
+        self._labels_params = None
 
     def points(self, type=None, fill_diagonal=None):
         """
@@ -72,10 +71,13 @@ class corr_plot_builder:
         -------
             self
         """
+        self._points_params = {}
 
-        self._points_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                                        tooltips=self._tooltip_spec(),
-                                        type=self._get_type(type), fill_diagonal=fill_diagonal)
+        if type:
+            self._points_params['type'] = self._get_type(type)
+
+        if fill_diagonal:
+            self._points_params['fill_diagonal'] = fill_diagonal
 
         return self
 
@@ -98,21 +100,19 @@ class corr_plot_builder:
             self
         """
 
-        other_args = {}
+        self._labels_params = {}
+
+        if type:
+            self._labels_params['type'] = self._get_type(type)
+
+        if fill_diagonal:
+            self._labels_params['fill_diagonal'] = fill_diagonal
 
         if not map_size:
-            other_args['size'] = 1
+            self._labels_params['size'] = 1
 
         if color:
-            other_args['color'] = color
-        else:
-            other_args['color'] = self._text_color
-
-        self._labels_layer = geom_text(stat='corr', show_legend=self._show_legend,
-                                       tooltips=self._tooltip_spec(),
-                                       type=self._get_type(type), fill_diagonal=fill_diagonal,
-                                       na_value='', label_format=self._format,
-                                       size_unit='x', **other_args)
+            self._labels_params['color'] = color
 
         return self
 
@@ -132,12 +132,13 @@ class corr_plot_builder:
             self
         """
 
-        self._text_color = 'white'
+        self._tiles_params = {}
 
-        self._tiles_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                                       tooltips=self._tooltip_spec(),
-                                       type=self._get_type(type), fill_diagonal=fill_diagonal,
-                                       size=1.0, shape=15)
+        if type:
+            self._tiles_params['type'] = self._get_type(type)
+
+        if fill_diagonal:
+            self._tiles_params['fill_diagonal'] = fill_diagonal
 
         return self
 
@@ -152,14 +153,25 @@ class corr_plot_builder:
 
         plot = ggplot(self._data)
 
-        if self._tiles_layer:
-            plot += self._tiles_layer
+        if self._tiles_params is not None:
+            plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
+                               tooltips=self._tooltip_spec(), size=1.0, shape=15,
+                               **self._tiles_params)
 
-        if self._points_layer:
-            plot += self._points_layer
+        if self._points_params is not None:
+            plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
+                               tooltips=self._tooltip_spec(),
+                               **self._points_params)
 
-        if self._labels_layer:
-            plot += self._labels_layer
+        if self._labels_params is not None:
+
+            if self._tiles_params is not None and 'color' not in self._labels_params:
+                self._labels_params['color'] = 'white'
+
+            plot += geom_text(stat='corr', show_legend=self._show_legend,
+                              tooltips=self._tooltip_spec(),
+                              na_value='', label_format=self._format,
+                              size_unit='x', **self._labels_params)
 
         return self._add_common_params(plot)
 
