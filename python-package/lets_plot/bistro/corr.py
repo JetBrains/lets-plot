@@ -22,6 +22,7 @@ from lets_plot.plot.scale_identity import scale_size_identity
 from lets_plot.plot.coord import coord_fixed
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
+from lets_plot.plot.plot import ggplot
 
 __all__ = ['corr_plot_builder', 'corr_plot_scatter', 'corr_plot_tiles',
            'corr_plot_tileslab', 'corr_plot_scatterlab']
@@ -150,18 +151,16 @@ class corr_plot_builder:
             self
         """
 
-        layers = []
+        plot = ggplot(self._data)
 
         if self._tiles_layer:
-            layers.append(self._tiles_layer)
+            plot += self._tiles_layer
 
         if self._points_layer:
-            layers.append(self._points_layer)
+            plot += self._points_layer
 
         if self._labels_layer:
-            layers.append(self._labels_layer)
-
-        plot = PlotSpec(self._data, mapping=None, scales=[], layers=layers)
+            plot += self._labels_layer
 
         return self._add_common_params(plot)
 
