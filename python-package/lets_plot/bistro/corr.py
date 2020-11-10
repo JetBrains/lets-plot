@@ -47,7 +47,7 @@ class corr_plot_builder:
         self._data = data
         self._show_legend = show_legend
         self._format = '.2f'
-        self._reverse_y = flip if flip is not None else True
+        self._reverse_y = flip if flip else False
         self._text_color = None
         self._tiles_layer = None
         self._points_layer = None
