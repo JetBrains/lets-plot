@@ -8,12 +8,12 @@ package jetbrains.datalore.plot.builder.interact.render
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
+import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode

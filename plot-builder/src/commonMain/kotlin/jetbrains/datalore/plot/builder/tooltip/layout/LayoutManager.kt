@@ -14,8 +14,8 @@ import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
-import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment
+import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
+import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import kotlin.math.min
 
 class LayoutManager(
@@ -45,7 +45,7 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
             ?.let { xAxisTooltip ->
-                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, VerticalAlignment.BOTTOM, true)
+                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, true)
                 desiredPosition.add(positionedTooltip)
 
                 // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
@@ -94,7 +94,7 @@ class LayoutManager(
                 VERTICAL_TOOLTIP -> placementList.add(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
-                        VerticalAlignment.TOP,
+                        TOP,
                         false
                     )
                 )
@@ -131,10 +131,10 @@ class LayoutManager(
         val placementList = ArrayList<PositionedTooltip>()
 
         val tooltipsHeight = cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
-        val verticalTooltipRange = when (myTooltipAnchor.verticalAlignment) {
-            VerticalAlignment.TOP -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
-            VerticalAlignment.BOTTOM -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
-            VerticalAlignment.MIDDLE -> centered(
+        val verticalTooltipRange = when (myTooltipAnchor.verticalAnchor) {
+            TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
+            TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+            TooltipAnchor.VerticalAnchor.MIDDLE -> centered(
                 (myVerticalGeomSpace.start() + myVerticalGeomSpace.end()) / 2,
                 tooltipsHeight
             )
@@ -146,7 +146,7 @@ class LayoutManager(
                 tooltip,
                 tooltipY,
                 verticalTooltipRange,
-                myTooltipAnchor.horizontalAlignment
+                myTooltipAnchor.horizontalAnchor
             )
             placementList.add(positionedTooltip)
             tooltipY += positionedTooltip.height + MARGIN_BETWEEN_TOOLTIPS
@@ -240,7 +240,7 @@ class LayoutManager(
                     bottomTooltipRange,
                     alignment,
                     cursorVerticalRange
-                ) === VerticalAlignment.TOP
+                ) === TOP
             ) {
                 tooltipY = topTooltipRange.start()
                 stemY = targetTopPoint
@@ -344,8 +344,13 @@ class LayoutManager(
         measuredTooltip: MeasuredTooltip,
         tooltipY: Double,
         verticalTooltipRange: DoubleRange,
-        horizontalAlignment: HorizontalAlignment
+        horizontalAnchor: TooltipAnchor.HorizontalAnchor
     ): PositionedTooltip {
+        val horizontalAlignment = when (horizontalAnchor) {
+            TooltipAnchor.HorizontalAnchor.RIGHT -> HorizontalAlignment.RIGHT
+            TooltipAnchor.HorizontalAnchor.LEFT -> HorizontalAlignment.LEFT
+            TooltipAnchor.HorizontalAnchor.CENTER -> HorizontalAlignment.CENTER
+        }
         var tooltipX = calculateAnchorX(measuredTooltip, horizontalAlignment)
 
         // check position under cursor
@@ -391,6 +396,25 @@ class LayoutManager(
 
     private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
         return this.filter(::isCorner)
+    }
+
+    internal enum class VerticalAlignment {
+        TOP,
+        BOTTOM
+    }
+
+    enum class HorizontalAlignment {
+        LEFT,
+        RIGHT,
+        CENTER;
+
+        fun inversed(): HorizontalAlignment {
+            return when (this) {
+                LEFT -> RIGHT
+                RIGHT -> LEFT
+                CENTER -> CENTER
+            }
+        }
     }
 
     class PositionedTooltip {

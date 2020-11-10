@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
-import jetbrains.datalore.plot.builder.tooltip.VerticalAlignment.*
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment.*
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.*
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.theme.TooltipTheme
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor

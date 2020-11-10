@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAlignment.LEFT
+import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
+import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
 import kotlin.test.Test
 
