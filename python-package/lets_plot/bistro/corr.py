@@ -197,7 +197,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('BrBG')
+        return self._set_brewer_palette('BrBG')
 
     def patette_PiYG(self):
         """
@@ -207,7 +207,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('PiYG')
+        return self._set_brewer_palette('PiYG')
 
     def patette_PRGn(self):
         """
@@ -217,7 +217,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('PRGn')
+        return self._set_brewer_palette('PRGn')
 
     def patette_PuOr(self):
         """
@@ -227,7 +227,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('PuOr')
+        return self._set_brewer_palette('PuOr')
 
     def patette_RdBu(self):
         """
@@ -237,7 +237,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('RdBu')
+        return self._set_brewer_palette('RdBu')
 
     def patette_RdGy(self):
         """
@@ -247,7 +247,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('RdGy')
+        return self._set_brewer_palette('RdGy')
 
     def patette_RdYlBu(self):
         """
@@ -257,7 +257,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('RdYlBu')
+        return self._set_brewer_palette('RdYlBu')
 
     def patette_RdYlGn(self):
         """
@@ -267,7 +267,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('RdYlGn')
+        return self._set_brewer_palette('RdYlGn')
 
     def patette_Spectral(self):
         """
@@ -277,7 +277,7 @@ class corr_plot_builder:
         -------
             self
         """
-        return self._set_diverging_palette('Spectral')
+        return self._set_brewer_palette('Spectral')
 
     def _get_numeric_columns_count(self):
 
@@ -347,7 +347,7 @@ class corr_plot_builder:
 
         return res
 
-    def _set_diverging_palette(self, palette):
+    def _set_brewer_palette(self, palette):
         self._color_scale = scale_color_brewer(name='Correlation',
                                                type='div',
                                                palette=palette,
@@ -377,7 +377,7 @@ def corr_plot_scatter(data, palette=None):
     plot_builder.points()
 
     if palette:
-        plot_builder._set_diverging_palette(palette)
+        plot_builder._set_brewer_palette(palette)
 
     return plot_builder.build()
 
@@ -401,7 +401,7 @@ def corr_plot_tiles(data, palette=None):
     plot_builder.tiles()
 
     if palette:
-        plot_builder._set_diverging_palette(palette)
+        plot_builder._set_brewer_palette(palette)
 
     return plot_builder.build()
 
@@ -426,7 +426,7 @@ def corr_plot_tileslab(data, palette=None):
     plot_builder.labels()
 
     if palette:
-        plot_builder._set_diverging_palette(palette)
+        plot_builder._set_brewer_palette(palette)
 
     return plot_builder.build()
 
@@ -451,6 +451,6 @@ def corr_plot_scatterlab(data, palette=None):
     plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
 
     if palette:
-        plot_builder._set_diverging_palette(palette)
+        plot_builder._set_brewer_palette(palette)
 
     return plot_builder.build()
