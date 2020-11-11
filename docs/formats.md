@@ -112,8 +112,11 @@ s        -->  "42.0000"
 020,s    -->  "000,000,000,042.0000"
 020.0%   -->  "0000000000000004200%"
 ```
+Some other examples:
 ```
-NumberFormat(".1f").apply(0.42) --> "0.4" 
+NumberFormat(".1f").apply(0.42) --> "0.4"
+NumberFormat(".3g").apply(0.4449) --> "0.445"
+NumberFormat(",.12g").apply(-4200000) --> "-4,200,000" 
 NumberFormat("10,.2f").apply(1234567.449) --> "1,234,567.45"
 NumberFormat("+$,.2f").apply(1e4) --> "+$10,000.00"
 ```
@@ -194,8 +197,7 @@ where `date=Date(6, Month.AUGUST, 2019)`, `time=Time(4, 46, 35)`
 %P  --> "am"
 %p  --> "AM"
 %S  --> "35"
-```
-```
+
 %Y-%m-%dT%H:%M:%S            --> "2019-08-06T04:46:35
 ----!%%%YY%md%dT%H:%M:%S%%%  -->  "----!%%2019Y08d06T04:46:35%%%"
 ```
