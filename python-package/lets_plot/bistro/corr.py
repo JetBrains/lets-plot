@@ -16,7 +16,8 @@ except ImportError:
 from lets_plot._type_utils import is_number
 from lets_plot.plot.plot import ggsize
 from lets_plot.plot.geom import geom_point, geom_text
-from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer
+from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
+    scale_fill_gradient2, scale_fill_brewer
 from lets_plot.plot.scale_identity import scale_size_identity
 from lets_plot.plot.coord import coord_fixed
 from lets_plot.plot.theme_ import theme, element_blank
@@ -35,6 +36,9 @@ class corr_plot_builder:
     _LEGEND_NAME = 'Corr'
     _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
     _LIMITS = [-1.0, 1.0]
+    _DEF_LOW_COLOR = 'red'
+    _DEF_MID_COLOR = 'light_gray'
+    _DEF_HIGH_COLOR = 'blue'
 
     def __init__(self, data, show_legend=None, flip=True):
         """
@@ -52,13 +56,14 @@ class corr_plot_builder:
         self._show_legend = show_legend
         self._format = '.2f'
         self._reverse_y = flip if flip else False
-        self._color_scale = scale_color_gradient2(name=corr_plot_builder._LEGEND_NAME,
-                                                  low='red', mid='light_gray', high='blue',
-                                                  breaks=corr_plot_builder._BREAKS,
-                                                  limits=corr_plot_builder._LIMITS)
+        self._color_scale = None
+        self._fill_scale = None
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
+        self.palette_gradient(low=corr_plot_builder._DEF_LOW_COLOR,
+                              mid=corr_plot_builder._DEF_MID_COLOR,
+                              high=corr_plot_builder._DEF_HIGH_COLOR)
 
     def points(self, type=None, fill_diagonal=None):
         """
@@ -181,7 +186,7 @@ class corr_plot_builder:
 
     def palette_gradient(self, low, mid, high):
         """
-        Set scale_color_gradient2 for corr plot.
+        Set scale_color_gradient2 and scale_fill_gradient2 for corr plot.
 
         Parameters
         ----------
@@ -200,6 +205,11 @@ class corr_plot_builder:
                                                   low=low, mid=mid, high=high,
                                                   breaks=corr_plot_builder._BREAKS,
                                                   limits=corr_plot_builder._LIMITS)
+
+        self._fill_scale = scale_fill_gradient2(name=corr_plot_builder._LEGEND_NAME,
+                                                low=low, mid=mid, high=high,
+                                                breaks=corr_plot_builder._BREAKS,
+                                                limits=corr_plot_builder._LIMITS)
 
         return self
 
@@ -329,6 +339,9 @@ class corr_plot_builder:
         plot += scale_size_identity(name="", na_value=0)
         plot += self._color_scale
 
+        if self._tiles_params is not None:
+            plot += self._fill_scale
+
         if self._reverse_y:
             plot += scale_y_discrete_reversed()
 
@@ -369,6 +382,11 @@ class corr_plot_builder:
                                                palette=palette,
                                                breaks=corr_plot_builder._BREAKS,
                                                limits=corr_plot_builder._LIMITS)
+
+        self._fill_scale = scale_fill_brewer(name=corr_plot_builder._LEGEND_NAME,
+                                             palette=palette,
+                                             breaks=corr_plot_builder._BREAKS,
+                                             limits=corr_plot_builder._LIMITS)
 
         return self
 
