@@ -97,7 +97,8 @@ object MathUtil {
         constructor(x: Double, y: Double) : this(DoubleVector(x, y))
 
         fun check(coord: DoubleVector): Boolean {
-            return compare(coord) == COMPARISON_RESULT.NEW_CLOSER
+            val cmpResult = compare(coord)
+            return cmpResult == COMPARISON_RESULT.NEW_CLOSER || cmpResult == COMPARISON_RESULT.EQUAL
         }
 
         fun compare(coord: DoubleVector): COMPARISON_RESULT {

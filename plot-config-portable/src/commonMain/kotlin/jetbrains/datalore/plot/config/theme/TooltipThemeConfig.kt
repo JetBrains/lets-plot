@@ -6,6 +6,12 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.LEFT
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.RIGHT
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.CENTER
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.TOP
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.BOTTOM
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.MIDDLE
 import jetbrains.datalore.plot.builder.theme.TooltipTheme
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
@@ -21,14 +27,28 @@ internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : O
             return ThemeConfig.DEF.tooltip().anchor()
 
         return when (val anchor = getString(Option.Theme.TOOLTIP_ANCHOR)) {
-            "top_right" -> TooltipAnchor.TOP_RIGHT
-            "top_left" -> TooltipAnchor.TOP_LEFT
-            "bottom_right" -> TooltipAnchor.BOTTOM_RIGHT
-            "bottom_left" -> TooltipAnchor.BOTTOM_LEFT
-            "none" -> null
+            "top_left" -> TooltipAnchor(TOP, LEFT)
+            "top_center" -> TooltipAnchor(TOP, CENTER)
+            "top_right" -> TooltipAnchor(TOP, RIGHT)
+            "middle_left" -> TooltipAnchor(MIDDLE, LEFT)
+            "middle_center" -> TooltipAnchor(MIDDLE, CENTER)
+            "middle_right" -> TooltipAnchor(MIDDLE, RIGHT)
+            "bottom_left" -> TooltipAnchor(BOTTOM, LEFT)
+            "bottom_center" -> TooltipAnchor(BOTTOM, CENTER)
+            "bottom_right" -> TooltipAnchor(BOTTOM, RIGHT)
             else -> throw IllegalArgumentException(
-                "Illegal value $anchor, ${Option.Theme.TOOLTIP_ANCHOR}, expected values are: 'top_right'/'top_left'/'bottom_right'/'bottom_left'/'none'"
+                "Illegal value $anchor, ${Option.Theme.TOOLTIP_ANCHOR}, expected values are: " +
+                        "'top_left'/'top_center'/'top_right'/" +
+                        "'middle_left'/'middle_center'/'middle_right'/" +
+                        "'bottom_left'/'bottom_center'/'bottom_right'/"
             )
         }
+    }
+
+    override fun minWidth(): Double? {
+        if (has(Option.Theme.TOOLTIP_WIDTH)) {
+            return getDouble(Option.Theme.TOOLTIP_WIDTH)
+        }
+        return ThemeConfig.DEF.tooltip().minWidth()
     }
 }

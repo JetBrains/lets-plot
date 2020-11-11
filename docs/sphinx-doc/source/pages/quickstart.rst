@@ -1,5 +1,8 @@
+.. _quickstart:
+
+
 Quickstart with Jupyter
-------------------------
+#######################
 
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 

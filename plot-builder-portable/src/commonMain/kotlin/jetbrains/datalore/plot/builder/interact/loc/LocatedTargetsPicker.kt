@@ -27,15 +27,19 @@ internal class LocatedTargetsPicker {
             return
         }
 
-        if (myPicked.isEmpty() || myMinDistance > distance) {
-            myPicked.clear()
-            myPicked.add(lookupResult)
-            myMinDistance = distance
-        } else if (
-            myMinDistance == distance
-            && sameGeomKind(myPicked[0], lookupResult)
-        ) {
-            myPicked.add(lookupResult)
+        when {
+            myPicked.isEmpty() || myMinDistance > distance -> {
+                myPicked.clear()
+                myPicked.add(lookupResult)
+                myMinDistance = distance
+            }
+            myMinDistance == distance && isSameUnivariateGeom(myPicked[0], lookupResult) -> {
+                myPicked.add(lookupResult)
+            }
+            myMinDistance == distance -> {
+                myPicked.clear()
+                myPicked.add(lookupResult)
+            }
         }
     }
 
@@ -65,7 +69,7 @@ internal class LocatedTargetsPicker {
             } else distance
         }
 
-        private fun sameGeomKind(lft: LookupResult, rgt: LookupResult): Boolean {
+        private fun isSameUnivariateGeom(lft: LookupResult, rgt: LookupResult): Boolean {
             return lft.geomKind === rgt.geomKind && UNIVARIATE_GEOMS.contains(rgt.geomKind)
         }
     }

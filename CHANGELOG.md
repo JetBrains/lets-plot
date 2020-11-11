@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.3] - 2020-11-05
 ### Added
- - Facilities for customization of tooltip contents and its position (see <link to doc>).
+ - Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
  - `attribution` and other new parameters in the `maptiles_zxy()` function. 
  - `label_format` parameter in the `geom_text()` function.
  - `scale_x_discrete_reversed()` / `scale_y_discrete_reversed()`

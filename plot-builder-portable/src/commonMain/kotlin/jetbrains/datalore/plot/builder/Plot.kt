@@ -68,6 +68,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     abstract val tooltipAnchor: TooltipAnchor?
 
+    abstract val tooltipMinWidth: Double?
+
     abstract val isInteractionsEnabled: Boolean
 
     internal val liveMapFigures: List<SomeFig>
