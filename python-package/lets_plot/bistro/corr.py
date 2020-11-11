@@ -32,6 +32,10 @@ class corr_plot_builder:
     This class is intended to build correlation matrix plots.
     """
 
+    _LEGEND_NAME = 'Corr'
+    _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
+    _LIMITS = [-1.0, 1.0]
+
     def __init__(self, data, show_legend=None, flip=True):
         """
         Parameters
@@ -48,10 +52,10 @@ class corr_plot_builder:
         self._show_legend = show_legend
         self._format = '.2f'
         self._reverse_y = flip if flip else False
-        self._color_scale = scale_color_gradient2(name='Correlation',
+        self._color_scale = scale_color_gradient2(name=corr_plot_builder._LEGEND_NAME,
                                                   low='red', mid='light_gray', high='blue',
-                                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                                  limits=[-1.0, 1.0])
+                                                  breaks=corr_plot_builder._BREAKS,
+                                                  limits=corr_plot_builder._LIMITS)
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
@@ -192,10 +196,10 @@ class corr_plot_builder:
         -------
             self
         """
-        self._color_scale = scale_color_gradient2(name='Correlation',
+        self._color_scale = scale_color_gradient2(name=corr_plot_builder._LEGEND_NAME,
                                                   low=low, mid=mid, high=high,
-                                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                                  limits=[-1.0, 1.0])
+                                                  breaks=corr_plot_builder._BREAKS,
+                                                  limits=corr_plot_builder._LIMITS)
 
         return self
 
@@ -330,7 +334,10 @@ class corr_plot_builder:
 
         columns_count = self._get_numeric_columns_count()
         width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
-        height = width * _PLOT_PROPORTION
+        height = width
+
+        if self._show_legend:
+            height *= _PLOT_PROPORTION
 
         plot += ggsize(width, height)
 
@@ -358,10 +365,10 @@ class corr_plot_builder:
         return res
 
     def _set_brewer_palette(self, palette):
-        self._color_scale = scale_color_brewer(name='Correlation',
+        self._color_scale = scale_color_brewer(name=corr_plot_builder._LEGEND_NAME,
                                                palette=palette,
-                                               breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                               limits=[-1.0, 1.0])
+                                               breaks=corr_plot_builder._BREAKS,
+                                               limits=corr_plot_builder._LIMITS)
 
         return self
 
