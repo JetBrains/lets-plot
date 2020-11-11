@@ -18,7 +18,6 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
-import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
@@ -359,11 +358,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             tile.liveMapFigure?.let(myLiveMapFigures::add)
 
             val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
-            myTooltipHelper.addTileInfo(
-                realGeomBounds,
-                tile.targetLocators,
-                FeatureSwitch.SHOW_CROSSHAIR_FOR_ANCHORED_TOOLTIP && tooltipAnchor != null
-            )
+            myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators, tooltipAnchor != null)
         }
 
         @Suppress("ConstantConditionIf")

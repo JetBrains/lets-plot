@@ -17,8 +17,6 @@ object FeatureSwitch {
 
     const val USE_DATA_FRAME_ENCODING = true
 
-    const val SHOW_CROSSHAIR_FOR_ANCHORED_TOOLTIP = true
-
     fun printEncodedDataSummary(header: String, dataSpec: Map<String, Any>) {
         @Suppress("ConstantConditionIf")
         if (PRINT_ENCODED_DATA_SUMMARY) {
