@@ -6,7 +6,7 @@
 
 ##### 1. Edit CHANGELOG.md file.
 
-##### 2. Set production version in the properties (remove _"-SNAPSHOT"_ and _"dev"_): 
+##### 2. Set production version in the properties (remove _"-apha"_ and _"dev"_): 
 
  - `version` and `js_artifact_version` in `build.gradle` 
  - `__version__` in `python-package/lets_plot/_version.py`
@@ -16,7 +16,7 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push`
  - `git tag vX.X.X && git push --tags`
 
-##### 4. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
+##### 4. Prepare to the next dev cycle: increment versions and add _"-alpha"_ and _"dev"_:
 
  - `version` and `js_artifact_version` in `build.gradle` 
  - `__version__` in `python-package/lets_plot/_version.py`
@@ -98,7 +98,7 @@ run `./gradlew python-package-build:buildManylinuxWheels`
  - `./gradlew :plot-image-export:bintrayUpload`
  
 Note that release versions will be uploaded to the `lets-plot-jars` package.    
-SNAPSHOT's and RC's will be uploaded to the `lets-plot-jars-dev` package.
+'aplha' and 'RC' versions will be uploaded to the `lets-plot-jars-dev` package.
  
 ### Add the GitHub release:
  
