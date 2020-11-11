@@ -3,6 +3,7 @@
 #
 
 """Correlation matrix implementation module"""
+
 try:
     import numpy
 except ImportError:
@@ -15,7 +16,8 @@ except ImportError:
 
 from lets_plot._type_utils import is_number
 from lets_plot.plot.plot import ggsize
-from lets_plot.plot.geom import geom_point, geom_text
+from lets_plot.plot.core import aes
+from lets_plot.plot.geom import geom_point, geom_text, geom_tile
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
     scale_fill_gradient2, scale_fill_brewer
 from lets_plot.plot.scale_identity import scale_size_identity
@@ -163,9 +165,9 @@ class corr_plot_builder:
         plot = ggplot(self._data)
 
         if self._tiles_params is not None:
-            plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                               tooltips=self._tooltip_spec(), size=1.0, shape=15,
-                               **self._tiles_params)
+            plot += geom_tile(stat='corr', show_legend=self._show_legend, size=1.0,
+                              mapping=aes(fill='..corr..', color='..corr..'),
+                              tooltips=self._tooltip_spec(), **self._tiles_params)
 
         if self._points_params is not None:
             plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
@@ -173,7 +175,6 @@ class corr_plot_builder:
                                **self._points_params)
 
         if self._labels_params is not None:
-
             if self._tiles_params is not None and 'color' not in self._labels_params:
                 self._labels_params['color'] = 'white'
 
@@ -338,9 +339,7 @@ class corr_plot_builder:
         plot += coord_fixed()
         plot += scale_size_identity(name="", na_value=0)
         plot += self._color_scale
-
-        if self._tiles_params is not None:
-            plot += self._fill_scale
+        plot += self._fill_scale
 
         if self._reverse_y:
             plot += scale_y_discrete_reversed()
