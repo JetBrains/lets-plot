@@ -28,7 +28,7 @@ internal class LocatedTargetsPicker {
                 myPicked.add(lookupResult)
                 myMinDistance = distance
             }
-            myMinDistance == distance && sameGeomKind(myPicked[0], lookupResult) -> {
+            myMinDistance == distance && isSameUnivariateGeom(myPicked[0], lookupResult) -> {
                 myPicked.add(lookupResult)
             }
             myMinDistance == distance -> {
@@ -64,7 +64,7 @@ internal class LocatedTargetsPicker {
             } else distance
         }
 
-        private fun sameGeomKind(lft: LookupResult, rgt: LookupResult): Boolean {
+        private fun isSameUnivariateGeom(lft: LookupResult, rgt: LookupResult): Boolean {
             return lft.geomKind === rgt.geomKind && UNIVARIATE_GEOMS.contains(rgt.geomKind)
         }
     }
