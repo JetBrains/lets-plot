@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
@@ -26,6 +27,7 @@ internal class TooltipLayer(
 ) {
     private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, tooltipAnchor)
     private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
+    private val myShowCrosshairComponent = tooltipAnchor != null
 
     fun showTooltips(
         cursor: DoubleVector,
@@ -33,6 +35,11 @@ internal class TooltipLayer(
         geomBounds: DoubleRectangle?
     ) {
         clearTooltips()
+
+        if (myShowCrosshairComponent && geomBounds != null) {
+            showCrosshair(tooltipSpecs, geomBounds)
+        }
+
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec -> spec
@@ -59,6 +66,28 @@ internal class TooltipLayer(
     private fun newTooltipBox(): TooltipBox {
         // Add to the layer to be able to calculate a bbox
         return TooltipBox(tooltipMinWidth).apply { myTooltipLayer.children().add(rootGroup) }
+    }
+
+    private fun newCrosshairComponent(): CrosshairComponent {
+        return CrosshairComponent().apply { myTooltipLayer.children().add(rootGroup) }
+    }
+
+    private fun showCrosshair(tooltipSpecs: List<TooltipSpec>, geomBounds: DoubleRectangle) {
+        val showVertical = tooltipSpecs.any { it.layoutHint.kind == X_AXIS_TOOLTIP }
+        val showHorizontal = tooltipSpecs.any { it.layoutHint.kind == Y_AXIS_TOOLTIP }
+        if (!showVertical && !showHorizontal) {
+            return
+        }
+        tooltipSpecs
+            .filterNot(TooltipSpec::isOutlier)
+            .forEach { tooltipSpec ->
+                tooltipSpec.layoutHint.coord?.let { coord ->
+                    newCrosshairComponent().also { crosshair ->
+                        if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
+                        if (showVertical) crosshair.addVertical(coord, geomBounds)
+                    }
+                }
+            }
     }
 
     private val TooltipSpec.style get() = when (this.layoutHint.kind) {

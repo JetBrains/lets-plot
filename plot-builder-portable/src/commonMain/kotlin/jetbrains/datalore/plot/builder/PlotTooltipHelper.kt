@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
+import kotlin.math.max
 
 internal class PlotTooltipHelper {
     private val myTileInfos = ArrayList<TileInfo>()
@@ -21,8 +22,12 @@ internal class PlotTooltipHelper {
         myTileInfos.clear()
     }
 
-    fun addTileInfo(geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
-        val tileInfo = TileInfo(geomBounds, targetLocators)
+    fun addTileInfo(geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>, hasTooltipAnchor: Boolean) {
+        val tileInfo = TileInfo(
+            geomBounds,
+            targetLocators,
+            maxAllowedDistance = if (hasTooltipAnchor) max(geomBounds.width, geomBounds.height) else null
+        )
         myTileInfos.add(tileInfo)
     }
 
@@ -60,7 +65,11 @@ internal class PlotTooltipHelper {
     }
 
 
-    private class TileInfo(internal val geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
+    private class TileInfo(
+        internal val geomBounds: DoubleRectangle,
+        targetLocators: List<GeomTargetLocator>,
+        private val maxAllowedDistance: Double?
+    ) {
 
         private val myTargetLocators = targetLocators.map { TileTargetLocator(it) }
 
@@ -69,6 +78,7 @@ internal class PlotTooltipHelper {
 
         internal fun findTargets(plotCoord: DoubleVector): List<LookupResult> {
             val targetsPicker = LocatedTargetsPicker().apply {
+                maxAllowedDistance?.let(this::updateMaxDistance)
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {

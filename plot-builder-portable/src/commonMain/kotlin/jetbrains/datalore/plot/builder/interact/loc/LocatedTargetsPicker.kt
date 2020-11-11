@@ -12,13 +12,18 @@ internal class LocatedTargetsPicker {
 
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
+    private var myMaxAllowedDistance = CUTOFF_DISTANCE
 
     val picked: List<LookupResult>
         get() = myPicked
 
+    fun updateMaxDistance(d: Double) {
+        myMaxAllowedDistance = d
+    }
+
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
-        if (distance > CUTOFF_DISTANCE) {
+        if (distance > myMaxAllowedDistance) {
             return
         }
 
