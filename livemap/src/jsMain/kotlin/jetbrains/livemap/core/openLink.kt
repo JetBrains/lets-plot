@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core
 
-import kotlin.browser.window
+import kotlinx.browser.window
 
 actual fun openLink(href: String) {
     window.open(href)

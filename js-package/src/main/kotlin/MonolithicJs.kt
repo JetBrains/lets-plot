@@ -40,8 +40,8 @@ import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
-import kotlin.browser.document
-import kotlin.dom.createElement
+import kotlinx.browser.document
+import kotlinx.dom.createElement
 
 private val LOG = KotlinLogging.logger {}
 

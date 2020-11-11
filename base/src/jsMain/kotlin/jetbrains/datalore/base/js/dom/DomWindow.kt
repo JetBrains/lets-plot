@@ -7,8 +7,8 @@ package jetbrains.datalore.base.js.dom
 
 import jetbrains.datalore.base.js.css.StyleMap
 import org.w3c.dom.Window
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 
 class DomWindow(private val myWindow: Window) : DomEventTarget() {
 
