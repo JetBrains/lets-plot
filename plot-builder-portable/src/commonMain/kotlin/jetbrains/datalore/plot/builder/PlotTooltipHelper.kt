@@ -66,8 +66,8 @@ internal class PlotTooltipHelper {
 
 
     private class TileInfo(
-        internal val geomBounds:
-        DoubleRectangle, targetLocators: List<GeomTargetLocator>,
+        internal val geomBounds: DoubleRectangle,
+        targetLocators: List<GeomTargetLocator>,
         private val maxAllowedDistance: Double?
     ) {
 

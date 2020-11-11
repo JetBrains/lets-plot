@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.interact.render
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -27,7 +28,7 @@ internal class TooltipLayer(
 ) {
     private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, tooltipAnchor)
     private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
-    private val myShowCrosshairComponent = tooltipAnchor != null
+    private val myShowCrosshairComponent = FeatureSwitch.SHOW_CROSSHAIR_FOR_ANCHORED_TOOLTIP && tooltipAnchor != null
 
     fun showTooltips(
         cursor: DoubleVector,
