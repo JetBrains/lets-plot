@@ -21,7 +21,7 @@ import kotlin.math.min
 class LayoutManager(
     private val myViewport: DoubleRectangle,
     private val myPreferredHorizontalAlignment: HorizontalAlignment,
-    private val myTooltipAnchor: TooltipAnchor
+    private val myTooltipAnchor: TooltipAnchor?
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
@@ -124,20 +124,30 @@ class LayoutManager(
     }
 
     private fun calculateCornerTooltipsPosition(cornerTooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
+        if (myTooltipAnchor == null) {
+            return emptyList()
+        }
+
         val placementList = ArrayList<PositionedTooltip>()
 
         val tooltipsHeight = cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
-        val verticalTooltipRange = when (myTooltipAnchor) {
-            //top
-            TooltipAnchor.TOP_LEFT,
-            TooltipAnchor.TOP_RIGHT -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
-            // bottom
-            else -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+        val verticalTooltipRange = when (myTooltipAnchor.verticalAnchor) {
+            TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
+            TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+            TooltipAnchor.VerticalAnchor.MIDDLE -> centered(
+                (myVerticalGeomSpace.start() + myVerticalGeomSpace.end()) / 2,
+                tooltipsHeight
+            )
         }
 
         var tooltipY = verticalTooltipRange.start()
         cornerTooltips.forEach { tooltip ->
-            val positionedTooltip = calculatePlotCornerTooltipPosition(tooltip, tooltipY, verticalTooltipRange)
+            val positionedTooltip = calculatePlotCornerTooltipPosition(
+                tooltip,
+                tooltipY,
+                verticalTooltipRange,
+                myTooltipAnchor.horizontalAnchor
+            )
             placementList.add(positionedTooltip)
             tooltipY += positionedTooltip.height + MARGIN_BETWEEN_TOOLTIPS
         }
@@ -325,21 +335,22 @@ class LayoutManager(
     private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
         return when (horizontalAlignment) {
             HorizontalAlignment.RIGHT -> myHorizontalGeomSpace.end() - measuredTooltip.size.x
-            else -> myHorizontalSpace.start() + myHorizontalGeomSpace.start() + MARGIN_BETWEEN_TOOLTIPS
+            HorizontalAlignment.LEFT -> myHorizontalSpace.start() + myHorizontalGeomSpace.start() + MARGIN_BETWEEN_TOOLTIPS
+            HorizontalAlignment.CENTER -> (myHorizontalGeomSpace.start() + myHorizontalGeomSpace.end() - measuredTooltip.size.x) / 2
         }
     }
 
     private fun calculatePlotCornerTooltipPosition(
         measuredTooltip: MeasuredTooltip,
         tooltipY: Double,
-        verticalTooltipRange: DoubleRange
+        verticalTooltipRange: DoubleRange,
+        horizontalAnchor: TooltipAnchor.HorizontalAnchor
     ): PositionedTooltip {
-
-        val horizontalAlignment = when (myTooltipAnchor) {
-            TooltipAnchor.TOP_RIGHT, TooltipAnchor.BOTTOM_RIGHT -> HorizontalAlignment.RIGHT
-            else -> HorizontalAlignment.LEFT
+        val horizontalAlignment = when (horizontalAnchor) {
+            TooltipAnchor.HorizontalAnchor.RIGHT -> HorizontalAlignment.RIGHT
+            TooltipAnchor.HorizontalAnchor.LEFT -> HorizontalAlignment.LEFT
+            TooltipAnchor.HorizontalAnchor.CENTER -> HorizontalAlignment.CENTER
         }
-
         var tooltipX = calculateAnchorX(measuredTooltip, horizontalAlignment)
 
         // check position under cursor
@@ -368,7 +379,7 @@ class LayoutManager(
     }
 
     private fun useCornerTooltips(): Boolean {
-        return myTooltipAnchor != TooltipAnchor.NONE
+        return myTooltipAnchor != null
     }
 
     private fun isCorner(tooltipSpec: TooltipSpec): Boolean {

@@ -5,10 +5,19 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-enum class TooltipAnchor {
-    TOP_RIGHT,
-    TOP_LEFT,
-    BOTTOM_RIGHT,
-    BOTTOM_LEFT,
-    NONE
+class TooltipAnchor(
+    val verticalAnchor: VerticalAnchor,
+    val horizontalAnchor: HorizontalAnchor
+) {
+    enum class VerticalAnchor {
+        TOP,
+        BOTTOM,
+        MIDDLE
+    }
+
+    enum class HorizontalAnchor {
+        LEFT,
+        RIGHT,
+        CENTER;
+    }
 }

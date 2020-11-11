@@ -18,7 +18,12 @@ import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTool
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 
-internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle, tooltipAnchor: TooltipAnchor) {
+internal class TooltipLayer(
+    decorationLayer: SvgNode,
+    viewport: DoubleRectangle,
+    tooltipAnchor: TooltipAnchor?,
+    private val tooltipMinWidth: Double?
+) {
     private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, tooltipAnchor)
     private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
 
@@ -52,8 +57,8 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle,
     private fun clearTooltips() = myTooltipLayer.children().clear()
 
     private fun newTooltipBox(): TooltipBox {
-        // Add to the layer to be able to calcualte a bbox
-        return TooltipBox().apply { myTooltipLayer.children().add(rootGroup) }
+        // Add to the layer to be able to calculate a bbox
+        return TooltipBox(tooltipMinWidth).apply { myTooltipLayer.children().add(rootGroup) }
     }
 
     private val TooltipSpec.style get() = when (this.layoutHint.kind) {

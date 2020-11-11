@@ -66,7 +66,9 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     protected abstract val isAxisEnabled: Boolean
 
-    abstract fun tooltipAnchor(): TooltipAnchor
+    abstract val tooltipAnchor: TooltipAnchor?
+
+    abstract val tooltipMinWidth: Double?
 
     abstract val isInteractionsEnabled: Boolean
 
