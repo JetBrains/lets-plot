@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.encoding
 
-import kotlin.browser.window
+import kotlinx.browser.window
 
 actual object Base64 {
     actual fun decode(s: String): ByteArray {

@@ -6,7 +6,7 @@
 package jetbrains.livemap.ui
 
 import org.w3c.dom.HTMLTextAreaElement
-import kotlin.browser.document
+import kotlinx.browser.document
 
 actual object Clipboard {
     actual fun copy(text: String) {

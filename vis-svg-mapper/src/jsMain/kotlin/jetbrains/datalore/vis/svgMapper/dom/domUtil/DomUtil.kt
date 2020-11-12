@@ -21,10 +21,10 @@ import jetbrains.datalore.vis.svgMapper.dom.css.CssDisplay
 import jetbrains.datalore.vis.svgMapper.dom.domExtensions.*
 import org.w3c.dom.*
 import org.w3c.dom.svg.SVGElement
-import kotlin.browser.document
-import kotlin.browser.window
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
+import kotlinx.browser.document
+import kotlinx.browser.window
+import kotlinx.dom.addClass
+import kotlinx.dom.removeClass
 
 object DomUtil {
     fun elementChildren(e: Element): MutableList<Node?> {

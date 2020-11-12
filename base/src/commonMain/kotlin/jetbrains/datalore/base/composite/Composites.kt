@@ -329,7 +329,7 @@ object Composites {
             if (!deepest && cv.focusable().get()) return cv
 
             val result = firstFocusable(cv)
-            if (result != null) return result
+            if (null != result) return result
         }
 
         return if (v.focusable().get()) v else null
@@ -351,7 +351,7 @@ object Composites {
             if (!deepest && cv.focusable().get()) return cv
 
             val result = lastFocusable(cv, deepest)
-            if (result != null) return result
+            if (null != result) return result
         }
 
         return if (v.focusable().get()) v else null
@@ -359,9 +359,9 @@ object Composites {
 
     fun <HasParentT> isVisible(v: HasParentT): Boolean
             where HasParentT : HasParent<HasParentT>, HasParentT : HasVisibility {
-        return getClosestAncestor(v, true) {
+        return null == getClosestAncestor(v, true) {
             !it.visible().get()
-        } == null
+        }
     }
 
     fun <HasParentT> focusableParent(v: HasParentT): HasParentT?

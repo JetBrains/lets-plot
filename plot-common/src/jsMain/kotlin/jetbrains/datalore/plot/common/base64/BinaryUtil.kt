@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.common.base64
 
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import org.khronos.webgl.*
-import kotlin.browser.window
+import kotlinx.browser.window
 
 actual object BinaryUtil {
     actual fun encodeList(l: List<Double?>): String {

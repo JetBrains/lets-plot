@@ -25,7 +25,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
         var current = cell
         while (true) {
             val prev = Composites.prevFocusable(current)
-            if (prev == null || isAbove(prev, cell)) return current
+            if (null == prev || isAbove(prev, cell)) return current
             current = prev
         }
     }
@@ -35,7 +35,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
         var current = cell
         while (true) {
             val next = Composites.nextFocusable(current)
-            if (next == null || isBelow(next, cell)) return current
+            if (null == next || isBelow(next, cell)) return current
             current = next
         }
     }
@@ -57,7 +57,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
         var current = Composites.prevFocusable(v)
         var bestMatch: ViewT? = null
 
-        while (current != null) {
+        while (null != current) {
             if (bestMatch != null && isAbove(current, bestMatch)) {
                 break
             }
@@ -81,7 +81,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
         var current = Composites.nextFocusable(v)
         var bestMatch: ViewT? = null
 
-        while (current != null) {
+        while (null != current) {
             if (bestMatch != null && isBelow(current, bestMatch)) {
                 break
             }
@@ -116,7 +116,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
 
         private fun firstFocusableAbove(initial: ViewT): ViewT? {
             var current = Composites.prevFocusable(initial)
-            while (current != null && !isAbove(current, initial)) {
+            while (null != current && !isAbove(current, initial)) {
                 current = Composites.prevFocusable(current)
             }
             return current
@@ -127,7 +127,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
                 return myFirstFocusableAbove
             }
             val next = Composites.prevFocusable(value)
-            return if (next != null && !isAbove(next, myFirstFocusableAbove)) next else null
+            return if (null != next && !isAbove(next, myFirstFocusableAbove)) next else null
         }
     }
 
@@ -142,7 +142,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
 
         private fun firstFocusableBelow(initial: ViewT): ViewT? {
             var current = Composites.nextFocusable(initial)
-            while (current != null && !isBelow(current, initial)) {
+            while (null != current && !isBelow(current, initial)) {
                 current = Composites.nextFocusable(current)
             }
             return current
@@ -153,7 +153,7 @@ class CompositesWithBounds(private val myThreshold: Int) {
                 return myFirstFocusableBelow
             }
             val next = Composites.nextFocusable(value)
-            return if (next != null && !isBelow(next, myFirstFocusableBelow)) next else null
+            return if (null != next && !isBelow(next, myFirstFocusableBelow)) next else null
         }
     }
 }
