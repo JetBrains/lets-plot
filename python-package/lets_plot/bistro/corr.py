@@ -42,7 +42,7 @@ class corr_plot_builder:
     _DEF_MID_COLOR = 'light_gray'
     _DEF_HIGH_COLOR = 'blue'
 
-    def __init__(self, data, show_legend=None, flip=True):
+    def __init__(self, data, show_legend=True, flip=True):
         """
         Parameters
         ----------
