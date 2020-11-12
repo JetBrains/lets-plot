@@ -165,7 +165,8 @@ class corr_plot_builder:
         plot = ggplot(self._data)
 
         if self._tiles_params is not None:
-            plot += geom_tile(stat='corr', show_legend=self._show_legend, size=1.0,
+            plot += geom_tile(stat='corr', show_legend=self._show_legend,
+                              size=0, width=1, height=1,
                               mapping=aes(fill='..corr..', color='..corr..'),
                               tooltips=self._tooltip_spec(), **self._tiles_params)
 
