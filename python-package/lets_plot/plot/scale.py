@@ -46,6 +46,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
 
     Returns
     -------
@@ -622,6 +624,11 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
 
     Returns
     -------
@@ -694,6 +701,11 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
 
     Returns
     -------
@@ -767,6 +779,8 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
 
     Returns
     -------
@@ -840,6 +854,8 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
 
     Returns
     -------
@@ -913,6 +929,8 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
 
     Returns
     -------
@@ -988,6 +1006,8 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
 
     Returns
     -------
@@ -1066,6 +1086,11 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1108,6 +1133,11 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         A numeric vector of length two providing limits of the scale.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1162,6 +1192,11 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1204,6 +1239,11 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         A numeric vector of length two providing limits of the scale.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1260,6 +1300,11 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1316,6 +1361,11 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1374,6 +1424,11 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1432,6 +1487,11 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1485,6 +1545,11 @@ def scale_fill_discrete(direction=None,
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
 
     Returns
     -------
@@ -1534,6 +1599,11 @@ def scale_color_discrete(direction=None,
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
 
     Returns
     -------
@@ -1585,6 +1655,11 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1643,6 +1718,11 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1725,6 +1805,11 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1800,6 +1885,11 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        Guide to use for this scale.
+        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
+        specifying additional arguments.
+        "none" will hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1974,6 +2064,8 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -2024,6 +2116,8 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -2075,6 +2169,8 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
+    guide :
+        A result returned by guide_legend() function or "none" to hide the guide.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
