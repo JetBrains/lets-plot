@@ -44,6 +44,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -416,10 +418,12 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
+    expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
+    na_value :
+        Missing values will be replaced with this value.
     reverse: boolean
         When True the scale reversed.
 
@@ -476,10 +480,12 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
+    expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -508,10 +514,12 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
+    expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
+    na_value :
+        Missing values will be replaced with this value.
     reverse: boolean
         When True the scale reversed.
 
@@ -569,10 +577,12 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
+    expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -610,6 +620,8 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -680,6 +692,8 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -751,6 +765,8 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -822,6 +838,8 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -893,6 +911,8 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -966,6 +986,8 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -1042,6 +1064,8 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1082,6 +1106,8 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         A vector of labels (on ticks)
     limits : list of numerics
         A numeric vector of length two providing limits of the scale.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1134,6 +1160,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1174,6 +1202,8 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         A vector of labels (on ticks)
     limits : list of numerics
         A numeric vector of length two providing limits of the scale.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1228,6 +1258,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1282,6 +1314,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1338,6 +1372,8 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1394,6 +1430,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1445,6 +1483,8 @@ def scale_fill_discrete(direction=None,
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -1492,6 +1532,8 @@ def scale_color_discrete(direction=None,
         A vector of labels (on ticks)
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
 
     Returns
     -------
@@ -1541,6 +1583,8 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1597,6 +1641,8 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1677,6 +1723,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1750,6 +1798,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -1818,7 +1868,7 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector of labels (on ticks)
     limits : list of numerics
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
@@ -1873,7 +1923,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector of labels (on ticks)
     limits : list of numerics
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
@@ -1911,6 +1961,8 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
 
     Parameters
     ----------
+    range : list of numerics of length 2
+        The range of the mapped aesthetics result.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1922,8 +1974,6 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
-    range : list of numerics of length 2
-        The range of the mapped aesthetics result.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -2012,6 +2062,8 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
 
     Parameters
     ----------
+    max_size : numeric
+        The max size that is mapped to.
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -2023,8 +2075,6 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         A vector specifying the data range for the scale. and the default order of their display in guides.
     na_value :
         Missing values will be replaced with this value.
-    max_size : numeric
-        The max size that is mapped to.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
