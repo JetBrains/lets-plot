@@ -6,20 +6,22 @@
 
 ##### 1. Edit CHANGELOG.md file.
 
-##### 2. Set production version in the properties (remove _"-apha"_ and _"dev"_): 
+##### 2. Set release or pre-release version in the properties (remove _"-alpha"_ and _"dev"_): 
 
- - `version` and `js_artifact_version` in `build.gradle` 
- - `__version__` in `python-package/lets_plot/_version.py`
+ - `version` in `build.gradle` (`X.X.X` or `X.X.X-rcN`)
+ - `js_artifact_version` in `build.gradle` (`X.X.X` or `X.X.XrcN`)
+ - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X` or `X.X.XrcN`)
   
 ##### 3. Push the version changes and git tag:
          
- - `git add --all && git commit -m "Updated version vX.X.X" && git push`
- - `git tag vX.X.X && git push --tags`
+ - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
+ - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
 
 ##### 4. Prepare to the next dev cycle: increment versions and add _"-alpha"_ and _"dev"_:
 
- - `version` and `js_artifact_version` in `build.gradle` 
- - `__version__` in `python-package/lets_plot/_version.py`
+ - `version` in `build.gradle` (`X.X.X-alphaN`)
+ - `js_artifact_version` in `build.gradle` (`X.X.X.devN`)
+ - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X.devN`)
 
 ##### 5. Push new dev version to GitHub.
 
