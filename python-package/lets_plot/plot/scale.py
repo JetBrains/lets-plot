@@ -98,6 +98,8 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
     trans : string
@@ -154,6 +156,10 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
+    na_value :
+        Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
 
@@ -210,6 +216,8 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
 
@@ -258,6 +266,8 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
 
@@ -306,6 +316,8 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
 
@@ -353,6 +365,8 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
 
@@ -404,6 +418,8 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0, additive = 0.6.
     reverse: boolean
         When True the scale reversed.
 
@@ -462,6 +478,8 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0, additive = 0.6.
 
     Returns
     -------
@@ -492,6 +510,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0, additive = 0.6.
     reverse: boolean
         When True the scale reversed.
 
@@ -551,6 +571,8 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0, additive = 0.6.
 
     Returns
     -------
@@ -1798,6 +1820,8 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
 
@@ -1851,6 +1875,8 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A numeric vector of length two providing limits of the scale.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
 
