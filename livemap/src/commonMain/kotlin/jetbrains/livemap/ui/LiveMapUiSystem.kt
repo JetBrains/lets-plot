@@ -23,11 +23,11 @@ import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.core.openLink
+import jetbrains.livemap.core.rendering.Alignment
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.primitives.Attribution
-import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
@@ -124,10 +124,11 @@ class LiveMapUiSystem(
                 texts.add(attributionText)
             }
 
-            Attribution(DoubleVector(myViewport.size.x, 0.0), texts).apply {
+            Attribution(DoubleVector(myViewport.size.x, myViewport.size.y), texts).apply {
                 background = Color(200, 200, 200, 179)
                 this.padding = 2.0
-                position = Label.LabelPosition.LEFT
+                horizontalAlignment = Alignment.HorizontalAlignment.LEFT
+                verticalAlignment = Alignment.VerticalAlignment.BOTTOM
             }.run {
                 myUiService.addRenderable(this)
             }

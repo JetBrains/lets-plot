@@ -52,10 +52,10 @@ class LayerTargetLocatorTwoOverlappedRectsTest {
     fun nearestXy() {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.XY)
 
-        assertObjects(locator, inside(FIRST_RECT), FIRST_RECT_KEY)
+        assertObjects(locator, inside(FIRST_RECT), SECOND_RECT_KEY)
         assertObjects(locator, outsideY(FIRST_RECT), SECOND_RECT_KEY)
         assertObjects(locator, inside(SECOND_RECT), SECOND_RECT_KEY)
-        assertObjects(locator, outsideX(FIRST_RECT), FIRST_RECT_KEY)
+        assertObjects(locator, outsideX(FIRST_RECT), SECOND_RECT_KEY)
         assertObjects(locator, outsideXY(FIRST_RECT), SECOND_RECT_KEY)
         assertObjects(locator, outsideY(SECOND_RECT), SECOND_RECT_KEY)
         assertObjects(locator, outsideX(SECOND_RECT), SECOND_RECT_KEY)

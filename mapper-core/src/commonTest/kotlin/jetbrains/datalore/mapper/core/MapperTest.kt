@@ -113,7 +113,7 @@ class MapperTest {
         mapper.detachRoot()
     }
 
-    @Test
+/*    @Test
     fun findableRoot() {
         val o = Any()
         val mapper = TestMapper(o)
@@ -121,7 +121,7 @@ class MapperTest {
         assertSame(mapper, mapper.getDescendantMapper(o))
 
         mapper.detachRoot()
-    }
+    }*/
 
     @Test
     fun nonFindableRoot() {

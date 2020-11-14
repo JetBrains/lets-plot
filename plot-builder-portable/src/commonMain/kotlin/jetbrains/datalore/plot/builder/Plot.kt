@@ -66,7 +66,9 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     protected abstract val isAxisEnabled: Boolean
 
-    abstract fun tooltipAnchor(): TooltipAnchor
+    abstract val tooltipAnchor: TooltipAnchor?
+
+    abstract val tooltipMinWidth: Double?
 
     abstract val isInteractionsEnabled: Boolean
 
@@ -356,7 +358,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             tile.liveMapFigure?.let(myLiveMapFigures::add)
 
             val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
-            myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators)
+            myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators, tooltipAnchor != null)
         }
 
         @Suppress("ConstantConditionIf")

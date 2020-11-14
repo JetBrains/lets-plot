@@ -35,9 +35,9 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
     internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapBuilder {
         return liveMapConfig {
             // raster tiles without geocoding
-            tileSystemProvider = RasterTileSystemProvider("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png")
+            tileSystemProvider = RasterTileSystemProvider("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
             geocodingService = Services.bogusGeocodingService()
-            attribution = "© wikimedia.org"
+            attribution = "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
 
             // vector tiles and geocoding
             //tileSystemProvider = VectorTileSystemProvider(Services.devTileProvider())

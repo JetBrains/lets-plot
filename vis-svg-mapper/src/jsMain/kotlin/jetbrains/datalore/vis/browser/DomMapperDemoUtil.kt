@@ -9,7 +9,7 @@ import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import org.w3c.dom.Node
-import kotlin.browser.document
+import kotlinx.browser.document
 
 object DomMapperDemoUtil {
     fun mapToDom(svgRoots: List<SvgSvgElement>, parentNodeId: String) {

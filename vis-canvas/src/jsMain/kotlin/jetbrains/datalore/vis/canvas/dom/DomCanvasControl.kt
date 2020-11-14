@@ -39,7 +39,7 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import kotlin.browser.document
+import kotlinx.browser.document
 import org.w3c.dom.events.MouseEvent as W3cMouseEvent
 
 class DomCanvasControl(

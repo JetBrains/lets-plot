@@ -5,16 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.3] - 2020-11-05
 ### Added
- - Facilities for customization of tooltip contents and its position (see <link>).
- - CorrelationStat
- - label_format
- - scale_x_discrete_reversed / scale_y_discrete_reversed
+ - Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
+ - `attribution` and other new parameters in the `maptiles_zxy()` function. 
+ - `label_format` parameter in the `geom_text()` function.
+ - `scale_x_discrete_reversed()` / `scale_y_discrete_reversed()`
  - `ggsave()` function (only SVG, HTML)
 
 ### Fixed
- - Mercator projection computes coordinates incorrectly (`geom_map(), coord_map()`)
+ - Mercator's projection computes coordinates incorrectly (`geom_map(), coord_map()`)
  - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`
  - Colorbars: take in account limits defined in continuous color/fill scales.
  - `scale_color_hue` incorrectly interprets chroma range [[#206](https://github.com/JetBrains/lets-plot/issues/206)].
@@ -22,11 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - `scale_fill_discrete` should not replace the default discrete scale (Brewer) with 'HUE' scale [[#172](https://github.com/JetBrains/lets-plot/issues/172)].
  
 ### Changed
+ - Lets-plot vector map-tiles are configured by default.
  - PACIFIC_BLUE color (#118ED8) replaced DARK_BLUE as a default color/fill value on plots.
  - Default discrete color scheme is now ColorBrewer's Set2 (was Dark2)
  
 ### Deprecated
-
  - Function `gg_image_matrix()`. The new function is: `image_matrix()` in the `lets_plot.bistro.im` module.
     The new function is not any longer displaying matrix by itself but returns a GGBunch object instead. 
     Unlike the depricated `gg_image_matrix()` function, it is not imported by `from lets_plot import *` statement.

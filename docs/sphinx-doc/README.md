@@ -11,30 +11,34 @@ This directory contains sources for building project documentation using Sphinx-
     
     If you have this environment already, update it:
     
-    `conda env update --prune -f docs/sphinx-doc/environment.yml`
+    `conda env update --name lets-plot-sphinx -f docs/sphinx-doc/environment.yml --prune`
     
 2. Activate this environment:
 
     `conda activate lets-plot-sphinx`
+
+3. Only for Windows users, run:
+
+    `conda install m2w64-toolchain`
     
-3. Edit `build_settings.yml`:
+4. Edit `build_settings.yml`:
    
     - set both `build_python_extension` and `enable_python_package` options to `yes`
     - set `bin_path` and `include_path` in the `Python settings` section to your conda environment paths.
 ​
-4. Build `Lets-Plot python-package`: 
+5. Build `Lets-Plot python-package`: 
 
     `./gradlew python-package-build:build`
 ​
-5. Then install it:
+6. Then install it:
     
     `pip install --no-index --force-reinstall --find-links=python-package/dist/ lets-plot --no-deps`
 ​
-6. Build documentation (HTML):  
+7. Build documentation (HTML):  
 
-    `sphinx-build -b html docs/sphinx-doc/source/ docs/sphinx-doc/build/`
+    `sphinx-build -b html docs/sphinx-doc/source docs/sphinx-doc/build`
 ​
-7. Open `docs/sphinx-doc/build/index.html` in your browser.
+8. Open `docs/sphinx-doc/build/index.html` in your browser.
 ​
 ​
 #### Edit documentation using `autodoc` generator:
@@ -59,7 +63,7 @@ Project already has generated autodoc structure for current Python modules: `doc
 ​
 7. Build documentation (HTML):  
 
-    `sphinx-build -b html docs/sphinx-doc/source docs/sphinx-doc/build/`
+    `sphinx-build -b html docs/sphinx-doc/source docs/sphinx-doc/build`
 ​
 8. Open `docs/sphinx-doc/build/index.html` in your browser and check result.
 ​

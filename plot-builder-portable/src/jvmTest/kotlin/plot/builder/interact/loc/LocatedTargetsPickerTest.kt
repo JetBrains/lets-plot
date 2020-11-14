@@ -60,11 +60,11 @@ class LocatedTargetsPickerTest {
     }
 
     @Test
-    fun whenBothTargetsHaveZeroDistance_ShouldSelectFirst() {
+    fun whenBothTargetsHaveZeroDistance_ShouldSelectSecond() {
         firstLookupResultConfig.distanceToTarget(0.0)
         secondLookupResultConfig!!.distanceToTarget(0.0)
 
-        assertTargetFrom(firstLookupResultConfig)
+        assertTargetFrom(secondLookupResultConfig)
     }
 
     @Test
@@ -76,11 +76,11 @@ class LocatedTargetsPickerTest {
     }
 
     @Test
-    fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectFirst() {
+    fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectSecond() {
         firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
         secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)
 
-        assertTargetFrom(firstLookupResultConfig)
+        assertTargetFrom(secondLookupResultConfig)
     }
 
     @Test

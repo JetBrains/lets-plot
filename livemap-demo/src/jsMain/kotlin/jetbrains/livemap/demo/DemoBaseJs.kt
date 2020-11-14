@@ -11,7 +11,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl.*
 import org.w3c.dom.HTMLElement
-import kotlin.browser.document
+import kotlinx.browser.document
 
 class DemoBaseJs(private val demoModelProvider: (DoubleVector) -> DemoModelBase) {
     private val size: Vector get() = Vector(800, 600)

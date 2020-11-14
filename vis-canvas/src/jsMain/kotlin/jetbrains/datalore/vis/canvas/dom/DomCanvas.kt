@@ -14,8 +14,8 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.ScaledCanvas
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlin.math.ceil
 
 internal class DomCanvas private constructor(val canvasElement: HTMLCanvasElement, size: Vector, pixelRatio: Double)

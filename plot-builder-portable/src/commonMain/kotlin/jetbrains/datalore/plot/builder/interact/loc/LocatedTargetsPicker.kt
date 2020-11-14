@@ -12,25 +12,34 @@ internal class LocatedTargetsPicker {
 
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
+    private var myMaxAllowedDistance = CUTOFF_DISTANCE
 
     val picked: List<LookupResult>
         get() = myPicked
 
+    fun updateMaxDistance(d: Double) {
+        myMaxAllowedDistance = d
+    }
+
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
-        if (distance > CUTOFF_DISTANCE) {
+        if (distance > myMaxAllowedDistance) {
             return
         }
 
-        if (myPicked.isEmpty() || myMinDistance > distance) {
-            myPicked.clear()
-            myPicked.add(lookupResult)
-            myMinDistance = distance
-        } else if (
-            myMinDistance == distance
-            && sameGeomKind(myPicked[0], lookupResult)
-        ) {
-            myPicked.add(lookupResult)
+        when {
+            myPicked.isEmpty() || myMinDistance > distance -> {
+                myPicked.clear()
+                myPicked.add(lookupResult)
+                myMinDistance = distance
+            }
+            myMinDistance == distance && isSameUnivariateGeom(myPicked[0], lookupResult) -> {
+                myPicked.add(lookupResult)
+            }
+            myMinDistance == distance -> {
+                myPicked.clear()
+                myPicked.add(lookupResult)
+            }
         }
     }
 
@@ -60,7 +69,7 @@ internal class LocatedTargetsPicker {
             } else distance
         }
 
-        private fun sameGeomKind(lft: LookupResult, rgt: LookupResult): Boolean {
+        private fun isSameUnivariateGeom(lft: LookupResult, rgt: LookupResult): Boolean {
             return lft.geomKind === rgt.geomKind && UNIVARIATE_GEOMS.contains(rgt.geomKind)
         }
     }
