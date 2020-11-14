@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,28 +51,26 @@ class ConfigUtilTest {
 
     @Test
     fun joinWithDuplicatedKeys() {
-        val items = listOf(
-            "State Debt", "Local Debt", "Gross State Product",
-            "State Debt", "Local Debt", "Gross State Product",
-            "State Debt", "Local Debt", "Gross State Product"
-        )
-
-        val state = listOf(
-            "Alabama", "Alabama", "Alabama",
-            "Alaska", "Alaska", "Alaska",
-            "Arizona", "Arizona", "Arizona"
-        )
-
-        val value = listOf(
-            10.7, 26.1, 228.0,
-            5.9, 3.5, 55.7,
-            13.3, 30.5, 361.1
-        )
 
         val data = DataFrame.Builder()
-            .put(Variable("item"), items)
-            .put(Variable("state"), state)
-            .put(Variable("value"), value)
+            .put(Variable("item"), listOf(
+                "State Debt", "Local Debt", "Gross State Product",
+                "State Debt", "Local Debt", "Gross State Product",
+                "State Debt", "Local Debt", "Gross State Product"
+            )
+            )
+            .put(Variable("state"), listOf(
+                "Alabama", "Alabama", "Alabama",
+                "Alaska", "Alaska", "Alaska",
+                "Arizona", "Arizona", "Arizona"
+            )
+            )
+            .put(Variable("value"), listOf(
+                10.7, 26.1, 228.0,
+                5.9, 3.5, 55.7,
+                13.3, 30.5, 361.1
+            )
+            )
             .build()
 
 
@@ -86,6 +86,25 @@ class ConfigUtilTest {
 
         val res = ConfigUtil.rightJoin(data, "state", geo, "__geo_id__")
         assertEquals(3, res.rowCount()) // TODO: should be 9, not 3
+    }
+
+
+    @Test
+    fun joinNoMatching() {
+        val data = DataFrame.Builder()
+            .put(Variable("States"), listOf("AL", "TX"))
+            .put(Variable("id"), listOf("id-AL", "id-TX"))
+            .put(Variable("Mean"), listOf(3.0, 1.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("state"), listOf("NV", "AL", "FL"))
+            .put(Variable("id"), listOf("id-NV", "id-AL", "id-FL"))
+            .put(Variable("found name"), listOf("Nevada", "Alaska", "Florida"))
+            .put(Variable("geometry"), listOf("nv_geometry", "al_geometry", "fl_geometry"))
+            .build()
+
+        val rightJoin = ConfigUtil.rightJoin(data, "States", map, "state")
     }
 
 }

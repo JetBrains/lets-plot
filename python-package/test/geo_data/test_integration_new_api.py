@@ -198,9 +198,25 @@ def test_asderror_us48_in_parent_not_available():
 
 def test_where_scope_with_existing_country():
     washington_county=geodata.county_regions_builder('Washington county').states('iowa').countries('usa').build()
-    geodata.city_regions_builder('Washington').countries('United States of America')\
-        .where('Washington', country='United States of America', scope=washington_county)\
+    washington = geodata.city_regions_builder('washington').countries('United States of America')\
+        .where('washington', country='United States of America', scope=washington_county)\
         .build()
+
+    assert_row(washington.to_data_frame(), request='washington', country='United States of America', found_name='Washington')
+
+
+def test_where_scope_with_existing_country_in_df():
+    df = {
+        'city': ['moscow', 'tashkent', 'washington'],
+        'country': ['russia', 'uzbekistan', 'usa']
+    }
+
+    washington_county=geodata.county_regions_builder('Washington county').states('iowa').countries('usa').build()
+    cities = geodata.city_regions_builder(df['city']).countries(df['country'])\
+        .where('washington', country='usa', scope=washington_county)\
+        .build()
+
+    assert_row(cities.to_data_frame(), index=2, request='washington', country='usa', found_name='Washington')
 
 
 def check_validation_error(message: str, action: Callable[[], Any]):

@@ -9,6 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.DataFrameUtil.entries
+import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.data.Dummies
 import jetbrains.datalore.plot.config.Option.Meta
 
@@ -35,6 +37,34 @@ object ConfigUtil {
     internal fun createDataFrame(rawData: Any?): DataFrame {
         val varNameMap = asVarNameMap(rawData)
         return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap)
+    }
+
+
+
+    fun join(left: DataFrame, leftKeys: List<String>, right: DataFrame, rightKeys: List<String>): DataFrame {
+        require(rightKeys.size == leftKeys.size) {
+            "Keys count for merging should be equal, but was ${leftKeys.size} and ${rightKeys.size}"
+        }
+
+        val jointMap = HashMap<DataFrame.Variable, MutableList<Any?>>()
+        right.entries().forEach { (variable, values) -> jointMap[variable] = values.toMutableList() }
+        left.entries().forEach { (variable, _) -> jointMap[variable] = MutableList<Any?>(right.rowCount()) { null }}
+
+        fun computeMultiKeys(dataFrame: DataFrame, keyVarNames: List<String>): List<List<Any?>> {
+            val keyVars = keyVarNames.map { keyVarName -> variables(dataFrame)[keyVarName] ?: error("Key $keyVarName not found") }
+            return (0 until dataFrame.rowCount())
+                .map { rowIndex -> keyVars.map { dataFrame.get(it)[rowIndex] } }
+        }
+
+        val leftMultiKeys = computeMultiKeys(left, leftKeys)
+        computeMultiKeys(right, rightKeys)
+            .mapIndexed { rightRowIndex, rightRowMultiKey -> Pair(leftMultiKeys.indexOf(rightRowMultiKey), rightRowIndex) } // index mapping between matching left and right keys
+            .filter { (leftRowIndex, _) -> leftRowIndex >= 0 }
+            .forEach { (leftRowIndex, rightRowIndex) ->
+                left.variables().forEach { jointMap[it]!!.set(rightRowIndex, left.get(it)[leftRowIndex]) }
+            }
+
+        return jointMap.entries.fold(DataFrame.Builder()) { acc, (variable, values) -> acc.put(variable, values)}.build()
     }
 
     /**
