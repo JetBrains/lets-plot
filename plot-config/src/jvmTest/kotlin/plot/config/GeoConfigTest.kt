@@ -151,7 +151,7 @@ class GeoConfigTest {
             |        "mapping": {"color": "value"},
             |        "map": $gdf,
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": ["fig", "kind"]
+            |        "map_join": [["fig"], ["kind"]]
             |    }]
             |}
         """.trimMargin()
@@ -273,7 +273,7 @@ class GeoConfigTest {
             |        "mapping": {"fill": "value"},
             |        "map": $gdf,
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": ["fig", "kind"]
+            |        "map_join": [["fig"], ["kind"]]
             |    }]
             |}
         """.trimMargin()
@@ -294,7 +294,7 @@ class GeoConfigTest {
             |        "mapping": {"fill": "value"},
             |        "map": $gdf,
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": ["fig", "kind"]
+            |        "map_join": [["fig"], ["kind"]]
             |    }]
             |}
         """.trimMargin()
@@ -359,7 +359,7 @@ class GeoConfigTest {
             |            "coord": ["$foo1", "$foo2", "$bar1"]
             |        },
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": ["continent", "cont"]
+            |        "map_join": [["continent"], ["cont"]]
             |    }]
             |}
         """.trimMargin()

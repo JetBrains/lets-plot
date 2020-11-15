@@ -83,7 +83,7 @@ class GeoConfig(
                 require(layerOptions.has(GEO_POSITIONS)) { "'map' parameter is mandatory with MAP_DATA_META" }
 
                 val mapJoin = layerOptions.getList(MAP_JOIN) ?: error("require map_join parameter")
-                val geoKeyColumn = mapJoin[1] as String
+                val geoKeyColumn = (mapJoin[1] as List<*>).get(0) as String
                 val mapKeys = layerOptions
                     .getMap(GEO_POSITIONS)
                     ?.getList(geoKeyColumn)
@@ -92,7 +92,7 @@ class GeoConfig(
                 geoData = getGeoData(gdfLocation = GEO_POSITIONS, keys = mapKeys)
 
                 dataFrame = data
-                dataKeyColumn = mapJoin[0] as String
+                dataKeyColumn = (mapJoin[0] as List<*>).get(0) as String
             }
 
             // (map=gdf) - simple geometry

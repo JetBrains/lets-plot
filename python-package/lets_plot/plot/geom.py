@@ -2,8 +2,10 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, geo_data_frame_to_wgs84, as_pair
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, \
+    geo_data_frame_to_wgs84, as_map_join
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -24,7 +26,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 
 def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-               map=None, map_join=None,
+               map=None, map_join=None, data_join_on=None, map_join_on=None,
                animation=None,
                tooltips=None,
                **other_args):
@@ -111,7 +113,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
 
 
 def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-              map=None, map_join=None,
+              map=None, map_join=None, data_join_on=None, map_join_on=None,
               animation=None,
               tooltips=None, **other_args):
     """
@@ -205,6 +207,8 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> p += geom_path(stat='smooth', color='red', linetype='longdash')
         >>> p
     """
+    if is_geo_data_regions(map):
+        raise ValueError("Regions object is not support in geom_path - there is no geometries for renedering as path")
     return _geom('path', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join,
                  animation=animation,
@@ -1224,7 +1228,8 @@ def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend
 
 
 def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-                 map=None, map_join=None, tooltips=None,
+                 map=None, map_join=None, data_join_on=None, map_join_on=None,
+                 tooltips=None,
                  **other_args):
     """
     Display a filled closed path defined by the vertex coordinates of individual polygons.
@@ -1302,12 +1307,13 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         map_join = map_join_regions(map_join)
 
     return _geom('polygon', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=None, map_join_on=None,
+                 tooltips=tooltips,
                  **other_args)
 
 
 def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None,
-             map=None, map_join=None,
+             map=None, map_join=None, data_join_on=None, map_join_on=None,
              tooltips=None,
              **other_args):
     """
@@ -2244,7 +2250,8 @@ def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
 
 def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-              map=None, map_join=None, tooltips=None,
+              map=None, map_join=None, data_join_on=None, map_join_on=None,
+              tooltips=None,
               **other_args):
     """
     Display an axis-aligned rectangle defined by two corners.
@@ -2391,7 +2398,8 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
 
 
 def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-              map=None, map_join=None, tooltips=None, label_format=None,
+              map=None, map_join=None,
+              tooltips=None, label_format=None,
               **other_args):
     """
     Add a text directly to the plot.
@@ -2510,13 +2518,11 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 
-    map_join = kwargs.get('map_join', None)
-    if map_join is not None:
-        pair = as_pair(map_join)
-        if pair is not None:
-            kwargs['map_join'] = pair
-        else:
-            raise ValueError("Unexpected 'map_join' format. Should be str, [str] or [str, str]")
+    kwargs['map_join'] = as_map_join(
+        kwargs.get('map_join', None),
+        kwargs.get('data_join_on', None),
+        kwargs.get('map_join_on', None)
+    )
 
     return LayerSpec(geom=name, stat=stat, data=data, mapping=mapping, position=position, show_legend=show_legend,
                      tooltips=tooltips, **data_meta, **map_data_meta, **kwargs)

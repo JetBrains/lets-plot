@@ -130,7 +130,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     .map(DataFrameValue::getVariableName)
 
                 // keep vars used in map_join
-                if (layerConfig.getMapJoin()?.first == varName) {
+                if (layerConfig.getMapJoin()?.first?.contains(varName) == true) {
                     dropPlotVar = false
                     break
                 }
@@ -188,7 +188,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
-                    listOfNotNull(layerConfig.getMapJoin()?.first) +
+                    (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
                     listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName) +
                     layerConfig.tooltips.valueSources
                         .filterIsInstance<DataFrameValue>()
