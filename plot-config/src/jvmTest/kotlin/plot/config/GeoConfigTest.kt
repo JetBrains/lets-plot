@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
@@ -73,8 +74,8 @@ class GeoConfigTest {
 |}""".trimMargin()
 
 
-    private fun polygonGroup(groupId: Int) = (0..14).map { groupId }
-    private fun multiPolygonGroup(groupId: Int) = (0..3).map { groupId }
+    private fun <T> polygonSequence(groupId: T) = (0..14).map { groupId }
+    private fun <T> multiPolygonSequence(groupId: T) = (0..3).map { groupId }
 
     private val gdf = """
         |{
@@ -130,7 +131,8 @@ class GeoConfigTest {
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "kind")
-            .assertGroups(polygonGroup(0) + multiPolygonGroup(1))
+            .assertGroups(polygonSequence(0) + multiPolygonSequence(1))
+            .assertAes(Aes.COLOR, polygonSequence(Color(102,194,165)) + multiPolygonSequence(Color(252,141,98)))
     }
 
     @Test
@@ -172,7 +174,7 @@ class GeoConfigTest {
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "value")
-            .assertGroups(polygonGroup(0) + multiPolygonGroup(1))
+            .assertGroups(polygonSequence(0) + multiPolygonSequence(1))
 
     }
 
@@ -298,7 +300,7 @@ class GeoConfigTest {
             |    }]
             |}
         """.trimMargin()
-        ).assertGroups(polygonGroup(0) + multiPolygonGroup(1))
+        ).assertGroups(polygonSequence(0) + multiPolygonSequence(1))
     }
 
     @Test
@@ -343,6 +345,8 @@ class GeoConfigTest {
             |}""".trimMargin()
 
 
+        val europe = Color(102, 194, 165)
+        val asia = Color(252, 141, 98)
         singleGeomLayer("""
             |{
             |    "kind": "plot", 
@@ -368,8 +372,7 @@ class GeoConfigTest {
             .assertBinding(Aes.XMAX, RECT_XMAX)
             .assertBinding(Aes.YMIN, RECT_YMIN)
             .assertBinding(Aes.YMAX, RECT_YMAX)
-            .assertGroups(listOf(0, 0, 1)) // RECTs of Germany, France, China
-
+            .assertAes(Aes.FILL, listOf(europe, europe, asia))
     }
 
     @Ignore
@@ -412,23 +415,73 @@ class GeoConfigTest {
             .assertValues("__y__", listOf(4.0, 4.0, 2.0, 2.0))
     }
 
+    @Test
+    fun `color mapping to __geo_id__ with multikey and map_join to make colors unique`() {
+        val fooQux = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
+        val barQux = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
+        val bazQux = """{\"type\": \"Point\", \"coordinates\": [5.0, 6.0]}"""
+
+        // county is not unique so to get unique color use special variable __geo_id__
+
+        singleGeomLayer(
+            """
+            |{
+            |    "kind": "plot", 
+            |    "layers": [{
+            |        "geom": "point",
+            |        "data": {
+            |            "State": ["foo", "bar", "baz"],
+            |            "County": ["qux", "qux", "qux"],
+            |            "values": [100.0, 500.0, 42.42]
+            |        },
+            |        "mapping": {
+            |           "color": "__geo_id__"
+            |        },
+            |        "map": {
+            |            "state": ["foo", "bar", "baz"],
+            |            "county": ["qux", "qux", "qux"],
+            |            "name": ["Qux", "Qux", "Qux"],
+            |            "coord": ["$fooQux", "$barQux", "$bazQux"]
+            |        },
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": [["County", "State"], ["county", "state"]]
+            |    }]
+            |}
+        """.trimMargin()
+        )
+            .assertValues("County", listOf("qux", "qux", "qux"))
+            .assertValues("State", listOf("foo", "bar", "baz"))
+            .assertValues("name", listOf("Qux", "Qux", "Qux"))
+            .assertValues("county", listOf("qux", "qux", "qux"))
+            .assertValues("state", listOf("foo", "bar", "baz"))
+            .assertValues("values", listOf(100.0, 500.0, 42.42))
+            .assertValues("lon", listOf(1.0, 3.0, 5.0))
+            .assertValues("lat", listOf(2.0, 4.0, 6.0))
+            .assertAes(Aes.COLOR, listOf(Color(102, 194, 165), Color(252, 141, 98), Color(141, 160, 203)))
+    }
+
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
         assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
-//        assertEquals(variable, getBinding(aes).scale!!.name)
         assertEquals(variable, scaleMap[aes].name)
         return this
     }
-
 
     private fun GeomLayer.assertValues(variable: String, values: List<*>): GeomLayer {
         assertEquals(values, dataFrame.get(findVariableOrFail(dataFrame, variable)))
         return this
     }
 
-
-    private fun GeomLayer.assertGroups(expected: Collection<*>) {
+    private fun GeomLayer.assertGroups(expected: Collection<*>): GeomLayer {
         val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
             .aesthetics.dataPoints().map(DataPointAesthetics::group)
         assertEquals(expected, actualGroups,"Aes valeus didn't match")
+        return this
+    }
+
+    private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
+        val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
+            .aesthetics.dataPoints().map { it.get(aes) }
+        assertEquals(expected, actualGroups,"Aes valeus didn't match")
+        return this
     }
 }

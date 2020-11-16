@@ -106,7 +106,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         map_join = map_join_regions(map_join)
 
     return _geom('point', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  animation=animation,
                  tooltips=tooltips,
                  **other_args)
@@ -210,7 +210,7 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     if is_geo_data_regions(map):
         raise ValueError("Regions object is not support in geom_path - there is no geometries for renedering as path")
     return _geom('path', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  animation=animation,
                  tooltips=tooltips, **other_args)
 
@@ -1307,7 +1307,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         map_join = map_join_regions(map_join)
 
     return _geom('polygon', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, data_join_on=None, map_join_on=None,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  tooltips=tooltips,
                  **other_args)
 
@@ -1399,7 +1399,8 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         map_join = map_join_regions(map_join)
 
     return _geom('map', mapping, data, stat, None, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 tooltips=tooltips,
                  **other_args)
 
 
@@ -2324,7 +2325,8 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
         map_join = map_join_regions(map_join)
 
     return _geom('rect', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 tooltips=tooltips,
                  **other_args)
 
 
@@ -2398,7 +2400,7 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
 
 
 def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-              map=None, map_join=None,
+              map=None, map_join=None, data_join_on=None, map_join_on=None,
               tooltips=None, label_format=None,
               **other_args):
     """
@@ -2480,7 +2482,8 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         map_join = map_join_regions(map_join)
 
     return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, tooltips=tooltips, label_format=label_format,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 tooltips=tooltips, label_format=label_format,
                  **other_args)
 
 

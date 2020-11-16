@@ -41,7 +41,7 @@ object ConfigUtil {
 
 
 
-    fun join(left: DataFrame, leftKeys: List<String>, right: DataFrame, rightKeys: List<String>): DataFrame {
+    fun join(left: DataFrame, leftKeys: List<*>, right: DataFrame, rightKeys: List<*>): DataFrame {
         require(rightKeys.size == leftKeys.size) {
             "Keys count for merging should be equal, but was ${leftKeys.size} and ${rightKeys.size}"
         }
@@ -50,7 +50,7 @@ object ConfigUtil {
         right.entries().forEach { (variable, values) -> jointMap[variable] = values.toMutableList() }
         left.entries().forEach { (variable, _) -> jointMap[variable] = MutableList<Any?>(right.rowCount()) { null }}
 
-        fun computeMultiKeys(dataFrame: DataFrame, keyVarNames: List<String>): List<List<Any?>> {
+        fun computeMultiKeys(dataFrame: DataFrame, keyVarNames: List<*>): List<List<Any?>> {
             val keyVars = keyVarNames.map { keyVarName -> variables(dataFrame)[keyVarName] ?: error("Key $keyVarName not found") }
             return (0 until dataFrame.rowCount())
                 .map { rowIndex -> keyVars.map { dataFrame.get(it)[rowIndex] } }
@@ -168,7 +168,7 @@ object ConfigUtil {
     }
 
     private fun updateDataFrame(df: DataFrame, data: Map<String, List<*>>): DataFrame {
-        val dfVars = DataFrameUtil.variables(df)
+        val dfVars = variables(df)
         val b = df.builder()
         for ((varName, values) in data) {
             val variable = dfVars[varName] ?: DataFrameUtil.createVariable(varName)
@@ -191,7 +191,7 @@ object ConfigUtil {
             return emptyMap()
         }
 
-        val dfVariables = DataFrameUtil.variables(data)
+        val dfVariables = variables(data)
 
         val result = HashMap<Aes<*>, DataFrame.Variable>()
         val options = Option.Mapping.REAL_AES_OPTION_NAMES
