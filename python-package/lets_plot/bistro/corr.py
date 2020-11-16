@@ -21,7 +21,7 @@ from lets_plot.plot.geom import geom_point, geom_text, geom_tile
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
     scale_fill_gradient2, scale_fill_brewer
 from lets_plot.plot.scale_identity import scale_size_identity
-from lets_plot.plot.coord import coord_fixed
+from lets_plot.plot.coord import coord_fixed, coord_cartesian
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
 from lets_plot.plot.plot import ggplot
@@ -169,6 +169,9 @@ class corr_plot_builder:
                               size=0, width=1, height=1,
                               mapping=aes(fill='..corr..', color='..corr..'),
                               tooltips=self._tooltip_spec(), **self._tiles_params)
+            plot += coord_cartesian()
+        else:
+            plot += coord_fixed()
 
         if self._points_params is not None:
             plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
@@ -337,7 +340,6 @@ class corr_plot_builder:
                       axis_line_x=element_blank(),
                       axis_line_y=element_blank())
 
-        plot += coord_fixed()
         plot += scale_size_identity(name="", na_value=0)
         plot += self._color_scale
         plot += self._fill_scale
