@@ -5,7 +5,7 @@ Formatting provides the ability to do complex variable substitutions and value f
 
 - [Number format](#number-format)
     - [Examples](#examples-number-format)
-- [String template](#string-template)  
+- [String template](#string-template)
 - [Date and time format](#datetime)
     - [Examples](#examples-datetime)
 ------
@@ -13,9 +13,9 @@ Formatting provides the ability to do complex variable substitutions and value f
 ## Number format
 Provides a wide variety of formats for numbers.
 
-Class `NumberFormat` implements number format: `NumberFormat(spec: String)`, where `spec` - string format specifier.
+Class `NumberFormat` implements number format: `NumberFormat(spec: String)`, where `spec` is a string format specifier.
 
-Function `apply(num: Number): String`, where `num` - number for formatting, returns the formatted number.
+Function `apply(num: Number): String`, where `num` is a number for formatting, returns the formatted number.
 
 The general form of a specifier is:
 
@@ -137,7 +137,6 @@ See: [Tooltip Customization in Lets-Plot](https://github.com/JetBrains/lets-plot
 ## Date and time format
 Provides formats for date and time values.
 
-
 Class `DateTime` implements the datetime format:
 
 `DateTime(date: Date, time: Time)`
@@ -153,10 +152,10 @@ Functions to get formatted value:
 `apply(time: Time): String`.
 
 The list of supported directives to format date/time values:
-* `%a`- weekday as an abbreviated name (Sun, Mon, …, Sat);
+* `%a` - weekday as an abbreviated name (Sun, Mon, …, Sat);
 * `%A` - weekday as a full name (Sunday, Monday, …, Saturday)
-* `%b`- month as an abbreviated name (Jan, Feb, …, Dec);
-* `%B`- month as a full name (January, February, …, December);
+* `%b` - month as an abbreviated name (Jan, Feb, …, Dec);
+* `%B` - month as a full name (January, February, …, December);
 * `%d` - day of the month as a zero-padded decimal number (01, 02, …, 31);
 * `%e` - day of the month as a decimal number (1, 2, …, 31);
 * `%j` - day of the year as a zero-padded decimal number (001, 002, …, 366).
@@ -174,7 +173,6 @@ The list of supported directives to format date/time values:
 
 <a id="examples-datetime"></a>
 ### Examples
-
 
 Apply format to `DateTime(date, time)`, 
 where `date=Date(6, Month.AUGUST, 2019)`, `time=Time(4, 46, 35)`
@@ -198,6 +196,14 @@ where `date=Date(6, Month.AUGUST, 2019)`, `time=Time(4, 46, 35)`
 %p  --> "AM"
 %S  --> "35"
 
-%Y-%m-%dT%H:%M:%S            --> "2019-08-06T04:46:35
-----!%%%YY%md%dT%H:%M:%S%%%  -->  "----!%%2019Y08d06T04:46:35%%%"
+%Y-%m-%dT%H:%M:%S        --> "2019-08-06T04:46:35
+%m/%d/%Y                 --> "08/06/2019"
+%m-%d-%Y %H:%M           --> "08-06-2019 04:46"
+%d.%m.%y                 --> "06.08.19"
+%A, %b %e, %Y            --> "Tuesday, Aug 6, 2019"
+%b %d, %l:%M %p          --> "Aug 06, 4:46 AM"
+%B %Y                    --> "August 2019"
+%b %e, %Y                --> "Aug 6, 2019"
+%a, %e %b %Y %H:%M:%S    --> "Tue, 6 Aug 2019 04:46:35"
+%B %e %Y %H:%M %p        --> "August 6 2019 04:46 AM"
 ```
