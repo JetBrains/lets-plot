@@ -10,7 +10,7 @@ kotlin {
     jvm("jvmRawAwt")
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
-    jvm("jvmBaticPlot")
+    jvm("jvmBatikPlot")
     js() {
         browser {
             dceTask {
@@ -92,7 +92,7 @@ kotlin {
                 implementation project(':vis-demo-common-jfx')
             }
         }
-        jvmBaticPlotMain {
+        jvmBatikPlotMain {
             dependsOn jvmMain
             dependencies {
                 implementation project(':vis-demo-common-batik')
