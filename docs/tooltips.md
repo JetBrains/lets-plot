@@ -28,11 +28,11 @@ The format will be applied to the mapped value in the default tooltip or to the 
 #### Arguments
 
 - `field` (string): The name of variable/aesthetic.
-The field name begins with `$` for aesthetics. Variable names are specified without prefix, but the `@` prefix can be also used.
-It's possible to set the format for all positional aesthetics: `$X` (all positional x) and `$Y` (all positional y).
+The field name begins with `^` for aesthetics. Variable names are specified without prefix, but the `@` prefix can be also used.
+It's possible to set the format for all positional aesthetics: `^X` (all positional x) and `^Y` (all positional y).
 For example:
-    - `field = '$Y'` - for all positional y;
-    - `field = '$y'` - for y aesthetic;
+    - `field = '^Y'` - for all positional y;
+    - `field = '^y'` - for y aesthetic;
     - `field = 'y'` - for variable with name "y".
     
 - `format` (string): The format to apply to the field.
@@ -42,9 +42,9 @@ The string template contain “replacement fields” surrounded by curly braces 
 Anything that is not contained in braces is considered literal text, which is copied unchanged to the result string. 
 If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}.
 For example:
-    - `.format('$color', '.1f')` -> `"17.0"`;
+    - `.format('^color', '.1f')` -> `"17.0"`;
     - `.format('cty', '{.2f} (mpg)'))` -> `"17.00 (mpg)"`;
-    - `.format('$color', '{{{.2f}}}')` -> `"{17.00}"`;
+    - `.format('^color', '{{{.2f}}}')` -> `"{17.00}"`;
     - `.format('model', '{} {{text}}')` -> `"mustang {text}"`.
 
 The string template in format will allow to change lines for the default tooltip without `line` specifying.
@@ -57,14 +57,14 @@ Variable's and aesthetic's formats are not interchangeable, i.e. var format will
 Specifies the string template to use in the multi-line tooltip. The presence of `line()` overrides the default tooltip.
 
 Variables and aesthetics can be accessed via a special syntax:
-- `$color` for aesthetic;
+- `^color` for aesthetic;
 - `@year` for variable;
 - `@{number of cylinders}` for variable with spaces or non-word characters in the name;
 - `@..count..` for statistics variables.
 
-A dollar sign can be escaped with a backslash, a brace character in the literal text - by doubling:
+A '^' symbol can be escaped with a backslash, a brace character in the literal text - by doubling:
 - `.line('text')` -> `"text"`;
-- `.line('\$text')` -> `"$text"`;
+- `.line('\^text')` -> `"^text"`;
 - `.line('{{text}}')` -> `"{text}"`;
 - `.line('@model')` -> `"mustang"`;
 - `.line('{{@model}}')` -> `"{mustang}"`.
@@ -80,10 +80,10 @@ Within the tooltip line the label is aligned to the left, the string formed by t
 If a label is not specified, the string will be centered in the tooltip. For example:
 
 
-- `line('$color')`: no label, value is centered;
-- `line('|$color')`: label is empty, value is right-aligned;
-- `line('@|$color')`: default label is used, value is right-aligned;
-- `line('my label|$color')`: label is specified, value is right-aligned.
+- `line('^color')`: no label, value is centered;
+- `line('|^color')`: label is empty, value is right-aligned;
+- `line('@|^color')`: default label is used, value is right-aligned;
+- `line('my label|^color')`: label is specified, value is right-aligned.
 
 <a id="examples"></a>
 ### Examples
@@ -107,7 +107,7 @@ Change format for the default tooltip:
 
 ```
 ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=21, color='black',\
-                           tooltips=layer_tooltips().format('$color', '{.2f} (mpg)'))
+                           tooltips=layer_tooltips().format('^color', '{.2f} (mpg)'))
 ```
 
 ![](examples/images/tooltips_2.png)
@@ -134,17 +134,17 @@ The specified `line` for outlier will move it to the general multi-line tooltip.
 Change formatting for outliers:
 ```
 p2 + geom_boxplot(tooltips=layer_tooltips()
-                        .format('$Y', '.2f')          # all positionals
-                        .format('$ymax', '.3f')       # use number format --> "ymax: value"
-                        .format('$middle', '{.3f}')   # use line format --> "value"
-                        .format('$ymin', 'ymin is {.3f}'))
+                        .format('^Y', '.2f')          # all positionals
+                        .format('^ymax', '.3f')       # use number format --> "ymax: value"
+                        .format('^middle', '{.3f}')   # use line format --> "value"
+                        .format('^ymin', 'ymin is {.3f}'))
 ```                        
 ![](examples/images/tooltips_3.png)
 
                   
 Move outliers to the general tooltip:
 
-`p2 + geom_boxplot(tooltips=layer_tooltips().line('lower/upper|$lower, $upper'))`
+`p2 + geom_boxplot(tooltips=layer_tooltips().line('lower/upper|^lower, ^upper'))`
 ![](examples/images/tooltips_4.png)
                  
 
@@ -168,9 +168,9 @@ The parameter `tooltip_anchor` of `theme` specifies the corner of the plot to pl
  ggplot(iris_df) + theme(legend_position='none', tooltip_anchor='top_right')\
  + geom_area(aes(x='sepal_length', color='sepal_width', fill='species'), stat='density',\
      tooltips=layer_tooltips()
-                 .line('$fill')
-                 .line('length|$x')
-                 .line('density|$y'))
+                 .line('^fill')
+                 .line('length|^x')
+                 .line('density|^y'))
 ```                 
  ![](examples/images/tooltips_5.png)
  
