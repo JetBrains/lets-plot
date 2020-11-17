@@ -19,7 +19,7 @@ from lets_plot.plot.plot import ggsize
 from lets_plot.plot.core import aes
 from lets_plot.plot.geom import geom_point, geom_text, geom_tile
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
-    scale_fill_gradient2, scale_fill_brewer
+    scale_fill_gradient2, scale_fill_brewer, scale_x_discrete
 from lets_plot.plot.scale_identity import scale_size_identity
 from lets_plot.plot.coord import coord_fixed, coord_cartesian
 from lets_plot.plot.theme_ import theme, element_blank
@@ -334,6 +334,7 @@ class corr_plot_builder:
         _MIN_PLOT_WIDTH = 400
         _MAX_PLOT_WIDTH = 900
         _PLOT_PROPORTION = 3.0 / 4.0
+        _PLOT_EXPAND_ADDITIVE = 0.5
 
         plot += theme(axis_title=element_blank(),
                       legend_title=element_blank(),
@@ -344,8 +345,10 @@ class corr_plot_builder:
         plot += self._color_scale
         plot += self._fill_scale
 
+        plot += scale_x_discrete(expand=[0.0, _PLOT_EXPAND_ADDITIVE])
+
         if self._reverse_y:
-            plot += scale_y_discrete_reversed()
+            plot += scale_y_discrete_reversed(expand=[0.0, _PLOT_EXPAND_ADDITIVE])
 
         columns_count = self._get_numeric_columns_count()
         width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
