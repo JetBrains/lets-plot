@@ -23,10 +23,10 @@ class TooltipConfig : PlotConfigDemoBase() {
         )
     }
 
-    private val aesX = "\$x"
-    private val aesY = "\$y"
-    private val aesColor = "\$color"
-    private val aesFill = "\$fill"
+    private val aesX = "^x"
+    private val aesY = "^y"
+    private val aesColor = "^color"
+    private val aesFill = "^fill"
     private val vehicleName = "@{vehicle name}"
     private val modelYear = "@{model year}"
     private val originCar = "@{origin of car}"
@@ -198,11 +198,11 @@ class TooltipConfig : PlotConfigDemoBase() {
           'geom': 'boxplot',
           'tooltips': {
             'tooltip_formats': [
-              { 'field' : '${'$'}middle', 'format' : '{{mid}} = {.3f}' },
-              { 'field' : '${'$'}Y', 'format' : '.2f' }
+              { 'field' : '^middle', 'format' : '{{mid}} = {.3f}' },
+              { 'field' : '^Y', 'format' : '.2f' }
             ],
             'tooltip_lines': [   
-               'min, max|${'$'}ymin, ${'$'}ymax'
+               'min, max|^ymin, ^ymax'
             ]
           }
         }

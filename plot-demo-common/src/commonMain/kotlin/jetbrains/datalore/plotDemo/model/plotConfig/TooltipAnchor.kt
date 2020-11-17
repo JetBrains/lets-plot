@@ -41,12 +41,12 @@ open class TooltipAnchor : PlotConfigDemoBase() {
         }
 
         private fun withTooltipAnchor(anchor: String): Map<String, Any> {
-            val allPositionals = "\$Y"
-            val aesYMin = "\$ymin"
-            val aesYMax = "\$ymax"
-            val aesMiddle = "\$middle"
-            val aesLower = "\$lower"
-            val aesUpper = "\$upper"
+            val allPositionals = "^Y"
+            val aesYMin = "^ymin"
+            val aesYMax = "^ymax"
+            val aesMiddle = "^middle"
+            val aesLower = "^lower"
+            val aesUpper = "^upper"
             val spec = """{
                     'kind': 'plot',
                     'ggtitle': {'text': '$anchor'},
