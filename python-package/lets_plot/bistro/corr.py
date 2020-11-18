@@ -203,7 +203,7 @@ class corr_plot_builder:
 
         return self
 
-    def patette_BrBG(self):
+    def palette_BrBG(self):
         """
         Set scale_color_brewer with BrBG palette for corr plot.
 
@@ -213,7 +213,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('BrBG')
 
-    def patette_PiYG(self):
+    def palette_PiYG(self):
         """
         Set scale_color_brewer with PiYG palette for corr plot.
 
@@ -223,7 +223,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('PiYG')
 
-    def patette_PRGn(self):
+    def palette_PRGn(self):
         """
         Set scale_color_brewer with PRGn palette for corr plot.
 
@@ -233,7 +233,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('PRGn')
 
-    def patette_PuOr(self):
+    def palette_PuOr(self):
         """
         Set scale_color_brewer with PuOr palette for corr plot.
 
@@ -243,7 +243,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('PuOr')
 
-    def patette_RdBu(self):
+    def palette_RdBu(self):
         """
         Set scale_color_brewer with RdBu palette for corr plot.
 
@@ -253,7 +253,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('RdBu')
 
-    def patette_RdGy(self):
+    def palette_RdGy(self):
         """
         Set scale_color_brewer with RdGy palette for corr plot.
 
@@ -263,7 +263,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('RdGy')
 
-    def patette_RdYlBu(self):
+    def palette_RdYlBu(self):
         """
         Set scale_color_brewer with RdYlBu palette for corr plot.
 
@@ -273,7 +273,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('RdYlBu')
 
-    def patette_RdYlGn(self):
+    def palette_RdYlGn(self):
         """
         Set scale_color_brewer with RdYlGn palette for corr plot.
 
@@ -283,7 +283,7 @@ class corr_plot_builder:
         """
         return self._set_brewer_palette('RdYlGn')
 
-    def patette_Spectral(self):
+    def palette_Spectral(self):
         """
         Set scale_color_brewer with Spectral palette for corr plot.
 
