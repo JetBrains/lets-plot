@@ -67,7 +67,7 @@ class corr_plot_builder:
                               mid=corr_plot_builder._DEF_MID_COLOR,
                               high=corr_plot_builder._DEF_HIGH_COLOR)
 
-    def points(self, type=None, fill_diagonal=None):
+    def points(self, type=None, fill_diagonal=True):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -82,17 +82,11 @@ class corr_plot_builder:
         -------
             self
         """
-        self._points_params = {}
-
-        if type:
-            self._points_params['type'] = self._get_type(type)
-
-        if fill_diagonal:
-            self._points_params['fill_diagonal'] = fill_diagonal
+        self._points_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
 
         return self
 
-    def labels(self, type=None, fill_diagonal=None, map_size=False, color=None):
+    def labels(self, type=None, fill_diagonal=True, map_size=False, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -111,23 +105,17 @@ class corr_plot_builder:
             self
         """
 
-        self._labels_params = {}
-
-        if type:
-            self._labels_params['type'] = self._get_type(type)
-
-        if fill_diagonal:
-            self._labels_params['fill_diagonal'] = fill_diagonal
+        self._labels_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
 
         if not map_size:
             self._labels_params['size'] = 1
 
-        if color:
+        if color is not None:
             self._labels_params['color'] = color
 
         return self
 
-    def tiles(self, type=None, fill_diagonal=None):
+    def tiles(self, type=None, fill_diagonal=True):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -143,13 +131,7 @@ class corr_plot_builder:
             self
         """
 
-        self._tiles_params = {}
-
-        if type:
-            self._tiles_params['type'] = self._get_type(type)
-
-        if fill_diagonal:
-            self._tiles_params['fill_diagonal'] = fill_diagonal
+        self._tiles_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
 
         return self
 
@@ -179,10 +161,13 @@ class corr_plot_builder:
                                **self._points_params)
 
         if self._labels_params is not None:
-            if self._tiles_params is not None and 'color' not in self._labels_params:
-                self._labels_params['color'] = 'white'
+            m = None
+
+            if 'size' not in self._labels_params:
+                m = aes(size='..corr_abs..')
 
             plot += geom_text(stat='corr', show_legend=self._show_legend,
+                              mapping=m,
                               tooltips=self._tooltip_spec(),
                               na_value='', label_format=self._format,
                               size_unit='x', **self._labels_params)
@@ -462,7 +447,7 @@ def corr_plot_tileslab(data, palette=None):
     """
     plot_builder = corr_plot_builder(data=data)
     plot_builder.tiles()
-    plot_builder.labels()
+    plot_builder.labels(color='white')
 
     if palette:
         plot_builder._set_brewer_palette(palette)
