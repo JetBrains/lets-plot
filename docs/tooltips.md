@@ -157,10 +157,15 @@ Set `tooltips = "none"` to hide tooltips from the layer.
 ## Corner tooltips
 The multi-line tooltip can be placed in the corner. 
 The parameter `tooltip_anchor` of `theme` specifies the corner of the plot to place tooltip:
-- 'top_right' 
 - 'top_left' 
-- 'bottom_right' 
+- 'top_center'
+- 'top_right' 
+- 'middle_left'
+- 'middle_center'
+- 'middle_right'
 - 'bottom_left'
+- 'bottom_center' 
+- 'bottom_right' 
 
 <a id="example-corners"></a> 
 ### Example
