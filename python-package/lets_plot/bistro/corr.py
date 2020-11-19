@@ -37,6 +37,7 @@ class corr_plot_builder:
 
     _LEGEND_NAME = 'Corr'
     _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
+    _LABELS = ['-1', '-0.5', '0', '0.5', '1']
     _LIMITS = [-1.0, 1.0]
     _DEF_LOW_COLOR = 'red'
     _DEF_MID_COLOR = 'light_gray'
@@ -371,11 +372,13 @@ class corr_plot_builder:
         self._color_scale = scale_color_brewer(name=corr_plot_builder._LEGEND_NAME,
                                                palette=palette,
                                                breaks=corr_plot_builder._BREAKS,
+                                               labels=corr_plot_builder._LABELS,
                                                limits=corr_plot_builder._LIMITS)
 
         self._fill_scale = scale_fill_brewer(name=corr_plot_builder._LEGEND_NAME,
                                              palette=palette,
                                              breaks=corr_plot_builder._BREAKS,
+                                             labels=corr_plot_builder._LABELS,
                                              limits=corr_plot_builder._LIMITS)
 
         return self
