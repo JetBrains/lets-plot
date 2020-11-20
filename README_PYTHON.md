@@ -242,7 +242,7 @@ when using 3-rd party map-tiles as a base-map layer.
 
     See [The Gallery of Base-maps](https://www.kaggle.com/alshan/the-gallery-of-basemaps).     
  
-- Formatting lables in `geom_text()`
+- Formatting labels in `geom_text()`
 
     New parameter, 'label_format' to define a formatting pattern.
 

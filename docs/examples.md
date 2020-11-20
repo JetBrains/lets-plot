@@ -16,9 +16,6 @@ Try the following tutorials and examples to learn and evaluate various features 
 - [GeoPandas Support](#geopandas)
 - [Interactive Maps](#livemap)
 - [Geocoding API](#geocoding)
-- [Cloud-based notebooks](#cloud_based)
-- [Interesting demos](#interesting)
-- [Tooltip Customization](#tooltip)
 
 
 
@@ -103,7 +100,7 @@ Try the following tutorials and examples to learn and evaluate various features 
 <a id="facets"></a>
 #### Facets
 
-`facet_grid`: 
+* `facet_grid`: 
 [distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb)
 
 
@@ -120,7 +117,7 @@ GGBunch allows to show a collection of plots on one figure. Each plot in the col
 <a id="as_discrete"></a>
 #### `as_discrete()` function 
 
-[geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
+* [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
 
 
 <a id="export"></a>
@@ -128,7 +125,7 @@ GGBunch allows to show a collection of plots on one figure. Each plot in the col
 
 The `ggsave()` function is an easy way to export plot to a file in SVG or HTML formats.
 
-[export_SVG_HTML.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
+* [export_SVG_HTML.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
 
 
 <a id="theme"></a>
@@ -136,7 +133,7 @@ The `ggsave()` function is an easy way to export plot to a file in SVG or HTML f
 
 Legend layout and axis presentation options : 
  
-[legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
+* [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
 
 
 <a id="sampling"></a>
