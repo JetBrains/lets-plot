@@ -20,7 +20,7 @@ from lets_plot.plot.core import aes
 from lets_plot.plot.geom import geom_point, geom_text, geom_tile
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
     scale_fill_gradient2, scale_fill_brewer, scale_x_discrete
-from lets_plot.plot.scale_identity import scale_size_identity
+from lets_plot.plot.scale_identity import scale_size_identity, scale_fill_identity
 from lets_plot.plot.coord import coord_fixed, coord_cartesian
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
@@ -328,6 +328,8 @@ class corr_plot_builder:
                       axis_line_y=element_blank())
 
         plot += scale_size_identity(name="", na_value=0)
+        plot += scale_fill_identity(name="", na_value='rgba(0,0,0,0)')
+
         plot += self._color_scale
         plot += self._fill_scale
 
