@@ -15,6 +15,7 @@ from .plot import *
 from .export import *
 from .frontend_context import *
 from .settings_utils import *
+from .bistro import *
 
 __all__ = (plot.__all__ +
            bistro.__all__ +

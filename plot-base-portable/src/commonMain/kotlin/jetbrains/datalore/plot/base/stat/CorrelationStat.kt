@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -13,20 +12,20 @@ import jetbrains.datalore.plot.base.stat.CorrelationUtil.correlationMatrix
 import jetbrains.datalore.plot.base.stat.math3.correlationPearson
 import kotlin.math.abs
 
-
 class CorrelationStat : BaseStat(DEF_MAPPING) {
     var correlationMethod = DEF_CORRELATION_METHOD
     var type = DEF_TYPE
+    var fillDiagonal = DEF_FILL_DIAGONAL
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (correlationMethod != Method.PEARSON)
-            throw IllegalArgumentException(
-                "Unsupported correlation method: $correlationMethod (only pearson is currently available)"
-            )
+        require(correlationMethod == Method.PEARSON) {
+            "Unsupported correlation method: $correlationMethod (only Pearson is currently available)"
+        }
 
-        val cm = correlationMatrix(data, type, ::correlationPearson)
-        val vals = cm.getNumeric(Stats.CORR)
-        val abs: List<Double> = vals.map { abs(it!!) }
+
+        val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson)
+        val values = cm.getNumeric(Stats.CORR)
+        val abs: List<Double?> = values.map { it?.let(::abs) }
 
         return cm.builder().putNumeric(Stats.CORR_ABS, abs).build()
     }
@@ -59,6 +58,7 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
 
         private val DEF_CORRELATION_METHOD = Method.PEARSON
         private val DEF_TYPE = Type.FULL
-
+        const val FILL_DIAGONAL = "fill_diagonal"
+        const val DEF_FILL_DIAGONAL = true
     }
 }
