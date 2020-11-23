@@ -63,29 +63,29 @@ class TooltipConfigTest {
     fun useNamesToConfigTooltipLines() {
         val myData = data + mapOf(
             "shape" to listOf("shape"),
-            "foo$" to listOf("foo"),
-            "\$bar" to listOf("bar"),
-            "foo\$bar" to listOf("foobar"),
+            "foo^" to listOf("foo"),
+            "^bar" to listOf("bar"),
+            "foo^bar" to listOf("foobar"),
             "foo@" to listOf("foo with @"),
             "@bar" to listOf("bar with @"),
             "foo@bar" to listOf("foobar with @")
         )
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "\$shape",           // aes
+                "^shape",           // aes
                 "@shape",            // variable with name that match to the name of aes
-                "\\\$shape",         // '$' is part of the string (it's not the name) => string is "$shape"
+                "\\^shape",         // '^' is part of the string (it's not the name) => string is "^shape"
                 "\\@shape",          // '@' is part of the string (it's not the name) => string is "@shape"
                 "@{model name}",     // space in the name
-                "@foo$",             // with '$' at the end
-                "@\$bar",            // with '$' at the beginning
-                "@foo\$bar",         // with '$' at the middle
+                "@foo^",             // with '^' at the end
+                "@^bar",            // with '^' at the beginning
+                "@foo^bar",         // with '^' at the middle
                 "@foo@",             // with '@' at the end
                 "@@bar",             // with '@' at the beginning
                 "@foo@bar",          // with '@' at the middle
-                "@foo$\\$",          // the second '$' is part of the result string
-                "(@foo\$)",          // with brackets as part of the result string
-                "\$shape, \$shape"   // result string comma separated
+                "@foo^\\^",          // the second '^' is part of the result string
+                "(@foo^)",          // with brackets as part of the result string
+                "^shape, ^shape"   // result string comma separated
             )
         )
         val geomLayer = buildGeomPointLayer(myData, mapping, tooltips = tooltipConfig)
@@ -93,7 +93,7 @@ class TooltipConfigTest {
         val expectedLines = listOf(
             "suv",
             "shape",
-            "\$shape",
+            "^shape",
             "@shape",
             "dodge",
             "foo",
@@ -102,7 +102,7 @@ class TooltipConfigTest {
             "foo with @",
             "bar with @",
             "foobar with @",
-            "foo$",
+            "foo^",
             "(foo)",
             "suv, suv"
         )
@@ -115,7 +115,7 @@ class TooltipConfigTest {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "\$color",
+                    Option.TooltipFormat.FIELD to "^color",
                     Option.TooltipFormat.FORMAT to ".4f"         // number format
                 )
             )
@@ -151,7 +151,7 @@ class TooltipConfigTest {
             data, mappingWithColor, tooltips = mapOf(
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "\$color",
+                        Option.TooltipFormat.FIELD to "^color",
                         Option.TooltipFormat.FORMAT to "{d}"
                     )
                 )
@@ -206,14 +206,14 @@ class TooltipConfigTest {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
                 "mpg data set info",             // static text
-                "\$color (mpg)",                 // formatted
+                "^color (mpg)",                 // formatted
                 "@{model name} car (@origin)",   // multiple sources in the line
-                "x/y|\$x x \$y"                  // specify label
+                "x/y|^x x ^y"                  // specify label
             ),
             Option.Layer.TOOLTIP_FORMATS to listOf(          //define formats
-                mapOf(Option.TooltipFormat.FIELD to "\$color", Option.TooltipFormat.FORMAT to ".1f"),
-                mapOf(Option.TooltipFormat.FIELD to "\$x", Option.TooltipFormat.FORMAT to ".3f"),
-                mapOf(Option.TooltipFormat.FIELD to "\$y", Option.TooltipFormat.FORMAT to ".1f")
+                mapOf(Option.TooltipFormat.FIELD to "^color", Option.TooltipFormat.FORMAT to ".1f"),
+                mapOf(Option.TooltipFormat.FIELD to "^x", Option.TooltipFormat.FORMAT to ".3f"),
+                mapOf(Option.TooltipFormat.FIELD to "^y", Option.TooltipFormat.FORMAT to ".1f")
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
@@ -264,15 +264,15 @@ class TooltipConfigTest {
     fun configOutlierTooltips() {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "lower/upper|\$lower, \$upper"
+                "lower/upper|^lower, ^upper"
             ),
             Option.Layer.TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "\$Y",
+                    Option.TooltipFormat.FIELD to "^Y",
                     Option.TooltipFormat.FORMAT to ".1f"
                 ),       // all positionals
-                mapOf(Option.TooltipFormat.FIELD to "\$middle", Option.TooltipFormat.FORMAT to ".3f"),    // number format
-                mapOf(Option.TooltipFormat.FIELD to "\$ymax", Option.TooltipFormat.FORMAT to "{.1f}")     // line pattern
+                mapOf(Option.TooltipFormat.FIELD to "^middle", Option.TooltipFormat.FORMAT to ".3f"),    // number format
+                mapOf(Option.TooltipFormat.FIELD to "^ymax", Option.TooltipFormat.FORMAT to "{.1f}")     // line pattern
             )
         )
 
@@ -345,7 +345,7 @@ class TooltipConfigTest {
             data = mapOf("label" to listOf("my text")),
             mapping = mapOf(Aes.LABEL.name to "label"),
             tooltips = mapOf(
-                Option.Layer.TOOLTIP_LINES to listOf("\$label")
+                Option.Layer.TOOLTIP_LINES to listOf("^label")
             )
         )
         assertTooltipStrings(
@@ -368,7 +368,7 @@ class TooltipConfigTest {
             tooltipConfig = mapOf(
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     listOf(
-                        Option.TooltipFormat.FIELD to "\$color",
+                        Option.TooltipFormat.FIELD to "^color",
                         Option.TooltipFormat.FORMAT to ".2f"
                     )
                 )
@@ -383,7 +383,7 @@ class TooltipConfigTest {
             tooltipConfig = mapOf(
                 Option.Layer.TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "\$color",
+                        Option.TooltipFormat.FIELD to "^color",
                         Option.TooltipFormat.FORMAT to "{.2f} {.2f}"
                     )
                 )
