@@ -50,7 +50,7 @@ need to be updated as:
 
 `https://mybinder.org/v2/gh/JetBrains/lets-plot/v1.2.3demos1?....`
 
-Push the updated demo notebooks and git tag:
+Push the updated demo notebooks and a git tag:
 
 `git add --all && git commit -m "Updated demo notebooks binder url to match repo tag v1.2.3demos1" && git push`
 
