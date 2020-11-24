@@ -169,7 +169,6 @@ class corr_plot_builder:
 
             plot += geom_text(stat='corr', show_legend=self._show_legend,
                               mapping=m,
-                              tooltips=self._tooltip_spec(),
                               na_value='', label_format=self._format,
                               size_unit='x', **self._labels_params)
 
