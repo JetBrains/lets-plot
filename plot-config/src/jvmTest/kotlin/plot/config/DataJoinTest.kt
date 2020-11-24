@@ -20,6 +20,9 @@ class DataJoinTest {
     @Test
     fun singleKey_MatchingRows() {
         // User searches names from data - same size, same order
+        // Data: [USA, RU, FR]
+        // Map: [USA, RU, FR]
+        // Result: [USA, RU, FR]
         val data = DataFrame.Builder()
             .put(Variable("Countries"), listOf("USA", "RU", "FR"))
             .put(Variable("Values"), listOf(0.0, 1.0, 2.0))
@@ -33,7 +36,6 @@ class DataJoinTest {
 
         val jointDataFrame = ConfigUtil.join(data, listOf("Countries"), map, listOf("request"))
 
-        // Should take variables from corresponding dataframes, not recreate them
         assertThat(jointDataFrame)
             .hasSerieFrom(data, "Countries")
             .hasSerieFrom(data, "Values")
@@ -45,6 +47,9 @@ class DataJoinTest {
     @Test
     fun tripleKeys_MatchingRows() {
         // User searches names from data - same size, same order
+        // Data: [Anderson, Clay, Alameda]
+        // Map: [Anderson, Clay, Alameda]
+        // Result: [Anderson, Clay, Alameda]
         val data = DataFrame.Builder()
             .put(Variable("Countries"), listOf("USA", "USA", "USA"))
             .put(Variable("States"), listOf("TX", "AL", "CA"))
@@ -62,7 +67,6 @@ class DataJoinTest {
 
         val jointDataFrame = ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
 
-        // Should take variables from corresponding dataframes, not recreate them
         assertThat(jointDataFrame)
             .hasSerieFrom(data, "Countries")
             .hasSerieFrom(data, "States")
@@ -77,6 +81,9 @@ class DataJoinTest {
 
     @Test
     fun singleKey_extraMapRows() {
+        // Data: [USA, RU, FR]
+        // Map: [UA, USA, GER, FR, RU]
+        // Result: [USA, RU, FR, UA, GER]
         val data = DataFrame.Builder()
             .put(Variable("Countries"), listOf("USA", "RU", "FR"))
             .put(Variable("Values"), listOf(0.0, 1.0, 2.0))
@@ -90,19 +97,49 @@ class DataJoinTest {
 
         val jointDataFrame = ConfigUtil.join(data, listOf("Countries"), map, listOf("request"))
 
-        // Should take variables from corresponding dataframes, not recreate them
         assertThat(jointDataFrame)
-            .hasSerie(variable(data, "Countries"), listOf(null, "USA", null, "FR", "RU")) // nulls for UA and GER
-            .hasSerie(variable(data, "Values"), listOf(null, 0.0, null, 2.0, 1.0)) // nulls for UA and GER
-            .hasSerieFrom(map, "request")
-            .hasSerieFrom(map, "found name")
-            .hasSerieFrom(map, "geometry")
+            .hasSerie(variable(data, "Countries"), listOf("USA", "RU", "FR", null, null)) // nulls for UA and GER
+            .hasSerie(variable(data, "Values"), listOf(0.0, 1.0, 2.0, null, null)) // nulls for UA and GER
+            .hasSerie(variable(map, "request"), listOf("USA", "RU", "FR", "UA", "GER"))
+            .hasSerie(variable(map, "found name"), listOf("United States of America", "Russia", "France", "Ukraine",  "Germany"))
+            .hasSerie(variable(map, "geometry"), listOf("usa_geometry", "ru_geometry", "fr_geometry", "ua_geometry", "ger_geometry"))
+    }
+
+
+    @Test
+    fun singleKey_DupsInMap() {
+        // Data: [Asia, Europe]
+        // Map: [Europe, Asia, Europe]
+        // Result: [Asia, Europe, Europe]
+
+        val data = DataFrame.Builder()
+            .put(Variable("Continents"), listOf("Asia", "Europe"))
+            .put(Variable("Values"), listOf(1.0, 2.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("Country"), listOf("Germany", "Japan", "France"))
+            .put(Variable("Cont"), listOf("Europe", "Asia", "Europe"))
+            .put(Variable("geometry"), listOf("get_geometry", "jap_geometry", "fr_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Continents"), map, listOf("Cont"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Continents"), listOf("Asia", "Europe", "Europe"))
+            .hasSerie(variable(data, "Values"), listOf(1.0, 2.0, 2.0))
+            .hasSerie(variable(map, "Country"), listOf("Japan", "Germany", "France"))
+            .hasSerie(variable(map, "Cont"), listOf("Asia", "Europe", "Europe"))
+            .hasSerie(variable(map, "geometry"), listOf("jap_geometry", "get_geometry", "fr_geometry"))
     }
 
 
     @Test
     fun tripleKey_extraMapRows() {
         // User searches names from data - same size, same order
+        // Data: [Anderson, Clay, Alameda]
+        // Map: [Carson, Anderson, Clay, Adams, Alameda]
+        // Result: [Anderson, Clay, Alameda, Carson, Adams]
         val data = DataFrame.Builder()
             .put(Variable("Countries"), listOf("USA", "USA", "USA"))
             .put(Variable("States"), listOf("TX", "AL", "CA"))
@@ -120,23 +157,24 @@ class DataJoinTest {
 
         val jointDataFrame = ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
 
-        // Should take variables from corresponding dataframes, not recreate them
         assertThat(jointDataFrame)
-            .hasSerie(variable(data, "Countries"), listOf(null, "USA", "USA", null, "USA"))
-            .hasSerie(variable(data, "States"), listOf(null, "TX", "AL", null, "CA"))
-            .hasSerie(variable(data, "Counties"), listOf(null, "Anderson", "Clay", null, "Alameda"))
-            .hasSerie(variable(data, "Values"), listOf(null, 0.0, 1.0, null, 2.0))
-            .hasSerieFrom(map, "request")
-            .hasSerieFrom(map, "state")
-            .hasSerieFrom(map, "country")
-            .hasSerieFrom(map, "found name")
-            .hasSerieFrom(map, "geometry")
+            .hasSerie(variable(data, "Countries"), listOf("USA", "USA", "USA", null, null))
+            .hasSerie(variable(data, "States"), listOf("TX", "AL", "CA", null, null))
+            .hasSerie(variable(data, "Counties"), listOf("Anderson", "Clay", "Alameda", null, null))
+            .hasSerie(variable(data, "Values"), listOf(0.0, 1.0, 2.0, null, null))
+            .hasSerie(variable(map, "request"), listOf("Anderson", "Clay", "Alameda", "Carson", "Adams"))
+            .hasSerie(variable(map, "state"), listOf("TX", "AL", "CA", "NV", "CO"))
+            .hasSerie(variable(map, "country"), listOf("USA", "USA", "USA", "USA", "USA"))
+            .hasSerie(variable(map, "found name"), listOf("Anderson County", "Clay County", "Alameda County", "Carson County", "Adams County"))
+            .hasSerie(variable(map, "geometry"), listOf("anderson_geometry", "clay_geometry", "alameda_geometry", "carson_geometry", "adams_geometry"))
     }
 
 
     @Test
     fun singleKey_extraDataRows() {
-        // Like drop_not_matched() from geocoding
+        // Remove data rows that not matched to a map
+        // Data: [USA, RU, FR]
+        // Map: [FR, RU]
         val data = DataFrame.Builder()
             .put(Variable("Countries"), listOf("USA", "RU", "FR"))
             .put(Variable("Values"), listOf(0.0, 1.0, 2.0))
@@ -152,11 +190,11 @@ class DataJoinTest {
 
         // Should take variables from corresponding dataframes, not recreate them
         assertThat(jointDataFrame)
-            .hasSerie(variable(data, "Countries"), listOf("FR", "RU"))
-            .hasSerie(variable(data, "Values"), listOf(2.0, 1.0))
-            .hasSerieFrom(map, "request")
-            .hasSerieFrom(map, "found name")
-            .hasSerieFrom(map, "geometry")
+            .hasSerie(variable(data, "Countries"), listOf("RU", "FR"))
+            .hasSerie(variable(data, "Values"), listOf(1.0, 2.0))
+            .hasSerie(variable(map, "request"), listOf("RU", "FR"))
+            .hasSerie(variable(map, "found name"), listOf("Russia", "France"))
+            .hasSerie(variable(map, "geometry"), listOf("ru_geometry", "fr_geometry"))
     }
 
 
@@ -193,43 +231,226 @@ class DataJoinTest {
             .hasSerieFrom(map, "geometry")
     }
 
-
     @Test
-    @Ignore("ToDo: fix later")
-    fun singleKey_DupsInData() {
+    fun multiindex_singleKey() {
+        // Data: [USA, RU, FR]
+        // Map: [USA, FR, RU]
+        // Result: [USA, RU, FR]
         val data = DataFrame.Builder()
-            .put(Variable("state"), listOf(
-                "AL", "AL",
-                "CO", "CO", "CO",
-                "IL", "IL", "IL", "IL"
-            ))
-            .put(Variable("item"), listOf(
-                "State Debt", "Local Debt", "Gross State Product",
-                "State Debt", "Local Debt", "Gross State Product",
-                "State Debt", "Local Debt", "Gross State Product"
-            ))
-            .put(Variable("value"), listOf(
-                10.7, 26.1, 228.0,
-                5.9, 3.5, 55.7,
-                13.3, 30.5, 361.1
-            ))
+            .put(Variable("Country"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
+            .put(Variable("Category"), listOf("A", "B", "A", "B", "A", "B"))
+            .put(Variable("Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
             .build()
 
         val map = DataFrame.Builder()
-            .put(Variable("request"), listOf("AL", "CO", "IL"))
-            .put(Variable("found name"), listOf("Alabama", "Colorado", "Illinois"))
-            .put(Variable("geometry"), listOf("al_geometry", "co_geometry", "il_geometry"))
+            .put(Variable("request"), listOf("USA", "FR", "RU"))
+            .put(Variable("found name"), listOf("United States of America", "France", "Russia"))
+            .put(Variable("geometry"), listOf("usa_geometry", "fr_geometry", "ru_geometry"))
             .build()
 
-        val jointDataFrame = ConfigUtil.join(data, listOf("state"), map, listOf("request"))
+        val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
+
         assertThat(jointDataFrame)
-            .hasSerieFrom(data, "state")
-            .hasSerieFrom(data, "item")
-            .hasSerieFrom(data, "value")
-            .hasSerieFrom(map, "request")
-            .hasSerieFrom(map, "found name")
-            .hasSerieFrom(map, "geometry")
+            .hasSerieFrom(data, "Country")
+            .hasSerieFrom(data, "Category")
+            .hasSerieFrom(data, "Value")
+            .hasSerie(variable(map, "request"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
+            .hasSerie(variable(map, "found name"), listOf("United States of America", "United States of America", "Russia", "Russia", "France", "France"))
+            .hasSerie(variable(map, "geometry"), listOf("usa_geometry", "usa_geometry", "ru_geometry", "ru_geometry", "fr_geometry", "fr_geometry"))
     }
+
+    @Test
+    fun multiIndex_singleKey_ExtraMapEntries() {
+        // Data: [USA, RU, FR]
+        // Map: [GER, USA, FR, RU]
+        // Result: [USA, RU, FR, GER]
+        val data = DataFrame.Builder()
+            .put(Variable("Country"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
+            .put(Variable("Category"), listOf("A", "B", "A", "B", "A", "B"))
+            .put(Variable("Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("request"), listOf("GER", "USA", "FR", "RU"))
+            .put(Variable("found name"), listOf("Germany", "United States of America", "France", "Russia"))
+            .put(Variable("geometry"), listOf("ger_geometry", "usa_geometry", "fr_geometry", "ru_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Country"), listOf("USA", "USA", "RU", "RU", "FR", "FR", null))
+            .hasSerie(variable(data, "Category"), listOf("A", "B", "A", "B", "A", "B", null))
+            .hasSerie(variable(data, "Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, null))
+            .hasSerie(variable(map, "request"), listOf("USA", "USA", "RU", "RU", "FR", "FR", "GER"))
+            .hasSerie(variable(map, "found name"), listOf("United States of America", "United States of America", "Russia", "Russia", "France", "France", "Germany"))
+            .hasSerie(variable(map, "geometry"), listOf("usa_geometry", "usa_geometry", "ru_geometry", "ru_geometry", "fr_geometry", "fr_geometry", "ger_geometry"))
+    }
+
+
+    @Test
+    fun multiIndex_singleKey_MisingDataEntries() {
+        // Remove data rows that not matched to a map
+
+        // Data: [USA, RU, FR]
+        // Map: [GER, USA, FR]
+        // Result: [USA, FR, GER]
+        val data = DataFrame.Builder()
+            .put(Variable("Country"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
+            .put(Variable("Category"), listOf("A", "B", "A", "B", "A", "B"))
+            .put(Variable("Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("request"), listOf("GER", "USA", "FR"))
+            .put(Variable("found name"), listOf("Germany", "United States of America", "France"))
+            .put(Variable("geometry"), listOf("ger_geometry", "usa_geometry", "fr_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Country"), listOf(
+                "USA", "USA",
+                "FR", "FR",
+                null // GER
+            ))
+            .hasSerie(variable(data, "Category"), listOf(
+                "A", "B", // USA
+                "A", "B", // FR
+                null // GER
+            ))
+            .hasSerie(variable(data, "Value"), listOf(
+                0.0, 1.0, // USA
+                4.0, 5.0, // FR
+                null // GER
+            ))
+            .hasSerie(variable(map, "request"), listOf(
+                "USA", "USA",
+                "FR", "FR",
+                "GER"
+            ))
+            .hasSerie(variable(map, "found name"), listOf(
+                "United States of America", "United States of America",
+                "France", "France",
+                "Germany"
+            ))
+            .hasSerie(variable(map, "geometry"), listOf(
+                "usa_geometry", "usa_geometry",
+                "fr_geometry", "fr_geometry",
+                "ger_geometry"
+            ))
+    }
+
+    @Test
+    fun multiIndex_singleKey_DuplicatedMapEntries() {
+        // Remove data rows that not matched to a map
+
+        // Data: [USA, RU, FR]
+        // Map: [GER, FR, USA, FR]
+        // Result: [USA, FR, GER]
+        val data = DataFrame.Builder()
+            .put(Variable("Country"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
+            .put(Variable("Category"), listOf("A", "B", "A", "B", "A", "B"))
+            .put(Variable("Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("request"), listOf("GER", "FR", "USA", "FR"))
+            .put(Variable("found name"), listOf("Germany", "France", "United States of America", "France"))
+            .put(Variable("geometry"), listOf("ger_geometry", "fr_geometry", "usa_geometry", "fr_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Country"), listOf(
+                "USA", "USA",
+                "FR", "FR",
+                null // GER
+            ))
+            .hasSerie(variable(data, "Category"), listOf(
+                "A", "B", // USA
+                "A", "B", // FR
+                null // GER
+            ))
+            .hasSerie(variable(data, "Value"), listOf(
+                0.0, 1.0, // USA
+                4.0, 5.0, // FR
+                null // GER
+            ))
+            .hasSerie(variable(map, "request"), listOf(
+                "USA", "USA",
+                "FR", "FR",
+                "GER"
+            ))
+            .hasSerie(variable(map, "found name"), listOf(
+                "United States of America", "United States of America",
+                "France", "France",
+                "Germany"
+            ))
+            .hasSerie(variable(map, "geometry"), listOf(
+                "usa_geometry", "usa_geometry",
+                "fr_geometry", "fr_geometry",
+                "ger_geometry"
+            ))
+    }
+
+
+    @Test
+    fun multiIndex_singleKey_DuplicatedMapEntriesNotMatchingToData() {
+        // Duplication in both data and map - map duplications will be removed
+
+        // Data: [USA, RU, FR]
+        // Map: [GER, FR, GER, USA]
+        // Result: [USA, FR, GER]
+        val data = DataFrame.Builder()
+            .put(Variable("Country"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
+            .put(Variable("Category"), listOf("A", "B", "A", "B", "A", "B"))
+            .put(Variable("Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("request"), listOf("GER", "FR", "GER", "USA"))
+            .put(Variable("found name"), listOf("Germany", "France", "Germany", "United States of America"))
+            .put(Variable("geometry"), listOf("ger_geometry", "fr_geometry", "ger_geometry", "usa_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Country"), listOf(
+                "USA", "USA",
+                "FR", "FR",
+                null // GER
+            ))
+            .hasSerie(variable(data, "Category"), listOf(
+                "A", "B", // USA
+                "A", "B", // FR
+                null // GER
+            ))
+            .hasSerie(variable(data, "Value"), listOf(
+                0.0, 1.0, // USA
+                4.0, 5.0, // FR
+                null // GER
+            ))
+            .hasSerie(variable(map, "request"), listOf(
+                "USA", "USA",
+                "FR", "FR",
+                "GER"
+            ))
+            .hasSerie(variable(map, "found name"), listOf(
+                "United States of America", "United States of America",
+                "France", "France",
+                "Germany"
+            ))
+            .hasSerie(variable(map, "geometry"), listOf(
+                "usa_geometry", "usa_geometry",
+                "fr_geometry", "fr_geometry",
+                "ger_geometry"
+            ))
+    }
+
 
     class DataFrameAssert(actual: DataFrame?) :
         AbstractAssert<DataFrameAssert, DataFrame>(actual, DataFrameAssert::class.java) {
@@ -256,8 +477,6 @@ class DataJoinTest {
             hasSerie(variable(df, name), values(df, name))
             return this
         }
-
-
     }
 
     private fun assertThat(df: DataFrame): DataFrameAssert {

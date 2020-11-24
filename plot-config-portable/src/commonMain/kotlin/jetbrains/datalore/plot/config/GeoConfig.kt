@@ -82,9 +82,9 @@ class GeoConfig(
                 val mapJoin = layerOptions.getList(MAP_JOIN) ?: error("require map_join parameter")
                 dataFrame = join(
                     left = data,
-                    leftKeys = (mapJoin[0] as List<*>),
+                    leftKeyVariableNames = (mapJoin[0] as List<*>),
                     right = getGeoDataFrame(gdfLocation = GEO_POSITIONS),
-                    rightKeys = (mapJoin[1] as List<*>)
+                    rightKeyVariableNames = (mapJoin[1] as List<*>)
                 )
 
                 geometries = findVariableOrFail(dataFrame, getGeometryColumn(GEO_POSITIONS))

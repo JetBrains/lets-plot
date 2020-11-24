@@ -170,10 +170,4 @@ object DataFrameUtil {
         }
         return b.build()
     }
-
-    fun DataFrame.entries(): List<Pair<DataFrame.Variable, List<*>>> {
-        return variables().map { Pair(it, get(it)) }
-    }
 }
-
-

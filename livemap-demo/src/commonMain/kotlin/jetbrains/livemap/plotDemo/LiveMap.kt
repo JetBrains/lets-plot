@@ -12,8 +12,9 @@ import kotlin.random.Random
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            multiLayerTooltips(),
-            mapJoinBar()
+            nullValuesInData()
+//            multiLayerTooltips(),
+//            mapJoinBar()
 //            antiMeridian()
 //            tooltips()
 //            symbol_point(),
@@ -23,6 +24,136 @@ class LiveMap : PlotConfigDemoBase() {
 //            bunch(),
 //            facet()
         )
+    }
+
+    private fun nullValuesInData(): Map<String, Any> {
+        val spec = """
+            {
+              "data": null,
+              "mapping": {
+                "x": null,
+                "y": null
+              },
+              "data_meta": {},
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "stat": null,
+                  "data": {
+                    "States": [
+                      "Alabama",
+                      "Alabama",
+                      "Alabama",
+                      "Alaska",
+                      "Alaska",
+                      "Alaska",
+                      "Arizona",
+                      "Arizona",
+                      "Arizona",
+                      "Arkansas",
+                      "Arkansas",
+                      "Arkansas"
+                    ],
+                    "Item": [
+                      "State Debt",
+                      "Local Debt",
+                      "Gross State Product",
+                      "State Debt",
+                      "Local Debt",
+                      "Gross State Product",
+                      "State Debt",
+                      "Local Debt",
+                      "Gross State Product",
+                      "State Debt",
+                      "Local Debt",
+                      "Gross State Product"
+                    ],
+                    "Values": [
+                      10.7,
+                      26.1,
+                      228.0,
+                      5.9,
+                      3.5,
+                      55.7,
+                      34.9,
+                      23.5,
+                      355.7,
+                      13.3,
+                      30.5,
+                      361.1
+                    ]
+                  },
+                  "mapping": {
+                    "x": null,
+                    "y": null,
+                    "sym_y": "Values",
+                    "fill": "Item"
+                  },
+                  "position": null,
+                  "show_legend": null,
+                  "tooltips": null,
+                  "data_meta": {},
+                  "map_data_meta": {
+                    "geodataframe": {
+                      "geometry": "geometry"
+                    }
+                  },
+                  "map": {
+                    "request": [
+                      "Alabama",
+                      "California",
+                      "Alaska",
+                      "Arizona",
+                      "Nevada"
+                    ],
+                    "found name": [
+                      "Alabama",
+                      "California",
+                      "Alaska",
+                      "Arizona",
+                      "Nevada"
+                    ],
+                    "geometry": [
+                      "{\"type\": \"Point\", \"coordinates\": [-86.7421099329499, 32.6446247845888]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-119.994112927034, 37.277335524559]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-152.012666774028, 63.0759818851948]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-111.665190827228, 34.1682100296021]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-116.666956541192, 38.5030842572451]}"
+                    ]
+                  },
+                  "map_join": [
+                    [
+                      "States"
+                    ],
+                    [
+                      "request"
+                    ]
+                  ],
+                  "sampling": null,
+                  "display_mode": "pie",
+                  "location": null,
+                  "zoom": null,
+                  "projection": null,
+                  "geodesic": null,
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "wss://tiles.datalore.jetbrains.com",
+                    "theme": "color",
+                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+                  },
+                  "geocoding": {
+                    "url": "http://172.31.52.145:3025"
+                  },
+                  "data_join_on": "States",
+                  "map_join_on": "request"
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun multiLayerTooltips(): Map<String, Any> {
