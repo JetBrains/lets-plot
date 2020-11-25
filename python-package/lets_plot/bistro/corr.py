@@ -150,7 +150,6 @@ class corr_plot_builder:
         if self._tiles_params is not None:
             plot += geom_tile(stat='corr', show_legend=self._show_legend,
                               size=0.0, width=0.99, height=0.99,
-                              mapping=aes(fill='..corr..'),
                               tooltips=self._tooltip_spec(), **self._tiles_params)
             plot += coord_cartesian()
         else:
