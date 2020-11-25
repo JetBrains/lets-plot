@@ -197,6 +197,9 @@ class StatProto {
             }
         }
 
+        stat.fillDiagonal = OptionsAccessor.over(options)
+            .getBoolean(CorrelationStat.FILL_DIAGONAL, def = CorrelationStat.DEF_FILL_DIAGONAL)
+
         return stat
     }
 

@@ -186,7 +186,7 @@ class LayoutManager(
             } else {
                 horizontalTooltips
                     .filter { it.stemCoord.y < myCursorCoord.y }
-                    .maxBy { it.stemCoord.y }
+                    .maxByOrNull { it.stemCoord.y }
                     ?.let(::fixate)
             }
         }

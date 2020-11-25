@@ -81,20 +81,20 @@ class CorrelationTest {
 
         val labels2series = mapOf("A" to a, "B" to b, "C" to c)
 
-        val cm = correlationMatrix(data, CorrelationStat.Type.FULL, ::correlationPearson)
+        val cm = correlationMatrix(data, CorrelationStat.Type.FULL, fillDiagonal = true, corrfn = ::correlationPearson)
 
         assertEquals(cm.rowCount(), a.size.ipow(2).toInt())
 
-        val v1 : List<String> = cm[Stats.X] as List<String>
-        val v2 : List<String> = cm[Stats.Y] as List<String>
-        val cr : List<Double> = cm.getNumeric(Stats.CORR) as List<Double>
+        val v1: List<String> = cm[Stats.X] as List<String>
+        val v2: List<String> = cm[Stats.Y] as List<String>
+        val cr: List<Double> = cm.getNumeric(Stats.CORR) as List<Double>
 
         for ((v12, corr) in v1.zip(v2).zip(cr)) {
             val s1 = labels2series[v12.first]
             val s2 = labels2series[v12.second]
             assertNotNull(s1)
             assertNotNull(s2)
-            assertEquals(corr, correlation( s1, s2, ::correlationPearson))
+            assertEquals(corr, correlation(s1, s2, ::correlationPearson))
         }
     }
 }

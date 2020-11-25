@@ -1,10 +1,10 @@
-## Release the project
+## Releasing the project
 
 
 ### Make version
 
 
-##### 1. Edit CHANGELOG.md file.
+##### 1. Update CHANGELOG.md file.
 
 ##### 2. Set release or pre-release version in the properties (remove _"-alpha"_ and _"dev"_): 
 
@@ -17,7 +17,7 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
  - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
 
-##### 4. Prepare to the next dev cycle: increment versions and add _"-alpha"_ and _"dev"_:
+##### 4. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
 
  - `version` in `build.gradle` (`X.X.X-alphaN`)
  - `js_artifact_version` in `build.gradle` (`X.X.X.devN`)
@@ -100,13 +100,13 @@ run `./gradlew python-package-build:buildManylinuxWheels`
  - `./gradlew :plot-image-export:bintrayUpload`
  
 Note that release versions will be uploaded to the `lets-plot-jars` package.    
-'aplha' and 'RC' versions will be uploaded to the `lets-plot-jars-dev` package.
+'alpha' and 'RC' versions will be uploaded to the `lets-plot-jars-dev` package.
  
 ### Add the GitHub release:
  
  * Open the link: https://github.com/JetBrains/lets-plot/releases/new
- * Fill `Tag version` and `Release title` with released version `vX.X.X`
- * Fill a description field with the new changes from the CHANGELOG.md
+ * Fill `Tag version` and `Release title` with the released version "vX.X.X"
+ * Fill the description field - copy from the CHANGELOG.md
  
 ### After release
 

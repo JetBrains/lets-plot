@@ -85,7 +85,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
             statCount.add(d)
             statDensity.add(d / SeriesUtil.sum(weight))
         }
-        val maxm = statCount.max()!!
+        val maxm = statCount.maxOrNull()!!
         for (d in statCount) {
             statScaled.add(d / maxm)
         }

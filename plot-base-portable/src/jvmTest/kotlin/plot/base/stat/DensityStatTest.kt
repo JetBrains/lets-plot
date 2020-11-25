@@ -79,7 +79,7 @@ class DensityStatTest {
                 SeriesUtil.sum(statDf.getNumeric(Stats.COUNT)) * binWidth,
                 length / 100.0
             ) //integral is the number of data points
-            assertEquals(1.0, statDf.getNumeric(Stats.SCALED).maxBy { v -> v!! }, 0.0) //maximum is one
+            assertEquals(1.0, statDf.getNumeric(Stats.SCALED).maxByOrNull { v -> v!! }, 0.0) //maximum is one
         }
     }
 
