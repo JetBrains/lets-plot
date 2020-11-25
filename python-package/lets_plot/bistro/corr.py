@@ -26,11 +26,11 @@ from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
 from lets_plot.plot.plot import ggplot
 
-__all__ = ['corr_plot_builder', 'corr_plot_scatter', 'corr_plot_tiles',
+__all__ = ['corr_plot', 'corr_plot_scatter', 'corr_plot_tiles',
            'corr_plot_tileslab', 'corr_plot_scatterlab']
 
 
-class corr_plot_builder:
+class corr_plot:
     """
     This class is intended to build correlation matrix plots.
     """
@@ -64,9 +64,9 @@ class corr_plot_builder:
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
-        self.palette_gradient(low=corr_plot_builder._DEF_LOW_COLOR,
-                              mid=corr_plot_builder._DEF_MID_COLOR,
-                              high=corr_plot_builder._DEF_HIGH_COLOR)
+        self.palette_gradient(low=corr_plot._DEF_LOW_COLOR,
+                              mid=corr_plot._DEF_MID_COLOR,
+                              high=corr_plot._DEF_HIGH_COLOR)
 
     def points(self, type=None, fill_diagonal=True):
         """
@@ -150,7 +150,6 @@ class corr_plot_builder:
         if self._tiles_params is not None:
             plot += geom_tile(stat='corr', show_legend=self._show_legend,
                               size=0.0, width=0.99, height=0.99,
-                              mapping=aes(fill='..corr..'),
                               tooltips=self._tooltip_spec(), **self._tiles_params)
             plot += coord_cartesian()
         else:
@@ -169,7 +168,6 @@ class corr_plot_builder:
 
             plot += geom_text(stat='corr', show_legend=self._show_legend,
                               mapping=m,
-                              tooltips=self._tooltip_spec(),
                               na_value='', label_format=self._format,
                               size_unit='x', **self._labels_params)
 
@@ -192,15 +190,15 @@ class corr_plot_builder:
         -------
             self
         """
-        self._color_scale = scale_color_gradient2(name=corr_plot_builder._LEGEND_NAME,
+        self._color_scale = scale_color_gradient2(name=corr_plot._LEGEND_NAME,
                                                   low=low, mid=mid, high=high,
-                                                  breaks=corr_plot_builder._BREAKS,
-                                                  limits=corr_plot_builder._LIMITS)
+                                                  breaks=corr_plot._BREAKS,
+                                                  limits=corr_plot._LIMITS)
 
-        self._fill_scale = scale_fill_gradient2(name=corr_plot_builder._LEGEND_NAME,
+        self._fill_scale = scale_fill_gradient2(name=corr_plot._LEGEND_NAME,
                                                 low=low, mid=mid, high=high,
-                                                breaks=corr_plot_builder._BREAKS,
-                                                limits=corr_plot_builder._LIMITS)
+                                                breaks=corr_plot._BREAKS,
+                                                limits=corr_plot._LIMITS)
 
         return self
 
@@ -371,17 +369,17 @@ class corr_plot_builder:
         return res
 
     def _set_brewer_palette(self, palette):
-        self._color_scale = scale_color_brewer(name=corr_plot_builder._LEGEND_NAME,
+        self._color_scale = scale_color_brewer(name=corr_plot._LEGEND_NAME,
                                                palette=palette,
-                                               breaks=corr_plot_builder._BREAKS,
-                                               labels=corr_plot_builder._LABELS,
-                                               limits=corr_plot_builder._LIMITS)
+                                               breaks=corr_plot._BREAKS,
+                                               labels=corr_plot._LABELS,
+                                               limits=corr_plot._LIMITS)
 
-        self._fill_scale = scale_fill_brewer(name=corr_plot_builder._LEGEND_NAME,
+        self._fill_scale = scale_fill_brewer(name=corr_plot._LEGEND_NAME,
                                              palette=palette,
-                                             breaks=corr_plot_builder._BREAKS,
-                                             labels=corr_plot_builder._LABELS,
-                                             limits=corr_plot_builder._LIMITS)
+                                             breaks=corr_plot._BREAKS,
+                                             labels=corr_plot._LABELS,
+                                             limits=corr_plot._LIMITS)
 
         return self
 
@@ -402,7 +400,7 @@ def corr_plot_scatter(data, palette=None):
         PlotSpec for correlation matrix.
     """
 
-    plot_builder = corr_plot_builder(data=data)
+    plot_builder = corr_plot(data=data)
     plot_builder.points()
 
     if palette:
@@ -426,7 +424,7 @@ def corr_plot_tiles(data, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data)
+    plot_builder = corr_plot(data=data)
     plot_builder.tiles()
 
     if palette:
@@ -450,7 +448,7 @@ def corr_plot_tileslab(data, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data)
+    plot_builder = corr_plot(data=data)
     plot_builder.tiles()
     plot_builder.labels(color='white')
 
@@ -475,7 +473,7 @@ def corr_plot_scatterlab(data, palette=None):
     -------
         PlotSpec for correlation matrix.
     """
-    plot_builder = corr_plot_builder(data=data)
+    plot_builder = corr_plot(data=data)
     plot_builder.points(type='lower')
     plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
 

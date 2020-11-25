@@ -52,6 +52,7 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.COLOR to Stats.CORR,
+            Aes.FILL to Stats.CORR,
             Aes.SIZE to Stats.CORR_ABS,
             Aes.LABEL to Stats.CORR
         )
