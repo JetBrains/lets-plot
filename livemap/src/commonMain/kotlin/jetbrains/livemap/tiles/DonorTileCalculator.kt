@@ -55,7 +55,7 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
     private fun findUpDonorTile(cellKey: CellKey): Tile {
         return myExistedTiles
             .filter { cellKey.startsWith(it.key) }
-            .maxBy { it.key.length }
+            .maxByOrNull { it.key.length }
             ?.let { SubTile(it.value, cellKey.subKey(it.key)) }
             ?: EMPTY_TILE
     }

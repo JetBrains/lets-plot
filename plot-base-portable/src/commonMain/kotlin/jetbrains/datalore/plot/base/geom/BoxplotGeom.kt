@@ -149,7 +149,7 @@ class BoxplotGeom : GeomBase() {
             override fun size(): Double? = getIntern(Aes.SIZE)
 
             private fun <T> getIntern(aes: Aes<T>): T? {
-                val value = when (aes) {
+                val value: Any? = when (aes) {
                     Aes.COLOR -> outlierColor ?: super.color()
                     Aes.FILL -> outlierFill ?: super.fill()
                     Aes.SHAPE -> outlierShape ?: super.shape()

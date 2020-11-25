@@ -46,8 +46,8 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
-            + layerManager.addLayer("geom_path", LayerGroup.FEATURES)
-            + LayerEntitiesComponent()
+            +layerManager.addLayer("geom_path", LayerGroup.FEATURES)
+            +LayerEntitiesComponent()
         }
 
     Paths(
@@ -84,57 +84,55 @@ class PathBuilder(
     fun build(nonInteractive: Boolean = false): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
-        return coord
-            .run { GeometryUtil.bbox(this) }
-            ?.let { bbox ->
-                val entity = myFactory
-                    .createMapEntity("map_ent_path")
-                    .addComponents {
-                        if (layerIndex != null && index != null) {
-                            + IndexComponent(layerIndex!!, index!!)
-                        }
-                        + RendererComponent(PathRenderer())
-                        + WorldOriginComponent(bbox.origin)
-                        + WorldGeometryComponent().apply { geometry = coord }
-                        + WorldDimensionComponent(bbox.dimension)
-                        + ScreenLoopComponent()
-                        + ScreenOriginComponent()
-                        + StyleComponent().apply {
-                            setStrokeColor(this@PathBuilder.strokeColor)
-                            strokeWidth = this@PathBuilder.strokeWidth
-                            lineDash = this@PathBuilder.lineDash.toDoubleArray()
-                        }
-                        + NeedLocationComponent
-                        + NeedCalculateLocationComponent
-                        if (!nonInteractive) {
-                            + LocatorComponent(PathLocatorHelper())
-                        }
+        return GeometryUtil.bbox(coord)?.let { bbox ->
+            val entity = myFactory
+                .createMapEntity("map_ent_path")
+                .addComponents {
+                    if (layerIndex != null && index != null) {
+                        +IndexComponent(layerIndex!!, index!!)
                     }
-
-                if (animation == 2) {
-                    val animationEntity = entity.componentManager
-                        .createEntity("map_ent_path_animation")
-                        .addAnimationComponent {
-                            duration = 5_000.0
-                            easingFunction = Animations.LINEAR
-                            direction = Animation.Direction.FORWARD
-                            loop = Animation.Loop.KEEP_DIRECTION
-                        }
-
-                    entity
-                        .setComponent(RendererComponent(GrowingPathRenderer()))
-                        .addGrowingPathEffectComponent { animationId = animationEntity.id }
+                    +RendererComponent(PathRenderer())
+                    +WorldOriginComponent(bbox.origin)
+                    +WorldGeometryComponent().apply { geometry = coord }
+                    +WorldDimensionComponent(bbox.dimension)
+                    +ScreenLoopComponent()
+                    +ScreenOriginComponent()
+                    +StyleComponent().apply {
+                        setStrokeColor(this@PathBuilder.strokeColor)
+                        strokeWidth = this@PathBuilder.strokeWidth
+                        lineDash = this@PathBuilder.lineDash.toDoubleArray()
+                    }
+                    +NeedLocationComponent
+                    +NeedCalculateLocationComponent
+                    if (!nonInteractive) {
+                        +LocatorComponent(PathLocatorHelper())
+                    }
                 }
 
-                return entity
+            if (animation == 2) {
+                val animationEntity = entity.componentManager
+                    .createEntity("map_ent_path_animation")
+                    .addAnimationComponent {
+                        duration = 5_000.0
+                        easingFunction = Animations.LINEAR
+                        direction = Animation.Direction.FORWARD
+                        loop = Animation.Loop.KEEP_DIRECTION
+                    }
+
+                entity
+                    .setComponent(RendererComponent(GrowingPathRenderer()))
+                    .addGrowingPathEffectComponent { animationId = animationEntity.id }
             }
+
+            return entity
+        }
     }
 
     private fun EcsEntity.addAnimationComponent(block: AnimationComponent.() -> Unit): EcsEntity {
         return add(AnimationComponent().apply(block))
     }
 
-    private  fun EcsEntity.addGrowingPathEffectComponent(block: GrowingPathEffectComponent.() -> Unit): EcsEntity {
+    private fun EcsEntity.addGrowingPathEffectComponent(block: GrowingPathEffectComponent.() -> Unit): EcsEntity {
         return add(GrowingPathEffectComponent().apply(block))
     }
 }

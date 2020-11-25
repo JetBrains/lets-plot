@@ -57,8 +57,8 @@ class GeoBoundingBoxCalculator<TypeT>(
             calculateLoopLimitRange(segments, mapRange)
         } else {
             ClosedRange(
-                segments.map(Segment::start).min()!!,
-                segments.map(Segment::end).max()!!
+                segments.map(Segment::start).minOrNull()!!,
+                segments.map(Segment::end).maxOrNull()!!
             )
         }
     }
@@ -92,7 +92,7 @@ class GeoBoundingBoxCalculator<TypeT>(
 
         private fun findMaxGapBetweenRanges(ranges: Sequence<ClosedRange<Double>>, width: Double): ClosedRange<Double> {
             val sortedRanges = ranges.sortedBy(ClosedRange<Double>::lowerEnd)
-            var prevUpper = sortedRanges.maxBy(ClosedRange<Double>::upperEnd)!!.upperEnd
+            var prevUpper = sortedRanges.maxByOrNull(ClosedRange<Double>::upperEnd)!!.upperEnd
             var nextLower = sortedRanges.first().lowerEnd
             val gapRight = max(width + nextLower, prevUpper)
             var maxGapRange = ClosedRange(prevUpper, gapRight)
