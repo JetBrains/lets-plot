@@ -15,13 +15,19 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuousDomain: Boolean = true
     override val domainLimits: ClosedRange<Double>?
 
+    val formatter: (Double) -> String
 
     override val defaultTransform: Transform
         get() = Transforms.IDENTITY
 
-    constructor(name: String, mapper: ((Double?) -> T?), continuousOutput: Boolean) : super(name, mapper) {
+    constructor(
+        name: String,
+        mapper: ((Double?) -> T?),
+        continuousOutput: Boolean
+    ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = null
+        formatter = { v -> v.toString() }
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -39,6 +45,8 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
                 upper ?: Double.POSITIVE_INFINITY
             )
         } else null
+
+        formatter = b.myFormatter
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
@@ -66,13 +74,9 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
         internal val myContinuousOutput: Boolean = scale.isContinuous
-        internal var myLowerLimit: Double?
-        internal var myUpperLimit: Double?
-
-        init {
-            myLowerLimit = scale.domainLimits?.lowerEnd
-            myUpperLimit = scale.domainLimits?.upperEnd
-        }
+        internal var myFormatter: (Double) -> String = scale.formatter
+        internal var myLowerLimit: Double? = scale.domainLimits?.lowerEnd
+        internal var myUpperLimit: Double? = scale.domainLimits?.upperEnd
 
         override fun lowerLimit(v: Double): Scale.Builder<T> {
             require(!v.isNaN()) { "`lower` can't be $v" }
@@ -92,6 +96,11 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
         override fun continuousTransform(v: Transform): Scale.Builder<T> {
             return transform(v)
+        }
+
+        override fun formatter(v: (Double) -> String): Scale.Builder<T> {
+            myFormatter = v
+            return this
         }
 
         override fun build(): Scale<T> {

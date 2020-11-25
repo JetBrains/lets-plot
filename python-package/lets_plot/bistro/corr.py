@@ -15,16 +15,16 @@ except ImportError:
     pandas = None
 
 from lets_plot._type_utils import is_number
-from lets_plot.plot.plot import ggsize
+from lets_plot.plot.coord import coord_fixed, coord_cartesian
 from lets_plot.plot.core import aes
 from lets_plot.plot.geom import geom_point, geom_text, geom_tile
+from lets_plot.plot.plot import ggplot
+from lets_plot.plot.plot import ggsize
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
     scale_fill_gradient2, scale_fill_brewer, scale_x_discrete
 from lets_plot.plot.scale_identity import scale_size_identity
-from lets_plot.plot.coord import coord_fixed, coord_cartesian
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
-from lets_plot.plot.plot import ggplot
 
 __all__ = ['corr_plot', 'corr_plot_scatter', 'corr_plot_tiles',
            'corr_plot_tileslab', 'corr_plot_scatterlab']
@@ -37,7 +37,6 @@ class corr_plot:
 
     _LEGEND_NAME = 'Corr'
     _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
-    _LABELS = ['-1', '-0.5', '0', '0.5', '1']
     _LIMITS = [-1.0, 1.0]
     _DEF_LOW_COLOR = 'red'
     _DEF_MID_COLOR = 'light_gray'
@@ -373,14 +372,12 @@ class corr_plot:
         self._color_scale = scale_color_brewer(name=corr_plot._LEGEND_NAME,
                                                palette=palette,
                                                breaks=corr_plot._BREAKS,
-                                               labels=corr_plot._LABELS,
                                                limits=corr_plot._LIMITS,
                                                na_value='rgba(0,0,0,0)')
 
         self._fill_scale = scale_fill_brewer(name=corr_plot._LEGEND_NAME,
                                              palette=palette,
                                              breaks=corr_plot._BREAKS,
-                                             labels=corr_plot._LABELS,
                                              limits=corr_plot._LIMITS,
                                              na_value='rgba(0,0,0,0)')
 

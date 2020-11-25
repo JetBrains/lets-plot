@@ -20,7 +20,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         protected set
 
     private val myTransform: Transform?
-    private var myBreaks: List<DomainT?>? = null
+    private var myBreaks: List<DomainT>? = null
     private var myLabels: List<String>? = null
 
     override val isContinuous: Boolean
@@ -29,13 +29,17 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     override val isContinuousDomain: Boolean
         get() = false
 
-    override var breaks: List<DomainT?>
+    override var breaks: List<Any>
         get() {
             Preconditions.checkState(hasBreaks(), "No breaks defined for scale $name")
-            return myBreaks!!
+            @Suppress("UNCHECKED_CAST")
+            return myBreaks!! as List<Any>
         }
         protected set(breaks) {
-            myBreaks = breaks
+            myBreaks = breaks.map {
+                @Suppress("UNCHECKED_CAST")
+                it as DomainT
+            }
         }
 
     override val labels: List<String>
@@ -80,32 +84,19 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
     protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {
         internal val myName: String = scale.name
-        internal var myTransform: Transform?
+        internal var myTransform: Transform? = scale.myTransform
 
-        internal var myBreaks: List<DomainT?>?
-        internal var myLabels: List<String>?
-        internal var myMapper: (Double?) -> T?
+        internal var myBreaks: List<DomainT>? = scale.myBreaks
+        internal var myLabels: List<String>? = scale.myLabels
+        internal var myMapper: (Double?) -> T? = scale.mapper
 
-        internal var myMultiplicativeExpand: Double = 0.0
-        internal var myAdditiveExpand: Double = 0.0
+        internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
+        internal var myAdditiveExpand: Double = scale.additiveExpand
 
-        init {
-            myTransform = scale.myTransform
-            myBreaks = scale.myBreaks
-            myLabels = scale.myLabels
-            myMapper = scale.mapper
-
-            myMultiplicativeExpand = scale.multiplicativeExpand
-            myAdditiveExpand = scale.additiveExpand
-        }
-
-        override fun breaks(l: List<*>): Scale.Builder<T> {
-            myBreaks = ArrayList<DomainT>().let {
-                for (any in l) {
-                    @Suppress("UNCHECKED_CAST")
-                    it.add(any as DomainT)
-                }
-                it
+        override fun breaks(l: List<Any>): Scale.Builder<T> {
+            myBreaks = l.map {
+                @Suppress("UNCHECKED_CAST")
+                it as DomainT
             }
             return this
         }

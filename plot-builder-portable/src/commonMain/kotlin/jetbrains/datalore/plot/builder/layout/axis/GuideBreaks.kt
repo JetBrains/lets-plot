@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 
-class GuideBreaks(domainValues: List<*>, transformedValues: List<Double>, labels: List<String>) {
-    val domainValues: List<*>
+class GuideBreaks(domainValues: List<Any>, transformedValues: List<Double>, labels: List<String>) {
+    val domainValues: List<Any>
     val transformedValues: List<Double>
     val labels: List<String>
 
@@ -17,12 +17,12 @@ class GuideBreaks(domainValues: List<*>, transformedValues: List<Double>, labels
 
     init {
         checkArgument(
-                domainValues.size == transformedValues.size,
-                "Scale breaks size: " + domainValues.size + " transformed size: " + transformedValues.size + " but expected to be the same"
+            domainValues.size == transformedValues.size,
+            "Scale breaks size: " + domainValues.size + " transformed size: " + transformedValues.size + " but expected to be the same"
         )
         checkArgument(
-                domainValues.size == labels.size,
-                "Scale breaks size: " + domainValues.size + " labels size: " + labels.size + " but expected to be the same"
+            domainValues.size == labels.size,
+            "Scale breaks size: " + domainValues.size + " labels size: " + labels.size + " but expected to be the same"
         )
         this.domainValues = ArrayList(domainValues)
         this.transformedValues = ArrayList(transformedValues)

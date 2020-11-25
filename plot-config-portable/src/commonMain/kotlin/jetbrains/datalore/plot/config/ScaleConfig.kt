@@ -176,7 +176,7 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             b.name(getString(NAME)!!)
         }
         if (has(BREAKS)) {
-            b.breaks(getList(BREAKS))
+            b.breaks(getList(BREAKS).mapNotNull { it })
         }
         if (has(LABELS)) {
             b.labels(getStringList(LABELS))

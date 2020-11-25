@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-class FixedAxisBreaksProvider(domainBreaks: List<*>, transformedBreaks: List<Double>, labels: List<String>) :
+class FixedAxisBreaksProvider(domainBreaks: List<Any>, transformedBreaks: List<Double>, labels: List<String>) :
     AxisBreaksProvider {
     override val fixedBreaks: GuideBreaks =
         GuideBreaks(
