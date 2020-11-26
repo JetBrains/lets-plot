@@ -21,11 +21,13 @@ internal class MultiDataPointHelper private constructor(
 
             fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
                 val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
-                return builders.getOrPut(coord, { MultiDataPointBuilder(p, sortingMode) })
+                return builders.getOrPut(coord) { MultiDataPointBuilder(p, sortingMode) }
             }
 
-            aesthetics.dataPoints().forEach { fetchBuilder(it).add(it) }
-            return builders.values.map { it.build() }
+            aesthetics.dataPoints()
+                .filter { it.symY() != null }
+                .forEach { p -> fetchBuilder(p).add(p) }
+            return builders.values.map(MultiDataPointBuilder::build)
         }
     }
 
@@ -59,7 +61,7 @@ internal class MultiDataPointHelper private constructor(
             return MultiDataPoint(
                 aes = myAes,
                 indices = myPoints.map { it.index() },
-                values = myPoints.map { it.symY()!! },
+                values = myPoints.map { it.symY()!! }, // symY can't be null - pre-filtered in function getPoints()
                 colors = myPoints.map { it.fill()!! }
             )
         }
@@ -88,5 +90,4 @@ internal class MultiDataPointHelper private constructor(
         val values: List<Double>,
         val colors: List<Color>
     )
-
 }
