@@ -2,7 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import json
-from typing import List, Union
+from typing import List, Union, Callable, Any
 
 from lets_plot.geo_data import DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
@@ -55,6 +55,16 @@ def run_intergration_tests() -> bool:
 
 NO_COLUMN = '<no column>'
 IGNORED = '__value_ignored__'
+
+
+def assert_error(message: str, action: Callable[[], Any]):
+    assert isinstance(message, str)
+    try:
+        action()
+        assert False, 'No error, but expected: {}'.format(message)
+    except Exception as e:
+        assert message == str(e), "'{}' != '{}'".format(message, str(e))
+
 
 def assert_row(
         df,

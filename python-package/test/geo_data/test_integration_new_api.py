@@ -5,7 +5,7 @@ from typing import Callable, Any
 from shapely.geometry import Point, box
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST, DF_PARENT_COUNTRY, DF_PARENT_STATE, DF_PARENT_COUNTY
-from .geo_data import assert_row, NO_COLUMN
+from .geo_data import assert_row, assert_error, NO_COLUMN
 
 
 def test_all_columns_order():
@@ -172,20 +172,20 @@ def test_query_scope_with_different_level_should_work():
 
 
 def test_error_level_detection_not_available():
-    check_validation_error(
+    assert_error(
         "Level detection is not available with new API. Please, specify the level.",
         lambda: geodata.regions_builder2(names='boston', countries='usa').build()
     )
 
 def test_error_us48_in_request_not_available():
-    check_validation_error(
+    assert_error(
         "us-48 can't be used in requests with new API.",
         lambda: geodata.state_regions_builder('us-48').countries('usa').build()
     )
 
 
 def test_error_us48_in_parent_not_available():
-    check_validation_error(
+    assert_error(
         "us-48 can't be used in parents with new API.",
         lambda: geodata.state_regions_builder('boston').states('us-48').build()
     )
@@ -217,13 +217,3 @@ def test_where_scope_with_existing_country_in_df():
         .build()
 
     assert_row(cities.to_data_frame(), index=2, request='washington', country='usa', found_name='Washington')
-
-
-def check_validation_error(message: str, action: Callable[[], Any]):
-    assert isinstance(message, str)
-    try:
-        action()
-        assert False, 'Validation error expected'
-    except Exception as e:
-        assert message == str(e)
-

@@ -177,27 +177,17 @@ class RegionsBuilder:
                  request: request_types = None,
                  scope: scope_types = None,
                  highlights: bool = False,
-                 allow_ambiguous=False,
-                 countries=None,
-                 states=None,
-                 counties=None,
-                 new_api=False,
-                 new_scope: List[MapRegion]=[]
+                 allow_ambiguous=False
                  ):
 
-        self._new_api: bool = new_api
         self._level: Optional[LevelKind] = _to_level_kind(level)
         self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()  # TODO rename to geohint
         self._highlights: bool = highlights
         self._allow_ambiguous = allow_ambiguous
         self._overridings: List[RegionQuery] = []
 
-        if self._new_api:
-            self._scope: List[MapRegion] = new_scope
-            self._queries: List[RegionQuery] = _create_new_queries(request, self._default_ambiguity_resolver, countries, states, counties)
-        else:
-            self._scope: List[MapRegion] = []
-            self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
+        self._scope: List[MapRegion] = []
+        self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
 
 
     def drop_not_found(self) -> 'RegionsBuilder':
@@ -254,18 +244,14 @@ class RegionsBuilder:
         """
 
         scope, box = _split(within)
-        if self._new_api:
-            if scope is not None:
-                raise ValueError('Parameter scope is not available in new version of where function')
-        else:
-            ambiguity_resolver = AmbiguityResolver(None, _to_near_coord(near), box)
+        ambiguity_resolver = AmbiguityResolver(None, _to_near_coord(near), box)
 
-            new_overridings = _create_queries(request, scope, ambiguity_resolver)
-            for overriding in self._overridings:
-                if overriding.request in set([overriding.request for overriding in new_overridings]):
-                    self._overridings.remove(overriding)
+        new_overridings = _create_queries(request, scope, ambiguity_resolver)
+        for overriding in self._overridings:
+            if overriding.request in set([overriding.request for overriding in new_overridings]):
+                self._overridings.remove(overriding)
 
-            self._overridings.extend(new_overridings)
+        self._overridings.extend(new_overridings)
 
         return self
 

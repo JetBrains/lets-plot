@@ -8,7 +8,7 @@ from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_FOUND_NAME
-from .geo_data import run_intergration_tests, assert_row, assert_found_names
+from .geo_data import run_intergration_tests, assert_row, assert_error, assert_found_names
 
 ShapelyPoint = shapely.geometry.Point
 
@@ -468,3 +468,9 @@ def test_incorrect_group_processing():
 
     assert 'group' not in boundaries.keys()
 
+
+def test_not_found_scope():
+    assert_error(
+        "Region is not found: blabla",
+        lambda: geodata.regions(request=['texas'], within='blabla')
+    )
