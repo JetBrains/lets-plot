@@ -95,6 +95,30 @@ class GeomInteractionBuilderCreationTest {
 
     }
 
+    @Test
+    fun `should skip duplicated mappings`() {
+        val v = "v" to listOf(4.0)
+        val mappedData = data + v + mapOf(
+            Aes.FILL.name to "v",
+            Aes.COLOR.name to "v"
+        )
+
+        val plotOpts = mutableMapOf(
+            MAPPING to mappedData,
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to Option.GeomName.POINT
+                )
+            )
+        )
+        val builder = createGeomInteractionBuilder(plotOpts)
+
+        val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+        assertFalse { aesListForTooltip.contains(Aes.FILL) }
+        val expectedAesList = listOf(Aes.X, Aes.Y, Aes.COLOR)
+        assertAesList(expectedAesList, aesListForTooltip)
+    }
+
     private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>) : GeomInteractionBuilder {
             val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
             val plotConfig = PlotConfigClientSide.create(plotSpec)
