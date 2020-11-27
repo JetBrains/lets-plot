@@ -17,7 +17,7 @@ class TooltipSpecFactorySkippedAesTest : jetbrains.datalore.plot.builder.interac
         init()
     }
 
-    @Test
+    //@Test
     fun whenSameVarMappedTwiceAsContinuousAndDiscrete_UseContinuousValue() {
 
         val commonLabel = "count"

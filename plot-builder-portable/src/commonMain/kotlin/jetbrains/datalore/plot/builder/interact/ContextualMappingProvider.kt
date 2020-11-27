@@ -17,7 +17,6 @@ interface ContextualMappingProvider {
         val NONE = object : ContextualMappingProvider {
             override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
                 return ContextualMapping(
-                    DataContext(dataFrame, dataAccess),
                     tooltipLines = emptyList()
                 )
             }
