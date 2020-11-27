@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.CURSOR_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
 import kotlin.math.max
 
@@ -163,10 +163,10 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
-            val yOffset = if (target.prototype.tooltipKind == TipLayoutHint.Kind.CURSOR_TOOLTIP )
-                                    rect.height / 2.0
-                                  else
-                                    0.0
+            val yOffset = when (target.prototype.tooltipKind) {
+                                    CURSOR_TOOLTIP -> rect.height / 2.0
+                                    else -> 0.0
+                                 }
 
             resultCollector.collect(
                     target.prototype.createGeomTarget(
