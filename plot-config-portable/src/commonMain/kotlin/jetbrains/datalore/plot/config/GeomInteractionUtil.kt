@@ -25,7 +25,6 @@ object GeomInteractionUtil {
         return createGeomInteractionBuilder( layerConfig, scaleMap, multilayer, isLiveMap, theme).build()
     }
 
-    // For tests
     internal fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
         scaleMap: TypedScaleMap,
@@ -169,8 +168,8 @@ object GeomInteractionUtil {
             GeomKind.ERROR_BAR,
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
-            GeomKind.LINE_RANGE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
-            GeomKind.BOX_PLOT -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
+            GeomKind.LINE_RANGE,
+            GeomKind.BOX_PLOT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.TILE,
             GeomKind.TEXT,
@@ -178,9 +177,7 @@ object GeomInteractionUtil {
             GeomKind.POINT,
             GeomKind.CONTOUR,
             GeomKind.RIBBON,
-            GeomKind.DENSITY2D -> {
-                return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
-            }
+            GeomKind.DENSITY2D -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {
                 when (statKind) {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(
@@ -196,7 +193,7 @@ object GeomInteractionUtil {
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
             GeomKind.BIN_2D,
-            GeomKind.MAP -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
+            GeomKind.MAP,
             GeomKind.RECT -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
 
             GeomKind.LIVE_MAP -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
