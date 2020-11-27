@@ -32,10 +32,10 @@ class DataFrameValue(
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val originalValue = myDataFrame[myVariable][index].toString()
+        val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,
-            value = myFormatter?.format(originalValue) ?: originalValue,
+            value = myFormatter?.format(originalValue) ?: originalValue.toString(),
             isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,
