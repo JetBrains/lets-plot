@@ -13,4 +13,6 @@ interface ValueSource {
     fun setDataContext(dataContext: DataContext)
 
     fun getDataPoint(index: Int): DataPoint?
+
+    fun copy(): ValueSource
 }

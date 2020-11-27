@@ -28,7 +28,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
         return createContextualMapping(
-            myTooltipLines,
+            myTooltipLines.map(::TooltipLine),  // duplicate the list of tooltip lines for correct working of facet_grid
             dataAccess,
             dataFrame
         )

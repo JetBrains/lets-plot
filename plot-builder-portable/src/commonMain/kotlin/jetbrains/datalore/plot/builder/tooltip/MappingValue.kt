@@ -28,6 +28,7 @@ class MappingValue(
     }
 
     override fun setDataContext(dataContext: DataContext) {
+        require(!::myDataAccess.isInitialized) { "Data context can be set once" }
         myDataAccess = dataContext.mappedDataAccess
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
@@ -70,6 +71,15 @@ class MappingValue(
                 isOutlier = isOutlier
             )
         }
+    }
+
+    override fun copy(): ValueSource {
+        return MappingValue(
+            aes = aes,
+            isOutlier = isOutlier,
+            isAxis = isAxis,
+            format = format
+        )
     }
 
     fun toOutlier(): MappingValue {

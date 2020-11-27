@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class DataFrameValue(
     private val name: String,
-    format: String? = null
+    private val format: String? = null
 ) : ValueSource {
 
     private lateinit var myDataFrame: DataFrame
@@ -25,6 +25,7 @@ class DataFrameValue(
     }
 
     override fun setDataContext(dataContext: DataContext) {
+        require(!::myDataFrame.isInitialized) { "Data frame can be set once" }
         myDataFrame = dataContext.dataFrame
 
         myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
@@ -41,6 +42,10 @@ class DataFrameValue(
             isAxis = false,
             isOutlier = false
         )
+    }
+
+    override fun copy(): ValueSource {
+        return DataFrameValue(name, format)
     }
 
     fun getVariableName(): String {

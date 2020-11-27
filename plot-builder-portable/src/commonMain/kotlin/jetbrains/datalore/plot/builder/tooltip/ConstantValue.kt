@@ -9,7 +9,7 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-open class ConstantValue(
+class ConstantValue(
     value: Any,
     format: String? = null
 ) : ValueSource {
@@ -33,5 +33,9 @@ open class ConstantValue(
             isAxis = false,
             isOutlier = false
         )
+    }
+
+    override fun copy(): ValueSource {
+        return this
     }
 }
