@@ -47,9 +47,6 @@ class MappingValue(
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        return if (isAxis && !myIsContinuous) {
-            null
-        } else {
             val originalValue = myDataAccess.getOriginalValue(aes, index)
             val formattedValue =
                 originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
@@ -62,7 +59,8 @@ class MappingValue(
             } else {
                 formattedValue
             }
-            DataPoint(
+
+        return DataPoint(
                 label = if (isOutlier) null else myDataLabel,
                 value = value,
                 isContinuous = myIsContinuous,
@@ -70,7 +68,6 @@ class MappingValue(
                 isAxis = isAxis,
                 isOutlier = isOutlier
             )
-        }
     }
 
     override fun copy(): MappingValue {
