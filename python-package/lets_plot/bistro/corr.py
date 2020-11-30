@@ -329,7 +329,7 @@ class corr_plot:
 
         scale_xy_expand = None
         if self._tiles_params is not None:
-            scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normappy 0.6)
+            scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normally: 0.6)
 
         plot += theme(axis_title=element_blank(),
                       legend_title=element_blank(),
