@@ -9,13 +9,14 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class TooltipLine(
     val label: String?,
     val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
-    private val myLineFormatter = StringFormat(pattern).also {
+    private val myLineFormatter = StringFormat(pattern, STRING_FORMAT).also {
         require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
     }
 

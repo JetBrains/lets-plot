@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.base.stringFormat
 
+import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.NUMBER_FORMAT
+import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.STRING_FORMAT
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -104,6 +106,23 @@ class StringFormatTest {
         }
         assertEquals(
             "Failed to format value with type SingletonMap. Supported types are Number and String.",
+            exception.message
+        )
+    }
+
+    @Test
+    fun `string similar to a numeric format as static text`() {
+        val formattedString = StringFormat(".2f", type = STRING_FORMAT).format(emptyList())
+        assertEquals(".2f", formattedString)
+    }
+
+    @Test
+    fun `try to format static text as number format`() {
+        val exception = assertFailsWith(IllegalStateException::class) {
+            StringFormat("text", type = NUMBER_FORMAT).format(emptyList())
+        }
+        assertEquals(
+            "Wrong number pattern: text",
             exception.message
         )
     }
