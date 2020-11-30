@@ -66,7 +66,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             }
             mappedTooltipLines.forEach { it.setDataContext(dataContext) }
 
-            return ContextualMapping(mappedTooltipLines)
+            return ContextualMapping(dataContext, mappedTooltipLines)
         }
     }
 }

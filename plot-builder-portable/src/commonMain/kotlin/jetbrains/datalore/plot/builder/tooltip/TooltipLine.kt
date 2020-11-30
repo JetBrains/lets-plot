@@ -35,6 +35,7 @@ class TooltipLine(
             DataPoint(
                 label = chooseLabel(dataValue.label),
                 value = myLineFormatter.format(dataValue.value),
+                isContinuous = dataValue.isContinuous,
                 aes = dataValue.aes,
                 isAxis = dataValue.isAxis,
                 isOutlier = dataValue.isOutlier
@@ -43,6 +44,7 @@ class TooltipLine(
             DataPoint(
                 label = chooseLabel(dataValues.joinToString(", ") { it.label ?: "" }),
                 value = myLineFormatter.format(dataValues.map { it.value }),
+                isContinuous = false,
                 aes = null,
                 isAxis = false,
                 isOutlier = false

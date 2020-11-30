@@ -47,7 +47,7 @@ class MappingValue(
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        return if (isAxis && !myIsContinuous) {  // todo remove this 'if'
+        return if (isAxis && !myIsContinuous) {
             null
         } else {
             val originalValue = myDataAccess.getOriginalValue(aes, index)
@@ -65,6 +65,7 @@ class MappingValue(
             DataPoint(
                 label = if (isOutlier) null else myDataLabel,
                 value = value,
+                isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
                 isOutlier = isOutlier

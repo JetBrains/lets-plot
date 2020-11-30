@@ -13,6 +13,7 @@ interface TooltipLineSpec {
     class DataPoint(
         val label: String?,
         val value: String,
+        val isContinuous: Boolean,
         val aes: Aes<*>?,
         val isAxis: Boolean,
         val isOutlier: Boolean

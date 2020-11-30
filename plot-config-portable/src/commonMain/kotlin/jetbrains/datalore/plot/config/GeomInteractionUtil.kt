@@ -131,10 +131,7 @@ object GeomInteractionUtil {
         // remove discrete mappings
         aesListForTooltip.removeAll { !isVariableContinuous(it) }
 
-        // remove duplicated mappings
-        return aesListForTooltip.distinctBy { aes ->
-            layerConfig.getVariableForAes(aes)
-        }
+        return aesListForTooltip
     }
 
     private fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {
