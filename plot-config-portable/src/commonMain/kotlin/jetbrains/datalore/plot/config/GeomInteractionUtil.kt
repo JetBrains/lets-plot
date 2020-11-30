@@ -186,7 +186,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.BOX_PLOT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
-            GeomKind.TILE,
+            GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
             GeomKind.SMOOTH,
             GeomKind.POINT,
