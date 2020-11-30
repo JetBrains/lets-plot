@@ -175,6 +175,20 @@ object Option {
         }
     }
 
+    object Stat {
+        object Bin2d {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val DROP = "drop"
+        }
+
+        object Corr {
+            const val METHOD = "method"
+            const val TYPE = "type"
+            const val FILL_DIAGONAL = "fill_diagonal"
+        }
+    }
+
     object Scale {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"
@@ -194,27 +208,34 @@ object Option {
 
         // discrete scale output values
         const val OUTPUT_VALUES = "values"
+
         // shape scale
         const val SHAPE_SOLID = "solid"
+
         // gradient scale
         const val LOW = "low"
         const val MID = "mid"
         const val HIGH = "high"
         const val MIDPOINT = "midpoint"
+
         // hue scale
         const val HUE_RANGE = "h"
         const val CHROMA = "c"
         const val LUMINANCE = "l"
         const val START_HUE = "h_start"
         const val DIRECTION = "direction"
+
         // grey scale
         const val START = "start"
         const val END = "end"
+
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
+
         // range
         const val RANGE = "range"
+
         // max_size for scale_size_area
         const val MAX_SIZE = "max_size"
 

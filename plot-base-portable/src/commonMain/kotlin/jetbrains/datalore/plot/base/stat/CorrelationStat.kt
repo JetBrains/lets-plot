@@ -53,13 +53,12 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
             Aes.Y to Stats.Y,
             Aes.COLOR to Stats.CORR,
             Aes.FILL to Stats.CORR,
-            Aes.SIZE to Stats.CORR_ABS,
+//            Aes.SIZE to Stats.CORR_ABS,
             Aes.LABEL to Stats.CORR
         )
 
-        private val DEF_CORRELATION_METHOD = Method.PEARSON
-        private val DEF_TYPE = Type.FULL
-        const val FILL_DIAGONAL = "fill_diagonal"
+        val DEF_CORRELATION_METHOD = Method.PEARSON
+        val DEF_TYPE = Type.FULL
         const val DEF_FILL_DIAGONAL = true
     }
 }

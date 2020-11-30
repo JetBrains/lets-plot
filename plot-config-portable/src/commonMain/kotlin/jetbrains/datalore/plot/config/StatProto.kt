@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
 import jetbrains.datalore.plot.base.stat.BoxplotStat.Companion.P_COEF
 import jetbrains.datalore.plot.base.stat.BoxplotStat.Companion.P_VARWIDTH
+import jetbrains.datalore.plot.config.Option.Stat.Bin2d
+import jetbrains.datalore.plot.config.Option.Stat.Corr
 
 class StatProto {
 
@@ -45,15 +47,15 @@ class StatProto {
 
             StatKind.BIN2D -> {
                 val opts = OptionsAccessor.over(options)
-                val (binCountX, binCountY) = opts.getNumPair(Bin2dStat.P_BINS)
-                val (binWidthX, binWidthY) = opts.getNumQPair(Bin2dStat.P_BINWIDTH)
+                val (binCountX, binCountY) = opts.getNumPair(Bin2d.BINS)
+                val (binWidthX, binWidthY) = opts.getNumQPair(Bin2d.BINWIDTH)
 
                 return Bin2dStat(
                     binCountX = binCountX.toInt(),
                     binCountY = binCountY.toInt(),
                     binWidthX = binWidthX?.toDouble(),
                     binWidthY = binWidthY?.toDouble(),
-                    drop = opts.getBoolean(Bin2dStat.P_BINWIDTH, def = Bin2dStat.DEF_DROP)
+                    drop = opts.getBoolean(Bin2d.DROP, def = Bin2dStat.DEF_DROP)
                 )
             }
 
@@ -81,7 +83,7 @@ class StatProto {
 
             StatKind.SMOOTH -> return configureSmoothStat(options)
 
-            StatKind.CORR -> return configureCorrStat(options)
+            StatKind.CORR -> return configureCorrStat(OptionsAccessor.over(options))
 
             StatKind.BOXPLOT -> {
                 val boxplotStat = Stats.boxplot()
@@ -176,30 +178,21 @@ class StatProto {
         return stat
     }
 
-    private fun configureCorrStat(options: Map<*, *>): Stat {
+    private fun configureCorrStat(options: OptionsAccessor): Stat {
         val stat = Stats.corr()
-
-        if (options.containsKey("method")) {
-            val method = options["method"] as String
-            stat.correlationMethod = when (method) {
-                "pearson" -> CorrelationStat.Method.PEARSON
-                else -> throw IllegalArgumentException("Unsupported correlation method: $method")
-            }
+        stat.correlationMethod = when (val method = options.getStringSafe(Corr.METHOD).toLowerCase()) {
+            "pearson" -> CorrelationStat.Method.PEARSON
+            else -> throw IllegalArgumentException("Unsupported correlation method: '$method'. Must be: 'pearson'")
         }
 
-        if (options.containsKey("type")) {
-            val type = options["type"] as String
-            stat.type = when (type) {
-                "full" -> CorrelationStat.Type.FULL
-                "upper" -> CorrelationStat.Type.UPPER
-                "lower" -> CorrelationStat.Type.LOWER
-                else -> throw IllegalArgumentException("Unsupported matrix type: $type. Only 'full', 'upper' and 'lower' are supported.")
-            }
+        stat.type = when (val type = options.getStringSafe(Corr.TYPE).toLowerCase()) {
+            "full" -> CorrelationStat.Type.FULL
+            "upper" -> CorrelationStat.Type.UPPER
+            "lower" -> CorrelationStat.Type.LOWER
+            else -> throw IllegalArgumentException("Unsupported matrix type: '$type'. Expected: 'full', 'upper' or 'lower'.")
         }
 
-        stat.fillDiagonal = OptionsAccessor.over(options)
-            .getBoolean(CorrelationStat.FILL_DIAGONAL, def = CorrelationStat.DEF_FILL_DIAGONAL)
-
+        stat.fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL)
         return stat
     }
 
@@ -282,7 +275,7 @@ class StatProto {
             DEFAULTS["density"] = createDensityDefaults()
             DEFAULTS["density2d"] = createDensity2dDefaults()
             DEFAULTS["density2df"] = createDensity2dDefaults()
-            DEFAULTS["corr"] = emptyMap()
+            DEFAULTS["corr"] = createCorrDefaults()
         }
 
         private fun createBinDefaults(): Map<String, Any> {
@@ -293,9 +286,9 @@ class StatProto {
 
         private fun createBin2dDefaults(): Map<String, Any> {
             return mapOf(
-                Bin2dStat.P_BINS to listOf(Bin2dStat.DEF_BINS, Bin2dStat.DEF_BINS),
-                Bin2dStat.P_BINWIDTH to listOf(Bin2dStat.DEF_BINWIDTH, Bin2dStat.DEF_BINWIDTH),
-                Bin2dStat.P_DROP to Bin2dStat.DEF_DROP
+                Bin2d.BINS to listOf(Bin2dStat.DEF_BINS, Bin2dStat.DEF_BINS),
+                Bin2d.BINWIDTH to listOf(Bin2dStat.DEF_BINWIDTH, Bin2dStat.DEF_BINWIDTH),
+                Bin2d.DROP to Bin2dStat.DEF_DROP
             )
         }
 
@@ -335,6 +328,14 @@ class StatProto {
                 "adjust" to AbstractDensity2dStat.DEF_ADJUST,
                 "contour" to AbstractDensity2dStat.DEF_CONTOUR,
                 "bins" to AbstractDensity2dStat.DEF_BIN_COUNT
+            )
+        }
+
+        private fun createCorrDefaults(): Map<String, Any> {
+            return mapOf(
+                Corr.METHOD to CorrelationStat.DEF_CORRELATION_METHOD,
+                Corr.TYPE to CorrelationStat.DEF_TYPE,
+                Corr.FILL_DIAGONAL to CorrelationStat.DEF_FILL_DIAGONAL
             )
         }
     }

@@ -20,8 +20,8 @@ from lets_plot.plot.core import aes
 from lets_plot.plot.geom import geom_point, geom_text, geom_tile
 from lets_plot.plot.plot import ggplot
 from lets_plot.plot.plot import ggsize
-from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
-    scale_fill_gradient2, scale_fill_brewer, scale_x_discrete
+from lets_plot.plot.scale import scale_color_gradient2, scale_color_brewer, \
+    scale_fill_gradient2, scale_fill_brewer, scale_x_discrete, scale_y_discrete
 from lets_plot.plot.scale_identity import scale_size_identity
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
@@ -37,6 +37,7 @@ class corr_plot:
 
     _LEGEND_NAME = 'Corr'
     _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
+    _LABELS = ['-1', '-0.5', '0', '0.5', '1']
     _LIMITS = [-1.0, 1.0]
     _DEF_LOW_COLOR = 'red'
     _DEF_MID_COLOR = 'light_gray'
@@ -148,27 +149,33 @@ class corr_plot:
 
         if self._tiles_params is not None:
             plot += geom_tile(stat='corr', show_legend=self._show_legend,
-                              size=0.0, width=0.99, height=0.99,
-                              tooltips=self._tooltip_spec(), **self._tiles_params)
+                              size=0.0, width=1.002, height=1.002,
+                              tooltips=self._tooltip_spec(),
+                              sampling='none',
+                              **self._tiles_params)
             plot += coord_cartesian()
         else:
             plot += coord_fixed()
 
         if self._points_params is not None:
             plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
+                               mapping=aes('..x..', '..y..', size='..corr_abs..'),
                                tooltips=self._tooltip_spec(),
+                               sampling='none',
                                **self._points_params)
 
         if self._labels_params is not None:
             m = None
 
             if 'size' not in self._labels_params:
-                m = aes(size='..corr_abs..')
+                m = aes('..x..', '..y..', size='..corr_abs..')
 
             plot += geom_text(stat='corr', show_legend=self._show_legend,
                               mapping=m,
                               na_value='', label_format=self._format,
-                              size_unit='x', **self._labels_params)
+                              size_unit='x',
+                              sampling='none',
+                              **self._labels_params)
 
         return self._add_common_params(plot)
 
@@ -319,7 +326,10 @@ class corr_plot:
         _MIN_PLOT_WIDTH = 400
         _MAX_PLOT_WIDTH = 900
         _PLOT_PROPORTION = 3.0 / 4.0
-        _PLOT_EXPAND_ADDITIVE = 0.5
+
+        scale_xy_expand = None
+        if self._tiles_params is not None:
+            scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normappy 0.6)
 
         plot += theme(axis_title=element_blank(),
                       legend_title=element_blank(),
@@ -331,10 +341,8 @@ class corr_plot:
         plot += self._color_scale
         plot += self._fill_scale
 
-        plot += scale_x_discrete(expand=[0.0, _PLOT_EXPAND_ADDITIVE])
-
-        if self._reverse_y:
-            plot += scale_y_discrete_reversed(expand=[0.0, _PLOT_EXPAND_ADDITIVE])
+        plot += scale_x_discrete(expand=scale_xy_expand)
+        plot += scale_y_discrete(expand=scale_xy_expand, reverse=self._reverse_y)
 
         columns_count = self._get_numeric_columns_count()
         width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
@@ -372,12 +380,14 @@ class corr_plot:
         self._color_scale = scale_color_brewer(name=corr_plot._LEGEND_NAME,
                                                palette=palette,
                                                breaks=corr_plot._BREAKS,
+                                               labels=corr_plot._LABELS,
                                                limits=corr_plot._LIMITS,
                                                na_value='rgba(0,0,0,0)')
 
         self._fill_scale = scale_fill_brewer(name=corr_plot._LEGEND_NAME,
                                              palette=palette,
                                              breaks=corr_plot._BREAKS,
+                                             labels=corr_plot._LABELS,
                                              limits=corr_plot._LIMITS,
                                              na_value='rgba(0,0,0,0)')
 

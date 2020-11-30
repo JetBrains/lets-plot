@@ -56,9 +56,12 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     fun getString(option: String): String? {
-        return if (has(option)) {
-            get(option).toString()
-        } else null
+        return get(option)?.toString()
+    }
+
+    fun getStringSafe(option: String): String {
+        return getString(option)
+            ?: throw IllegalArgumentException("Can't get string value: option '$option' is not present.")
     }
 
     fun getList(option: String): List<*> {

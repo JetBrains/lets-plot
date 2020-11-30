@@ -164,10 +164,6 @@ class Bin2dStat(
 
     companion object {
 
-        const val P_BINS = "bins"
-        const val P_BINWIDTH = "binwidth"
-        const val P_DROP = "drop"
-
         const val DEF_BINS = 30
         val DEF_BINWIDTH: Double? = null
         const val DEF_DROP = true

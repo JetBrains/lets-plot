@@ -100,6 +100,7 @@ open class AestheticsDefaults {
 
         fun tile(): AestheticsDefaults {
             return AestheticsDefaults()
+                .update(Aes.SIZE, 0.0)       // no outline
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 

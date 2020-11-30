@@ -37,7 +37,10 @@ class LayerConfig constructor(
     val geomProto: GeomProto,
     statProto: StatProto,
     private val clientSide: Boolean
-) : OptionsAccessor(layerOptions, initDefaultOptions(layerOptions, geomProto, statProto)) {
+) : OptionsAccessor(
+    layerOptions,
+    initDefaultOptions(layerOptions, geomProto, statProto)
+) {
 
     val stat: Stat
     val explicitGroupingVarName: String?
@@ -111,7 +114,7 @@ class LayerConfig constructor(
             aesMappings = createAesMapping(combinedData, combinedMappings)
         }
 
-        statKind = StatKind.safeValueOf(getString(STAT)!!)
+        statKind = StatKind.safeValueOf(getStringSafe(STAT))
         stat = statProto.createStat(statKind, mergedOptions)
         if (clientSide) {
             // add stat default mappings
@@ -164,10 +167,11 @@ class LayerConfig constructor(
         ownData = layerData
         myCombinedData = combinedData
 
-        mySamplings = if (clientSide)
+        mySamplings = if (clientSide) {
             null
-        else
+        } else {
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        }
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
