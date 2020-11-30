@@ -412,6 +412,27 @@ class TooltipConfigTest {
         assertEquals(expectedMessage, PlotConfig.getErrorMessage(plotSpec))
     }
 
+    @Test
+    fun `tooltip with strings similar to number format`() {
+        val tooltipConfig = mapOf(
+            Option.Layer.TOOLTIP_LINES to listOf(
+                "^x",   // aes x
+                "x",    // static text "x"
+                "\$x",  // static text "$x"
+                ".1f"   // static text ".1f"
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "1.60",
+            "x",
+            "\$x",
+            ".1f"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
+    }
+
     companion object {
 
         private fun buildGeomPointLayer(
