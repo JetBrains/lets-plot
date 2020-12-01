@@ -25,7 +25,7 @@ class DataFrameValue(
     }
 
     override fun setDataContext(dataContext: DataContext) {
-        require(!::myDataFrame.isInitialized) { "Data frame can be set once" }
+        require(!::myDataFrame.isInitialized) { "Data frame can be set only once" }
         myDataFrame = dataContext.dataFrame
 
         myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")

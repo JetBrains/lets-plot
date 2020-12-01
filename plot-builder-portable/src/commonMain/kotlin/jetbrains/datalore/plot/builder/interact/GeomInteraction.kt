@@ -28,7 +28,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
         return createContextualMapping(
-            myTooltipLines.map(::TooltipLine),  // duplicate the list of tooltip lines for correct working of facet_grid
+            myTooltipLines.map(::TooltipLine),  // clone tooltip lines to not share DataContext between plots when facet is used
+                                                // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             dataAccess,
             dataFrame
         )
