@@ -27,7 +27,7 @@ class MappingValue(
         }
     }
 
-    override fun setDataContext(dataContext: DataContext) {
+    override fun initDataContext(dataContext: DataContext) {
         require(!::myDataAccess.isInitialized) { "Data context can be set only once" }
         myDataAccess = dataContext.mappedDataAccess
 

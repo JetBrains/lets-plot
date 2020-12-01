@@ -21,7 +21,7 @@ class ConstantValue(
         value.toString()
     }
 
-    override fun setDataContext(dataContext: DataContext) {
+    override fun initDataContext(dataContext: DataContext) {
     }
 
     override fun getDataPoint(index: Int): DataPoint? {

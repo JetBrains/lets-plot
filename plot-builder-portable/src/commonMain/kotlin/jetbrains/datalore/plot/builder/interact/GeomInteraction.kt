@@ -65,7 +65,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 val dataAesList = line.fields.filterIsInstance<MappingValue>()
                 dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
             }
-            mappedTooltipLines.forEach { it.setDataContext(dataContext) }
+            mappedTooltipLines.forEach { it.initDataContext(dataContext) }
 
             return ContextualMapping(dataContext, mappedTooltipLines)
         }
