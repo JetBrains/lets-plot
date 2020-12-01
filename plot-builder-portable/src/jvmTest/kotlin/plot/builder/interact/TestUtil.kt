@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.C
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
+import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
@@ -67,6 +68,14 @@ object TestUtil {
         assertTrue(tooltipSpecs.isEmpty())
     }
 
+    internal fun assertGeneralTooltips(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltips: String) {
+        val actualGeneralLines = tooltipSpecs.filterNot(TooltipSpec::isOutlier)
+        assertText(actualGeneralLines, listOf(*expectedTooltips))
+    }
+
+    internal fun assertNoGeneralTooltips(tooltipSpecs: List<TooltipSpec>) {
+        assertTrue(tooltipSpecs.filterNot(TooltipSpec::isOutlier).isEmpty())
+    }
 
     private const val OUTSIDE_DELTA = 10.0
     private const val PATH_POINTS_COUNT_PER_KEY = 100
@@ -396,6 +405,23 @@ object TestUtil {
                 return HitIndex(expected)
             }
         }
+    }
 
+    internal fun findLookupResults(targetLocators: List<GeomTargetLocator>, coord: DoubleVector): List<LookupResult> {
+        val targetsPicker = LocatedTargetsPicker()
+        targetLocators.forEach { locator ->
+            val lookupResult = locator.search(coord)
+            lookupResult?.let { targetsPicker.addLookupResult(it) }
+        }
+        return targetsPicker.picked
+    }
+
+    internal fun createTooltipSpecs(lookupResults: List<LookupResult>): List<TooltipSpec> {
+        val tooltipSpecs = ArrayList<TooltipSpec>()
+        lookupResults.forEach { result ->
+            val factory = TooltipSpecFactory(result.contextualMapping, DoubleVector.ZERO)
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
+        }
+        return tooltipSpecs
     }
 }
