@@ -10,8 +10,8 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class ConstantValue(
-    value: Any,
-    format: String? = null
+    private val value: Any,
+    private val format: String? = null
 ) : ValueSource {
 
     private var myIsContinuous: Boolean = value is Number
@@ -36,6 +36,9 @@ class ConstantValue(
     }
 
     override fun copy(): ValueSource {
-        return this
+        return ConstantValue(
+            value,
+            format
+        )
     }
 }
