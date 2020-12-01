@@ -9,9 +9,9 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-open class ConstantValue(
-    value: Any,
-    format: String? = null
+class ConstantValue(
+    private val value: Any,
+    private val format: String? = null
 ) : ValueSource {
 
     private var myIsContinuous: Boolean = value is Number
@@ -21,7 +21,7 @@ open class ConstantValue(
         value.toString()
     }
 
-    override fun setDataContext(dataContext: DataContext) {
+    override fun initDataContext(dataContext: DataContext) {
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
@@ -32,6 +32,13 @@ open class ConstantValue(
             aes = null,
             isAxis = false,
             isOutlier = false
+        )
+    }
+
+    override fun copy(): ConstantValue {
+        return ConstantValue(
+            value,
+            format
         )
     }
 }

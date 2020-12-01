@@ -16,12 +16,14 @@ class TooltipLine(
     val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
+    constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
+
     private val myLineFormatter = StringFormat(pattern, STRING_FORMAT).also {
         require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
     }
 
-    fun setDataContext(dataContext: DataContext) {
-        fields.forEach { it.setDataContext(dataContext) }
+    fun initDataContext(dataContext: DataContext) {
+        fields.forEach { it.initDataContext(dataContext) }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
