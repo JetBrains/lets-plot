@@ -35,7 +35,7 @@ class ConstantValue(
         )
     }
 
-    override fun copy(): ValueSource {
+    override fun copy(): ConstantValue {
         return ConstantValue(
             value,
             format

@@ -73,7 +73,7 @@ class MappingValue(
         }
     }
 
-    override fun copy(): ValueSource {
+    override fun copy(): MappingValue {
         return MappingValue(
             aes = aes,
             isOutlier = isOutlier,

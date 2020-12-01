@@ -44,7 +44,7 @@ class DataFrameValue(
         )
     }
 
-    override fun copy(): ValueSource {
+    override fun copy(): DataFrameValue {
         return DataFrameValue(name, format)
     }
 
