@@ -28,7 +28,7 @@ class MappingValue(
     }
 
     override fun initDataContext(dataContext: DataContext) {
-        require(!::myDataAccess.isInitialized) { "Data context can be set only once" }
+        require(!::myDataAccess.isInitialized) { "Data context can be initialized only once" }
         myDataAccess = dataContext.mappedDataAccess
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
