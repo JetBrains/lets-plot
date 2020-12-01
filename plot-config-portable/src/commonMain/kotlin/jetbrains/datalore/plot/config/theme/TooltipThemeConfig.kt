@@ -40,7 +40,7 @@ internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : O
                 "Illegal value $anchor, ${Option.Theme.TOOLTIP_ANCHOR}, expected values are: " +
                         "'top_left'/'top_center'/'top_right'/" +
                         "'middle_left'/'middle_center'/'middle_right'/" +
-                        "'bottom_left'/'bottom_center'/'bottom_right'/"
+                        "'bottom_left'/'bottom_center'/'bottom_right'"
             )
         }
     }

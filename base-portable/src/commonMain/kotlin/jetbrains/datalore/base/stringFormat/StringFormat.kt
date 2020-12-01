@@ -8,17 +8,18 @@ package jetbrains.datalore.base.stringFormat
 import jetbrains.datalore.base.numberFormat.NumberFormat
 
 class StringFormat(
-    private val pattern: String
+    private val pattern: String,
+    type: FormatType? = null
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
         STRING_FORMAT
     }
 
-    val formatType = if (NumberFormat.isValidPattern(pattern)) {
-        FormatType.NUMBER_FORMAT
-    } else {
-        FormatType.STRING_FORMAT
+    val formatType = when {
+        type != null -> type
+        NumberFormat.isValidPattern(pattern) -> FormatType.NUMBER_FORMAT
+        else -> FormatType.STRING_FORMAT
     }
 
     private val myNumberFormatters: List<NumberFormat?>
