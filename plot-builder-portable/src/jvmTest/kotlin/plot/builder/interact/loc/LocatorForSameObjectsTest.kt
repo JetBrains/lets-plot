@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.Test
 
 
-class LocatorForSameObjects {
+class LocatorForSameObjectsTest {
 
     @Test
     fun `locator should take the last closest object of the layer`() {
