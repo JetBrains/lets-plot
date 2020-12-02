@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
 import jetbrains.datalore.plot.config.Option.Stat.Bin
@@ -16,12 +17,26 @@ import jetbrains.datalore.plot.config.Option.Stat.Density
 import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
 
-class StatProto {
+object StatProto {
 
-    internal fun defaultOptions(statName: String): Map<String, Any> {
-//        checkArgument(DEFAULTS.containsKey(statName), "Unknown stat name: '$statName'")
-//        return DEFAULTS[statName]!!
-        return emptyMap()
+    internal fun defaultOptions(statName: String, geomKind: GeomKind): Map<String, Any> {
+        return when (StatKind.safeValueOf(statName)) {
+            StatKind.CORR -> {
+                when (geomKind) {
+                    GeomKind.TILE -> mapOf<String, Any>(
+                        "size" to 0.0   // 'corr' is mapped to the outline color 'color' - avoid on 'tiles'.
+                    )
+                    GeomKind.POINT,
+                    GeomKind.TEXT -> mapOf<String, Any>(
+                        "size" to 0.8,
+                        "size_unit" to "x",
+                        "label_format" to ".2f"
+                    )
+                    else -> emptyMap()
+                }
+            }
+            else -> emptyMap()
+        }
     }
 
     internal fun createStat(statKind: StatKind, options: OptionsAccessor): Stat {

@@ -58,7 +58,6 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             plotMappings,
             plotDiscreteAes,
             GeomProtoClientSide(geomKind),
-            StatProto(),
             true
         )
     }

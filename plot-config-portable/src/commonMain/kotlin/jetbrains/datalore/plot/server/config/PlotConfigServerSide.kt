@@ -38,7 +38,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             plotMappings,
             plotDiscreteAes,
             GeomProto(geomKind),
-            StatProto(),
             false
         )
     }

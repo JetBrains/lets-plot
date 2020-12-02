@@ -159,7 +159,7 @@ class corr_plot:
 
         if self._points_params is not None:
             plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                               mapping=aes('..x..', '..y..', size='..corr_abs..'),
+                               mapping=aes(size='..corr_abs..'),
                                tooltips=self._tooltip_spec(),
                                sampling='none',
                                **self._points_params)
@@ -168,7 +168,7 @@ class corr_plot:
             m = None
 
             if 'size' not in self._labels_params:
-                m = aes('..x..', '..y..', size='..corr_abs..')
+                m = aes(size='..corr_abs..')
 
             plot += geom_text(stat='corr', show_legend=self._show_legend,
                               mapping=m,
