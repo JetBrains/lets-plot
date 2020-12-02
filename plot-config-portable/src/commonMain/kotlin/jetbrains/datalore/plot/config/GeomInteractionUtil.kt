@@ -47,11 +47,13 @@ object GeomInteractionUtil {
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, scaleMap, builder.getAxisFromFunctionKind) - hiddenAesList
         val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
+        val constantAesList = createConstantAesList(layerConfig.geomProto.geomKind)
 
         return builder.axisAes(axisAes)
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipLinesSpec(layerConfig.tooltips)
+            .tooltipConstants(layerConfig.constantsMap.filter { (aes, _) -> aes in constantAesList })
             .showAxisTooltip(!isLiveMap)
     }
 
@@ -155,6 +157,12 @@ object GeomInteractionUtil {
         GeomKind.POINT_RANGE -> listOf(Aes.YMAX, Aes.YMIN)
         GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
         GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
+        else -> emptyList()
+    }
+
+    private fun createConstantAesList(geomKind: GeomKind) = when (geomKind) {
+        GeomKind.V_LINE -> listOf(Aes.XINTERCEPT)
+        GeomKind.H_LINE -> listOf(Aes.YINTERCEPT)
         else -> emptyList()
     }
 
