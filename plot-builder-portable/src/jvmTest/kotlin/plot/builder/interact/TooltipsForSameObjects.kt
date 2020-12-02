@@ -5,16 +5,15 @@
 
 package jetbrains.datalore.plot.builder.interact
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.interact.TestUtil.assertGeneralTooltips
-import jetbrains.datalore.plot.builder.interact.TestUtil.createTooltipSpecs
-import jetbrains.datalore.plot.builder.interact.TestUtil.findLookupResults
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator
+import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class TooltipsForSameObjects {
@@ -51,11 +50,11 @@ class TooltipsForSameObjects {
             layer.contextualMapping,
             listOf(FIRST_TARGET, SECOND_TARGET)
         )
-        val lookupResults = findLookupResults(listOf(targetLocator), COORD)
+        val lookupResults = findTargets(listOf(targetLocator))
         val tooltipSpecs = createTooltipSpecs(lookupResults)
-        assertGeneralTooltips(
+        assertGeneralTooltipLines(
             tooltipSpecs,
-            "B"
+            listOf("B")
         )
     }
 
@@ -103,11 +102,11 @@ class TooltipsForSameObjects {
                 listOf(FIRST_TARGET)
             )
         }
-        val lookupResults = findLookupResults(targetLocators, COORD)
+        val lookupResults = findTargets(targetLocators)
         val tooltipSpecs = createTooltipSpecs(lookupResults)
-        assertGeneralTooltips(
+        assertGeneralTooltipLines(
             tooltipSpecs,
-            "B"
+            listOf("B")
         )
     }
 
@@ -118,9 +117,32 @@ class TooltipsForSameObjects {
         private val FIRST_TARGET = TestUtil.pointTarget(FIRST_POINT_KEY, COORD)
         private val SECOND_TARGET = TestUtil.pointTarget(SECOND_POINT_KEY, COORD)
 
-        private fun createGeomLayers(spec: String): List<GeomLayer> {
-            val plotSpec = PlotConfigServerSide.processTransform(parsePlotSpec(spec))
-            return PlotConfigClientSideUtil.createPlotAssembler(plotSpec).layersByTile.single()
+        private fun createGeomLayers(spec: String) =
+            PlotConfigClientSideUtil.createPlotAssembler(parsePlotSpec(spec)).layersByTile.single()
+
+        private fun findTargets(targetLocators: List<GeomTargetLocator>): List<GeomTargetLocator.LookupResult> {
+            val targetsPicker = LocatedTargetsPicker()
+            targetLocators.forEach { locator ->
+                val lookupResult = locator.search(COORD)
+                lookupResult?.let { targetsPicker.addLookupResult(it) }
+            }
+            return targetsPicker.picked
+        }
+
+        private fun createTooltipSpecs(lookupResults: List<GeomTargetLocator.LookupResult>): List<TooltipSpec> {
+            val tooltipSpecs = ArrayList<TooltipSpec>()
+            lookupResults.forEach { result ->
+                val factory = TooltipSpecFactory(result.contextualMapping, DoubleVector.ZERO)
+                result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
+            }
+            return tooltipSpecs
+        }
+
+        private fun assertGeneralTooltipLines(tooltipSpecs: List<TooltipSpec>, expectedTooltipLines: List<String>) {
+            val actualGeneralLines =
+                tooltipSpecs.filterNot(TooltipSpec::isOutlier).flatMap { it.lines.map(TooltipSpec.Line::toString) }
+            assertEquals(expectedTooltipLines.size, actualGeneralLines.size)
+            assertEquals(expectedTooltipLines, actualGeneralLines)
         }
     }
 }

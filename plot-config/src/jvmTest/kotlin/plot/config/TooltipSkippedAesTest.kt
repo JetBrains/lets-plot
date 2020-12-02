@@ -3,20 +3,20 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.interact
+package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.interact.TestUtil.assertGeneralTooltips
-import jetbrains.datalore.plot.builder.interact.TestUtil.assertNoGeneralTooltips
-import jetbrains.datalore.plot.builder.interact.TestUtil.createTooltipSpecs
-import jetbrains.datalore.plot.builder.interact.TestUtil.findLookupResults
-import jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator
-import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class TooltipSkippedAesTest {
@@ -43,18 +43,10 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = createGeomLayers(spec).single()
-        val targetLocator = LayerTargetLocator(
-            GeomKind.BAR,
-            layer.locatorLookupSpec,
-            layer.contextualMapping,
-            listOf(TestUtil.rectTarget(0, RECT))
-        )
-        val lookupResults = findLookupResults(listOf(targetLocator), COORD)
-        val tooltipSpecs = createTooltipSpecs(lookupResults)
-
+        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
         assertGeneralTooltips(
             tooltipSpecs,
-            "2.00"
+            expectedLines = listOf("2.00")
         )
     }
 
@@ -62,7 +54,7 @@ class TooltipSkippedAesTest {
     fun `should skip duplicated mappings`() {
         val spec = """{
             "kind": "plot",
-            "data": { 
+            "data": {
                   "x": [1],
                   "y": [1],
                   "z": [5]
@@ -82,10 +74,11 @@ class TooltipSkippedAesTest {
             ]
         }"""
 
-        val tooltipSpecs = buildTooltipSpecs(spec)
+        val layer = createGeomLayers(spec).single()
+        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
         assertGeneralTooltips(
             tooltipSpecs,
-            "z: 5.00"
+            expectedLines = listOf("z: 5.00")
         )
     }
 
@@ -93,7 +86,7 @@ class TooltipSkippedAesTest {
     fun `should skip discrete mappings`() {
         val spec = """{
             "kind": "plot",
-            "data": { 
+            "data": {
                   "x": [1],
                   "y": [1],
                   "z": ["a"]
@@ -113,29 +106,45 @@ class TooltipSkippedAesTest {
             ]
         }"""
 
-        val tooltipSpecs = buildTooltipSpecs(spec)
-        assertNoGeneralTooltips(tooltipSpecs)
+        val layer = createGeomLayers(spec).single()
+        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+        // No tooltips
+        assertGeneralTooltips(
+            tooltipSpecs,
+            expectedLines = emptyList()
+        )
     }
 
     companion object {
-        private val COORD = TestUtil.point(10.0, 10.0)
-        private val RECT = DoubleRectangle(0.0, 0.0, 20.0, 20.0)
 
         private fun createGeomLayers(spec: String): List<GeomLayer> {
             val plotSpec = PlotConfigServerSide.processTransform(parsePlotSpec(spec))
             return PlotConfigClientSideUtil.createPlotAssembler(plotSpec).layersByTile.single()
         }
 
-        private fun buildTooltipSpecs(spec: String): List<TooltipSpec> {
-            val layer = createGeomLayers(spec).single()
-            val targetLocator = LayerTargetLocator(
-                GeomKind.POINT,
-                layer.locatorLookupSpec,
-                layer.contextualMapping,
-                listOf(TestUtil.pointTarget(0, COORD))
+        private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {
+            val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO)
+            return factory.create(
+                GeomTarget(
+                    hitIndex = 0,
+                    tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, Color.BLACK),
+                    aesTipLayoutHints = emptyMap()
+                )
             )
-            val lookupResults = findLookupResults(listOf(targetLocator), COORD)
-            return createTooltipSpecs(lookupResults)
+        }
+
+        private fun assertGeneralTooltips(tooltipSpecs: List<TooltipSpec>, expectedLines: List<String>) {
+            val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isOutlier)
+            val expectedGeneralCount = if (expectedLines.isEmpty()) 0 else 1
+            assertEquals(actualGeneralTooltips.size, expectedGeneralCount)
+
+            if (expectedGeneralCount != 0) {
+                val actualLines = actualGeneralTooltips.single().lines.map(TooltipSpec.Line::toString)
+                assertEquals(expectedLines.size, actualLines.size)
+                for (index in expectedLines.indices) {
+                    assertEquals(expectedLines[index], actualLines[index])
+                }
+            }
         }
     }
 }
