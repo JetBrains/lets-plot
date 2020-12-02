@@ -16,6 +16,7 @@ except ImportError:
 
 from lets_plot._type_utils import is_number
 from lets_plot.plot.coord import coord_fixed, coord_cartesian
+from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.core import aes
 from lets_plot.plot.geom import geom_point, geom_text, geom_tile
 from lets_plot.plot.plot import ggplot
@@ -68,7 +69,7 @@ class corr_plot:
                               mid=corr_plot._DEF_MID_COLOR,
                               high=corr_plot._DEF_HIGH_COLOR)
 
-    def points(self, type=None, fill_diagonal=True):
+    def points(self, type=None, diag=True):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -76,18 +77,18 @@ class corr_plot:
         ----------
         type : string
             Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
-        fill_diagonal : Boolean
+        diag : Boolean
             If True the main diagonal is filled with values. Default - True.
 
         Returns
         -------
             self
         """
-        self._points_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
+        self._points_params = {'type': self._get_type(type), 'diag': diag}
 
         return self
 
-    def labels(self, type=None, fill_diagonal=True, map_size=False, color=None):
+    def labels(self, type=None, diag=True, map_size=False, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -95,7 +96,7 @@ class corr_plot:
         ----------
         type : string
             Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
-        fill_diagonal : Boolean
+        diag : Boolean
             If True the main diagonal is filled with values. Default - True.
         map_size : Boolean
             If True, then absolute value of correlation is mapped to text size. Default - False.
@@ -106,7 +107,7 @@ class corr_plot:
             self
         """
 
-        self._labels_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
+        self._labels_params = {'type': self._get_type(type), 'diag': diag}
 
         if not map_size:
             self._labels_params['size'] = 1
@@ -116,7 +117,7 @@ class corr_plot:
 
         return self
 
-    def tiles(self, type=None, fill_diagonal=True):
+    def tiles(self, type=None, diag=True):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -124,7 +125,7 @@ class corr_plot:
         ----------
         type : string
             Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
-        fill_diagonal : Boolean
+        diag : Boolean
             If True the main diagonal is filled with values. Default - True.
 
         Returns
@@ -132,18 +133,20 @@ class corr_plot:
             self
         """
 
-        self._tiles_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
+        self._tiles_params = {'type': self._get_type(type), 'diag': diag}
 
         return self
 
-    def build(self):
+    def build(self) -> PlotSpec:
         """
-        This method create PlotSpec and returns it.
+        This method creates PlotSpec object.
 
         Returns
         -------
-            self
+            PlotSpec object
         """
+
+        # Build the plot.
 
         plot = ggplot(self._data)
 
@@ -321,7 +324,7 @@ class corr_plot:
 
         return res
 
-    def _add_common_params(self, plot):
+    def _add_common_params(self, plot) -> PlotSpec:
         _COLUMN_WIDTH = 60
         _MIN_PLOT_WIDTH = 400
         _MAX_PLOT_WIDTH = 900
@@ -485,7 +488,7 @@ def corr_plot_scatterlab(data, palette=None):
     """
     plot_builder = corr_plot(data=data)
     plot_builder.points(type='lower')
-    plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
+    plot_builder.labels(type='upper', diag=False, map_size=False)
 
     if palette:
         plot_builder._set_brewer_palette(palette)

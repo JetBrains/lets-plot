@@ -202,7 +202,7 @@ object Option {
         object Corr {
             const val METHOD = "method"
             const val TYPE = "type"
-            const val FILL_DIAGONAL = "fill_diagonal"
+            const val FILL_DIAGONAL = "diag"
         }
 
         object Smooth {
