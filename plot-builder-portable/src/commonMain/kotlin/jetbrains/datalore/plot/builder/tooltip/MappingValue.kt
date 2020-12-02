@@ -64,7 +64,6 @@ class MappingValue(
             DataPoint(
                 label = if (isOutlier) null else myDataLabel,
                 value = value,
-                isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
                 isOutlier = isOutlier
