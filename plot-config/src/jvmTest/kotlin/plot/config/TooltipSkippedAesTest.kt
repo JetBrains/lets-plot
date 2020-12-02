@@ -135,15 +135,11 @@ class TooltipSkippedAesTest {
 
         private fun assertGeneralTooltips(tooltipSpecs: List<TooltipSpec>, expectedLines: List<String>) {
             val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isOutlier)
-            val expectedGeneralCount = if (expectedLines.isEmpty()) 0 else 1
-            assertEquals(actualGeneralTooltips.size, expectedGeneralCount)
-
-            if (expectedGeneralCount != 0) {
+            assertEquals(expectedLines.isEmpty(), actualGeneralTooltips.isEmpty())
+            if (actualGeneralTooltips.isNotEmpty()) {
                 val actualLines = actualGeneralTooltips.single().lines.map(TooltipSpec.Line::toString)
                 assertEquals(expectedLines.size, actualLines.size)
-                for (index in expectedLines.indices) {
-                    assertEquals(expectedLines[index], actualLines[index])
-                }
+                expectedLines.zip(actualLines).forEach { (expected, actual) -> assertEquals(expected, actual) }
             }
         }
     }
