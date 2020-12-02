@@ -44,7 +44,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
     }
 
     override fun createLayerConfig(
-        layerOptions: Map<*, *>,
+        layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDiscreteAes: Set<*>

@@ -28,28 +28,13 @@ import kotlin.math.sqrt
  * notchlower   - lower edge of notch = median - 1.58 * IQR / sqrt(n)
  * notchupper   - upper edge of notch = median + 1.58 * IQR / sqrt(n)
  */
-class BoxplotStat : BaseStat(DEF_MAPPING) {
-
-    private var myWhiskerIQRRatio: Double = 0.0          // ggplot: 'coef'
-    private var myComputeWidth = false    // ggplot: 'varWidth'
-
-    /**
-     * Calculate components of box and whisker plot.
-     */
-    init {
-        myWhiskerIQRRatio = DEF_WHISKER_IQR_RATIO
-    }
-
-    fun setWhiskerIQRRatio(v: Double) {
-        myWhiskerIQRRatio = v
-    }
-
-    fun setComputeWidth(b: Boolean) {
-        myComputeWidth = b
-    }
+class BoxplotStat(
+    private val whiskerIQRRatio: Double,    // ggplot: 'coef'
+    private val computeWidth: Boolean       // ggplot: 'varWidth'
+) : BaseStat(DEF_MAPPING) {
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
-        return super.hasDefaultMapping(aes) || aes == WIDTH && myComputeWidth
+        return super.hasDefaultMapping(aes) || aes == WIDTH && computeWidth
     }
 
     override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
@@ -72,14 +57,14 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
         val collector = HashMap<DataFrame.Variable, MutableList<Double>>()
 
         val maxCountPerBinOverall =
-            BoxplotStatUtil.buildStat(xs, ys, myWhiskerIQRRatio, 0, collector)
+            BoxplotStatUtil.buildStat(xs, ys, whiskerIQRRatio, 0, collector)
 
         if (maxCountPerBinOverall == 0) {
             return withEmptyStatValues()
         }
 
         val statCount = collector.remove(Stats.WIDTH)
-        if (myComputeWidth) {
+        if (computeWidth) {
             // 'width' is in range 0..1
             val statWidth = ArrayList<Double>()
             val norm = sqrt(maxCountPerBinOverall.toDouble())
@@ -99,9 +84,6 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
     companion object {
         const val DEF_WHISKER_IQR_RATIO = 1.5
         const val DEF_COMPUTE_WIDTH = false
-
-        const val P_COEF = "coef"
-        const val P_VARWIDTH = "varwidth"
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

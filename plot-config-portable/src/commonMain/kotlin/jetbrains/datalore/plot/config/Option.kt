@@ -176,16 +176,61 @@ object Option {
     }
 
     object Stat {
+        object Boxplot {
+            const val COEF = "coef"
+            const val VARWIDTH = "varwidth"
+        }
+
+        object Bin {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val CENTER = "center"
+            const val BOUNDARY = "boundary"
+        }
+
         object Bin2d {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
             const val DROP = "drop"
         }
 
+        object Contour {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+        }
+
         object Corr {
             const val METHOD = "method"
             const val TYPE = "type"
             const val FILL_DIAGONAL = "fill_diagonal"
+        }
+
+        object Smooth {
+            const val POINT_COUNT = "n"
+            const val METHOD = "method"
+            const val CONFIDENCE_LEVEL = "level"
+            const val DISPLAY_CONFIDENCE_INTERVAL = "se"
+            const val SPAN = "span"
+            const val POLYNOMIAL_DEGREE = "span"
+            const val LOESS_CRITICAL_SIZE = "max_n"
+            const val SAMPLING_SEED = "seed"
+        }
+
+        object Density {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"     // number or string (method name)
+            const val ADJUST = "adjust"
+        }
+
+        object Density2d {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"     // list of two numbers, one number or string (method name)
+            const val ADJUST = "adjust"
+            const val IS_CONTOUR = "contour"
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
         }
     }
 

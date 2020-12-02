@@ -106,7 +106,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         // Smooth stat (regression)
 
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
+            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
             .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
@@ -173,7 +173,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         // Smooth stat (regression)
 
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
+            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
             .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
@@ -248,7 +248,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         // Smooth stat (regression)
 
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
+            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
             .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
@@ -335,12 +335,12 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .addConstantAes(Aes.SIZE, 2.0)
 
         val defaultLoessLayer = regressionLayerBuilder
-            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS })
+            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
             .addConstantAes(Aes.COLOR, Color.BLUE)
             .build(data, scaleByAes)
 
         val accurateLoessLayer = regressionLayerBuilder
-            .stat(Stats.smooth().apply { smoothingMethod = Method.LOESS; span = 0.3 })
+            .stat(Stats.smooth(smoothingMethod = Method.LOESS, span = 0.3))
             .addConstantAes(Aes.COLOR, Color.DARK_GREEN)
             .build(data, scaleByAes)
 

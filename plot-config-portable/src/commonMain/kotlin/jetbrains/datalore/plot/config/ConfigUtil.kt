@@ -21,7 +21,7 @@ object ConfigUtil {
         return options.containsKey("feature-list")
     }
 
-    internal fun featuresInFeatureList(options: MutableMap<*, *>): List<Map<*, *>> {
+    internal fun featuresInFeatureList(options: MutableMap<String, Any>): List<Map<*, *>> {
         val list = OptionsAccessor.over(options).getList("feature-list")
 
         return list

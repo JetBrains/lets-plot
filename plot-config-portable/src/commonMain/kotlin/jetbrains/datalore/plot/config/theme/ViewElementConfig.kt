@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.config.OptionsAccessor
  */
 internal class ViewElementConfig private constructor(
     private val name: String,
-    options: Map<*, *>
+    options: Map<String, Any>
 ) : OptionsAccessor(options) {
 
     val isBlank: Boolean

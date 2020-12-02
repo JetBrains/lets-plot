@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 internal class ScaleTransformConfig private constructor(
     val transform: Transform,
     opts: Map<String, Any>
-) : OptionsAccessor(opts, emptyMap<Any, Any>()) {
+) : OptionsAccessor(opts) {
 
     companion object {
         fun create(trans: Any): ScaleTransformConfig {

@@ -7,8 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 
-internal class PosConfig private constructor(name: String, options: Map<String, Any>) :
-    OptionsAccessor(options, emptyMap<Any, Any>()) {
+internal class PosConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options) {
 
     val pos: PosProvider = PosProto.createPosProvider(name, mergedOptions)
 

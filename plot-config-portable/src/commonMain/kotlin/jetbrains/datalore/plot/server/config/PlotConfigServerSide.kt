@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTrans
 open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     override fun createLayerConfig(
-        layerOptions: Map<*, *>,
+        layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDiscreteAes: Set<*>

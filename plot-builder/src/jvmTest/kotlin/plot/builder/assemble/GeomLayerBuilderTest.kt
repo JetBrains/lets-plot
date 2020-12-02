@@ -45,7 +45,7 @@ class GeomLayerBuilderTest {
             .build()
 
         val geomProvider = GeomProvider.histogram()
-        val stat = Stats.bin().build()
+        val stat = Stats.bin()
         val posProvider = PosProvider.barStack()
 
         val scaleByAes = TypedScaleMap(

@@ -10,16 +10,11 @@ import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
 
-class ThemeConfig(options: Map<*, *>) {
+class ThemeConfig(options: Map<String, Any>) {
 
+    val theme: Theme = MyTheme(options, DEF_OPTIONS)
 
-    val theme: Theme
-
-    init {
-        theme = MyTheme(options, DEF_OPTIONS)
-    }
-
-    private class MyTheme internal constructor(options: Map<*, *>, defOptions: Map<*, *>) : Theme {
+    private class MyTheme internal constructor(options: Map<String, Any>, defOptions: Map<String, Any>) : Theme {
         private val myAxisXTheme: AxisTheme
         private val myAxisYTheme: AxisTheme
         private val myLegendTheme: LegendTheme
@@ -52,9 +47,9 @@ class ThemeConfig(options: Map<*, *>) {
     companion object {
         internal val DEF: Theme = DefaultTheme()
         private val DEF_OPTIONS = mapOf(
-                LEGEND_POSITION to DEF.legend().position(),
-                LEGEND_JUSTIFICATION to DEF.legend().justification(),
-                LEGEND_DIRECTION to DEF.legend().direction()
+            LEGEND_POSITION to DEF.legend().position(),
+            LEGEND_JUSTIFICATION to DEF.legend().justification(),
+            LEGEND_DIRECTION to DEF.legend().direction()
         )
     }
 }

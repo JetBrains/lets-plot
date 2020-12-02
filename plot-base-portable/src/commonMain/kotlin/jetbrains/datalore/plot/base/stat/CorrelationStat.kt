@@ -12,10 +12,11 @@ import jetbrains.datalore.plot.base.stat.CorrelationUtil.correlationMatrix
 import jetbrains.datalore.plot.base.stat.math3.correlationPearson
 import kotlin.math.abs
 
-class CorrelationStat : BaseStat(DEF_MAPPING) {
-    var correlationMethod = DEF_CORRELATION_METHOD
-    var type = DEF_TYPE
-    var fillDiagonal = DEF_FILL_DIAGONAL
+class CorrelationStat(
+    val correlationMethod: Method,
+    val type: Type,
+    val fillDiagonal: Boolean
+) : BaseStat(DEF_MAPPING) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         require(correlationMethod == Method.PEARSON) {
@@ -53,7 +54,6 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
             Aes.Y to Stats.Y,
             Aes.COLOR to Stats.CORR,
             Aes.FILL to Stats.CORR,
-//            Aes.SIZE to Stats.CORR_ABS,
             Aes.LABEL to Stats.CORR
         )
 

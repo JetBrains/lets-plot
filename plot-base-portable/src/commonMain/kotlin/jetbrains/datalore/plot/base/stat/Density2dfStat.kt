@@ -12,7 +12,30 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.math3.BlockRealMatrix
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-class Density2dfStat internal constructor() : AbstractDensity2dStat() {
+class Density2dfStat(
+    bandWidthX: Double?,
+    bandWidthY: Double?,
+    bandWidthMethod: DensityStat.BandWidthMethod,  // Used is `bandWidth` is not set.
+    adjust: Double,
+    kernel: DensityStat.Kernel,
+    nX: Int,
+    nY: Int,
+    isContour: Boolean,
+    binCount: Int,
+    binWidth: Double
+
+) : AbstractDensity2dStat(
+    bandWidthX = bandWidthX,
+    bandWidthY = bandWidthY,
+    bandWidthMethod = bandWidthMethod,
+    adjust = adjust,
+    kernel = kernel,
+    nX = nX,
+    nY = nY,
+    isContour = isContour,
+    binCount = binCount,
+    binWidth = binWidth
+) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
@@ -40,17 +63,20 @@ class Density2dfStat internal constructor() : AbstractDensity2dStat() {
         val statDensity = ArrayList<Double>()
 
         val bandWidth = DoubleArray(2)
-        bandWidth[0] = if (bandWidths != null) bandWidths!![0] else DensityStatUtil.bandWidth(
-            bandWidthMethod,
-            xVector
-        )
-        bandWidth[1] = if (bandWidths != null) bandWidths!![1] else DensityStatUtil.bandWidth(
-            bandWidthMethod,
-            yVector
-        )
+//        bandWidth[0] = if (bandWidths != null) bandWidths!![0] else DensityStatUtil.bandWidth(
+//            bandWidthMethod,
+//            xVector
+//        )
+        bandWidth[0] = getBandWidthX(xVector)
 
-        val stepsX = DensityStatUtil.createStepValues(xRange!!, nx)
-        val stepsY = DensityStatUtil.createStepValues(yRange!!, ny)
+//        bandWidth[1] = if (bandWidths != null) bandWidths!![1] else DensityStatUtil.bandWidth(
+//            bandWidthMethod,
+//            yVector
+//        )
+        bandWidth[1] = getBandWidthY(yVector)
+
+        val stepsX = DensityStatUtil.createStepValues(xRange!!, nX)
+        val stepsY = DensityStatUtil.createStepValues(yRange!!, nY)
 
         // weight aesthetics
         val groupWeight = BinStatUtil.weightVector(xVector.size, data)
@@ -59,7 +85,7 @@ class Density2dfStat internal constructor() : AbstractDensity2dStat() {
             DensityStatUtil.createRawMatrix(
                 xVector,
                 stepsX,
-                kernel!!,
+                kernelFun,
                 bandWidth[0],
                 adjust,
                 groupWeight
@@ -69,7 +95,7 @@ class Density2dfStat internal constructor() : AbstractDensity2dStat() {
             DensityStatUtil.createRawMatrix(
                 yVector,
                 stepsY,
-                kernel!!,
+                kernelFun,
                 bandWidth[1],
                 adjust,
                 groupWeight
@@ -78,8 +104,8 @@ class Density2dfStat internal constructor() : AbstractDensity2dStat() {
         // size: nY * nX
         val matrixFinal = matrixY.multiply(matrixX.transpose())
 
-        for (row in 0 until ny) {
-            for (col in 0 until nx) {
+        for (row in 0 until nY) {
+            for (col in 0 until nX) {
                 statX.add(stepsX[col])
                 statY.add(stepsY[row])
                 statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight))
@@ -95,8 +121,8 @@ class Density2dfStat internal constructor() : AbstractDensity2dStat() {
             val pathListByLevel = ContourStatUtil.computeContours(
                 xRange,
                 yRange,
-                nx,
-                ny,
+                nX,
+                nY,
                 statDensity,
                 levels
             )
@@ -116,7 +142,6 @@ class Density2dfStat internal constructor() : AbstractDensity2dStat() {
                 .putNumeric(Stats.X, statX)
                 .putNumeric(Stats.Y, statY)
                 .putNumeric(Stats.DENSITY, statDensity)
-                //.putNumericVar(Stats.GROUP, newGroups)
                 .build()
         }
     }

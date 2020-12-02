@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.config.Option.GGBunch
 import jetbrains.datalore.plot.config.Option.GGBunch.Item
 
-class BunchConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
+class BunchConfig(opts: Map<String, Any>) : OptionsAccessor(opts) {
     private val myItems = ArrayList<BunchItem>()
 
     val bunchItems: List<BunchItem>
@@ -21,7 +21,8 @@ class BunchConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
         val items = getList(GGBunch.ITEMS)
         for (itemRaw in items) {
             if (itemRaw is Map<*, *>) {
-                val itemOptions = OptionsAccessor(itemRaw as MutableMap<*, *>)
+                @Suppress("UNCHECKED_CAST")
+                val itemOptions = OptionsAccessor(itemRaw as MutableMap<String, Any>)
                 myItems.add(
                     BunchItem(
                         itemOptions.getMap(Item.FEATURE_SPEC),

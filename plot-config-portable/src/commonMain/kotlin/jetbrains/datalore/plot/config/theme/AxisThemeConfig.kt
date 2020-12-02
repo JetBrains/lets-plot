@@ -14,7 +14,11 @@ import jetbrains.datalore.plot.config.Option.Theme.AXIS_TITLE
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TOOLTIP
 import jetbrains.datalore.plot.config.OptionsAccessor
 
-class AxisThemeConfig private constructor(options: Map<*, *>, defOptions: Map<*, *>, private val myX: Boolean) : OptionsAccessor(options, defOptions), AxisTheme {
+class AxisThemeConfig private constructor(
+    options: Map<String, Any>,
+    defOptions: Map<String, Any>,
+    private val myX: Boolean
+) : OptionsAccessor(options, defOptions), AxisTheme {
 
     private fun defTheme(): AxisTheme {
         return if (myX)
@@ -94,11 +98,11 @@ class AxisThemeConfig private constructor(options: Map<*, *>, defOptions: Map<*,
     }
 
     companion object {
-        fun X(options: Map<*, *>, defOptions: Map<*, *>): AxisThemeConfig {
+        fun X(options: Map<String, Any>, defOptions: Map<String, Any>): AxisThemeConfig {
             return AxisThemeConfig(options, defOptions, true)
         }
 
-        fun Y(options: Map<*, *>, defOptions: Map<*, *>): AxisThemeConfig {
+        fun Y(options: Map<String, Any>, defOptions: Map<String, Any>): AxisThemeConfig {
             return AxisThemeConfig(options, defOptions, false)
         }
     }

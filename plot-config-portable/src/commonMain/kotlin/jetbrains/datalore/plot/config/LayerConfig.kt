@@ -30,7 +30,7 @@ import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 class LayerConfig constructor(
-    layerOptions: Map<*, *>,
+    layerOptions: Map<String, Any>,
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
     plotDiscreteAes: Set<*>,
@@ -115,7 +115,7 @@ class LayerConfig constructor(
         }
 
         statKind = StatKind.safeValueOf(getStringSafe(STAT))
-        stat = statProto.createStat(statKind, mergedOptions)
+        stat = statProto.createStat(statKind, OptionsAccessor(mergedOptions))
         if (clientSide) {
             // add stat default mappings
             val statDefMapping = Stats.defaultMapping(stat)
@@ -235,7 +235,11 @@ class LayerConfig constructor(
     }
 
     private companion object {
-        private fun initDefaultOptions(layerOptions: Map<*, *>, geomProto: GeomProto, statProto: StatProto): Map<*, *> {
+        private fun initDefaultOptions(
+            layerOptions: Map<*, *>,
+            geomProto: GeomProto,
+            statProto: StatProto
+        ): Map<String, Any> {
             checkArgument(
                 layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT),
                 "Either 'geom' or 'stat' must be specified"

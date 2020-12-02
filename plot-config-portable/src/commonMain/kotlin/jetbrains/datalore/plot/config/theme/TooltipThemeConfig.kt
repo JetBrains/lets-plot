@@ -6,17 +6,17 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.LEFT
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.RIGHT
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.CENTER
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.TOP
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.BOTTOM
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.MIDDLE
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.HorizontalAnchor.*
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.theme.TooltipTheme
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
 
-internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : OptionsAccessor(options, defOptions), TooltipTheme {
+internal class TooltipThemeConfig(
+    options: Map<String, Any>,
+    defOptions: Map<String, Any>
+) : OptionsAccessor(options, defOptions),
+    TooltipTheme {
 
     override fun isVisible(): Boolean {
         return ThemeConfig.DEF.tooltip().isVisible()

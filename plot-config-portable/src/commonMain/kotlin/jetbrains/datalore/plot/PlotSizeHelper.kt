@@ -39,7 +39,7 @@ object PlotSizeHelper {
         }
     }
 
-    private fun bunchItemBoundsList(bunchSpec: Map<*, *>): List<DoubleRectangle> {
+    private fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
         val bunchConfig = BunchConfig(bunchSpec)
         if (bunchConfig.bunchItems.isEmpty()) {
             throw IllegalArgumentException("No plots in the bunch")
@@ -89,7 +89,9 @@ object PlotSizeHelper {
         if (!singlePlotSpec.containsKey(Option.Plot.SIZE)) {
             return null
         }
-        val map = OptionsAccessor.over(singlePlotSpec).getMap(Option.Plot.SIZE)
+        @Suppress("UNCHECKED_CAST")
+        val map = OptionsAccessor(singlePlotSpec as Map<String, Any>)
+            .getMap(Option.Plot.SIZE)
         val sizeSpec = OptionsAccessor.over(map)
         val width = sizeSpec.getDouble("width")
         val height = sizeSpec.getDouble("height")
@@ -111,14 +113,15 @@ object PlotSizeHelper {
             }
             PlotConfig.isGGBunchSpec(figureFpec) -> {
                 // bunch
-                val bunchSize = plotBunchSize(figureFpec)
+                @Suppress("UNCHECKED_CAST")
+                val bunchSize = plotBunchSize(figureFpec as Map<String, Any>)
                 bunchSize.x / bunchSize.y
             }
             else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(figureFpec))
         }
     }
 
-    fun plotBunchSize(plotBunchFpec: Map<*, *>): DoubleVector {
+    fun plotBunchSize(plotBunchFpec: Map<String, Any>): DoubleVector {
         require(PlotConfig.isGGBunchSpec(plotBunchFpec)) {
             "Plot Bunch is expected but was kind: ${PlotConfig.specKind(plotBunchFpec)}"
         }
