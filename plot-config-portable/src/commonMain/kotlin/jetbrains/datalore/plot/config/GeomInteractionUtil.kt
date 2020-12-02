@@ -179,13 +179,13 @@ object GeomInteractionUtil {
             GeomKind.HISTOGRAM,
             GeomKind.LINE,
             GeomKind.AREA,
-            GeomKind.BAR,
             GeomKind.ERROR_BAR,
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.BOX_PLOT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
+            GeomKind.BAR -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER).showAxisTooltip(false)
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
             GeomKind.SMOOTH,
