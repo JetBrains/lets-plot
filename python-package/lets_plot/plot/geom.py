@@ -676,8 +676,8 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
     .. jupyter-execute::
 
         >>> import numpy as np
-        >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
@@ -747,8 +747,8 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
     .. jupyter-execute::
 
         >>> import numpy as np
-        >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
@@ -1116,8 +1116,8 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
 
         >>> import numpy as np
         >>> import pandas as pd
-        >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
@@ -1197,8 +1197,8 @@ def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend
 
         >>> import numpy as np
         >>> import pandas as pd
-        >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
@@ -1366,6 +1366,9 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     --------
     .. jupyter-execute::
 
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from lets_plot import *
         >>> import lets_plot.geo_data as gd
         >>> LetsPlot.setup_html()
         >>> boundaries = gd.regions_state(request=['Texas', 'Iowa', 'Arizona'], within='US-48').boundaries()
