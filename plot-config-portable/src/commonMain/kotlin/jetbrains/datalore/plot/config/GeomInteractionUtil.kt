@@ -52,6 +52,7 @@ object GeomInteractionUtil {
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipLinesSpec(layerConfig.tooltips)
+            .tooltipConstants(layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) })
             .showAxisTooltip(!isLiveMap)
     }
 
