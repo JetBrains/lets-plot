@@ -189,7 +189,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                 val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
                 userDefined ?: MappingValue(aes)
             }
-            val constantValues = constantsMap?.map { (_, value) -> ConstantValue(value, null) } ?: emptyList()
+            val constantValues = constantsMap?.map { (_, value) -> ConstantValue(value, format = null) } ?: emptyList()
             return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
         }
     }
