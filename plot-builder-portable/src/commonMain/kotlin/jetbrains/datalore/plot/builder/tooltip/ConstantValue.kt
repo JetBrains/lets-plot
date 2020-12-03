@@ -14,7 +14,6 @@ class ConstantValue(
     private val format: String? = null
 ) : ValueSource {
 
-    private var myIsContinuous: Boolean = value is Number
     private val myDataValue = if (format != null) {
         StringFormat(format).format(value)
     } else {
@@ -28,7 +27,6 @@ class ConstantValue(
         return DataPoint(
             label = "",
             value = myDataValue,
-            isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,
             isOutlier = false

@@ -9,6 +9,16 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
+import jetbrains.datalore.plot.config.Option.GeomName.POINT
+import jetbrains.datalore.plot.config.Option.Layer.GEOM
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
+import jetbrains.datalore.plot.config.Option.Plot.LAYERS
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
+import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
+import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -71,7 +81,7 @@ class TooltipConfigTest {
             "foo@bar" to listOf("foobar with @")
         )
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_LINES to listOf(
+            TOOLTIP_LINES to listOf(
                 "^shape",           // aes
                 "@shape",            // variable with name that match to the name of aes
                 "\\^shape",         // '^' is part of the string (it's not the name) => string is "^shape"
@@ -113,10 +123,10 @@ class TooltipConfigTest {
     @Test
     fun changeFormatForTheDefault() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_FORMATS to listOf(
+            TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "^color",
-                    Option.TooltipFormat.FORMAT to ".4f"         // number format
+                    FIELD to "^color",
+                    FORMAT to ".4f"         // number format
                 )
             )
         )
@@ -149,10 +159,10 @@ class TooltipConfigTest {
         // redefine format for the 'color' aes
         val geomLayerWithAesInTooltip = buildGeomPointLayer(
             data, mappingWithColor, tooltips = mapOf(
-                Option.Layer.TOOLTIP_FORMATS to listOf(
+                TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "^color",
-                        Option.TooltipFormat.FORMAT to "{d}"
+                        FIELD to "^color",
+                        FORMAT to "{d}"
                     )
                 )
             )
@@ -165,11 +175,11 @@ class TooltipConfigTest {
         // redefine format for the 'year' variable
         val geomLayerWithVarInTooltip = buildGeomPointLayer(
             data, mappingWithColor, tooltips = mapOf(
-                Option.Layer.TOOLTIP_LINES to listOf("@|@year"),
-                Option.Layer.TOOLTIP_FORMATS to listOf(
+                TOOLTIP_LINES to listOf("@|@year"),
+                TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "year",
-                        Option.TooltipFormat.FORMAT to "{d}"
+                        FIELD to "year",
+                        FORMAT to "{d}"
                     )
                 )
             )
@@ -183,7 +193,7 @@ class TooltipConfigTest {
     @Test
     fun configLabels() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_LINES to listOf(
+            TOOLTIP_LINES to listOf(
                 "@{model name}",             // no label
                 "|@{model name}",            // empty label
                 "@|@{model name}",           // default = the variable name
@@ -204,16 +214,16 @@ class TooltipConfigTest {
     @Test
     fun userComplicatedTooltipLines() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_LINES to listOf(
+            TOOLTIP_LINES to listOf(
                 "mpg data set info",             // static text
                 "^color (mpg)",                 // formatted
                 "@{model name} car (@origin)",   // multiple sources in the line
                 "x/y|^x x ^y"                  // specify label
             ),
-            Option.Layer.TOOLTIP_FORMATS to listOf(          //define formats
-                mapOf(Option.TooltipFormat.FIELD to "^color", Option.TooltipFormat.FORMAT to ".1f"),
-                mapOf(Option.TooltipFormat.FIELD to "^x", Option.TooltipFormat.FORMAT to ".3f"),
-                mapOf(Option.TooltipFormat.FIELD to "^y", Option.TooltipFormat.FORMAT to ".1f")
+            TOOLTIP_FORMATS to listOf(          //define formats
+                mapOf(FIELD to "^color", FORMAT to ".1f"),
+                mapOf(FIELD to "^x", FORMAT to ".3f"),
+                mapOf(FIELD to "^y", FORMAT to ".1f")
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
@@ -263,16 +273,16 @@ class TooltipConfigTest {
     @Test
     fun configOutlierTooltips() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_LINES to listOf(
+            TOOLTIP_LINES to listOf(
                 "lower/upper|^lower, ^upper"
             ),
-            Option.Layer.TOOLTIP_FORMATS to listOf(
+            TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "^Y",
-                    Option.TooltipFormat.FORMAT to ".1f"
+                    FIELD to "^Y",
+                    FORMAT to ".1f"
                 ),       // all positionals
-                mapOf(Option.TooltipFormat.FIELD to "^middle", Option.TooltipFormat.FORMAT to ".3f"),    // number format
-                mapOf(Option.TooltipFormat.FIELD to "^ymax", Option.TooltipFormat.FORMAT to "{.1f}")     // line pattern
+                mapOf(FIELD to "^middle", FORMAT to ".3f"),    // number format
+                mapOf(FIELD to "^ymax", FORMAT to "{.1f}")     // line pattern
             )
         )
 
@@ -307,13 +317,13 @@ class TooltipConfigTest {
     @Test
     fun `numeric format for non-numeric value will be ignored`() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_LINES to listOf(
+            TOOLTIP_LINES to listOf(
                 "class is @class"
             ),
-            Option.Layer.TOOLTIP_FORMATS to listOf(
+            TOOLTIP_FORMATS to listOf(
                 mapOf(
-                    Option.TooltipFormat.FIELD to "class",
-                    Option.TooltipFormat.FORMAT to ".2f"
+                    FIELD to "class",
+                    FORMAT to ".2f"
                 )
             )
         )
@@ -345,7 +355,7 @@ class TooltipConfigTest {
             data = mapOf("label" to listOf("my text")),
             mapping = mapOf(Aes.LABEL.name to "label"),
             tooltips = mapOf(
-                Option.Layer.TOOLTIP_LINES to listOf("^label")
+                TOOLTIP_LINES to listOf("^label")
             )
         )
         assertTooltipStrings(
@@ -357,7 +367,7 @@ class TooltipConfigTest {
     @Test
     fun `wrong tooltip format (no arguments)`() {
         assertFailTooltipSpec(
-            tooltipConfig = mapOf(Option.Layer.TOOLTIP_FORMATS to listOf(emptyMap<String, String>())),
+            tooltipConfig = mapOf(TOOLTIP_FORMATS to listOf(emptyMap<String, String>())),
             expectedMessage = "Invalid 'format' arguments: 'field' and 'format' are expected"
         )
     }
@@ -366,10 +376,10 @@ class TooltipConfigTest {
     fun `wrong tooltip format (list instead of map)`() {
         assertFailTooltipSpec(
             tooltipConfig = mapOf(
-                Option.Layer.TOOLTIP_FORMATS to listOf(
+                TOOLTIP_FORMATS to listOf(
                     listOf(
-                        Option.TooltipFormat.FIELD to "^color",
-                        Option.TooltipFormat.FORMAT to ".2f"
+                        FIELD to "^color",
+                        FORMAT to ".2f"
                     )
                 )
             ),
@@ -381,10 +391,10 @@ class TooltipConfigTest {
     fun `wrong tooltip format (wrong number of arguments)`() {
         assertFailTooltipSpec(
             tooltipConfig = mapOf(
-                Option.Layer.TOOLTIP_FORMATS to listOf(
+                TOOLTIP_FORMATS to listOf(
                     mapOf(
-                        Option.TooltipFormat.FIELD to "^color",
-                        Option.TooltipFormat.FORMAT to "{.2f} {.2f}"
+                        FIELD to "^color",
+                        FORMAT to "{.2f} {.2f}"
                     )
                 )
             ),
@@ -397,12 +407,12 @@ class TooltipConfigTest {
         expectedMessage: String
     ) {
         val plotOpts = mutableMapOf(
-            Option.PlotBase.DATA to data,
-            Option.PlotBase.MAPPING to mapping,
-            Option.Plot.LAYERS to listOf(
+            DATA to data,
+            MAPPING to mapping,
+            LAYERS to listOf(
                 mapOf(
-                    Option.Layer.GEOM to "point",
-                    Option.Layer.TOOLTIPS to tooltipConfig
+                    GEOM to "point",
+                    TOOLTIPS to tooltipConfig
                 )
             )
         )
@@ -415,7 +425,7 @@ class TooltipConfigTest {
     @Test
     fun `tooltip with strings similar to number format`() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_LINES to listOf(
+            TOOLTIP_LINES to listOf(
                 "^x",   // aes x
                 "x",    // static text "x"
                 "\$x",  // static text "$x"
@@ -440,7 +450,7 @@ class TooltipConfigTest {
             mapping: Map<String, String>,
             tooltips: Any?
         ): GeomLayer {
-            return buildGeomLayer(Option.GeomName.POINT, data, mapping, tooltips)
+            return buildGeomLayer(POINT, data, mapping, tooltips)
         }
 
         private fun buildGeomLayer(
@@ -450,12 +460,12 @@ class TooltipConfigTest {
             tooltips: Any?
         ): GeomLayer {
             val plotOpts = mutableMapOf(
-                Option.PlotBase.DATA to data,
-                Option.PlotBase.MAPPING to mapping,
-                Option.Plot.LAYERS to listOf(
+                DATA to data,
+                MAPPING to mapping,
+                LAYERS to listOf(
                     mapOf(
-                        Option.Layer.GEOM to geom,
-                        Option.Layer.TOOLTIPS to tooltips
+                        GEOM to geom,
+                        TOOLTIPS to tooltips
                     )
                 )
             )
