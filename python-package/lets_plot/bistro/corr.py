@@ -65,11 +65,12 @@ class corr_plot:
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
+        self._labels_map_size = None
         self.palette_gradient(low=corr_plot._DEF_LOW_COLOR,
                               mid=corr_plot._DEF_MID_COLOR,
                               high=corr_plot._DEF_HIGH_COLOR)
 
-    def points(self, type=None, diag=True):
+    def points(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -84,11 +85,10 @@ class corr_plot:
         -------
             self
         """
-        self._points_params = {'type': self._get_type(type), 'diag': diag}
-
+        self._points_params = {'type': type, 'diag': diag}
         return self
 
-    def labels(self, type=None, diag=True, map_size=False, color=None):
+    def labels(self, type=None, diag=None, map_size=None, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -107,17 +107,11 @@ class corr_plot:
             self
         """
 
-        self._labels_params = {'type': self._get_type(type), 'diag': diag}
-
-        if not map_size:
-            self._labels_params['size'] = 1
-
-        if color is not None:
-            self._labels_params['color'] = color
-
+        self._labels_params = {'type': type, 'diag': diag, 'color': color}
+        self._labels_map_size = map_size
         return self
 
-    def tiles(self, type=None, diag=True):
+    def tiles(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -133,8 +127,7 @@ class corr_plot:
             self
         """
 
-        self._tiles_params = {'type': self._get_type(type), 'diag': diag}
-
+        self._tiles_params = {'type': type, 'diag': diag}
         return self
 
     def build(self) -> PlotSpec:
@@ -145,6 +138,12 @@ class corr_plot:
         -------
             PlotSpec object
         """
+
+        # Adjust options
+        _OpUtil.adjust_type_color_size(self._tiles_params, self._points_params, self._labels_params,
+                                       self._labels_map_size)
+        _OpUtil.adjust_diag(self._tiles_params, self._points_params, self._labels_params)
+        _OpUtil.flip_type(self._tiles_params, self._points_params, self._labels_params, self._reverse_y)
 
         # Build the plot.
 
@@ -363,22 +362,6 @@ class corr_plot:
             format(field='@..corr..', format=self._format). \
             line('@..corr..')
 
-    def _get_type(self, type):
-        def _reverse_type(type):
-            if type == 'upper':
-                return 'lower'
-            elif type == 'lower':
-                return 'upper'
-
-            return type
-
-        res = type if type else "full"
-
-        if self._reverse_y:
-            res = _reverse_type(res)
-
-        return res
-
     def _set_brewer_palette(self, palette):
         self._color_scale = scale_color_brewer(name=corr_plot._LEGEND_NAME,
                                                palette=palette,
@@ -487,10 +470,120 @@ def corr_plot_scatterlab(data, palette=None):
         PlotSpec for correlation matrix.
     """
     plot_builder = corr_plot(data=data)
-    plot_builder.points(type='lower')
-    plot_builder.labels(type='upper', diag=False, map_size=False)
+    plot_builder.points(type='upper', diag=False)
+    plot_builder.labels(type='lower', diag=False, map_size=False)
 
     if palette:
         plot_builder._set_brewer_palette(palette)
 
     return plot_builder.build()
+
+
+class _OpUtil:
+    @classmethod
+    def _flip(cls, type):
+        if type == 'upper':
+            return 'lower'
+        elif type == 'lower':
+            return 'upper'
+        return type
+
+    @classmethod
+    def _overlap(cls, type0, type1) -> bool:
+        if type0 is None or type1 is None:
+            return False
+        if type0 == 'full' or type1 == 'full':
+            return True
+
+        return type0 == type1
+
+    @classmethod
+    def adjust_type_color_size(cls, tiles_params: dict, points_params: dict, labels_params: dict,
+                               labels_map_size: bool) -> None:
+        has_tiles = tiles_params is not None
+        has_points = points_params is not None
+        has_labels = labels_params is not None
+
+        tiles_type = tiles_params.get('type') if has_tiles else None
+        points_type = points_params.get('type') if has_points else None
+        labels_type = labels_params.get('type') if has_labels else None
+
+        if has_tiles and has_points:
+            # avoid showing tiles and points in the same cells
+            if (tiles_type is None and points_type is None):
+                tiles_type = "lower"
+                points_type = "upper"
+            elif tiles_type is None:
+                if points_type == 'lower':
+                    tiles_type = "upper"
+                elif points_type in ['upper', 'full']:
+                    tiles_type = "lower"
+            elif points_type is None:
+                points_type = cls._flip(tiles_type)
+
+        if has_labels and labels_params.get('color') is None:
+            # avoid labels without 'color' showing on top of tiles or points.
+            if has_points:
+                if points_type is None and labels_type is None:
+                    labels_type = "lower"
+                    points_type = "upper"
+                elif points_type is None:
+                    points_type = cls._flip(labels_type)
+                else:
+                    labels_type = cls._flip(points_type)
+            if has_tiles:
+                if tiles_type is None and labels_type is None:
+                    tiles_type = "lower"
+                    labels_type = "upper"
+                elif tiles_type is None:
+                    tiles_type = cls._flip(labels_type)
+                else:
+                    labels_type = cls._flip(tiles_type)
+
+            # Update labels parameters.
+            labels_params['type'] = labels_type
+            if cls._overlap(labels_type, tiles_type) or cls._overlap(labels_type, points_type):
+                labels_params['color'] = "white"
+
+        if has_points and has_labels and labels_map_size is None:
+            if cls._overlap(labels_type if labels_type is not None else 'full',
+                            points_type if points_type is not None else 'full'):
+                labels_map_size = True
+
+        # Anover labels parameters update.
+        if has_labels and not labels_map_size:
+            # Disable size mapping by setting 'size' explicitly.
+            labels_params['size'] = 1
+
+        # Update tiles and points parameters.
+        if has_tiles:
+            tiles_params['type'] = tiles_type
+
+        if has_points:
+            points_params['type'] = points_type
+
+    @classmethod
+    def adjust_diag(cls, tiles_params: dict, points_params: dict, labels_params: dict) -> None:
+        # Prefer not to fill diagonal when the type is 'lower' or 'upper'.
+        def _adjust(diag: bool, type):
+            if diag is None:
+                if type in ['lower', 'upper']:
+                    diag = False
+            return diag
+
+        if tiles_params is not None:
+            tiles_params['diag'] = _adjust(tiles_params.get('diag'), tiles_params.get('type'))
+        if points_params is not None:
+            points_params['diag'] = _adjust(points_params.get('diag'), points_params.get('type'))
+        if labels_params is not None:
+            labels_params['diag'] = _adjust(labels_params.get('diag'), labels_params.get('type'))
+
+    @classmethod
+    def flip_type(cls, tiles_params: dict, points_params: dict, labels_params: dict, flip: bool) -> None:
+        if flip:
+            if tiles_params is not None:
+                tiles_params['type'] = cls._flip(tiles_params.get('type'))
+            if points_params is not None:
+                points_params['type'] = cls._flip(points_params.get('type'))
+            if labels_params is not None:
+                labels_params['type'] = cls._flip(labels_params.get('type'))
