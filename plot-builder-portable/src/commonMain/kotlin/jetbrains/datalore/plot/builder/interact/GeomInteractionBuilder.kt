@@ -116,11 +116,23 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return when {
             myUserTooltipSpec == null -> {
                 // No user tooltip specification => use default tooltips
-                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList, null, myTooltipConstantsAesList)
+                defaultValueSourceTooltipLines(
+                    myTooltipAes,
+                    myTooltipAxisAes,
+                    myTooltipOutlierAesList,
+                    userDefinedValueSources = null,
+                    constantsMap = myTooltipConstantsAesList
+                )
             }
             myUserTooltipSpec!!.tooltipLinePatterns == null -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
-                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList, myUserTooltipSpec!!.valueSources, myTooltipConstantsAesList)
+                defaultValueSourceTooltipLines(
+                    myTooltipAes,
+                    myTooltipAxisAes,
+                    myTooltipOutlierAesList,
+                    myUserTooltipSpec!!.valueSources,
+                    myTooltipConstantsAesList
+                )
             }
             myUserTooltipSpec!!.tooltipLinePatterns!!.isEmpty() -> {
                 // User list is empty => not show tooltips

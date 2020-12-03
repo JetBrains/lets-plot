@@ -28,7 +28,6 @@ class TooltipWithConstantTest {
             expected = listOf("xintercept: 0.25"),
             actual = getTooltipLines(layer)
         )
-
     }
 
     @Test
@@ -36,6 +35,21 @@ class TooltipWithConstantTest {
         val layerSpec = """
             "geom": "vline",
             "xintercept": 0.25
+        """
+        val layer = buildGeomLayer(layerSpec)
+
+        assertEquals(
+            expected = listOf("0.25"),
+            actual = getTooltipLines(layer)
+        )
+    }
+
+    @Test
+    fun `should add positionals only`() {
+        val layerSpec = """
+            "geom": "vline",
+            "xintercept": 0.25,
+            "size": 1
         """
         val layer = buildGeomLayer(layerSpec)
 
