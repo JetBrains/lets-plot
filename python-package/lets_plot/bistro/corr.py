@@ -29,8 +29,7 @@ from lets_plot.plot.scale_identity import scale_size_identity
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
 
-__all__ = ['corr_plot', 'corr_plot_scatter', 'corr_plot_tiles',
-           'corr_plot_tileslab', 'corr_plot_scatterlab']
+__all__ = ['corr_plot']
 
 
 class corr_plot:
@@ -79,9 +78,11 @@ class corr_plot:
         Parameters
         ----------
         type : string
-            Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
+            Type of matrix. Possible values - "upper", "lower", "full".
+            Default - contextual.
         diag : Boolean
-            If True the main diagonal is filled with values. Default - True.
+            Determines whether to fill the main diagonal with values or not.
+            Default - contextual.
 
         Returns
         -------
@@ -97,13 +98,17 @@ class corr_plot:
         Parameters
         ----------
         type : string
-            Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
+            Type of matrix. Possible values - "upper", "lower", "full".
+            Default - contextual.
         diag : Boolean
-            If True the main diagonal is filled with values. Default - True.
+            Determines whether to fill the main diagonal with values or not.
+            Default - contextual.
         map_size : Boolean
-            If True, then absolute value of correlation is mapped to text size. Default - False.
+            If True, then absolute value of correlation is mapped to text size. If False - the text size is constant.
+            Default - contextual.
         color: string
             Set text color.
+            Default - contextual.
         Returns
         -------
             self
@@ -120,9 +125,11 @@ class corr_plot:
         Parameters
         ----------
         type : string
-            Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
+            Type of matrix. Possible values - "upper", "lower", "full".
+            Default - contextual.
         diag : Boolean
-            If True the main diagonal is filled with values. Default - True.
+            Determines whether to fill the main diagonal with values or not.
+            Default - contextual.
 
         Returns
         -------
@@ -321,105 +328,6 @@ class corr_plot:
         return self
 
 
-def corr_plot_scatter(data, palette=None):
-    """
-    Draws correlation matrix as scatterplot.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-
-    plot_builder = corr_plot(data=data)
-    plot_builder.points()
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
-
-
-def corr_plot_tiles(data, palette=None):
-    """
-    Draws correlation matrix as tiles.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-    plot_builder = corr_plot(data=data)
-    plot_builder.tiles()
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
-
-
-def corr_plot_tileslab(data, palette=None):
-    """
-    Draws correlation matrix as tiles with labels.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-    plot_builder = corr_plot(data=data)
-    plot_builder.tiles()
-    plot_builder.labels(color='white')
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
-
-
-def corr_plot_scatterlab(data, palette=None):
-    """
-    Draws correlation matrix as mix of scattrplot and labels.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-    plot_builder = corr_plot(data=data)
-    plot_builder.points(type='upper', diag=False)
-    plot_builder.labels(type='lower', diag=False, map_size=False)
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
-
-
 class _BuildUtil:
     @classmethod
     def create_plot(cls, *,
@@ -434,7 +342,7 @@ class _BuildUtil:
                     ) -> PlotSpec:
 
         # Adjust options
-        _OpUtil.adjust_type_color_size(tiles_params, points_params, labels_params, labels_map_size)
+        labels_map_size = _OpUtil.adjust_type_color_size(tiles_params, points_params, labels_params, labels_map_size)
         _OpUtil.adjust_diag(tiles_params, points_params, labels_params)
         _OpUtil.flip_type(tiles_params, points_params, labels_params, reverse_y)
 
@@ -466,9 +374,10 @@ class _BuildUtil:
 
         if labels_params is not None:
             m = None
-
-            if 'size' not in labels_params:
+            if labels_map_size:
                 m = aes(size='..corr_abs..')
+            else:
+                labels_params['size'] = 1
 
             plot += geom_text(stat='corr',
                               show_legend=show_legend,
@@ -544,7 +453,13 @@ class _OpUtil:
 
     @classmethod
     def adjust_type_color_size(cls, tiles_params: dict, points_params: dict, labels_params: dict,
-                               labels_map_size: bool) -> None:
+                               labels_map_size: bool) -> bool:
+        """
+        Returns
+        -------
+            bool - Updated 'labels_map_size' value.
+
+        """
         has_tiles = tiles_params is not None
         has_points = points_params is not None
         has_labels = labels_params is not None
@@ -595,17 +510,14 @@ class _OpUtil:
                            points_type if points_type is not None else 'full'):
                 labels_map_size = True
 
-        # Anover labels parameters update.
-        if has_labels and not labels_map_size:
-            # Disable size mapping by setting 'size' explicitly.
-            labels_params['size'] = 1
-
         # Update tiles and points parameters.
         if has_tiles:
             tiles_params['type'] = tiles_type
 
         if has_points:
             points_params['type'] = points_type
+
+        return labels_map_size
 
     @classmethod
     def adjust_diag(cls, tiles_params: dict, points_params: dict, labels_params: dict) -> None:
