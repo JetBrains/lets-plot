@@ -14,6 +14,8 @@ try:
 except ImportError:
     pandas = None
 
+from typing import Dict
+
 from lets_plot._type_utils import is_number
 from lets_plot.plot.coord import coord_fixed, coord_cartesian
 from lets_plot.plot.core import PlotSpec
@@ -139,47 +141,25 @@ class corr_plot:
             PlotSpec object
         """
 
-        # Adjust options
-        _OpUtil.adjust_type_color_size(self._tiles_params, self._points_params, self._labels_params,
-                                       self._labels_map_size)
-        _OpUtil.adjust_diag(self._tiles_params, self._points_params, self._labels_params)
-        _OpUtil.flip_type(self._tiles_params, self._points_params, self._labels_params, self._reverse_y)
+        tiles_params = self._tiles_params.copy() if self._tiles_params is not None else None
+        points_params = self._points_params.copy() if self._points_params is not None else None
+        labels_params = self._labels_params.copy() if self._labels_params is not None else None
 
-        # Build the plot.
-
-        plot = ggplot(self._data)
-
-        if self._tiles_params is not None:
-            plot += geom_tile(stat='corr', show_legend=self._show_legend,
-                              size=0.0, width=1.002, height=1.002,
-                              tooltips=self._tooltip_spec(),
-                              sampling='none',
-                              **self._tiles_params)
-            plot += coord_cartesian()
-        else:
-            plot += coord_fixed()
-
-        if self._points_params is not None:
-            plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                               mapping=aes(size='..corr_abs..'),
-                               tooltips=self._tooltip_spec(),
-                               sampling='none',
-                               **self._points_params)
-
-        if self._labels_params is not None:
-            m = None
-
-            if 'size' not in self._labels_params:
-                m = aes(size='..corr_abs..')
-
-            plot += geom_text(stat='corr', show_legend=self._show_legend,
-                              mapping=m,
-                              na_value='', label_format=self._format,
-                              size_unit='x',
-                              sampling='none',
-                              **self._labels_params)
-
-        return self._add_common_params(plot)
+        plot = _BuildUtil.create_plot(data=self._data,
+                                      tiles_params=tiles_params,
+                                      points_params=points_params,
+                                      labels_params=labels_params,
+                                      reverse_y=self._reverse_y,
+                                      show_legend=self._show_legend,
+                                      labels_map_size=self._labels_map_size,
+                                      corr_value_format=self._format)
+        return _BuildUtil.add_common_params(plot=plot,
+                                            has_tiles=tiles_params is not None,
+                                            color_scale=self._color_scale,
+                                            fill_scale=self._fill_scale,
+                                            reverse_y=self._reverse_y,
+                                            show_legend=self._show_legend,
+                                            numeric_columns_count=self._get_numeric_columns_count())
 
     def palette_gradient(self, low, mid, high):
         """
@@ -323,45 +303,6 @@ class corr_plot:
 
         return res
 
-    def _add_common_params(self, plot) -> PlotSpec:
-        _COLUMN_WIDTH = 60
-        _MIN_PLOT_WIDTH = 400
-        _MAX_PLOT_WIDTH = 900
-        _PLOT_PROPORTION = 3.0 / 4.0
-
-        scale_xy_expand = None
-        if self._tiles_params is not None:
-            scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normally: 0.6)
-
-        plot += theme(axis_title=element_blank(),
-                      legend_title=element_blank(),
-                      axis_line_x=element_blank(),
-                      axis_line_y=element_blank())
-
-        plot += scale_size_identity(name="", na_value=0)
-
-        plot += self._color_scale
-        plot += self._fill_scale
-
-        plot += scale_x_discrete(expand=scale_xy_expand)
-        plot += scale_y_discrete(expand=scale_xy_expand, reverse=self._reverse_y)
-
-        columns_count = self._get_numeric_columns_count()
-        width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
-        height = width
-
-        if self._show_legend:
-            height *= _PLOT_PROPORTION
-
-        plot += ggsize(width, height)
-
-        return plot
-
-    def _tooltip_spec(self):
-        return layer_tooltips(). \
-            format(field='@..corr..', format=self._format). \
-            line('@..corr..')
-
     def _set_brewer_palette(self, palette):
         self._color_scale = scale_color_brewer(name=corr_plot._LEGEND_NAME,
                                                palette=palette,
@@ -479,9 +420,113 @@ def corr_plot_scatterlab(data, palette=None):
     return plot_builder.build()
 
 
+class _BuildUtil:
+    @classmethod
+    def create_plot(cls, *,
+                    data,
+                    tiles_params: Dict,
+                    points_params: Dict,
+                    labels_params: Dict,
+                    reverse_y: bool,
+                    show_legend: bool,
+                    labels_map_size: bool,
+                    corr_value_format: str,
+                    ) -> PlotSpec:
+
+        # Adjust options
+        _OpUtil.adjust_type_color_size(tiles_params, points_params, labels_params, labels_map_size)
+        _OpUtil.adjust_diag(tiles_params, points_params, labels_params)
+        _OpUtil.flip_type(tiles_params, points_params, labels_params, reverse_y)
+
+        tooltips = (layer_tooltips()
+                    .format(field='@..corr..', format=corr_value_format)
+                    .line('@..corr..'))
+
+        plot = ggplot(data)
+
+        if tiles_params is not None:
+            plot += geom_tile(stat='corr',
+                              show_legend=show_legend,
+                              size=0.0, width=1.002, height=1.002,
+                              tooltips=tooltips,
+                              sampling='none',
+                              **tiles_params)
+            plot += coord_cartesian()
+        else:
+            plot += coord_fixed()
+
+        if points_params is not None:
+            plot += geom_point(stat='corr',
+                               show_legend=show_legend,
+                               size_unit='x',
+                               mapping=aes(size='..corr_abs..'),
+                               tooltips=tooltips,
+                               sampling='none',
+                               **points_params)
+
+        if labels_params is not None:
+            m = None
+
+            if 'size' not in labels_params:
+                m = aes(size='..corr_abs..')
+
+            plot += geom_text(stat='corr',
+                              show_legend=show_legend,
+                              mapping=m,
+                              na_value='',
+                              label_format=corr_value_format,
+                              size_unit='x',
+                              sampling='none',
+                              **labels_params)
+
+        return plot
+
+    @classmethod
+    def add_common_params(cls, *,
+                          plot: PlotSpec,
+                          has_tiles: bool,
+                          color_scale,
+                          fill_scale,
+                          reverse_y,
+                          show_legend,
+                          numeric_columns_count) -> PlotSpec:
+        _COLUMN_WIDTH = 60
+        _MIN_PLOT_WIDTH = 400
+        _MAX_PLOT_WIDTH = 900
+        _PLOT_PROPORTION = 3.0 / 4.0
+
+        scale_xy_expand = None
+        if has_tiles:
+            scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normally: 0.6)
+
+        plot += theme(axis_title=element_blank(),
+                      legend_title=element_blank(),
+                      axis_line_x=element_blank(),
+                      axis_line_y=element_blank())
+
+        plot += scale_size_identity(name="", na_value=0)
+
+        plot += color_scale
+        plot += fill_scale
+
+        plot += scale_x_discrete(expand=scale_xy_expand)
+        plot += scale_y_discrete(expand=scale_xy_expand, reverse=reverse_y)
+
+        columns_count = numeric_columns_count
+        width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
+        height = width
+
+        if show_legend:
+            height *= _PLOT_PROPORTION
+
+        plot += ggsize(width, height)
+
+        return plot
+
+
 class _OpUtil:
     @classmethod
-    def _flip(cls, type):
+    def flip(cls, type):
         if type == 'upper':
             return 'lower'
         elif type == 'lower':
@@ -489,7 +534,7 @@ class _OpUtil:
         return type
 
     @classmethod
-    def _overlap(cls, type0, type1) -> bool:
+    def overlap(cls, type0, type1) -> bool:
         if type0 is None or type1 is None:
             return False
         if type0 == 'full' or type1 == 'full':
@@ -519,7 +564,7 @@ class _OpUtil:
                 elif points_type in ['upper', 'full']:
                     tiles_type = "lower"
             elif points_type is None:
-                points_type = cls._flip(tiles_type)
+                points_type = cls.flip(tiles_type)
 
         if has_labels and labels_params.get('color') is None:
             # avoid labels without 'color' showing on top of tiles or points.
@@ -528,26 +573,26 @@ class _OpUtil:
                     labels_type = "lower"
                     points_type = "upper"
                 elif points_type is None:
-                    points_type = cls._flip(labels_type)
+                    points_type = cls.flip(labels_type)
                 else:
-                    labels_type = cls._flip(points_type)
+                    labels_type = cls.flip(points_type)
             if has_tiles:
                 if tiles_type is None and labels_type is None:
                     tiles_type = "lower"
                     labels_type = "upper"
                 elif tiles_type is None:
-                    tiles_type = cls._flip(labels_type)
+                    tiles_type = cls.flip(labels_type)
                 else:
-                    labels_type = cls._flip(tiles_type)
+                    labels_type = cls.flip(tiles_type)
 
             # Update labels parameters.
             labels_params['type'] = labels_type
-            if cls._overlap(labels_type, tiles_type) or cls._overlap(labels_type, points_type):
+            if cls.overlap(labels_type, tiles_type) or cls.overlap(labels_type, points_type):
                 labels_params['color'] = "white"
 
         if has_points and has_labels and labels_map_size is None:
-            if cls._overlap(labels_type if labels_type is not None else 'full',
-                            points_type if points_type is not None else 'full'):
+            if cls.overlap(labels_type if labels_type is not None else 'full',
+                           points_type if points_type is not None else 'full'):
                 labels_map_size = True
 
         # Anover labels parameters update.
@@ -582,8 +627,8 @@ class _OpUtil:
     def flip_type(cls, tiles_params: dict, points_params: dict, labels_params: dict, flip: bool) -> None:
         if flip:
             if tiles_params is not None:
-                tiles_params['type'] = cls._flip(tiles_params.get('type'))
+                tiles_params['type'] = cls.flip(tiles_params.get('type'))
             if points_params is not None:
-                points_params['type'] = cls._flip(points_params.get('type'))
+                points_params['type'] = cls.flip(points_params.get('type'))
             if labels_params is not None:
-                labels_params['type'] = cls._flip(labels_params.get('type'))
+                labels_params['type'] = cls.flip(labels_params.get('type'))
