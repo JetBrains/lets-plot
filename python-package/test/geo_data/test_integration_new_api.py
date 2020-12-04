@@ -114,13 +114,19 @@ def test_drop_not_found_with_namesakes():
 
 
 def test_simple_scope():
-    florida_with_country = geodata.regions_builder2('state', names=['florida', 'florida'], countries=['Uruguay', 'usa']) \
-        .build() \
-        .to_data_frame()
+    florida_with_country = geodata.regions_builder2(
+        'state',
+        names=['florida', 'florida'],
+        countries=['Uruguay', 'usa']
+    ).build().to_data_frame()
 
     assert florida_with_country[DF_ID][0] != florida_with_country[DF_ID][1]
 
-    florida_with_scope = geodata.regions_builder2('state', names=['florida'], scope='Uruguay').build().to_data_frame()
+    florida_with_scope = geodata.regions_builder2(
+        'state',
+        names=['florida'],
+        scope='Uruguay'
+    ).build().to_data_frame()
 
     assert florida_with_country[DF_ID][0] == florida_with_scope[DF_ID][0]
 
@@ -171,29 +177,15 @@ def test_query_scope_with_different_level_should_work():
         .build()
 
 
-def test_error_level_detection_not_available():
+def test_error_with_scopeand_level_detection():
     assert_error(
-        "Level detection is not available with new API. Please, specify the level.",
-        lambda: geodata.regions_builder2(names='boston', countries='usa').build()
-    )
-
-def test_error_us48_in_request_not_available():
-    assert_error(
-        "us-48 can't be used in requests with new API.",
-        lambda: geodata.state_regions_builder('us-48').countries('usa').build()
+        "Region is not found: blablabla",
+        lambda: geodata.regions_builder2(names='florida', scope='blablabla').build()
     )
 
 
-def test_error_us48_in_parent_not_available():
-    assert_error(
-        "us-48 can't be used in parents with new API.",
-        lambda: geodata.state_regions_builder('boston').states('us-48').build()
-    )
-
-
-def test_asderror_us48_in_parent_not_available():
-    geodata.regions_builder('city', 'boston').where('boston', within='us-48').build()
-    geodata.city_regions_builder('boston').where('boston', scope='us-48').build()
+def test_level_detection():
+    geodata.regions_builder2(names='boston', countries='usa').build()
 
 
 def test_where_scope_with_existing_country():
@@ -217,3 +209,18 @@ def test_where_scope_with_existing_country_in_df():
         .build()
 
     assert_row(cities.to_data_frame(), index=2, request='washington', country='usa', found_name='Washington')
+
+
+def test_scope_with_level_detection_should_work():
+    florida_uruguay = geodata.regions_builder2(names='florida', scope='uruguay').build().to_data_frame()[DF_ID][0]
+    florida_usa = geodata.regions_builder2(names='florida', scope='usa').build().to_data_frame()[DF_ID][0]
+    assert florida_usa != florida_uruguay, 'florida_usa({}) != florida_uruguay({})'.format(florida_usa, florida_uruguay)
+
+
+def test_fetch_all_countries():
+    geodata.country_regions_builder().build()
+
+
+def test_fetch_all_counties_by_state():
+    geodata.county_regions_builder().states('New York').build()
+

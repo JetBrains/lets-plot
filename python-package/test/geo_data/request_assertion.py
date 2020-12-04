@@ -6,7 +6,7 @@ from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 
 from lets_plot.geo_data.regions import _ensure_is_list
 from lets_plot.geo_data.gis.request import Request, GeocodingRequest, RegionQuery, MapRegion, AmbiguityResolver, \
-    PayloadKind, MapRegionKind, IgnoringStrategyKind
+    PayloadKind, MapRegionKind, IgnoringStrategyKind, LevelKind
 
 T = TypeVar('T')
 
@@ -180,6 +180,10 @@ class GeocodingRequestAssertion:
 
     def has_scope(self, scope_matcher: ScopeMatcher) -> 'GeocodingRequestAssertion':
         scope_matcher.check(self._request.scope)
+        return self
+
+    def has_level(self, level_matcher: ValueMatcher[LevelKind]) -> 'GeocodingRequestAssertion':
+        level_matcher.check(self._request.level)
         return self
 
     def fetches(self, payload: PayloadKind):

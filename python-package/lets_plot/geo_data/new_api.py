@@ -195,8 +195,8 @@ class RegionsBuilder2:
         _validate_parents_size(self._states, 'states')
         _validate_parents_size(self._counties, 'counties')
 
-        if len(self._scope) > 0 and len(self._countries) > 0:
-            raise ValueError("Invalid request: countries and scope can't be used simultaneously")
+        if len(self._scope) > 0 and (len(self._countries) + len(self._states) + len(self._counties)) > 0:
+            raise ValueError("Invalid request: parents and scope can't be used simultaneously")
 
         queries = []
         for i in range(len(self._names)):

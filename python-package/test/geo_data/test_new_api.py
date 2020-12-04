@@ -195,10 +195,28 @@ def test_global_scope():
         .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
 
+def test_request_without_name():
+    assert_that(RegionsBuilder2(level='county').states('New York')) \
+        .has_level(eq(LevelKind.county)) \
+        .has_query(QueryMatcher()
+                   .with_name(None)
+                   .state(eq_map_region_with_name('New York'))
+                   )
+
+
+def test_request_countries():
+    assert_that(RegionsBuilder2(level='country')) \
+        .has_level(eq(LevelKind.country)) \
+        .has_query(QueryMatcher()
+                   .with_name(None)
+                   .state(eq_map_region_with_name('New York'))
+                   )
+
+
 def test_error_when_country_and_scope_set_should_show_error():
     # scope can't work with given country parent.
     check_validation_error(
-        "Invalid request: countries and scope can't be used simultaneously",
+        "Invalid request: parents and scope can't be used simultaneously",
         lambda: RegionsBuilder2(request='foo').countries('bar').scope('baz')
     )
 
@@ -263,7 +281,7 @@ def no_parents(request: ValueMatcher[Optional[str]],
                         country=empty(), state=empty(), county=empty())
 
 
-def assert_that(request: Union[RegionsBuilder2, GeocodingRequest]):
+def assert_that(request: Union[RegionsBuilder2, GeocodingRequest]) -> GeocodingRequestAssertion:
     if isinstance(request, RegionsBuilder2):
         return GeocodingRequestAssertion(request._build_request())
     elif isinstance(request, GeocodingRequest):
