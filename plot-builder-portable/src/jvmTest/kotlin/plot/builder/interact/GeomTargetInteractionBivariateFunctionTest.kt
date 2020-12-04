@@ -33,11 +33,31 @@ class GeomTargetInteractionBivariateFunctionTest {
     }
 
     @Test
+    fun whenXIsNotContinuous_ShouldAddTooltipText() {
+        val mapping = discrete(Aes.X)
+        val targetTooltipSpec = createBuilder()
+            .variable(mapping)
+            .build()
+
+        assertText(targetTooltipSpec, mapping.shortTooltipText())
+    }
+
+    @Test
     fun whenYIsContinuous_ShouldAddTooltipText() {
         val mapping = continuous(Aes.Y)
         val targetTooltipSpec = createBuilder()
                 .variable(mapping)
                 .build()
+
+        assertText(targetTooltipSpec, mapping.shortTooltipText())
+    }
+
+    @Test
+    fun whenYIsNotContinuous_ShouldAddTooltipText() {
+        val mapping = discrete(Aes.Y)
+        val targetTooltipSpec = createBuilder()
+            .variable(mapping)
+            .build()
 
         assertText(targetTooltipSpec, mapping.shortTooltipText())
     }
