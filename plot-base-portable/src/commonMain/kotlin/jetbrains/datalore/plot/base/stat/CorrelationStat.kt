@@ -12,6 +12,14 @@ import jetbrains.datalore.plot.base.stat.CorrelationUtil.correlationMatrix
 import jetbrains.datalore.plot.base.stat.math3.correlationPearson
 import kotlin.math.abs
 
+/**
+ * Computes correlation between numeric variables in data.
+ * Creates a data-frame with the following variables:
+ *   - '..x..' : X coordinates
+ *   - '..y..' : Y coordinates
+ *   - '..corr..' : correlation (in range -1..1)
+ *   - '..corr_abs..' : absolute value of correlation (in range 0..1)
+ */
 class CorrelationStat(
     val correlationMethod: Method,
     val type: Type,
