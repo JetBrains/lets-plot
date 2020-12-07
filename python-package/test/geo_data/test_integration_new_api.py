@@ -218,7 +218,8 @@ def test_scope_with_level_detection_should_work():
 
 
 def test_fetch_all_countries():
-    geodata.country_regions_builder().build()
+    countries = geodata.country_regions_builder().build()
+    assert len(countries.to_data_frame()[DF_REQUEST]) == 217
 
 
 def test_fetch_all_counties_by_state():

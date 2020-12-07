@@ -1,6 +1,6 @@
 import enum
 from abc import abstractmethod
-from typing import List, Dict, Optional, Union
+from typing import List, Optional, Union
 
 from pandas import DataFrame, Series
 
@@ -453,7 +453,7 @@ def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegio
         if isinstance(obj, str):
             return MapRegion.with_name(obj)
 
-        raise ValueError('Invalid region: ' + str(obj))
+        raise ValueError('Unsupported scope type. Expected Regions, str or list, but was `{}`'.format(type(obj)))
 
     if isinstance(location, list):
         return [_make_region(obj) for obj in location]

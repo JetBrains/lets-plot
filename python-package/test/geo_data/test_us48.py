@@ -10,7 +10,8 @@ def test_us48_in_request_with_level():
 
 
 def test_us48_in_request_without_level():
-    geodata.regions_builder2(names='us-48').build()
+    us48 = geodata.regions_builder2(names='us-48').build().to_data_frame()
+    assert 49 == len(us48[DF_ID])
 
 
 def test_within_us_48_with_level():

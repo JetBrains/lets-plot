@@ -241,7 +241,7 @@ class GeocodingRequest(Request):
             if not query.request and not level and query.scope:
                 raise ValueError(MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT)
 
-            if not query.request and level is not LevelKind.country and not query.scope:
+            if not query.request and not level and not query.scope:
                 raise ValueError(MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
 
     def __init__(self,

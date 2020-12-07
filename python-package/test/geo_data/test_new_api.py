@@ -206,11 +206,7 @@ def test_request_without_name():
 
 def test_request_countries():
     assert_that(RegionsBuilder2(level='country')) \
-        .has_level(eq(LevelKind.country)) \
-        .has_query(QueryMatcher()
-                   .with_name(None)
-                   .state(eq_map_region_with_name('New York'))
-                   )
+        .has_level(eq(LevelKind.country))
 
 
 def test_error_when_country_and_scope_set_should_show_error():

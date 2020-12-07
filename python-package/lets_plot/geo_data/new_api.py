@@ -10,8 +10,7 @@ from .gis.response import Response, SuccessResponse
 from .regions import _make_parent_region
 from .regions import _to_level_kind, request_types, parent_types, scope_types, Regions, _raise_exception, \
     _ensure_is_list
-from .regions_builder import NAMESAKE_MAX_COUNT, ShapelyPointType, ShapelyPolygonType, _to_near_coord, \
-    _make_ambiguity_resolver
+from .regions_builder import NAMESAKE_MAX_COUNT, ShapelyPointType, ShapelyPolygonType, _make_ambiguity_resolver
 
 __all__ = [
     'regions2', 'regions_builder2', 'city_regions_builder', 'county_regions_builder', 'state_regions_builder',
@@ -67,7 +66,10 @@ class RegionsBuilder2:
         self._overridings: Dict[QuerySpec, WhereSpec] = {}  # query to scope
 
         requests: Optional[List[str]] = _ensure_is_list(request)
-        self._names: List[Optional[str]] = list(map(lambda name: name if requests is not None else None, requests))
+        if requests is not None:
+            self._names: List[Optional[str]] = list(map(lambda name: name if requests is not None else None, requests))
+        else:
+            self._names = []
 
     def scope(self, scope: scope_types) -> 'RegionsBuilder2':
         self._scope = _prepare_new_scope(scope)
@@ -186,40 +188,59 @@ class RegionsBuilder2:
         return self
 
     def _build_request(self) -> GeocodingRequest:
-        def _validate_parents_size(parents: List, parents_level: str):
-            if len(parents) > 0 and len(parents) != len(self._names):
-                raise ValueError('Invalid request: {} count({}) != names count({})'.format(parents_level, len(parents),
-                                                                                           len(self._names)))
+        if len(self._names) == 0:
+            def to_scope(regions):
+                if len(regions) == 0:
+                    return None
+                elif len(regions) == 1:
+                    return regions[0]
+                else:
+                    raise ValueError('Too many parent objects. Expcted single object instead of {}'.format(len(regions)))
 
-        _validate_parents_size(self._countries, 'countries')
-        _validate_parents_size(self._states, 'states')
-        _validate_parents_size(self._counties, 'counties')
+            # all countries/states etc. We need one dummy query
+            queries = [
+                RegionQuery(
+                    request=None,
+                    country=to_scope(self._countries),
+                    state=to_scope(self._states),
+                    county=to_scope(self._counties)
+                )
+            ]
+        else:
+            def _validate_parents_size(parents: List, parents_level: str):
+                if len(parents) > 0 and len(parents) != len(self._names):
+                    raise ValueError('Invalid request: {} count({}) != names count({})'
+                                     .format(parents_level, len(parents), len(self._names)))
 
-        if len(self._scope) > 0 and (len(self._countries) + len(self._states) + len(self._counties)) > 0:
-            raise ValueError("Invalid request: parents and scope can't be used simultaneously")
+            _validate_parents_size(self._countries, 'countries')
+            _validate_parents_size(self._states, 'states')
+            _validate_parents_size(self._counties, 'counties')
 
-        queries = []
-        for i in range(len(self._names)):
-            name = self._names[i]
-            country = _get_or_none(self._countries, i)
-            state = _get_or_none(self._states, i)
-            county = _get_or_none(self._counties, i)
+            if len(self._scope) > 0 and (len(self._countries) + len(self._states) + len(self._counties)) > 0:
+                raise ValueError("Invalid request: parents and scope can't be used simultaneously")
 
-            scope, ambiguity_resolver = self._overridings.get(
-                QuerySpec(name, county, state, country),
-                WhereSpec(None, self._default_ambiguity_resolver)
-            )
+            queries = []
+            for i in range(len(self._names)):
+                name = self._names[i]
+                country = _get_or_none(self._countries, i)
+                state = _get_or_none(self._states, i)
+                county = _get_or_none(self._counties, i)
 
-            query = RegionQuery(
-                request=name,
-                country=country,
-                state=state,
-                county=county,
-                scope=scope,
-                ambiguity_resolver=ambiguity_resolver
-            )
+                scope, ambiguity_resolver = self._overridings.get(
+                    QuerySpec(name, county, state, country),
+                    WhereSpec(None, self._default_ambiguity_resolver)
+                )
 
-            queries.append(query)
+                query = RegionQuery(
+                    request=name,
+                    country=country,
+                    state=state,
+                    county=county,
+                    scope=scope,
+                    ambiguity_resolver=ambiguity_resolver
+                )
+
+                queries.append(query)
 
         request = RequestBuilder() \
             .set_request_kind(RequestKind.geocoding) \

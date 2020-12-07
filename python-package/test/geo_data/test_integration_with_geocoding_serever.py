@@ -8,7 +8,7 @@ from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_FOUND_NAME
-from .geo_data import run_intergration_tests, assert_row, assert_error, assert_found_names
+from .geo_data import run_intergration_tests, assert_row, assert_error
 
 ShapelyPoint = shapely.geometry.Point
 
@@ -16,52 +16,7 @@ BOSTON_ID = '4631409'
 NYC_ID = '351811'
 
 
-
-
 TURN_OFF_INTERACTION_TEST = not run_intergration_tests()
-
-DO_NOT_DROP = False
-NO_ERROR = None
-NOT_FOUND = None
-
-
-@pytest.mark.parametrize('address,drop_not_found,found,error', [
-    pytest.param(['NYC, NY', 'Dallas, TX'], DO_NOT_DROP, ['New York', 'Dallas'], NO_ERROR),
-    pytest.param(['NYC, NY', 'foobar, barbaz'], DO_NOT_DROP, NOT_FOUND, 'No objects were found for barbaz.\n'),
-])
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_missing_address(address, drop_not_found, found, error):
-    builder = geodata.regions_builder(level='city', request=address, within='usa')
-    if drop_not_found:
-        builder.drop_not_found()
-
-    if error is not None:
-        try:
-            builder.build()
-        except ValueError as e:
-            assert str(e).startswith(error)
-    else:
-        r = builder.build()
-        assert_found_names(r.to_data_frame(), found)
-
-
-NO_LEVEL = None
-NO_REGION = None
-
-
-@pytest.mark.parametrize('address,level,region,expected_name', [
-    pytest.param('moscow, Latah County, Idaho, USA', NO_LEVEL, NO_REGION, 'Moscow'),
-    # TODO: CHECK -  pytest.param('richmond, virginia, usa', NO_LEVEL, NO_REGION, 'Richmond City'),
-    # TODO: CHECK - pytest.param('richmond, virginia, usa', 'county', NO_REGION, 'Richmond County'),
-    pytest.param('NYC, usa', NO_LEVEL, NO_REGION, 'New York'),
-    pytest.param('NYC, NY', NO_LEVEL, 'usa', 'New York'),
-    pytest.param('dallas, TX', NO_LEVEL, NO_REGION, 'Dallas'),
-    pytest.param('moscow, russia', NO_LEVEL, NO_REGION, 'Москва'),
-])
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_address_request(address, level, region, expected_name):
-    r = geodata.regions(request=address, level=level, within=region)
-    assert_row(r.to_data_frame(), found_name=expected_name)
 
 
 MOSCOW_LON = 37.620393
