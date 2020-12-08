@@ -9,8 +9,7 @@ from .scale import scale_x_discrete, scale_y_discrete
 from .scale_identity import scale_size_identity
 
 
-def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=None, sampling=None,
-              tooltips=None,
+def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=None, sampling=None, tooltips=None,
               type='full',
               diag=None,
               flip=True,
@@ -102,9 +101,9 @@ def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=Non
                   show_legend=show_legend,
                   sampling=sampling,
                   tooltips=tooltips,
-                  na_value='',
                   type=type,
                   diag=diag,
+                  na_value='',
                   **other_args) +
             scale_size_identity() +
             coord +
