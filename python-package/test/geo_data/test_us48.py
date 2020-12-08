@@ -2,7 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_ID
-from .geo_data import assert_error
+from .geo_data import assert_error, assert_row
 
 
 def test_us48_in_request_with_level():
@@ -12,6 +12,25 @@ def test_us48_in_request_with_level():
 def test_us48_in_request_without_level():
     us48 = geodata.regions_builder2(names='us-48').build().to_data_frame()
     assert 49 == len(us48[DF_ID])
+
+
+def test_us48_with_extra_names():
+    us48 = geodata.regions_builder2(names=['texas', 'us-48', 'nevada']).build().to_data_frame()
+    assert 51 == len(us48[DF_ID])
+    assert_row(us48, index=0, request='texas', found_name='Texas')
+    assert_row(us48, index=50, request='nevada', found_name='Nevada')
+
+
+def test_us48_with_extra_and_missing_names():
+    us48 = geodata.regions_builder2(names=['texas', 'blahblahblah', 'us-48', 'nevada'])\
+        .drop_not_found()\
+        .build()\
+        .to_data_frame()
+
+    # still 51 - drop missing completley
+    assert 51 == len(us48[DF_ID])
+    assert_row(us48, index=0, request='texas', found_name='Texas')
+    assert_row(us48, index=50, request='nevada', found_name='Nevada')
 
 
 def test_within_us_48_with_level():
