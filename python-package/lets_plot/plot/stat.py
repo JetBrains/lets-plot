@@ -11,8 +11,9 @@ from .scale_identity import scale_size_identity
 
 def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=None, sampling=None,
               tooltips=None,
-              type=None,
+              type='full',
               diag=None,
+              flip=True,
               **other_args):
     """
     Computes correlations between numeric variables in the 'data'
@@ -51,6 +52,9 @@ def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=Non
         Default - "full".
     diag : Boolean
         Determines whether to fill the main diagonal with values.
+        Default - True if 'full' matrix, else - False.
+    flip : Boolean
+        If True the y axis is flipped.
         Default - "True".
 
     Returns
@@ -79,6 +83,15 @@ def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=Non
         if geom == 'point' and not fixed_size:
             coord = coord_fixed()
 
+    if flip:
+        if type == 'upper':
+            type = 'lower'
+        if type == 'lower':
+            type = 'upper'
+
+    if type in ['lower', 'upper']:
+        diag = False if diag is None else diag
+
     return (_geom(geom,
                   mapping=mapping,
                   data=data,
@@ -94,4 +107,4 @@ def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=Non
             scale_size_identity() +
             coord +
             scale_x_discrete(expand=scale_xy_expand) +
-            scale_y_discrete(expand=scale_xy_expand))
+            scale_y_discrete(expand=scale_xy_expand, reverse=flip))
