@@ -9,18 +9,21 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class TooltipLine(
     val label: String?,
     val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
-    private val myLineFormatter = StringFormat(pattern).also {
+    constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
+
+    private val myLineFormatter = StringFormat(pattern, STRING_FORMAT).also {
         require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
     }
 
-    fun setDataContext(dataContext: DataContext) {
-        fields.forEach { it.setDataContext(dataContext) }
+    fun initDataContext(dataContext: DataContext) {
+        fields.forEach { it.initDataContext(dataContext) }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
@@ -32,7 +35,6 @@ class TooltipLine(
             DataPoint(
                 label = chooseLabel(dataValue.label),
                 value = myLineFormatter.format(dataValue.value),
-                isContinuous = dataValue.isContinuous,
                 aes = dataValue.aes,
                 isAxis = dataValue.isAxis,
                 isOutlier = dataValue.isOutlier
@@ -41,7 +43,6 @@ class TooltipLine(
             DataPoint(
                 label = chooseLabel(dataValues.joinToString(", ") { it.label ?: "" }),
                 value = myLineFormatter.format(dataValues.map { it.value }),
-                isContinuous = false,
                 aes = null,
                 isAxis = false,
                 isOutlier = false

@@ -81,16 +81,16 @@ abstract class PlotConfig(
 
     fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
         // merge options by 'aes'
-        val mergedOpts = HashMap<Aes<*>, MutableMap<Any, Any>>()
+        val mergedOpts = HashMap<Aes<*>, MutableMap<String, Any>>()
         for (opts in scaleOptionsList) {
-            val optsMap = opts as Map<*, *>
+            @Suppress("UNCHECKED_CAST")
+            val optsMap = opts as Map<String, Any>
             val aes = ScaleConfig.aesOrFail(optsMap)
             if (!mergedOpts.containsKey(aes)) {
                 mergedOpts[aes] = HashMap()
             }
 
-            @Suppress("UNCHECKED_CAST")
-            mergedOpts[aes]!!.putAll(optsMap as Map<Any, Any>)
+            mergedOpts[aes]!!.putAll(optsMap)
         }
 
         val result = ArrayList<ScaleConfig<Any>>()
@@ -111,8 +111,9 @@ abstract class PlotConfig(
                 layerOptions is Map<*, *>,
                 "Layer options: expected Map but was " + layerOptions!!::class.simpleName
             )
+            @Suppress("UNCHECKED_CAST")
             val layerConfig = createLayerConfig(
-                layerOptions as Map<*, *>,
+                layerOptions as Map<String, Any>,
                 sharedData,
                 getMap(MAPPING),
                 DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
@@ -123,7 +124,7 @@ abstract class PlotConfig(
     }
 
     protected abstract fun createLayerConfig(
-        layerOptions: Map<*, *>,
+        layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDiscreteAes: Set<*>

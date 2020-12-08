@@ -27,7 +27,8 @@ class MappingValue(
         }
     }
 
-    override fun setDataContext(dataContext: DataContext) {
+    override fun initDataContext(dataContext: DataContext) {
+        require(!::myDataAccess.isInitialized) { "Data context can be initialized only once" }
         myDataAccess = dataContext.mappedDataAccess
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
@@ -64,12 +65,20 @@ class MappingValue(
             DataPoint(
                 label = if (isOutlier) null else myDataLabel,
                 value = value,
-                isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
                 isOutlier = isOutlier
             )
         }
+    }
+
+    override fun copy(): MappingValue {
+        return MappingValue(
+            aes = aes,
+            isOutlier = isOutlier,
+            isAxis = isAxis,
+            format = format
+        )
     }
 
     fun toOutlier(): MappingValue {

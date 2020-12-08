@@ -51,8 +51,8 @@ class HLineGeom : GeomBase() {
                     lines.add(line)
 
                     val h = AesScaling.strokeWidth(p)
-                    val origin = DoubleVector(0.0, intercept - h/2 - 2.0)
-                    val dimensions = DoubleVector(end.x, h + 4.0)
+                    val origin = DoubleVector(start.x, intercept - h/2 - 2.0)
+                    val dimensions = DoubleVector(viewPort.dimension.x, h + 4.0)
                     val rect = DoubleRectangle(origin, dimensions)
                     ctx.targetCollector.addRectangle(
                         p.index(),

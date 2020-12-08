@@ -175,6 +175,65 @@ object Option {
         }
     }
 
+    object Stat {
+        object Boxplot {
+            const val COEF = "coef"
+            const val VARWIDTH = "varwidth"
+        }
+
+        object Bin {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val CENTER = "center"
+            const val BOUNDARY = "boundary"
+        }
+
+        object Bin2d {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val DROP = "drop"
+        }
+
+        object Contour {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+        }
+
+        object Corr {
+            const val METHOD = "method"
+            const val TYPE = "type"
+            const val FILL_DIAGONAL = "diag"
+        }
+
+        object Smooth {
+            const val POINT_COUNT = "n"
+            const val METHOD = "method"
+            const val CONFIDENCE_LEVEL = "level"
+            const val DISPLAY_CONFIDENCE_INTERVAL = "se"
+            const val SPAN = "span"
+            const val POLYNOMIAL_DEGREE = "span"
+            const val LOESS_CRITICAL_SIZE = "max_n"
+            const val SAMPLING_SEED = "seed"
+        }
+
+        object Density {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"     // number or string (method name)
+            const val ADJUST = "adjust"
+        }
+
+        object Density2d {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"     // list of two numbers, one number or string (method name)
+            const val ADJUST = "adjust"
+            const val IS_CONTOUR = "contour"
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+        }
+    }
+
     object Scale {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"
@@ -194,27 +253,34 @@ object Option {
 
         // discrete scale output values
         const val OUTPUT_VALUES = "values"
+
         // shape scale
         const val SHAPE_SOLID = "solid"
+
         // gradient scale
         const val LOW = "low"
         const val MID = "mid"
         const val HIGH = "high"
         const val MIDPOINT = "midpoint"
+
         // hue scale
         const val HUE_RANGE = "h"
         const val CHROMA = "c"
         const val LUMINANCE = "l"
         const val START_HUE = "h_start"
         const val DIRECTION = "direction"
+
         // grey scale
         const val START = "start"
         const val END = "end"
+
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
+
         // range
         const val RANGE = "range"
+
         // max_size for scale_size_area
         const val MAX_SIZE = "max_size"
 

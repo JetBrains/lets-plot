@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.config.Option.Facet.NAME
 import jetbrains.datalore.plot.config.Option.Facet.X
 import jetbrains.datalore.plot.config.Option.Facet.Y
 
-internal class FacetConfig(options: Map<*, *>) : OptionsAccessor(options, mapOf(NAME to "grid")) {
+internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options, mapOf(NAME to "grid")) {
 
     // todo: check 'name'
     val isGrid: Boolean

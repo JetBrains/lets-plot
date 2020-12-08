@@ -7,7 +7,10 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 
-class CoordConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
+class CoordConfig private constructor(
+    name: String,
+    options: Map<String, Any>
+) : OptionsAccessor(options) {
 
     val coord: CoordProvider = CoordProto.createCoordProvider(name, this)
 

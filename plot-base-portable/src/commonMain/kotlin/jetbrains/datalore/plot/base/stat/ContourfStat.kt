@@ -10,13 +10,9 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 
-internal class ContourfStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
+class ContourfStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
 
-    private val myBinOptions: BinStatUtil.BinOptions
-
-    init {
-        myBinOptions = BinStatUtil.BinOptions(binCount, binWidth)
-    }
+    private val myBinOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.Z)

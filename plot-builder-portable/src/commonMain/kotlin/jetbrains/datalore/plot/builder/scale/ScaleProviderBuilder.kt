@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -14,16 +13,11 @@ import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
-/**
- * see ggplot2: discrete_scale(...) / continuous_scale(...)
- * https://ggplot2.tidyverse.org/reference/discrete_scale.html
- * https://ggplot2.tidyverse.org/current/continuous_scale.html
- */
-class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
+class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
-    private var myMapperProvider: MapperProvider<T>? = null
+    private var _mapperProvider: MapperProvider<T>? = null
     private var myName: String? = null
-    private var myBreaks: List<*>? = null
+    private var myBreaks: List<Any>? = null
     private var myLabels: List<String>? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
@@ -33,13 +27,19 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
 
-
-    init {
-        myMapperProvider = DefaultMapperProvider[myAes]
-    }
+    var mapperProvider: MapperProvider<T>
+        get() {
+            if (_mapperProvider == null) {
+                _mapperProvider = DefaultMapperProvider[aes]
+            }
+            return _mapperProvider ?: throw AssertionError("Set to null by another thread")
+        }
+        set(p: MapperProvider<T>) {
+            _mapperProvider = p
+        }
 
     fun mapperProvider(mapperProvider: MapperProvider<T>): ScaleProviderBuilder<T> {
-        myMapperProvider = mapperProvider
+        this.mapperProvider = mapperProvider
         return this
     }
 
@@ -48,7 +48,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun breaks(breaks: List<*>): ScaleProviderBuilder<T> {
+    fun breaks(breaks: List<Any>): ScaleProviderBuilder<T> {
         myBreaks = breaks
         return this
     }
@@ -121,7 +121,6 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
     }
 
     fun build(): ScaleProvider<T> {
-        Preconditions.checkState(myMapperProvider != null, "Mapper Provider is not specified")
         return MyScaleProvider(this)
     }
 
@@ -129,16 +128,17 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         ScaleProvider<T> {
 
         private val myName: String? = b.myName
-        private val myBreaks: List<*>? = if (b.myBreaks == null) null else ArrayList(b.myBreaks!!)
-        private val myLabels: List<String>? = if (b.myLabels == null) null else ArrayList(b.myLabels!!)
+
+        private val myBreaks: List<Any>? = b.myBreaks?.let { ArrayList(b.myBreaks!!) }
+        private val myLabels: List<String>? = b.myLabels?.let { ArrayList(b.myLabels!!) }
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
-        private val myLimits: List<*>? = if (b.myLimits == null) null else ArrayList(b.myLimits!!)
+        private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         private val myContinuousTransform: Transform? = b.myTransform
 
-        private val myAes: Aes<T> = b.myAes
-        private val mapperProvider: MapperProvider<T> = b.myMapperProvider!!
+        private val myAes: Aes<T> = b.aes
+        private val mapperProvider: MapperProvider<T> = b.mapperProvider
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
 
@@ -214,17 +214,12 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
 
             scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
 
-            if (mapper is WithGuideBreaks) {
-                val guideBreaks = (mapper as WithGuideBreaks).guideBreaks
-                val breaks = ArrayList<Any>()
-                val labels = ArrayList<String>()
-                for (guideBreak in guideBreaks) {
-                    breaks.add(guideBreak.domainValue!!)
-                    labels.add(guideBreak.label)
-                }
+            if (mapper is WithGuideBreaks<*>) {
+                @Suppress("UNCHECKED_CAST")
+                mapper as WithGuideBreaks<Double>
                 scale = scale.with()
-                    .breaks(breaks)
-                    .labels(labels)
+                    .breaks(mapper.breaks)
+                    .formatter(mapper.formatter)
                     .build()
             }
 

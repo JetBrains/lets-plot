@@ -29,7 +29,7 @@ import kotlin.math.abs
  * ncount - count, scaled to maximum of 1
  * ndensity - density, scaled to maximum of 1
  */
-internal class BinStat(
+class BinStat(
     binCount: Int,
     binWidth: Double?,
     private val xPosKind: XPosKind,
@@ -140,6 +140,8 @@ internal class BinStat(
     }
 
     companion object {
+        const val DEF_BIN_COUNT = 30
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.COUNT

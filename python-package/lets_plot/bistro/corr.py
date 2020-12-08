@@ -14,23 +14,25 @@ try:
 except ImportError:
     pandas = None
 
+from typing import Dict
+
 from lets_plot._type_utils import is_number
-from lets_plot.plot.plot import ggsize
+from lets_plot.plot.coord import coord_fixed, coord_cartesian
+from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.core import aes
 from lets_plot.plot.geom import geom_point, geom_text, geom_tile
-from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer, \
-    scale_fill_gradient2, scale_fill_brewer, scale_x_discrete
-from lets_plot.plot.scale_identity import scale_size_identity, scale_fill_identity
-from lets_plot.plot.coord import coord_fixed, coord_cartesian
+from lets_plot.plot.plot import ggplot
+from lets_plot.plot.plot import ggsize
+from lets_plot.plot.scale import scale_color_gradient2, scale_color_brewer, \
+    scale_fill_gradient2, scale_fill_brewer, scale_x_discrete, scale_y_discrete
+from lets_plot.plot.scale_identity import scale_size_identity
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
-from lets_plot.plot.plot import ggplot
 
-__all__ = ['corr_plot_builder', 'corr_plot_scatter', 'corr_plot_tiles',
-           'corr_plot_tileslab', 'corr_plot_scatterlab']
+__all__ = ['corr_plot']
 
 
-class corr_plot_builder:
+class corr_plot:
     """
     This class is intended to build correlation matrix plots.
     """
@@ -64,116 +66,107 @@ class corr_plot_builder:
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
-        self.palette_gradient(low=corr_plot_builder._DEF_LOW_COLOR,
-                              mid=corr_plot_builder._DEF_MID_COLOR,
-                              high=corr_plot_builder._DEF_HIGH_COLOR)
+        self._labels_map_size = None
+        self.palette_gradient(low=corr_plot._DEF_LOW_COLOR,
+                              mid=corr_plot._DEF_MID_COLOR,
+                              high=corr_plot._DEF_HIGH_COLOR)
 
-    def points(self, type=None, fill_diagonal=True):
+    def points(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
         Parameters
         ----------
         type : string
-            Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
-        fill_diagonal : Boolean
-            If True the main diagonal is filled with values. Default - True.
+            Type of matrix. Possible values - "upper", "lower", "full".
+            Default - contextual.
+        diag : Boolean
+            Determines whether to fill the main diagonal with values or not.
+            Default - contextual.
 
         Returns
         -------
             self
         """
-        self._points_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
-
+        self._points_params = {'type': type, 'diag': diag}
         return self
 
-    def labels(self, type=None, fill_diagonal=True, map_size=False, color=None):
+    def labels(self, type=None, diag=None, map_size=None, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
         Parameters
         ----------
         type : string
-            Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
-        fill_diagonal : Boolean
-            If True the main diagonal is filled with values. Default - True.
+            Type of matrix. Possible values - "upper", "lower", "full".
+            Default - contextual.
+        diag : Boolean
+            Determines whether to fill the main diagonal with values or not.
+            Default - contextual.
         map_size : Boolean
-            If True, then absolute value of correlation is mapped to text size. Default - False.
+            If True, then absolute value of correlation is mapped to text size. If False - the text size is constant.
+            Default - contextual.
         color: string
             Set text color.
+            Default - contextual.
         Returns
         -------
             self
         """
 
-        self._labels_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
-
-        if not map_size:
-            self._labels_params['size'] = 1
-
-        if color is not None:
-            self._labels_params['color'] = color
-
+        self._labels_params = {'type': type, 'diag': diag, 'color': color}
+        self._labels_map_size = map_size
         return self
 
-    def tiles(self, type=None, fill_diagonal=True):
+    def tiles(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
         Parameters
         ----------
         type : string
-            Type of matrix. Possible values - "upper", "lower", "full". Default - "full".
-        fill_diagonal : Boolean
-            If True the main diagonal is filled with values. Default - True.
+            Type of matrix. Possible values - "upper", "lower", "full".
+            Default - contextual.
+        diag : Boolean
+            Determines whether to fill the main diagonal with values or not.
+            Default - contextual.
 
         Returns
         -------
             self
         """
 
-        self._tiles_params = {'type': self._get_type(type), 'fill_diagonal': fill_diagonal}
-
+        self._tiles_params = {'type': type, 'diag': diag}
         return self
 
-    def build(self):
+    def build(self) -> PlotSpec:
         """
-        This method create PlotSpec and returns it.
+        This method creates PlotSpec object.
 
         Returns
         -------
-            self
+            PlotSpec object
         """
 
-        plot = ggplot(self._data)
+        tiles_params = self._tiles_params.copy() if self._tiles_params is not None else None
+        points_params = self._points_params.copy() if self._points_params is not None else None
+        labels_params = self._labels_params.copy() if self._labels_params is not None else None
 
-        if self._tiles_params is not None:
-            plot += geom_tile(stat='corr', show_legend=self._show_legend,
-                              size=0.0, width=0.99, height=0.99,
-                              mapping=aes(fill='..corr..'),
-                              tooltips=self._tooltip_spec(), **self._tiles_params)
-            plot += coord_cartesian()
-        else:
-            plot += coord_fixed()
-
-        if self._points_params is not None:
-            plot += geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
-                               tooltips=self._tooltip_spec(),
-                               **self._points_params)
-
-        if self._labels_params is not None:
-            m = None
-
-            if 'size' not in self._labels_params:
-                m = aes(size='..corr_abs..')
-
-            plot += geom_text(stat='corr', show_legend=self._show_legend,
-                              mapping=m,
-                              tooltips=self._tooltip_spec(),
-                              na_value='', label_format=self._format,
-                              size_unit='x', **self._labels_params)
-
-        return self._add_common_params(plot)
+        plot = _BuildUtil.create_plot(data=self._data,
+                                      tiles_params=tiles_params,
+                                      points_params=points_params,
+                                      labels_params=labels_params,
+                                      reverse_y=self._reverse_y,
+                                      show_legend=self._show_legend,
+                                      labels_map_size=self._labels_map_size,
+                                      corr_value_format=self._format)
+        return _BuildUtil.add_common_params(plot=plot,
+                                            has_tiles=tiles_params is not None,
+                                            color_scale=self._color_scale,
+                                            fill_scale=self._fill_scale,
+                                            reverse_y=self._reverse_y,
+                                            show_legend=self._show_legend,
+                                            numeric_columns_count=self._get_numeric_columns_count())
 
     def palette_gradient(self, low, mid, high):
         """
@@ -192,15 +185,17 @@ class corr_plot_builder:
         -------
             self
         """
-        self._color_scale = scale_color_gradient2(name=corr_plot_builder._LEGEND_NAME,
+        self._color_scale = scale_color_gradient2(name=corr_plot._LEGEND_NAME,
                                                   low=low, mid=mid, high=high,
-                                                  breaks=corr_plot_builder._BREAKS,
-                                                  limits=corr_plot_builder._LIMITS)
+                                                  breaks=corr_plot._BREAKS,
+                                                  limits=corr_plot._LIMITS,
+                                                  na_value='rgba(0,0,0,0)')
 
-        self._fill_scale = scale_fill_gradient2(name=corr_plot_builder._LEGEND_NAME,
+        self._fill_scale = scale_fill_gradient2(name=corr_plot._LEGEND_NAME,
                                                 low=low, mid=mid, high=high,
-                                                breaks=corr_plot_builder._BREAKS,
-                                                limits=corr_plot_builder._LIMITS)
+                                                breaks=corr_plot._BREAKS,
+                                                limits=corr_plot._LIMITS,
+                                                na_value='rgba(0,0,0,0)')
 
         return self
 
@@ -315,12 +310,103 @@ class corr_plot_builder:
 
         return res
 
-    def _add_common_params(self, plot):
+    def _set_brewer_palette(self, palette):
+        self._color_scale = scale_color_brewer(name=corr_plot._LEGEND_NAME,
+                                               palette=palette,
+                                               breaks=corr_plot._BREAKS,
+                                               labels=corr_plot._LABELS,
+                                               limits=corr_plot._LIMITS,
+                                               na_value='rgba(0,0,0,0)')
+
+        self._fill_scale = scale_fill_brewer(name=corr_plot._LEGEND_NAME,
+                                             palette=palette,
+                                             breaks=corr_plot._BREAKS,
+                                             labels=corr_plot._LABELS,
+                                             limits=corr_plot._LIMITS,
+                                             na_value='rgba(0,0,0,0)')
+
+        return self
+
+
+class _BuildUtil:
+    @classmethod
+    def create_plot(cls, *,
+                    data,
+                    tiles_params: Dict,
+                    points_params: Dict,
+                    labels_params: Dict,
+                    reverse_y: bool,
+                    show_legend: bool,
+                    labels_map_size: bool,
+                    corr_value_format: str,
+                    ) -> PlotSpec:
+
+        # Adjust options
+        labels_map_size = _OpUtil.adjust_type_color_size(tiles_params, points_params, labels_params, labels_map_size)
+        _OpUtil.adjust_diag(tiles_params, points_params, labels_params)
+        _OpUtil.flip_type(tiles_params, points_params, labels_params, reverse_y)
+
+        tooltips = (layer_tooltips()
+                    .format(field='@..corr..', format=corr_value_format)
+                    .line('@..corr..'))
+
+        plot = ggplot(data)
+
+        if tiles_params is not None:
+            plot += geom_tile(stat='corr',
+                              show_legend=show_legend,
+                              size=0.0, width=1.002, height=1.002,
+                              tooltips=tooltips,
+                              sampling='none',
+                              **tiles_params)
+            plot += coord_cartesian()
+        else:
+            plot += coord_fixed()
+
+        if points_params is not None:
+            plot += geom_point(stat='corr',
+                               show_legend=show_legend,
+                               size_unit='x',
+                               mapping=aes(size='..corr_abs..'),
+                               tooltips=tooltips,
+                               sampling='none',
+                               **points_params)
+
+        if labels_params is not None:
+            m = None
+            if labels_map_size:
+                m = aes(size='..corr_abs..')
+            else:
+                labels_params['size'] = 1
+
+            plot += geom_text(stat='corr',
+                              show_legend=show_legend,
+                              mapping=m,
+                              na_value='',
+                              label_format=corr_value_format,
+                              size_unit='x',
+                              sampling='none',
+                              **labels_params)
+
+        return plot
+
+    @classmethod
+    def add_common_params(cls, *,
+                          plot: PlotSpec,
+                          has_tiles: bool,
+                          color_scale,
+                          fill_scale,
+                          reverse_y,
+                          show_legend,
+                          numeric_columns_count) -> PlotSpec:
         _COLUMN_WIDTH = 60
         _MIN_PLOT_WIDTH = 400
         _MAX_PLOT_WIDTH = 900
         _PLOT_PROPORTION = 3.0 / 4.0
-        _PLOT_EXPAND_ADDITIVE = 0.5
+
+        scale_xy_expand = None
+        if has_tiles:
+            scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normally: 0.6)
 
         plot += theme(axis_title=element_blank(),
                       legend_title=element_blank(),
@@ -328,158 +414,133 @@ class corr_plot_builder:
                       axis_line_y=element_blank())
 
         plot += scale_size_identity(name="", na_value=0)
-        plot += scale_fill_identity(name="", na_value='rgba(0,0,0,0)')
 
-        plot += self._color_scale
-        plot += self._fill_scale
+        plot += color_scale
+        plot += fill_scale
 
-        plot += scale_x_discrete(expand=[0.0, _PLOT_EXPAND_ADDITIVE])
+        plot += scale_x_discrete(expand=scale_xy_expand)
+        plot += scale_y_discrete(expand=scale_xy_expand, reverse=reverse_y)
 
-        if self._reverse_y:
-            plot += scale_y_discrete_reversed(expand=[0.0, _PLOT_EXPAND_ADDITIVE])
-
-        columns_count = self._get_numeric_columns_count()
+        columns_count = numeric_columns_count
         width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
         height = width
 
-        if self._show_legend:
+        if show_legend:
             height *= _PLOT_PROPORTION
 
         plot += ggsize(width, height)
 
         return plot
 
-    def _tooltip_spec(self):
-        return layer_tooltips(). \
-            format(field='@..corr..', format=self._format). \
-            line('@..corr..')
 
-    def _get_type(self, type):
-        def _reverse_type(type):
-            if type == 'upper':
-                return 'lower'
-            elif type == 'lower':
-                return 'upper'
+class _OpUtil:
+    @classmethod
+    def flip(cls, type):
+        if type == 'upper':
+            return 'lower'
+        elif type == 'lower':
+            return 'upper'
+        return type
 
-            return type
+    @classmethod
+    def overlap(cls, type0, type1) -> bool:
+        if type0 is None or type1 is None:
+            return False
+        if type0 == 'full' or type1 == 'full':
+            return True
 
-        res = type if type else "full"
+        return type0 == type1
 
-        if self._reverse_y:
-            res = _reverse_type(res)
+    @classmethod
+    def adjust_type_color_size(cls, tiles_params: dict, points_params: dict, labels_params: dict,
+                               labels_map_size: bool) -> bool:
+        """
+        Returns
+        -------
+            bool - Updated 'labels_map_size' value.
 
-        return res
+        """
+        has_tiles = tiles_params is not None
+        has_points = points_params is not None
+        has_labels = labels_params is not None
 
-    def _set_brewer_palette(self, palette):
-        self._color_scale = scale_color_brewer(name=corr_plot_builder._LEGEND_NAME,
-                                               palette=palette,
-                                               breaks=corr_plot_builder._BREAKS,
-                                               labels=corr_plot_builder._LABELS,
-                                               limits=corr_plot_builder._LIMITS)
+        tiles_type = tiles_params.get('type') if has_tiles else None
+        points_type = points_params.get('type') if has_points else None
+        labels_type = labels_params.get('type') if has_labels else None
 
-        self._fill_scale = scale_fill_brewer(name=corr_plot_builder._LEGEND_NAME,
-                                             palette=palette,
-                                             breaks=corr_plot_builder._BREAKS,
-                                             labels=corr_plot_builder._LABELS,
-                                             limits=corr_plot_builder._LIMITS)
+        if has_tiles and has_points:
+            # avoid showing tiles and points in the same cells
+            if (tiles_type is None and points_type is None):
+                tiles_type = "lower"
+                points_type = "upper"
+            elif tiles_type is None:
+                if points_type == 'lower':
+                    tiles_type = "upper"
+                elif points_type in ['upper', 'full']:
+                    tiles_type = "lower"
+            elif points_type is None:
+                points_type = cls.flip(tiles_type)
 
-        return self
+        if has_labels and labels_params.get('color') is None:
+            # avoid labels without 'color' showing on top of tiles or points.
+            if has_points:
+                if points_type is None and labels_type is None:
+                    labels_type = "lower"
+                    points_type = "upper"
+                elif points_type is None:
+                    points_type = cls.flip(labels_type)
+                else:
+                    labels_type = cls.flip(points_type)
+            if has_tiles:
+                if tiles_type is None and labels_type is None:
+                    tiles_type = "lower"
+                    labels_type = "upper"
+                elif tiles_type is None:
+                    tiles_type = cls.flip(labels_type)
+                else:
+                    labels_type = cls.flip(tiles_type)
 
+            # Update labels parameters.
+            labels_params['type'] = labels_type
+            if cls.overlap(labels_type, tiles_type) or cls.overlap(labels_type, points_type):
+                labels_params['color'] = "white"
 
-def corr_plot_scatter(data, palette=None):
-    """
-    Draws correlation matrix as scatterplot.
+        if has_points and has_labels and labels_map_size is None:
+            if cls.overlap(labels_type if labels_type is not None else 'full',
+                           points_type if points_type is not None else 'full'):
+                labels_map_size = True
 
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
+        # Update tiles and points parameters.
+        if has_tiles:
+            tiles_params['type'] = tiles_type
 
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
+        if has_points:
+            points_params['type'] = points_type
 
-    plot_builder = corr_plot_builder(data=data)
-    plot_builder.points()
+        return labels_map_size
 
-    if palette:
-        plot_builder._set_brewer_palette(palette)
+    @classmethod
+    def adjust_diag(cls, tiles_params: dict, points_params: dict, labels_params: dict) -> None:
+        # Prefer not to fill diagonal when the type is 'lower' or 'upper'.
+        def _adjust(diag: bool, type):
+            if diag is None:
+                if type in ['lower', 'upper']:
+                    diag = False
+            return diag
 
-    return plot_builder.build()
+        if tiles_params is not None:
+            tiles_params['diag'] = _adjust(tiles_params.get('diag'), tiles_params.get('type'))
+        if points_params is not None:
+            points_params['diag'] = _adjust(points_params.get('diag'), points_params.get('type'))
+        if labels_params is not None:
+            labels_params['diag'] = _adjust(labels_params.get('diag'), labels_params.get('type'))
 
-
-def corr_plot_tiles(data, palette=None):
-    """
-    Draws correlation matrix as tiles.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-    plot_builder = corr_plot_builder(data=data)
-    plot_builder.tiles()
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
-
-
-def corr_plot_tileslab(data, palette=None):
-    """
-    Draws correlation matrix as tiles with labels.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-    plot_builder = corr_plot_builder(data=data)
-    plot_builder.tiles()
-    plot_builder.labels(color='white')
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
-
-
-def corr_plot_scatterlab(data, palette=None):
-    """
-    Draws correlation matrix as mix of scattrplot and labels.
-
-    Parameters
-    ----------
-    data : dictionary or pandas DataFrame.
-        Correlation will be calculated for each variable pair. Required.
-    palette : string
-        Palette name, one of: "BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral".
-
-    Returns
-    -------
-        PlotSpec for correlation matrix.
-    """
-    plot_builder = corr_plot_builder(data=data)
-    plot_builder.points(type='lower')
-    plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
-
-    if palette:
-        plot_builder._set_brewer_palette(palette)
-
-    return plot_builder.build()
+    @classmethod
+    def flip_type(cls, tiles_params: dict, points_params: dict, labels_params: dict, flip: bool) -> None:
+        if flip:
+            if tiles_params is not None:
+                tiles_params['type'] = cls.flip(tiles_params.get('type'))
+            if points_params is not None:
+                points_params['type'] = cls.flip(points_params.get('type'))
+            if labels_params is not None:
+                labels_params['type'] = cls.flip(labels_params.get('type'))

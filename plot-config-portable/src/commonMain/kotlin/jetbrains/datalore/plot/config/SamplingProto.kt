@@ -21,7 +21,7 @@ import jetbrains.datalore.plot.config.Option.Sampling.SEED
 
 internal object SamplingProto {
 
-    fun createSampling(name: String, options: Map<*, *>): Sampling {
+    fun createSampling(name: String, options: Map<String, Any>): Sampling {
         val opts = OptionsAccessor.over(options)
         return when (name) {
             RANDOM -> Samplings.random(opts.getInteger(N)!!, opts.getLong(SEED))
@@ -29,7 +29,11 @@ internal object SamplingProto {
             SYSTEMATIC -> Samplings.systematic(opts.getInteger(N)!!)
             RANDOM_GROUP -> Samplings.randomGroup(opts.getInteger(N)!!, opts.getLong(SEED))
             SYSTEMATIC_GROUP -> Samplings.systematicGroup(opts.getInteger(N)!!)
-            RANDOM_STRATIFIED -> Samplings.randomStratified(opts.getInteger(N)!!, opts.getLong(SEED), opts.getInteger(MIN_SUB_SAMPLE))
+            RANDOM_STRATIFIED -> Samplings.randomStratified(
+                opts.getInteger(N)!!,
+                opts.getLong(SEED),
+                opts.getInteger(MIN_SUB_SAMPLE)
+            )
             VERTEX_VW -> Samplings.vertexVw(opts.getInteger(N)!!)
             VERTEX_DP -> Samplings.vertexDp(opts.getInteger(N)!!)
 

@@ -30,7 +30,7 @@ class BoxplotStatTest {
     @Test
     fun emptyDataFrame() {
         val df = df(emptyMap())
-        val stat = BoxplotStat()
+        val stat = Stats.boxplot()
         val statDf = stat.apply(df, statContext(df))
 
         for (aes in Aes.values()) {
@@ -44,11 +44,13 @@ class BoxplotStatTest {
 
     @Test
     fun oneElementDataFrame() {
-        val df = df(mapOf(
+        val df = df(
+            mapOf(
                 TransformVar.X to listOf(3.3),
                 TransformVar.Y to listOf(4.4)
-        ))
-        val stat = BoxplotStat()
+            )
+        )
+        val stat = Stats.boxplot()
         val statDf = stat.apply(df, statContext(df))
 
         // no 'width'
@@ -70,13 +72,16 @@ class BoxplotStatTest {
 
     @Test
     fun varWidth() {
-        val df = df(mapOf(
+        val df = df(
+            mapOf(
                 TransformVar.X to listOf(3.3),
                 TransformVar.Y to listOf(4.4)
-        ))
+            )
+        )
 
-        val stat = BoxplotStat()
-        stat.setComputeWidth(true)                              // varWidth = True
+        val stat = Stats.boxplot(
+            computeWidth = true
+        )
         val statDf = stat.apply(df, statContext(df))
 
         // no 'width'

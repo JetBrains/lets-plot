@@ -1,8 +1,9 @@
-## [1.5.?] - 2020-11-??
+## [1.5.5] - 2020-12-??
 
 ### Added
  - new tooltip anchor options - center and middle.
  - min tooltip width
+ - corr_plot(), stat_corr()
 
 ### Changed
 

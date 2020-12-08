@@ -12,53 +12,46 @@ import jetbrains.datalore.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 import kotlin.jvm.JvmOverloads
 
-open class OptionsAccessor protected constructor(private val myOptions: Map<*, *>, defaultOptions: Map<*, *>) {
-    private val myDefaultOptions: Map<*, *>
-
-    val mergedOptions: Map<*, *>
-        get() {
-            val mergedOptions = HashMap(myDefaultOptions)
-            mergedOptions.putAll(myOptions)
-            return mergedOptions
-        }
+open class OptionsAccessor(
+    private val options: Map<String, Any>,
+    private val defaultOptions: Map<String, Any> = emptyMap<String, Any>()
+) {
+    val mergedOptions: Map<String, Any>
+        get() = defaultOptions + options
 
     val isEmpty: Boolean
-        get() = myOptions.isEmpty() && myDefaultOptions.isEmpty()
-
-    constructor(options: Map<*, *>) : this(options, emptyMap<Any, Any>())
-
-    init {
-        myDefaultOptions = HashMap(defaultOptions)
-    }
+        get() = options.isEmpty() && defaultOptions.isEmpty()
 
     fun update(key: String, value: Any) {
         @Suppress("UNCHECKED_CAST")
-        (myOptions as MutableMap<String, Any>)[key] = value
+        (options as MutableMap<String, Any>)[key] = value
     }
 
-    protected fun update(otherOptions: Map<Any, Any>) {
-        @Suppress("UNCHECKED_CAST")
-        (myOptions as MutableMap<Any, Any>).putAll(otherOptions)
+    protected fun update(otherOptions: Map<String, Any>) {
+        (options as MutableMap<String, Any>).putAll(otherOptions)
     }
 
     fun has(option: String): Boolean {
-        return hasOwn(option) || myDefaultOptions[option] != null
+        return hasOwn(option) || defaultOptions[option] != null
     }
 
     fun hasOwn(option: String): Boolean {
-        return myOptions[option] != null
+        return options[option] != null
     }
 
     operator fun get(option: String): Any? {
         return if (hasOwn(option)) {
-            myOptions[option]
-        } else myDefaultOptions[option]
+            options[option]
+        } else defaultOptions[option]
     }
 
     fun getString(option: String): String? {
-        return if (has(option)) {
-            get(option).toString()
-        } else null
+        return get(option)?.toString()
+    }
+
+    fun getStringSafe(option: String): String {
+        return getString(option)
+            ?: throw IllegalArgumentException("Can't get string value: option '$option' is not present.")
     }
 
     fun getList(option: String): List<*> {
@@ -74,16 +67,31 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         return list.map { it.toDouble() }
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun getNumPair(option: String): Pair<Number, Number> {
         val list = getNumList(option) { it is Number }
+        @Suppress("UNCHECKED_CAST")
         return pickTwo(option, list) as Pair<Number, Number>
     }
 
     fun getNumQPair(option: String): Pair<Number?, Number?> {
         val list = getNumList(option) { it == null || it is Number }
-        require(list.size >= 2) { "$option requires a list of 2 but was ${list.size}" }
-        return Pair(list[0], list[1])
+        return pickTwo(option, list)
+    }
+
+    fun getNumPairDef(option: String, def: Pair<Number, Number>): Pair<Number, Number> {
+        return if (has(option)) {
+            getNumPair(option)
+        } else {
+            def
+        }
+    }
+
+    fun getNumQPairDef(option: String, def: Pair<Number?, Number?>): Pair<Number?, Number?> {
+        return if (has(option)) {
+            getNumQPair(option)
+        } else {
+            def
+        }
     }
 
     private fun <T> pickTwo(option: String, list: List<T>): Pair<T, T> {
@@ -148,12 +156,12 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         }
     }
 
-    fun getMap(option: String): Map<*, *> {
-        val v = get(option) ?: return emptyMap<Any, Any>()
-
+    fun getMap(option: String): Map<String, Any> {
+        val v = get(option) ?: return emptyMap<String, Any>()
         require(v is Map<*, *>) { "Not a Map: " + option + ": " + v::class.simpleName }
 
-        return v
+        @Suppress("UNCHECKED_CAST")
+        return v as Map<String, Any>
     }
 
     @JvmOverloads
@@ -172,6 +180,18 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getLong(option: String): Long? {
         return getNumber(option)?.toLong()
+    }
+
+    fun getDoubleDef(option: String, def: Double): Double {
+        return getDouble(option) ?: def
+    }
+
+    fun getIntegerDef(option: String, def: Int): Int {
+        return getInteger(option) ?: def
+    }
+
+    fun getLongDef(option: String, def: Long): Long {
+        return getLong(option) ?: def
     }
 
     private fun <T> getValueOrNull(option: String, mapper: (Any?) -> T?): T? {
@@ -193,8 +213,8 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     companion object {
-        fun over(map: Map<*, *>): OptionsAccessor {
-            return OptionsAccessor(map, emptyMap<Any, Any>())
+        fun over(map: Map<String, Any>): OptionsAccessor {
+            return OptionsAccessor(map)
         }
 
         private fun <T> requireAll(items: Iterable<T>, predicate: (T) -> Boolean, lazy: (T) -> Any) {

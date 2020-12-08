@@ -12,35 +12,37 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class DataFrameValue(
     private val name: String,
-    format: String? = null
+    private val format: String? = null
 ) : ValueSource {
 
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
-    private var myIsContinuous: Boolean = false
     private val myFormatter = format?.let {
         StringFormat(format).also {
             require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'$name\'. Expected 1 argument instead of ${it.argsNumber}" }
         }
     }
 
-    override fun setDataContext(dataContext: DataContext) {
+    override fun initDataContext(dataContext: DataContext) {
+        require(!::myDataFrame.isInitialized) { "Data context can be initialized only once" }
         myDataFrame = dataContext.dataFrame
 
         myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
-        myIsContinuous = myDataFrame.isNumeric(myVariable)
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val originalValue = myDataFrame[myVariable][index].toString()
+        val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,
-            value = myFormatter?.format(originalValue) ?: originalValue,
-            isContinuous = myIsContinuous,
+            value = myFormatter?.format(originalValue) ?: originalValue.toString(),
             aes = null,
             isAxis = false,
             isOutlier = false
         )
+    }
+
+    override fun copy(): DataFrameValue {
+        return DataFrameValue(name, format)
     }
 
     fun getVariableName(): String {

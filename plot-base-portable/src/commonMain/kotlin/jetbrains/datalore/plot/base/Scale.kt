@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.base.scale.BreaksGenerator
 interface Scale<T> {
     val name: String
 
-    val breaks: List<*>
+    val breaks: List<Any>
 
     val labels: List<String>
 
@@ -87,7 +87,12 @@ interface Scale<T> {
          */
         fun limits(domainValues: List<Any>): Builder<T>
 
-        fun breaks(l: List<*>): Builder<T>
+        fun breaks(l: List<Any>): Builder<T>
+
+        /**
+         * Formatter for continuous domains
+         */
+        fun formatter(v: (Double) -> String): Builder<T>
 
         fun labels(l: List<String>): Builder<T>
 

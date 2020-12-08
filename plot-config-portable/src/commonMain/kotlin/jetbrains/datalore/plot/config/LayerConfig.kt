@@ -29,24 +29,28 @@ import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
-class LayerConfig constructor(
-    layerOptions: Map<*, *>,
+class LayerConfig(
+    layerOptions: Map<String, Any>,
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
     plotDiscreteAes: Set<*>,
     val geomProto: GeomProto,
-    statProto: StatProto,
     private val clientSide: Boolean
-) : OptionsAccessor(layerOptions, initDefaultOptions(layerOptions, geomProto, statProto)) {
+) : OptionsAccessor(
+    layerOptions,
+    initDefaultOptions(layerOptions, geomProto)
+) {
 
     val stat: Stat
+    val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
+
     val explicitGroupingVarName: String?
     val posProvider: PosProvider
     private val myCombinedData: DataFrame
 
     val varBindings: List<VarBinding>
     val constantsMap: Map<Aes<*>, Any>
-    val statKind: StatKind
+
     private val mySamplings: List<Sampling>?
     val tooltips: TooltipSpecification
 
@@ -111,8 +115,7 @@ class LayerConfig constructor(
             aesMappings = createAesMapping(combinedData, combinedMappings)
         }
 
-        statKind = StatKind.safeValueOf(getString(STAT)!!)
-        stat = statProto.createStat(statKind, mergedOptions)
+        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
         if (clientSide) {
             // add stat default mappings
             val statDefMapping = Stats.defaultMapping(stat)
@@ -120,9 +123,14 @@ class LayerConfig constructor(
             aesMappings = statDefMapping + aesMappings
         }
 
-        // exclude constant aes from mapping
-        constantsMap = LayerConfigUtil.initConstants(this)
-        aesMappings = aesMappings - constantsMap.keys
+        // drop from aes mapping constant that were defined explicitly.
+        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
+            .filter { hasOwn(it) }
+            .map { Option.Mapping.toAes(it) }
+        aesMappings = aesMappings - explicitConstantAes
+
+        // init AES constants excluding mapped AES
+        constantsMap = LayerConfigUtil.initConstants(this, aesMappings.keys)
 
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappings)
@@ -164,10 +172,11 @@ class LayerConfig constructor(
         ownData = layerData
         myCombinedData = combinedData
 
-        mySamplings = if (clientSide)
+        mySamplings = if (clientSide) {
             null
-        else
+        } else {
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        }
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
@@ -198,8 +207,8 @@ class LayerConfig constructor(
 
     fun replaceOwnData(dataFrame: DataFrame?) {
         checkState(!clientSide)   // This class is immutable on client-side
-        checkArgument(dataFrame != null)
-        update(DATA, DataFrameUtil.toMap(dataFrame!!))
+        require(dataFrame != null)
+        update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame
         myOwnDataUpdated = true
     }
@@ -238,10 +247,13 @@ class LayerConfig constructor(
     }
 
     private companion object {
-        private fun initDefaultOptions(layerOptions: Map<*, *>, geomProto: GeomProto, statProto: StatProto): Map<*, *> {
+        private fun initDefaultOptions(
+            layerOptions: Map<*, *>,
+            geomProto: GeomProto
+        ): Map<String, Any> {
             checkArgument(
                 layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT),
-                "Either 'geom' or 'stat' must be specified"
+                "Either 'geom' or 'stat' must be specified."
             )
 
             val defaults = HashMap<String, Any>()
@@ -251,9 +263,8 @@ class LayerConfig constructor(
             if (statName == null) {
                 statName = defaults[STAT] as String
             }
-            defaults.putAll(statProto.defaultOptions(statName))
 
-            return defaults
+            return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
         }
     }
 }

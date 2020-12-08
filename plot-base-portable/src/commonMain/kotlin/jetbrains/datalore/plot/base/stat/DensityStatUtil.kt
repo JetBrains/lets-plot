@@ -29,6 +29,7 @@ object DensityStatUtil {
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {
         val mySize = valuesX.size
+
         @Suppress("UNCHECKED_CAST")
         val valuesXFinite = valuesX.filter { SeriesUtil.isFinite(it) } as List<Double>
         val dataSummary = FiveNumberSummary(valuesXFinite)
@@ -70,11 +71,12 @@ object DensityStatUtil {
     }
 
     internal fun densityFunction(
-            valuesX: List<Double?>,
-            ker: (Double) -> Double,
-            bw: Double,
-            ad: Double,
-            weightX: List<Double?>): (Double) -> Double {
+        valuesX: List<Double?>,
+        ker: (Double) -> Double,
+        bw: Double,
+        ad: Double,
+        weightX: List<Double?>
+    ): (Double) -> Double {
         val a = bw * ad
         return { d ->
             var sum = 0.0
@@ -113,7 +115,10 @@ object DensityStatUtil {
             "epanechikov", "parabolic" -> DensityStat.Kernel.EPANECHNIKOV
             "optcosine" -> DensityStat.Kernel.OPTCOSINE
             "cosine" -> DensityStat.Kernel.COSINE
-            else -> throw IllegalArgumentException("Unsupported kernel method: $method")
+            else -> throw IllegalArgumentException(
+                "Unsupported kernel method: '$method'.\n" +
+                        "Use one of: gaussian, rectangular, triangular, biweight, epanechikov, optcosine, cos."
+            )
         }
     }
 
@@ -121,12 +126,21 @@ object DensityStatUtil {
         return when (bw) {
             "nrd0" -> DensityStat.BandWidthMethod.NRD0
             "nrd" -> DensityStat.BandWidthMethod.NRD
-            else -> throw IllegalArgumentException("Unsupported bandwidth method: $bw")
+            else -> throw IllegalArgumentException(
+                "Unsupported bandwidth method: '$bw'.\n" +
+                        "Use one of: nrd0, nrd."
+            )
         }
     }
 
     fun createRawMatrix(
-            values: List<Double?>, list: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weight: List<Double?>): Array<DoubleArray> {
+        values: List<Double?>,
+        list: List<Double>,
+        ker: (Double) -> Double,
+        bw: Double,
+        ad: Double,
+        weight: List<Double?>
+    ): Array<DoubleArray> {
         val a = bw * ad
         val n = values.size
         val x = list.size

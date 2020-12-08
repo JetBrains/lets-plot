@@ -10,7 +10,7 @@ from lets_plot.plot.scale import scale_x_continuous, scale_y_continuous
 from lets_plot.plot.theme_ import theme
 from lets_plot.plot.util import is_ndarray
 
-__all__ = []
+__all__ = ['image_matrix']
 
 
 def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
@@ -49,7 +49,8 @@ def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
         raise Exception("Invalid image_data_array: 2d ndarray is expacted but was {}".format(type(image_data_array)))
 
     if image_data_array.ndim != 2:
-        raise Exception("Invalid image_data_array: 2-dimentional ndarray is expacted but was {}-dimentional".format(image_data_array.ndim))
+        raise Exception("Invalid image_data_array: 2-dimentional ndarray is expacted but was {}-dimentional".format(
+            image_data_array.ndim))
 
     rows, cols = image_data_array.shape
     if cols * rows <= 0:
@@ -100,7 +101,8 @@ def _assert_image_data(image_data: Any) -> None:
             raise Exception("Invalid image_data: ndarray is expacted but was {}".format(type(image_data)))
 
         if image_data.ndim not in (2, 3):
-            raise Exception("Invalid image_data: 2d or 3d array is expacted but was {}-dimentional".format(image_data.ndim))
+            raise Exception(
+                "Invalid image_data: 2d or 3d array is expacted but was {}-dimentional".format(image_data.ndim))
     except ImportError:
         pass
 

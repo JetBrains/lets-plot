@@ -12,7 +12,17 @@ import kotlin.random.Random
 open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            tiles()
+            tiles(),
+            tiles(
+                limits = "'limits': [-1, 1]",
+            ),
+            tiles(
+                breaks = "'breaks': [-1, -0.5, 0, 0.5, 1]"
+            ),
+            tiles(
+                limits = "'limits': [-1, 1]",
+                breaks = "'breaks': [-1, -0.5, 0, 0.5, 1]"
+            ),
         )
     }
 
@@ -26,17 +36,18 @@ open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
             )
         }
 
-        private fun getSpec(): Map<String, Any> {
+        private fun getSpec(limits: String?, breaks: String?): Map<String, Any> {
             val spec = """
 {
-    'mapping':{'x': 'x', 'fill': 'v'}, 
-    'kind':'plot', 
+    'mapping': {'x': 'x', 'fill': 'v'}, 
+    'kind': 'plot', 
+    'ggtitle': {'text': '${breaks?.let { "breaks" } ?: "no breaks"}, ${limits?.let { "limits" } ?: "no limits"}'}, 
     'scales':
         [
             {
                 'aesthetic':'fill', 
-                'breaks' : [-1, -0.5, 0, 0.5, 1],
-                'limits': [-1, 1],
+                ${breaks?.let { breaks + "," } ?: ""}
+                ${limits?.let { limits + "," } ?: ""}
                 'palette': 'PRGn',
                 'scale_mapper_kind': 'color_brewer'
             }
@@ -55,15 +66,8 @@ open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-//        fun text() {
-//            """
-//{'scales': [{'aesthetic': 'fill', 'breaks': [-1, -0.5, 0, 0.5, 1], 'labels': None, 'limits': [-1, 1], 'expand': None, 'na_value': None, 'guide': None, 'trans': None, 'type': None, 'palette': 'PRGn', 'direction': None, 'scale_mapper_kind': 'color_brewer'}], 'layers': [{'geom': 'tile', 'stat': None, 'data': None, 'mapping': {'x': None, 'y': None}, 'position': None, 'show_legend': None, 'tooltips': {'tooltip_formats': [], 'tooltip_lines': ['^fill']}, 'data_meta': {}, 'sampling': None}]}
-//
-//            """.trimIndent()
-//        }
-
-        fun tiles(): Map<String, Any> {
-            val spec = getSpec()
+        fun tiles(limits: String? = null, breaks: String? = null): Map<String, Any> {
+            val spec = getSpec(limits, breaks)
             val specWithData = HashMap<String, Any>(spec)
             specWithData["data"] = data(10)
             return specWithData

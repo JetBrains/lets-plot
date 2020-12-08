@@ -12,10 +12,19 @@ import jetbrains.datalore.plot.base.stat.CorrelationUtil.correlationMatrix
 import jetbrains.datalore.plot.base.stat.math3.correlationPearson
 import kotlin.math.abs
 
-class CorrelationStat : BaseStat(DEF_MAPPING) {
-    var correlationMethod = DEF_CORRELATION_METHOD
-    var type = DEF_TYPE
-    var fillDiagonal = DEF_FILL_DIAGONAL
+/**
+ * Computes correlation between numeric variables in data.
+ * Creates a data-frame with the following variables:
+ *   - '..x..' : X coordinates
+ *   - '..y..' : Y coordinates
+ *   - '..corr..' : correlation (in range -1..1)
+ *   - '..corr_abs..' : absolute value of correlation (in range 0..1)
+ */
+class CorrelationStat(
+    val correlationMethod: Method,
+    val type: Type,
+    val fillDiagonal: Boolean
+) : BaseStat(DEF_MAPPING) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         require(correlationMethod == Method.PEARSON) {
@@ -52,13 +61,12 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.COLOR to Stats.CORR,
-            Aes.SIZE to Stats.CORR_ABS,
+            Aes.FILL to Stats.CORR,
             Aes.LABEL to Stats.CORR
         )
 
-        private val DEF_CORRELATION_METHOD = Method.PEARSON
-        private val DEF_TYPE = Type.FULL
-        const val FILL_DIAGONAL = "fill_diagonal"
+        val DEF_CORRELATION_METHOD = Method.PEARSON
+        val DEF_TYPE = Type.FULL
         const val DEF_FILL_DIAGONAL = true
     }
 }

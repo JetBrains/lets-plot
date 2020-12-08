@@ -46,7 +46,7 @@ import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
 /**
  * @param <T> - target aesthetic type of the configured scale
  */
-class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
+class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
 
     @Suppress("UNCHECKED_CAST")
     val aes: Aes<T> = aesOrFail(options) as Aes<T>
@@ -176,7 +176,7 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             b.name(getString(NAME)!!)
         }
         if (has(BREAKS)) {
-            b.breaks(getList(BREAKS))
+            b.breaks(getList(BREAKS).mapNotNull { it })
         }
         if (has(LABELS)) {
             b.labels(getStringList(LABELS))
@@ -216,7 +216,7 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
         private const val COLOR_BREWER = "color_brewer"
         private const val SIZE_AREA = "size_area"
 
-        fun aesOrFail(options: Map<*, *>): Aes<*> {
+        fun aesOrFail(options: Map<String, Any>): Aes<*> {
             val accessor = OptionsAccessor(options)
             checkArgument(accessor.has(AES), "Required parameter '$AES' is missing")
             return Option.Mapping.toAes(accessor.getString(AES)!!)

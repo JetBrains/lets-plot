@@ -38,12 +38,14 @@ object ScaleUtil {
             return result
         }
 
-        // generate labels
-        val result = ArrayList<String>()
-        for (o in breaks) {
-            result.add(o.toString())
+        val formatter: (Any) -> String = if (scale is ContinuousScale) {
+            { v: Any -> scale.formatter(v as Double) }
+        } else {
+            { v: Any -> v.toString() }
         }
-        return result
+
+        // generate labels
+        return breaks.map { formatter(it) }
     }
 
     fun labelByBreak(scale: Scale<*>): Map<Any, String> {
@@ -52,7 +54,7 @@ object ScaleUtil {
             val breaks = scale.breaks.iterator()
             val labels = labels(scale).iterator()
             while (breaks.hasNext() && labels.hasNext()) {
-                result[breaks.next()!!] = labels.next()
+                result[breaks.next()] = labels.next()
             }
         }
         return result

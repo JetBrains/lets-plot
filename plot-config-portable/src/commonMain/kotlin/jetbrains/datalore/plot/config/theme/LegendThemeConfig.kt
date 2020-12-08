@@ -13,7 +13,10 @@ import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
 import jetbrains.datalore.plot.config.OptionsAccessor
 
-internal class LegendThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : OptionsAccessor(options, defOptions), LegendTheme {
+internal class LegendThemeConfig(
+    options: Map<String, Any>,
+    defOptions: Map<String, Any>
+) : OptionsAccessor(options, defOptions), LegendTheme {
 
     override fun keySize(): Double {
         return ThemeConfig.DEF.legend().keySize()
@@ -36,9 +39,11 @@ internal class LegendThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : Op
                 "top" -> return jetbrains.datalore.plot.builder.guide.LegendPosition.TOP
                 "bottom" -> return jetbrains.datalore.plot.builder.guide.LegendPosition.BOTTOM
                 "none" -> return jetbrains.datalore.plot.builder.guide.LegendPosition.NONE
-                else -> throw IllegalArgumentException("Illegal value '" +
-                        o +
-                        "', " + LEGEND_POSITION + " expected values are: left/right/top/bottom/none or or two-element numeric list")
+                else -> throw IllegalArgumentException(
+                    "Illegal value '" +
+                            o +
+                            "', " + LEGEND_POSITION + " expected values are: left/right/top/bottom/none or or two-element numeric list"
+                )
             }
         } else if (o is List<*>) {
             val v = ConfigUtil.toNumericPair((o as List<*>?)!!)
@@ -55,9 +60,11 @@ internal class LegendThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : Op
         if (o is String) {
             when (o) {
                 "center" -> return jetbrains.datalore.plot.builder.guide.LegendJustification.CENTER
-                else -> throw IllegalArgumentException("Illegal value '" +
-                        o +
-                        "', " + LEGEND_JUSTIFICATION + " expected values are: 'center' or two-element numeric list")
+                else -> throw IllegalArgumentException(
+                    "Illegal value '" +
+                            o +
+                            "', " + LEGEND_JUSTIFICATION + " expected values are: 'center' or two-element numeric list"
+                )
             }
         } else if (o is List<*>) {
             val v = ConfigUtil.toNumericPair((o as List<*>?)!!)

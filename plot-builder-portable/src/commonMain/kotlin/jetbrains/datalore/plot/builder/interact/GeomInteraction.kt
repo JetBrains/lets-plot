@@ -28,7 +28,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
         return createContextualMapping(
-            myTooltipLines,
+            myTooltipLines.map(::TooltipLine),  // clone tooltip lines to not share DataContext between plots when facet is used
+                                                // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             dataAccess,
             dataFrame
         )
@@ -64,9 +65,9 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 val dataAesList = line.fields.filterIsInstance<MappingValue>()
                 dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
             }
-            mappedTooltipLines.forEach { it.setDataContext(dataContext) }
+            mappedTooltipLines.forEach { it.initDataContext(dataContext) }
 
-            return ContextualMapping(dataContext, mappedTooltipLines)
+            return ContextualMapping(mappedTooltipLines)
         }
     }
 }

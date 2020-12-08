@@ -52,6 +52,7 @@ object GeomInteractionUtil {
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipLinesSpec(layerConfig.tooltips)
+            .tooltipConstants(layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) })
             .showAxisTooltip(!isLiveMap)
     }
 
@@ -112,7 +113,7 @@ object GeomInteractionUtil {
     ): List<Aes<*>> {
 
         fun isVariableContinuous(aes: Aes<*>): Boolean {
-            return scaleMap.containsKey(aes) && scaleMap[aes].isContinuous
+            return scaleMap.containsKey(aes) && (scaleMap[aes].isContinuous || scaleMap[aes].isContinuousDomain)
         }
 
         // remove axis mapping: if aes and axis are bound to the same data
@@ -131,7 +132,21 @@ object GeomInteractionUtil {
         // remove discrete mappings
         aesListForTooltip.removeAll { !isVariableContinuous(it) }
 
-        return aesListForTooltip
+        // remove duplicated mappings
+        // (this step was in TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
+        val mappingsToShow = HashMap<String, Aes<*>>()
+        aesListForTooltip
+            .filter { aes -> scaleMap.containsKey(aes) }
+            .forEach { aes ->
+                val label = scaleMap[aes].name
+                val mappingToShow = mappingsToShow[label]
+                if (mappingToShow == null) {
+                    mappingsToShow[label] = aes
+                } else if (!isVariableContinuous(mappingToShow) && isVariableContinuous(aes)) {
+                    mappingsToShow[label] = aes
+                }
+            }
+        return mappingsToShow.values.toList()
     }
 
     private fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {

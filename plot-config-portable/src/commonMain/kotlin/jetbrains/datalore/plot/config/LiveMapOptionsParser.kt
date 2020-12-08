@@ -21,7 +21,8 @@ class LiveMapOptionsParser {
             if (layers.any { it.isLiveMap() }) {
                 require(layers.count { it.isLiveMap() } == 1) { "Only one geom_livemap is allowed per plot" }
                 require(layers.first().isLiveMap()) { "geom_livemap should be a first geom" }
-                return parseFromLayerOptions(OptionsAccessor(layers.first()))
+                @Suppress("UNCHECKED_CAST")
+                return parseFromLayerOptions(OptionsAccessor(layers.first() as Map<String, Any>))
             }
 
             return null

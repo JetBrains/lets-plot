@@ -20,7 +20,7 @@ import jetbrains.datalore.plot.config.Option.Guide.Legend.ROW_COUNT
 import jetbrains.datalore.plot.config.Option.Guide.NONE
 import jetbrains.datalore.plot.config.Option.Guide.REVERSE
 
-abstract class GuideConfig private constructor(opts: Map<String, Any>) : OptionsAccessor(opts, emptyMap<Any, Any>()) {
+abstract class GuideConfig private constructor(opts: Map<String, Any>) : OptionsAccessor(opts) {
 
     fun createGuideOptions(): GuideOptions {
         val options = createGuideOptionsIntern()

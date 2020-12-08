@@ -16,7 +16,8 @@ internal object SamplingConfig {
         // or
         // xxx_geom(..., sampling=sampling_random(100,seed=3) + sampling_pick(10)...)
         if (sampling is MutableMap<*, *> && ConfigUtil.isFeatureList(sampling)) {
-            val samplingList = ConfigUtil.featuresInFeatureList(sampling)
+            @Suppress("UNCHECKED_CAST")
+            val samplingList = ConfigUtil.featuresInFeatureList(sampling as MutableMap<String, Any>)
             val result = ArrayList<Sampling>()
             for (o in samplingList) {
                 result.add(createOne(o))
@@ -29,10 +30,9 @@ internal object SamplingConfig {
 
     private fun createOne(sampling: Any): Sampling {
         if (sampling is Map<*, *>) {
+            @Suppress("UNCHECKED_CAST")
             return SamplingProto.createSampling(
-                ConfigUtil.featureName(
-                    sampling
-                ), sampling
+                ConfigUtil.featureName(sampling), sampling as Map<String, Any>
             )
         } else if (NONE == sampling) {
             return Samplings.NONE

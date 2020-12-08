@@ -80,7 +80,7 @@ object PlotConfigUtil {
     }
 
     // frontend
-    fun findComputationMessages(spec: Map<*, *>): List<String> {
+    fun findComputationMessages(spec: Map<String, Any>): List<String> {
         val result: List<String> =
             when {
                 PlotConfig.isPlotSpec(spec) -> getComputationMessages(spec)
@@ -94,12 +94,8 @@ object PlotConfigUtil {
         return result.distinct()
     }
 
-    private fun getComputationMessages(opts: Map<*, *>): List<String> {
-        return getComputationMessages(
-            OptionsAccessor.over(
-                opts
-            )
-        )
+    private fun getComputationMessages(opts: Map<String, Any>): List<String> {
+        return getComputationMessages(OptionsAccessor(opts))
     }
 
     private fun getComputationMessages(accessor: OptionsAccessor): List<String> {
