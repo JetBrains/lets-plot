@@ -92,6 +92,8 @@ def stat_corr(mapping=None, data=None, geom=None, position=None, show_legend=Non
     if type in ['lower', 'upper']:
         diag = False if diag is None else diag
 
+    sampling = 'none' if sampling is None else sampling
+
     return (_geom(geom,
                   mapping=mapping,
                   data=data,
