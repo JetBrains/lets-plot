@@ -15,4 +15,6 @@ interface ValueSource {
     fun getDataPoint(index: Int): DataPoint?
 
     fun copy(): ValueSource
+
+    fun isForGeneralTooltip(): Boolean
 }

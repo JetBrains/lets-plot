@@ -18,4 +18,8 @@ open class ContextualMapping(
     fun getDataPoints(index: Int): List<TooltipLineSpec.DataPoint> {
         return tooltipLines.mapNotNull { it.getDataPoint(index) }
     }
+
+    fun hasGeneralTooltip(): Boolean {
+        return tooltipLines.any(TooltipLineSpec::isForGeneralTooltip)
+    }
 }

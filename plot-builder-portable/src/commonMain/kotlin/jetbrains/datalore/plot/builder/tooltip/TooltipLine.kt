@@ -57,6 +57,10 @@ class TooltipLine(
         }
     }
 
+    override fun isForGeneralTooltip(): Boolean {
+        return fields.any(ValueSource::isForGeneralTooltip)
+    }
+
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
             label = DEFAULT_LABEL_SPECIFIER,

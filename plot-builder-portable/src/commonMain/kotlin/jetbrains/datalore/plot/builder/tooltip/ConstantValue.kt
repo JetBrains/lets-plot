@@ -39,4 +39,8 @@ class ConstantValue(
             format
         )
     }
+
+    override fun isForGeneralTooltip(): Boolean {
+        return true
+    }
 }

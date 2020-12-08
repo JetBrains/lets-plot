@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.Aes
 interface TooltipLineSpec {
     fun getDataPoint(index: Int): DataPoint?
 
+    fun isForGeneralTooltip(): Boolean
+
     class DataPoint(
         val label: String?,
         val value: String,

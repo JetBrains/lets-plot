@@ -9,12 +9,17 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 
 internal class LocatedTargetsPicker {
-
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
+    private var myNeedCheckTooltip = false
+    private val myTargetCandidates = ArrayList<Pair<LookupResult, Int>>()
 
     val picked: List<LookupResult>
         get() = myPicked
+
+    fun setNeedCheckTooltips(b: Boolean) {
+        myNeedCheckTooltip = b
+    }
 
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
@@ -24,18 +29,42 @@ internal class LocatedTargetsPicker {
 
         when {
             myPicked.isEmpty() || myMinDistance > distance -> {
-                myPicked.clear()
-                myPicked.add(lookupResult)
                 myMinDistance = distance
+                addNewCandidate(lookupResult, withSamePriority = false)
             }
             myMinDistance == distance && isSameUnivariateGeom(myPicked[0], lookupResult) -> {
-                myPicked.add(lookupResult)
+                addNewCandidate(lookupResult, withSamePriority = true)
             }
             myMinDistance == distance -> {
-                myPicked.clear()
-                myPicked.add(lookupResult)
+                addNewCandidate(lookupResult, withSamePriority = false)
             }
         }
+    }
+
+    private fun addNewCandidate(lookupResult: LookupResult, withSamePriority: Boolean) {
+        val maxPriority = myTargetCandidates.map(Pair<LookupResult, Int>::second).maxOrNull() ?: 0
+        val newPriority = if (withSamePriority) maxPriority else maxPriority + 1
+        myTargetCandidates.add(lookupResult to newPriority)
+
+        //update picked
+        myPicked.clear()
+        chooseBestResult().forEach { myPicked.add(it) }
+    }
+
+    private fun chooseBestResult(): List<LookupResult> {
+        if (myNeedCheckTooltip) {
+            // try to find the result with general tooltip
+            val resultWithGeneralTooltip = myTargetCandidates
+                .map(Pair<LookupResult, Int>::first)
+                .lastOrNull { lookupResult -> lookupResult.contextualMapping.hasGeneralTooltip() }
+            if (resultWithGeneralTooltip != null) {
+                return listOf(resultWithGeneralTooltip)
+            }
+        }
+
+        // get the result with the max priority (the last added)
+        val maxPriority = myTargetCandidates.map(Pair<LookupResult, Int>::second).maxOrNull() ?: 0
+        return myTargetCandidates.filter { (_, priority) -> priority == maxPriority }.map(Pair<LookupResult, Int>::first)
     }
 
     companion object {

@@ -76,6 +76,10 @@ class MappingValue(
         )
     }
 
+    override fun isForGeneralTooltip(): Boolean {
+        return !isOutlier
+    }
+
     fun toOutlier(): MappingValue {
         return MappingValue(
             aes = aes,

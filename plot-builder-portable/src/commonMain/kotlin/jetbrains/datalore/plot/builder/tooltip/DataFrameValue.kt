@@ -45,6 +45,10 @@ class DataFrameValue(
         return DataFrameValue(name, format)
     }
 
+    override fun isForGeneralTooltip(): Boolean {
+        return true
+    }
+
     fun getVariableName(): String {
         return name
     }
