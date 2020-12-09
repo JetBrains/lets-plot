@@ -24,7 +24,7 @@ except ImportError:
 __all__ = ['geom_livemap']
 
 
-def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None,
+def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
                  map=None, map_join=None,
                  symbol=None,
                  location=None,
@@ -44,6 +44,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None,
     data : dictionary or pandas DataFrame, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
+    show_legend: bool
+        True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair, optional
@@ -67,6 +73,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None,
         The map projection. There are:
         - 'epsg3857' for Mercator projection (default).
         - 'epsg4326' for Equirectangular projection.
+        Note: 'projection' only works with vector map tiles (i.e. Lets-Plot map tiles)
     geodesic : True (default) or False, optional
         Enables geodesic type of all paths and segments
     tiles: string, optional
@@ -127,7 +134,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None,
                  position=None,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=None,
+                 tooltips=tooltips,
                  map=map, map_join=map_join,
                  display_mode=symbol,
                  location=location,
