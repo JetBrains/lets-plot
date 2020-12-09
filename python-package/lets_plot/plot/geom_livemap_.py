@@ -34,7 +34,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  tiles=None,
                  **other_args):
     """
-    Display a live map.
+    Display an interactive map.
 
     Parameters
     ----------
