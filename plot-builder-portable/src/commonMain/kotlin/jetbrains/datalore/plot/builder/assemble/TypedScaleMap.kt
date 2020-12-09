@@ -16,9 +16,6 @@ class TypedScaleMap constructor(map: Map<Aes<*>, Scale<*>>) {
         return (myMap[aes] as? Scale<T>) ?: error("No scale found for aes $aes")
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T> safeGet(aes: Aes<T>): Scale<T>? = myMap[aes] as Scale<T>?
-
     fun containsKey(aes: Aes<*>): Boolean {
         return myMap.containsKey(aes)
     }

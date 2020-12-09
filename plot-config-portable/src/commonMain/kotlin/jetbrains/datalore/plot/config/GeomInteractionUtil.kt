@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomMeta
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
@@ -223,3 +224,6 @@ object GeomInteractionUtil {
         }
     }
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> TypedScaleMap.safeGet(aes: Aes<T>): Scale<T>? = if (containsKey(aes)) get(aes) else null
