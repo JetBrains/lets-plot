@@ -40,7 +40,7 @@ internal class TooltipLayer(
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec -> spec
-                .run { newTooltipBox(spec.tooltipMinWidth).apply { visible = false } } // to not flicker on arrange
+                .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }

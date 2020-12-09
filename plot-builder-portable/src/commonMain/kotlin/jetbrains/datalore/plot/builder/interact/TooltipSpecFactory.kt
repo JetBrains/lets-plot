@@ -101,8 +101,8 @@ class TooltipSpecFactory(
                         lines = generalLines,
                         fill = tipLayoutHint().color!!,
                         isOutlier = false,
-                        tooltipAnchor = myTooltipAnchor,
-                        tooltipMinWidth = myTooltipMinWidth
+                        anchor = myTooltipAnchor,
+                        minWidth = myTooltipMinWidth
                     )
                 )
             } else {

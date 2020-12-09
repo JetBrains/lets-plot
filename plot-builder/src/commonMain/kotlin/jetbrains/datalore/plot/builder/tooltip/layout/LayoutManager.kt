@@ -68,8 +68,8 @@ class LayoutManager(
         tooltips
             .filter(::isCorner)
             .forEach { tooltip ->
-                val list = cornerTooltips.getOrPut(tooltip.tooltipSpec.tooltipAnchor!!, { ArrayList() })
-                list.add(tooltip)
+                val tooltipsInTheCorner = cornerTooltips.getOrPut(tooltip.tooltipSpec.anchor!!, { ArrayList() })
+                tooltipsInTheCorner.add(tooltip)
             }
         cornerTooltips.forEach { (anchor, list) ->
             desiredPosition += calculateCornerTooltipsPosition(list, anchor)
@@ -380,7 +380,7 @@ class LayoutManager(
         return verticalTooltipRange.overlaps(cursorVerticalRange)
     }
 
-    private fun isCorner(tooltipSpec: TooltipSpec) = tooltipSpec.tooltipAnchor != null
+    private fun isCorner(tooltipSpec: TooltipSpec) = tooltipSpec.anchor != null
 
     private fun isCorner(tooltip: MeasuredTooltip): Boolean {
         return isCorner(tooltip.tooltipSpec)

@@ -153,8 +153,9 @@ class TooltipConfig(
         private fun varField(aesName: String) = Pair(aesName, false)
 
         private fun readAnchor(): TooltipAnchor? {
-            if (!has(Option.Layer.TOOLTIP_ANCHOR))
+            if (!has(Option.Layer.TOOLTIP_ANCHOR)) {
                 return null
+            }
 
             return when (val anchor = getString(Option.Layer.TOOLTIP_ANCHOR)) {
                 "top_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.LEFT)
