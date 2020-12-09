@@ -121,6 +121,8 @@ object PlotConfigClientSideUtil {
         }
 
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)
+            .setTooltipAnchor(layerConfig.tooltips.getTooltipAnchor())
+            .setTooltipMinWidth(layerConfig.tooltips.getTooltipMinWidth())
 
         layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())

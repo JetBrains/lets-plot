@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor
+import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
@@ -20,8 +20,7 @@ import kotlin.math.min
 
 class LayoutManager(
     private val myViewport: DoubleRectangle,
-    private val myPreferredHorizontalAlignment: HorizontalAlignment,
-    private val myTooltipAnchor: TooltipAnchor?
+    private val myPreferredHorizontalAlignment: HorizontalAlignment
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
@@ -65,9 +64,16 @@ class LayoutManager(
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it)) }
 
         // add corner tooltips
+        val cornerTooltips = HashMap<TooltipAnchor, ArrayList<MeasuredTooltip>>()
         tooltips
             .filter(::isCorner)
-            .let { desiredPosition += calculateCornerTooltipsPosition(it) }
+            .forEach { tooltip ->
+                val list = cornerTooltips.getOrPut(tooltip.tooltipSpec.tooltipAnchor!!, { ArrayList() })
+                list.add(tooltip)
+            }
+        cornerTooltips.forEach { (anchor, list) ->
+            desiredPosition += calculateCornerTooltipsPosition(list, anchor)
+        }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
         desiredPosition += calculateDataTooltipsPosition(
@@ -123,15 +129,11 @@ class LayoutManager(
         return placementList
     }
 
-    private fun calculateCornerTooltipsPosition(cornerTooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
-        if (myTooltipAnchor == null) {
-            return emptyList()
-        }
-
+    private fun calculateCornerTooltipsPosition(cornerTooltips: List<MeasuredTooltip>, tooltipAnchor: TooltipAnchor): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
         val tooltipsHeight = cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
-        val verticalTooltipRange = when (myTooltipAnchor.verticalAnchor) {
+        val verticalTooltipRange = when (tooltipAnchor.verticalAnchor) {
             TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
             TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
             TooltipAnchor.VerticalAnchor.MIDDLE -> centered(
@@ -146,7 +148,7 @@ class LayoutManager(
                 tooltip,
                 tooltipY,
                 verticalTooltipRange,
-                myTooltipAnchor.horizontalAnchor
+                tooltipAnchor.horizontalAnchor
             )
             placementList.add(positionedTooltip)
             tooltipY += positionedTooltip.height + MARGIN_BETWEEN_TOOLTIPS
@@ -378,13 +380,7 @@ class LayoutManager(
         return verticalTooltipRange.overlaps(cursorVerticalRange)
     }
 
-    private fun useCornerTooltips(): Boolean {
-        return myTooltipAnchor != null
-    }
-
-    private fun isCorner(tooltipSpec: TooltipSpec): Boolean {
-        return if (useCornerTooltips()) !tooltipSpec.isOutlier else false
-    }
+    private fun isCorner(tooltipSpec: TooltipSpec) = tooltipSpec.tooltipAnchor != null
 
     private fun isCorner(tooltip: MeasuredTooltip): Boolean {
         return isCorner(tooltip.tooltipSpec)

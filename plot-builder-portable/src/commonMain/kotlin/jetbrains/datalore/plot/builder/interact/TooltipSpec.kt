@@ -7,8 +7,16 @@ package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TooltipAnchor
 
-class TooltipSpec(val layoutHint: TipLayoutHint, lines: List<Line>, val fill: Color, val isOutlier: Boolean) {
+class TooltipSpec(
+    val layoutHint: TipLayoutHint,
+    lines: List<Line>,
+    val fill: Color,
+    val isOutlier: Boolean,
+    val tooltipAnchor: TooltipAnchor? = null,
+    val tooltipMinWidth: Double? = null
+) {
     val lines: List<Line> = ArrayList(lines)
 
     override fun toString(): String {
