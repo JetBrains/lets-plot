@@ -225,5 +225,4 @@ object GeomInteractionUtil {
     }
 }
 
-@Suppress("UNCHECKED_CAST")
 fun <T> TypedScaleMap.safeGet(aes: Aes<T>): Scale<T>? = if (containsKey(aes)) get(aes) else null
