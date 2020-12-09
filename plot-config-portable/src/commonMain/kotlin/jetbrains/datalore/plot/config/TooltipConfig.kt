@@ -28,38 +28,6 @@ class TooltipConfig(
             },
             tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS)
         ).parse()
-            .setTooltipAnchor(anchor())
-            .setTooltipMinWidth(minWidth())
-    }
-
-    private fun anchor(): TooltipAnchor? {
-        if (!has(Option.Layer.TOOLTIP_ANCHOR))
-            return null
-
-        return when (val anchor = getString(Option.Layer.TOOLTIP_ANCHOR)) {
-            "top_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.LEFT)
-            "top_center" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.CENTER)
-            "top_right" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.RIGHT)
-            "middle_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.MIDDLE, TooltipAnchor.HorizontalAnchor.LEFT)
-            "middle_center" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.MIDDLE, TooltipAnchor.HorizontalAnchor.CENTER)
-            "middle_right" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.MIDDLE, TooltipAnchor.HorizontalAnchor.RIGHT)
-            "bottom_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.LEFT)
-            "bottom_center" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.CENTER)
-            "bottom_right" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.RIGHT)
-            else -> throw IllegalArgumentException(
-                "Illegal value $anchor, ${Option.Layer.TOOLTIP_ANCHOR}, expected values are: " +
-                        "'top_left'/'top_center'/'top_right'/" +
-                        "'middle_left'/'middle_center'/'middle_right'/" +
-                        "'bottom_left'/'bottom_center'/'bottom_right'"
-            )
-        }
-    }
-
-    private fun minWidth(): Double? {
-        if (has(Option.Layer.TOOLTIP_MIN_WIDTH)) {
-            return getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
-        }
-        return null
     }
 
     private inner class TooltipConfigParseHelper(
@@ -76,7 +44,9 @@ class TooltipConfig(
             val lines = tooltipLines?.map(::parseLine)
             return TooltipSpecification(
                 myValueSources.map { it.value },
-                lines
+                lines,
+                readAnchor(),
+                readMinWidth()
             )
         }
 
@@ -181,6 +151,48 @@ class TooltipConfig(
         private fun aesField(aesName: String) = Pair(aesName, true)
 
         private fun varField(aesName: String) = Pair(aesName, false)
+
+        private fun readAnchor(): TooltipAnchor? {
+            if (!has(Option.Layer.TOOLTIP_ANCHOR))
+                return null
+
+            return when (val anchor = getString(Option.Layer.TOOLTIP_ANCHOR)) {
+                "top_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.LEFT)
+                "top_center" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.CENTER)
+                "top_right" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.RIGHT)
+                "middle_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.MIDDLE, TooltipAnchor.HorizontalAnchor.LEFT)
+                "middle_center" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.MIDDLE,
+                    TooltipAnchor.HorizontalAnchor.CENTER
+                )
+                "middle_right" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.MIDDLE,
+                    TooltipAnchor.HorizontalAnchor.RIGHT
+                )
+                "bottom_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.LEFT)
+                "bottom_center" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.BOTTOM,
+                    TooltipAnchor.HorizontalAnchor.CENTER
+                )
+                "bottom_right" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.BOTTOM,
+                    TooltipAnchor.HorizontalAnchor.RIGHT
+                )
+                else -> throw IllegalArgumentException(
+                    "Illegal value $anchor, ${Option.Layer.TOOLTIP_ANCHOR}, expected values are: " +
+                            "'top_left'/'top_center'/'top_right'/" +
+                            "'middle_left'/'middle_center'/'middle_right'/" +
+                            "'bottom_left'/'bottom_center'/'bottom_right'"
+                )
+            }
+        }
+
+        private fun readMinWidth(): Double? {
+            if (has(Option.Layer.TOOLTIP_MIN_WIDTH)) {
+                return getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+            }
+            return null
+        }
     }
 
     companion object {
