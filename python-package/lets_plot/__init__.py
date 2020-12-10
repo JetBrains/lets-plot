@@ -8,8 +8,8 @@ from typing import Dict
 # To handle the situation when the 'lets_plot' package is shared by modules in different locations.
 __path__ = extend_path(__path__, __name__)
 
-from ._version import __version__
-from ._global_settings import _settings, is_production
+from ._global_settings import _settings, is_production, get_global_bool
+from ._global_settings import NO_JS, OFFLINE
 
 from .plot import *
 from .export import *
@@ -32,7 +32,7 @@ class LetsPlot:
     def setup_html(cls, *,
                    isolated_frame: bool = None,
                    offline: bool = None,
-                   no_js: bool = False,
+                   no_js: bool = None,
                    show_status: bool = False) -> None:
         """
         Configures Lets-Plot HTML output.
@@ -50,7 +50,7 @@ class LetsPlot:
             True - full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
             to work with notebook without the Internet connection.
             False - load Lets-Plot JS library from CDN.
-            Default: None - evaluated to 'connected' mode in production environment.
+            Default (None): 'connected' mode in production environment and 'offline' mode in dev environment.
         no_js : bool
             True - do not generate HTML+JS as an output - just static SVG image.
             Default: False.
@@ -64,14 +64,16 @@ class LetsPlot:
             raise ValueError("'offline' argument is not boolean: {}".format(type(offline)))
         if not (isinstance(no_js, bool) or no_js is None):
             raise ValueError("'no_js' argument is not boolean: {}".format(type(no_js)))
-        if not (isinstance(show_status, bool) or show_status is None):
+        if not isinstance(show_status, bool):
             raise ValueError("'show_status' argument is not boolean: {}".format(type(show_status)))
 
-        cfg._setup_html_context(
-            isolated_frame=isolated_frame,
-            offline=offline,
-            no_js=no_js,
-            show_status=show_status)
+        offline = offline if offline is not None else get_global_bool(OFFLINE)
+        no_js = no_js if no_js is not None else get_global_bool(NO_JS)
+
+        cfg._setup_html_context(isolated_frame=isolated_frame,
+                                offline=offline,
+                                no_js=no_js,
+                                show_status=show_status)
 
     @classmethod
     def set(cls, settings: Dict):

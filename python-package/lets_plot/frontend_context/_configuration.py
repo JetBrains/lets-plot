@@ -8,8 +8,7 @@ from ._frontend_ctx import FrontendContext
 from ._html_contexts import _create_html_frontend_context, _use_isolated_frame
 from ._json_contexts import _create_json_frontend_context, _is_Intellij_Python_Lets_Plot_Plugin
 from ._mime_types import TEXT_HTML, LETS_PLOT_JSON
-from ._svg_contexts import _create_image_svg_frontend_context
-from .._global_settings import get_global_bool
+from ._static_svg_ctx import StaticSvgImageContext
 from .._version import __version__
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
@@ -26,9 +25,9 @@ if _is_Intellij_Python_Lets_Plot_Plugin():
 
 def _setup_html_context(*,
                         isolated_frame: bool = None,
-                        offline: bool = None,
-                        no_js: bool = False,
-                        show_status: bool = False) -> None:
+                        offline: bool,
+                        no_js: bool,
+                        show_status: bool) -> None:
     """
     Configures Lets-Plot HTML output.
 
@@ -42,13 +41,11 @@ def _setup_html_context(*,
         True - full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
         to work with notebook without the Internet connection.
         False - load Lets-Plot JS library from CDN.
-        Default: None - evaluated to 'connected' mode in production environment.
     no_js : bool
         True - do not generate HTML+JS as an output - just static SVG image.
-        Default: False.
     show_status : bool
-            Whether to show status of loading of the Lets-Plot JS library.
-            Only applicable when the Lets-Plot JS library is preloaded.
+        Whether to show status of loading of the Lets-Plot JS library.
+        Only applicable when the Lets-Plot JS library is preloaded.
 
     """
     global _default_mimetype
@@ -61,13 +58,10 @@ def _setup_html_context(*,
                                                                                                            LETS_PLOT_JSON))
         return
 
-    no_js = no_js if no_js is not None else get_global_bool('no_js')
-    embed = offline if offline is not None else get_global_bool('offline')
-
     if no_js:
-        ctx = _create_image_svg_frontend_context()
+        ctx = StaticSvgImageContext()
     else:
-        ctx = _create_html_frontend_context(isolated_frame, embed)
+        ctx = _create_html_frontend_context(isolated_frame, offline=offline)
 
     ctx.configure(verbose=show_status)
     _frontend_contexts[TEXT_HTML] = ctx
@@ -110,7 +104,10 @@ def _as_html(plot_spec: Dict) -> str:
     if TEXT_HTML not in _frontend_contexts:
         if _use_isolated_frame():
             # 'Isolated' HTML context can be setup lazily.
-            _setup_html_context(isolated_frame=True, offline=False, show_status=False)
+            _setup_html_context(isolated_frame=True,
+                                offline=False,
+                                no_js=False,
+                                show_status=False)
         else:
             return """\
                 <div style="color:darkred;">

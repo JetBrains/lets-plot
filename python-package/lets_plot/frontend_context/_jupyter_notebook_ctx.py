@@ -13,6 +13,7 @@ from IPython.display import display_html
 from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
 from .._global_settings import get_global_str, has_global_value, is_production
+from .._global_settings import JS_BASE_URL, JS_NAME
 from .._version import __version__
 
 # Data-attributes used to store extra information about the meaning of 'script' elements
@@ -40,9 +41,9 @@ class JupyterNotebookContext(FrontendContext):
 
     @staticmethod
     def _configure_connected_script(verbose: bool) -> str:
-        base_url = get_global_str("js_base_url")
-        if has_global_value('js_name'):
-            name = get_global_str('js_name')
+        base_url = get_global_str(JS_BASE_URL)
+        if has_global_value(JS_NAME):
+            name = get_global_str(JS_NAME)
         else:
             suffix = ".min.js" if is_production() else ".js"
             name = "lets-plot-{version}{suffix}".format(version=__version__, suffix=suffix)
