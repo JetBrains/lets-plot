@@ -22,11 +22,15 @@ class TooltipAnchor(
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is TooltipAnchor) {
-            return false
-        }
-        val anchor = other as TooltipAnchor?
-        return verticalAnchor == anchor!!.verticalAnchor && horizontalAnchor == anchor.horizontalAnchor
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as TooltipAnchor
+
+        if (verticalAnchor != other.verticalAnchor) return false
+        if (horizontalAnchor != other.horizontalAnchor) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
