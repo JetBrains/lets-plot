@@ -14,6 +14,9 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
+import jetbrains.datalore.plot.config.Option.Plot.SCALES
+import jetbrains.datalore.plot.config.Option.Scale.AES
+import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -92,7 +95,31 @@ class GeomInteractionBuilderCreationTest {
         assertFalse { aesListForTooltip.contains(Aes.COLOR) }
         val expectedAesList = listOf(Aes.X, Aes.Y, Aes.SIZE)
         assertAesList(expectedAesList, aesListForTooltip)
+    }
 
+    @Test
+    fun `should show the continuous mapped data`() {
+        val mappedData = mapOf(
+            Aes.X.name to listOf(0),
+            Aes.FILL.name to listOf(0.1)
+        )
+        val plotOpts = mutableMapOf(
+            MAPPING to mappedData,
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to "tile"
+                )
+            ),
+            SCALES to listOf(
+                mapOf(
+                    AES to Aes.FILL.name,
+                    SCALE_MAPPER_KIND to "color_brewer"
+                )
+            )
+        )
+        val builder = createGeomInteractionBuilder(plotOpts)
+        val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+        assertTrue { Aes.FILL in aesListForTooltip }
     }
 
     private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>) : GeomInteractionBuilder {
