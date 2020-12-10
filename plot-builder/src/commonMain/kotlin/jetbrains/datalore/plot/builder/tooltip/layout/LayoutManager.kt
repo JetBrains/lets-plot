@@ -192,18 +192,18 @@ class LayoutManager(
                     ?.let(::fixate)
             }
         }
-        val verticalsWithOverlappedCorners = tooltips.select(VERTICAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
-         verticalsWithOverlappedCorners
-            .let {
+
+        // Add corner tooltips
+       (tooltips.selectCorner() - horizontalsWithOverlappedCorners).forEach(::fixate)
+
+       (tooltips.select(VERTICAL_TOOLTIP) - tooltips.selectCorner())
+            .let { verticalTooltips ->
                 VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
-                    it,
+                    verticalTooltips,
                     restrictions
                 )
             }
             .forEach(::fixate)
-
-        // Add corner tooltips
-        (tooltips.selectCorner() - horizontalsWithOverlappedCorners - verticalsWithOverlappedCorners).forEach(::fixate)
 
         return separatedTooltips
     }
