@@ -33,7 +33,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
     }
 
     @Test
-    fun whenPositionalNonNumericXVar_ShouldAddTooltipText() {
+    fun whenPositionalDiscreteXVar_ShouldAddTooltipText() {
         val mapping = discrete(Aes.X)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
             .variable(mapping)
@@ -53,7 +53,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
     }
 
     @Test
-    fun whenPositionalNonNumericYVar_ShouldAddTooltipText() {
+    fun whenPositionalDiscreteYVar_ShouldAddTooltipText() {
         val mapping = discrete(Aes.Y)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
             .variable(mapping)
@@ -73,7 +73,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
     }
 
     @Test
-    fun whenNonNumericWidthVar_ShouldAddTooltipText() {
+    fun whenDiscreteWidthVar_ShouldAddTooltipText() {
         val mapping = discrete(Aes.WIDTH)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
             .variable(mapping)
