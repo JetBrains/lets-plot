@@ -64,16 +64,7 @@ class LayoutManager(
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it)) }
 
         // add corner tooltips
-        val cornerTooltips = mutableMapOf<TooltipAnchor, ArrayList<MeasuredTooltip>>()
-        tooltips
-            .filter(::isCorner)
-            .forEach { tooltip ->
-                val tooltipsInTheCorner = cornerTooltips.getOrPut(tooltip.tooltipSpec.anchor!!, { ArrayList() })
-                tooltipsInTheCorner.add(tooltip)
-            }
-        cornerTooltips.forEach { (anchor, tooltips) ->
-            desiredPosition += calculateCornerTooltipsPosition(tooltips, anchor)
-        }
+        desiredPosition += calculateCornerTooltipsPosition(tooltips)
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
         desiredPosition += calculateDataTooltipsPosition(
@@ -129,30 +120,36 @@ class LayoutManager(
         return placementList
     }
 
-    private fun calculateCornerTooltipsPosition(cornerTooltips: List<MeasuredTooltip>, tooltipAnchor: TooltipAnchor): List<PositionedTooltip> {
+    private fun calculateCornerTooltipsPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
-        val tooltipsHeight = cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
-        val verticalTooltipRange = when (tooltipAnchor.verticalAnchor) {
-            TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
-            TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
-            TooltipAnchor.VerticalAnchor.MIDDLE -> centered(
-                (myVerticalGeomSpace.start() + myVerticalGeomSpace.end()) / 2,
-                tooltipsHeight
-            )
-        }
+        tooltips
+            .filter(::isCorner) // has an anchor
+            .groupBy { it.tooltipSpec.anchor!! }
+            .forEach { (tooltipAnchor, cornerTooltips) ->
+                val tooltipsHeight =
+                    cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
+                val verticalTooltipRange = when (tooltipAnchor.verticalAnchor) {
+                    TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
+                    TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+                    TooltipAnchor.VerticalAnchor.MIDDLE -> centered(
+                        (myVerticalGeomSpace.start() + myVerticalGeomSpace.end()) / 2,
+                        tooltipsHeight
+                    )
+                }
 
-        var tooltipY = verticalTooltipRange.start()
-        cornerTooltips.forEach { tooltip ->
-            val positionedTooltip = calculatePlotCornerTooltipPosition(
-                tooltip,
-                tooltipY,
-                verticalTooltipRange,
-                tooltipAnchor.horizontalAnchor
-            )
-            placementList.add(positionedTooltip)
-            tooltipY += positionedTooltip.height + MARGIN_BETWEEN_TOOLTIPS
-        }
+                var tooltipY = verticalTooltipRange.start()
+                cornerTooltips.forEach { tooltip ->
+                    val positionedTooltip = calculatePlotCornerTooltipPosition(
+                        tooltip,
+                        tooltipY,
+                        verticalTooltipRange,
+                        tooltipAnchor.horizontalAnchor
+                    )
+                    placementList.add(positionedTooltip)
+                    tooltipY += positionedTooltip.height + MARGIN_BETWEEN_TOOLTIPS
+                }
+            }
 
         return placementList
     }
