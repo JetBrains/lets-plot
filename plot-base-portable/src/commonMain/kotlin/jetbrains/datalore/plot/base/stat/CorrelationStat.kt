@@ -23,7 +23,8 @@ import kotlin.math.abs
 class CorrelationStat(
     val correlationMethod: Method,
     val type: Type,
-    val fillDiagonal: Boolean
+    val fillDiagonal: Boolean,
+    val threshold: Double
 ) : BaseStat(DEF_MAPPING) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -31,8 +32,7 @@ class CorrelationStat(
             "Unsupported correlation method: $correlationMethod (only Pearson is currently available)"
         }
 
-
-        val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson)
+        val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson, threshold)
         val values = cm.getNumeric(Stats.CORR)
         val abs: List<Double?> = values.map { it?.let(::abs) }
 
@@ -68,5 +68,6 @@ class CorrelationStat(
         val DEF_CORRELATION_METHOD = Method.PEARSON
         val DEF_TYPE = Type.FULL
         const val DEF_FILL_DIAGONAL = true
+        const val DEF_THRESHOLD = 0.0
     }
 }

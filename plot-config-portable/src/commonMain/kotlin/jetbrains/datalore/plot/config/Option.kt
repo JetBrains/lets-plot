@@ -203,6 +203,7 @@ object Option {
             const val METHOD = "method"
             const val TYPE = "type"
             const val FILL_DIAGONAL = "diag"
+            const val THRESHOLD = "threshold"
         }
 
         object Smooth {

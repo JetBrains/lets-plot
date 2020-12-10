@@ -165,7 +165,8 @@ object StatProto {
         return CorrelationStat(
             correlationMethod = correlationMethod ?: CorrelationStat.DEF_CORRELATION_METHOD,
             type = type ?: CorrelationStat.DEF_TYPE,
-            fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL, CorrelationStat.DEF_FILL_DIAGONAL)
+            fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL, CorrelationStat.DEF_FILL_DIAGONAL),
+            threshold = options.getDouble(Corr.THRESHOLD) ?: CorrelationStat.DEF_THRESHOLD
         )
     }
 

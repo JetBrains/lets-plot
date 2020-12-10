@@ -71,7 +71,7 @@ class corr_plot:
                               mid=corr_plot._DEF_MID_COLOR,
                               high=corr_plot._DEF_HIGH_COLOR)
 
-    def points(self, type=None, diag=None):
+    def points(self, type=None, diag=None, threshold=None):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -83,15 +83,18 @@ class corr_plot:
         diag : Boolean
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
+        threshold: Double
+            Minimal correlation abs value to be included in result.
+            Default - 0.0.
 
         Returns
         -------
             self
         """
-        self._points_params = {'type': type, 'diag': diag}
+        self._points_params = {'type': type, 'diag': diag, 'threshold': threshold}
         return self
 
-    def labels(self, type=None, diag=None, map_size=None, color=None):
+    def labels(self, type=None, diag=None, map_size=None, color=None, threshold=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -109,16 +112,19 @@ class corr_plot:
         color: string
             Set text color.
             Default - contextual.
+        threshold: Double
+            Minimal correlation abs value to be included in result.
+            Default - 0.0.
         Returns
         -------
             self
         """
 
-        self._labels_params = {'type': type, 'diag': diag, 'color': color}
+        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': threshold}
         self._labels_map_size = map_size
         return self
 
-    def tiles(self, type=None, diag=None):
+    def tiles(self, type=None, diag=None, threshold=None):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -131,12 +137,16 @@ class corr_plot:
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
 
+        threshold: Double
+            Minimal correlation abs value to be included in result.
+            Default - 0.0.
+
         Returns
         -------
             self
         """
 
-        self._tiles_params = {'type': type, 'diag': diag}
+        self._tiles_params = {'type': type, 'diag': diag, 'threshold': threshold}
         return self
 
     def build(self) -> PlotSpec:
