@@ -64,15 +64,15 @@ class LayoutManager(
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it)) }
 
         // add corner tooltips
-        val cornerTooltips = HashMap<TooltipAnchor, ArrayList<MeasuredTooltip>>()
+        val cornerTooltips = mutableMapOf<TooltipAnchor, ArrayList<MeasuredTooltip>>()
         tooltips
             .filter(::isCorner)
             .forEach { tooltip ->
                 val tooltipsInTheCorner = cornerTooltips.getOrPut(tooltip.tooltipSpec.anchor!!, { ArrayList() })
                 tooltipsInTheCorner.add(tooltip)
             }
-        cornerTooltips.forEach { (anchor, list) ->
-            desiredPosition += calculateCornerTooltipsPosition(list, anchor)
+        cornerTooltips.forEach { (anchor, tooltips) ->
+            desiredPosition += calculateCornerTooltipsPosition(tooltips, anchor)
         }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
@@ -174,13 +174,13 @@ class LayoutManager(
 
         // First add tooltips with pre-arranged position
         tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
-        tooltips.selectCorner().forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
         // Include overlapped corner tooltips.
 
-        tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+        val horizontalsWithOverlappedCorners = tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+        horizontalsWithOverlappedCorners
             .let { horizontalTooltips ->
             if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
                 HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
@@ -192,8 +192,8 @@ class LayoutManager(
                     ?.let(::fixate)
             }
         }
-
-        tooltips.select(VERTICAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+        val verticalsWithOverlappedCorners = tooltips.select(VERTICAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+         verticalsWithOverlappedCorners
             .let {
                 VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
                     it,
@@ -201,6 +201,9 @@ class LayoutManager(
                 )
             }
             .forEach(::fixate)
+
+        // Add corner tooltips
+        (tooltips.selectCorner() - horizontalsWithOverlappedCorners - verticalsWithOverlappedCorners).forEach(::fixate)
 
         return separatedTooltips
     }

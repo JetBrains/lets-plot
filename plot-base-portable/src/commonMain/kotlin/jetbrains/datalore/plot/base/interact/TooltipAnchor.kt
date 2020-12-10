@@ -20,4 +20,18 @@ class TooltipAnchor(
         RIGHT,
         CENTER;
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is TooltipAnchor) {
+            return false
+        }
+        val anchor = other as TooltipAnchor?
+        return verticalAnchor == anchor!!.verticalAnchor && horizontalAnchor == anchor.horizontalAnchor
+    }
+
+    override fun hashCode(): Int {
+        var result = verticalAnchor.hashCode()
+        result = 31 * result + horizontalAnchor.hashCode()
+        return result
+    }
 }
