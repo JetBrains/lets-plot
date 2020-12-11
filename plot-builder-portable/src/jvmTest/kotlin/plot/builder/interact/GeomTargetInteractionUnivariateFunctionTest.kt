@@ -23,7 +23,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
     }
 
     @Test
-    fun whenPositionalXVar_ShouldAddEmptyTooltipText() {
+    fun whenPositionalXVar_ShouldAddTooltipText() {
         val mapping = continuous(Aes.X)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
             .variable(mapping)
