@@ -98,42 +98,107 @@ class GeomInteractionBuilderCreationTest {
     }
 
     @Test
-    fun `should show the continuous mapped data`() {
-        val mappedData = mapOf(
-            Aes.X.name to listOf(0),
-            Aes.FILL.name to listOf(0.1)
-        )
-        val plotOpts = mutableMapOf(
-            MAPPING to mappedData,
-            LAYERS to listOf(
-                mapOf(
-                    GEOM to "tile"
-                )
-            ),
-            SCALES to listOf(
-                mapOf(
-                    AES to Aes.FILL.name,
-                    SCALE_MAPPER_KIND to "color_brewer"
+    fun `should show the continuous data`() {
+        // Issue #241: Tooltip should appear if the mapped data is continuous
+        run {
+            val mappedData = data + mapOf(
+                Aes.FILL.name to listOf(1.0)
+            )
+            val plotOpts = mutableMapOf(
+                MAPPING to mappedData,
+                LAYERS to listOf(
+                    mapOf(
+                        GEOM to Option.GeomName.POINT
+                    )
                 )
             )
-        )
-        val builder = createGeomInteractionBuilder(plotOpts)
-        val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-        assertTrue { Aes.FILL in aesListForTooltip }
+            val builder = createGeomInteractionBuilder(plotOpts)
+
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertTrue { Aes.FILL in aesListForTooltip }
+        }
+        run {
+            val mappedData = mapOf(
+                Aes.X.name to listOf(0),
+                Aes.FILL.name to listOf(0.1)
+            )
+            val plotOpts = mutableMapOf(
+                MAPPING to mappedData,
+                LAYERS to listOf(
+                    mapOf(
+                        GEOM to "tile"
+                    )
+                ),
+                SCALES to listOf(
+                    mapOf(
+                        AES to Aes.FILL.name,
+                        SCALE_MAPPER_KIND to "color_brewer"
+                    )
+                )
+            )
+            val builder = createGeomInteractionBuilder(plotOpts)
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertTrue { Aes.FILL in aesListForTooltip }
+        }
     }
 
-    private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>) : GeomInteractionBuilder {
-            val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
-            val plotConfig = PlotConfigClientSide.create(plotSpec)
-            val layerConfig = PlotConfigClientSide.create(plotSpec).layerConfigs.first()
-            return GeomInteractionUtil.createGeomInteractionBuilder(
-                layerConfig = layerConfig,
-                scaleMap =  plotConfig.scaleMap,
-                multilayer = false,
-                isLiveMap = false,
-                theme = DefaultTheme()
+    @Test
+    fun `should skip the discrete data`() {
+        run {
+            val mappedData = data + mapOf(
+                Aes.FILL.name to listOf('a')
             )
+            val plotOpts = mutableMapOf(
+                MAPPING to mappedData,
+                LAYERS to listOf(
+                    mapOf(
+                        GEOM to Option.GeomName.POINT
+                    )
+                )
+            )
+            val builder = createGeomInteractionBuilder(plotOpts)
+
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertFalse { Aes.FILL in aesListForTooltip }
+        }
+        run {
+            val mappedData = mapOf(
+                Aes.X.name to listOf(0),
+                Aes.FILL.name to listOf('a')
+            )
+            val plotOpts = mutableMapOf(
+                MAPPING to mappedData,
+                LAYERS to listOf(
+                    mapOf(
+                        GEOM to "tile"
+                    )
+                ),
+                SCALES to listOf(
+                    mapOf(
+                        AES to Aes.FILL.name,
+                        SCALE_MAPPER_KIND to "color_brewer"
+                    )
+                )
+            )
+            val builder = createGeomInteractionBuilder(plotOpts)
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertFalse { Aes.FILL in aesListForTooltip }
+        }
     }
+
+    private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>): GeomInteractionBuilder {
+        val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
+        val plotConfig = PlotConfigClientSide.create(plotSpec)
+        val layerConfig = PlotConfigClientSide.create(plotSpec).layerConfigs.first()
+        return GeomInteractionUtil.createGeomInteractionBuilder(
+            layerConfig = layerConfig,
+            scaleMap = plotConfig.scaleMap,
+            multilayer = false,
+            isLiveMap = false,
+            theme = DefaultTheme()
+        )
+    }
+
     private fun getAesListInTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
             line.fields.filterIsInstance<MappingValue>().map(MappingValue::aes)
