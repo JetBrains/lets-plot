@@ -138,11 +138,13 @@ object Stats {
         correlationMethod: CorrelationStat.Method = CorrelationStat.DEF_CORRELATION_METHOD,
         type: CorrelationStat.Type = CorrelationStat.DEF_TYPE,
         fillDiagonal: Boolean = CorrelationStat.DEF_FILL_DIAGONAL,
+        threshold: Double = CorrelationStat.DEF_THRESHOLD
     ): CorrelationStat {
         return CorrelationStat(
             correlationMethod = correlationMethod,
             type = type,
-            fillDiagonal = fillDiagonal
+            fillDiagonal = fillDiagonal,
+            threshold = threshold
         )
     }
 

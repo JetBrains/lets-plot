@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.stat
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil.isNumeric
 import jetbrains.datalore.plot.base.stat.regression.allFinite
+import kotlin.math.abs
 
 object CorrelationUtil {
 
@@ -23,7 +24,8 @@ object CorrelationUtil {
         data: DataFrame,
         type: CorrelationStat.Type,
         fillDiagonal: Boolean,
-        corrfn: (DoubleArray, DoubleArray) -> Double
+        corrfn: (DoubleArray, DoubleArray) -> Double,
+        threshold: Double = CorrelationStat.DEF_THRESHOLD
     ): DataFrame {
         val numerics = data.variables().filter { isNumeric(data, it.name) }
 
@@ -31,15 +33,22 @@ object CorrelationUtil {
         val var2: ArrayList<String> = arrayListOf()
         val corr: ArrayList<Double?> = arrayListOf()
 
+        fun addCorrelation(varX: String, varY: String, v: Double) {
+            if (abs(v) >= threshold) {
+                var1.add(varX)
+                var2.add(varY)
+                corr.add(v)
+            }
+        }
+
         for ((i, vx) in numerics.withIndex()) {
 
-            var1.add(vx.label)
-            var2.add(vx.label)
-
             if (fillDiagonal) {
-                corr.add(1.0)
-            } else {
-                corr.add(null)
+                addCorrelation(
+                    vx.label,
+                    vx.label,
+                    1.0
+                )
             }
 
             val xs = data.getNumeric(vx)
@@ -50,15 +59,11 @@ object CorrelationUtil {
                 val c = correlation(xs, ys, corrfn)
 
                 if (type == CorrelationStat.Type.FULL || type == CorrelationStat.Type.LOWER) {
-                    var1.add(vx.label)
-                    var2.add(vy.label)
-                    corr.add(c)
+                    addCorrelation(vx.label, vy.label, c )
                 }
 
                 if (type == CorrelationStat.Type.FULL || type == CorrelationStat.Type.UPPER) {
-                    var1.add(vy.label)
-                    var2.add(vx.label)
-                    corr.add(c)
+                    addCorrelation(vy.label, vx.label, c )
                 }
             }
         }
