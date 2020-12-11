@@ -98,92 +98,66 @@ class GeomInteractionBuilderCreationTest {
     }
 
     @Test
-    fun `should show the continuous data`() {
+    fun `continuous var should be in tooltip`() {
         // Issue #241: Tooltip should appear if the mapped data is continuous
         run {
-            val mappedData = data + mapOf(
-                Aes.FILL.name to listOf(1.0)
-            )
-            val plotOpts = mutableMapOf(
-                MAPPING to mappedData,
-                LAYERS to listOf(
-                    mapOf(
-                        GEOM to Option.GeomName.POINT
-                    )
-                )
-            )
-            val builder = createGeomInteractionBuilder(plotOpts)
-
-            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertTrue { Aes.FILL in aesListForTooltip }
+            checkPointLayer(useContinuousVars = true)
         }
         run {
-            val mappedData = mapOf(
-                Aes.X.name to listOf(0),
-                Aes.FILL.name to listOf(0.1)
-            )
-            val plotOpts = mutableMapOf(
-                MAPPING to mappedData,
-                LAYERS to listOf(
-                    mapOf(
-                        GEOM to "tile"
-                    )
-                ),
-                SCALES to listOf(
-                    mapOf(
-                        AES to Aes.FILL.name,
-                        SCALE_MAPPER_KIND to "color_brewer"
-                    )
-                )
-            )
-            val builder = createGeomInteractionBuilder(plotOpts)
-            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertTrue { Aes.FILL in aesListForTooltip }
+            checkTileLayer(useContinuousVars = true)
         }
     }
 
     @Test
-    fun `should skip the discrete data`() {
+    fun `discrete var should not be in tooltip`() {
         run {
-            val mappedData = data + mapOf(
-                Aes.FILL.name to listOf('a')
-            )
-            val plotOpts = mutableMapOf(
-                MAPPING to mappedData,
-                LAYERS to listOf(
-                    mapOf(
-                        GEOM to Option.GeomName.POINT
-                    )
-                )
-            )
-            val builder = createGeomInteractionBuilder(plotOpts)
+            checkPointLayer(useContinuousVars = false)
+        }
+        run {
+            checkTileLayer(useContinuousVars = false)
+        }
+    }
 
-            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertFalse { Aes.FILL in aesListForTooltip }
-        }
-        run {
-            val mappedData = mapOf(
-                Aes.X.name to listOf(0),
-                Aes.FILL.name to listOf('a')
-            )
-            val plotOpts = mutableMapOf(
-                MAPPING to mappedData,
-                LAYERS to listOf(
-                    mapOf(
-                        GEOM to "tile"
-                    )
-                ),
-                SCALES to listOf(
-                    mapOf(
-                        AES to Aes.FILL.name,
-                        SCALE_MAPPER_KIND to "color_brewer"
-                    )
+    private fun createBuilder(layerOpts: MutableMap<String, Any>, aesName: String, useContinuousVars: Boolean): GeomInteractionBuilder {
+        val mappedData = data + mapOf(
+            aesName to if (useContinuousVars) {
+                listOf(0.1)
+            } else {
+                listOf('a')
+            }
+        )
+        val plotOpts = layerOpts + mapOf(MAPPING to mappedData)
+        return createGeomInteractionBuilder(plotOpts.toMutableMap())
+    }
+
+    private fun checkPointLayer(useContinuousVars: Boolean) {
+        val opts: MutableMap<String, Any> = mutableMapOf(
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to "point"
                 )
             )
-            val builder = createGeomInteractionBuilder(plotOpts)
-            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertFalse { Aes.FILL in aesListForTooltip }
-        }
+        )
+        val aesListForTooltip = getAesListInTooltip(createBuilder(opts, Aes.FILL.name, useContinuousVars).tooltipLines)
+        assertTrue { useContinuousVars == (Aes.FILL in aesListForTooltip) }
+    }
+
+    private fun checkTileLayer(useContinuousVars: Boolean) {
+        val opts: MutableMap<String, Any> = mutableMapOf(
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to "tile"
+                )
+            ),
+            SCALES to listOf(
+                mapOf(
+                    AES to Aes.FILL.name,
+                    SCALE_MAPPER_KIND to "color_brewer"
+                )
+            )
+        )
+        val aesListForTooltip = getAesListInTooltip(createBuilder(opts, Aes.FILL.name, useContinuousVars).tooltipLines)
+        assertTrue { useContinuousVars == (Aes.FILL in aesListForTooltip) }
     }
 
     private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>): GeomInteractionBuilder {
