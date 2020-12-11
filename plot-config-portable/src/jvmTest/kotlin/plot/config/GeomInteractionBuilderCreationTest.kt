@@ -143,6 +143,8 @@ class GeomInteractionBuilderCreationTest {
     }
 
     private fun checkTileLayer(useContinuousVars: Boolean) {
+        // Add color_fill_brewer:
+        // after GuideMappers.continuousToDiscrete() tooltip may not display required originally continuous data.
         val opts: MutableMap<String, Any> = mutableMapOf(
             LAYERS to listOf(
                 mapOf(
