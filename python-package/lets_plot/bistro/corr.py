@@ -392,7 +392,7 @@ class _BuildUtil:
             plot += geom_text(stat='corr',
                               show_legend=show_legend,
                               mapping=m,
-                              na_value='',
+                              na_text='',
                               label_format=corr_value_format,
                               size_unit='x',
                               sampling='none',

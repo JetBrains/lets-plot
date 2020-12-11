@@ -1060,7 +1060,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                    tooltips=None,
                     fatten=None,
                     **other_args):
     """
@@ -2272,7 +2273,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                    tooltips=None,
                     kernel=None,
                     adjust=None,
                     bw=None,
@@ -2796,6 +2798,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None,
               label_format=None,
+              na_text=None,
               **other_args):
     """
     Add a text directly to the plot.
@@ -2835,6 +2838,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+    na_text : str
+        Text to show for missing values.
+        Default: 'n/a'    
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2889,6 +2895,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  map=map, map_join=map_join,
                  label_format=label_format,
+                 na_text=na_text,
                  **other_args)
 
 
