@@ -18,7 +18,7 @@ class TargetPrototype(
     internal val hitShape: HitShape,
     internal val indexMapper: (Int) -> Int,
     private val tooltipParams: TooltipParams,
-    private val tooltipKind: TipLayoutHint.Kind
+    internal val tooltipKind: TipLayoutHint.Kind
 ) {
 
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
