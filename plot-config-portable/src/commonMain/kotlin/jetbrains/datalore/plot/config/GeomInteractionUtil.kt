@@ -117,7 +117,7 @@ object GeomInteractionUtil {
         axisAes: List<Aes<*>>
     ): List<Aes<*>> {
         fun isVariableContinuous(aes: Aes<*>): Boolean {
-            return scaleMap.safeGet(aes)?.let { it.isContinuous || it.isContinuousDomain } ?: false
+            return scaleMap.safeGet(aes)?.isContinuousDomain ?: false
         }
 
         // remove axis mapping: if aes and axis are bound to the same data
