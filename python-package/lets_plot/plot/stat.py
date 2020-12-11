@@ -13,6 +13,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
               type='full',
               diag=None,
               flip=True,
+              threshold=None,
               **other_args):
     """
     Computes correlations between numeric variables in the 'data'
@@ -54,7 +55,10 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
         Default - True if 'full' matrix, else - False.
     flip : Boolean
         If True the y axis is flipped.
-        Default - "True".
+        Default - True.
+    threshold: Double
+        Minimal correlation abs value to be included in result.
+        Default - 0.0.
 
     Returns
     -------
@@ -103,6 +107,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
                   tooltips=tooltips,
                   type=type,
                   diag=diag,
+                  threshold=threshold,
                   na_value='',
                   **other_args) +
             scale_size_identity() +
