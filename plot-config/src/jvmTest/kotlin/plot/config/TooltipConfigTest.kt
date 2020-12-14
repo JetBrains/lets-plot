@@ -342,9 +342,9 @@ class TooltipConfigTest {
             mapping = mapOf(Aes.LABEL.name to "label"),
             tooltips = null
         )
-        assertTooltipLines(
-            expectedLines = emptyList(),
-            actualLines = getGeneralTooltipLines(geomTextLayer)
+        assertTooltipStrings(
+            expected = emptyList(),
+            actual = getGeneralTooltipStrings(geomTextLayer)
         )
     }
 
@@ -362,6 +362,56 @@ class TooltipConfigTest {
             expected = listOf("my text"),
             actual = getGeneralTooltipStrings(geomTextLayer)
         )
+    }
+
+    @Test
+    fun `geom_text by default should not show axis tooltips`() {
+        val geomTextLayer = buildGeomLayer(
+            geom = "text",
+            data = mapOf(
+                "x" to listOf(1.0),
+                "y" to listOf(1.0),
+                "label" to listOf("my text")
+            ),
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y",
+                Aes.LABEL.name to "label"
+            ),
+            tooltips = null
+        )
+        assertTooltipStrings(
+            expected = emptyList(),
+            actual = getGeneralTooltipStrings(geomTextLayer)
+        )
+        val axisTooltips = getAxisTooltips(geomTextLayer)
+        assertEquals(0, axisTooltips.size, "Wrong number of axis tooltips")
+    }
+
+    @Test
+    fun `geom_text should add axis tooltips if tooltip lines are defined`() {
+        val geomTextLayer = buildGeomLayer(
+            geom = "text",
+            data = mapOf(
+                "x" to listOf(1.0),
+                "y" to listOf(1.0),
+                "label" to listOf("my text")
+            ),
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y",
+                Aes.LABEL.name to "label"
+            ),
+            tooltips = mapOf(
+                TOOLTIP_LINES to listOf("^label")
+            )
+        )
+        assertTooltipStrings(
+            expected = listOf("my text"),
+            actual = getGeneralTooltipStrings(geomTextLayer)
+        )
+        val axisTooltips = getAxisTooltips(geomTextLayer)
+        assertEquals(2, axisTooltips.size, "Wrong number of axis tooltips")
     }
 
     @Test
