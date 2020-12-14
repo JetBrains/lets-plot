@@ -124,8 +124,8 @@ class LayoutManager(
         val placementList = ArrayList<PositionedTooltip>()
 
         tooltips
-            .filter(::isCorner) // has an anchor
-            .groupBy { it.tooltipSpec.anchor!! }
+            .filter { it.tooltipSpec.anchor != null }
+            .groupBy { it.tooltipSpec.anchor }
             .forEach { (tooltipAnchor, cornerTooltips) ->
                 val tooltipsHeight =
                     cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
