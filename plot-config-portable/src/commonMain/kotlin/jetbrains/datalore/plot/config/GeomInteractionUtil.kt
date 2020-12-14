@@ -43,7 +43,7 @@ object GeomInteractionUtil {
             multilayer,
             isVariableContinuous(scaleMap, Aes.X)
         )
-        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
+        val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, scaleMap, builder.getAxisFromFunctionKind) - hiddenAesList
         val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
@@ -86,12 +86,19 @@ object GeomInteractionUtil {
         return builder
     }
 
-    private fun createHiddenAesList(geomKind: GeomKind): List<Aes<*>> {
-        return when (geomKind) {
+    private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
+        return when (layerConfig.geomProto.geomKind) {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
-            // by default geom_text doesn't show tooltips, but user can enable them via tooltips config
-            GeomKind.TEXT -> GeomMeta.renders(GeomKind.TEXT)
+            GeomKind.TEXT -> {
+                // by default geom_text doesn't show tooltips,
+                // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
+                if (layerConfig.tooltips.tooltipLinePatterns.isNullOrEmpty()) {
+                    GeomMeta.renders(GeomKind.TEXT)
+                } else {
+                    GeomMeta.renders(GeomKind.TEXT) - axisAes
+                }
+            }
             else -> emptyList()
         }
     }
