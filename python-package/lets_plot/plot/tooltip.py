@@ -63,6 +63,13 @@ class layer_tooltips(FeatureSpec):
 
     Set tooltips = "none" to hide tooltips from this layer.
 
+    anchor() - the corner of the plot to move the general tooltip:
+        ['top_left' | 'top_center' | 'top_right' |
+                      'middle_left' | 'middle_center' | 'middle_right' |
+                      'bottom_left' | 'bottom_center' | 'bottom_right']
+
+    min_width() - minimum width of the general multiline tooltip.
+
     Returns
     -------
         layer tooltips specification
@@ -88,12 +95,16 @@ class layer_tooltips(FeatureSpec):
     def __init__(self):
         self._tooltip_formats: List = []
         self._tooltip_lines: List = None
+        self._tooltip_anchor = None
+        self._tooltip_min_width = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
         d = super().as_dict()
         d['tooltip_formats'] = self._tooltip_formats
         d['tooltip_lines'] = self._tooltip_lines
+        d['tooltip_anchor'] = self._tooltip_anchor
+        d['tooltip_min_width'] = self._tooltip_min_width
         return d
 
     def format(self, field=None, format=None):
@@ -104,4 +115,12 @@ class layer_tooltips(FeatureSpec):
         if self._tooltip_lines is None:
             self._tooltip_lines = []
         self._tooltip_lines.append(value)
+        return self
+
+    def anchor(self, value):
+        self._tooltip_anchor = value
+        return self
+
+    def min_width(self, value):
+        self._tooltip_min_width = value
         return self

@@ -18,13 +18,11 @@ class ThemeConfig(options: Map<String, Any>) {
         private val myAxisXTheme: AxisTheme
         private val myAxisYTheme: AxisTheme
         private val myLegendTheme: LegendTheme
-        private val myTooltipTheme: TooltipTheme
 
         init {
             myAxisXTheme = AxisThemeConfig.X(options, defOptions)
             myAxisYTheme = AxisThemeConfig.Y(options, defOptions)
             myLegendTheme = LegendThemeConfig(options, defOptions)
-            myTooltipTheme = TooltipThemeConfig(options, defOptions)
         }
 
         override fun axisX(): AxisTheme {
@@ -37,10 +35,6 @@ class ThemeConfig(options: Map<String, Any>) {
 
         override fun legend(): LegendTheme {
             return myLegendTheme
-        }
-
-        override fun tooltip(): TooltipTheme {
-            return myTooltipTheme
         }
     }
 

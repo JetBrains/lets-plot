@@ -12,6 +12,4 @@ interface Theme {
     fun axisY(): AxisTheme
 
     fun legend(): LegendTheme
-
-    fun tooltip(): TooltipTheme
 }

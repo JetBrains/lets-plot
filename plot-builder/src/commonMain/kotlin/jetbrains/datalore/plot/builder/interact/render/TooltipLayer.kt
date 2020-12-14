@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.interact.render
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
-import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
@@ -21,13 +20,10 @@ import jetbrains.datalore.vis.svg.SvgNode
 
 internal class TooltipLayer(
     decorationLayer: SvgNode,
-    viewport: DoubleRectangle,
-    tooltipAnchor: TooltipAnchor?,
-    private val tooltipMinWidth: Double?
+    viewport: DoubleRectangle
 ) {
-    private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, tooltipAnchor)
+    private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
     private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
-    private val myShowCrosshairComponent = tooltipAnchor != null
 
     fun showTooltips(
         cursor: DoubleVector,
@@ -44,7 +40,7 @@ internal class TooltipLayer(
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec -> spec
-                .run { newTooltipBox().apply { visible = false } } // to not flicker on arrange
+                .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
@@ -64,7 +60,7 @@ internal class TooltipLayer(
 
     private fun clearTooltips() = myTooltipLayer.children().clear()
 
-    private fun newTooltipBox(): TooltipBox {
+    private fun newTooltipBox(tooltipMinWidth: Double?): TooltipBox {
         // Add to the layer to be able to calculate a bbox
         return TooltipBox(tooltipMinWidth).apply { myTooltipLayer.children().add(rootGroup) }
     }
