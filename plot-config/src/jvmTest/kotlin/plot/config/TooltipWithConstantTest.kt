@@ -76,6 +76,21 @@ class TooltipWithConstantTest {
         )
     }
 
+    @Test
+    fun `should not add positional constants for geoms other than hline or vline`() {
+        val layerSpec = """
+            "geom": "point",
+            "x": 0,
+            "y": 0
+        """
+        val layer = buildGeomLayer(layerSpec)
+
+        assertEquals(
+            expected = emptyList(),
+            actual = getTooltipLines(layer)
+        )
+    }
+
     private fun buildGeomLayer(layerSpec: String): GeomLayer {
         val spec = """{
             "data": { "x": [0.0, 0.5] },

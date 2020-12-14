@@ -52,7 +52,7 @@ object GeomInteractionUtil {
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipLinesSpec(layerConfig.tooltips)
-            .tooltipConstants(layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) })
+            .tooltipConstants(createConstantAesList(layerConfig))
             .showAxisTooltip(!isLiveMap)
     }
 
@@ -156,6 +156,14 @@ object GeomInteractionUtil {
         GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
         GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
         else -> emptyList()
+    }
+
+    private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
+        return when (layerConfig.geomProto.geomKind) {
+            GeomKind.H_LINE,
+            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+            else -> emptyMap()
+        }
     }
 
     private fun initGeomInteractionBuilder(
