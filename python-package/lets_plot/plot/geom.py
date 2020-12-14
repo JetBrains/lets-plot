@@ -25,10 +25,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_text']
 
 
-def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                map=None, map_join=None, data_join_on=None, map_join_on=None,
-               animation=None,
-               tooltips=None,
                **other_args):
     """
     Draw points defined by an x and y coordinate, as for a scatter plot.
@@ -48,8 +46,10 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
-    animation : type of the animation, optional
-        Codes and names: 0 = "none" (default), 1 = "ripple".
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair, optional
@@ -57,8 +57,6 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -107,17 +105,21 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         map = map.centroids()
         map_join = map_join_regions(map_join)
 
-    return _geom('point', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
-                 animation=animation,
+    return _geom('point',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
                  tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  **other_args)
 
 
-def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, data_join_on=None, map_join_on=None,
-              animation=None,
-              tooltips=None, **other_args):
+              **other_args):
     """
     Connects observations in the order, how they appear in the data.
 
@@ -139,8 +141,10 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
-    animation : type of the animation, optional
-        Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes LineString and MultiLineString)
         Data containing coordinates of lines.
     map_join : str, pair, optional
@@ -148,8 +152,6 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -174,10 +176,6 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
      - size : line width
-     - speed : animation speed
-        The number of pixels covered by animation object per second. Default value is 10.
-     - flow : animation flow
-        The number of animation objects passing a reference point per second. Default value is 0.1.
 
     Examples
     ---------
@@ -213,13 +211,19 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     """
     if is_geo_data_regions(map):
         raise ValueError("Regions object is not support in geom_path - there is no geometries for renedering as path")
-    return _geom('path', mapping, data, stat, position, show_legend, sampling=sampling,
+    return _geom('path',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
-                 animation=animation,
-                 tooltips=tooltips, **other_args)
+                 **other_args)
 
 
-def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               **other_args):
     """
     Connect points in the order of the variable on the x axis.
@@ -243,6 +247,8 @@ def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -300,10 +306,26 @@ def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> p += geom_line(stat='smooth', color='red', linetype="longdash")
         >>> p
     """
-    return _geom('line', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('line',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                method=None,
+                n=None,
+                se=None,
+                level=None,
+                span=None,
+                deg=None,
+                seed=None,
+                max_n=None,
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -326,6 +348,8 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     method :  smoothing method: lm (Linear Model) or loess (Locally Estimated Scatterplot Smoothing). Default - 'lm'
@@ -340,8 +364,6 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
     seed : random seed for LOESS sampling.
     max_n : maximum number of data-points for LOESS method. If this quantity exceeded random sampling
         is applied to data. Default - 1000
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -400,10 +422,26 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> dat["t"] = np.tile(t / N, M)
         >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_point(aes(color='variable')) + geom_smooth(color='red')
     """
-    return _geom('smooth', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('smooth',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 method=method,
+                 n=n,
+                 se=se,
+                 level=level,
+                 span=span,
+                 deg=deg,
+                 seed=seed,
+                 max_n=max_n,
+                 **other_args)
 
 
-def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              **other_args):
     """
     Display a bar chart which makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
@@ -426,6 +464,8 @@ def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -473,15 +513,22 @@ def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None
         >>> dat = pd.melt(dat)
         >>> ggplot(dat, aes(x='value')) + geom_bar(stat='bin', color='gray', fill='dark_green', size=2)
     """
-    return _geom('bar', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('bar',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                    bins=None,
                    binwidth=None,
                    center=None,
                    boundary=None,
-                   tooltips=None,
                    **other_args):
     """
     Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
@@ -502,6 +549,8 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     bins :
@@ -513,8 +562,6 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
         Specifies x-value to align bin centers to.
     boundary : number, optional
         Specifies x-value to align bin boundary (i.e. point berween bins) to.
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -553,20 +600,25 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
         >>> )
         >>> ggplot(data) + geom_histogram(aes(x='x'), color='black', fill='gray', size=1)
     """
-    return _geom('histogram', mapping, data, stat, position, show_legend, sampling=sampling,
+    return _geom('histogram',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  bins=bins,
                  binwidth=binwidth,
                  center=center,
                  boundary=boundary,
-                 tooltips=tooltips,
                  **other_args)
 
 
-def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                bins=None,
                binwidth=None,
                drop=None,
-               tooltips=None,
                **other_args):
     """
     Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
@@ -587,6 +639,8 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     bins : list of 2 numbers, default: [30,30]
@@ -596,8 +650,6 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
         The default is to use bin widths that cover the entire range of the data.
     drop : bool, optional, default: True
         Specifies whether to remove all bins with 0 counts.
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -641,15 +693,22 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
         >>> )
         >>> ggplot(data) + geom_bin2d(aes(x='x', y='y'), binwidth=[0.5,0.5])
     """
-    return _geom('bin2d', mapping, data, stat, position, show_legend, sampling=sampling,
+    return _geom('bin2d',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  bins=bins,
                  binwidth=binwidth,
                  drop=drop,
-                 tooltips=tooltips,
                  **other_args)
 
 
-def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, **other_args):
+def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+              **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
 
@@ -671,6 +730,8 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -724,10 +785,19 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> plot = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z'), width=.7, height=.7)
         >>> plot
     """
-    return _geom('tile', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('tile',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=None, tooltips=None, **other_args):
+def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
     This is a high performance special function for same-sized tiles.
@@ -751,6 +821,8 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -797,10 +869,18 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> plot = ggplot(dat, aes('x', 'y')) +  geom_raster(aes(fill='z'))
         >>> plot
     """
-    return _geom('raster', mapping, data, stat, position, show_legend, tooltips=tooltips, **other_args)
+    return _geom('raster',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   **other_args):
     """
     Display error bars defined by the upper and lower values.
@@ -823,6 +903,8 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -873,11 +955,20 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
         >>> dat = dict(x=x, ymin=ymin, ymax=ymax)
         >>> ggplot(dat, aes(x='x')) + geom_errorbar(aes(ymin='ymin', ymax='ymax'))
     """
-    return _geom('errorbar', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('errorbar',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, fatten=None,
-                  tooltips=None, **other_args):
+def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  fatten=None,
+                  **other_args):
     """
     Display bars with horizontal median line.
 
@@ -896,12 +987,12 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     fatten : number, default: 2.5
         A multiplicative factor applied to size of the middle bar
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -948,12 +1039,22 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
         >>> p += geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
         >>> p
     """
-    return _geom('crossbar', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten,
-                 tooltips=tooltips, **other_args)
+    return _geom('crossbar',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 fatten=fatten,
+                 **other_args)
 
 
-def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, fatten=None,
-                    tooltips=None, **other_args):
+def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                    tooltips=None,
+                    fatten=None,
+                    **other_args):
     """
     Add a vertical line defined by upper and lower value with midpoint at y location.
 
@@ -972,6 +1073,8 @@ def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_lege
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     fatten : number, default: 5.0
@@ -1022,11 +1125,19 @@ def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_lege
         >>> p += geom_pointrange(aes(ymin='len_min', ymax='len_max', y='length'), fatten=5)
         >>> p
     """
-    return _geom('pointrange', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten,
-                 tooltips=tooltips, **other_args)
+    return _geom('pointrange',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 fatten=fatten,
+                 **other_args)
 
 
-def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                    **other_args):
     """
     Display a line range defined by an upper and lower value.
@@ -1046,6 +1157,8 @@ def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legen
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -1091,11 +1204,21 @@ def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legen
         >>> p += geom_linerange(aes(ymin='len_min', ymax='len_max'))
         >>> p
     """
-    return _geom('linerange', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('linerange',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, bins=None,
-                 binwidth=None, tooltips=None, **other_args):
+def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 bins=None,
+                 binwidth=None,
+                 **other_args):
     """
     Display contours of a 3d surface in 2d.
 
@@ -1117,6 +1240,8 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     bins : int, optional
@@ -1178,12 +1303,22 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
         >>> p = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z')) + geom_contour(aes(z='z', color='..level..')) + scale_color_gradient(low='dark_green', high='yellow')
         >>> p
     """
-    return _geom('contour', mapping, data, stat, position, show_legend, sampling=sampling, bins=bins, binwidth=binwidth,
-                 tooltips=tooltips, **other_args)
+    return _geom('contour',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins, binwidth=binwidth,
+                 **other_args)
 
 
-def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, bins=None,
-                  binwidth=None, tooltips=None, **other_args):
+def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  bins=None,
+                  binwidth=None,
+                  **other_args):
     """
     Fill contours of a 3d surface in 2d.
 
@@ -1205,6 +1340,8 @@ def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     bins : int, optional
@@ -1261,13 +1398,21 @@ def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend
         >>> p = ggplot(dat, aes('x', 'y', z='z')) + geom_contourf(aes(fill='..level..'))
         >>> p
     """
-    return _geom('contourf', mapping, data, stat, position, show_legend, sampling=sampling, bins=bins,
-                 binwidth=binwidth, tooltips=tooltips, **other_args)
+    return _geom('contourf',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 **other_args)
 
 
-def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  map=None, map_join=None, data_join_on=None, map_join_on=None,
-                 tooltips=None,
                  **other_args):
     """
     Display a filled closed path defined by the vertex coordinates of individual polygons.
@@ -1290,6 +1435,10 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Regions (implicitly invoke boundaries())
         Data contains coordinates of polygon vertices on map.
     map_join : str, pair, optional
@@ -1297,8 +1446,6 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1346,15 +1493,20 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         map = map.boundaries()
         map_join = map_join_regions(map_join)
 
-    return _geom('polygon', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+    return _geom('polygon',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
                  tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  **other_args)
 
 
-def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None,
+def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              map=None, map_join=None, data_join_on=None, map_join_on=None,
-             tooltips=None,
              **other_args):
     """
     Display polygons from a reference map.
@@ -1372,8 +1524,15 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
+    position : string, optional
+        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
+        position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Regions (implicitly invoke boundaries())
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str, pair, optional
@@ -1381,8 +1540,6 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1427,30 +1584,26 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         >>> ggplot(df) + ggtitle('Randomly colored states') + geom_map(aes(fill='value'), map=boundaries, map_join=('state', 'found name'), color='white')
     """
 
-    # mapKey = 'map'
-    #
-    # if mapKey in other_args.keys():
-    #     map = other_args.get(mapKey)
-    #
-    #     # map data: do not allow aes(..) here
-    #     if isinstance(map, FeatureSpec):
-    #         raise ValueError("Argument 'map' can't accept object '{}'".format(map.kind))
-    #
-    # elif not is_geo_data_frame(data):
-    #     raise TypeError("geom_map() missing 1 required keyword-only argument: 'map'")
-
     if is_geo_data_regions(map):
         map = map.boundaries()
         map_join = map_join_regions(map_join)
 
-    return _geom('map', mapping, data, stat, None, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+    return _geom('map',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
                  tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  **other_args)
 
 
-def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, slope=None,
-                intercept=None, tooltips=None, **other_args):
+def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                slope=None,
+                intercept=None,
+                **other_args):
     """
     Add a straight line with specified slope and intercept to the plot.
 
@@ -1472,6 +1625,8 @@ def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=N
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     slope :
@@ -1510,12 +1665,22 @@ def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3)
     """
-    return _geom('abline', mapping, data, stat, position, show_legend, sampling=sampling, slope=slope,
-                 intercept=intercept, tooltips=tooltips, **other_args)
+    return _geom('abline',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 slope=slope,
+                 intercept=intercept,
+                 **other_args)
 
 
-def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, yintercept=None,
-               tooltips=None, **other_args):
+def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+               yintercept=None,
+               **other_args):
     """
     Add a straight horizontal line to the plot.
 
@@ -1537,6 +1702,8 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     yintercept:
@@ -1572,12 +1739,21 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_hline(yintercept=0.2, color='dark_blue', linetype='longdash', size=2)
     """
-    return _geom('hline', mapping, data, stat, position, show_legend, sampling=sampling, yintercept=yintercept,
-                 tooltips=tooltips, **other_args)
+    return _geom('hline',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 yintercept=yintercept,
+                 **other_args)
 
 
-def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, xintercept=None,
-               tooltips=None, **other_args):
+def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+               xintercept=None,
+               **other_args):
     """
     Add a straight vertical line to the plot.
 
@@ -1599,6 +1775,8 @@ def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     xintercept:
@@ -1634,15 +1812,22 @@ def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=No
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_vline(xintercept=0.2, color='dark_green', linetype='dotdash', size=2)
     """
-    return _geom('vline', mapping, data, stat, position, show_legend, sampling=sampling, xintercept=xintercept,
-                 tooltips=tooltips, **other_args)
+    return _geom('vline',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 xintercept=xintercept,
+                 **other_args)
 
 
-def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  fatten=None,
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
                  varwidth=None,
-                 tooltips=None,
                  **other_args):
     """
     Display the distribution of data based on a five number summary ("minimum", first quartile (Q1), median, 
@@ -1667,6 +1852,8 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     fatten : number, default: 1.0
@@ -1721,13 +1908,24 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
         >>> p += geom_boxplot(outlier_color='red', outlier_shape=8, outlier_size=5)
         >>> p
     """
-    return _geom('boxplot', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten,
-                 outlier_color=outlier_color, outlier_fill=outlier_fill, outlier_shape=outlier_shape,
-                 outlier_size=outlier_size, varwidth=varwidth, tooltips=tooltips,
+    return _geom('boxplot',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 fatten=fatten,
+                 outlier_color=outlier_color,
+                 outlier_fill=outlier_fill,
+                 outlier_shape=outlier_shape,
+                 outlier_size=outlier_size,
+                 varwidth=varwidth,
                  **other_args)
 
 
-def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 **other_args):
     """
     Display a y interval defined by ymin and ymax.
@@ -1750,6 +1948,8 @@ def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=N
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -1794,10 +1994,18 @@ def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> dat = dict(id=id, x=x, ymin=ymin, ymax=ymax)
         >>> ggplot(dat) + geom_ribbon(aes(x='x', ymin='ymin', ymax='ymax', group='id', fill='id'), color='black', alpha=0.5)
     """
-    return _geom('ribbon', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('ribbon',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_area(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               **other_args):
     """
     Display the development of quantitative values over an interval. This is the continuous analog of geom_bar.
@@ -1820,6 +2028,8 @@ def geom_area(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -1860,11 +2070,22 @@ def geom_area(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> dat = dict(x=x, y=y, g=g)
         >>> ggplot(dat,aes('x','y', group='g')) + geom_area(aes(fill='g', color='g'), alpha=.2) + scale_fill_discrete() + scale_color_discrete()
     """
-    return _geom('area', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('area',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, kernel=None,
-                 adjust=None, bw=None, n=None, tooltips=None,
+def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 kernel=None,
+                 adjust=None,
+                 bw=None,
+                 n=None,
                  **other_args):
     """
     Display a density estimate, which is a smoothed version of the histogram.
@@ -1887,6 +2108,8 @@ def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     kernel : string, optional
@@ -1935,13 +2158,26 @@ def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=
         >>> dat = dict(x=x)
         >>> ggplot(dat,aes('x')) + geom_density()
     """
-    return _geom('density', mapping, data, stat, position, show_legend, sampling=sampling,
-                 kernel=kernel, adjust=adjust, bw=bw, n=n, tooltips=tooltips, **other_args)
+    return _geom('density',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 kernel=kernel, adjust=adjust, bw=bw, n=n,
+                 **other_args)
 
 
-def geom_density2d(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
-                   kernel=None, adjust=None, bw=None, n=None,
-                   bins=None, binwidth=None, tooltips=None, **other_args):
+def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                   kernel=None,
+                   adjust=None,
+                   bw=None,
+                   n=None,
+                   bins=None,
+                   binwidth=None,
+                   **other_args):
     """
     Display density function contour.
 
@@ -1963,6 +2199,8 @@ def geom_density2d(mapping=None, data=None, stat=None, position=None, show_legen
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     kernel : string, optional
@@ -2014,14 +2252,27 @@ def geom_density2d(mapping=None, data=None, stat=None, position=None, show_legen
         >>> dat = dict(x=x, y=y)
         >>> ggplot(dat,aes('x', 'y')) + geom_density2d()
     """
-    return _geom('density2d', mapping, data, stat, position, show_legend, sampling=sampling,
+    return _geom('density2d',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  kernel=kernel, adjust=adjust, bw=bw, n=n, bins=bins, binwidth=binwidth,
-                 tooltips=tooltips, **other_args)
+                 **other_args)
 
 
-def geom_density2df(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, kernel=None,
-                    adjust=None, bw=None, n=None,
-                    bins=None, binwidth=None, tooltips=None, **other_args):
+def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                    tooltips=None,
+                    kernel=None,
+                    adjust=None,
+                    bw=None,
+                    n=None,
+                    bins=None,
+                    binwidth=None,
+                    **other_args):
     """
     Fill density function contour.
 
@@ -2043,6 +2294,8 @@ def geom_density2df(mapping=None, data=None, stat=None, position=None, show_lege
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     kernel : string, optional
@@ -2088,13 +2341,26 @@ def geom_density2df(mapping=None, data=None, stat=None, position=None, show_lege
         >>> dat = dict(x=x, y=y)
         >>> ggplot(dat,aes('x', 'y')) + geom_density2df(aes(fill='..level..'))
     """
-    return _geom('density2df', mapping, data, stat, position, show_legend, sampling=sampling,
-                 kernel=kernel, adjust=adjust, bw=bw, n=n, bins=bins, binwidth=binwidth,
-                 tooltips=tooltips, **other_args)
+    return _geom('density2df',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 kernel=kernel,
+                 adjust=adjust,
+                 bw=bw, n=n,
+                 bins=bins,
+                 binwidth=binwidth,
+                 **other_args)
 
 
-def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, width=None,
-                height=None, tooltips=None, **other_args):
+def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                width=None,
+                height=None,
+                **other_args):
     """
     Display jittered points, especially for discrete plots or dense plots.
 
@@ -2116,6 +2382,8 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     width : double, optional
@@ -2161,11 +2429,18 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> p = ggplot(dat) + geom_jitter(aes(x='x', y='y', color='x'), height=0)
         >>> p
     """
-    return _geom('jitter', mapping, data, stat, position, show_legend, sampling=sampling,
-                 width=width, height=height, tooltips=tooltips, **other_args)
+    return _geom('jitter',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 width=width, height=height, **other_args)
 
 
-def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   **other_args):
     """
     Display a line chart which makes the y value proportional to the number of observed variable values, mapped to x axis.
@@ -2188,6 +2463,8 @@ def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     other_args :
@@ -2234,11 +2511,20 @@ def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend
         >>> dat = pd.melt(dat)
         >>> ggplot(dat, aes(x='value')) + geom_freqpoly(size=2)
     """
-    return _geom('freqpoly', mapping, data, stat, position, show_legend, sampling=sampling, tooltips=tooltips, **other_args)
+    return _geom('freqpoly',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
 
 
-def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, direction=None,
-              tooltips=None, **other_args):
+def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+              direction=None,
+              **other_args):
     """
     Connect observations in the order in which they appear in the data by stairs.
 
@@ -2260,6 +2546,8 @@ def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     direction: string, optional
@@ -2315,13 +2603,20 @@ def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
         >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_step(aes(color='variable'), size=1, alpha=0.7)
     """
-    return _geom('step', mapping, data, stat, position, show_legend, sampling=sampling, direction=direction,
-                 tooltips=tooltips, **other_args)
+    return _geom('step',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 direction=direction,
+                 **other_args)
 
 
-def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, data_join_on=None, map_join_on=None,
-              tooltips=None,
               **other_args):
     """
     Display an axis-aligned rectangle defined by two corners.
@@ -2342,6 +2637,12 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    show_legend: bool
+        True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
+    tooltips : result of the call to the layer_tooltips() function.
+        Specifies appearance, style and content.
     map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Regions (implicitly invoke limits())
         Bounding boxes of geometries will be drawn.
     map_join : str, pair, optional
@@ -2349,8 +2650,6 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    tooltips : result of the call to the layer_tooltips() function.
-        Specifies appearance, style and content.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2393,14 +2692,20 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
         map = map.limits()
         map_join = map_join_regions(map_join)
 
-    return _geom('rect', mapping, data, stat, position, show_legend, sampling=sampling,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+    return _geom('rect',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
                  tooltips=tooltips,
+                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
                  **other_args)
 
 
-def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, arrow=None,
-                 animation=None, tooltips=None, **other_args):
+def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, arrow=None,
+                 tooltips=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -2422,12 +2727,12 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     arrow : optional
         Specification for arrow head, as created by arrow() function.
-    animation : type of the animation, optional
-        Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2453,10 +2758,6 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
      - size : line width
-     - speed : animation speed
-        The number of pixels covered by animation object per second. Default value is 10.
-     - flow : animation flow
-        The number of animation objects passing a reference point per second. Default value is 0.1.
 
     Examples
     ---------
@@ -2466,13 +2767,22 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]))
     """
-    return _geom('segment', mapping, data, stat, position, show_legend, sampling=sampling, arrow=arrow,
-                 animation=animation, tooltips=tooltips, **other_args)
+    return _geom('segment',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 arrow=arrow,
+                 **other_args)
 
 
-def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, data_join_on=None, map_join_on=None,
-              tooltips=None, label_format=None,
+              label_format=None,
+              na_text=None,
               **other_args):
     """
     Add a text directly to the plot.
@@ -2495,6 +2805,8 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     show_legend: bool
         True - do not show legend for this layer.
+    sampling : result of the call to the sampling_xxx() function.
+        Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
@@ -2510,6 +2822,9 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+    na_text : str
+        Text to show for missing values.
+        Default: 'n/a'
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2554,32 +2869,29 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         map = map.centroids()
         map_join = map_join_regions(map_join)
 
-    return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling,
+    return _geom('text',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
-                 tooltips=tooltips, label_format=label_format,
+                 label_format=label_format,
+                 na_text=na_text,
                  **other_args)
 
 
-def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=None, tooltips=None, **kwargs):
-    """
-    :param mapping: Set of aesthetic mappings created by aes.
-    :param data: The data to be displayed in this layer. If None, the default, the data
-        is inherited from the plot data as specified in the call to ggplot.
-    :param stat: The statistical transformation to use on the data for this layer, as a string.
-    :param position: Position adjustment, either as a string, or the result of a call
-        to a position adjustment function.
-    :param tooltips: The tooltip configuration created by layer_tooltips() function, optional.
-        It has a 'lines' parameter with a list of tooltip line specifications (variable names or
-        'tooltip_line' with variable name, label, format).
-    ..
-    :param kwargs:  passed on to layer. (These are often aesthetics, used to set an aesthetic to a fixed value,
-        like color = "red" or size = 3. Also other cases - see doc)
-                        They may also be parameters to the paired geom/stat
-
-    todo: other parameters:
-    na.rm = FALSE, show.legend = NA, inherit.aes = TRUE, ...
-    """
-    # aes(...)
+def _geom(name, *,
+          mapping=None,
+          data=None,
+          stat=None,
+          position=None,
+          show_legend=None,
+          sampling=None,
+          tooltips=None,
+          **kwargs):
     if mapping:
         if not (isinstance(mapping, FeatureSpec) and mapping.kind == 'mapping'):
             raise ValueError("Unexpected value for argument 'mapping'. Hint: try to use function aes()")
@@ -2600,5 +2912,14 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
         kwargs.get('map_join_on', None)
     )
 
-    return LayerSpec(geom=name, stat=stat, data=data, mapping=mapping, position=position, show_legend=show_legend,
-                     tooltips=tooltips, **data_meta, **map_data_meta, **kwargs)
+    return LayerSpec(geom=name,
+                     stat=stat,
+                     data=data,
+                     mapping=mapping,
+                     position=position,
+                     show_legend=show_legend,
+                     sampling=sampling,
+                     tooltips=tooltips,
+                     **data_meta,
+                     **map_data_meta,
+                     **kwargs)

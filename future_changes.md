@@ -3,7 +3,10 @@
 ### Added
  - new tooltip anchor options - center and middle.
  - min tooltip width
- - corr_plot(), stat_corr()
+ - stat_corr()
+ - 'bistro' package, corr_plot()
+ - 'no_js' parameter in LetsPlot.setup_html(), 'LETS_PLOT_NO_JS' env var.
+ - 'na_text' parameter in 'geom_text'
 
 ### Changed
 

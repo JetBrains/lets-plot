@@ -142,8 +142,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
-                if (opts.has(Text.NA_VALUE)) {
-                    val naValue = opts[Text.NA_VALUE] as? String
+                if (opts.has(Text.NA_TEXT)) {
+                    val naValue = opts[Text.NA_TEXT] as? String
 
                     if (naValue != null) {
                         geom.naValue = naValue
