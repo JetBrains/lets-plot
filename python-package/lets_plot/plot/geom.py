@@ -26,7 +26,6 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                map=None, map_join=None,
-               animation=None,
                **other_args):
     """
     Draw points defined by an x and y coordinate, as for a scatter plot.
@@ -57,8 +56,6 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    animation : type of the animation, optional
-        Codes and names: 0 = "none" (default), 1 = "ripple".
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -116,13 +113,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join,
-                 animation=animation,
                  **other_args)
 
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None,
-              animation=None,
               **other_args):
     """
     Connects observations in the order, how they appear in the data.
@@ -156,8 +151,6 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         str is allowed only when used with Regions object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    animation : type of the animation, optional
-        Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -182,10 +175,6 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
      - size : line width
-     - speed : animation speed
-        The number of pixels covered by animation object per second. Default value is 10.
-     - flow : animation flow
-        The number of animation objects passing a reference point per second. Default value is 0.1.
 
     Examples
     ---------
@@ -228,7 +217,6 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join,
-                 animation=animation,
                  **other_args)
 
 
@@ -2714,7 +2702,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, arrow=None,
-                 animation=None, tooltips=None, **other_args):
+                 tooltips=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -2742,8 +2730,6 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specifies appearance, style and content.
     arrow : optional
         Specification for arrow head, as created by arrow() function.
-    animation : type of the animation, optional
-        Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2769,10 +2755,6 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
      - size : line width
-     - speed : animation speed
-        The number of pixels covered by animation object per second. Default value is 10.
-     - flow : animation flow
-        The number of animation objects passing a reference point per second. Default value is 0.1.
 
     Examples
     ---------
@@ -2791,7 +2773,6 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
-                 animation=animation,
                  **other_args)
 
 
