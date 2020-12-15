@@ -81,7 +81,7 @@ class CorrelationTest {
 
         val labels2series = mapOf("A" to a, "B" to b, "C" to c)
 
-        val cm = correlationMatrix(data, CorrelationStat.Type.FULL, fillDiagonal = true, corrfn = ::correlationPearson)
+        val cm = correlationMatrix(data, CorrelationStat.Type.FULL, fillDiagonal = true, correlationFunction = ::correlationPearson)
 
         assertEquals(cm.rowCount(), a.size.ipow(2).toInt())
 
