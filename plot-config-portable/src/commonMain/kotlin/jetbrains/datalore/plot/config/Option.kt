@@ -214,7 +214,7 @@ object Option {
             const val CONFIDENCE_LEVEL = "level"
             const val DISPLAY_CONFIDENCE_INTERVAL = "se"
             const val SPAN = "span"
-            const val POLYNOMIAL_DEGREE = "span"
+            const val POLYNOMIAL_DEGREE = "deg"
             const val LOESS_CRITICAL_SIZE = "max_n"
             const val SAMPLING_SEED = "seed"
         }
