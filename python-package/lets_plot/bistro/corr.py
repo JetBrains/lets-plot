@@ -394,6 +394,7 @@ class _BuildUtil:
                               mapping=m,
                               na_text='',
                               label_format=corr_value_format,
+                              tooltips=tooltips,
                               size_unit='x',
                               sampling='none',
                               **labels_params)
