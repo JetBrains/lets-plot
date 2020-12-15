@@ -7,7 +7,7 @@ import pytest
 
 from lets_plot.geo_data.gis.response import Namesake, LevelKind, FeatureBuilder, NamesakeParent, AmbiguousFeature, \
     AmbiguousResponse, ErrorResponse
-from lets_plot.geo_data.regions import _create_multiple_error_message, _format_error_message
+from lets_plot.geo_data.geocodes import _create_multiple_error_message, _format_error_message
 from .geo_data import ERROR_MESSAGE, make_ambiguous_response, make_error_response
 
 

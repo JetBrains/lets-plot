@@ -31,41 +31,41 @@ MOSCOW_LAT = 55.753960
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_moscow(level, expected_name):
     r = geodata.regions_xy(lon=MOSCOW_LON, lat=MOSCOW_LAT, level=level)
-    assert_row(r.to_data_frame(), found_name=expected_name)
+    assert_row(r.get_geocodes(), found_name=expected_name)
 
 
 @pytest.mark.parametrize('geometry_getter', [
-    pytest.param(lambda regions_obj: regions_obj.centroids(), id='centroids()'),
-    pytest.param(lambda regions_obj: regions_obj.limits(), id='limits()'),
-    pytest.param(lambda regions_obj: regions_obj.boundaries(5), id='boundaries(5)'),
-    pytest.param(lambda regions_obj: regions_obj.boundaries(), id='boundaries()')
+    pytest.param(lambda regions_obj: regions_obj.get_centroids(), id='centroids()'),
+    pytest.param(lambda regions_obj: regions_obj.get_limits(), id='limits()'),
+    pytest.param(lambda regions_obj: regions_obj.get_boundaries(5), id='boundaries(5)'),
+    pytest.param(lambda regions_obj: regions_obj.get_boundaries(), id='boundaries()')
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_name_columns(geometry_getter):
     request = 'boston'
     found_name = 'Boston'
 
-    boston = geodata.regions_city(request)
+    boston = geodata.geocode_cities(request)
 
-    assert_row(boston.to_data_frame(), request=request, found_name=found_name)
-    assert_row(geometry_getter(boston), request=request, found_name=found_name)
+    assert_row(boston.get_geocodes(), names=request, found_name=found_name)
+    assert_row(geometry_getter(boston), names=request, found_name=found_name)
 
 
 @pytest.mark.parametrize('geometry_getter', [
-    pytest.param(lambda regions_obj: regions_obj.centroids(), id='centroids()'),
-    pytest.param(lambda regions_obj: regions_obj.limits(), id='limits()'),
-    pytest.param(lambda regions_obj: regions_obj.boundaries(5), id='boundaries(5)'),
-    pytest.param(lambda regions_obj: regions_obj.boundaries(), id='boundaries()')
+    pytest.param(lambda regions_obj: regions_obj.get_centroids(), id='centroids()'),
+    pytest.param(lambda regions_obj: regions_obj.get_limits(), id='limits()'),
+    pytest.param(lambda regions_obj: regions_obj.get_boundaries(5), id='boundaries(5)'),
+    pytest.param(lambda regions_obj: regions_obj.get_boundaries(), id='boundaries()')
 ])
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_name_columns(geometry_getter):
     request = 'Vermont'
     found_name = 'Vermont'
 
-    states = geodata.regions_state('us-48')
+    states = geodata.geocode_states('us-48')
 
-    assert_row(states.to_data_frame(), request=request, found_name=found_name)
-    assert_row(geometry_getter(states), request=request, found_name=found_name)
+    assert_row(states.get_geocodes(), names=request, found_name=found_name)
+    assert_row(geometry_getter(states), names=request, found_name=found_name)
 
 
 BOSTON_LON = -71.057083
@@ -82,15 +82,15 @@ NYC_LAT = 40.730610
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_geocoding_of_list_(lons, lats):
     r = geodata.regions_xy(lons, lats, 'city')
-    assert_row(r.to_data_frame(), index=0, request='[-71.057083, 42.361145]', found_name='Boston')
-    assert_row(r.to_data_frame(), index=1, request='[-73.935242, 40.73061]', found_name='New York')
+    assert_row(r.get_geocodes(), index=0, names='[-71.057083, 42.361145]', found_name='Boston')
+    assert_row(r.get_geocodes(), index=1, names='[-73.935242, 40.73061]', found_name='New York')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_geocoding_of_nyc():
     r = geodata.regions_xy(NYC_LON, NYC_LAT, 'city')
 
-    assert_row(r.to_data_frame(), found_name='New York')
+    assert_row(r.get_geocodes(), found_name='New York')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -113,7 +113,7 @@ SEVASTOPOL_ID = '6061953'
 def test_only_one_sevastopol():
     sevastopol = geodata.regions_xy(SEVASTOPOL_LON, SEVASTOPOL_LAT, 'city')
 
-    assert_row(sevastopol.to_data_frame(), id=SEVASTOPOL_ID)
+    assert_row(sevastopol.get_geocodes(), id=SEVASTOPOL_ID)
 
 
 WARWICK_LON = -71.4332938210472
@@ -123,39 +123,37 @@ WARWICK_ID = '785807'
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_near_boston_by_name():
-    r = geodata.regions_builder(
+    r = geodata.geocode(
         level='city',
-        request='Warwick'
+        names='Warwick'
     ) \
-        .where('Warwick', near=geodata.regions_city('boston')) \
-        .build()
+        .where('Warwick', near=geodata.geocode_cities('boston'))
 
-    assert_row(r.to_data_frame(), id=WARWICK_ID, found_name='Warwick')
-    assert_row(r.centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
+    assert_row(r.get_geocodes(), id=WARWICK_ID, found_name='Warwick')
+    assert_row(r.get_centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_near_boston_by_coord():
-    r = geodata.regions_builder(
+    r = geodata.geocode(
         level='city',
-        request='Warwick'
+        names='Warwick'
     ) \
-        .where('Warwick', near=ShapelyPoint(BOSTON_LON, BOSTON_LAT)) \
-        .build()
+        .where('Warwick', near=ShapelyPoint(BOSTON_LON, BOSTON_LAT))
 
-    assert_row(r.to_data_frame(), id=WARWICK_ID, found_name='Warwick')
-    assert_row(r.centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
+    assert_row(r.get_geocodes(), id=WARWICK_ID, found_name='Warwick')
+    assert_row(r.get_centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_near_boston_by_box():
-    boston = geodata.regions_city('boston').centroids().iloc[[0]]
+    boston = geodata.geocode_cities('boston').get_centroids().iloc[[0]]
     buffer = 0.6
     boston_centroid = ShapelyPoint(boston.geometry.x, boston.geometry.y)
 
-    r = geodata.regions_builder(
+    r = geodata.geocode(
         level='city',
-        request='Warwick'
+        names='Warwick'
     ) \
         .where('Warwick',
                within=shapely.geometry.box(
@@ -163,39 +161,38 @@ def test_ambiguity_near_boston_by_box():
                    boston_centroid.y - buffer,
                    boston_centroid.x + buffer,
                    boston_centroid.y + buffer
-               )) \
-        .build()
+               ))
 
-    assert_row(r.to_data_frame(), id=WARWICK_ID, found_name='Warwick')
-    assert_row(r.centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
+    assert_row(r.get_geocodes(), id=WARWICK_ID, found_name='Warwick')
+    assert_row(r.get_centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_allow_ambiguous():
-    r = geodata.regions_builder(level='city', request=['gotham', 'new york', 'manchester']) \
+    r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
         .allow_ambiguous() \
-        .build()
+        .get_geocodes()
 
-    actual = r.to_data_frame()[DF_FOUND_NAME].tolist()
+    actual = r[DF_FOUND_NAME].tolist()
     assert 29 == len(actual)  # 1 New York + 27 Manchester
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_drop_not_matched():
-    r = geodata.regions_builder(level='city', request=['gotham', 'new york', 'manchester']) \
+    r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
         .drop_not_matched() \
-        .build()
+        .get_geocodes()
 
-    actual = r.to_data_frame()[DF_FOUND_NAME].tolist()
+    actual = r[DF_FOUND_NAME].tolist()
     assert actual == ['New York']
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_drop_not_found():
     try:
-        r = geodata.regions_builder(level='city', request=['gotham', 'new york', 'manchester']) \
+        r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
             .drop_not_found() \
-            .build()
+            .get_geocodes()
     except ValueError as ex:
         str(ex).startswith('Multiple objects (27) were found for manchester')
         return
@@ -205,106 +202,83 @@ def test_ambiguity_drop_not_found():
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_single_request_level_detection():
-    r = geodata.regions_builder(request=['new york', 'boston'], within='usa') \
-        .build()
+    r = geodata.geocode(names=['new york', 'boston']).scope('usa').get_geocodes()
 
-    assert r.to_data_frame().id.tolist() == [NYC_ID, BOSTON_ID]
+    assert r.id.tolist() == [NYC_ID, BOSTON_ID]
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_where_request_level_detection():
     """
-    where('new york', region=geodata.regions_state('new york')) gives county as first detected level
-    where('boston', region=geodata.regions_country('usa')) gives city as first detected level
+    where('new york', region=geodata.geocode_states('new york')) gives county as first detected level
+    where('boston', region=geodata.geocode_countries('usa')) gives city as first detected level
     But 'new york' also matches a city name so common level should be a city
     """
-    r = geodata.regions_builder(request=['new york', 'boston']) \
-        .where('new york', within=geodata.regions_state('new york')) \
-        .where('boston', within=geodata.regions_country('usa')) \
-        .build()
+    r = geodata.geocode(names=['new york', 'boston']) \
+        .where('new york', scope=geodata.geocode_states('new york')) \
+        .where('boston', scope=geodata.geocode_countries('usa')) \
+        .get_geocodes()
 
-    assert [NYC_ID, BOSTON_ID] == r.to_data_frame().id.tolist()
+    assert [NYC_ID, BOSTON_ID] == r.id.tolist()
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_positional_regions():
-    df = geodata.regions_city(
-        request=['york', 'york'],
-        within=[
-            geodata.regions_state(['New York']),
-            geodata.regions_state(['Illinois']),
-        ]
-    ).to_data_frame()
+    df = geodata.geocode_cities(['york', 'york']).states(['New York', 'Illinois']).get_geocodes()
 
     assert ['New York', 'Little York'] == df['found name'].tolist()
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_region_us48():
-    df = geodata.regions_state(within='us-48').to_data_frame()
-    assert len(df['request'].tolist()) == 49
-    for state in df.request:
-        assert len(state) > 0
-
-
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_filter_us48():
-    df = geodata.regions_state(request='us-48').to_data_frame()
-    assert len(df['request'].tolist()) == 49
-    for state in df.request:
-        assert len(state) > 0
-
-
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_duplications():
-    r1 = geodata.regions(request=['Virginia', 'West Virginia'], within='USA')
-    r1.centroids()
+    r1 = geodata.geocode(names=['Virginia', 'West Virginia'], scope='USA')
+    r1.get_centroids()
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_limits_request():
-    print(geodata.regions(request='texas').limits())
+    print(geodata.geocode(names='texas').get_limits())
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_centroids_request():
-    print(geodata.regions(request='texas').centroids())
+    print(geodata.geocode(names='texas').get_centroids())
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_polygon_boundaries_request():
-    print(geodata.regions(request='colorado').boundaries(14))
+    print(geodata.geocode(names='colorado').get_boundaries(14))
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_multipolygon_boundaries_request():
-    assert geodata.regions(request='USA').boundaries(1) is not None
+    assert geodata.geocode(names='USA').get_boundaries(1) is not None
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_regions():
-    map_regions = geodata.regions(level='country', request=['Russia', 'USA'])
-    map_regions.boundaries()
-    assert map_regions is not None
+    countries_geocoder = geodata.geocode(level='country', names=['Russia', 'USA'])
+    countries_geocoder.get_boundaries()
+    assert countries_geocoder is not None
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_mapregion():
-    usa: geodata.Regions = geodata.regions_country(request='USA')
-    print(usa.centroids())
+    usa = geodata.geocode_countries(names='USA')
+    print(usa.get_centroids())
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_geocoderegion_as_region():
-    usa = geodata.regions_country(request=['usa'])
+    usa = geodata.geocode_countries(names=['usa'])
     states_list = ['NY', 'TX', 'NV']
-    geodata.regions_state(request=states_list, within=usa)
+    geodata.geocode_states(names=states_list).scope(usa).get_geocodes()
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_error_response():
     with pytest.raises(ValueError) as exception:
-        geodata.regions_country(request='blablabla').centroids()
+        geodata.geocode_countries(names='blablabla').get_centroids()
 
     assert 'No objects were found for blablabla.\n' == exception.value.args[0]
 
@@ -312,10 +286,10 @@ def test_error_response():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_rows_order():
     city_names = ['Boston', 'Phoenix', 'Tucson', 'Salt Lake City', 'Los Angeles', 'San Francisco']
-    city_regions = geodata.regions_city(city_names, within='US')
+    city_regions = geodata.geocode_cities(city_names).scope('US')
 
     # create path preserving the order
-    df = city_regions.centroids()
+    df = city_regions.get_centroids()
 
     df = df.set_index('request')
     df = df.reindex(city_names)
@@ -323,109 +297,126 @@ def test_rows_order():
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_new_server():
-    c = geodata.regions_country(request='USA')
-    print(c.centroids())
+    c = geodata.geocode_countries(names='USA')
+    print(c.get_centroids())
     print(c)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_case():
-    usa = geodata.regions_country(request=['usa'])
-    states_48 = geodata.regions_state(['us-48'])
+    usa = geodata.geocode_countries(names=['usa'])
+    states_48 = geodata.geocode_states(['us-48'])
 
     states_list = ['NY', 'TX', 'louisiana']
-    states = geodata.regions_state(request=states_list, within=usa)
+    states = geodata.geocode_states(names=states_list).scope(usa)
 
     cities_list = ['New york', 'boston', 'la']
-    t_cities = geodata.regions_city(request=cities_list, within=usa)
+    t_cities = geodata.geocode_cities(names=cities_list).scope(usa)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguous_not_found_with_level():
     with pytest.raises(ValueError) as exception:
-        r = geodata.regions(request=['zimbabwe', 'moscow'], level='country')
+        r = geodata.geocode(names=['zimbabwe', 'moscow'], level='country')
     assert 'No objects were found for moscow.\n' == exception.value.args[0]
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_order():
-    bound = geodata.regions(request=['Russia', 'USA', 'France', 'Japan'])
-    df = bound.to_data_frame()
+    bound = geodata.geocode(names=['Russia', 'USA', 'France', 'Japan'])
+    df = bound.get_geocodes()
     assert ['Russia', 'USA', 'France', 'Japan'] == df['request'].tolist()
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_resolution():
-    r = geodata.regions(request=['monaco', ], level='country')
+    r = geodata.geocode(names=['monaco', ], level='country')
     sizes = []
     for res in range(1, 16):
-        b = r.boundaries(res)
+        b = r.get_boundaries(res)
         sizes.append(len(b['request']))
 
     assert 15 == len(sizes)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_duplications_in_filter_should_preserve_order():
-    df = geodata.regions(request=['Texas', 'TX', 'Arizona', 'Texas'], level='state').to_data_frame()
-    assert ['Texas', 'TX', 'Arizona', 'Texas'] == df['request'].tolist()
+def test_should_copy_found_name_to_request_for_us48():
+    df = geodata.geocode_states('us-48').get_geocodes()
+
+    assert len(df['request']) == 49
+    assert df['request'] == df['found name']
+
+
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+def test_us48_in_scope():
+    df = geodata.geocode_states().scope('us-48').get_geocodes()
+
+    assert len(df['request']) == 49
+    assert all(len(request) > 0 for request in df.request)
+
+
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+def test_us48_in_name_without_level():
+    df = geodata.geocode(names='us-48').get_geocodes()
+
+    assert len(df['request']) == 49
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_duplication_with_us48():
-    df = geodata.regions_state(request=['tx', 'us-48', 'tx']).to_data_frame()
+    df = geodata.geocode_states(names=['tx', 'us-48', 'tx']).get_geocodes()
 
     assert len(df['request']) == 51
-    assert_row(df, request='tx', found_name='Texas', index=0)
-    assert_row(df, request='Vermont', found_name='Vermont', index=1)
-    assert_row(df, request='tx', found_name='Texas', index=50)
+    assert_row(df, names='tx', found_name='Texas', index=0)
+    assert_row(df, names='Vermont', found_name='Vermont', index=1)
+    assert_row(df, names='tx', found_name='Texas', index=50)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_empty_request_to_data_frame():
-    orange_county = geodata.regions_county('orange county', within='north carolina')
-    r = geodata.regions_city(within=orange_county)
-    df = r.to_data_frame()
+def test_empty_request_get_geocodes():
+    orange_county = geodata.geocode_counties('orange county').scope('north carolina')
+    r = geodata.geocode_cities().scope(orange_county)
+    df = r.get_geocodes()
     assert set(['Chapel Hill', 'Town of Carrboro', 'Carrboro', 'Hillsborough', 'Town of Carrboro', 'City of Durham']) == \
            set(df['request'].tolist())
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_centroid():
-    orange_county = geodata.regions_county('orange county', within='north carolina')
-    r = geodata.regions_city(within=orange_county)
-    df = r.centroids()
+    orange_county = geodata.geocode_counties('orange county').scope('north carolina')
+    r = geodata.geocode_cities().scope(orange_county)
+    df = r.get_centroids()
     assert set(['Chapel Hill', 'Town of Carrboro', 'Carrboro', 'Hillsborough', 'Town of Carrboro', 'City of Durham']) == \
            set(df['request'].tolist())
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_highlights():
-    r = geodata.regions_builder(level='city', request='NYC', highlights=True).build()
-    df = r.to_data_frame()
+    r = geodata.geocode(level='city', names='NYC').highlights(True)
+    df = r.get_geocodes()
     assert df['found name'].tolist() == ['New York']
     assert df['highlights'].tolist() == [['NYC']]
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_countries():
-    assert len(geodata.regions_country().centroids().request) == 217
+    assert len(geodata.geocode_countries().get_centroids().request) == 217
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_incorrect_group_processing():
-    c = geodata.regions_country().centroids()
+    c = geodata.geocode_countries().get_centroids()
     c = list(c.request[141:142]) + list(c.request[143:144]) + list(c.request[136:137]) + list(c.request[114:134])
     print(c)
-    c = geodata.regions_country(c).centroids()
-    r = geodata.regions_country(c['request'])
-    boundaries: DataFrame = r.boundaries(resolution=10)
+    c = geodata.geocode_countries(c).get_centroids()
+    r = geodata.geocode_countries(c['request'])
+    boundaries: DataFrame = r.get_boundaries(resolution=10)
 
     assert 'group' not in boundaries.keys()
 
 
 def test_not_found_scope():
     assert_error(
-        "Region is not found: blabla",
-        lambda: geodata.regions(request=['texas'], within='blabla')
+        "Region is not found: blablabla",
+        lambda: geodata.geocode(names=['texas'], scope='blablabla')
     )

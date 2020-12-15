@@ -10,7 +10,7 @@ from lets_plot.geo_data.gis.json_response import ResponseField, GeometryKind
 from lets_plot.geo_data.gis.request import RegionQuery
 from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
     Response, SuccessResponse, AmbiguousResponse, ErrorResponse, ResponseBuilder
-from lets_plot.geo_data.regions import Regions
+from lets_plot.geo_data.geocodes import Geocodes
 
 from pandas import DataFrame
 from shapely.geometry import Point
@@ -69,7 +69,7 @@ def assert_error(message: str, action: Callable[[], Any]):
 def assert_row(
         df,
         index: int = 0,
-        request: Union[str, List] = IGNORED,
+        names: Union[str, List] = IGNORED,
         found_name: Union[str, List] = IGNORED,
         id: Union[str, List] = IGNORED,
         county: Union[str, List] = IGNORED,
@@ -99,7 +99,7 @@ def assert_row(
 
 
     assert_str(DF_ID, id)
-    assert_str(DF_REQUEST, request)
+    assert_str(DF_REQUEST, names)
     assert_str(DF_FOUND_NAME, found_name)
     assert_str(DF_PARENT_COUNTY, county)
     assert_str(DF_PARENT_STATE, state)
@@ -114,8 +114,8 @@ def assert_row(
 def assert_found_names(df: DataFrame, names: List[str]):
     assert names == df[DF_FOUND_NAME].tolist()
 
-def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Regions:
-    return Regions(
+def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Geocodes:
+    return Geocodes(
         level_kind=level_kind,
         queries=[RegionQuery(request=request)],
         answers=[make_answer(name, geo_object_id, highlights)]

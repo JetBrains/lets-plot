@@ -4,7 +4,7 @@ from typing import TypeVar, Generic, Optional, List, Union
 
 from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 
-from lets_plot.geo_data.regions import _ensure_is_list
+from lets_plot.geo_data.geocodes import _ensure_is_list
 from lets_plot.geo_data.gis.request import Request, GeocodingRequest, RegionQuery, MapRegion, AmbiguityResolver, \
     PayloadKind, MapRegionKind, IgnoringStrategyKind, LevelKind
 
@@ -87,8 +87,15 @@ class ScopeMatcher:
         self._ids = ids
         return self
 
+    def empty(self) -> 'ScopeMatcher':
+        self._names = None
+        self._ids = None
+        return self
+
     def check(self, scope: List[MapRegion]):
-        if self._names is not None:
+        if self._names is None and self._ids is None:
+            assert len(scope) == 0
+        elif self._names is not None:
             assert len(self._names) == len(scope)
             for expected_name, region in zip(self._names, scope):
                 assert expected_name == MapRegion.name_or_none(region)
@@ -167,8 +174,9 @@ class GeocodingRequestAssertion:
         assert isinstance(request, GeocodingRequest)
         self._request: GeocodingRequest = request
 
-    def allows_ambiguous(self):
+    def allows_ambiguous(self) -> 'GeocodingRequestAssertion':
         assert self._request.allow_ambiguous
+        return self
 
     def has_query(self, query_matcher: QueryMatcher, i: Optional[int] = None) -> 'GeocodingRequestAssertion':
         if i is None:

@@ -100,7 +100,7 @@ class PlacesDataFrameBuilder:
         raise ValueError('Not implemented')
 
 
-class Regions(CanToDataFrame):
+class Geocodes(CanToDataFrame):
     def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery],
                  highlights: bool = False):
         assert_list_type(answers, Answer)
@@ -136,13 +136,13 @@ class Regions(CanToDataFrame):
                 regions.append(MapRegion.place(feature.id, select_request(query, answer, feature), self._level_kind))
         return regions
 
-    def as_list(self) -> List['Regions']:
+    def as_list(self) -> List['Geocodes']:
         if len(self._queries) == 0:
-            return [Regions(self._level_kind, [answer], [RegionQuery(request=None)], self._highlights) for answer in
+            return [Geocodes(self._level_kind, [answer], [RegionQuery(request=None)], self._highlights) for answer in
                     self._answers]
 
         assert len(self._queries) == len(self._answers)
-        return [Regions(self._level_kind, [answer], [query], self._highlights) for query, answer in
+        return [Geocodes(self._level_kind, [answer], [query], self._highlights) for query, answer in
                 zip(self._queries, self._answers)]
 
     def unique_ids(self) -> List[str]:
@@ -234,7 +234,7 @@ class Regions(CanToDataFrame):
             BoundariesGeoDataFrame()
         )
 
-    def limits(self):
+    def limits(self) -> 'GeoDataFrame':
         """
         Return bboxes (Polygon geometry) for given regions in form of GeoDataFrame. For regions intersecting
         anti-meridian bbox will be divided into two and stored as two rows.
@@ -334,8 +334,6 @@ class Regions(CanToDataFrame):
 
 
 request_types = Optional[Union[str, List[str], Series]]
-scope_types = Optional[Union[str, List[str], Regions, List[Regions]]]
-parent_types = Optional[Union[str, Regions, MapRegion, List]] # list of same types
 
 
 def _raise_exception(response: Response):
@@ -426,39 +424,6 @@ def _parse_resolution(resolution: str) -> Resolution:
         return Resolution[resolution]
 
     raise ValueError('Invalid resolution type: ' + type(resolution).__name__)
-
-
-def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
-    if place is None:
-        return None
-
-    if isinstance(place, str):
-        return MapRegion.with_name(place)
-
-    if isinstance(place, Regions):
-        assert len(place.to_map_regions()) == 1, 'Region object used as parent should contain only single record'
-        return place.to_map_regions()[0]
-
-    raise ValueError('Unsupported parent type: ' + str(type(place)))
-
-
-def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegion]]:
-    if location is None:
-        return None
-
-    def _make_region(obj: Union[str, Regions]) -> Optional[MapRegion]:
-        if isinstance(obj, Regions):
-            return MapRegion.scope(obj.unique_ids())
-
-        if isinstance(obj, str):
-            return MapRegion.with_name(obj)
-
-        raise ValueError('Unsupported scope type. Expected Regions, str or list, but was `{}`'.format(type(obj)))
-
-    if isinstance(location, list):
-        return [_make_region(obj) for obj in location]
-
-    return _make_region(location)
 
 
 def _ensure_is_list(obj) -> Optional[List[str]]:

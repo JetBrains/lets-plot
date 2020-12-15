@@ -8,15 +8,15 @@ import pytest
 from pandas import DataFrame
 
 from lets_plot._type_utils import _standardize_value
-from lets_plot.geo_data import regions, regions_builder
+from lets_plot.geo_data import geocode
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequest, PayloadKind, ExplicitRequest, \
     AmbiguityResolver
 from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint, Answer
 from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _prepare_parent, \
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
-from lets_plot.geo_data.regions import _to_scope, _coerce_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
-    DF_FOUND_NAME
+from lets_plot.geo_data.geocodes import _coerce_resolution, _ensure_is_list, Geocodes, DF_REQUEST, DF_ID, DF_FOUND_NAME
+from lets_plot.geo_data.geocoder import _to_scope
 from .geo_data import make_geocode_region, make_success_response, features_to_answers, features_to_queries
 
 DATAFRAME_COLUMN_NAME = 'name'
@@ -59,7 +59,7 @@ def make_expected_map_region(region_kind: RegionKind, values):
 @mock.patch.object(GeocodingService, 'do_request')
 def test_regions(mock_geocoding):
     try:
-        regions(level=LEVEL, request=FILTER_LIST, within=REGION_NAME).to_data_frame()
+        geocode(level=LEVEL, names=FILTER_LIST).scope(REGION_NAME).get_geocodes()
     except Exception:
         pass  # response doesn't contain proper feature with ids - ignore
 
@@ -78,7 +78,7 @@ def test_regions(mock_geocoding):
 @mock.patch.object(GeocodingService, 'do_request')
 def test_regions_with_highlights(mock_geocoding):
     try:
-        regions_builder(level=LEVEL, request=FILTER_LIST, within=REGION_NAME, highlights=True).build()
+        geocode(level=LEVEL, names=FILTER_LIST).scope(REGION_NAME).highlights(True).get_geocodes()
     except Exception:
         pass  # response doesn't contain proper feature with ids - ignore
 
@@ -111,7 +111,7 @@ BAR = Answer([FeatureBuilder().set_name('barname').set_id('barid').build_geocode
      ),
 
     # single region
-    (Regions(
+    (Geocodes(
         level_kind=LEVEL_KIND,
         queries=features_to_queries([FOO_FEATURE, BAR_FEATURE]),
         answers=features_to_answers([FOO_FEATURE, BAR_FEATURE])
@@ -131,12 +131,12 @@ BAR = Answer([FeatureBuilder().set_name('barname').set_id('barid').build_geocode
 
     # list of regions
     ([
-         Regions(
+         Geocodes(
              level_kind=LEVEL_KIND,
              queries=features_to_queries([FOO_FEATURE]),
              answers=features_to_answers([FOO_FEATURE])
          ),
-         Regions(
+         Geocodes(
              level_kind=LEVEL_KIND,
              queries=features_to_queries([BAR_FEATURE]),
              answers=features_to_answers([BAR_FEATURE]),
@@ -152,7 +152,7 @@ BAR = Answer([FeatureBuilder().set_name('barname').set_id('barid').build_geocode
     # mix of strings and regions
     ([
          FOO_FEATURE.name,
-         Regions(
+         Geocodes(
              level_kind=LEVEL_KIND,
              queries=features_to_queries([BAR_FEATURE]),
              answers=features_to_answers([BAR_FEATURE])
@@ -176,7 +176,7 @@ def test_to_parent_with_id():
 @mock.patch.object(GeocodingService, 'do_request')
 def test_request_remove_duplicated_ids(mock_request):
     try:
-        Regions(
+        Geocodes(
             level_kind=LEVEL_KIND,
             queries=features_to_queries([FOO_FEATURE, FOO_FEATURE]),
             answers=features_to_answers([FOO_FEATURE, FOO_FEATURE])
@@ -247,7 +247,7 @@ def test_reorder_for_centroids_should_happen(mock_request):
         GeoPoint(0, 0)).build_geocoded()
     mock_request.return_value = make_success_response().set_geocoded_features([new_york, las_vegas, los_angeles]).build()
 
-    df = Regions(
+    df = Geocodes(
         level_kind=LevelKind.city,
         queries=features_to_queries([los_angeles, new_york, las_vegas, los_angeles]),
         answers=features_to_answers([los_angeles, new_york, las_vegas, los_angeles])
