@@ -3,20 +3,26 @@
 - [Formatting tooltip fields](#formatting)
 - [Customizing tooltip lines](#lines)
     - [Labels configuration](#labels-configuration)
+- [Tooltip anchor](#tooltip-anchor)
+- [Minimum width of a multi-line tooltip](#minwidth)
 - [Examples](#examples)
 - [Outlier tooltips configuration](#outliers)
     - [Examples](#example-outliers)    
 - [Hiding tooltips](#hiding-tooltips)
-- [Corner tooltips](#corner-tooltips)
-    - [Example](#example-corners)
 - [Example Notebooks](#example-notebooks)    
     
 ------
 You can customize the content of tooltips for the layer by using the parameter `tooltips` of `geom` functions.
 
-The following functions set lines and define formatting of the tooltip:
+The following functions set lines, define formatting of the tooltip, its location and width:
 
-`tooltips=layer_tooltips().format(field, format).line(template)`
+```
+tooltips=layer_tooltips()
+    .format(field, format)
+    .line(template)
+    .anchor(position)
+    .min_width(value)
+```
 
 
 <a id="formatting"></a>
@@ -84,6 +90,24 @@ If you do not specify a label, the string will be centered in the tooltip. For e
 - `line('@|^color')`: default label is used, value is right-aligned;
 - `line('my label|^color')`: label is specified, value is right-aligned.
 
+<a id="tooltip-anchor"></a>
+### Tooltip anchor: `layer_tooltips().anchor(position)`
+Specifies an anchor to place a multi-line tooltip.
+The parameter of the `anchor` function specifies the position of the plot to place tooltip:
+- 'top_right'
+- 'top_center'
+- 'top_left' 
+- 'bottom_right' 
+- 'bottom_center'
+- 'bottom_left'
+- 'middle_right'
+- 'middle_center' 
+- 'middle_left'
+ 
+<a id="minwidth"></a>
+### Minimum width of a multi-line tooltip: `layer_tooltips().min_width(value)`
+Specifies the minimum width of a multi-line tooltip.
+
 <a id="examples"></a>
 ### Examples
 
@@ -112,6 +136,35 @@ ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=
 ![](examples/images/tooltips_2.png)
 
 
+Place a multi-line tooltip at the top center and define its minimum width:
+
+```
+ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=21, color='black',\
+                          tooltips=layer_tooltips()
+                                     .format('cty', '.1f')
+                                     .format('hwy', '.1f')
+                                     .format('drv', '{}wd')
+                                     .line('@manufacturer @model')
+                                     .line('cty/hwy|@cty/@hwy')
+                                     .line('@|@class')
+                                     .line('drive train|@drv')
+                                     .line('@|@year')
+                                     .anchor('top_center')
+                                     .min_width(200)) 
+```
+![](examples/images/tooltips_6.png)
+
+Move the tooltips to the top right corner:
+```
+ ggplot(iris_df) + theme(legend_position='none')\
+ + geom_area(aes(x='sepal_length', color='sepal_width', fill='species'), stat='density',\
+     tooltips=layer_tooltips()
+                 .anchor('top_right')
+                 .line('^fill')
+                 .line('length|^x')
+                 .line('density|^y'))
+```                 
+![](examples/images/tooltips_5.png)
 
 
 <a id="outliers"></a>
@@ -152,28 +205,6 @@ Move outliers to a general tooltip:
 ## Hiding tooltips     
 Set `tooltips = "none"` to hide tooltips from the layer.
           
-<a id="corner-tooltips"></a>
-## Corner tooltips
-A multi-line tooltip can be placed in the corner. 
-The parameter `tooltip_anchor` of `theme` specifies the corner of the plot to place tooltip:
-- 'top_right' 
-- 'top_left' 
-- 'bottom_right' 
-- 'bottom_left'
-
-<a id="example-corners"></a> 
-### Example
-```
- ggplot(iris_df) + theme(legend_position='none', tooltip_anchor='top_right')\
- + geom_area(aes(x='sepal_length', color='sepal_width', fill='species'), stat='density',\
-     tooltips=layer_tooltips()
-                 .line('^fill')
-                 .line('length|^x')
-                 .line('density|^y'))
-```                 
- ![](examples/images/tooltips_5.png)
- 
- 
 <a id="example-notebooks"></a> 
  ## Example Notebooks
  
