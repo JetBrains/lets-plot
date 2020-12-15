@@ -13,6 +13,7 @@ Try the following tutorials and examples to learn and evaluate various features 
 - [Theme](#theme)
 - [Data Sampling](#sampling)
 - [Tooltip Customization](#tooltip)
+- [The 'bistro' Package](#bistro)
 - [GeoPandas Support](#geopandas)
 - [Interactive Maps](#livemap)
 - [Geocoding API](#geocoding)
@@ -22,7 +23,8 @@ Try the following tutorials and examples to learn and evaluate various features 
 <a id="quickstart"></a>
 #### Quickstart and User Guide
 
-- Quickstart: <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb"> 
+- Quickstart: 
+            <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb"> 
                 <img src="https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.png" width="109" height="20" align="left">
             </a>
             <span>&nbsp;&nbsp;</span>
@@ -68,16 +70,21 @@ Try the following tutorials and examples to learn and evaluate various features 
 
 `geom_image, geom_raster`
 
-`geom_image()` displays an image specified by a ndarray with shape (n,m) or (n,m,3) or (n,m,4).
+`geom_image()`: displays an image specified by a ndarray with shape (n,m) or (n,m,3) or (n,m,4).
 
 * [image_101.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_101.ipynb)
-* [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
-* [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb) 
+* [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb)
+
+See also: `image_matrix` in [The 'bistro' Package](#bistro).
 
 `geom_text`, label format
 
 [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)
 
+`stat_corr`
+
+See the 'corr_plot' example in [The 'bistro' Package](#bistro).
+ 
 
 <a id="pos"></a>
 #### Position Adjustment
@@ -155,6 +162,18 @@ See: [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/
                                         
                                         
 See also [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+
+
+<a id="bistro"></a>
+### The 'bistro' Package
+
+#### `from lets_plot.bistro.corr`
+
+`corr_plot` (also `stat_corr`): [TODO]
+
+#### `from lets_plot.bistro.im`
+
+`image_matrix`: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb) 
 
 
 <a id="geopandas"></a>

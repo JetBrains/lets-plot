@@ -33,15 +33,18 @@
 - [GGBunch](#ggbunch)
 - [Data Sampling](#sampling)
 - [Export to File](#export)
-- [Cloud Notebooks](#cloud_based)
+- [The 'bistro' Package](#bistro)
+    - [Correlation Plot](#corr_plot)
+    - [Image Matrix](#image_matrix)
 - [Geospatial](#geospatial)
     - [GeoPandas Support](#geopandas)
     - [Interactive Maps](#livemap)
     - [Geocoding API](#geocoding)
-- [Interesting Demos](#interesting)
+- ['No Javascript' Mode](#no_js)
 - [Offline Mode](#offline)
+- [Interesting Demos](#interesting)
 - [Scientific Mode in IntelliJ IDEA / PyCharm](#pycharm)
-- [What is new in 1.5.3](#new)
+- [What is new in 1.5.5](#new)
 - [Change Log](#change_log)
 - [License](#license)
 
@@ -85,6 +88,8 @@ pip install lets-plot
 <a id="start"></a>
 ### Quick start with Jupyter
 
+You can use Lets-Plot in Jupyter notebook or other notebook of your choice, like Datalore, Kaggle or Colab.
+ 
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
@@ -155,15 +160,32 @@ Note: The `ggsave()` function currently do not save images of interactive maps t
 Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
   
 
-<a id="cloud_based"></a>
-### Cloud Notebooks
+<a id="bistro"></a>
+### The 'bistro' Package
 
-Examples:
+The 'bistro' package is a collection of higher level API functions, each allows 
+to create a certain kind of plot with a single function call instead of combining a plethora of plot features manually.
 
-* [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
-* [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart)
-* [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
+<a id="corr_plot"></a>
+#### Correlation Plot 
+
+The `corr_plot()` function creates a fluent builder object offering a set of methods for 
+configuring of beautiful correlation plots. A call to the terminal `build()` method in the end 
+will create a resulting plot object.    
+
+Example: [TODO]
   
+<a id="image_matrix"></a>
+#### Image Matrix 
+
+The `image_matrix()` function arranges a set of images in a grid.
+ 
+Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
+
+The `image_matrix()` function uses `geom_image` under the hood, so you might want to check out these demos as well:
+* [image_101.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_101.ipynb)
+* [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
+ 
 <a id="geospatial"></a>
 ### Geospatial  
   
@@ -189,14 +211,28 @@ Geocoding is the process of converting names of places into geographic coordinat
 
 Learn more: [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
-<a id="interesting"></a>
-### Interesting Demos
+<a id="no_js"></a>
+### 'No Javascript' Mode
 
-A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/klein_bottle.png" alt="Couldn't load klein_bottle.png" width="498" height="386">
-<br>
- 
-  
+In the 'no javascript' mode Lets-Plot genetares plots as bare-bones SVG images.
+
+This mode is halpfull when there is a requirement to render notebooks in an 'ipnb' renderer which does not suppopt javascript 
+(like GitHub's built-in renderer).    
+
+Activate 'no javascript' mode using the `LetsPlot.setup_html()` method call:
+```python
+from lets_plot import *
+
+LetsPlot.setup_html(no_js=True)
+```
+
+Alternativaly, you can set up the environment variable:
+```
+LETS_PLOT_NO_JS = true   (other accepted values are: 1, t, y, yes)
+``` 
+
+Note: interactive maps do not support the 'no javascript' mode.
+
 <a id="offline"></a>
 ### Offline Mode
 
@@ -209,7 +245,15 @@ from lets_plot import *
 LetsPlot.setup_html(offline=True)
 ```
  
+Note: internet connection is still required for interactive maps and geocoding API.
   
+<a id="interesting"></a>
+### Interesting Demos
+
+A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/klein_bottle.png" alt="Couldn't load klein_bottle.png" width="498" height="386">
+<br>
+ 
 <a id="pycharm"></a>
 ### Scientific mode in IntelliJ IDEA / PyCharm
 
@@ -229,36 +273,22 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 </div>
 
 <a id="new"></a>
-### What is new in 1.5.3
+### What is new in 1.5.5
 
-- Tooltip Customization
+- Correlation plot
+  
+    New higher level API in [the 'bistro' package](#bistro) allowing with little efforts building of beautiful correlation plots.
+    
+- 'no javascript' mode
 
-    New API for customization of tooltip contents and its position (see [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
+    Enables plots that can be rendered in notebook renderers which do not support javascript. 
+    See ['No Javascript' Mode](#no_js) for more details.    
+    
+- New tooltip anchor options: 'center' and 'middle'
 
-- Attribution when Configuring 3-rd Party Map-tiles
+    See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)) for more details.
 
-    New arguments in the `maptiles_zxy()` function allowing configuring attributions
-when using 3-rd party map-tiles as a base-map layer.
-
-    See [The Gallery of Base-maps](https://www.kaggle.com/alshan/the-gallery-of-basemaps).     
- 
-- Formatting labels in `geom_text()`
-
-    New parameter, 'label_format' to define a formatting pattern.
-
-    See demo: [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)   
- 
-- Export to File
-
-    The `ggsave()` function is an easy way to export plot to a file in SVG or HTML formats.
- 
-    Note: The `ggsave()` function currently do not save images of interactive maps to SVG.
- 
-    Example: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
-
-- Fixed 'HUE' Scale and Other Fixes
-
-    See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for details.
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for more details.
 
 <a id="change_log"></a>
 ### Change Log
