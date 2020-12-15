@@ -486,7 +486,7 @@ class _OpUtil:
             elif points_type is None:
                 points_type = cls.flip(tiles_type)
 
-        if has_labels and labels_params.get('color') is None:
+        if has_labels and labels_type is None and labels_params.get('color') is None:
             # avoid labels without 'color' showing on top of tiles or points.
             if has_points:
                 if points_type is None and labels_type is None:
@@ -505,11 +505,18 @@ class _OpUtil:
                 else:
                     labels_type = cls.flip(tiles_type)
 
-            # Update labels parameters.
-            labels_params['type'] = labels_type
-            if cls.overlap(labels_type, tiles_type) or cls.overlap(labels_type, points_type):
-                labels_params['color'] = "white"
+        # Set labels color if labels are over points or tiles.
+        if has_labels and labels_params.get('color') is None:
+            if has_tiles:
+                if cls.overlap(labels_type if labels_type is not None else 'full',
+                               tiles_type if tiles_type is not None else 'full'):
+                    labels_params['color'] = "white"
+            if has_points:
+                if cls.overlap(labels_type if labels_type is not None else 'full',
+                               points_type if points_type is not None else 'full'):
+                    labels_params['color'] = "white"
 
+        # Map labels size if labels are over points.
         if has_points and has_labels and labels_map_size is None:
             if cls.overlap(labels_type if labels_type is not None else 'full',
                            points_type if points_type is not None else 'full'):
@@ -521,6 +528,9 @@ class _OpUtil:
 
         if has_points:
             points_params['type'] = points_type
+
+        if has_labels:
+            labels_params['type'] = labels_type
 
         return labels_map_size
 
