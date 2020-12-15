@@ -46,10 +46,14 @@ object CorrelationUtil {
             val xs = data.getNumeric(vx)
 
             for (j in 0 .. i) {
-                if (i == j) {
+                if (i == j) { // Handle main diagonal
                     if (fillDiagonal) {
+                        // if we do show values on main diagonal calculations is not necessary
                         addCorrelation(vx.label, vx.label, 1.0)
                     } else {
+                        // we have to add special entries here to be sure that first and last variables
+                        // are present on scale in X / Y.
+                        // Otherwise on mixed upper/lower plots ordering of axis X/Y will be broken
                         if ((i == 0 || i == numerics.lastIndex ) && type != CorrelationStat.Type.FULL) {
                             addCorrelation(vx.label, vx.label, null )
                         }
