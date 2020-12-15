@@ -45,7 +45,7 @@ class corr_plot:
     _DEF_MID_COLOR = 'light_gray'
     _DEF_HIGH_COLOR = 'blue'
 
-    def __init__(self, data, show_legend=True, flip=True):
+    def __init__(self, data, show_legend=True, flip=True, threshold=None):
         """
         Parameters
         ----------
@@ -55,12 +55,16 @@ class corr_plot:
             If True legend is shown. Default - True.
         flip : Boolean
             If True the y axis is flipped.
+        threshold: Double
+            Minimal correlation abs value to be included in result.
+            Default - 0.0.
         """
 
         self._data = data
         self._show_legend = show_legend
         self._format = '.2f'
         self._reverse_y = flip if flip else False
+        self.threshold = threshold
         self._color_scale = None
         self._fill_scale = None
         self._points_params = None
@@ -71,7 +75,7 @@ class corr_plot:
                               mid=corr_plot._DEF_MID_COLOR,
                               high=corr_plot._DEF_HIGH_COLOR)
 
-    def points(self, type=None, diag=None, threshold=None):
+    def points(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -83,18 +87,15 @@ class corr_plot:
         diag : Boolean
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
-        threshold: Double
-            Minimal correlation abs value to be included in result.
-            Default - 0.0.
 
         Returns
         -------
             self
         """
-        self._points_params = {'type': type, 'diag': diag, 'threshold': threshold}
+        self._points_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
         return self
 
-    def labels(self, type=None, diag=None, map_size=None, color=None, threshold=None):
+    def labels(self, type=None, diag=None, map_size=None, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -112,19 +113,16 @@ class corr_plot:
         color: string
             Set text color.
             Default - contextual.
-        threshold: Double
-            Minimal correlation abs value to be included in result.
-            Default - 0.0.
         Returns
         -------
             self
         """
 
-        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': threshold}
+        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': self.threshold}
         self._labels_map_size = map_size
         return self
 
-    def tiles(self, type=None, diag=None, threshold=None):
+    def tiles(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -137,16 +135,12 @@ class corr_plot:
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
 
-        threshold: Double
-            Minimal correlation abs value to be included in result.
-            Default - 0.0.
-
         Returns
         -------
             self
         """
 
-        self._tiles_params = {'type': type, 'diag': diag, 'threshold': threshold}
+        self._tiles_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
         return self
 
     def build(self) -> PlotSpec:
@@ -394,6 +388,7 @@ class _BuildUtil:
                               mapping=m,
                               na_text='',
                               label_format=corr_value_format,
+                              tooltips=tooltips,
                               size_unit='x',
                               sampling='none',
                               **labels_params)
