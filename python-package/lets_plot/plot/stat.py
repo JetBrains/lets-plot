@@ -2,7 +2,6 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 __all__ = ['stat_corr']
 
-
 from .coord import coord_cartesian, coord_fixed
 from .core import FeatureSpec
 from .geom import _geom
@@ -70,9 +69,11 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     geom = geom if geom else "tile"
     other_args['label_format'] = other_args.get('label_format', '.2f')
 
+    avoid_na_color = scale_color_continuous(name='', na_value='rgba(0,0,0,0)')
     scale_xy_expand = None
     if geom == 'tile':
         scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normally: 0.6)
+        avoid_na_color += scale_fill_continuous(name='', na_value='rgba(0,0,0,0)')
 
     coord = coord_cartesian()
     if geom in ['point', 'text']:
@@ -118,7 +119,6 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
                   **other_args) +
             scale_size_identity(na_value=0) +
             coord +
-            scale_color_continuous(name='', na_value='rgba(0,0,0,0)') +
-            scale_fill_continuous(name='', na_value='rgba(0,0,0,0)') +
+            avoid_na_color +
             scale_x_discrete(expand=scale_xy_expand) +
             scale_y_discrete(expand=scale_xy_expand, reverse=flip))
