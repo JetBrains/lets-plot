@@ -2,11 +2,13 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 __all__ = ['stat_corr']
 
+
 from .coord import coord_cartesian, coord_fixed
 from .core import FeatureSpec
 from .geom import _geom
 from .scale import scale_x_discrete, scale_y_discrete, scale_color_continuous
 from .scale_identity import scale_size_identity
+from .tooltip import layer_tooltips
 
 
 def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -96,6 +98,10 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
         diag = False if diag is None else diag
 
     sampling = 'none' if sampling is None else sampling
+
+    tooltips = (layer_tooltips()
+                .format(field='@..corr..', format='.2f')
+                .line('@..corr..')) if tooltips is None else tooltips
 
     return (_geom(geom,
                   mapping=mapping,
