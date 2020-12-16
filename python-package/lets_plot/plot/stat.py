@@ -114,7 +114,6 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
                   type=type,
                   diag=diag,
                   threshold=threshold,
-                  na_value='',
                   na_text='',
                   **other_args) +
             scale_size_identity(na_value=0) +
