@@ -86,7 +86,7 @@ open class TooltipSpecTestHelper {
         }
 
         myTooltipSpecs = TooltipSpecFactory(
-            GeomInteraction.createContextualMapping(
+            GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 geomTarget.aesTipLayoutHints.map { it.key },
@@ -102,7 +102,7 @@ open class TooltipSpecTestHelper {
         valueSources: List<ValueSource>
     ) {
         myTooltipSpecs = TooltipSpecFactory(
-            GeomInteraction.createContextualMapping(
+            GeomInteraction.createTestContextualMapping(
                 emptyList(),
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 geomTarget.aesTipLayoutHints.map { it.key },

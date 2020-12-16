@@ -184,8 +184,14 @@ object GeomInteractionUtil {
             when (geomKind) {
                 GeomKind.POINT,
                 GeomKind.CONTOUR -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-                else -> {
-                }
+                else -> {}
+            }
+        } else if (statKind == StatKind.CORR) {
+            when (geomKind) {
+                GeomKind.POINT -> return builder
+                    .bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
+                    .ignoreZeroSizedTarget(true)
+                else -> {}
             }
         }
 

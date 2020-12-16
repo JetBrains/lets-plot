@@ -29,7 +29,8 @@ interface ContextualMappingProvider {
                 return ContextualMapping(
                     tooltipLines = emptyList(),
                     tooltipAnchor = null,
-                    tooltipMinWidth = null
+                    tooltipMinWidth = null,
+                    ignoreZeroSizedTargets = false
                 )
             }
         }
