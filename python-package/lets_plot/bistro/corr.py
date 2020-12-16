@@ -54,7 +54,7 @@ class corr_plot:
         show_legend : Boolean
             If True legend is shown. Default - True.
         flip : Boolean
-            If True the y axis is flipped.
+            If True the y axis is flipped. Default - True.
         threshold: Double
             Minimal correlation abs value to be included in result.
             Default - 0.0.
