@@ -26,6 +26,10 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
+        if (contextualMapping.ignoreZeroSizedTargets && radius == 0.0) {
+            return;
+        }
+
         addTarget(
             TargetPrototype(
                 HitShape.point(point, radius),
