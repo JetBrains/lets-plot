@@ -19,3 +19,7 @@ Now it can be set using the `tooltips` parameter:
  
 ### Fixed
  - Crosshair for corner tooltips. 
+ - Tooltip should appear if the mapped data is continuous [[#241](https://github.com/JetBrains/lets-plot/issues/241)]
+ - Tooltip 'null' displayed for undefined vals [[#243](https://github.com/JetBrains/lets-plot/issues/243)]
+ - y-tooltip should be aligned with a tile center [[#246](https://github.com/JetBrains/lets-plot/issues/246)]
+ - With facet_grid tooltip shows data from last plot on all plots [[#247](https://github.com/JetBrains/lets-plot/issues/247)]
