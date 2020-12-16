@@ -109,8 +109,9 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
                   diag=diag,
                   threshold=threshold,
                   na_value='',
+                  na_text='',
                   **other_args) +
-            scale_size_identity() +
+            scale_size_identity(na_value=0) +
             coord +
             scale_x_discrete(expand=scale_xy_expand) +
             scale_y_discrete(expand=scale_xy_expand, reverse=flip))
