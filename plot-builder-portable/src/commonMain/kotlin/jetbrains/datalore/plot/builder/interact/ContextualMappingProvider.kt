@@ -8,14 +8,13 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification.TooltipProperties
 
 interface ContextualMappingProvider {
     fun createContextualMapping(
         dataAccess: MappedDataAccess,
         dataFrame: DataFrame,
-        tooltipAnchor: TooltipAnchor?,
-        tooltipMinWidth: Double?
+        tooltipProperties: TooltipProperties
     ): ContextualMapping
 
     companion object {
@@ -23,13 +22,13 @@ interface ContextualMappingProvider {
             override fun createContextualMapping(
                 dataAccess: MappedDataAccess,
                 dataFrame: DataFrame,
-                tooltipAnchor: TooltipAnchor?,
-                tooltipMinWidth: Double?
+                tooltipProperties: TooltipProperties
             ): ContextualMapping {
                 return ContextualMapping(
                     tooltipLines = emptyList(),
                     tooltipAnchor = null,
                     tooltipMinWidth = null,
+                    tooltipColor = null,
                     ignoreInvisibleTargets = false
                 )
             }

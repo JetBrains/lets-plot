@@ -69,6 +69,7 @@ class layer_tooltips(FeatureSpec):
                       'bottom_left' | 'bottom_center' | 'bottom_right']
 
     min_width() - minimum width of the general multiline tooltip.
+    color() - the color for the multiline tooltip.
 
     Returns
     -------
@@ -97,6 +98,7 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_lines: List = None
         self._tooltip_anchor = None
         self._tooltip_min_width = None
+        self._tooltip_color = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -105,6 +107,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_lines'] = self._tooltip_lines
         d['tooltip_anchor'] = self._tooltip_anchor
         d['tooltip_min_width'] = self._tooltip_min_width
+        d['tooltip_color'] = self._tooltip_color
         return d
 
     def format(self, field=None, format=None):
@@ -123,4 +126,8 @@ class layer_tooltips(FeatureSpec):
 
     def min_width(self, value):
         self._tooltip_min_width = value
+        return self
+
+    def color(self, value):
+        self._tooltip_color = value
         return self

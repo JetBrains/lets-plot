@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
@@ -29,6 +28,7 @@ import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 
 class GeomLayerBuilder {
     private val myBindings = ArrayList<VarBinding>()
@@ -45,8 +45,7 @@ class GeomLayerBuilder {
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
-    private var myTooltipAnchor: TooltipAnchor? = null
-    private var myTooltipMinWidth: Double? = null
+    private var myTooltipProperties: TooltipSpecification.TooltipProperties = TooltipSpecification.TooltipProperties.NONE
 
     fun stat(v: Stat): GeomLayerBuilder {
         myStat = v
@@ -108,13 +107,8 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun setTooltipAnchor(tooltipAnchor: TooltipAnchor?): GeomLayerBuilder {
-        myTooltipAnchor = tooltipAnchor
-        return this
-    }
-
-    fun setTooltipMinWidth(tooltipMinWidth: Double?): GeomLayerBuilder {
-        myTooltipMinWidth = tooltipMinWidth
+    fun setTooltipProperties(tooltipProperties: TooltipSpecification.TooltipProperties): GeomLayerBuilder {
+        myTooltipProperties = tooltipProperties
         return this
     }
 
@@ -174,7 +168,7 @@ class GeomLayerBuilder {
             scaleMap,
             dataAccess,
             myLocatorLookupSpec,
-            myContextualMappingProvider.createContextualMapping(dataAccess, data, myTooltipAnchor, myTooltipMinWidth),
+            myContextualMappingProvider.createContextualMapping(dataAccess, data, myTooltipProperties),
             myIsLegendDisabled
         )
     }

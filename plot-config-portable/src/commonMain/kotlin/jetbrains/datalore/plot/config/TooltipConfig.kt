@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
@@ -45,8 +47,11 @@ class TooltipConfig(
             return TooltipSpecification(
                 myValueSources.map { it.value },
                 lines,
-                readAnchor(),
-                readMinWidth()
+                TooltipSpecification.TooltipProperties(
+                    anchor = readAnchor(),
+                    minWidth = readMinWidth(),
+                    color = readColor()
+                )
             )
         }
 
@@ -191,6 +196,14 @@ class TooltipConfig(
         private fun readMinWidth(): Double? {
             if (has(Option.Layer.TOOLTIP_MIN_WIDTH)) {
                 return getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+            }
+            return null
+        }
+
+        private fun readColor(): Color? {
+            if (has(Option.Layer.TOOLTIP_COLOR)) {
+                val colorName = getString(Option.Layer.TOOLTIP_COLOR)
+                return colorName?.let(Colors::parseColor)
             }
             return null
         }
