@@ -19,85 +19,30 @@ class Corr : PlotConfigDemoBase() {
     private fun complexMpg(): Map<String, Any> {
         val spec = """
             {
-              "mapping": {
-                "x": null,
-                "y": null
-              },
-              "data_meta": {},
-              "coord": {
-                "name": "cartesian",
-                "xlim": null,
-                "ylim": null
-              },
+              "coord": { "name": "cartesian" },
               "theme": {
-                "axis_title": {
-                  "name": "blank"
-                },
-                "axis_title_x": null,
-                "axis_title_y": null,
-                "axis_text": null,
-                "axis_text_x": null,
-                "axis_text_y": null,
-                "axis_ticks": null,
-                "axis_ticks_x": null,
-                "axis_ticks_y": null,
-                "axis_line": null,
-                "axis_line_x": {
-                  "name": "blank"
-                },
-                "axis_line_y": {
-                  "name": "blank"
-                },
-                "legend_position": null,
-                "legend_justification": null,
-                "legend_direction": null,
-                "axis_tooltip": null,
-                "axis_tooltip_x": null,
-                "axis_tooltip_y": null,
-                "legend_title": {
-                  "name": "blank"
-                }
+                "axis_title": { "name": "blank" },
+                "axis_line_x": { "name": "blank" },
+                "axis_line_y": { "name": "blank" },
+                "legend_title": { "name": "blank" }
               },
-              "ggsize": {
-                "width": 400,
-                "height": 300.0
-              },
-              "ggtitle": {
-                "text": "Tiles, points and labels"
-              },
+              "ggsize": { "width": 400, "height": 300.0 },
+              "ggtitle": { "text": "Tiles, points and labels" },
               "kind": "plot",
               "scales": [
                 {
                   "name": "",
                   "aesthetic": "size",
-                  "breaks": null,
-                  "labels": null,
-                  "limits": null,
-                  "expand": null,
                   "na_value": 0,
                   "guide": "none",
-                  "trans": null,
                   "scale_mapper_kind": "identity"
                 },
                 {
                   "name": "Corr",
                   "aesthetic": "color",
-                  "breaks": [
-                    -1.0,
-                    -0.5,
-                    0.0,
-                    0.5,
-                    1.0
-                  ],
-                  "labels": null,
-                  "limits": [
-                    -1.0,
-                    1.0
-                  ],
-                  "expand": null,
+                  "breaks": [-1.0, -0.5, 0.0, 0.5, 1.0],
+                  "limits": [-1.0, 1.0],
                   "na_value": "rgba(0,0,0,0)",
-                  "guide": null,
-                  "trans": null,
                   "low": "red",
                   "mid": "light_gray",
                   "high": "blue",
@@ -107,22 +52,9 @@ class Corr : PlotConfigDemoBase() {
                 {
                   "name": "Corr",
                   "aesthetic": "fill",
-                  "breaks": [
-                    -1.0,
-                    -0.5,
-                    0.0,
-                    0.5,
-                    1.0
-                  ],
-                  "labels": null,
-                  "limits": [
-                    -1.0,
-                    1.0
-                  ],
-                  "expand": null,
+                  "breaks": [-1.0, -0.5, 0.0, 0.5, 1.0],
+                  "limits": [-1.0, 1.0],
                   "na_value": "rgba(0,0,0,0)",
-                  "guide": null,
-                  "trans": null,
                   "low": "red",
                   "mid": "light_gray",
                   "high": "blue",
@@ -131,31 +63,13 @@ class Corr : PlotConfigDemoBase() {
                 },
                 {
                   "aesthetic": "x",
-                  "breaks": null,
-                  "labels": null,
-                  "limits": null,
-                  "expand": [
-                    0,
-                    0.1
-                  ],
-                  "na_value": null,
-                  "guide": null,
-                  "trans": null,
+                  "expand": [0, 0.1],
                   "discrete": true,
                   "reverse": false
                 },
                 {
                   "aesthetic": "y",
-                  "breaks": null,
-                  "labels": null,
-                  "limits": null,
-                  "expand": [
-                    0,
-                    0.1
-                  ],
-                  "na_value": null,
-                  "guide": null,
-                  "trans": null,
+                  "expand": [0, 0.1],
                   "discrete": true,
                   "reverse": true
                 }
@@ -164,12 +78,6 @@ class Corr : PlotConfigDemoBase() {
                 {
                   "geom": "tile",
                   "stat": "corr",
-                  "data": null,
-                  "mapping": {
-                    "x": null,
-                    "y": null
-                  },
-                  "position": null,
                   "show_legend": true,
                   "sampling": "none",
                   "tooltips": {
@@ -179,30 +87,19 @@ class Corr : PlotConfigDemoBase() {
                         "format": ".2f"
                       }
                     ],
-                    "tooltip_lines": [
-                      "@..corr.."
-                    ],
-                    "tooltip_anchor": null,
-                    "tooltip_min_width": null
+                    "tooltip_lines": ["@..corr.."]
                   },
                   "data_meta": {},
                   "size": 0.0,
                   "width": 1.002,
                   "height": 1.002,
                   "type": "upper",
-                  "diag": false,
-                  "threshold": null
+                  "diag": false
                 },
                 {
                   "geom": "point",
                   "stat": "corr",
-                  "data": null,
-                  "mapping": {
-                    "x": null,
-                    "y": null,
-                    "size": "..corr_abs.."
-                  },
-                  "position": null,
+                  "mapping": { "size": "..corr_abs.." },
                   "show_legend": true,
                   "sampling": "none",
                   "tooltips": {
@@ -212,30 +109,17 @@ class Corr : PlotConfigDemoBase() {
                         "format": ".2f"
                       }
                     ],
-                    "tooltip_lines": [
-                      "@..corr.."
-                    ],
-                    "tooltip_anchor": null,
-                    "tooltip_min_width": null
+                    "tooltip_lines": ["@..corr.."]
                   },
                   "data_meta": {},
-                  "map": null,
-                  "map_join": null,
                   "size_unit": "x",
                   "type": "lower",
-                  "diag": false,
-                  "threshold": null
+                  "diag": false
                 },
                 {
                   "geom": "text",
                   "stat": "corr",
-                  "data": null,
-                  "mapping": {
-                    "x": null,
-                    "y": null,
-                    "size": "..corr_abs.."
-                  },
-                  "position": null,
+                  "mapping": { "size": "..corr_abs.." },
                   "show_legend": true,
                   "sampling": "none",
                   "tooltips": {
@@ -245,22 +129,15 @@ class Corr : PlotConfigDemoBase() {
                         "format": ".2f"
                       }
                     ],
-                    "tooltip_lines": [
-                      "@..corr.."
-                    ],
-                    "tooltip_anchor": null,
-                    "tooltip_min_width": null
+                    "tooltip_lines": ["@..corr.."]
                   },
                   "data_meta": {},
-                  "map": null,
-                  "map_join": null,
                   "label_format": ".2f",
                   "na_text": "",
                   "size_unit": "x",
                   "type": "lower",
                   "diag": false,
-                  "color": "white",
-                  "threshold": null
+                  "color": "white"
                 }
               ]
             }

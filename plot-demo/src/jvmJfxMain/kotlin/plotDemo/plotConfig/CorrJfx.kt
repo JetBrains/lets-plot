@@ -7,11 +7,10 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plotDemo.model.plotConfig.CoordLim
 import jetbrains.datalore.plotDemo.model.plotConfig.Corr
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
-object CorrdJfx {
+object CorrJfx {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Corr()) {
