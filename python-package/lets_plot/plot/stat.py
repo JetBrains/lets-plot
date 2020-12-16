@@ -5,7 +5,7 @@ __all__ = ['stat_corr']
 from .coord import coord_cartesian, coord_fixed
 from .core import FeatureSpec
 from .geom import _geom
-from .scale import scale_x_discrete, scale_y_discrete
+from .scale import scale_x_discrete, scale_y_discrete, scale_color_continuous
 from .scale_identity import scale_size_identity
 
 
@@ -113,5 +113,6 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
                   **other_args) +
             scale_size_identity(na_value=0) +
             coord +
+            scale_color_continuous(name='', na_value='rgba(0,0,0,0)') +
             scale_x_discrete(expand=scale_xy_expand) +
             scale_y_discrete(expand=scale_xy_expand, reverse=flip))
