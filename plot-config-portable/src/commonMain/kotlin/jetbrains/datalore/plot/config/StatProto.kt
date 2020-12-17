@@ -162,17 +162,11 @@ object StatProto {
             }
         }
 
-        val threshold = options.getDoubleDef(Corr.THRESHOLD, CorrelationStat.DEF_THRESHOLD)
-
-        if (threshold < 0.0 || threshold > 1.0) {
-            throw IllegalArgumentException("Threshold: $threshold. Expected: threshold value must be in interval [0.0, 1.0].")
-        }
-
         return CorrelationStat(
             correlationMethod = correlationMethod ?: CorrelationStat.DEF_CORRELATION_METHOD,
             type = type ?: CorrelationStat.DEF_TYPE,
             fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL, CorrelationStat.DEF_FILL_DIAGONAL),
-            threshold = threshold
+            threshold = options.getDoubleDef(Corr.THRESHOLD, CorrelationStat.DEF_THRESHOLD)
         )
     }
 
