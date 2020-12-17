@@ -44,7 +44,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -139,7 +139,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -243,7 +243,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -344,7 +344,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -460,7 +460,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -545,7 +545,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -635,7 +635,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -726,7 +726,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -817,7 +817,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -899,7 +899,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -983,7 +983,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1069,7 +1069,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1153,7 +1153,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1236,7 +1236,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1336,7 +1336,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1431,7 +1431,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1525,7 +1525,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1621,7 +1621,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1698,7 +1698,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1771,7 +1771,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1848,7 +1848,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -1944,7 +1944,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2024,7 +2024,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2104,7 +2104,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2195,7 +2195,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2290,7 +2290,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2378,7 +2378,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2459,7 +2459,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2542,7 +2542,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2635,7 +2635,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2723,7 +2723,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -2801,7 +2801,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.

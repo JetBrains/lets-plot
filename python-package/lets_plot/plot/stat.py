@@ -43,7 +43,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
