@@ -73,7 +73,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             tooltipLines: List<TooltipLine>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
-            tooltipProperties: TooltipProperties
+            tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
