@@ -101,7 +101,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     sampling = 'none' if sampling is None else sampling
 
     tooltips = (layer_tooltips()
-                .format(field='@..corr..', format='.2f')
+                .format(field='@..corr..', format=other_args.get('label_format', '.2f'))
                 .line('@..corr..')) if tooltips is None else tooltips
 
     return (_geom(geom,
