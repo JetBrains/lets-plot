@@ -22,6 +22,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
+    private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -39,13 +40,14 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataAccess,
             dataFrame,
             tooltipAnchor,
-            tooltipMinWidth
+            tooltipMinWidth,
+            myIgnoreInvisibleTargets
         )
     }
 
     companion object {
         // For tests
-        fun createContextualMapping(
+        fun createTestContextualMapping(
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
             outliers: List<Aes<*>>,
@@ -64,7 +66,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 dataAccess,
                 dataFrame,
                 tooltipAnchor = null,
-                tooltipMinWidth = null
+                tooltipMinWidth = null,
+                ignoreInvisibleTargets = false
             )
         }
 
@@ -73,7 +76,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
             tooltipAnchor: TooltipAnchor?,
-            tooltipMinWidth: Double?
+            tooltipMinWidth: Double?,
+            ignoreInvisibleTargets: Boolean
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
 
@@ -83,7 +87,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             }
             mappedTooltipLines.forEach { it.initDataContext(dataContext) }
 
-            return ContextualMapping(mappedTooltipLines, tooltipAnchor, tooltipMinWidth)
+            return ContextualMapping(mappedTooltipLines, tooltipAnchor, tooltipMinWidth, ignoreInvisibleTargets)
         }
     }
 }
