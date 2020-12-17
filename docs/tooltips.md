@@ -92,8 +92,9 @@ If you do not specify a label, the string will be centered in the tooltip. For e
 
 <a id="tooltip-anchor"></a>
 ### Tooltip anchor: `layer_tooltips().anchor(position)`
-Specifies an anchor to place a multi-line tooltip.
-The parameter of the `anchor` function specifies the position of the plot to place tooltip:
+Specifies a fixed position for multi-line tooltip.
+
+The `anchor()` function accepts the following values:
 - 'top_right'
 - 'top_center'
 - 'top_left' 
@@ -106,7 +107,7 @@ The parameter of the `anchor` function specifies the position of the plot to pla
  
 <a id="minwidth"></a>
 ### Minimum width of a multi-line tooltip: `layer_tooltips().min_width(value)`
-Specifies the minimum width of a multi-line tooltip.
+Specifies minimum width of a multi-line tooltip in pixels.
 
 <a id="examples"></a>
 ### Examples

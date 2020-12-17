@@ -169,14 +169,18 @@ to create a certain kind of plot with a single function call instead of combinin
 <a id="corr_plot"></a>
 #### Correlation Plot 
 
+`from lets_plot.bistro.corr`
+
 The `corr_plot()` function creates a fluent builder object offering a set of methods for 
 configuring of beautiful correlation plots. A call to the terminal `build()` method in the end 
 will create a resulting plot object.    
 
-Example: [TODO]
+Example: [correlation_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/correlation_plot.ipynb)
   
 <a id="image_matrix"></a>
 #### Image Matrix 
+
+`from lets_plot.bistro.im`
 
 The `image_matrix()` function arranges a set of images in a grid.
  

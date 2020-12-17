@@ -83,7 +83,7 @@ See also: `image_matrix` in [The 'bistro' Package](#bistro).
 
 `stat_corr`
 
-See the 'corr_plot' example in [The 'bistro' Package](#bistro).
+See the `corr_plot` example in [The 'bistro' Package](#bistro).
  
 
 <a id="pos"></a>
@@ -169,7 +169,7 @@ See also [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/mas
 
 #### `from lets_plot.bistro.corr`
 
-`corr_plot` (also `stat_corr`): [TODO]
+`corr_plot`: [correlation_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/correlation_plot.ipynb)
 
 #### `from lets_plot.bistro.im`
 
