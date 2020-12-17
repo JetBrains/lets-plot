@@ -30,7 +30,7 @@ interface ContextualMappingProvider {
                     tooltipLines = emptyList(),
                     tooltipAnchor = null,
                     tooltipMinWidth = null,
-                    ignoreZeroSizedTargets = false
+                    ignoreInvisibleTargets = false
                 )
             }
         }

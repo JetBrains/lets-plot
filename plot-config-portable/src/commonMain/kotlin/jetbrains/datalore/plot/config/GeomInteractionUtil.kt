@@ -190,7 +190,7 @@ object GeomInteractionUtil {
             when (geomKind) {
                 GeomKind.POINT -> return builder
                     .bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
-                    .ignoreZeroSizedTarget(true)
+                    .ignoreInvisibleTargets(true)
                 else -> {}
             }
         }

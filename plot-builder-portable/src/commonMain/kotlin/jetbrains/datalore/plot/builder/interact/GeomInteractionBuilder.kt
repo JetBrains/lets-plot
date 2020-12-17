@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.ConstantValue
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
-    private var myIgnoreZeroSizedTargets: Boolean = false
+    private var myIgnoreInvisibleTargets: Boolean = false
     lateinit var locatorLookupSpace: LookupSpace
         private set
     lateinit var locatorLookupStrategy: LookupStrategy
@@ -167,13 +167,13 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return GeomInteraction(this)
     }
 
-    fun ignoreZeroSizedTarget(isTrue: Boolean): GeomInteractionBuilder {
-        myIgnoreZeroSizedTargets = isTrue
+    fun ignoreInvisibleTargets(isTrue: Boolean): GeomInteractionBuilder {
+        myIgnoreInvisibleTargets = isTrue
         return this
     }
 
-    fun isIgnoringZeroSizeTargets(): Boolean {
-        return myIgnoreZeroSizedTargets
+    fun isIgnoringInvisibleTargets(): Boolean {
+        return myIgnoreInvisibleTargets
     }
 
 

@@ -10,7 +10,7 @@ open class ContextualMapping(
     private val tooltipLines: List<TooltipLineSpec>,
     val tooltipAnchor: TooltipAnchor?,
     val tooltipMinWidth: Double?,
-    val ignoreZeroSizedTargets: Boolean
+    val ignoreInvisibleTargets: Boolean
 ) {
     fun getDataPoints(index: Int): List<TooltipLineSpec.DataPoint> {
         return tooltipLines.mapNotNull { it.getDataPoint(index) }

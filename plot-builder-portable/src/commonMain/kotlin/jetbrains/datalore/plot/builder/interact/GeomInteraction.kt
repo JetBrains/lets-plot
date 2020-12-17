@@ -22,7 +22,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
-    private val myIgnoreZeroSizedTargets = builder.isIgnoringZeroSizeTargets()
+    private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -41,7 +41,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame,
             tooltipAnchor,
             tooltipMinWidth,
-            myIgnoreZeroSizedTargets
+            myIgnoreInvisibleTargets
         )
     }
 
@@ -67,7 +67,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 dataFrame,
                 tooltipAnchor = null,
                 tooltipMinWidth = null,
-                ignoreZeroSizedTargets = false
+                ignoreInvisibleTargets = false
             )
         }
 
@@ -77,7 +77,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame: DataFrame,
             tooltipAnchor: TooltipAnchor?,
             tooltipMinWidth: Double?,
-            ignoreZeroSizedTargets: Boolean
+            ignoreInvisibleTargets: Boolean
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
 
@@ -87,7 +87,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             }
             mappedTooltipLines.forEach { it.initDataContext(dataContext) }
 
-            return ContextualMapping(mappedTooltipLines, tooltipAnchor, tooltipMinWidth, ignoreZeroSizedTargets)
+            return ContextualMapping(mappedTooltipLines, tooltipAnchor, tooltipMinWidth, ignoreInvisibleTargets)
         }
     }
 }
