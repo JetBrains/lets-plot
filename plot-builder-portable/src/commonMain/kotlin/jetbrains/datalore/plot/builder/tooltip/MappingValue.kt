@@ -20,7 +20,6 @@ class MappingValue(
 
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = null
-    private var myIsContinuous: Boolean = false
     private val myFormatter = format?.let {
         StringFormat(format).also {
             require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'. Expected 1 argument instead of ${it.argsNumber}" }
@@ -43,7 +42,6 @@ class MappingValue(
             dataLabel in axisLabels -> ""
             else -> dataLabel
         }
-        myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
     }
 
     override fun getDataPoint(index: Int): DataPoint? {

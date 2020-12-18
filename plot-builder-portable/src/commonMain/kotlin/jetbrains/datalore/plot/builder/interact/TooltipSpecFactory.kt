@@ -24,6 +24,8 @@ class TooltipSpecFactory(
 
     private inner class Helper(private val myGeomTarget: GeomTarget) {
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
+        private val myTooltipAnchor = contextualMapping.tooltipAnchor
+        private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -98,7 +100,9 @@ class TooltipSpecFactory(
                         tipLayoutHint(),
                         lines = generalLines,
                         fill = tipLayoutHint().color!!,
-                        isOutlier = false
+                        isOutlier = false,
+                        anchor = myTooltipAnchor,
+                        minWidth = myTooltipMinWidth
                     )
                 )
             } else {

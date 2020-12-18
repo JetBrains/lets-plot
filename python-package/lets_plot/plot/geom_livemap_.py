@@ -45,7 +45,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.

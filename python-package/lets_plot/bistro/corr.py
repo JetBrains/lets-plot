@@ -45,7 +45,7 @@ class corr_plot:
     _DEF_MID_COLOR = 'light_gray'
     _DEF_HIGH_COLOR = 'blue'
 
-    def __init__(self, data, show_legend=True, flip=True):
+    def __init__(self, data, show_legend=True, flip=True, threshold=None):
         """
         Parameters
         ----------
@@ -54,13 +54,17 @@ class corr_plot:
         show_legend : Boolean
             If True legend is shown. Default - True.
         flip : Boolean
-            If True the y axis is flipped.
+            If True the y axis is flipped. Default - True.
+        threshold: Double
+            Minimal correlation abs value to be included in result.
+            Default - 0.0.
         """
 
         self._data = data
         self._show_legend = show_legend
         self._format = '.2f'
         self._reverse_y = flip if flip else False
+        self.threshold = threshold
         self._color_scale = None
         self._fill_scale = None
         self._points_params = None
@@ -71,7 +75,7 @@ class corr_plot:
                               mid=corr_plot._DEF_MID_COLOR,
                               high=corr_plot._DEF_HIGH_COLOR)
 
-    def points(self, type=None, diag=None, threshold=None):
+    def points(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn by points to the plot.
 
@@ -83,18 +87,15 @@ class corr_plot:
         diag : Boolean
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
-        threshold: Double
-            Minimal correlation abs value to be included in result.
-            Default - 0.0.
 
         Returns
         -------
             self
         """
-        self._points_params = {'type': type, 'diag': diag, 'threshold': threshold}
+        self._points_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
         return self
 
-    def labels(self, type=None, diag=None, map_size=None, color=None, threshold=None):
+    def labels(self, type=None, diag=None, map_size=None, color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -112,19 +113,16 @@ class corr_plot:
         color: string
             Set text color.
             Default - contextual.
-        threshold: Double
-            Minimal correlation abs value to be included in result.
-            Default - 0.0.
         Returns
         -------
             self
         """
 
-        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': threshold}
+        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': self.threshold}
         self._labels_map_size = map_size
         return self
 
-    def tiles(self, type=None, diag=None, threshold=None):
+    def tiles(self, type=None, diag=None):
         """
         Method defines correlation matrix layer drawn as square tiles to the plot.
 
@@ -137,16 +135,12 @@ class corr_plot:
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
 
-        threshold: Double
-            Minimal correlation abs value to be included in result.
-            Default - 0.0.
-
         Returns
         -------
             self
         """
 
-        self._tiles_params = {'type': type, 'diag': diag, 'threshold': threshold}
+        self._tiles_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
         return self
 
     def build(self) -> PlotSpec:
@@ -169,7 +163,8 @@ class corr_plot:
                                       reverse_y=self._reverse_y,
                                       show_legend=self._show_legend,
                                       labels_map_size=self._labels_map_size,
-                                      corr_value_format=self._format)
+                                      corr_value_format=self._format,
+                                      threshold=self.threshold)
         return _BuildUtil.add_common_params(plot=plot,
                                             has_tiles=tiles_params is not None,
                                             color_scale=self._color_scale,
@@ -349,11 +344,12 @@ class _BuildUtil:
                     show_legend: bool,
                     labels_map_size: bool,
                     corr_value_format: str,
+                    threshold
                     ) -> PlotSpec:
 
         # Adjust options
         labels_map_size = _OpUtil.adjust_type_color_size(tiles_params, points_params, labels_params, labels_map_size)
-        _OpUtil.adjust_diag(tiles_params, points_params, labels_params)
+        _OpUtil.adjust_diag(tiles_params, points_params, labels_params, threshold)
         _OpUtil.flip_type(tiles_params, points_params, labels_params, reverse_y)
 
         tooltips = (layer_tooltips()
@@ -394,6 +390,7 @@ class _BuildUtil:
                               mapping=m,
                               na_text='',
                               label_format=corr_value_format,
+                              tooltips=tooltips,
                               size_unit='x',
                               sampling='none',
                               **labels_params)
@@ -491,7 +488,7 @@ class _OpUtil:
             elif points_type is None:
                 points_type = cls.flip(tiles_type)
 
-        if has_labels and labels_params.get('color') is None:
+        if has_labels and labels_type is None and labels_params.get('color') is None:
             # avoid labels without 'color' showing on top of tiles or points.
             if has_points:
                 if points_type is None and labels_type is None:
@@ -510,11 +507,18 @@ class _OpUtil:
                 else:
                     labels_type = cls.flip(tiles_type)
 
-            # Update labels parameters.
-            labels_params['type'] = labels_type
-            if cls.overlap(labels_type, tiles_type) or cls.overlap(labels_type, points_type):
-                labels_params['color'] = "white"
+        # Set labels color if labels are over points or tiles.
+        if has_labels and labels_params.get('color') is None:
+            if has_tiles:
+                if cls.overlap(labels_type if labels_type is not None else 'full',
+                               tiles_type if tiles_type is not None else 'full'):
+                    labels_params['color'] = "white"
+            if has_points:
+                if cls.overlap(labels_type if labels_type is not None else 'full',
+                               points_type if points_type is not None else 'full'):
+                    labels_params['color'] = "white"
 
+        # Map labels size if labels are over points.
         if has_points and has_labels and labels_map_size is None:
             if cls.overlap(labels_type if labels_type is not None else 'full',
                            points_type if points_type is not None else 'full'):
@@ -527,10 +531,13 @@ class _OpUtil:
         if has_points:
             points_params['type'] = points_type
 
+        if has_labels:
+            labels_params['type'] = labels_type
+
         return labels_map_size
 
     @classmethod
-    def adjust_diag(cls, tiles_params: dict, points_params: dict, labels_params: dict) -> None:
+    def adjust_diag(cls, tiles_params: dict, points_params: dict, labels_params: dict, threshold) -> None:
         # Prefer not to fill diagonal when the type is 'lower' or 'upper'.
         def _adjust(diag: bool, type):
             if diag is None:
@@ -538,12 +545,33 @@ class _OpUtil:
                     diag = False
             return diag
 
+        tiles_diag = None
+        points_diag = None
+        labels_diag = None
         if tiles_params is not None:
-            tiles_params['diag'] = _adjust(tiles_params.get('diag'), tiles_params.get('type'))
+            tiles_diag = _adjust(tiles_params.get('diag'), tiles_params.get('type'))
         if points_params is not None:
-            points_params['diag'] = _adjust(points_params.get('diag'), points_params.get('type'))
+            points_diag = _adjust(points_params.get('diag'), points_params.get('type'))
         if labels_params is not None:
-            labels_params['diag'] = _adjust(labels_params.get('diag'), labels_params.get('type'))
+            labels_diag = _adjust(labels_params.get('diag'), labels_params.get('type'))
+
+        if threshold is not None and threshold > 0.0:
+            # For all layers 'diag' must be the same.
+            if tiles_diag or points_diag or labels_diag:
+                tiles_diag = True
+                points_diag = True
+                labels_diag = True
+            else:
+                tiles_diag = False
+                points_diag = False
+                labels_diag = False
+
+        if tiles_params is not None:
+            tiles_params['diag'] = tiles_diag
+        if points_params is not None:
+            points_params['diag'] = points_diag
+        if labels_params is not None:
+            labels_params['diag'] = labels_diag
 
     @classmethod
     def flip_type(cls, tiles_params: dict, points_params: dict, labels_params: dict, flip: bool) -> None:

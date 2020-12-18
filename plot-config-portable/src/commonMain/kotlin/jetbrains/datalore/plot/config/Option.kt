@@ -85,6 +85,8 @@ object Option {
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_LINES = "tooltip_lines"
         const val TOOLTIP_FORMATS = "tooltip_formats"
+        const val TOOLTIP_ANCHOR = "tooltip_anchor"
+        const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
     }
@@ -212,7 +214,7 @@ object Option {
             const val CONFIDENCE_LEVEL = "level"
             const val DISPLAY_CONFIDENCE_INTERVAL = "se"
             const val SPAN = "span"
-            const val POLYNOMIAL_DEGREE = "span"
+            const val POLYNOMIAL_DEGREE = "deg"
             const val LOESS_CRITICAL_SIZE = "max_n"
             const val SAMPLING_SEED = "seed"
         }
@@ -364,9 +366,6 @@ object Option {
         const val LEGEND_POSITION = "legend_position"
         const val LEGEND_JUSTIFICATION = "legend_justification"
         const val LEGEND_DIRECTION = "legend_direction"
-
-        const val TOOLTIP_ANCHOR = "tooltip_anchor"
-        const val TOOLTIP_WIDTH = "tooltip_width"
     }
 
     object GeomName {

@@ -5,8 +5,9 @@ __all__ = ['stat_corr']
 from .coord import coord_cartesian, coord_fixed
 from .core import FeatureSpec
 from .geom import _geom
-from .scale import scale_x_discrete, scale_y_discrete
+from .scale import scale_x_discrete, scale_y_discrete, scale_color_continuous, scale_fill_continuous
 from .scale_identity import scale_size_identity
+from .tooltip import layer_tooltips
 
 
 def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -42,7 +43,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
-        True - do not show legend for this layer.
+        False - do not show legend for this layer.
     sampling : result of the call to the sampling_xxx() function.
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
@@ -68,9 +69,11 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     geom = geom if geom else "tile"
     other_args['label_format'] = other_args.get('label_format', '.2f')
 
+    avoid_na_color = scale_color_continuous(na_value='rgba(0,0,0,0)')
     scale_xy_expand = None
     if geom == 'tile':
         scale_xy_expand = [0, 0.1]  # Smaller 'additive' expand for tiles (normally: 0.6)
+        avoid_na_color += scale_fill_continuous(na_value='rgba(0,0,0,0)')
 
     coord = coord_cartesian()
     if geom in ['point', 'text']:
@@ -89,13 +92,17 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     if flip:
         if type == 'upper':
             type = 'lower'
-        if type == 'lower':
+        elif type == 'lower':
             type = 'upper'
 
     if type in ['lower', 'upper']:
         diag = False if diag is None else diag
 
     sampling = 'none' if sampling is None else sampling
+
+    tooltips = (layer_tooltips()
+                .format(field='@..corr..', format='.2f')
+                .line('@..corr..')) if tooltips is None else tooltips
 
     return (_geom(geom,
                   mapping=mapping,
@@ -108,9 +115,10 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
                   type=type,
                   diag=diag,
                   threshold=threshold,
-                  na_value='',
+                  na_text='',
                   **other_args) +
-            scale_size_identity() +
+            scale_size_identity(na_value=0) +
             coord +
+            avoid_na_color +
             scale_x_discrete(expand=scale_xy_expand) +
             scale_y_discrete(expand=scale_xy_expand, reverse=flip))

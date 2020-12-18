@@ -43,7 +43,7 @@ object GeomInteractionUtil {
             multilayer,
             isVariableContinuous(scaleMap, Aes.X)
         )
-        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
+        val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, scaleMap, builder.getAxisFromFunctionKind) - hiddenAesList
         val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
@@ -52,7 +52,7 @@ object GeomInteractionUtil {
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipLinesSpec(layerConfig.tooltips)
-            .tooltipConstants(layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) })
+            .tooltipConstants(createConstantAesList(layerConfig))
             .showAxisTooltip(!isLiveMap)
     }
 
@@ -86,12 +86,19 @@ object GeomInteractionUtil {
         return builder
     }
 
-    private fun createHiddenAesList(geomKind: GeomKind): List<Aes<*>> {
-        return when (geomKind) {
+    private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
+        return when (layerConfig.geomProto.geomKind) {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
-            // by default geom_text doesn't show tooltips, but user can enable them via tooltips config
-            GeomKind.TEXT -> GeomMeta.renders(GeomKind.TEXT)
+            GeomKind.TEXT -> {
+                // by default geom_text doesn't show tooltips,
+                // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
+                if (layerConfig.tooltips.tooltipLinePatterns.isNullOrEmpty()) {
+                    GeomMeta.renders(GeomKind.TEXT)
+                } else {
+                    GeomMeta.renders(GeomKind.TEXT) - axisAes
+                }
+            }
             else -> emptyList()
         }
     }
@@ -158,6 +165,14 @@ object GeomInteractionUtil {
         else -> emptyList()
     }
 
+    private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
+        return when (layerConfig.geomProto.geomKind) {
+            GeomKind.H_LINE,
+            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+            else -> emptyMap()
+        }
+    }
+
     private fun initGeomInteractionBuilder(
         renders: List<Aes<*>>,
         geomKind: GeomKind,
@@ -169,8 +184,14 @@ object GeomInteractionUtil {
             when (geomKind) {
                 GeomKind.POINT,
                 GeomKind.CONTOUR -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-                else -> {
-                }
+                else -> {}
+            }
+        } else if (statKind == StatKind.CORR) {
+            when (geomKind) {
+                GeomKind.POINT -> return builder
+                    .bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
+                    .ignoreInvisibleTargets(true)
+                else -> {}
             }
         }
 

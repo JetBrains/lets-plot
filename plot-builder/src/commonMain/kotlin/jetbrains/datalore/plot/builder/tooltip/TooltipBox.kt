@@ -77,7 +77,7 @@ class TooltipBox(
             lines,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
-            tooltipMinWidth = tooltipMinWidth.takeUnless { isOutlier }
+            tooltipMinWidth = tooltipMinWidth
         )
     }
 
