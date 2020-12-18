@@ -65,12 +65,17 @@ class TextGeom : GeomBase() {
         }
     }
 
-    // This implementation is oversimplified.
-    // Current implementation works for label_format ='.2f'
-    // and values between -1.0 and 1.0.
+    // Simplified implementation - will work correctly if data in open interval (-10.0, 10.0)
+    // improve previous implementation by considering label_format
     private fun getSizeUnitRatio(ctx: GeomContext): Double {
+        fun estimateMaxTextWidth(): Double {
+            val testString = toString(-1.0) // max symbols count in label with given format
+            val textWidthNorm = 1.2 // magic constant, works with default font settings
+            return testString.length  * textWidthNorm
+        }
+
         return if ( sizeUnit != null)  {
-            val textWidth = 6.0
+            val textWidth = estimateMaxTextWidth()
             val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
             unitRes / textWidth
         } else {
