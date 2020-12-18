@@ -48,8 +48,10 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        if (contextualMapping.ignoreInvisibleTargets && tooltipParams.getColor().alpha == 0) {
-            return
+        if (contextualMapping.ignoreInvisibleTargets) {
+            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.getColor().alpha == 0) {
+                return
+            }
         }
         addTarget(
             TargetPrototype(
