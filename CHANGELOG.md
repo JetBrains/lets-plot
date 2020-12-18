@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     
     See: [The 'bistro' Package](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#the-bistro-package).
 
- - The 'no javascript' mode.
+ - 'No Javascript' mode.
+ 
    Support for notebook renderers that don't execute Javascript.
    
    See: ['No Javascript' mode](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#no-javascript-mode)
