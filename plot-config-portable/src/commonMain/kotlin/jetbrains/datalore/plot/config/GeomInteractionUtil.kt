@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
@@ -139,17 +140,25 @@ object GeomInteractionUtil {
         aesListForTooltip.removeAll { !isVariableContinuous(scaleMap, it) }
 
         // remove duplicated mappings
-        // (this step was in TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
-        val mappingsToShow = HashMap<String, Aes<*>>()
+        val mappingsToShow = HashMap<DataFrame.Variable?, Aes<*>>()
         aesListForTooltip
             .filter { aes -> scaleMap.containsKey(aes) }
             .forEach { aes ->
-                val label = scaleMap[aes].name
-                val mappingToShow = mappingsToShow[label]
-                if (mappingToShow == null) {
-                    mappingsToShow[label] = aes
-                } else if (!isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes)) {
-                    mappingsToShow[label] = aes
+                val variable = layerConfig.getVariableForAes(aes)
+                val mappingToShow = mappingsToShow[variable]
+                when {
+                    mappingToShow == null ->  {
+                        mappingsToShow[variable] = aes
+                    }
+                    !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
+                        // If the same variable is mapped twice as continuous and discrete - use the continuous value
+                        // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
+                        mappingsToShow[variable] = aes
+                    }
+                    scaleMap[aes].name != variable?.label -> {
+                        // Use variable which is shown by the scale with its name
+                        mappingsToShow[variable] = aes
+                    }
                 }
             }
         return mappingsToShow.values.toList()
