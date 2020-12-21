@@ -64,7 +64,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 defaultTooltipLines,
                 dataAccess,
                 dataFrame,
-                TooltipSpecification.TooltipProperties.NONE,
+                TooltipProperties.NONE,
                 ignoreInvisibleTargets = false
             )
         }
