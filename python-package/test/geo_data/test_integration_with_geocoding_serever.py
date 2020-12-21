@@ -30,7 +30,7 @@ MOSCOW_LAT = 55.753960
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_moscow(level, expected_name):
-    r = geodata.regions_xy(lon=MOSCOW_LON, lat=MOSCOW_LAT, level=level)
+    r = geodata.reverse_geocode(lon=MOSCOW_LON, lat=MOSCOW_LAT, level=level)
     assert_row(r.get_geocodes(), found_name=expected_name)
 
 
@@ -81,14 +81,14 @@ NYC_LAT = 40.730610
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_geocoding_of_list_(lons, lats):
-    r = geodata.regions_xy(lons, lats, 'city')
+    r = geodata.reverse_geocode(lons, lats, 'city')
     assert_row(r.get_geocodes(), index=0, names='[-71.057083, 42.361145]', found_name='Boston')
     assert_row(r.get_geocodes(), index=1, names='[-73.935242, 40.73061]', found_name='New York')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_geocoding_of_nyc():
-    r = geodata.regions_xy(NYC_LON, NYC_LAT, 'city')
+    r = geodata.reverse_geocode(NYC_LON, NYC_LAT, 'city')
 
     assert_row(r.get_geocodes(), found_name='New York')
 
@@ -96,7 +96,7 @@ def test_reverse_geocoding_of_nyc():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_geocoding_of_nothing():
     try:
-        geodata.regions_xy(-30.0, -30.0, 'city')
+        geodata.reverse_geocode(-30.0, -30.0, 'city').get_geocodes()
     except ValueError as e:
         assert str(e).startswith('No objects were found for [-30.000000, -30.000000].\n')
         return
@@ -111,7 +111,7 @@ SEVASTOPOL_ID = '6061953'
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_only_one_sevastopol():
-    sevastopol = geodata.regions_xy(SEVASTOPOL_LON, SEVASTOPOL_LAT, 'city')
+    sevastopol = geodata.reverse_geocode(SEVASTOPOL_LON, SEVASTOPOL_LAT, 'city')
 
     assert_row(sevastopol.get_geocodes(), id=SEVASTOPOL_ID)
 
@@ -317,7 +317,7 @@ def test_case():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguous_not_found_with_level():
     with pytest.raises(ValueError) as exception:
-        r = geodata.geocode(names=['zimbabwe', 'moscow'], level='country')
+        r = geodata.geocode(names=['zimbabwe', 'moscow'], level='country').get_geocodes()
     assert 'No objects were found for moscow.\n' == exception.value.args[0]
 
 
@@ -344,7 +344,7 @@ def test_should_copy_found_name_to_request_for_us48():
     df = geodata.geocode_states('us-48').get_geocodes()
 
     assert len(df['request']) == 49
-    assert df['request'] == df['found name']
+    assert df['request'].equals(df['found name'])
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -418,5 +418,5 @@ def test_incorrect_group_processing():
 def test_not_found_scope():
     assert_error(
         "Region is not found: blablabla",
-        lambda: geodata.geocode(names=['texas'], scope='blablabla')
+        lambda: geodata.geocode(names=['texas'], scope='blablabla').get_geocodes()
     )

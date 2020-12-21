@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Union, Optional, List
 
 from .geom import _geom
-from .util import is_geo_data_regions, map_join_regions
+from .util import is_geocoder, auto_join_geocoded_gdf
 from .._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, \
     GEOCODING_PROVIDER_URL, \
     TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
@@ -50,11 +50,11 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     symbol : string, optional
@@ -123,9 +123,9 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     if _display_mode in other_args.keys():
         other_args.pop(_display_mode)
 
-    if is_geo_data_regions(map):
-        map = map.centroids()
-        map_join = map_join_regions(map_join)
+    if is_geocoder(map):
+        map = map.get_centroids()
+        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('livemap',
                  mapping=mapping,
@@ -240,7 +240,7 @@ def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
         return None
 
     value = location
-    # if isinstance(location, Regions):
+    # if isinstance(location, Geocoder):
     #     kind = RegionKind.region_ids
     #     value = location.unique_ids()
 

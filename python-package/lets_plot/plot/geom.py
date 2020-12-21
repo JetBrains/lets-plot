@@ -4,7 +4,7 @@
 #
 
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, \
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geocoder, auto_join_geocoded_gdf, \
     geo_data_frame_to_wgs84, as_map_join
 
 #
@@ -50,11 +50,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     other_args :
@@ -101,9 +101,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>> p
     """
 
-    if is_geo_data_regions(map):
-        map = map.centroids()
-        map_join = map_join_regions(map_join)
+    if is_geocoder(map):
+        map = map.get_centroids()
+        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('point',
                  mapping=mapping,
@@ -149,7 +149,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Data containing coordinates of lines.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     other_args :
@@ -209,8 +209,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> p += geom_path(stat='smooth', color='red', linetype='longdash')
         >>> p
     """
-    if is_geo_data_regions(map):
-        raise ValueError("Regions object is not support in geom_path - there is no geometries for renedering as path")
+    if is_geocoder(map):
+        raise ValueError("Geocoding doesn't provide geometries supported by geom_path")
     return _geom('path',
                  mapping=mapping,
                  data=data,
@@ -1439,11 +1439,11 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Regions (implicitly invoke boundaries())
+    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
         Data contains coordinates of polygon vertices on map.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     other_args :
@@ -1489,9 +1489,9 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> ggplot(dat, aes('x', 'y')) + geom_polygon(aes(fill='id'), alpha=0.5)
     """
 
-    if is_geo_data_regions(map):
-        map = map.boundaries()
-        map_join = map_join_regions(map_join)
+    if is_geocoder(map):
+        map = map.get_boundaries()
+        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('polygon',
                  mapping=mapping,
@@ -1533,11 +1533,11 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Regions (implicitly invoke boundaries())
+    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     other_args :
@@ -1584,9 +1584,9 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         >>> ggplot(df) + ggtitle('Randomly colored states') + geom_map(aes(fill='value'), map=boundaries, map_join=('state', 'found name'), color='white')
     """
 
-    if is_geo_data_regions(map):
-        map = map.boundaries()
-        map_join = map_join_regions(map_join)
+    if is_geocoder(map):
+        map = map.get_boundaries()
+        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('map',
                  mapping=mapping,
@@ -2643,11 +2643,11 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Regions (implicitly invoke limits())
+    map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Geocoder (implicitly invoke limits())
         Bounding boxes of geometries will be drawn.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     other_args :
@@ -2688,9 +2688,9 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     """
 
-    if is_geo_data_regions(map):
-        map = map.limits()
-        map_join = map_join_regions(map_join)
+    if is_geocoder(map):
+        map = map.get_limits()
+        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('rect',
                  mapping=mapping,
@@ -2809,11 +2809,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
     label_format : str, optional
@@ -2865,9 +2865,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
     """
 
-    if is_geo_data_regions(map):
-        map = map.centroids()
-        map_join = map_join_regions(map_join)
+    if is_geocoder(map):
+        map = map.get_centroids()
+        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('text',
                  mapping=mapping,

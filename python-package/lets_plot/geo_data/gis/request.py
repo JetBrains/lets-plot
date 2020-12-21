@@ -1,6 +1,6 @@
 import enum
 from numbers import Number
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 
 from .geometry import GeoRect, GeoPoint
 from ..type_assertion import assert_type, assert_list_type, assert_optional_type
@@ -407,7 +407,7 @@ class RequestBuilder:
         self.allow_ambiguous = v
         return self
 
-    def build(self) -> 'Request':
+    def build(self) -> Union[ExplicitRequest, GeocodingRequest, ReverseGeocodingRequest]:
         if self.request_kind == RequestKind.explicit:
             return ExplicitRequest(self.requested_payload, self.ids, self.resolution)
 

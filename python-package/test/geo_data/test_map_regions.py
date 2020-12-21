@@ -2,17 +2,17 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from unittest import mock
+
 import pytest
 
+from lets_plot.geo_data.geocoder import Geocoder
+from lets_plot.geo_data.geocodes import _coerce_resolution, _parse_resolution, Geocodes, Resolution, DF_ID, \
+    DF_FOUND_NAME, DF_REQUEST
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind, \
     RegionQuery
 from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint
-from lets_plot.geo_data.geocodes import _coerce_resolution, _parse_resolution, Geocodes, Resolution, DF_ID, DF_FOUND_NAME, \
-    DF_REQUEST
-from lets_plot.geo_data.geocoder import Geocoder
-from lets_plot.plot import ggplot, geom_polygon
-from .geo_data import make_success_response, get_map_data_meta, features_to_queries, features_to_answers
+from .geo_data import make_success_response, features_to_queries, features_to_answers
 
 USA_REQUEST = 'united states'
 USA_NAME = 'USA'
@@ -247,40 +247,6 @@ class TestMapRegions:
 
         assert ['foo', 'bar', 'foo'] == df[DF_REQUEST].tolist()
 
-    # python invokes geocoding functions when Geocoder objects detected in map
-    # changed from previous version, where client invoked these functions
-    @mock.patch.object(GeocodingService, 'do_request')
-    def test_plot_should_have_geometries_when_regions_in_map_parameter(self, mock_request):
-
-        mock_request.return_value = make_success_response() \
-            .set_geocoded_features(
-            [
-                FeatureBuilder() \
-                    .set_id(USA_ID) \
-                    .set_name(USA_NAME) \
-                    .set_boundary(GeoPoint(0, 1))
-                    .build_geocoded(),
-                FeatureBuilder() \
-                    .set_id(RUSSIA_ID) \
-                    .set_name(RUSSIA_NAME) \
-                    .set_boundary(GeoPoint(0, 1))
-                    .build_geocoded()
-
-            ]
-        ).build()
-
-        plotSpec = ggplot() + geom_polygon(map=self.make_geocoder())
-
-        # previous behaviour
-        # expected_map_data_meta = {
-        #    'georeference': {}
-        # }
-
-        expected_map_data_meta = {
-            'geodataframe': {'geometry': 'geometry'}
-        }
-
-        assert expected_map_data_meta == get_map_data_meta(plotSpec, 0)
 
     def make_geocoder(self) -> Geocoder:
         usa = FeatureBuilder() \
@@ -300,4 +266,9 @@ class TestMapRegions:
             queries=features_to_queries([usa, russia]),
             answers=features_to_answers([usa, russia])
         )
-        return regions
+
+        class StubGeocoder(Geocoder):
+            def _get_geocodes(self) -> Geocodes:
+                return regions
+
+        return StubGeocoder()

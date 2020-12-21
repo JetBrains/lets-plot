@@ -10,7 +10,7 @@ from lets_plot.geo_data import GeocodingService, SuccessResponse, Answer, Geocod
 from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, GeocodingRequest, LevelKind, RegionQuery, \
     IgnoringStrategyKind
-from lets_plot.geo_data.geocoder import geocode_countries, geocode, Geocoder
+from lets_plot.geo_data.geocoder import geocode_countries, geocode, NamesGeocoder
 from lets_plot.geo_data.geocodes import Geocodes
 from .geo_data import make_answer
 from .request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \
@@ -209,7 +209,7 @@ def test_allow_ambiguous_and_near():
 def test_global_scope():
     # scope should be applied to whole request, not to queries
 
-    builder: Geocoder = geocode(names='foo')
+    builder: NamesGeocoder = geocode(names='foo')
 
     # single str scope
     assert_that(builder.scope('bar')) \
@@ -344,8 +344,8 @@ def no_parents(request: ValueMatcher[Optional[str]],
                         country=empty(), state=empty(), county=empty())
 
 
-def assert_that(request: Union[Geocoder, GeocodingRequest]) -> GeocodingRequestAssertion:
-    if isinstance(request, Geocoder):
+def assert_that(request: Union[NamesGeocoder, GeocodingRequest]) -> GeocodingRequestAssertion:
+    if isinstance(request, NamesGeocoder):
         return GeocodingRequestAssertion(request._build_request())
     elif isinstance(request, GeocodingRequest):
         return GeocodingRequestAssertion(request)
@@ -353,7 +353,7 @@ def assert_that(request: Union[Geocoder, GeocodingRequest]) -> GeocodingRequestA
         raise ValueError('Expected types are [RegionsBuilder2, GeocodingRequest], but was {}', str(type(request)))
 
 
-def check_validation_error(message: str, get_builder: Callable[[], Geocoder]):
+def check_validation_error(message: str, get_builder: Callable[[], NamesGeocoder]):
     assert isinstance(message, str)
     try:
         get_builder()._build_request()

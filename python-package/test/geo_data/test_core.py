@@ -38,8 +38,8 @@ REGION_HIGHLIGHTS = ['united states', 'united states of america']
 
 PARENT_WITH_NAME = MapRegion.with_name(REGION_NAME)
 
-REGION_QUERY_LA = RegionQuery('LA', PARENT_WITH_NAME, AmbiguityResolver())
-REGION_QUERY_NY = RegionQuery('NY', PARENT_WITH_NAME, AmbiguityResolver())
+REGION_QUERY_LA = RegionQuery('LA', None, AmbiguityResolver())
+REGION_QUERY_NY = RegionQuery('NY', None, AmbiguityResolver())
 
 NAMESAKES_EXAMPLE_LIMIT = 10
 
@@ -68,7 +68,7 @@ def test_regions(mock_geocoding):
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          level=LEVEL_KIND,
-                         scope=MapRegion.with_name(REGION_NAME),
+                         scope=[MapRegion.with_name(REGION_NAME)],
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False
                          )

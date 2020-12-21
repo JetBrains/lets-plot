@@ -20,7 +20,7 @@ def test_us48_in_names_without_level():
 def test_us48_with_extra_names():
     us48 = geodata.geocode(names=['texas', 'us-48', 'nevada']).get_geocodes()
     assert 51 == len(us48.id)
-    assert us48['request'].tolist() == us48['found name'].tolist()
+    assert us48['request'][1:49].equals(us48['found name'][1:49])
     assert_row(us48, index=0, names='texas', found_name='Texas')
     assert_row(us48, index=50, names='nevada', found_name='Nevada')
 

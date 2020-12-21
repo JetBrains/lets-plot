@@ -2,11 +2,13 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from collections import namedtuple
 from typing import Union, List, Optional, Dict
+from pandas import Series
 
+from .type_assertion import assert_list_type
 from .gis.geocoding_service import GeocodingService
 from .gis.geometry import GeoRect, GeoPoint
 from .gis.request import RequestBuilder, GeocodingRequest, RequestKind, MapRegion, AmbiguityResolver, \
-    RegionQuery, LevelKind, IgnoringStrategyKind, PayloadKind
+    RegionQuery, LevelKind, IgnoringStrategyKind, PayloadKind, ReverseGeocodingRequest
 from .gis.response import Response, SuccessResponse
 from .geocodes import _to_level_kind, request_types, Geocodes, _raise_exception, \
     _ensure_is_list
@@ -17,7 +19,8 @@ __all__ = [
     'geocode_cities',
     'geocode_counties',
     'geocode_states',
-    'geocode_countries'
+    'geocode_countries',
+    'reverse_geocode'
 ]
 
 NAMESAKE_MAX_COUNT = 10
@@ -43,7 +46,7 @@ def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegio
         if isinstance(obj, str):
             return MapRegion.with_name(obj)
 
-        raise ValueError('Unsupported scope type. Expected Regions, str or list, but was `{}`'.format(type(obj)))
+        raise ValueError('Unsupported scope type. Expected Geocoder, str or list, but was `{}`'.format(type(obj)))
 
     if isinstance(location, list):
         return [_make_region(obj) for obj in location]
@@ -173,11 +176,81 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
 
 
 class Geocoder:
+    def _get_geocodes(self) -> Geocodes:
+        raise ValueError('Abstract method')
+
+    def get_limits(self) -> 'GeoDataFrame':
+        return self._get_geocodes().limits()
+
+    def get_centroids(self) -> 'GeoDataFrame':
+        return self._get_geocodes().centroids()
+
+    def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
+        return self._get_geocodes().boundaries(resolution)
+
+    def get_geocodes(self) -> 'DataFrame':
+        return self._get_geocodes().to_data_frame()
+
+    def _get_geocodes_obj(self) -> Geocodes:
+        return self._get_geocodes()
+
+
+def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[Union[float, Series, List[float]]]) -> List[GeoPoint]:
+    if type(lon) != type(lat):
+        raise ValueError('lon and lat have different types')
+
+    if isinstance(lon, float):
+        return [GeoPoint(lon, lat)]
+
+    if isinstance(lon, Series):
+        lon = lon.tolist()
+        lat = lat.tolist()
+
+    if isinstance(lon, list):
+        assert_list_type(lon, float)
+        assert_list_type(lat, float)
+        return [GeoPoint(lo, la) for lo, la in zip(lon, lat)]
+
+
+class ReverseGeocoder(Geocoder):
+    def __init__(self, lon, lat, level: Optional[Union[str, LevelKind]], within=None):
+        self._geocodes: Optional[Geocodes] = None
+        self._request: ReverseGeocodingRequest = RequestBuilder() \
+            .set_request_kind(RequestKind.reverse) \
+            .set_reverse_coordinates(_to_coords(lon, lat)) \
+            .set_level(_to_level_kind(level)) \
+            .set_reverse_scope(_to_scope(within)) \
+            .build()
+
+    def _get_geocodes(self) -> Geocodes:
+        if self._geocodes is None:
+            self._geocodes = self._build()
+
+        return self._geocodes
+
+    def _build(self):
+        response: Response = GeocodingService().do_request(self._request)
+
+        if not isinstance(response, SuccessResponse):
+            _raise_exception(response)
+
+        return Geocodes(
+            response.level,
+            response.answers,
+            [
+                RegionQuery(request='[{}, {}]'.format(pt.lon, pt.lat)) for pt in self._request.coordinates
+            ],
+            False
+        )
+
+
+
+class NamesGeocoder(Geocoder):
     def __init__(self,
                  level: Optional[Union[str, LevelKind]] = None,
                  request: request_types = None
                  ):
-
+        self._geocodes: Optional[Geocodes] = None
         self._scope: List[Optional[MapRegion]] = []
         self._level: Optional[LevelKind] = _to_level_kind(level)
         self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()  # TODO rename to geohint
@@ -194,35 +267,42 @@ class Geocoder:
         else:
             self._names = []
 
-    def scope(self, scope: scope_types) -> 'Geocoder':
+    def scope(self, scope: scope_types) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._scope = _prepare_new_scope(scope)
         return self
 
-    def highlights(self, v: bool) -> 'Geocoder':
+    def highlights(self, v: bool) -> 'NamesGeocoder':
         self._highlights = v
         return self
 
-    def countries(self, countries: parent_types) -> 'Geocoder':
+    def countries(self, countries: parent_types) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._countries = _make_parents(countries)
         return self
 
-    def states(self, states: parent_types) -> 'Geocoder':
+    def states(self, states: parent_types) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._states = _make_parents(states)
         return self
 
-    def counties(self, counties: parent_types) -> 'Geocoder':
+    def counties(self, counties: parent_types) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._counties = _make_parents(counties)
         return self
 
-    def drop_not_found(self) -> 'Geocoder':
+    def drop_not_found(self) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
         return self
 
-    def drop_not_matched(self) -> 'Geocoder':
+    def drop_not_matched(self) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_all)
         return self
 
-    def allow_ambiguous(self) -> 'Geocoder':
+    def allow_ambiguous(self) -> 'NamesGeocoder':
+        self._reset_geocodes()
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
         self._allow_ambiguous = True
         return self
@@ -234,35 +314,36 @@ class Geocoder:
               scope: scope_types = None,
               within: ShapelyPolygonType = None,
               near: Optional[Union[Geocodes, ShapelyPointType]] = None
-              ) -> 'Geocoder':
+              ) -> 'NamesGeocoder':
         """
         If name is not exist - error will be generated.
-        If name is exist in the RegionsBuilder - specify extra parameters for geocoding.
+        If name is exist in the Geocoder - specify extra parameters for geocoding.
 
 
         Parameters
         ----------
         name : string
-            Name in RegionsBuilder that needs better qualificationfrom request Data can be filtered by full names at any level (only exact matching).
+            Name in Geocoder that needs better qualificationfrom request Data can be filtered by full names at any level (only exact matching).
         county : [string | None]
-            When RegionsBuilder built with parents this field is used to identify a row for the name
+            When Geocoder built with parents this field is used to identify a row for the name
         state : [string | None]
-            When RegionsBuilder built with parents this field is used to identify a row for the name
+            When Geocoder built with parents this field is used to identify a row for the name
         country : [string | None]
-            When RegionsBuilder built with parents this field is used to identify a row for the name
-        scope : [string | Regions | None]
+            When Geocoder built with parents this field is used to identify a row for the name
+        scope : [string | Geocoder | None]
             Resolve ambiguity by setting scope as parent. If parent country is set then error will be shown.
              If type is string - scope will be geocoded and used as parent.
-             If type is Regions  - scope will be used as parent.
+             If type is Geocoder  - scope will be used as parent.
         within : [shapely.Polygon | None]
             Resolve ambihuity by limiting area in which centroid be located.
-        near: [Regions | shapely.geometry.Point | None]
+        near: [Geocoder | shapely.geometry.Point | None]
             Resolve ambiguity by taking object closest to a 'near' object.
 
         Returns
         -------
-            RegionsBuilder object
+            Geocoder object
         """
+        self._reset_geocodes()
         query_spec = QuerySpec(
             name,
             _make_parent_region(county),
@@ -310,30 +391,16 @@ class Geocoder:
         self._overridings[query_spec] = WhereSpec(new_scope, ambiguity_resolver)
         return self
 
-    def get_limits(self) -> 'GeoDataFrame':
-        return self._build().limits()
-
-    def get_centroids(self) -> 'GeoDataFrame':
-        return self._build().centroids()
-
-    def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
-        return self._build().boundaries(resolution)
-
-    def get_geocodes(self) -> 'DataFrame':
-        return self._build().to_data_frame()
-
-    def _get_geocodes_obj(self) -> Geocodes:
-        return self._build()
 
     def _build_request(self) -> GeocodingRequest:
         if len(self._names) == 0:
-            def to_scope(regions):
-                if len(regions) == 0:
+            def to_scope(parents):
+                if len(parents) == 0:
                     return None
-                elif len(regions) == 1:
-                    return regions[0]
+                elif len(parents) == 1:
+                    return parents[0]
                 else:
-                    raise ValueError('Too many parent objects. Expcted single object instead of {}'.format(len(regions)))
+                    raise ValueError('Too many parent objects. Expcted single object instead of {}'.format(len(parents)))
 
             # all countries/states etc. We need one dummy query
             queries = [
@@ -405,8 +472,17 @@ class Geocoder:
 
         return self._build_regions(response, request.region_queries)
 
+    def _get_geocodes(self) -> Geocodes:
+        if self._geocodes is None:
+            self._geocodes = self._build()
+
+        return self._geocodes
+
+    def _reset_geocodes(self):
+        self._geocodes = None
+
     def __eq__(self, o):
-        return isinstance(o, Geocoder) \
+        return isinstance(o, NamesGeocoder) \
                and self._overridings == o._overridings
 
     def __ne__(self, o):
@@ -435,14 +511,14 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion,
         if all(map(lambda v: isinstance(v, Geocodes), scope)):
             return [map_region for region in scope for map_region in region.to_map_regions()]
         else:
-            raise ValueError('Iterable scope can contain str or Regions.')
+            raise ValueError('Iterable scope can contain str or Geocoder.')
 
 
 def regions_builder2(level=None, names=None, countries=None, states=None, counties=None, scope=None,
-                     highlights=False) -> Geocoder:
+                     highlights=False) -> NamesGeocoder:
     """
     Create a RegionBuilder class by level and request. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -455,30 +531,30 @@ def regions_builder2(level=None, names=None, countries=None, states=None, counti
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
     countries : [array | None]
-        Parent countries. Should have same size as names. Can contain strings or Regions objects.
+        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
     states : [array | None]
-        Parent states. Should have same size as names. Can contain strings or Regions objects.
+        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
     counties : [array | None]
-        Parent counties. Should have same size as names. Can contain strings or Regions objects.
-    scope : [array | string | Regions | None]
+        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
+    scope : [array | string | Geocoder | None]
         Limits area of geocoding. Applyed to a highest admin level of parents that are set or to names, if no parents given.
         If all parents are set (including countries) then the scope parameter is ignored.
         If scope is an array then geocoding will try to search objects in all scopes.
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
     >>> from lets_plot.geo_data import *
     >>> r = regions_builder2(level='city', names=['moscow', 'york']).where('york', regions_state('New York')).build()
     """
-    return Geocoder(level, names) \
+    return NamesGeocoder(level, names) \
         .scope(scope) \
         .highlights(highlights) \
         .countries(countries) \
@@ -486,7 +562,7 @@ def regions_builder2(level=None, names=None, countries=None, states=None, counti
         .counties(counties)
 
 
-def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> Geocoder:
+def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
     Returns regions object.
 
@@ -499,12 +575,12 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
     countries : [array | None]
-        Parent countries. Should have same size as names. Can contain strings or Regions objects.
+        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
     states : [array | None]
-        Parent states. Should have same size as names. Can contain strings or Regions objects.
+        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
     counties : [array | None]
-        Parent counties. Should have same size as names. Can contain strings or Regions objects.
-    scope : [array | string | Regions | None]
+        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
+    scope : [array | string | Geocoder | None]
         Limits area of geocoding. Applyed to a highest admin level of parents that are set or to names, if no parents given.
         If all parents are set (including countries) then the scope parameter is ignored.
         If scope is an array then geocoding will try to search objects in all scopes.
@@ -512,10 +588,10 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
     return regions_builder2(level, names, countries, states, counties, scope)
 
 
-def geocode_cities(names=None) -> Geocoder:
+def geocode_cities(names=None) -> NamesGeocoder:
     """
     Create a RegionBuilder object for cities. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -526,24 +602,24 @@ def geocode_cities(names=None) -> Geocoder:
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_cities(names=['moscow', 'york']).where('york', regions_state('New York')).build()
+    >>> r = geocode_cities(names=['moscow', 'york']).where('york', regions_state('New York')).get_geocodes()
     """
-    return Geocoder('city', names)
+    return NamesGeocoder('city', names)
 
 
-def geocode_counties(names=None) -> Geocoder:
+def geocode_counties(names=None) -> NamesGeocoder:
     """
     Create a RegionBuilder object for counties. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -554,24 +630,24 @@ def geocode_counties(names=None) -> Geocoder:
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_counties(names='suffolk').build()
+    >>> r = geocode_counties(names='suffolk').get_geocodes()
     """
-    return Geocoder('county', names)
+    return NamesGeocoder('county', names)
 
 
-def geocode_states(names=None) -> Geocoder:
+def geocode_states(names=None) -> NamesGeocoder:
     """
     Create a RegionBuilder object for states. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -582,24 +658,24 @@ def geocode_states(names=None) -> Geocoder:
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_states(names='texas').build()
+    >>> r = geocode_states(names='texas').get_geocodes()
     """
-    return Geocoder('state', names)
+    return NamesGeocoder('state', names)
 
 
-def geocode_countries(names=None) -> Geocoder:
+def geocode_countries(names=None) -> NamesGeocoder:
     """
     Create a RegionBuilder object for countries. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -610,15 +686,18 @@ def geocode_countries(names=None) -> Geocoder:
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_countries(names='USA').build()
+    >>> r = geocode_countries(names='USA').get_geocodes()
     """
-    return Geocoder('country', names)
+    return NamesGeocoder('country', names)
+
+def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
+    return ReverseGeocoder(lon, lat, level, scope)

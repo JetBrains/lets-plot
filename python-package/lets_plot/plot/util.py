@@ -71,7 +71,7 @@ def as_annotated_map_data(raw_map: Any) -> dict:
     if raw_map is None:
         return {}
 
-    if is_geo_data_regions(raw_map):
+    if is_geocoder(raw_map):
         return {'map_data_meta': {'georeference': {}}}
 
     if is_geo_data_frame(raw_map):
@@ -80,12 +80,15 @@ def as_annotated_map_data(raw_map: Any) -> dict:
     raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)) + '. Should be a GeoDataFrame.')
 
 
-def is_geo_data_regions(data: Any) -> bool:
-    # do not import Regions directly to suppress OSM attribution from geo_data package
-    return data is not None and type(data).__name__ == 'Regions'
+def is_geocoder(data: Any) -> bool:
+    # do not import Geocoder directly to suppress OSM attribution from geo_data package
+    if data is None:
+        return False
+
+    return any(base.__name__ == 'Geocoder' for base in type(data).mro())
 
 
-def map_join_regions(map_join: Any):
+def auto_join_geocoded_gdf(map_join: Any):
     if isinstance(map_join, str):
         return [map_join, 'request']
 
