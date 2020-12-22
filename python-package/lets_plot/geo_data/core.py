@@ -2,11 +2,7 @@ from typing import Any
 
 import numpy as np
 
-from .geocoder import _to_scope, ReverseGeocoder, Geocoder
-from .geocodes import Geocodes, _raise_exception, _to_level_kind
-from .gis.geocoding_service import GeocodingService
-from .gis.request import RequestBuilder, RequestKind, RegionQuery
-from .gis.response import Response, SuccessResponse
+from .geocoder import Geocoder
 
 __all__ = [
     'distance',
@@ -117,7 +113,7 @@ def regions(level=None, request=None, within=None):
         >>> r = regions(level='country', request=['Germany', 'USA'])
         >>> r
     """
-    raise ValueError('Function `regions_builder(...)` is deprecated. Use new function `geocode(...)`.')
+    raise ValueError('Function `regions(...)` is deprecated. Use new function `geocode(...)`.')
     #return Geocoder(level=level, request=request, scope=within).build()
 
 
@@ -228,7 +224,7 @@ def regions_county(request=None, within=None):
         >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
         >>> r_county
     """
-    raise ValueError('Function `regions_state(...)` is deprecated. Use new function `geocode_counties(...)`')
+    raise ValueError('Function `regions_county(...)` is deprecated. Use new function `geocode_counties(...)`')
     #return regions('county', request, within)
 
 
@@ -266,7 +262,7 @@ def regions_city(request=None, within=None):
         >>> r_city = regions_city(request=['New York', 'Los Angeles'])
         >>> r_city
     """
-    raise ValueError('Function `regions_state(...)` is deprecated. Use new function `geocode_cities(...)`')
+    raise ValueError('Function `regions_city(...)` is deprecated. Use new function `geocode_cities(...)`')
     #return regions('city', request, within)
 
 

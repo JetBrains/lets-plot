@@ -86,4 +86,4 @@ def _standardize_value(v):
 class CanToDataFrame:
     @abstractmethod
     def to_data_frame(self):  # -> pandas.DataFrame
-        pass
+        raise ValueError('Not implemented')

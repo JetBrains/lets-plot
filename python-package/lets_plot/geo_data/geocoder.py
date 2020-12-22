@@ -2,16 +2,18 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from collections import namedtuple
 from typing import Union, List, Optional, Dict
+
 from pandas import Series
 
-from .type_assertion import assert_list_type
+from .geocodes import _to_level_kind, request_types, Geocodes, _raise_exception, \
+    _ensure_is_list
 from .gis.geocoding_service import GeocodingService
 from .gis.geometry import GeoRect, GeoPoint
 from .gis.request import RequestBuilder, GeocodingRequest, RequestKind, MapRegion, AmbiguityResolver, \
     RegionQuery, LevelKind, IgnoringStrategyKind, PayloadKind, ReverseGeocodingRequest
 from .gis.response import Response, SuccessResponse
-from .geocodes import _to_level_kind, request_types, Geocodes, _raise_exception, \
-    _ensure_is_list
+from .type_assertion import assert_list_type
+from .._type_utils import CanToDataFrame
 
 __all__ = [
     'geocode',
@@ -84,8 +86,11 @@ def _make_ambiguity_resolver(ignoring_strategy: Optional[IgnoringStrategyKind] =
                              within: ShapelyPolygonType = None,
                              near: Optional[Union[Geocodes, ShapelyPointType]] = None):
     box = None
-    if LazyShapely.is_polygon(within):
-        box = GeoRect(min_lon=within.bounds[0], min_lat=within.bounds[1], max_lon=within.bounds[2], max_lat=within.bounds[3])
+    if within is not None:
+        if LazyShapely.is_polygon(within):
+            box = GeoRect(min_lon=within.bounds[0], min_lat=within.bounds[1], max_lon=within.bounds[2], max_lat=within.bounds[3])
+        else:
+            raise ValueError('Wrong type of parameter `within` - expected `shapely.geometry.Polygon`, but was `{}`'.format(type(within).__name__))
 
     near = _to_near_coord(near)
 
@@ -101,7 +106,7 @@ def _to_near_coord(near: Optional[Union[Geocodes, ShapelyPointType]]) -> Optiona
         return None
 
     if isinstance(near, Geocoder):
-        near = near._get_geocodes_obj()
+        near = near._get_geocodes()
 
     if isinstance(near, Geocodes):
         near_id = near.as_list()[0].unique_ids()
@@ -138,7 +143,7 @@ def _ensure_is_parent_list(obj):
         return None
 
     if isinstance(obj, Geocoder):
-        obj = obj._get_geocodes_obj()
+        obj = obj._get_geocodes()
 
     if isinstance(obj, Geocodes):
         return obj.as_list()
@@ -163,7 +168,7 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
         return None
 
     if isinstance(place, Geocoder):
-        place = place._get_geocodes_obj()
+        place = place._get_geocodes()
 
     if isinstance(place, str):
         return MapRegion.with_name(place)
@@ -175,10 +180,7 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
     raise ValueError('Unsupported parent type: ' + str(type(place)))
 
 
-class Geocoder:
-    def _get_geocodes(self) -> Geocodes:
-        raise ValueError('Abstract method')
-
+class Geocoder(CanToDataFrame):
     def get_limits(self) -> 'GeoDataFrame':
         return self._get_geocodes().limits()
 
@@ -188,11 +190,14 @@ class Geocoder:
     def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
         return self._get_geocodes().boundaries(resolution)
 
+    def to_data_frame(self):
+        return self.get_geocodes()
+
     def get_geocodes(self) -> 'DataFrame':
         return self._get_geocodes().to_data_frame()
 
-    def _get_geocodes_obj(self) -> Geocodes:
-        return self._get_geocodes()
+    def _get_geocodes(self) -> Geocodes:
+        raise ValueError('Abstract method')
 
 
 def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[Union[float, Series, List[float]]]) -> List[GeoPoint]:
@@ -224,11 +229,11 @@ class ReverseGeocoder(Geocoder):
 
     def _get_geocodes(self) -> Geocodes:
         if self._geocodes is None:
-            self._geocodes = self._build()
+            self._geocodes = self._geocode()
 
         return self._geocodes
 
-    def _build(self):
+    def _geocode(self):
         response: Response = GeocodingService().do_request(self._request)
 
         if not isinstance(response, SuccessResponse):
@@ -459,22 +464,19 @@ class NamesGeocoder(Geocoder):
 
         return request
 
-    def _build_regions(self, response: Response, queries: List[RegionQuery]) -> Geocodes:
-        if not isinstance(response, SuccessResponse):
-            _raise_exception(response)
-
-        return Geocodes(response.level, response.answers, queries, self._highlights)
-
-    def _build(self) -> Geocodes:
+    def _geocode(self) -> Geocodes:
         request: GeocodingRequest = self._build_request()
 
         response: Response = GeocodingService().do_request(request)
 
-        return self._build_regions(response, request.region_queries)
+        if not isinstance(response, SuccessResponse):
+            _raise_exception(response)
+
+        return Geocodes(response.level, response.answers, request.region_queries, self._highlights)
 
     def _get_geocodes(self) -> Geocodes:
         if self._geocodes is None:
-            self._geocodes = self._build()
+            self._geocodes = self._geocode()
 
         return self._geocodes
 
@@ -497,7 +499,7 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion,
         return []
 
     if isinstance(scope, Geocoder):
-        scope = scope._get_geocodes_obj()
+        scope = scope._get_geocodes()
 
     if isinstance(scope, str):
         return [MapRegion.with_name(scope)]
