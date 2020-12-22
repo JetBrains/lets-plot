@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
-import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification.TooltipProperties
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 
@@ -23,6 +22,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
+    private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
     private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
 
     fun createLookupSpec(): LookupSpec {
@@ -31,15 +31,14 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(
         dataAccess: MappedDataAccess,
-        dataFrame: DataFrame,
-        tooltipProperties: TooltipProperties
+        dataFrame: DataFrame
     ): ContextualMapping {
         return createContextualMapping(
             myTooltipLines.map(::TooltipLine),  // clone tooltip lines to not share DataContext between plots when facet is used
                                                 // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             dataAccess,
             dataFrame,
-            tooltipProperties,
+            myTooltipProperties,
             myIgnoreInvisibleTargets
         )
     }

@@ -114,8 +114,7 @@ class LayerTargetCollectorWithLocatorTest {
             val builder = createGeomInteractionBuilder(area = geomKind == GeomKind.RECT)
             val contextualMapping = builder.createContextualMapping(
                 dataAccess = Mockito.mock(MappedDataAccess::class.java),
-                dataFrame = DataFrame.Builder().build(),
-                tooltipProperties = TooltipSpecification.TooltipProperties.NONE
+                dataFrame = DataFrame.Builder().build()
             )
             return LayerTargetCollectorWithLocator(
                 geomKind = geomKind,
