@@ -5,6 +5,9 @@
 from pkgutil import extend_path
 from typing import Dict
 
+# Workaround for macos missing symbol in
+import urllib.request as _workaround
+
 # To handle the situation when the 'lets_plot' package is shared by modules in different locations.
 __path__ = extend_path(__path__, __name__)
 
