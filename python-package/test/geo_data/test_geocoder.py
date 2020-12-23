@@ -25,6 +25,13 @@ def test_simple():
         .has_query(no_parents(request=eq('foo')))
 
 
+def test_single_parent_should_apply_to_all_names():
+    assert_that(geocode(names=['foo', 'bar', 'baz']).countries('qux')) \
+        .has_query(QueryMatcher().with_name('foo').country(eq_map_region_with_name('qux'))) \
+        .has_query(QueryMatcher().with_name('bar').country(eq_map_region_with_name('qux'))) \
+        .has_query(QueryMatcher().with_name('baz').country(eq_map_region_with_name('qux')))
+
+
 def test_no_parents_where_should_override_scope():
     # without parents should update scope for matching name
 

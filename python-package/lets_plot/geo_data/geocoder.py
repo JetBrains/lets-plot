@@ -418,6 +418,12 @@ class NamesGeocoder(Geocoder):
             ]
         else:
             def _validate_parents_size(parents: List, parents_level: str):
+                # When only one parent is set - use this parent for all names
+                if len(parents) == 1:
+                    parent = parents[0]
+                    parents.clear()
+                    parents.extend([parent] * len(self._names))
+
                 if len(parents) > 0 and len(parents) != len(self._names):
                     raise ValueError('Invalid request: {} count({}) != names count({})'
                                      .format(parents_level, len(parents), len(self._names)))

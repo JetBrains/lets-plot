@@ -26,6 +26,7 @@ class eq(ValueMatcher[T]):
         self.expected = v
 
     def check(self, value):
+        assert type(self.expected) == type(value), "{} != {}".format(type(self.expected), type(value))
         assert self.expected == value, '{} != {}'.format(self.expected, value)
 
 
