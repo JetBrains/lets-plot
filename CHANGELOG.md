@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.6] - 2020-12-23
 
 ### Fixed
- - “Symbol not found: _NSGenericException” error on macOS.
+ - “Symbol not found: _NSGenericException” error on macOS [[#276](https://github.com/JetBrains/lets-plot/issues/276)].
 
 ## [1.5.5] - 2020-12-18
 
