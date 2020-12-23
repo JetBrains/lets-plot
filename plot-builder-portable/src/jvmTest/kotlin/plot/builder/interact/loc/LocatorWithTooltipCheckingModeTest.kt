@@ -87,7 +87,9 @@ class LocatorWithTooltipCheckingModeTest {
         val contextualMappingProvider = GeomInteractionBuilder(Aes.values()).bivariateFunction(true).build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,
-            DataFrame.Builder().build()
+            DataFrame.Builder().build(),
+            tooltipAnchor = null,
+            tooltipMinWidth = null
         )
     }
 
