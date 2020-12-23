@@ -121,7 +121,7 @@ class LocatedTargetsPickerTest {
         listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
                 .forEach { targetsPicker.addLookupResult(it) }
 
-        val lookupResults = targetsPicker.picked
+        val lookupResults = targetsPicker.picked(withGeneralTooltip = false)
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
             assertThat<LookupResult>(lookupResults).isEmpty()

@@ -59,7 +59,7 @@ class LocatorForSameObjectsTest {
                 val lookupResult = locator.search(POINT_COORD)
                 lookupResult?.let { targetsPicker.addLookupResult(it) }
             }
-            return targetsPicker.picked
+            return targetsPicker.picked(withGeneralTooltip = false)
         }
 
         private fun assertLookupResult(results: List<GeomTargetLocator.LookupResult>, expectedIndex: Int) {

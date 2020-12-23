@@ -75,7 +75,6 @@ internal class PlotTooltipHelper {
 
         internal fun findTargets(plotCoord: DoubleVector): List<LookupResult> {
             val targetsPicker = LocatedTargetsPicker().apply {
-                setNeedCheckTooltips(true)
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
@@ -83,7 +82,7 @@ internal class PlotTooltipHelper {
                     }
                 }
             }
-            return targetsPicker.picked
+            return targetsPicker.picked(withGeneralTooltip = true)
         }
 
         internal operator fun contains(plotCoord: DoubleVector): Boolean {

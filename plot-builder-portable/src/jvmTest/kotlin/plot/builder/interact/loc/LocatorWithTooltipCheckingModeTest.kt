@@ -22,7 +22,6 @@ class LocatorWithTooltipCheckingModeTest {
 
     @Test
     fun `locator with disabled tooltip checking mode - should take the last object`() {
-        val targetsPicker = LocatedTargetsPicker()
         val targetLocators = listOf(
             createLocator(
                 lookupSpec = lookupSpec,
@@ -37,13 +36,12 @@ class LocatorWithTooltipCheckingModeTest {
                 targetPrototypes = listOf(SECOND_TARGET)
             )
         )
-        val results = findTargets(targetsPicker, targetLocators)
+        val results = findTargets(targetLocators, withGeneralTooltip = false)
         assertLookupResult(results, SECOND_POINT_KEY)
     }
 
     @Test
     fun `locator with tooltip checking mode - should take the object with general tooltip`() {
-        val targetsPicker = LocatedTargetsPicker().also { it.setNeedCheckTooltips(true) }
         val targetLocators = listOf(
             createLocator(
                 lookupSpec = lookupSpec,
@@ -58,15 +56,13 @@ class LocatorWithTooltipCheckingModeTest {
                 targetPrototypes = listOf(SECOND_TARGET)
             )
         )
-        val results = findTargets(targetsPicker, targetLocators)
+        val results = findTargets(targetLocators, withGeneralTooltip = true)
         assertLookupResult(results, FIRST_POINT_KEY)
     }
 
     @Test
     fun `between objects without tooltips, locator should choose the last`() {
         // Both objects don't have general tooltips => locator will choose the last added object
-        val targetsPicker = LocatedTargetsPicker().also { it.setNeedCheckTooltips(true) }
-
         val targets = listOf(
             createLocator(
                 lookupSpec = lookupSpec,
@@ -79,7 +75,7 @@ class LocatorWithTooltipCheckingModeTest {
                 targetPrototypes = listOf(SECOND_TARGET)
             )
         )
-        val results = findTargets(targetsPicker, targets)
+        val results = findTargets(targets, withGeneralTooltip = true)
         assertLookupResult(results, SECOND_POINT_KEY)
     }
 
@@ -94,14 +90,15 @@ class LocatorWithTooltipCheckingModeTest {
     }
 
     private fun findTargets(
-        targetsPicker: LocatedTargetsPicker,
-        targetLocators: List<GeomTargetLocator>
+        targetLocators: List<GeomTargetLocator>,
+        withGeneralTooltip: Boolean
     ): List<LookupResult> {
+        val targetsPicker = LocatedTargetsPicker()
         targetLocators.forEach { locator ->
             val lookupResult = locator.search(COORD)
             lookupResult?.let { targetsPicker.addLookupResult(it) }
         }
-        return targetsPicker.picked
+        return targetsPicker.picked(withGeneralTooltip)
     }
 
     private fun assertLookupResult(results: List<LookupResult>, expectedIndex: Int) {
