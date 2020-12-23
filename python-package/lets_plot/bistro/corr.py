@@ -56,7 +56,7 @@ class corr_plot:
         flip : Boolean
             If True the y axis is flipped. Default - True.
         threshold: Double
-            Minimal correlation abs value to be included in result.
+            Minimal correlation abs value to be included in result. Must be in interval [0.0, 1.0]
             Default - 0.0.
         """
 

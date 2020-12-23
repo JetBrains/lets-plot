@@ -32,6 +32,10 @@ class CorrelationStat(
             "Unsupported correlation method: $correlationMethod (only Pearson is currently available)"
         }
 
+        require(threshold in 0.0..1.0) {
+            "Threshold value:  $threshold must be in interval [0.0, 1.0]"
+        }
+
         val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson, threshold)
         val values = cm.getNumeric(Stats.CORR)
         val abs: List<Double?> = values.map { it?.let(::abs) }
