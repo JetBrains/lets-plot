@@ -60,11 +60,11 @@ if this_system == 'Windows':
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 if this_system == 'Darwin':
-    stdc_lib = 'c++'
-    extra_link = ['-framework', 'Foundation']
+    lets_plot_stdcpp_lib = 'c++'
+    lets_plot_extra_link_args = ['-framework', 'Foundation']
 else:
-    stdc_lib = 'stdc++'
-    extra_link = []
+    lets_plot_stdcpp_lib = 'stdc++'
+    lets_plot_extra_link_args = []
 
 setup(name='lets-plot',
       license="MIT",
@@ -105,11 +105,11 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', stdc_lib],
+                    libraries=['lets_plot_python_extension', lets_plot_stdcpp_lib],
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
-                    extra_link_args=extra_link
+                    extra_link_args=lets_plot_extra_link_args
                     )
       ],
 
