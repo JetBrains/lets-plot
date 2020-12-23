@@ -60,12 +60,12 @@ if this_system == 'Windows':
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 if this_system == 'Darwin':
-    lets_plot_stdcpp_lib = 'c++'
+    stdcpp_lib = 'c++'
     # fix for "ImportError: dlopen(...) Symbol not found: _NSGenericException" on macOS
-    lets_plot_extra_link_args = ['-framework', 'Foundation']
+    extra_link = ['-framework', 'Foundation']
 else:
-    lets_plot_stdcpp_lib = 'stdc++'
-    lets_plot_extra_link_args = []
+    stdcpp_lib = 'stdc++'
+    extra_link = []
 
 setup(name='lets-plot',
       license="MIT",
@@ -106,11 +106,11 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', lets_plot_stdcpp_lib],
+                    libraries=['lets_plot_python_extension', stdcpp_lib],
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
-                    extra_link_args=lets_plot_extra_link_args
+                    extra_link_args=extra_link
                     )
       ],
 
