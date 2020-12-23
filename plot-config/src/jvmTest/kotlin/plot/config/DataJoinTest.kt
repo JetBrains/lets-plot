@@ -107,7 +107,7 @@ class DataJoinTest {
 
 
     @Test
-    fun singleKey_DupsInMap() {
+    fun singleKey_MatchingDupsInMap() {
         // Data: [Asia, Europe]
         // Map: [Europe, Asia, Europe]
         // Result: [Asia, Europe, Europe]
@@ -120,7 +120,7 @@ class DataJoinTest {
         val map = DataFrame.Builder()
             .put(Variable("Country"), listOf("Germany", "Japan", "France"))
             .put(Variable("Cont"), listOf("Europe", "Asia", "Europe"))
-            .put(Variable("geometry"), listOf("get_geometry", "jap_geometry", "fr_geometry"))
+            .put(Variable("geometry"), listOf("ger_geometry", "jap_geometry", "fr_geometry"))
             .build()
 
         val jointDataFrame = ConfigUtil.join(data, listOf("Continents"), map, listOf("Cont"))
@@ -130,9 +130,64 @@ class DataJoinTest {
             .hasSerie(variable(data, "Values"), listOf(1.0, 2.0, 2.0))
             .hasSerie(variable(map, "Country"), listOf("Japan", "Germany", "France"))
             .hasSerie(variable(map, "Cont"), listOf("Asia", "Europe", "Europe"))
-            .hasSerie(variable(map, "geometry"), listOf("jap_geometry", "get_geometry", "fr_geometry"))
+            .hasSerie(variable(map, "geometry"), listOf("jap_geometry", "ger_geometry", "fr_geometry"))
     }
 
+
+    @Test
+    fun singleKey_MissingDupsInMap() {
+        // Data: [Asia]
+        // Map: [Europe, Asia, Europe]
+        // Result: [Asia, Europe, Europe]
+
+        val data = DataFrame.Builder()
+            .put(Variable("Continents"), listOf("Asia"))
+            .put(Variable("Values"), listOf(1.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("Country"), listOf("Germany", "Japan", "France"))
+            .put(Variable("Cont"), listOf("Europe", "Asia", "Europe"))
+            .put(Variable("geometry"), listOf("ger_geometry", "jap_geometry", "fr_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Continents"), map, listOf("Cont"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Continents"), listOf("Asia", null, null))
+            .hasSerie(variable(data, "Values"), listOf(1.0, null, null))
+            .hasSerie(variable(map, "Country"), listOf("Japan", "Germany", "France"))
+            .hasSerie(variable(map, "Cont"), listOf("Asia", "Europe", "Europe"))
+            .hasSerie(variable(map, "geometry"), listOf("jap_geometry", "ger_geometry", "fr_geometry"))
+    }
+
+    @Test
+    fun dupsInDataAndMap_takeOnlyFirstEntryFromMap() {
+        // Drops France - expected behaviour. We can't predict is there multiindex in map by a single key.
+        // Data: [Asia, Asia]
+        // Map: [Europe, Asia, Europe]
+        // Result: [Asia, Asia, Europe]
+
+        val data = DataFrame.Builder()
+            .put(Variable("Continents"), listOf("Asia", "Asia"))
+            .put(Variable("Values"), listOf(1.0, 2.0))
+            .build()
+
+        val map = DataFrame.Builder()
+            .put(Variable("Country"), listOf("Germany", "Japan", "France", "Japan"))
+            .put(Variable("Cont"), listOf("Europe", "Asia", "Europe", "Asia"))
+            .put(Variable("geometry"), listOf("ger_geometry", "jap_geometry", "fr_geometry", "jap_geometry"))
+            .build()
+
+        val jointDataFrame = ConfigUtil.join(data, listOf("Continents"), map, listOf("Cont"))
+
+        assertThat(jointDataFrame)
+            .hasSerie(variable(data, "Continents"), listOf("Asia", "Asia", null))
+            .hasSerie(variable(data, "Values"), listOf(1.0, 2.0, null))
+            .hasSerie(variable(map, "Country"), listOf("Japan", "Japan", "Germany"))
+            .hasSerie(variable(map, "Cont"), listOf("Asia", "Asia", "Europe"))
+            .hasSerie(variable(map, "geometry"), listOf("jap_geometry", "jap_geometry", "ger_geometry"))
+    }
 
     @Test
     fun tripleKey_extraMapRows() {

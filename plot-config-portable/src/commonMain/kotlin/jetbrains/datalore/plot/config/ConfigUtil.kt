@@ -60,7 +60,7 @@ object ConfigUtil {
         right.variables().forEach { variable -> jointMap[variable] = mutableListOf<Any?>() }
         left.variables().forEach { variable -> jointMap[variable] = mutableListOf<Any?>() }
 
-        // return only first match if left and right contains duplicates
+        // return only first match if left and right contains duplicates to not generate m*n rows
         fun List<*>.indicesOf(obj: Any?): List<Int> = when {
             restrictRightDuplicates -> listOf(indexOf(obj))
             else -> mapIndexed { i, v -> i.takeIf { v == obj } }.filterNotNull()
@@ -78,9 +78,11 @@ object ConfigUtil {
         }
 
         notMatchedRightMultiKeys.forEach { notMatchedRightKey ->
-            val rightRowIndex = rightMultiKeys.indexOf(notMatchedRightKey)
-            right.variables().forEach { jointMap[it]!!.add(right.get(it)[rightRowIndex]) }
-            left.variables().forEach { jointMap[it]!!.add(null) }
+            val rightRowIndices = rightMultiKeys.indicesOf(notMatchedRightKey)
+            rightRowIndices.forEach { rightRowIndex ->
+                right.variables().forEach { jointMap[it]!!.add(right.get(it)[rightRowIndex]) }
+                left.variables().forEach { jointMap[it]!!.add(null) }
+            }
         }
 
         return jointMap.entries.fold(DataFrame.Builder()) { b, (variable, values) -> b.put(variable, values)}.build()
