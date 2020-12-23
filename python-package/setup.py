@@ -61,6 +61,7 @@ if this_system == 'Windows':
 
 if this_system == 'Darwin':
     lets_plot_stdcpp_lib = 'c++'
+    # fix for "ImportError: dlopen(...) Symbol not found: _NSGenericException" on macOS
     lets_plot_extra_link_args = ['-framework', 'Foundation']
 else:
     lets_plot_stdcpp_lib = 'stdc++'
