@@ -140,11 +140,11 @@ object GeomInteractionUtil {
         aesListForTooltip.removeAll { !isVariableContinuous(scaleMap, it) }
 
         // remove duplicated mappings
-        val mappingsToShow = HashMap<DataFrame.Variable?, Aes<*>>()
+        val mappingsToShow = HashMap<DataFrame.Variable, Aes<*>>()
         aesListForTooltip
-            .filter { aes -> scaleMap.containsKey(aes) }
+            .filter { aes -> scaleMap.containsKey(aes) && layerConfig.getVariableForAes(aes) != null }
             .forEach { aes ->
-                val variable = layerConfig.getVariableForAes(aes)
+                val variable = layerConfig.getVariableForAes(aes)!!
                 val mappingToShow = mappingsToShow[variable]
                 when {
                     mappingToShow == null ->  {
@@ -155,7 +155,7 @@ object GeomInteractionUtil {
                         // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
                         mappingsToShow[variable] = aes
                     }
-                    scaleMap[aes].name != variable?.label -> {
+                    scaleMap[aes].name != variable.label -> {
                         // Use variable which is shown by the scale with its name
                         mappingsToShow[variable] = aes
                     }
