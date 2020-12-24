@@ -68,8 +68,8 @@ class layer_tooltips(FeatureSpec):
                       'middle_left' | 'middle_center' | 'middle_right' |
                       'bottom_left' | 'bottom_center' | 'bottom_right']
 
-    min_width() - minimum width of the general multiline tooltip.
-    color() - the color for the multiline tooltip.
+    min_width() - minimum width of the general tooltip.
+    color() - the color for the general tooltip.
 
     Returns
     -------
