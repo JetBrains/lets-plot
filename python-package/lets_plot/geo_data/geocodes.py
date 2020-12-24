@@ -105,7 +105,11 @@ class Geocodes(CanToDataFrame):
                  highlights: bool = False):
         assert_list_type(answers, Answer)
         assert_list_type(queries, RegionQuery)
-        assert len(answers) == len(queries)
+
+        if len(answers) == 0:
+            assert len(queries) == 1 and queries[0].request is None # select all
+        else:
+            assert len(queries) == len(answers)  # regular request - should have same size
 
         try:
             import geopandas

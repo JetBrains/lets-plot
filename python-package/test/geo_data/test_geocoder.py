@@ -10,7 +10,7 @@ from lets_plot.geo_data import GeocodingService, SuccessResponse, Answer, Geocod
 from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, GeocodingRequest, LevelKind, RegionQuery, \
     IgnoringStrategyKind
-from lets_plot.geo_data.geocoder import geocode_countries, geocode, NamesGeocoder
+from lets_plot.geo_data.geocoder import geocode_countries, geocode, NamesGeocoder, geocode_cities
 from lets_plot.geo_data.geocodes import Geocodes
 from .geo_data import make_answer
 from .request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \
@@ -182,6 +182,23 @@ def test_where_near_region():
                    .state(eq_map_region_with_name('bar'))
                    .ambiguity_resolver(eq(AmbiguityResolver(closest_coord=GeoPoint(1, 2))))
                    )
+
+
+@mock.patch.object(GeocodingService, 'do_request', lambda self, reqest: SuccessResponse(
+    message='',
+    level=LevelKind.city,
+    answers=[]
+))
+def test_select_all_query_with_empty_result_should_return_empty_dataframe():
+    geocoder = geocode_cities().scope('foo')
+
+    geocodes = geocoder.get_geocodes()
+    assert 0 == len(geocodes)
+
+    centroids = geocoder.get_centroids()
+    assert 0 == len(centroids)
+
+
 
 def test_allow_ambiguous():
     request = geocode(names='foo')\

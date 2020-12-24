@@ -224,3 +224,13 @@ def test_duplications_in_filter_should_preserve_order():
         names=['Texas', 'TX', 'Arizona', 'Texas'],
         found_name=['Texas', 'Texas', 'Arizona', 'Texas']
     )
+
+
+def test_select_all_query_with_empty_result_should_return_empty_dataframe():
+    geocoder = geodata.geocode_counties().scope('Norway')
+
+    geocodes = geocoder.get_geocodes()
+    assert 0 == len(geocodes)
+
+    centroids = geocoder.get_centroids()
+    assert 0 == len(centroids)

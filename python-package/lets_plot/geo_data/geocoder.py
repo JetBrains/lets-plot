@@ -17,7 +17,6 @@ from .._type_utils import CanToDataFrame
 
 __all__ = [
     'geocode',
-    'regions_builder2',
     'geocode_cities',
     'geocode_counties',
     'geocode_states',
@@ -420,27 +419,27 @@ class NamesGeocoder(Geocoder):
             def _validate_parents_size(parents: List, parents_level: str):
                 # When only one parent is set - use this parent for all names
                 if len(parents) == 1:
-                    parent = parents[0]
-                    parents.clear()
-                    parents.extend([parent] * len(self._names))
+                    return [parents[0]] * len(self._names)
 
                 if len(parents) > 0 and len(parents) != len(self._names):
                     raise ValueError('Invalid request: {} count({}) != names count({})'
                                      .format(parents_level, len(parents), len(self._names)))
 
-            _validate_parents_size(self._countries, 'countries')
-            _validate_parents_size(self._states, 'states')
-            _validate_parents_size(self._counties, 'counties')
+                return parents.copy()
 
-            if len(self._scope) > 0 and (len(self._countries) + len(self._states) + len(self._counties)) > 0:
+            countries = _validate_parents_size(self._countries, 'countries')
+            states = _validate_parents_size(self._states, 'states')
+            counties = _validate_parents_size(self._counties, 'counties')
+
+            if len(self._scope) > 0 and (len(countries) + len(states) + len(counties)) > 0:
                 raise ValueError("Invalid request: parents and scope can't be used simultaneously")
 
             queries = []
             for i in range(len(self._names)):
                 name = self._names[i]
-                country = _get_or_none(self._countries, i)
-                state = _get_or_none(self._states, i)
-                county = _get_or_none(self._counties, i)
+                country = _get_or_none(countries, i)
+                state = _get_or_none(states, i)
+                county = _get_or_none(counties, i)
 
                 scope, ambiguity_resolver = self._overridings.get(
                     QuerySpec(name, county, state, country),
@@ -522,54 +521,6 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion,
             raise ValueError('Iterable scope can contain str or Geocoder.')
 
 
-def regions_builder2(level=None, names=None, countries=None, states=None, counties=None, scope=None,
-                     highlights=False) -> NamesGeocoder:
-    """
-    Create a RegionBuilder class by level and request. Allows to refine ambiguous request with
-    where method. build() method creates Geocoder object or shows details for ambiguous result.
-
-    regions_builder(level, request, within)
-
-    Parameters
-    ----------
-    level : ['country' | 'state' | 'county' | 'city' | None]
-        The level of administrative division. Default is a 'state'.
-    names : [array | string | None]
-        Names of objects to be geocoded.
-        For 'state' level:
-        -'US-48' returns continental part of United States (48 states) in a compact form.
-    countries : [array | None]
-        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
-    states : [array | None]
-        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
-    counties : [array | None]
-        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
-    scope : [array | string | Geocoder | None]
-        Limits area of geocoding. Applyed to a highest admin level of parents that are set or to names, if no parents given.
-        If all parents are set (including countries) then the scope parameter is ignored.
-        If scope is an array then geocoding will try to search objects in all scopes.
-
-    Returns
-    -------
-    Geocoder object :
-
-    Note
-    -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
-
-    Examples
-    ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = regions_builder2(level='city', names=['moscow', 'york']).where('york', regions_state('New York')).build()
-    """
-    return NamesGeocoder(level, names) \
-        .scope(scope) \
-        .highlights(highlights) \
-        .countries(countries) \
-        .states(states) \
-        .counties(counties)
-
-
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
     Returns regions object.
@@ -593,7 +544,11 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
         If all parents are set (including countries) then the scope parameter is ignored.
         If scope is an array then geocoding will try to search objects in all scopes.
     """
-    return regions_builder2(level, names, countries, states, counties, scope)
+    return NamesGeocoder(level, names) \
+        .scope(scope) \
+        .countries(countries) \
+        .states(states) \
+        .counties(counties)
 
 
 def geocode_cities(names=None) -> NamesGeocoder:
