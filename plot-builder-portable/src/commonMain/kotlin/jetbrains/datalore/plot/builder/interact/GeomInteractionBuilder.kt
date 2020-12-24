@@ -41,6 +41,9 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     val tooltipLines: List<TooltipLine>
         get() = prepareTooltipValueSources()
 
+    val tooltipProperties: TooltipSpecification.TooltipProperties
+        get() = myUserTooltipSpec?.tooltipProperties ?: TooltipSpecification.TooltipProperties.NONE
+
     fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
         myAxisTooltipVisibilityFromConfig = isTrue
         return this

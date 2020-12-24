@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
@@ -45,8 +44,6 @@ class GeomLayerBuilder {
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
-    private var myTooltipAnchor: TooltipAnchor? = null
-    private var myTooltipMinWidth: Double? = null
 
     fun stat(v: Stat): GeomLayerBuilder {
         myStat = v
@@ -108,16 +105,6 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun setTooltipAnchor(tooltipAnchor: TooltipAnchor?): GeomLayerBuilder {
-        myTooltipAnchor = tooltipAnchor
-        return this
-    }
-
-    fun setTooltipMinWidth(tooltipMinWidth: Double?): GeomLayerBuilder {
-        myTooltipMinWidth = tooltipMinWidth
-        return this
-    }
-
     fun build(data: DataFrame, scaleMap: TypedScaleMap): GeomLayer {
         @Suppress("NAME_SHADOWING")
         var data = data
@@ -174,7 +161,7 @@ class GeomLayerBuilder {
             scaleMap,
             dataAccess,
             myLocatorLookupSpec,
-            myContextualMappingProvider.createContextualMapping(dataAccess, data, myTooltipAnchor, myTooltipMinWidth),
+            myContextualMappingProvider.createContextualMapping(dataAccess, data),
             myIsLegendDisabled
         )
     }

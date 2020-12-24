@@ -11,9 +11,9 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification.TooltipProperties
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
@@ -22,6 +22,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
+    private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
     private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
 
     fun createLookupSpec(): LookupSpec {
@@ -30,17 +31,14 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(
         dataAccess: MappedDataAccess,
-        dataFrame: DataFrame,
-        tooltipAnchor: TooltipAnchor?,
-        tooltipMinWidth: Double?
+        dataFrame: DataFrame
     ): ContextualMapping {
         return createContextualMapping(
             myTooltipLines.map(::TooltipLine),  // clone tooltip lines to not share DataContext between plots when facet is used
                                                 // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             dataAccess,
             dataFrame,
-            tooltipAnchor,
-            tooltipMinWidth,
+            myTooltipProperties,
             myIgnoreInvisibleTargets
         )
     }
@@ -65,8 +63,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 defaultTooltipLines,
                 dataAccess,
                 dataFrame,
-                tooltipAnchor = null,
-                tooltipMinWidth = null,
+                TooltipProperties.NONE,
                 ignoreInvisibleTargets = false
             )
         }
@@ -75,8 +72,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             tooltipLines: List<TooltipLine>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
-            tooltipAnchor: TooltipAnchor?,
-            tooltipMinWidth: Double?,
+            tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
@@ -87,7 +83,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             }
             mappedTooltipLines.forEach { it.initDataContext(dataContext) }
 
-            return ContextualMapping(mappedTooltipLines, tooltipAnchor, tooltipMinWidth, ignoreInvisibleTargets)
+            return ContextualMapping(mappedTooltipLines, tooltipProperties.anchor, tooltipProperties.minWidth, tooltipProperties.color, ignoreInvisibleTargets)
         }
     }
 }
