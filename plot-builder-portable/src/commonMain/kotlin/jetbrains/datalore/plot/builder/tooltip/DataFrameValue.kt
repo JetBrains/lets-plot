@@ -23,6 +23,8 @@ class DataFrameValue(
         }
     }
 
+    override val isOutlier: Boolean = false
+
     override fun initDataContext(dataContext: DataContext) {
         require(!::myDataFrame.isInitialized) { "Data context can be initialized only once" }
         myDataFrame = dataContext.dataFrame
@@ -43,10 +45,6 @@ class DataFrameValue(
 
     override fun copy(): DataFrameValue {
         return DataFrameValue(name, format)
-    }
-
-    override fun isForGeneralTooltip(): Boolean {
-        return true
     }
 
     fun getVariableName(): String {

@@ -20,6 +20,8 @@ class ConstantValue(
         value.toString()
     }
 
+    override val isOutlier: Boolean = false
+
     override fun initDataContext(dataContext: DataContext) {
     }
 
@@ -38,9 +40,5 @@ class ConstantValue(
             value,
             format
         )
-    }
-
-    override fun isForGeneralTooltip(): Boolean {
-        return true
     }
 }

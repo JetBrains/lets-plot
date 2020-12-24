@@ -58,7 +58,7 @@ class TooltipLine(
     }
 
     override fun isForGeneralTooltip(): Boolean {
-        return fields.any(ValueSource::isForGeneralTooltip)
+        return fields.any { !it.isOutlier }
     }
 
     companion object {

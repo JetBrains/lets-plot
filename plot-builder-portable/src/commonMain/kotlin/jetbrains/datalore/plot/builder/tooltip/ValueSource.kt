@@ -10,11 +10,11 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 interface ValueSource {
 
+    val isOutlier: Boolean
+
     fun initDataContext(dataContext: DataContext)
 
     fun getDataPoint(index: Int): DataPoint?
 
     fun copy(): ValueSource
-
-    fun isForGeneralTooltip(): Boolean
 }
