@@ -27,6 +27,7 @@ class TooltipSpecFactory(
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
         private val myTooltipColor = contextualMapping.tooltipColor
+        private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -103,7 +104,8 @@ class TooltipSpecFactory(
                         fill = myTooltipColor ?: tipLayoutHint().color!!,
                         isOutlier = false,
                         anchor = myTooltipAnchor,
-                        minWidth = myTooltipMinWidth
+                        minWidth = myTooltipMinWidth,
+                        isCrosshairEnabled = myIsCrosshairEnabled
                     )
                 )
             } else {

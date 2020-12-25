@@ -14,7 +14,8 @@ open class ContextualMapping(
     val tooltipMinWidth: Double?,
     val tooltipColor: Color?,
     val ignoreInvisibleTargets: Boolean,
-    val hasGeneralTooltip: Boolean
+    val hasGeneralTooltip: Boolean,
+    val isCrosshairEnabled: Boolean
 ) {
     fun getDataPoints(index: Int): List<TooltipLineSpec.DataPoint> {
         return tooltipLines.mapNotNull { it.getDataPoint(index) }
