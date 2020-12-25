@@ -202,7 +202,8 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2DF,
             GeomKind.FREQPOLY,
             GeomKind.PATH,
-            GeomKind.RIBBON -> true
+            GeomKind.RIBBON,
+            GeomKind.SMOOTH -> true
             else -> false
         }
     }
