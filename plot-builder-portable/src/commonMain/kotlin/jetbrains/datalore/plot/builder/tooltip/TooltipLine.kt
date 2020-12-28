@@ -12,8 +12,8 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class TooltipLine(
-    val label: String?,
-    val pattern: String,
+    private val label: String?,
+    private val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
     constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
@@ -55,10 +55,6 @@ class TooltipLine(
             DEFAULT_LABEL_SPECIFIER -> dataLabel    // use default label (from data)
             else -> label                     // use the given label (can be null)
         }
-    }
-
-    override fun isForGeneralTooltip(): Boolean {
-        return fields.any { !it.isOutlier }
     }
 
     companion object {
