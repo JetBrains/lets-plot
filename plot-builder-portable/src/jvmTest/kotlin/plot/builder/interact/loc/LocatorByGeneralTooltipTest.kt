@@ -17,31 +17,11 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LocatorWithTooltipCheckingModeTest {
+class LocatorByGeneralTooltipTest {
     private val lookupSpec = LookupSpec(LookupSpace.XY, LookupStrategy.NEAREST)
 
     @Test
-    fun `locator with disabled tooltip checking mode - should take the last object`() {
-        val targetLocators = listOf(
-            createLocator(
-                lookupSpec = lookupSpec,
-                contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
-                ),
-                targetPrototypes = listOf(FIRST_TARGET)
-            ),
-            createLocator(
-                lookupSpec = lookupSpec,
-                contextualMapping = createContextualMapping(MappedDataAccessMock()),
-                targetPrototypes = listOf(SECOND_TARGET)
-            )
-        )
-        val results = findTargets(targetLocators, withGeneralTooltip = false)
-        assertLookupResult(results, SECOND_POINT_KEY)
-    }
-
-    @Test
-    fun `locator with tooltip checking mode - should take the object with general tooltip`() {
+    fun `locator should take the object with general tooltip`() {
         val targetLocators = listOf(
             createLocator(
                 lookupSpec = lookupSpec,
@@ -56,7 +36,7 @@ class LocatorWithTooltipCheckingModeTest {
                 targetPrototypes = listOf(SECOND_TARGET)
             )
         )
-        val results = findTargets(targetLocators, withGeneralTooltip = true)
+        val results = findTargets(targetLocators)
         assertLookupResult(results, FIRST_POINT_KEY)
     }
 
@@ -75,7 +55,7 @@ class LocatorWithTooltipCheckingModeTest {
                 targetPrototypes = listOf(SECOND_TARGET)
             )
         )
-        val results = findTargets(targets, withGeneralTooltip = true)
+        val results = findTargets(targets)
         assertLookupResult(results, SECOND_POINT_KEY)
     }
 
@@ -83,22 +63,19 @@ class LocatorWithTooltipCheckingModeTest {
         val contextualMappingProvider = GeomInteractionBuilder(Aes.values()).bivariateFunction(true).build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,
-            DataFrame.Builder().build(),
-            tooltipAnchor = null,
-            tooltipMinWidth = null
+            DataFrame.Builder().build()
         )
     }
 
     private fun findTargets(
-        targetLocators: List<GeomTargetLocator>,
-        withGeneralTooltip: Boolean
+        targetLocators: List<GeomTargetLocator>
     ): List<LookupResult> {
         val targetsPicker = LocatedTargetsPicker()
         targetLocators.forEach { locator ->
             val lookupResult = locator.search(COORD)
             lookupResult?.let { targetsPicker.addLookupResult(it) }
         }
-        return targetsPicker.picked(withGeneralTooltip)
+        return targetsPicker.picked
     }
 
     private fun assertLookupResult(results: List<LookupResult>, expectedIndex: Int) {

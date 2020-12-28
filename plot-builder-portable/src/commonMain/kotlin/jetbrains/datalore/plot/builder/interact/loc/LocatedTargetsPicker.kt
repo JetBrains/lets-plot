@@ -13,7 +13,8 @@ internal class LocatedTargetsPicker {
     private var myMinDistance = 0.0
     private val myAllLookupResults = ArrayList<LookupResult>()
 
-    fun picked(withGeneralTooltip: Boolean): List<LookupResult> = chooseBestResult(withGeneralTooltip)
+    val picked: List<LookupResult>
+        get() = chooseBestResult()
 
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
@@ -38,9 +39,8 @@ internal class LocatedTargetsPicker {
         myAllLookupResults.add(lookupResult)
     }
 
-    private fun chooseBestResult(withGeneralTooltip: Boolean): List<LookupResult> {
+    private fun chooseBestResult(): List<LookupResult> {
         return when {
-            !withGeneralTooltip -> myPicked
             myPicked.any { it.contextualMapping.hasGeneralTooltip } -> myPicked
             myAllLookupResults.none { it.contextualMapping.hasGeneralTooltip } -> myPicked
             else -> {

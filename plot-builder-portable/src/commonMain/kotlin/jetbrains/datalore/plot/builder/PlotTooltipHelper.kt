@@ -82,7 +82,7 @@ internal class PlotTooltipHelper {
                     }
                 }
             }
-            return targetsPicker.picked(withGeneralTooltip = true)
+            return targetsPicker.picked
         }
 
         internal operator fun contains(plotCoord: DoubleVector): Boolean {

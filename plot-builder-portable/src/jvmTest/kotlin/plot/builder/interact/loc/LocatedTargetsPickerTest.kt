@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
@@ -121,7 +122,7 @@ class LocatedTargetsPickerTest {
         listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
                 .forEach { targetsPicker.addLookupResult(it) }
 
-        val lookupResults = targetsPicker.picked(withGeneralTooltip = false)
+        val lookupResults = targetsPicker.picked
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
             assertThat<LookupResult>(lookupResults).isEmpty()
@@ -141,6 +142,7 @@ class LocatedTargetsPickerTest {
         internal var myResult: LookupResult? = mock(LookupResult::class.java)
         private var myGeomKind: GeomKind? = null
         private var myDistance: Double = 0.toDouble()
+        private val myContextualMapping = mock(ContextualMapping::class.java)
 
         fun distanceToTarget(v: Double): LookupResultConfig {
             myDistance = v
@@ -160,11 +162,12 @@ class LocatedTargetsPickerTest {
         fun build(): LookupResult? {
             if (myResult != null) {
                 `when`<GeomKind>(myResult!!.geomKind)
-                        .thenReturn(myGeomKind)
+                    .thenReturn(myGeomKind)
                 `when`<Double>(myResult!!.distance)
-                        .thenReturn(myDistance)
+                    .thenReturn(myDistance)
+                `when`(myResult!!.contextualMapping)
+                    .thenReturn(myContextualMapping)
             }
-
             return myResult
         }
     }
