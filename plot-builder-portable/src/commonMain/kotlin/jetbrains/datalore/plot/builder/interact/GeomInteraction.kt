@@ -83,7 +83,18 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             }
             mappedTooltipLines.forEach { it.initDataContext(dataContext) }
 
-            return ContextualMapping(mappedTooltipLines, tooltipProperties.anchor, tooltipProperties.minWidth, tooltipProperties.color, ignoreInvisibleTargets)
+            val hasGeneralTooltip = mappedTooltipLines.any { line ->
+                line.fields.none(ValueSource::isOutlier)
+            }
+
+            return ContextualMapping(
+                mappedTooltipLines,
+                tooltipProperties.anchor,
+                tooltipProperties.minWidth,
+                tooltipProperties.color,
+                ignoreInvisibleTargets,
+                hasGeneralTooltip
+            )
         }
     }
 }

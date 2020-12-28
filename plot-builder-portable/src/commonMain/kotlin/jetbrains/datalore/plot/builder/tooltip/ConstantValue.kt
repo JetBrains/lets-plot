@@ -20,6 +20,8 @@ class ConstantValue(
         value.toString()
     }
 
+    override val isOutlier: Boolean = false
+
     override fun initDataContext(dataContext: DataContext) {
     }
 
