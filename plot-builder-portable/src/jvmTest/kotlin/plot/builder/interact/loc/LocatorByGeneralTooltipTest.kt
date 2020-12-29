@@ -59,6 +59,29 @@ class LocatorByGeneralTooltipTest {
         assertLookupResult(results, SECOND_POINT_KEY)
     }
 
+    @Test
+    fun `between objects that have a general tooltip, locator should choose the last`() {
+        // Both objects have general tooltips => locator will choose the last added object
+        val targets = listOf(
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                ),
+                targetPrototypes = listOf(FIRST_TARGET)
+            ),
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping
+                    (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                ),
+                targetPrototypes = listOf(SECOND_TARGET)
+            )
+        )
+        val results = findTargets(targets)
+        assertLookupResult(results, SECOND_POINT_KEY)
+    }
+
     private fun createContextualMapping(mappedDataAccessMock: MappedDataAccessMock): ContextualMapping {
         val contextualMappingProvider = GeomInteractionBuilder(Aes.values()).bivariateFunction(true).build()
         return contextualMappingProvider.createContextualMapping(
