@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -12,10 +13,6 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.DensityStat.BandWidthMethod.NRD0
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-/**
- * Calculates the density function.
- * (or if the weight aesthetic is supplied, the sum of the weights, **not yet implemented**)
- */
 class DensityStat(
     private val bandWidth: Double?,
     private val bandWidthMethod: BandWidthMethod,  // Used is `bandWidth` is not set.
@@ -23,39 +20,10 @@ class DensityStat(
     private val kernel: Kernel,
     private val n: Int
 ) : BaseStat(DEF_MAPPING) {
-    //    private var myAdjust = DEF_ADJUST
-//    private var myN = DEF_N
-//    private var myBandWidthMethod = NRD0
-//    private var myBandWidth: Double? = null
-//    private var myKernel: (Double) -> Double = DensityStatUtil.kernel(Kernel.GAUSSIAN)
 
     init {
         require(n <= MAX_N) { "The input n = $n  > $MAX_N is too large!" }
     }
-
-//    fun setKernel(kernel: Kernel) {
-//        myKernel = DensityStatUtil.kernel(kernel)
-//    }
-
-//    fun setAdjust(adjust: Double) {
-//        adjust = adjust
-//    }
-
-//    fun setN(n: Int) {
-//        if (n > MAX_N) {
-//            throw IllegalArgumentException("The input n " + n + " > " + MAX_N + "is too large!")
-//        }
-//        myN = n
-//    }
-
-//    fun setBandWidthMethod(bw: BandWidthMethod) {
-//        myBandWidthMethod = bw
-//        myBandWidth = null
-//    }
-
-//    fun setBandWidth(bw: Double) {
-//        myBandWidth = bw
-//    }
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.WEIGHT)
@@ -66,34 +34,59 @@ class DensityStat(
             return withEmptyStatValues()
         }
 
-        val valuesX = data.getNumeric(TransformVar.X)
-        val statX = DensityStatUtil.createStepValues(statCtx.overallXRange()!!, n)
+        val xs: List<Double>
+        val weights: List<Double>
+        if (data.has(TransformVar.WEIGHT)) {
+            val filtered = SeriesUtil.filterFinite(
+                data.getNumeric(TransformVar.X),
+                data.getNumeric(TransformVar.WEIGHT)
+            )
+            val xsFiltered = filtered[0]
+            val weightsFiltered = filtered[1]
+
+            val (xsSorted, weightsSorted) = xsFiltered
+                .zip(weightsFiltered).sortedBy { it.first }
+                .unzip()
+            xs = xsSorted
+            weights = weightsSorted
+
+        } else {
+            xs = data.getNumeric(TransformVar.X)
+                .filterNotNull().filter { it.isFinite() }
+                .sorted()
+            weights = List(xs.size) { 1.0 }
+        }
+
+        if (xs.isEmpty()) return withEmptyStatValues()
+
+        val rangeX = ClosedRange(xs.first(), xs.last())
+
+        val statX = DensityStatUtil.createStepValues(rangeX, n)
         val statDensity = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
 
-        // weight aesthetics
-        val weight = BinStatUtil.weightVector(valuesX.size, data)
-
         val bandWidth = bandWidth ?: DensityStatUtil.bandWidth(
             bandWidthMethod,
-            valuesX
+            xs
         )
 
         val kernelFun: (Double) -> Double = DensityStatUtil.kernel(kernel)
         val densityFunction: (Double) -> Double = DensityStatUtil.densityFunction(
-            valuesX,
+            xs,
             kernelFun,
             bandWidth,
             adjust,
-            weight
+            weights
         )
 
+        val nTotal = weights.sum()
         for (x in statX) {
             val d = densityFunction(x)
             statCount.add(d)
-            statDensity.add(d / SeriesUtil.sum(weight))
+            statDensity.add(d / nTotal)
         }
+
         val maxm = statCount.maxOrNull()!!
         for (d in statCount) {
             statScaled.add(d / maxm)
@@ -127,13 +120,12 @@ class DensityStat(
         const val DEF_ADJUST = 1.0
         const val DEF_N = 512
         val DEF_BW = NRD0
-        //        const val DEF_BW = "nrd0"
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.DENSITY
         )
 
-        private const val MAX_N = 9999
+        private const val MAX_N = 1024
     }
 }

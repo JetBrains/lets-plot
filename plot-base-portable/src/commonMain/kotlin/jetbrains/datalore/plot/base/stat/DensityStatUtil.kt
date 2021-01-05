@@ -11,9 +11,9 @@ import kotlin.math.*
 
 object DensityStatUtil {
 
-    private val DEF_STEP_SIZE = 0.5
+    private const val DEF_STEP_SIZE = 0.5
 
-    fun stdDev(data: List<Double>): Double {
+    private fun stdDev(data: List<Double>): Double {
         var sum = 0.0
         var counter = 0.0
 
