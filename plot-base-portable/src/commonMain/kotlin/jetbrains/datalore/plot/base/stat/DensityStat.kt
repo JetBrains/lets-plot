@@ -13,12 +13,19 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.DensityStat.BandWidthMethod.NRD0
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
+/**
+ * Computes kernel density estimate for 'n' values evenly distributed throughout the range of the input series.
+ *
+ * If size of the input series exceeds the 'fullScalMax' value, then the less accurate but more efficient computation replaces
+ * highly inefficient 'full scan' computation.
+ */
 class DensityStat(
     private val bandWidth: Double?,
     private val bandWidthMethod: BandWidthMethod,  // Used is `bandWidth` is not set.
     private val adjust: Double,
     private val kernel: Kernel,
-    private val n: Int
+    private val n: Int,
+    private val fullScalMax: Int
 ) : BaseStat(DEF_MAPPING) {
 
     init {
@@ -72,13 +79,22 @@ class DensityStat(
         )
 
         val kernelFun: (Double) -> Double = DensityStatUtil.kernel(kernel)
-        val densityFunction: (Double) -> Double = DensityStatUtil.densityFunction(
-            xs,
-            kernelFun,
-            bandWidth,
-            adjust,
-            weights
-        )
+        val densityFunction: (Double) -> Double = when (xs.size <= fullScalMax) {
+            true -> DensityStatUtil.densityFunctionFullScan(
+                xs,
+                weights,
+                kernelFun,
+                bandWidth,
+                adjust
+            )
+            false -> DensityStatUtil.densityFunctionFast(
+                xs,
+                weights,
+                kernelFun,
+                bandWidth,
+                adjust
+            )
+        }
 
         val nTotal = weights.sum()
         for (x in statX) {
@@ -120,6 +136,7 @@ class DensityStat(
         const val DEF_ADJUST = 1.0
         const val DEF_N = 512
         val DEF_BW = NRD0
+        const val DEF_FULL_SCAN_MAX = 5000
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

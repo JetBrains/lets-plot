@@ -225,6 +225,7 @@ object Option {
             const val KERNEL = "kernel"
             const val BAND_WIDTH = "bw"     // number or string (method name)
             const val ADJUST = "adjust"
+            const val FULL_SCAN_MAX = "fs_max"  // use 'full scan' when the input size is < 'fs_max'
         }
 
         object Density2d {

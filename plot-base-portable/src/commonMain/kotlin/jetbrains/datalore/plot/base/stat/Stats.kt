@@ -180,14 +180,16 @@ object Stats {
         bandWidthMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW,
         adjust: Double = DensityStat.DEF_ADJUST,
         kernel: DensityStat.Kernel = DensityStat.DEF_KERNEL,
-        n: Int = DensityStat.DEF_N
+        n: Int = DensityStat.DEF_N,
+        fullScalMax: Int = DensityStat.DEF_FULL_SCAN_MAX
     ): DensityStat {
         return DensityStat(
             bandWidth = bandWidth,
             bandWidthMethod = bandWidthMethod,
             adjust = adjust,
             kernel = kernel,
-            n = n
+            n = n,
+            fullScalMax = fullScalMax
         )
     }
 
