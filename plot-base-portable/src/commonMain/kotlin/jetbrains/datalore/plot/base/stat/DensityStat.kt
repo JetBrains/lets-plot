@@ -66,7 +66,7 @@ class DensityStat(
 
         if (xs.isEmpty()) return withEmptyStatValues()
 
-        val rangeX = ClosedRange(xs.first(), xs.last())
+        val rangeX = statCtx.overallXRange() ?: ClosedRange(-0.5, 0.5)
 
         val statX = DensityStatUtil.createStepValues(rangeX, n)
         val statDensity = ArrayList<Double>()

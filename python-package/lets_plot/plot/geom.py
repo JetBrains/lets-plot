@@ -2083,6 +2083,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  adjust=None,
                  bw=None,
                  n=None,
+                 fs_max=None,
                  **other_args):
     """
     Displays kernel density estimate, which is a smoothed version of the histogram.
@@ -2096,10 +2097,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
+        The statistical transformation to use on the data for this layer, as a string.
+        Default: "density"
     position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
@@ -2112,12 +2111,18 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     kernel : string
         The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
         "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
+        Default: "gaussian"
     bw: string or double
         The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double.
     adjust: double
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
     n: int
         The number of sampled points for plotting the function
+        Default: 512
+    fs_max: int
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+        Default: 5000
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2129,7 +2134,6 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     -----
-    geom_density draws density function.
     geom_density understands the following aesthetics mappings:
      - x : x-axis coordinates.
      - alpha : transparency level of a layer
@@ -2143,6 +2147,11 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         5 = "longdash", 6 = "twodash"
      - fill : color of geometry filling
      - weight : used by "density" stat to compute weighted density.
+
+    Density stat computes variables:
+     - ..density.. : density estimate (mapped by default)
+     - ..count.. : density * number of points
+     - ..scaled.. : density estimate, scaled to maximum of 1
 
     Examples
     ---------
@@ -2163,7 +2172,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 kernel=kernel, adjust=adjust, bw=bw, n=n,
+                 kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
                  **other_args)
 
 

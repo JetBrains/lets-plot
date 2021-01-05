@@ -30,9 +30,8 @@ open class Histogram : PlotConfigDemoBase() {
             data()  // make it stable between calls
 
         fun data(): Map<String, List<*>> {
-//            val count = 100
-//            val count = 5001
-            val count = 500000
+            val count = 100
+//            val count = 500000
 
             val xs = DemoUtil.gauss(count, 12, 0.0, 5.0)
             val weights = ArrayList<Double>()
