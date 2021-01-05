@@ -9,12 +9,12 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 
 internal class LocatedTargetsPicker {
-
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
+    private val myAllLookupResults = ArrayList<LookupResult>()
 
     val picked: List<LookupResult>
-        get() = myPicked
+        get() = chooseBestResult()
 
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
@@ -34,6 +34,17 @@ internal class LocatedTargetsPicker {
             myMinDistance == distance -> {
                 myPicked.clear()
                 myPicked.add(lookupResult)
+            }
+        }
+        myAllLookupResults.add(lookupResult)
+    }
+
+    private fun chooseBestResult(): List<LookupResult> {
+        return when {
+            myPicked.any { it.contextualMapping.hasGeneralTooltip } -> myPicked
+            myAllLookupResults.none { it.contextualMapping.hasGeneralTooltip } -> myPicked
+            else -> {
+                listOf(myAllLookupResults.last { it.contextualMapping.hasGeneralTooltip })
             }
         }
     }

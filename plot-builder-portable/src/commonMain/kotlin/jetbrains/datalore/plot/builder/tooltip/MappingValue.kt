@@ -13,7 +13,7 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 
 class MappingValue(
     val aes: Aes<*>,
-    private val isOutlier: Boolean = false,
+    override val isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
     private val format: String? = null
 ) : ValueSource {
@@ -45,26 +45,26 @@ class MappingValue(
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-            val originalValue = myDataAccess.getOriginalValue(aes, index)
-            val formattedValue =
-                originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
+        val originalValue = myDataAccess.getOriginalValue(aes, index)
+        val formattedValue =
+            originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
 
-            // for outliers: myDataLabel is a part of the value, but pattern format removes this part
-            val value = if (isOutlier && !myDataLabel.isNullOrEmpty() &&
-                myFormatter?.formatType != StringFormat.FormatType.STRING_FORMAT
-            ) {
-                "$myDataLabel: $formattedValue"
-            } else {
-                formattedValue
-            }
+        // for outliers: myDataLabel is a part of the value, but pattern format removes this part
+        val value = if (isOutlier && !myDataLabel.isNullOrEmpty() &&
+            myFormatter?.formatType != StringFormat.FormatType.STRING_FORMAT
+        ) {
+            "$myDataLabel: $formattedValue"
+        } else {
+            formattedValue
+        }
 
         return DataPoint(
-                label = if (isOutlier) null else myDataLabel,
-                value = value,
-                aes = aes,
-                isAxis = isAxis,
-                isOutlier = isOutlier
-            )
+            label = if (isOutlier) null else myDataLabel,
+            value = value,
+            aes = aes,
+            isAxis = isAxis,
+            isOutlier = isOutlier
+        )
     }
 
     override fun copy(): MappingValue {
