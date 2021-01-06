@@ -3,6 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 import json
+import math
 from abc import abstractmethod
 from datetime import datetime
 
@@ -49,17 +50,22 @@ def is_float(v):
 def is_number(v):
     return is_int(v) or is_float(v)
 
+
 def _standardize_value(v):
     if v is None:
         return v
     if isinstance(v, bool):
         return bool(v)
-    if is_int(v):
-        return int(v)
     if isinstance(v, str):
         return str(v)
     if is_float(v):
-        return float(v)
+        if math.isfinite(v):
+            return float(v)
+        # None for special values like 'nan' etc. because
+        # some json parsers (like com.google.gson.Gson) do not handle them well.
+        return None
+    if is_int(v):
+        return int(v)
     if is_dict_or_dataframe(v):
         return standardize_dict(v)
     if isinstance(v, list):
