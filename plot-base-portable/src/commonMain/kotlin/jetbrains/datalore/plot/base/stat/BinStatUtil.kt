@@ -28,6 +28,7 @@ object BinStatUtil {
         return { 1.0 }
     }
 
+    // ToDo: need to deal fith n/a values (see DensityStat)
     fun weightVector(dataLength: Int, data: DataFrame): List<Double?> {
         return if (data.has(TransformVar.WEIGHT)) {
             data.getNumeric(TransformVar.WEIGHT)

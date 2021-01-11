@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import org.mockito.Mockito
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -113,9 +114,7 @@ class LayerTargetCollectorWithLocatorTest {
             val builder = createGeomInteractionBuilder(area = geomKind == GeomKind.RECT)
             val contextualMapping = builder.createContextualMapping(
                 dataAccess = Mockito.mock(MappedDataAccess::class.java),
-                dataFrame = DataFrame.Builder().build(),
-                tooltipAnchor = null,
-                tooltipMinWidth = null
+                dataFrame = DataFrame.Builder().build()
             )
             return LayerTargetCollectorWithLocator(
                 geomKind = geomKind,

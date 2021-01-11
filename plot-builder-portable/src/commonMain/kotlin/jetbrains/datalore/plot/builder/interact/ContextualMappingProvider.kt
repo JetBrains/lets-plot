@@ -8,29 +8,20 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
 
 interface ContextualMappingProvider {
-    fun createContextualMapping(
-        dataAccess: MappedDataAccess,
-        dataFrame: DataFrame,
-        tooltipAnchor: TooltipAnchor?,
-        tooltipMinWidth: Double?
-    ): ContextualMapping
+    fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping
 
     companion object {
         val NONE = object : ContextualMappingProvider {
-            override fun createContextualMapping(
-                dataAccess: MappedDataAccess,
-                dataFrame: DataFrame,
-                tooltipAnchor: TooltipAnchor?,
-                tooltipMinWidth: Double?
-            ): ContextualMapping {
+            override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
                 return ContextualMapping(
                     tooltipLines = emptyList(),
                     tooltipAnchor = null,
                     tooltipMinWidth = null,
-                    ignoreInvisibleTargets = false
+                    tooltipColor = null,
+                    ignoreInvisibleTargets = false,
+                    hasGeneralTooltip = false
                 )
             }
         }

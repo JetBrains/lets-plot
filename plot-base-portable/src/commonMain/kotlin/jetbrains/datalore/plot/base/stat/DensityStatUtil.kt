@@ -11,9 +11,9 @@ import kotlin.math.*
 
 object DensityStatUtil {
 
-    private val DEF_STEP_SIZE = 0.5
+    private const val DEF_STEP_SIZE = 0.5
 
-    fun stdDev(data: List<Double>): Double {
+    private fun stdDev(data: List<Double>): Double {
         var sum = 0.0
         var counter = 0.0
 
@@ -70,22 +70,48 @@ object DensityStatUtil {
         }
     }
 
-    internal fun densityFunction(
-        valuesX: List<Double?>,
+    internal fun densityFunctionFullScan(
+        xs: List<Double>,
+        weights: List<Double>,
         ker: (Double) -> Double,
         bw: Double,
-        ad: Double,
-        weightX: List<Double?>
+        ad: Double
     ): (Double) -> Double {
-        val a = bw * ad
-        return { d ->
+        val h = bw * ad
+        return { x ->
             var sum = 0.0
-            var value: Double
-            for (i in valuesX.indices) {
-                value = valuesX[i]!!
-                sum += ker((d - value) / a) * weightX[i]!!
+            for (i in xs.indices) {
+                sum += ker((x - xs[i]) / h) * weights[i]
             }
-            sum / a
+            sum / h
+        }
+    }
+
+    internal fun densityFunctionFast(
+        xs: List<Double>,  // must be ordered!
+        weights: List<Double>,
+        ker: (Double) -> Double,
+        bw: Double,
+        ad: Double
+    ): (Double) -> Double {
+        val h = bw * ad
+        val cutoff = h * 5
+
+        return { x ->
+            var sum = 0.0
+            var from = xs.binarySearch(x - cutoff)
+            if (from < 0) {
+                from = -from - 1
+            }
+            var to = xs.binarySearch(x + cutoff)
+            if (to < 0) {
+                to = -to - 1
+            }
+
+            for (i in (from until to)) {
+                sum += ker((x - xs[i]) / h) * weights[i]
+            }
+            sum / h
         }
     }
 

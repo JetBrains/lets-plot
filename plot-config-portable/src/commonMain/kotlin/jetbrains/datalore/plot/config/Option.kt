@@ -87,6 +87,7 @@ object Option {
         const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
+        const val TOOLTIP_COLOR = "tooltip_color"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
     }
@@ -224,6 +225,7 @@ object Option {
             const val KERNEL = "kernel"
             const val BAND_WIDTH = "bw"     // number or string (method name)
             const val ADJUST = "adjust"
+            const val FULL_SCAN_MAX = "fs_max"  // use 'full scan' when the input size is < 'fs_max'
         }
 
         object Density2d {

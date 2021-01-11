@@ -26,6 +26,7 @@ class TooltipSpecFactory(
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
+        private val myTooltipColor = contextualMapping.tooltipColor
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -99,7 +100,7 @@ class TooltipSpecFactory(
                     TooltipSpec(
                         tipLayoutHint(),
                         lines = generalLines,
-                        fill = tipLayoutHint().color!!,
+                        fill = myTooltipColor ?: tipLayoutHint().color!!,
                         isOutlier = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth

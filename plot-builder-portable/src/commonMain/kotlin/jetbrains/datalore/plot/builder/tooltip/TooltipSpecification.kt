@@ -5,27 +5,39 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 
 class TooltipSpecification(
     val valueSources: List<ValueSource>,
     val tooltipLinePatterns: List<TooltipLine>?,
-    val tooltipAnchor: TooltipAnchor?,
-    val tooltipMinWidth: Double?
+    val tooltipProperties: TooltipProperties
 ) {
+    class TooltipProperties(
+        val anchor: TooltipAnchor?,
+        val minWidth: Double?,
+        val color: Color?
+    ) {
+        companion object {
+            val NONE = TooltipProperties(
+                anchor = null,
+                minWidth = null,
+                color = null
+            )
+        }
+    }
+
     companion object {
         fun withoutTooltip() = TooltipSpecification(
             valueSources = emptyList(),
             tooltipLinePatterns = emptyList(),
-            tooltipAnchor = null,
-            tooltipMinWidth = null
+            tooltipProperties = TooltipProperties.NONE
         )
 
         fun defaultTooltip() = TooltipSpecification(
             valueSources = emptyList(),
             tooltipLinePatterns = null,
-            tooltipAnchor = null,
-            tooltipMinWidth = null
+            tooltipProperties = TooltipProperties.NONE
         )
     }
 }

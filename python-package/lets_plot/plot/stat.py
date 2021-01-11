@@ -9,6 +9,7 @@ from .scale import scale_x_discrete, scale_y_discrete, scale_color_continuous, s
 from .scale_identity import scale_size_identity
 from .tooltip import layer_tooltips
 
+_DEF_FORMAT = '.2f'
 
 def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=None, sampling=None, tooltips=None,
               type='full',
@@ -67,7 +68,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     """
 
     geom = geom if geom else "tile"
-    other_args['label_format'] = other_args.get('label_format', '.2f')
+    other_args['label_format'] = other_args.get('label_format', _DEF_FORMAT)
 
     avoid_na_color = scale_color_continuous(na_value='rgba(0,0,0,0)')
     scale_xy_expand = None
@@ -101,7 +102,7 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     sampling = 'none' if sampling is None else sampling
 
     tooltips = (layer_tooltips()
-                .format(field='@..corr..', format='.2f')
+                .format(field='@..corr..', format=other_args.get('label_format', _DEF_FORMAT))
                 .line('@..corr..')) if tooltips is None else tooltips
 
     return (_geom(geom,

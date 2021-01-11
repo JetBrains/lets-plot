@@ -36,12 +36,12 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint), optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer.
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -52,7 +52,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
-    map_join : str, pair, optional
+    map_join : str, pair
         Pair of names used to join map coordinates with data.
         str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
@@ -128,15 +128,15 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString), optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString)
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -147,7 +147,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes LineString and MultiLineString)
         Data containing coordinates of lines.
-    map_join : str, pair, optional
+    map_join : str, pair
         Pair of names used to join map coordinates with data.
         str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
@@ -234,15 +234,15 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -335,15 +335,15 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -356,7 +356,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     n : number of points to evaluate smoother at.
     se : boolean, to display confidence interval around smooth. Default - True
     level : level of confidence interval to use. Default - 0.95
-    span : number, optional
+    span : number
        Only for LOESS method. The fraction of source points closest to the current point
        is taken into account for computing a least-squares regression. A sensible value is usually 0.25 to 0.5.
        Default - 0.5
@@ -451,15 +451,15 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -539,12 +539,12 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional, default: "bin"
+    stat : string, default: "bin"
         The statistical transformation to use on the data for this layer.
-    position : string, optional, default: "stack"
+    position : string, default: "stack"
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -558,9 +558,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     binwidth :
         The width of the bins. The default is to use bin widths that cover the range of the data. You should always
         override this value, exploring multiple widths to find the best to illustrate the stories in your data.
-    center : number, optional
+    center : number
         Specifies x-value to align bin centers to.
-    boundary : number, optional
+    boundary : number
         Specifies x-value to align bin boundary (i.e. point berween bins) to.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -629,7 +629,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, default: "bin"
@@ -645,10 +645,10 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specifies appearance, style and content.
     bins : list of 2 numbers, default: [30,30]
         Number of bins in both directions, vertical and horizontal.  Overridden by binwidth.
-    binwidth : list of 2 numbers, optional
+    binwidth : list of 2 numbers
         The width of the bins in both directions, vertical and horizontal. Overrides `bins`.
         The default is to use bin widths that cover the entire range of the data.
-    drop : bool, optional, default: True
+    drop : bool, default: True
         Specifies whether to remove all bins with 0 counts.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -717,15 +717,15 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -808,15 +808,15 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -890,15 +890,15 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -977,12 +977,12 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer.
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1063,12 +1063,12 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer.
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1147,12 +1147,12 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer.
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1227,15 +1227,15 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1244,9 +1244,9 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth: double, optional
+    binwidth: double
         Distance between levels.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1327,15 +1327,15 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1344,9 +1344,9 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth: double, optional
+    binwidth: double
         Distance between levels.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1422,15 +1422,15 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon), optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1441,7 +1441,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
         Data contains coordinates of polygon vertices on map.
-    map_join : str, pair, optional
+    map_join : str, pair
         Pair of names used to join map coordinates with data.
         str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
@@ -1516,15 +1516,15 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon), optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1535,7 +1535,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
         Data containing region boundaries (coordinates of polygon vertices on map).
-    map_join : str, pair, optional
+    map_join : str, pair
         Pair of names used to join map coordinates with data.
         str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
@@ -1612,15 +1612,15 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1689,15 +1689,15 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1762,15 +1762,15 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1838,16 +1838,16 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged) should be used to define boxplot from your own computations via lower,
         upper, ymin, ymax, middle aesthetics mappings (see below), "count" (counts number of points with same x-axis
         coordinate), "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs
         smoothing - linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -1935,15 +1935,15 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2015,15 +2015,15 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2086,24 +2086,23 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  adjust=None,
                  bw=None,
                  n=None,
+                 fs_max=None,
                  **other_args):
     """
-    Display a density estimate, which is a smoothed version of the histogram.
+    Displays kernel density estimate, which is a smoothed version of the histogram.
 
     Parameters
     ----------
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string, optional
+    stat : string
+        The statistical transformation to use on the data for this layer, as a string.
+        Default: "density"
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2112,15 +2111,21 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    kernel : string, optional
+    kernel : string
         The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
         "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
-    bw: string or double, optional
+        Default: "gaussian"
+    bw: string or double
         The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double.
-    adjust: double, optional
+    adjust: double
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n: int, optional
+    n: int
         The number of sampled points for plotting the function
+        Default: 512
+    fs_max: int
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+        Default: 5000
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2132,7 +2137,6 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     -----
-    geom_density draws density function.
     geom_density understands the following aesthetics mappings:
      - x : x-axis coordinates.
      - alpha : transparency level of a layer
@@ -2146,6 +2150,11 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         5 = "longdash", 6 = "twodash"
      - fill : color of geometry filling
      - weight : used by "density" stat to compute weighted density.
+
+    Density stat computes variables:
+     - ..density.. : density estimate (mapped by default)
+     - ..count.. : density * number of points
+     - ..scaled.. : density estimate, scaled to maximum of 1
 
     Examples
     ---------
@@ -2166,7 +2175,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 kernel=kernel, adjust=adjust, bw=bw, n=n,
+                 kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
                  **other_args)
 
 
@@ -2186,15 +2195,15 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2203,18 +2212,18 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    kernel : string, optional
+    kernel : string
         The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
         "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
-    bw: string or double array, optional
+    bw: string or double array
         The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double array of length 2.
-    adjust: double, optional
+    adjust: double
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n: int array, optional
+    n: int array
         The number of sampled points for plotting the function (on x and y direction correspondingly)
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth: double, optional
+    binwidth: double
         Distance between levels.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2281,15 +2290,15 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2298,18 +2307,18 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    kernel : string, optional
+    kernel : string
         The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
         "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
-    bw: string or double array, optional
+    bw: string or double array
         The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double array of length 2.
-    adjust: double, optional
+    adjust: double
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n: int array, optional
+    n: int array
         The number of sampled points for plotting the function (on x and y direction correspondingly)
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth: double, optional
+    binwidth: double
         Distance between levels.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2369,15 +2378,15 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2386,9 +2395,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    width : double, optional
+    width : double
         width for jitter, default=0.4
-    height : double, optional
+    height : double
         height for jitter, default=0.4
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2450,15 +2459,15 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2533,15 +2542,15 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2550,7 +2559,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Value 'none' will disable sampling for this layer.
     tooltips : result of the call to the layer_tooltips() function.
         Specifies appearance, style and content.
-    direction: string, optional
+    direction: string
         "hv" or "HV" stands for horizontal then vertical (default); "vh" or "VH" stands for vertical then horizontal
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2626,15 +2635,15 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon), optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon)
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2645,7 +2654,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specifies appearance, style and content.
     map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Geocoder (implicitly invoke limits())
         Bounding boxes of geometries will be drawn.
-    map_join : str, pair, optional
+    map_join : str, pair
         Pair of names used to join map coordinates with data.
         str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
@@ -2714,15 +2723,15 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2792,15 +2801,15 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary or pandas DataFrame
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
+    stat : string
         The statistical transformation to use on the data for this layer, as a string. Supported transformations:
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    position : string, optional
+    position : string
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
     show_legend: bool
@@ -2811,12 +2820,12 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
-    map_join : str, pair, optional
+    map_join : str, pair
         Pair of names used to join map coordinates with data.
         str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
         first value in pair - column in data
         second value in pair - column in map
-    label_format : str, optional
+    label_format : str
         Format used to transform label mapping values to a string.
         Examples:
         '.2f' -> '12.45'

@@ -12,8 +12,8 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class TooltipLine(
-    val label: String?,
-    val pattern: String,
+    private val label: String?,
+    private val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
     constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))

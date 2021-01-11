@@ -71,6 +71,39 @@ object SeriesUtil {
         ) && isFinite(v3)
     }
 
+    fun filterFinite(l0: List<Double?>, l1: List<Double?>): List<List<Double>> {
+        checkState(l0.size == l1.size)
+
+        val l0Copy = ArrayList<Double>()
+        val l1Copy = ArrayList<Double>()
+        var copy: Boolean = false
+        for ((i, v0) in l0.withIndex()) {
+            val v1 = l1[i]
+            if (!allFinite(v0, v1)) {
+                if (!copy) {
+                    // copy already checked elements
+                    @Suppress("UNCHECKED_CAST")
+                    l0Copy.addAll(l0.take(i).toList() as List<Double>)
+                    @Suppress("UNCHECKED_CAST")
+                    l1Copy.addAll(l1.take(i).toList() as List<Double>)
+                    copy = true
+                }
+                continue
+            }
+
+            if (copy) {
+                l0Copy.add(v0 as Double)
+                l1Copy.add(v1 as Double)
+            }
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return when (copy) {
+            true -> listOf(l0Copy, l1Copy)
+            false -> listOf(l0 as List<Double>, l1 as List<Double>)
+        }
+    }
+
     fun range(values: Iterable<Double?>): ClosedRange<Double>? {
         var min = 0.0
         var max = 0.0
