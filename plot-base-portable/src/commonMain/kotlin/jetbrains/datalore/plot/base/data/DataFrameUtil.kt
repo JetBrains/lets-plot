@@ -132,7 +132,7 @@ object DataFrameUtil {
                 "Map to data-frame: key expected a String but was " + key!!::class.simpleName + " : " + key
             )
             checkArgument(
-                key is List<*>,
+                value is List<*>,
                 "Map to data-frame: value expected a List but was " + value!!::class.simpleName + " : " + value
             )
             frameBuilder.put(createVariable(key as String), value as List<*>)
