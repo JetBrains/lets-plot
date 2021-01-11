@@ -1576,7 +1576,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         >>> from lets_plot import *
         >>> import lets_plot.geo_data as gd
         >>> LetsPlot.setup_html()
-        >>> boundaries = gd.regions_state(request=['Texas', 'Iowa', 'Arizona'], within='US-48').boundaries()
+        >>> boundaries = gd.geocode_states(['Texas', 'Iowa', 'Arizona']).scope('US-48').get_boundaries()
         >>> regions = np.unique(boundaries['found name'])
         >>> num_of_regions = len(regions)
         >>> df = pd.DataFrame(regions, columns=['state'])

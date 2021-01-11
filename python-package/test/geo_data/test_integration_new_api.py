@@ -134,23 +134,23 @@ def test_where():
     assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
 
 
-def test_where_near_point():
-    worcester = geodata.geocode_cities('worcester').where('worcester', near=Point(-71.00, 42.00))
+def test_where_closest_to_point():
+    worcester = geodata.geocode_cities('worcester').where('worcester', closest_to=Point(-71.00, 42.00))
 
     assert_row(worcester.get_centroids(), lon=-71.8154652712922, lat=42.2678737342358)
     assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
 
 
-def test_where_near_regions():
+def test_where_closest_to_regions():
     boston = geodata.geocode_cities('boston')
-    worcester = geodata.geocode_cities('worcester').where('worcester', near=boston)
+    worcester = geodata.geocode_cities('worcester').where('worcester', closest_to=boston)
 
     assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
     assert_row(worcester.get_centroids(), lon=-71.8154652712922, lat=42.2678737342358)
 
 
-def test_where_within():
-    worcester = geodata.geocode_cities('worcester').where('worcester', within=box(-71.00, 42.00, -72.00, 43.00))
+def test_where_scope():
+    worcester = geodata.geocode_cities('worcester').where('worcester', scope=box(-71.00, 42.00, -72.00, 43.00))
 
     assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
     assert_row(worcester.get_centroids(), lon=-71.8154652712922, lat=42.2678737342358)

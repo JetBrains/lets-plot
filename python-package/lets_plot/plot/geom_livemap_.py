@@ -109,9 +109,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     >>> p = ggplot() + geom_livemap()
     >>> p += ggtitle('Live Map')
     """
-    # if within is not None:
-    #     within = _prepare_parent(within)
-
     if location is not None:
         location = _prepare_location(location)
 

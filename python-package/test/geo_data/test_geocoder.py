@@ -25,13 +25,6 @@ def test_simple():
         .has_query(no_parents(request=eq('foo')))
 
 
-def test_single_parent_should_apply_to_all_names():
-    assert_that(geocode(names=['foo', 'bar', 'baz']).countries('qux')) \
-        .has_query(QueryMatcher().with_name('foo').country(eq_map_region_with_name('qux'))) \
-        .has_query(QueryMatcher().with_name('bar').country(eq_map_region_with_name('qux'))) \
-        .has_query(QueryMatcher().with_name('baz').country(eq_map_region_with_name('qux')))
-
-
 def test_no_parents_where_should_override_scope():
     # without parents should update scope for matching name
 
@@ -123,10 +116,10 @@ def test_where_with_given_country_should_be_used():
                    )
 
 
-def test_where_within_box():
+def test_where_scope_is_box():
     request = geocode(names=['foo']) \
         .states(['bar']) \
-        .where(name='foo', state='bar', within=shapely.geometry.box(1, 2, 3, 4)) \
+        .where(name='foo', state='bar', scope=shapely.geometry.box(1, 2, 3, 4)) \
         ._build_request()
 
     assert_that(request) \
@@ -137,10 +130,10 @@ def test_where_within_box():
                    )
 
 
-def test_where_near_point():
+def test_where_closets_to_point():
     request = geocode(names=['foo']) \
         .states(['bar']) \
-        .where(name='foo', state='bar', near=shapely.geometry.Point(1, 2)) \
+        .where(name='foo', state='bar', closest_to=shapely.geometry.Point(1, 2)) \
         ._build_request()
 
     assert_that(request) \
@@ -169,10 +162,10 @@ def test_where_near_point():
             ])
     ]
 ))
-def test_where_near_region():
+def test_where_closest_to_region():
     request = geocode(names=['foo']) \
         .states(['bar']) \
-        .where(name='foo', state='bar', near=make_simple_region('foo', 'foo_id')) \
+        .where(name='foo', state='bar', closest_to=make_simple_region('foo', 'foo_id')) \
         ._build_request()
 
 
@@ -212,9 +205,9 @@ def test_allow_ambiguous():
                    )
 
 
-def test_allow_ambiguous_and_near():
+def test_allow_ambiguous_and_closest_to():
     request = geocode(names=['foo', 'bar'])\
-        .where('foo', near=shapely.geometry.Point(1, 2))\
+        .where('foo', closest_to=shapely.geometry.Point(1, 2))\
         .allow_ambiguous()\
         ._build_request()
 
@@ -240,24 +233,9 @@ def test_global_scope():
         .has_scope(ScopeMatcher().with_names(['bar'])) \
         .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
-    # two strings scope - should flatten to two MapRegions with single name in each
-    assert_that(builder.scope(['bar', 'baz'])) \
-        .has_scope(ScopeMatcher().with_names(['bar', 'baz'])) \
-        .has_query(QueryMatcher().with_name('foo').scope(empty()))
-
     # single regions scope
     assert_that(builder.scope(make_simple_region('bar', 'bar_id'))) \
         .has_scope(ScopeMatcher().with_ids(['bar_id'])) \
-        .has_query(QueryMatcher().with_name('foo').scope(empty()))
-
-    # single region with entries scope
-    assert_that(builder.scope([make_simple_region(['bar', 'baz'], ['bar_id', 'baz_id'])])) \
-        .has_scope(ScopeMatcher().with_ids(['bar_id', 'baz_id'])) \
-        .has_query(QueryMatcher().with_name('foo').scope(empty()))
-
-    # two regions scope - flatten ids
-    assert_that(builder.scope([make_simple_region('bar', 'bar_id'), make_simple_region('baz', 'baz_id')])) \
-        .has_scope(ScopeMatcher().with_ids(['bar_id', 'baz_id'])) \
         .has_query(QueryMatcher().with_name('foo').scope(empty()))
 
 
@@ -303,7 +281,7 @@ def test_request_countries_with_empty_names_list():
 def test_error_when_country_and_scope_set_should_show_error():
     # scope can't work with given country parent.
     check_validation_error(
-        "Invalid request: parents and scope can't be used simultaneously",
+        "Invalid request: countries and scope can't be used simultaneously",
         lambda: geocode(names='foo').countries('bar').scope('baz')
     )
 
@@ -327,7 +305,7 @@ def test_error_when_names_and_parents_have_different_size():
 
 def test_error_where_scope_len_is_invalid():
     check_validation_error(
-        'Invalid request: where functions scope should have length of 1, but was 2',
+        "Unsupported 'scope' type. Expected 'str', 'Geocoder', 'MapRegion' but was 'list'",
         lambda: geocode(names='foo').where('foo', scope=['bar', 'baz'])
     )
 
@@ -344,6 +322,31 @@ def test_error_for_where_with_unknown_name_and_parents():
         "bar(country=baz) is not found in names",
         lambda: geocode(names='foo').where('bar', country='baz', scope='spam')
     )
+
+def test_error_multi_entries_map_region_in_scope():
+    check_validation_error(
+        "'scope' has 2 entries, but expected to have exactly 1",
+        lambda : geocode(names='foo').where('foo', scope=make_simple_region(['bar', 'baz'], ['bar_id', 'baz_id']))
+    )
+
+def test_error_multi_entries_map_region_scope_in_request():
+    check_validation_error(
+        "'scope' has 2 entries, but expected to have exactly 1",
+        lambda : geocode(names='foo').scope(make_simple_region(['bar', 'baz'], ['bar_id', 'baz_id']))
+    )
+
+def test_error_list_scopein_request():
+    check_validation_error(
+        "Unsupported 'scope' type. Expected 'str', 'Geocoder', 'MapRegion' but was 'list'",
+        lambda : geocode(names='foo').scope(['bar', 'baz'])
+    )
+
+def test_parents_always_positional():
+    check_validation_error(
+        "Invalid request: countries count(1) != names count(2)",
+        lambda : geocode(names=['foo', 'bar']).countries('baz')
+    )
+
 
 
 def make_simple_region(requests: Union[str, List[str]], geo_object_ids: Union[str, List[str]] = None, level_kind: LevelKind = LevelKind.county) -> Geocodes:

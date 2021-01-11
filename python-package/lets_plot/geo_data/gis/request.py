@@ -5,9 +5,9 @@ from typing import Optional, List, Tuple, Union
 from .geometry import GeoRect, GeoPoint
 from ..type_assertion import assert_type, assert_list_type, assert_optional_type
 
-MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument: within or request.'
+MISSING_SCOPE_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument: scope or request.'
 MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument: level or request.'
-MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument. You must enter level and within or request.'
+MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument. You must enter level and scope or request.'
 
 GeoId = str
 
@@ -232,17 +232,17 @@ class GeocodingRequest(Request):
                                    level: Optional[LevelKind]) -> None:
 
         if len(region_queries) == 0 and not level:
-            raise ValueError(MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
+            raise ValueError(MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT)
 
         for query in region_queries:
             if not query.request and not level and not query.scope:
-                raise ValueError(MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
+                raise ValueError(MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT)
 
             if not query.request and not level and query.scope:
                 raise ValueError(MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT)
 
             if not query.request and not level and not query.scope:
-                raise ValueError(MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
+                raise ValueError(MISSING_SCOPE_OR_REQUEST_EXCEPTION_TEXT)
 
     def __init__(self,
                  requested_payload: List[PayloadKind],

@@ -37,7 +37,7 @@ def test_us48_with_extra_and_missing_names():
     assert_row(us48, index=50, names='nevada', found_name='Nevada')
 
 
-def test_within_us_48_with_level():
+def test_scope_us_48_with_level():
     # Oslo is a city in Marshall County, Minnesota, United States
     # Also Oslo is a capital of Norway
     name = 'oslo'

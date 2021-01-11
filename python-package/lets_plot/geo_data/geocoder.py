@@ -30,10 +30,10 @@ ShapelyPointType = 'shapely.geometry.Point'
 ShapelyPolygonType = 'shapely.geometry.Polygon'
 
 QuerySpec = namedtuple('QuerySpec', 'name, county, state, country')
-WhereSpec = namedtuple('WithinSpec', 'scope, ambiguity_resolver')
+WhereSpec = namedtuple('WhereSpec', 'scope, ambiguity_resolver')
 
 parent_types = Optional[Union[str, Geocodes, 'Geocoder', MapRegion, List]] # list of same types
-scope_types = Optional[Union[str, List[str], Geocodes, 'Geocoder', List[Geocodes]]]
+scope_types = Optional[Union[str, Geocodes, 'Geocoder', ShapelyPolygonType]]
 
 
 def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegion]]:
@@ -82,25 +82,24 @@ class LazyShapely:
 
 
 def _make_ambiguity_resolver(ignoring_strategy: Optional[IgnoringStrategyKind] = None,
-                             within: ShapelyPolygonType = None,
-                             near: Optional[Union[Geocodes, ShapelyPointType]] = None):
-    box = None
-    if within is not None:
-        if LazyShapely.is_polygon(within):
-            box = GeoRect(min_lon=within.bounds[0], min_lat=within.bounds[1], max_lon=within.bounds[2], max_lat=within.bounds[3])
-        else:
-            raise ValueError('Wrong type of parameter `within` - expected `shapely.geometry.Polygon`, but was `{}`'.format(type(within).__name__))
-
-    near = _to_near_coord(near)
+                             scope: Optional[ShapelyPolygonType] = None,
+                             closest_object: Optional[Union[Geocodes, ShapelyPointType]] = None):
+    if LazyShapely.is_polygon(scope):
+        rect = GeoRect(min_lon=scope.bounds[0], min_lat=scope.bounds[1], max_lon=scope.bounds[2], max_lat=scope.bounds[3])
+    elif scope is None:
+        rect = None
+    else:
+        assert scope is not None # else for empty scope - existing scope should be already handled
+        raise ValueError('Wrong type of parameter `scope` - expected `shapely.geometry.Polygon`, but was `{}`'.format(type(scope).__name__))
 
     return AmbiguityResolver(
         ignoring_strategy=ignoring_strategy,
-        closest_coord=near,
-        box=box
+        closest_coord=_to_geo_point(closest_object),
+        box=rect
     )
 
 
-def _to_near_coord(near: Optional[Union[Geocodes, ShapelyPointType]]) -> Optional[GeoPoint]:
+def _to_geo_point(near: Optional[Union[Geocodes, ShapelyPointType]]) -> Optional[GeoPoint]:
     if near is None:
         return None
 
@@ -217,13 +216,13 @@ def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[U
 
 
 class ReverseGeocoder(Geocoder):
-    def __init__(self, lon, lat, level: Optional[Union[str, LevelKind]], within=None):
+    def __init__(self, lon, lat, level: Optional[Union[str, LevelKind]], scope=None):
         self._geocodes: Optional[Geocodes] = None
         self._request: ReverseGeocodingRequest = RequestBuilder() \
             .set_request_kind(RequestKind.reverse) \
             .set_reverse_coordinates(_to_coords(lon, lat)) \
             .set_level(_to_level_kind(level)) \
-            .set_reverse_scope(_to_scope(within)) \
+            .set_reverse_scope(_to_scope(scope)) \
             .build()
 
     def _get_geocodes(self) -> Geocodes:
@@ -316,8 +315,7 @@ class NamesGeocoder(Geocoder):
               state: Optional[parent_types] = None,
               country: Optional[parent_types] = None,
               scope: scope_types = None,
-              within: ShapelyPolygonType = None,
-              near: Optional[Union[Geocodes, ShapelyPointType]] = None
+              closest_to: Optional[Union[Geocodes, ShapelyPointType]] = None
               ) -> 'NamesGeocoder':
         """
         If name is not exist - error will be generated.
@@ -334,14 +332,13 @@ class NamesGeocoder(Geocoder):
             When Geocoder built with parents this field is used to identify a row for the name
         country : [string | None]
             When Geocoder built with parents this field is used to identify a row for the name
-        scope : [string | Geocoder | None]
+        scope : [string | Geocoder | shapely.Polygon | None]
             Resolve ambiguity by setting scope as parent. If parent country is set then error will be shown.
-             If type is string - scope will be geocoded and used as parent.
-             If type is Geocoder  - scope will be used as parent.
-        within : [shapely.Polygon | None]
-            Resolve ambihuity by limiting area in which centroid be located.
-        near: [Geocoder | shapely.geometry.Point | None]
-            Resolve ambiguity by taking object closest to a 'near' object.
+            If type is string - scope will be geocoded and used as parent.
+            If type is Geocoder  - scope will be used as parent.
+            If type is shapely.Polygon - bbox of the polygon in which geoobject centroid should be located.
+        closest_to: [Geocoder | shapely.geometry.Point | None]
+            Resolve ambiguity by taking closest geoobject.
 
         Returns
         -------
@@ -383,14 +380,14 @@ class NamesGeocoder(Geocoder):
 
         if scope is None:
             new_scope = None
+            ambiguity_resolver = _make_ambiguity_resolver(scope=None, closest_object=closest_to)
         else:
-            new_scopes: List[MapRegion] = _prepare_new_scope(scope)
-            if len(new_scopes) != 1:
-                raise ValueError(
-                    'Invalid request: where functions scope should have length of 1, but was {}'.format(len(new_scopes)))
-            new_scope = new_scopes[0]
-
-        ambiguity_resolver = _make_ambiguity_resolver(within=within, near=near)
+            if LazyShapely.is_polygon(scope):
+                new_scope = None
+                ambiguity_resolver = _make_ambiguity_resolver(scope=scope, closest_object=closest_to)
+            else:
+                new_scope = _prepare_new_scope(scope)[0]
+                ambiguity_resolver = _make_ambiguity_resolver(scope=None, closest_object=closest_to)
 
         self._overridings[query_spec] = WhereSpec(new_scope, ambiguity_resolver)
         return self
@@ -416,30 +413,26 @@ class NamesGeocoder(Geocoder):
                 )
             ]
         else:
-            def _validate_parents_size(parents: List, parents_level: str):
-                # When only one parent is set - use this parent for all names
-                if len(parents) == 1:
-                    return [parents[0]] * len(self._names)
+            def assert_parents_size(parents: List, parents_level: str):
+                if len(parents) == 0:
+                    return
 
-                if len(parents) > 0 and len(parents) != len(self._names):
-                    raise ValueError('Invalid request: {} count({}) != names count({})'
-                                     .format(parents_level, len(parents), len(self._names)))
+                if len(self._scope) > 0:
+                    raise ValueError("Invalid request: {} and scope can't be used simultaneously".format(parents_level))
 
-                return parents.copy()
+                if len(parents) != len(self._names):
+                    raise ValueError('Invalid request: {} count({}) != names count({})'.format(parents_level, len(parents), len(self._names)))
 
-            countries = _validate_parents_size(self._countries, 'countries')
-            states = _validate_parents_size(self._states, 'states')
-            counties = _validate_parents_size(self._counties, 'counties')
-
-            if len(self._scope) > 0 and (len(countries) + len(states) + len(counties)) > 0:
-                raise ValueError("Invalid request: parents and scope can't be used simultaneously")
+            assert_parents_size(self._countries, 'countries')
+            assert_parents_size(self._states, 'states')
+            assert_parents_size(self._counties, 'counties')
 
             queries = []
             for i in range(len(self._names)):
                 name = self._names[i]
-                country = _get_or_none(countries, i)
-                state = _get_or_none(states, i)
-                county = _get_or_none(counties, i)
+                country = _get_or_none(self._countries, i)
+                state = _get_or_none(self._states, i)
+                county = _get_or_none(self._counties, i)
 
                 scope, ambiguity_resolver = self._overridings.get(
                     QuerySpec(name, county, state, country),
@@ -496,29 +489,33 @@ class NamesGeocoder(Geocoder):
         return not self == o
 
 
-def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion, List]]) -> List[MapRegion]:
+def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion]]) -> List[MapRegion]:
     """
     Return list of MapRegions. Every MapRegion object contains only one name or id.
     """
     if scope is None:
         return []
 
-    if isinstance(scope, Geocoder):
-        scope = scope._get_geocodes()
+    def assert_scope_length_(l):
+        if l != 1:
+            raise ValueError("'scope' has {} entries, but expected to have exactly 1".format(l))
+
+    if isinstance(scope, MapRegion):
+        assert_scope_length_(len(scope.values))
+        return [scope]
 
     if isinstance(scope, str):
         return [MapRegion.with_name(scope)]
 
-    if isinstance(scope, Geocodes):
-        return scope.to_map_regions()
+    if isinstance(scope, Geocoder):
+        scope = scope._get_geocodes()
 
-    if isinstance(scope, (list, tuple)):
-        if all(map(lambda v: isinstance(v, str), scope)):
-            return [MapRegion.with_name(name) for name in scope]
-        if all(map(lambda v: isinstance(v, Geocodes), scope)):
-            return [map_region for region in scope for map_region in region.to_map_regions()]
-        else:
-            raise ValueError('Iterable scope can contain str or Geocoder.')
+    if isinstance(scope, Geocodes):
+        map_regions = scope.to_map_regions()
+        assert_scope_length_(len(map_regions))
+        return map_regions
+
+    raise ValueError("Unsupported 'scope' type. Expected 'str', 'Geocoder', 'MapRegion' but was '{}'".format(type(scope).__name__))
 
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
@@ -553,10 +550,10 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
 
 def geocode_cities(names=None) -> NamesGeocoder:
     """
-    Create a RegionBuilder object for cities. Allows to refine ambiguous request with
-    where method. build() method creates Geocoder object or shows details for ambiguous result.
+    Create a Geocoder object for cities. Allows to refine ambiguous request with
+    where method.
 
-    regions_builder(level, request, within)
+    geocode_cities(names)
 
     Parameters
     ----------
@@ -569,7 +566,7 @@ def geocode_cities(names=None) -> NamesGeocoder:
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
+    Geocoder allows to refine ambiguous request with where() method.
 
     Examples
     ---------
@@ -581,10 +578,10 @@ def geocode_cities(names=None) -> NamesGeocoder:
 
 def geocode_counties(names=None) -> NamesGeocoder:
     """
-    Create a RegionBuilder object for counties. Allows to refine ambiguous request with
-    where method. build() method creates Geocoder object or shows details for ambiguous result.
+    Create a Geocoder object for counties. Allows to refine ambiguous request with
+    where method.
 
-    regions_builder(level, request, within)
+    geocode_counties(names)
 
     Parameters
     ----------
@@ -597,7 +594,7 @@ def geocode_counties(names=None) -> NamesGeocoder:
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
+    Geocoder allows to refine ambiguous request with where() method.
 
     Examples
     ---------
@@ -609,10 +606,10 @@ def geocode_counties(names=None) -> NamesGeocoder:
 
 def geocode_states(names=None) -> NamesGeocoder:
     """
-    Create a RegionBuilder object for states. Allows to refine ambiguous request with
-    where method. build() method creates Geocoder object or shows details for ambiguous result.
+    Create a Geocoder object for states. Allows to refine ambiguous request with
+    where method.
 
-    regions_builder(level, request, within)
+    geocode_states(names)
 
     Parameters
     ----------
@@ -625,7 +622,7 @@ def geocode_states(names=None) -> NamesGeocoder:
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
+    Geocoder allows to refine ambiguous request with where() method.
 
     Examples
     ---------
@@ -637,10 +634,10 @@ def geocode_states(names=None) -> NamesGeocoder:
 
 def geocode_countries(names=None) -> NamesGeocoder:
     """
-    Create a RegionBuilder object for countries. Allows to refine ambiguous request with
-    where method. build() method creates Geocoder object or shows details for ambiguous result.
+    Create a Geocoder object for countries. Allows to refine ambiguous request with
+    where method.
 
-    regions_builder(level, request, within)
+    geocode_countries(names)
 
     Parameters
     ----------
@@ -653,7 +650,7 @@ def geocode_countries(names=None) -> NamesGeocoder:
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
+    Geocoder allows to refine ambiguous request with where() method.
 
     Examples
     ---------

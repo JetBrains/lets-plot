@@ -122,31 +122,31 @@ WARWICK_ID = '785807'
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_ambiguity_near_boston_by_name():
+def test_ambiguity_closest_to_boston_by_name():
     r = geodata.geocode(
         level='city',
         names='Warwick'
     ) \
-        .where('Warwick', near=geodata.geocode_cities('boston'))
+        .where('Warwick', closest_to=geodata.geocode_cities('boston'))
 
     assert_row(r.get_geocodes(), id=WARWICK_ID, found_name='Warwick')
     assert_row(r.get_centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_ambiguity_near_boston_by_coord():
+def test_ambiguity_closest_to_boston_by_coord():
     r = geodata.geocode(
         level='city',
         names='Warwick'
     ) \
-        .where('Warwick', near=ShapelyPoint(BOSTON_LON, BOSTON_LAT))
+        .where('Warwick', closest_to=ShapelyPoint(BOSTON_LON, BOSTON_LAT))
 
     assert_row(r.get_geocodes(), id=WARWICK_ID, found_name='Warwick')
     assert_row(r.get_centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_ambiguity_near_boston_by_box():
+def test_ambiguity_scope_boston_by_box():
     boston = geodata.geocode_cities('boston').get_centroids().iloc[[0]]
     buffer = 0.6
     boston_centroid = ShapelyPoint(boston.geometry.x, boston.geometry.y)
@@ -156,7 +156,7 @@ def test_ambiguity_near_boston_by_box():
         names='Warwick'
     ) \
         .where('Warwick',
-               within=shapely.geometry.box(
+               scope=shapely.geometry.box(
                    boston_centroid.x - buffer,
                    boston_centroid.y - buffer,
                    boston_centroid.x + buffer,
