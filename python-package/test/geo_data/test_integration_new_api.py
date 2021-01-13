@@ -234,3 +234,19 @@ def test_select_all_query_with_empty_result_should_return_empty_dataframe():
 
     centroids = geocoder.get_centroids()
     assert 0 == len(centroids)
+
+
+def test_none_parents_at_diff_levels():
+    warwick = geodata.geocode_cities('warwick').states('georgia').get_geocodes()
+    worcester = geodata.geocode_cities('worcester').countries('uk').get_geocodes()
+
+    cities = geodata.geocode_cities(['warwick', 'worcester'])\
+        .states(['Georgia', None])\
+        .countries([None, 'United Kingdom'])\
+        .get_geocodes()
+
+    assert_row(
+        cities,
+        names=['warwick', 'worcester'],
+        id=[warwick.id[0], worcester.id[0]]
+    )

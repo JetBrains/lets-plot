@@ -99,21 +99,21 @@ def _make_ambiguity_resolver(ignoring_strategy: Optional[IgnoringStrategyKind] =
     )
 
 
-def _to_geo_point(near: Optional[Union[Geocodes, ShapelyPointType]]) -> Optional[GeoPoint]:
-    if near is None:
+def _to_geo_point(closest_place: Optional[Union[Geocodes, ShapelyPointType]]) -> Optional[GeoPoint]:
+    if closest_place is None:
         return None
 
-    if isinstance(near, Geocoder):
-        near = near._get_geocodes()
+    if isinstance(closest_place, Geocoder):
+        closest_place = closest_place._get_geocodes()
 
-    if isinstance(near, Geocodes):
-        near_id = near.as_list()[0].unique_ids()
-        assert len(near_id) == 1
+    if isinstance(closest_place, Geocodes):
+        closest_place_id = closest_place.as_list()[0].unique_ids()
+        assert len(closest_place_id) == 1
 
         request = RequestBuilder() \
             .set_request_kind(RequestKind.explicit) \
             .set_requested_payload([PayloadKind.centroids]) \
-            .set_ids(near_id) \
+            .set_ids(closest_place_id) \
             .build()
 
         response: Response = GeocodingService().do_request(request)
@@ -122,12 +122,12 @@ def _to_geo_point(near: Optional[Union[Geocodes, ShapelyPointType]]) -> Optional
             centroid = response.features[0].centroid
             return GeoPoint(lon=centroid.lon, lat=centroid.lat)
         else:
-            raise ValueError("Unexpected geocoding response for id " + str(near_id[0]))
+            raise ValueError("Unexpected geocoding response for id " + str(closest_place_id[0]))
 
-    if LazyShapely.is_point(near):
-        return GeoPoint(lon=near.x, lat=near.y)
+    if LazyShapely.is_point(closest_place):
+        return GeoPoint(lon=closest_place.x, lat=closest_place.y)
 
-    raise ValueError('Not supported type: {}'.format(type(near)))
+    raise ValueError('Not supported type: {}'.format(type(closest_place)))
 
 
 def _get_or_none(list, index):
@@ -515,7 +515,7 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion]
         assert_scope_length_(len(map_regions))
         return map_regions
 
-    raise ValueError("Unsupported 'scope' type. Expected 'str', 'Geocoder', 'MapRegion' but was '{}'".format(type(scope).__name__))
+    raise ValueError("Unsupported 'scope' type. Expected 'str' or 'Geocoder' but was '{}'".format(type(scope).__name__))
 
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
