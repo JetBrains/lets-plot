@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
@@ -18,7 +19,8 @@ import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 
 class TooltipConfig(
     opts: Map<String, Any>,
-    private val constantsMap: Map<Aes<*>, Any>
+    private val constantsMap: Map<Aes<*>, Any>,
+    private val variables: Set<DataFrame.Variable>
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
@@ -88,6 +90,9 @@ class TooltipConfig(
                     else -> ConstantValue(constant, format)
                 }
             } else {
+                require(variables.any { it.name == fieldName }) {
+                    "Undefined variable: '$fieldName'. Variables: ${variables.map { "'${it.name}'" }}"
+                }
                 DataFrameValue(fieldName, format)
             }
         }

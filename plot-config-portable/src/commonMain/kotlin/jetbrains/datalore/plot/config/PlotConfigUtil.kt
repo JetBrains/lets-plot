@@ -132,7 +132,7 @@ object PlotConfigUtil {
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
             require(data.has(variable)) {
-                "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables()}"
+                "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
             }
 
             val aes = varBinding.aes
