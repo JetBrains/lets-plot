@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
@@ -90,9 +91,7 @@ class TooltipConfig(
                     else -> ConstantValue(constant, format)
                 }
             } else {
-                require(variables.any { it.name == fieldName }) {
-                    "Undefined variable: '$fieldName'. Variables: ${variables.map { "'${it.name}'" }}"
-                }
+                DataFrameUtil.findVariableOrFail(variables, fieldName)
                 DataFrameValue(fieldName, format)
             }
         }

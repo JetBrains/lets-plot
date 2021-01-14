@@ -11,6 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
@@ -131,9 +132,7 @@ object PlotConfigUtil {
         val discreteMappedAes = HashSet<Aes<*>>()
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
-            require(data.has(variable)) {
-                "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
-            }
+            DataFrameUtil.hasVariableOrFail(data, variable)
 
             val aes = varBinding.aes
             val scaleProvider = scaleProvidersByMappedAes[aes]!!

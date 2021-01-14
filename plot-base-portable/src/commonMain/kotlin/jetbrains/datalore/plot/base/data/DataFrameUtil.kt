@@ -71,13 +71,22 @@ object DataFrameUtil {
         return false
     }
 
-    fun findVariableOrFail(data: DataFrame, varName: String): DataFrame.Variable {
-        for (`var` in data.variables()) {
+    fun hasVariableOrFail(data: DataFrame, variable: DataFrame.Variable): Boolean {
+        if (data.has(variable)) {
+            return true
+        }
+        throw IllegalArgumentException("Variable not found: '$variable'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}")
+    }
+
+    fun findVariableOrFail(data: DataFrame, varName: String): DataFrame.Variable = findVariableOrFail(data.variables(), varName)
+
+    fun findVariableOrFail(variables: Set<DataFrame.Variable>, varName: String): DataFrame.Variable {
+        for (`var` in variables) {
             if (varName == `var`.name) {
                 return `var`
             }
         }
-        throw IllegalArgumentException("Variable not found: '$varName'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}")
+        throw IllegalArgumentException("Variable not found: '$varName'. Variables in data frame: ${variables.map { "'${it.name}'" }}")
     }
 
     fun isNumeric(data: DataFrame, varName: String): Boolean {

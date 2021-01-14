@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.sampling.Sampling
@@ -58,9 +59,11 @@ internal object LayerConfigUtil {
                 val binding: VarBinding = when {
                     data.has(variable) -> VarBinding(variable, aes)
                     variable.isStat && !clientSide -> VarBinding(variable, aes) // 'stat' is not yet built.
-                    else -> throw IllegalArgumentException(
-                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
-                    )
+                    else -> {
+                        // Error - undefined variable
+                        DataFrameUtil.hasVariableOrFail(data, variable)
+                        return emptyList()
+                    }
                 }
                 result.add(binding)
             }
