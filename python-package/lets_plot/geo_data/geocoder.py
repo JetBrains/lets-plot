@@ -417,11 +417,11 @@ class NamesGeocoder(Geocoder):
                 if len(parents) == 0:
                     return
 
-                if len(self._scope) > 0:
-                    raise ValueError("Invalid request: {} and scope can't be used simultaneously".format(parents_level))
-
                 if len(parents) != len(self._names):
                     raise ValueError('Invalid request: {} count({}) != names count({})'.format(parents_level, len(parents), len(self._names)))
+
+            if len(self._countries) > 0 and len(self._scope) > 0:
+                raise ValueError("Invalid request: countries and scope can't be used simultaneously")
 
             assert_parents_size(self._countries, 'countries')
             assert_parents_size(self._states, 'states')

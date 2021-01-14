@@ -278,6 +278,18 @@ def test_request_countries_with_empty_names_list():
         .has_query(QueryMatcher().with_name(None))
 
 
+def test_request_scope_and_parent_county():
+    assert_that(geocode_cities('foo_city').counties('foo_county').scope('foo_country'))\
+        .has_level(eq(LevelKind.city))\
+        .has_scope(ScopeMatcher().with_names(['foo_country'])) \
+        .has_query(QueryMatcher()
+                   .with_name('foo_city')
+                   .county(eq_map_region_with_name('foo_county'))
+                   )
+
+
+
+
 def test_error_when_country_and_scope_set_should_show_error():
     # scope can't work with given country parent.
     check_validation_error(
@@ -305,7 +317,7 @@ def test_error_when_names_and_parents_have_different_size():
 
 def test_error_where_scope_len_is_invalid():
     check_validation_error(
-        "Unsupported 'scope' type. Expected 'str', 'Geocoder', 'MapRegion' but was 'list'",
+        "Unsupported 'scope' type. Expected 'str' or 'Geocoder' but was 'list'",
         lambda: geocode(names='foo').where('foo', scope=['bar', 'baz'])
     )
 
@@ -337,7 +349,7 @@ def test_error_multi_entries_map_region_scope_in_request():
 
 def test_error_list_scopein_request():
     check_validation_error(
-        "Unsupported 'scope' type. Expected 'str', 'Geocoder', 'MapRegion' but was 'list'",
+        "Unsupported 'scope' type. Expected 'str' or 'Geocoder' but was 'list'",
         lambda : geocode(names='foo').scope(['bar', 'baz'])
     )
 
