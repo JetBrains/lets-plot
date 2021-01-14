@@ -55,6 +55,7 @@ object GeomInteractionUtil {
             .tooltipLinesSpec(layerConfig.tooltips)
             .tooltipConstants(createConstantAesList(layerConfig))
             .showAxisTooltip(!isLiveMap)
+            .setIsCrosshairEnabled(isCrosshairEnabled(layerConfig))
     }
 
     private fun createGeomInteractionBuilder(
@@ -179,6 +180,31 @@ object GeomInteractionUtil {
             GeomKind.H_LINE,
             GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
             else -> emptyMap()
+        }
+    }
+
+    private fun isCrosshairEnabled(layerConfig: LayerConfig): Boolean {
+        // Crosshair is enabled if the general tooltip is moved to the specified position
+        if (layerConfig.tooltips.tooltipProperties.anchor == null) {
+            return false
+        }
+
+        return when (layerConfig.geomProto.geomKind) {
+            GeomKind.POINT,
+            GeomKind.LINE,
+            GeomKind.AREA,
+            GeomKind.TILE,
+            GeomKind.CONTOUR,
+            GeomKind.CONTOURF,
+            GeomKind.BIN_2D,
+            GeomKind.DENSITY,
+            GeomKind.DENSITY2D,
+            GeomKind.DENSITY2DF,
+            GeomKind.FREQPOLY,
+            GeomKind.PATH,
+            GeomKind.RIBBON,
+            GeomKind.SMOOTH -> true
+            else -> false
         }
     }
 

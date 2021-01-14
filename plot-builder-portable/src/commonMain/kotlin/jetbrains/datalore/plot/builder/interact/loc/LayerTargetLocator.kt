@@ -92,7 +92,8 @@ internal class LayerTargetLocator(
                         // In this case use 0.0 as a distance - we have a direct hit.
                         max(0.0, collector.closestPointChecker.distance),
                         geomKind,
-                        contextualMapping
+                        contextualMapping,
+                        contextualMapping.isCrosshairEnabled
                 )
         )
     }
