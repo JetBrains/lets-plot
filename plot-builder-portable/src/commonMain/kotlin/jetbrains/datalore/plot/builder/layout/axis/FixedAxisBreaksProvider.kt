@@ -17,7 +17,7 @@ class FixedAxisBreaksProvider(domainBreaks: List<Any>, transformedBreaks: List<D
     override val isFixedBreaks: Boolean
         get() = true
 
-    override fun getBreaks(targetCount: Int, axisLength: Double): GuideBreaks {
+    override fun getBreaks(targetCount: Int): GuideBreaks {
         return fixedBreaks
     }
 }

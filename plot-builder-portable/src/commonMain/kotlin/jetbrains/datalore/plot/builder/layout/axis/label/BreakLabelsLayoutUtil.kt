@@ -18,10 +18,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal object BreakLabelsLayoutUtil {
-    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): GuideBreaks {
+    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int): GuideBreaks {
         checkArgument(!breaksProvider.isFixedBreaks, "fixed breaks not expected")
         checkArgument(maxCount > 0, "maxCount=$maxCount")
-        var breaks = breaksProvider.getBreaks(maxCount, axisLength)
+        var breaks = breaksProvider.getBreaks(maxCount)
 
         if (maxCount == 1 && !breaks.isEmpty) {
             return GuideBreaks(
@@ -35,7 +35,7 @@ internal object BreakLabelsLayoutUtil {
         while (breaks.size() > maxCount) {
             val delta = max(1, (breaks.size() - maxCount) / 2)
             count -= delta
-            breaks = breaksProvider.getBreaks(count, axisLength)
+            breaks = breaksProvider.getBreaks(count)
         }
         return breaks
     }
