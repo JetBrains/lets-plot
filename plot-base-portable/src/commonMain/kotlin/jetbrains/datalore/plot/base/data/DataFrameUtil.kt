@@ -71,13 +71,6 @@ object DataFrameUtil {
         return false
     }
 
-    fun assertHasVariable(data: DataFrame, variable: DataFrame.Variable): Boolean {
-        if (data.has(variable)) {
-            return true
-        }
-        throw IllegalArgumentException("Variable not found: '$variable'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}")
-    }
-
     fun findVariableOrFail(data: DataFrame, varName: String): DataFrame.Variable {
         for (`var` in data.variables()) {
             if (varName == `var`.name) {
