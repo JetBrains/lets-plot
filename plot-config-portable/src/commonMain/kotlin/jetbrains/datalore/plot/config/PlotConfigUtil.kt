@@ -11,7 +11,6 @@ import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
