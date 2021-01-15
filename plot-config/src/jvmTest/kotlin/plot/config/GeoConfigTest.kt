@@ -412,9 +412,40 @@ class GeoConfigTest {
             .assertValues("__y__", listOf(4.0, 4.0, 2.0, 2.0))
     }
 
+    @Test
+    fun `should not trigger when positional mapping exist`() {
+        singleGeomLayer("""
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "histogram",
+            |      "data": {
+            |        "..count..": [1, 2, 3],
+            |        "id": ["A", "B", "C"],
+            |        "price": [123, 22, 44],
+            |        "coord": [
+            |          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+            |          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+            |          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+            |        ]
+            |      },
+            |      "mapping": { "x": "price" },
+            |      "data_meta": {
+            |        "geodataframe": {
+            |          "geometry": "coord"
+            |        }
+            |      }
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+        )
+            .assertBinding(Aes.X, "price") // was not rebind to gdf
+    }
+
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
         assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
-//        assertEquals(variable, getBinding(aes).scale!!.name)
         assertEquals(variable, scaleMap[aes].name)
         return this
     }

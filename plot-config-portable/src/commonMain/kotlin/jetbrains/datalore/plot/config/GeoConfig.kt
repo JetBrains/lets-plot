@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.config.CoordinatesCollector.*
 import jetbrains.datalore.plot.config.GeoConfig.Companion.GEO_ID
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Mapping.toAes
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
@@ -153,7 +154,15 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(layerOptions: Map<*, *>): Boolean {
+        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>): Boolean {
+            if (combinedMappings.keys
+                    .mapNotNull { it as? String }
+                    .mapNotNull { runCatching { toAes(it) }.getOrNull()} // skip "group" or invalid names
+                    .any(Aes.Companion::isPositional)
+            ) {
+                return false
+            }
+
             return layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(DATA_META, GDF, GEOMETRY)
         }
