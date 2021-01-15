@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
@@ -29,7 +30,7 @@ class DataFrameValue(
         require(!::myDataFrame.isInitialized) { "Data context can be initialized only once" }
         myDataFrame = dataContext.dataFrame
 
-        myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
+        myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
