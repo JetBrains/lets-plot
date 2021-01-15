@@ -12,7 +12,9 @@ open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             tiles(),
-            tilesReversed()
+            tilesLimitsReversed(),
+            tilesNoLimitsFlagReverse(),
+            tilesWithLimitsFlagReverse(),
         )
     }
 
@@ -23,12 +25,20 @@ open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
             return getSpec("{'x':['a', 'b', 'c', 'd', 'e']}", "['b', 'c', 'e']")
         }
 
-        fun tilesReversed(): Map<String, Any> {
+        fun tilesLimitsReversed(): Map<String, Any> {
             return getSpec("{'x':['a', 'b', 'c', 'd', 'e']}", "['e', 'c', 'b']")
         }
 
+        fun tilesNoLimitsFlagReverse(): Map<String, Any> {
+            return getSpec("{'x':['a', 'b', 'c']}", null, reverse = true)
+        }
 
-        fun getSpec(data: String, limits: String): Map<String, Any> {
+        fun tilesWithLimitsFlagReverse(): Map<String, Any> {
+            return getSpec("{'x':['a', 'b', 'c']}", "['a', 'b', 'c']", reverse = true)
+        }
+
+
+        fun getSpec(data: String, limits: String?, reverse: Boolean = false): Map<String, Any> {
             val spec = """
 {
     'mapping':{}, 
@@ -38,7 +48,8 @@ open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
         [
             {
                 'aesthetic':'x', 
-                'limits':$limits
+                'limits':$limits,
+                'reverse':$reverse
             }
         ], 
     'layers':
