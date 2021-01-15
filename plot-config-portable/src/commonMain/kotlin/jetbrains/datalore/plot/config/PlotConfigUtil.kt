@@ -132,7 +132,7 @@ object PlotConfigUtil {
         val discreteMappedAes = HashSet<Aes<*>>()
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
-            DataFrameUtil.hasVariableOrFail(data, variable)
+            DataFrameUtil.assertHasVariable(data, variable)
 
             val aes = varBinding.aes
             val scaleProvider = scaleProvidersByMappedAes[aes]!!

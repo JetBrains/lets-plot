@@ -59,11 +59,9 @@ internal object LayerConfigUtil {
                 val binding: VarBinding = when {
                     data.has(variable) -> VarBinding(variable, aes)
                     variable.isStat && !clientSide -> VarBinding(variable, aes) // 'stat' is not yet built.
-                    else -> {
-                        // Error - undefined variable
-                        DataFrameUtil.hasVariableOrFail(data, variable)
-                        return emptyList()
-                    }
+                    else -> throw IllegalArgumentException(
+                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
+                    )
                 }
                 result.add(binding)
             }

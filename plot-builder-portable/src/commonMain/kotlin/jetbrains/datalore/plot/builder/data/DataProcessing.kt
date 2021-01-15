@@ -35,7 +35,7 @@ object DataProcessing {
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isOrigin) {
-                DataFrameUtil.hasVariableOrFail(data, variable)
+                DataFrameUtil.assertHasVariable(data, variable)
                 data = DataFrameUtil.applyTransform(
                     data,
                     variable,

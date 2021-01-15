@@ -71,7 +71,7 @@ object DataFrameUtil {
         return false
     }
 
-    fun hasVariableOrFail(data: DataFrame, variable: DataFrame.Variable): Boolean {
+    fun assertHasVariable(data: DataFrame, variable: DataFrame.Variable): Boolean {
         if (data.has(variable)) {
             return true
         }
