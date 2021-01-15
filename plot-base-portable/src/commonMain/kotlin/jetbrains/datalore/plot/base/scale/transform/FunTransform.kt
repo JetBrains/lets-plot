@@ -25,7 +25,7 @@ open class FunTransform(
     }
 
     override fun apply(rawData: List<*>): List<Double?> {
-        return rawData.map { myFun(it as Double) }
+        return rawData.map { myFun(it as? Double) }
     }
 
     override fun applyInverse(v: Double?): Any? {

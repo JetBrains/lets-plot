@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
+import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -136,5 +137,42 @@ class ScaleConfigTest {
 
 //        checkDiscreteScale(Aes.FILL)
         checkDiscreteScale(Aes.COLOR)
+    }
+
+    @Test
+    fun log10WithNull() {
+        val spec = """
+            
+            {
+              "data": {
+                "x": [0, 1, 2, 3 ],
+                "y": [0, 1, 4, 9],
+                "v": [null, 0, 1, 81]
+              },
+              "mapping": {
+                "x": "x",
+                "y": "y"
+              },
+              "kind": "plot",
+              "scales": [
+                {
+                  "aesthetic": "color",
+                  "trans": "log10",
+                  "scale_mapper_kind": "color_gradient"
+                }
+              ],
+              "layers": [
+                {
+                  "geom": "point",
+                  "mapping": {
+                    "color": "v"
+                  }
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val opts = parsePlotSpec(spec)
+        PlotConfigClientSideUtil.createPlotAssembler(opts)
     }
 }
