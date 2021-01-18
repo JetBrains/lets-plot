@@ -200,6 +200,9 @@ class ScaleConfigLabelsTest {
         closeRange: ClosedRange<Double> = myCloseRange
     ): List<String> {
         val breaksProvider = AxisBreaksUtil.createAxisBreaksProvider(scale, closeRange)
-        return breaksProvider.getBreaks(targetCount).labels
+        return breaksProvider.getBreaks(
+            targetCount,
+            axisLength = 0.0  // actually the axisLength parameter is not used to get breaks
+        ).labels
     }
 }
