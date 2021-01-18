@@ -34,4 +34,9 @@ internal class IdentityTransform @JvmOverloads constructor(
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         return myBreaksGenerator.generateBreaks(domainAfterTransform, targetCount)
     }
+
+    override fun setLabelFormat(format: String?): BreaksGenerator {
+        myBreaksGenerator.setLabelFormat(format)
+        return this
+    }
 }

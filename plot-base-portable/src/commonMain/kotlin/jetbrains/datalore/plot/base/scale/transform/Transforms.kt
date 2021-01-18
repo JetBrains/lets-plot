@@ -9,14 +9,21 @@ import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 
 object Transforms {
-    val IDENTITY: Transform =
-        IdentityTransform()
-    val LOG10: Transform = Log10Transform()
-    val REVERSE: Transform =
-        ReverseTransform()
-    val SQRT: Transform = SqrtTransform()
+    val IDENTITY: Transform = createTransform(TransformKind.IDENTITY)
+    val LOG10: Transform = createTransform(TransformKind.LOG10)
+    val REVERSE: Transform = createTransform(TransformKind.REVERSE)
+    val SQRT: Transform = createTransform(TransformKind.SQRT)
 
     fun identityWithBreaksGen(breaksGenerator: BreaksGenerator): Transform {
         return IdentityTransform(breaksGenerator)
+    }
+
+    fun createTransform(transKind: TransformKind): Transform {
+        return when (transKind) {
+            TransformKind.IDENTITY -> IdentityTransform()
+            TransformKind.LOG10 -> Log10Transform()
+            TransformKind.REVERSE -> ReverseTransform()
+            TransformKind.SQRT -> SqrtTransform()
+        }
     }
 }

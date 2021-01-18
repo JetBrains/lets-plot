@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.transform.*
 
 internal class ScaleTransformConfig private constructor(
     val transform: Transform,
@@ -14,7 +15,7 @@ internal class ScaleTransformConfig private constructor(
 ) : OptionsAccessor(opts) {
 
     companion object {
-        fun create(trans: Any): ScaleTransformConfig {
+        fun create(trans: Any, format: String?): ScaleTransformConfig {
             // trans - name (identity,log10 ...)
             //        or
             //        map with transform options
@@ -23,22 +24,21 @@ internal class ScaleTransformConfig private constructor(
                 val opts = trans as Map<String, Any>
                 return createForName(
                     ConfigUtil.featureName(opts),
-                    opts
+                    opts,
+                    format
                 )
             }
             return createForName(
                 trans.toString(),
-                HashMap()
+                HashMap(),
+                format
             )
         }
 
-        private fun createForName(name: String, opts: Map<String, Any>): ScaleTransformConfig {
-            val transform = when (name) {
-                "identity" -> Transforms.IDENTITY
-                "log10" -> Transforms.LOG10
-                "reverse" -> Transforms.REVERSE
-                "sqrt" -> Transforms.SQRT
-                else -> throw IllegalArgumentException("Can't create transform '$name'")
+        private fun createForName(name: String, opts: Map<String, Any>, format: String?) : ScaleTransformConfig {
+            val transform = Transforms.createTransform(transKind = TransformKind.safeValueOf(name))
+            if (transform is BreaksGenerator) {
+                transform.setLabelFormat(format)
             }
             return ScaleTransformConfig(transform, opts)
         }

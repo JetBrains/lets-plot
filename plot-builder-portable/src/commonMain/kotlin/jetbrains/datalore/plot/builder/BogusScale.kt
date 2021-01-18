@@ -19,6 +19,9 @@ internal class BogusScale : Scale<Double> {
     override val labels: MutableList<String>
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
+    override val labelFormat: String
+        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
+
     override val isContinuous: Boolean
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 

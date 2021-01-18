@@ -45,4 +45,9 @@ open class FunTransform(
 
         return ScaleBreaks(domainValues, transformValues, originalBreaks.labels)
     }
+
+    override fun setLabelFormat(format: String?): BreaksGenerator {
+        myLinearBreaksGen.setLabelFormat(format)
+        return this
+    }
 }

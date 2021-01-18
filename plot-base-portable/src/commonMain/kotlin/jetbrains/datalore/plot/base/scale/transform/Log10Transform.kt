@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.log10
@@ -15,6 +17,16 @@ internal class Log10Transform : FunTransform(
     F,
     F_INVERSE
 ) {
+    private var myLabelFormatter: ((Any) -> String)? = null
+
+    override fun setLabelFormat(format: String?): BreaksGenerator {
+        myLabelFormatter = format?.let { { value: Any -> StringFormat(format).format(value) } }
+        return this
+    }
+
+    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return myLabelFormatter ?: super.labelFormatter(domainAfterTransform, targetCount)
+    }
 
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val transformedBreaks = LinearBreaksGen()
@@ -40,8 +52,8 @@ internal class Log10Transform : FunTransform(
             } else {
                 step = domainValue - newDomainValues[i - 1]
             }
-            val formatter = NumericBreakFormatter(domainValue, step, true)
-            labels.add(formatter.apply(domainValue))
+            val formatter = myLabelFormatter ?: NumericBreakFormatter(domainValue, step, true)::apply
+            labels.add(formatter(domainValue))
         }
 
         return ScaleBreaks(newDomainValues, transformValues, labels)

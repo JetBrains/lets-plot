@@ -6,9 +6,11 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.base.scale.transform.TransformKind
+import jetbrains.datalore.plot.base.scale.transform.Transforms.createTransform
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuous: Boolean
@@ -18,7 +20,11 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     val formatter: (Double) -> String
 
     override val defaultTransform: Transform
-        get() = Transforms.IDENTITY
+        get() = createTransform(TransformKind.IDENTITY).also {
+            if (it is BreaksGenerator) {
+                it.setLabelFormat(labelFormat)
+            }
+        }
 
     constructor(
         name: String,
@@ -27,7 +33,11 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = null
-        formatter = { v -> v.toString() }
+        formatter = if (labelFormat != null) {
+            StringFormat(labelFormat!!)::format
+        } else {
+            { v -> v.toString() }
+        }
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -46,7 +56,11 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
             )
         } else null
 
-        formatter = b.myFormatter
+        formatter = if (b.myLabelFormat != null) {
+            StringFormat(b.myLabelFormat!!)::format
+        } else {
+            b.myFormatter
+        }
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
