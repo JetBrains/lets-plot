@@ -32,10 +32,9 @@ internal class TooltipLayer(
     ) {
         clearTooltips()
 
-        // TODO: enable after release 1.5.4. Doesn't work well with bar/boxplot/histogram.
-        //if (myShowCrosshairComponent && geomBounds != null) {
-        //    showCrosshair(tooltipSpecs, geomBounds)
-        //}
+        if (geomBounds != null) {
+            showCrosshair(tooltipSpecs, geomBounds)
+        }
 
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
@@ -76,7 +75,7 @@ internal class TooltipLayer(
             return
         }
         tooltipSpecs
-            .filterNot(TooltipSpec::isOutlier)
+            .filter(TooltipSpec::isCrosshairEnabled)
             .forEach { tooltipSpec ->
                 tooltipSpec.layoutHint.coord?.let { coord ->
                     newCrosshairComponent().also { crosshair ->

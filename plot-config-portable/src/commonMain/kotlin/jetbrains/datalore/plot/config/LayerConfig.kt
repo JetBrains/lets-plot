@@ -101,7 +101,7 @@ class LayerConfig(
             }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions)) {
+        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappings)) {
             val geoConfig = GeoConfig(
                 geomProto.geomKind,
                 combinedData,

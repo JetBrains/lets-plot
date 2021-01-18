@@ -18,7 +18,7 @@ internal class LocatedTargetsPicker {
 
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
-        if (distance > CUTOFF_DISTANCE) {
+        if (!lookupResult.isCrosshairEnabled && distance > CUTOFF_DISTANCE) {
             return
         }
 

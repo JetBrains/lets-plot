@@ -50,7 +50,7 @@ internal class Log10Transform : FunTransform(
     companion object {
         private val F: (Double?) -> Double? = { v ->
             if (v != null)
-                log10(v)
+                log10(v).takeIf { !it.isNaN() }
             else
                 null
         }

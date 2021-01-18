@@ -59,7 +59,7 @@ internal object LayerConfigUtil {
                     data.has(variable) -> VarBinding(variable, aes)
                     variable.isStat && !clientSide -> VarBinding(variable, aes) // 'stat' is not yet built.
                     else -> throw IllegalArgumentException(
-                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables()}"
+                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
                     )
                 }
                 result.add(binding)

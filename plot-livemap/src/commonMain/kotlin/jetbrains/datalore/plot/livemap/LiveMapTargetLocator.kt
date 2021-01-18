@@ -38,7 +38,8 @@ class LiveMapTargetLocator(
                    ),
                    distance = 0.0, // livemap shows tooltip only on hover
                    geomKind = GeomKind.LIVE_MAP,
-                   contextualMapping = myTargetSource[it.layerIndex to it.index] ?: error("Can't find target.")
+                   contextualMapping = myTargetSource[it.layerIndex to it.index] ?: error("Can't find target."),
+                   isCrosshairEnabled = false
            )
        }
     }

@@ -77,7 +77,7 @@ object DataFrameUtil {
                 return `var`
             }
         }
-        throw IllegalArgumentException("Variable not found: '$varName'")
+        throw IllegalArgumentException("Variable not found: '$varName'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}")
     }
 
     fun isNumeric(data: DataFrame, varName: String): Boolean {

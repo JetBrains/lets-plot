@@ -84,7 +84,7 @@ internal class LayerDataPointAestheticsProcessor(
                 layerKind = MapLayerKind.TEXT
             }
 
-            DENSITY2DF, CONTOURF, POLYGON -> {
+            DENSITY2DF, CONTOURF, POLYGON, MAP -> {
                 mapEntityBuilders = dataPointsConverter.toPolygon()
                 layerKind = MapLayerKind.POLYGON
             }
