@@ -17,7 +17,7 @@ class AdaptableAxisBreaksProvider internal constructor(private val myDomainAfter
     override val fixedBreaks: GuideBreaks
         get() = throw IllegalStateException("Not a fixed breaks provider")
 
-    override fun getBreaks(targetCount: Int): GuideBreaks {
+    override fun getBreaks(targetCount: Int, axisLength: Double): GuideBreaks {
         val scaleBreaks = myBreaksGenerator.generateBreaks(myDomainAfterTransform, targetCount)
         return GuideBreaks(
             scaleBreaks.domainValues,

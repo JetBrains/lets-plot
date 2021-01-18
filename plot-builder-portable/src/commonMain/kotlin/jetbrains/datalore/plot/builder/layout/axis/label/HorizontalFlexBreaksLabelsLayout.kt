@@ -35,7 +35,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             HorizontalSimpleLabelsLayout.estimateBreakCountInitial(
                 axisLength
             )
-        var breaks = getBreaks(targetBreakCount)
+        var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
 
         while (labelsInfo.isOverlap) {
@@ -50,7 +50,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 break
             }
             targetBreakCount = newTargetBreakCount
-            breaks = getBreaks(targetBreakCount)
+            breaks = getBreaks(targetBreakCount, axisLength)
             labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
         }
 
@@ -73,10 +73,11 @@ internal class HorizontalFlexBreaksLabelsLayout(
         return layout.doLayout(axisLength, axisMapper, maxLabelsBounds)
     }
 
-    private fun getBreaks(maxCount: Int): GuideBreaks {
+    private fun getBreaks(maxCount: Int, axisLength: Double): GuideBreaks {
         return BreakLabelsLayoutUtil.getFlexBreaks(
             myBreaksProvider,
-            maxCount
+            maxCount,
+            axisLength
         )
     }
 }

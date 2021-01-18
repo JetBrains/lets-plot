@@ -38,7 +38,7 @@ internal class VerticalFlexBreaksLabelsLayout(
 
         checkArgument(axisLength > 0, "axis length: $axisLength")
         val maxTickCount = maxTickCount(axisLength)
-        val breaks = getBreaks(maxTickCount)
+        val breaks = getBreaks(maxTickCount, axisLength)
 
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
             orientation, breaks,
@@ -48,10 +48,11 @@ internal class VerticalFlexBreaksLabelsLayout(
         )
     }
 
-    private fun getBreaks(maxCount: Int): GuideBreaks {
+    protected fun getBreaks(maxCount: Int, axisLength: Double): GuideBreaks {
         return BreakLabelsLayoutUtil.getFlexBreaks(
             myBreaksProvider,
-            maxCount
+            maxCount,
+            axisLength
         )
     }
 }

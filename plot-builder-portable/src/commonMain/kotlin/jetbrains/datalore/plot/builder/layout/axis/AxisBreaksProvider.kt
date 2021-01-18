@@ -10,5 +10,5 @@ interface AxisBreaksProvider {
 
     val fixedBreaks: GuideBreaks
 
-    fun getBreaks(targetCount: Int): GuideBreaks
+    fun getBreaks(targetCount: Int, axisLength: Double): GuideBreaks
 }
