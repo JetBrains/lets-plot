@@ -27,24 +27,21 @@ import jetbrains.datalore.plot.config.Option.Scale.DATE_TIME
 import jetbrains.datalore.plot.config.Option.Scale.DISCRETE_DOMAIN
 import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.LABELS
+import jetbrains.datalore.plot.config.Option.Scale.LIMITS
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ScaleConfigLabelsTest {
 
-    private val myData = mapOf(
-        "x" to listOf(0, 1),
-        "y" to listOf(0, 1)
-    )
-    private val myCloseRange = ClosedRange(-0.5, 0.5)
-
     @Test
     fun `default scale`() {
-        val geomLayer = geomLayer(scales = emptyList())
+        val geomLayer = geomLayer(
+            data = mapOf("value" to listOf(0, 1)),
+            scales = emptyList()
+        )
         val xLabels = getScaleLabels(geomLayer.scaleMap[Aes.X])
         val yLabels = getScaleLabels(geomLayer.scaleMap[Aes.Y])
-
 
         assertEquals(listOf("-0.4", "-0.2", "0.0", "0.2", "0.4"), xLabels)
         assertEquals(listOf("-0.4", "-0.2", "0.0", "0.2", "0.4"), yLabels)
@@ -53,6 +50,7 @@ class ScaleConfigLabelsTest {
     @Test
     fun `set format for labels of the continuous scale`() {
         val geomLayer = geomLayer(
+            data = mapOf("value" to listOf(0, 1)),
             scales = listOf(
                 mapOf(
                     Option.Scale.AES to Aes.X.name,
@@ -74,6 +72,7 @@ class ScaleConfigLabelsTest {
     @Test
     fun `set format for labels of the log scale`() {
         val geomLayer = geomLayer(
+            data = mapOf("value" to listOf(0, 1)),
             scales = listOf(
                 mapOf(
                     Option.Scale.AES to Aes.X.name,
@@ -92,35 +91,12 @@ class ScaleConfigLabelsTest {
 
         assertEquals(listOf("0.40", "0.63", "1.00", "1.58", "2.51"), xLabels)
         assertEquals(listOf("0.398", "0.631", "1.000", "1.585", "2.512"), yLabels)
-
-    }
-
-    @Test
-    fun `set format for labels of the discrete scale`() {
-        val geomLayer = geomLayer(
-            scales = listOf(
-                mapOf(
-                    Option.Scale.AES to Aes.X.name,
-                    DISCRETE_DOMAIN to true,
-                    FORMAT to "x = {d}"
-                ),
-                mapOf(
-                    Option.Scale.AES to Aes.Y.name,
-                    DISCRETE_DOMAIN to true,
-                    FORMAT to "y = {.1f}"
-                )
-            )
-        )
-        val xLabels = getScaleLabels(geomLayer.scaleMap[Aes.X])
-        val yLabels = getScaleLabels(geomLayer.scaleMap[Aes.Y])
-
-        assertEquals(listOf("x = 0", "x = 1"), xLabels)
-        assertEquals(listOf("y = 0.0", "y = 1.0"), yLabels)
     }
 
     @Test
     fun `skip format parameter if breaks and labels are specified`() {
         val geomLayer = geomLayer(
+            data = mapOf("value" to listOf(0, 1)),
             scales = listOf(
                 mapOf(
                     Option.Scale.AES to Aes.X.name,
@@ -135,6 +111,45 @@ class ScaleConfigLabelsTest {
     }
 
     @Test
+    fun `set format for labels of the discrete scale`() {
+        val geomLayer = geomLayer(
+            data = mapOf("value" to listOf('a', 'b', 'c')),
+            scales = listOf(
+                mapOf(
+                    Option.Scale.AES to Aes.X.name,
+                    DISCRETE_DOMAIN to true,
+                    FORMAT to "x = is {}"
+                ),
+                mapOf(
+                    Option.Scale.AES to Aes.Y.name,
+                    DISCRETE_DOMAIN to true
+                )
+            )
+        )
+        val xLabels = getScaleLabels(geomLayer.scaleMap[Aes.X])
+        val yLabels = getScaleLabels(geomLayer.scaleMap[Aes.Y])
+
+        assertEquals(listOf("x = is a", "x = is b", "x = is c"), xLabels)
+        assertEquals(listOf("a", "b", "c"), yLabels)
+    }
+
+    @Test
+    fun `format discrete scale with limits parameter`() {
+        val geomLayer = geomLayer(
+            data = mapOf("value" to listOf('a', 'b', 'c')),
+            scales = listOf(
+                mapOf(
+                    Option.Scale.AES to Aes.X.name,
+                    LIMITS to listOf('a', 'b'),
+                    FORMAT to "is {}"
+                )
+            )
+        )
+        val xLabels = getScaleLabels(geomLayer.scaleMap[Aes.X])
+        assertEquals(listOf("is a", "is b"), xLabels)
+    }
+
+    @Test
     fun datetime() {
         val instant = TimeZone.UTC.toInstant(
             DateTime(
@@ -145,8 +160,7 @@ class ScaleConfigLabelsTest {
 
         val geomLayer = geomLayer(
             data = mapOf(
-                "x" to listOf(instant),
-                "y" to listOf(instant)
+                "value" to listOf(instant)
             ),
             scales = listOf(
                 mapOf(
@@ -178,11 +192,11 @@ class ScaleConfigLabelsTest {
     }
 
 
-    private fun geomLayer(data: Map<String, Any> = myData, scales: List<Map<String, Any>>): GeomLayer {
+    private fun geomLayer(data: Map<String, Any>, scales: List<Map<String, Any>>): GeomLayer {
         val plotOpts = mutableMapOf(
             Option.Meta.KIND to Option.Meta.Kind.PLOT,
             DATA to data,
-            MAPPING to mapOf(Aes.X.name to "x", Aes.Y.name to "y"),
+            MAPPING to mapOf(Aes.X.name to "value", Aes.Y.name to "value"),
             LAYERS to listOf(
                 mapOf(
                     GEOM to POINT
@@ -196,8 +210,8 @@ class ScaleConfigLabelsTest {
 
     private fun getScaleLabels(
         scale: Scale<Double>,
-        targetCount: Int = 6,
-        closeRange: ClosedRange<Double> = myCloseRange
+        targetCount: Int = 5,
+        closeRange: ClosedRange<Double> = ClosedRange(-0.5, 0.5)
     ): List<String> {
         val breaksProvider = AxisBreaksUtil.createAxisBreaksProvider(scale, closeRange)
         return breaksProvider.getBreaks(
