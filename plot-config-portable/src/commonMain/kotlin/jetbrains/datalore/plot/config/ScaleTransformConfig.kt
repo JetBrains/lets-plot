@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.transform.*
@@ -38,7 +39,8 @@ internal class ScaleTransformConfig private constructor(
         private fun createForName(name: String, opts: Map<String, Any>, format: String?) : ScaleTransformConfig {
             val transform = Transforms.createTransform(transKind = TransformKind.safeValueOf(name))
             if (transform is BreaksGenerator) {
-                transform.setLabelFormat(format)
+                val formatter = format?.let { { value: Any -> StringFormat(it).format(value) } }
+                transform.setLabelFormatter(formatter)
             }
             return ScaleTransformConfig(transform, opts)
         }

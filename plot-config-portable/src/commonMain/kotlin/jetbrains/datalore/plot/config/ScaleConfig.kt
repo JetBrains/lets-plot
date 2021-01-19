@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
+import jetbrains.datalore.plot.common.text.Formatter
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
@@ -162,9 +163,10 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             // ToDo: add support for 'date_breaks', 'date_labels' (see: https://ggplot2.tidyverse.org/current/scale_date.html)
+            val dateTimeFormatter = getString(FORMAT)?.let { Formatter.time(it) }
             b.transform(
                 Transforms.identityWithBreaksGen(
-                    DateTimeBreaksGen().setLabelFormat(getString(FORMAT))
+                    DateTimeBreaksGen().setLabelFormatter(dateTimeFormatter)
                 )
             )
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {

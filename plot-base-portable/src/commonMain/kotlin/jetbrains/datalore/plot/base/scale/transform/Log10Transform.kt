@@ -19,8 +19,8 @@ internal class Log10Transform : FunTransform(
 ) {
     private var myLabelFormatter: ((Any) -> String)? = null
 
-    override fun setLabelFormat(format: String?): BreaksGenerator {
-        myLabelFormatter = format?.let { { value: Any -> StringFormat(format).format(value) } }
+    override fun setLabelFormatter(formatter: ((Any) -> String)?): BreaksGenerator {
+        myLabelFormatter = formatter
         return this
     }
 

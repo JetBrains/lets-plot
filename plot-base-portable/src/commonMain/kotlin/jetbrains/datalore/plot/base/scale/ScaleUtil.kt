@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.transform.LinearBreaksGen
@@ -39,18 +38,7 @@ object ScaleUtil {
             return result
         }
 
-        val formatter: (Any) -> String = when {
-            scale is ContinuousScale -> {
-                { v: Any -> scale.formatter(v as Double) }
-            }
-            scale.labelFormat != null -> {
-                { v: Any -> StringFormat(scale.labelFormat!!).format(v) }
-            }
-            else -> {
-                { v: Any -> v.toString() }
-            }
-        }
-
+        val formatter: (Any) -> String = scale.labelFormatter ?: { v: Any -> v.toString() }
         // generate labels
         return breaks.map { formatter(it) }
     }
@@ -165,7 +153,7 @@ object ScaleUtil {
     fun getBreaksGenerator(scale: Scale<*>): BreaksGenerator {
         return when {
             scale.hasBreaksGenerator() -> scale.breaksGenerator
-            else -> LinearBreaksGen().setLabelFormat(scale.labelFormat)
+            else -> LinearBreaksGen().setLabelFormatter(scale.labelFormatter)
         }
     }
 }

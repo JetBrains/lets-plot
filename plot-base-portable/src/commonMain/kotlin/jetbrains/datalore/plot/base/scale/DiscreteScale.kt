@@ -193,10 +193,6 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             return this
         }
 
-        override fun formatter(v: (Double) -> String): Scale.Builder<T> {
-            throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
         override fun continuousTransform(v: Transform): Scale.Builder<T> {
             // ignore
             return this

@@ -9,13 +9,12 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.DateTimeBreaksHelper
-import jetbrains.datalore.plot.common.text.Formatter
 
 class DateTimeBreaksGen : BreaksGenerator {
     private var myLabelFormatter: ((Any) -> String)? = null
 
-    override fun setLabelFormat(format: String?): BreaksGenerator {
-        myLabelFormatter = format?.let { Formatter.time(it) }
+    override fun setLabelFormatter(formatter: ((Any) -> String)?): BreaksGenerator {
+        myLabelFormatter = formatter
         return this
     }
 

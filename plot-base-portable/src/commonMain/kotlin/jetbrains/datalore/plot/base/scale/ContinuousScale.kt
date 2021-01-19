@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.transform.TransformKind
@@ -17,12 +16,10 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuousDomain: Boolean = true
     override val domainLimits: ClosedRange<Double>?
 
-    val formatter: (Double) -> String
-
     override val defaultTransform: Transform
         get() = createTransform(TransformKind.IDENTITY).also {
             if (it is BreaksGenerator) {
-                it.setLabelFormat(labelFormat)
+                it.setLabelFormatter(labelFormatter)
             }
         }
 
@@ -33,11 +30,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = null
-        formatter = if (labelFormat != null) {
-            StringFormat(labelFormat!!)::format
-        } else {
-            { v -> v.toString() }
-        }
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -55,12 +47,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
                 upper ?: Double.POSITIVE_INFINITY
             )
         } else null
-
-        formatter = if (b.myLabelFormat != null) {
-            StringFormat(b.myLabelFormat!!)::format
-        } else {
-            b.myFormatter
-        }
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
@@ -88,7 +74,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
         internal val myContinuousOutput: Boolean = scale.isContinuous
-        internal var myFormatter: (Double) -> String = scale.formatter
         internal var myLowerLimit: Double? = scale.domainLimits?.lowerEnd
         internal var myUpperLimit: Double? = scale.domainLimits?.upperEnd
 
@@ -110,11 +95,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
         override fun continuousTransform(v: Transform): Scale.Builder<T> {
             return transform(v)
-        }
-
-        override fun formatter(v: (Double) -> String): Scale.Builder<T> {
-            myFormatter = v
-            return this
         }
 
         override fun build(): Scale<T> {

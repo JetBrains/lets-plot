@@ -14,8 +14,8 @@ import jetbrains.datalore.plot.base.scale.breaks.LinearBreaksHelper
 class LinearBreaksGen : BreaksGenerator {
     private var myLabelFormatter: ((Any) -> String)? = null
 
-    override fun setLabelFormat(format: String?): BreaksGenerator {
-        myLabelFormatter = format?.let { { value: Any -> StringFormat(it).format(value) } }
+    override fun setLabelFormatter(formatter: ((Any) -> String)?): BreaksGenerator {
+        myLabelFormatter = formatter
         return this
     }
 

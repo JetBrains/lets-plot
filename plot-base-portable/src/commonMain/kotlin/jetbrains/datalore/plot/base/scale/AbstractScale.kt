@@ -22,7 +22,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     private val myTransform: Transform?
     private var myBreaks: List<DomainT>? = null
     private var myLabels: List<String>? = null
-    private var myLabelFormat: String? = null
+    private var myLabelFormatter: ((Any) -> String)? = null
 
     override val isContinuous: Boolean
         get() = false
@@ -49,8 +49,8 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             return myLabels!!
         }
 
-    override val labelFormat: String?
-        get() = myLabelFormat
+    override val labelFormatter: ((Any) -> String)?
+        get() = myLabelFormatter
 
     override val transform: Transform
         get() = myTransform ?: defaultTransform
@@ -67,7 +67,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         name = b.myName
         myBreaks = b.myBreaks
         myLabels = b.myLabels
-        myLabelFormat = b.myLabelFormat
+        myLabelFormatter = b.myLabelFormatter
         myTransform = b.myTransform
         mapper = b.myMapper
 
@@ -93,7 +93,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
         internal var myBreaks: List<DomainT>? = scale.myBreaks
         internal var myLabels: List<String>? = scale.myLabels
-        internal var myLabelFormat: String? = scale.myLabelFormat
+        internal var myLabelFormatter: ((Any) -> String)? = scale.myLabelFormatter
         internal var myMapper: (Double?) -> T? = scale.mapper
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -112,8 +112,8 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             return this
         }
 
-        override fun labelFormat(l: String): Scale.Builder<T> {
-            myLabelFormat = l
+        override fun labelFormatter(v: (Any) -> String): Scale.Builder<T>{
+            myLabelFormatter = v
             return this
         }
 

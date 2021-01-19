@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
@@ -223,10 +224,10 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
             if (mapper is WithGuideBreaks<*>) {
                 @Suppress("UNCHECKED_CAST")
-                mapper as WithGuideBreaks<Double>
+                mapper as WithGuideBreaks<Any>
                 scale = scale.with()
                     .breaks(mapper.breaks)
-                    .formatter(mapper.formatter)
+                    .labelFormatter(mapper.formatter)
                     .build()
             }
 
@@ -260,7 +261,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 with.labels(myLabels)
             }
             if (myLabelFormat != null) {
-                with.labelFormat(myLabelFormat)
+                with.labelFormatter(StringFormat(myLabelFormat)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)
