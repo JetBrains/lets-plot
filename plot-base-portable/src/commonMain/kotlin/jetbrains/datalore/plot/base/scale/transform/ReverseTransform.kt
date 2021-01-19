@@ -5,9 +5,10 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-class ReverseTransform : FunTransform(
+class ReverseTransform(labelFormatter: ((Any) -> String)? = null) : FunTransform(
     F,
-    F_INVERSE
+    F_INVERSE,
+    labelFormatter
 ) {
     companion object {
         private val F: (Double?) -> Double? = { v ->

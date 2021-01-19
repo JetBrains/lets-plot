@@ -36,12 +36,11 @@ internal class ScaleTransformConfig private constructor(
             )
         }
 
-        private fun createForName(name: String, opts: Map<String, Any>, format: String?) : ScaleTransformConfig {
-            val transform = Transforms.createTransform(transKind = TransformKind.safeValueOf(name))
-            if (transform is BreaksGenerator) {
-                val formatter = format?.let { { value: Any -> StringFormat(it).format(value) } }
-                transform.setLabelFormatter(formatter)
-            }
+        private fun createForName(name: String, opts: Map<String, Any>, format: String?): ScaleTransformConfig {
+            val transform = Transforms.createTransform(
+                transKind = TransformKind.safeValueOf(name),
+                labelFormatter = format?.let { { value: Any -> StringFormat(it).format(value) } }
+            )
             return ScaleTransformConfig(transform, opts)
         }
     }

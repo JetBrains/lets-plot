@@ -18,12 +18,12 @@ object Transforms {
         return IdentityTransform(breaksGenerator)
     }
 
-    fun createTransform(transKind: TransformKind): Transform {
+    fun createTransform(transKind: TransformKind, labelFormatter: ((Any) -> String)? = null): Transform {
         return when (transKind) {
-            TransformKind.IDENTITY -> IdentityTransform()
-            TransformKind.LOG10 -> Log10Transform()
-            TransformKind.REVERSE -> ReverseTransform()
-            TransformKind.SQRT -> SqrtTransform()
+            TransformKind.IDENTITY -> IdentityTransform(labelFormatter)
+            TransformKind.LOG10 -> Log10Transform(labelFormatter)
+            TransformKind.REVERSE -> ReverseTransform(labelFormatter)
+            TransformKind.SQRT -> SqrtTransform(labelFormatter)
         }
     }
 }

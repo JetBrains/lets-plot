@@ -17,11 +17,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val domainLimits: ClosedRange<Double>?
 
     override val defaultTransform: Transform
-        get() = createTransform(TransformKind.IDENTITY).also {
-            if (it is BreaksGenerator) {
-                it.setLabelFormatter(labelFormatter)
-            }
-        }
+        get() = createTransform(TransformKind.IDENTITY, labelFormatter)
 
     constructor(
         name: String,

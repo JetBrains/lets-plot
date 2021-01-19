@@ -6,19 +6,11 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.LinearBreaksHelper
 
-class LinearBreaksGen : BreaksGenerator {
-    private var myLabelFormatter: ((Any) -> String)? = null
-
-    override fun setLabelFormatter(formatter: ((Any) -> String)?): BreaksGenerator {
-        myLabelFormatter = formatter
-        return this
-    }
-
+class LinearBreaksGen(private val myLabelFormatter: ((Any) -> String)? = null) : BreaksGenerator {
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val helper = breaksHelper(domainAfterTransform, targetCount)
         val ticks = helper.breaks

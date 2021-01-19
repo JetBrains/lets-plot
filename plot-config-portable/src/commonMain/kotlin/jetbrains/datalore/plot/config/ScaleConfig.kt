@@ -166,7 +166,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
             val dateTimeFormatter = getString(FORMAT)?.let { Formatter.time(it) }
             b.transform(
                 Transforms.identityWithBreaksGen(
-                    DateTimeBreaksGen().setLabelFormatter(dateTimeFormatter)
+                    DateTimeBreaksGen(dateTimeFormatter)
                 )
             )
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {

@@ -153,7 +153,7 @@ object ScaleUtil {
     fun getBreaksGenerator(scale: Scale<*>): BreaksGenerator {
         return when {
             scale.hasBreaksGenerator() -> scale.breaksGenerator
-            else -> LinearBreaksGen().setLabelFormatter(scale.labelFormatter)
+            else -> LinearBreaksGen(scale.labelFormatter)
         }
     }
 }

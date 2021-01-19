@@ -138,7 +138,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         private val myBreaks: List<Any>? = b.myBreaks?.let { ArrayList(b.myBreaks!!) }
         private val myLabels: List<String>? = b.myLabels?.let { ArrayList(b.myLabels!!) }
-        private val myLabelFormat: String? = b.myLabelFormat?.let { b.myLabelFormat!! }
+        private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
