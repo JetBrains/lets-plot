@@ -11,7 +11,9 @@ import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.log10
 import kotlin.math.pow
 
-internal class Log10Transform(private val myLabelFormatter: ((Any) -> String)? = null): FunTransform(
+internal class Log10Transform(
+    private val myLabelFormatter: ((Any) -> String)? = null
+) : FunTransform(
     F,
     F_INVERSE
 ) {
