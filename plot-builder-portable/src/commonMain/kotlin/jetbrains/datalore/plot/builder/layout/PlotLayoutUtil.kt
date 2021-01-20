@@ -31,12 +31,6 @@ object PlotLayoutUtil {
         )
     }
 
-    fun titleBounds(titleSize: DoubleVector, containerSize: DoubleVector): DoubleRectangle {
-        val titleBoxLeft = max(0.0, (containerSize.x - titleSize.x) / 2)
-        val titleBoxTop = 0.0
-        return DoubleRectangle(titleBoxLeft, titleBoxTop, titleSize.x, titleSize.y)
-    }
-
     fun axisTitleDimensions(text: String): DoubleVector {
         if (isNullOrEmpty(text)) {
             return DoubleVector.ZERO
