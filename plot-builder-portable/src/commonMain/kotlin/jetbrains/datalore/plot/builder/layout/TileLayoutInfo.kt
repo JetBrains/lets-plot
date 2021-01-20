@@ -13,9 +13,8 @@ class TileLayoutInfo
  * Params xAxisInfo/yAxisInfo can be NULL in this case any mapping of positional Aes should be dropped (live map plot)
  */
 private constructor(
-    // tile origin relative to plot (plot area doesn't include title, axis title, facet labels or legends)
-    // ToDo: rename
-    val plotOffset: DoubleVector,
+    val plotOrigin: DoubleVector,     // tile 'plot' origin relative to overall 'plot' origin
+    // 'plot' means : geom area + axis (but not titles, facet labels or legends)
 
     // relative to plot tile
     val bounds: DoubleRectangle,      // plotting area + optional elements (axis, axis tick labels)
@@ -81,18 +80,18 @@ private constructor(
     }
 
     fun getAbsoluteBounds(tilesOrigin: DoubleVector): DoubleRectangle {
-        val offset = tilesOrigin.add(plotOffset)
+        val offset = tilesOrigin.add(plotOrigin)
         return bounds.add(offset)
     }
 
     fun getAbsoluteGeomBounds(tilesOrigin: DoubleVector): DoubleRectangle {
-        val offset = tilesOrigin.add(plotOffset)
+        val offset = tilesOrigin.add(plotOrigin)
         return geomBounds.add(offset)
     }
 
     fun withFacetLabels(xLabel: String, yLabel: String): TileLayoutInfo {
         return TileLayoutInfo(
-            this.plotOffset,
+            this.plotOrigin,
             this.bounds,
             this.geomBounds,
             this.clipBounds,

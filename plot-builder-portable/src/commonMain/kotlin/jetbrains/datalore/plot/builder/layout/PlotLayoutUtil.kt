@@ -10,12 +10,11 @@ import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import kotlin.math.max
 
 object PlotLayoutUtil {
-    val AXIS_TITLE_OUTER_MARGIN = 4.0
-    val AXIS_TITLE_INNER_MARGIN = 4.0
-    private val TITLE_V_MARGIN = 4.0
+    const val AXIS_TITLE_OUTER_MARGIN = 4.0
+    const val AXIS_TITLE_INNER_MARGIN = 4.0
+    private const val TITLE_V_MARGIN = 4.0
     private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
@@ -26,8 +25,8 @@ object PlotLayoutUtil {
 
         val labelSpec = PlotLabelSpec.PLOT_TITLE
         return DoubleVector(
-                labelSpec.width(text.length),
-                labelSpec.height() + 2 * TITLE_V_MARGIN
+            labelSpec.width(text.length),
+            labelSpec.height() + 2 * TITLE_V_MARGIN
         )
     }
 
@@ -38,8 +37,9 @@ object PlotLayoutUtil {
 
         val labelSpec = PlotLabelSpec.AXIS_TITLE
         return DoubleVector(
-                labelSpec.width(text.length),
-                labelSpec.height())
+            labelSpec.width(text.length),
+            labelSpec.height()
+        )
     }
 
     fun absoluteGeomBounds(origin: DoubleVector, plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
@@ -53,10 +53,10 @@ object PlotLayoutUtil {
         return result!!
     }
 
-    fun liveMapBounds(plotOrigin: DoubleVector, plotDimension: DoubleVector): DoubleRectangle {
+    fun liveMapBounds(container: DoubleRectangle): DoubleRectangle {
         return DoubleRectangle(
-            plotOrigin.add(LIVE_MAP_PLOT_PADDING),
-            plotDimension.subtract(LIVE_MAP_PLOT_MARGIN)
+            container.origin.add(LIVE_MAP_PLOT_PADDING),
+            container.dimension.subtract(LIVE_MAP_PLOT_MARGIN)
         )
     }
 }

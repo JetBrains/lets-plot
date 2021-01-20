@@ -248,14 +248,13 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets.xVar,
                         facets.yVar,
-                        statCtx,
-                        { message ->
-                            layerIndexAndSamplingMessage(
-                                layerIndex,
-                                createStatMessage(message, layerConfig)
-                            )
-                        }
-                    )
+                        statCtx
+                    ) { message ->
+                        layerIndexAndSamplingMessage(
+                            layerIndex,
+                            createStatMessage(message, layerConfig)
+                        )
+                    }
 
                     tileLayerDataAfterStat = tileLayerDataAndGroupingContextAfterStat.data
                     groupingContextAfterStat = tileLayerDataAndGroupingContextAfterStat.groupingContext
