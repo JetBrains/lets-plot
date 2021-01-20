@@ -14,9 +14,11 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 internal class IdentityTransform @JvmOverloads constructor(
-        private val myBreaksGenerator: BreaksGenerator = LinearBreaksGen()
-) :
-        Transform, BreaksGenerator {
+    private val myBreaksGenerator: BreaksGenerator
+) : Transform, BreaksGenerator {
+
+    constructor(labelFormatter: ((Any) -> String)? = null) : this(LinearBreaksGen(labelFormatter))
+
     override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
         return myBreaksGenerator.labelFormatter(domainAfterTransform, targetCount)
     }

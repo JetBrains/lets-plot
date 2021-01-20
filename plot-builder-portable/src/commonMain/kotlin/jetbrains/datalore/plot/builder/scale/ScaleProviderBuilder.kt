@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
@@ -19,6 +20,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
     private var myName: String? = null
     private var myBreaks: List<Any>? = null
     private var myLabels: List<String>? = null
+    private var myLabelFormat: String? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<*>? = null
@@ -63,6 +65,11 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
     fun labels(labels: List<String>): ScaleProviderBuilder<T> {
         myLabels = ArrayList(labels)
+        return this
+    }
+
+    fun labelFormat(format: String? ): ScaleProviderBuilder<T> {
+        myLabelFormat = format
         return this
     }
 
@@ -131,6 +138,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         private val myBreaks: List<Any>? = b.myBreaks?.let { ArrayList(b.myBreaks!!) }
         private val myLabels: List<String>? = b.myLabels?.let { ArrayList(b.myLabels!!) }
+        private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
@@ -216,10 +224,10 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
             if (mapper is WithGuideBreaks<*>) {
                 @Suppress("UNCHECKED_CAST")
-                mapper as WithGuideBreaks<Double>
+                mapper as WithGuideBreaks<Any>
                 scale = scale.with()
                     .breaks(mapper.breaks)
-                    .formatter(mapper.formatter)
+                    .labelFormatter(mapper.formatter)
                     .build()
             }
 
@@ -252,7 +260,9 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             if (myLabels != null) {
                 with.labels(myLabels)
             }
-
+            if (myLabelFormat != null) {
+                with.labelFormatter(StringFormat(myLabelFormat)::format)
+            }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)
             }

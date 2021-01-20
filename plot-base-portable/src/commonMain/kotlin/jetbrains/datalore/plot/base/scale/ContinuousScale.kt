@@ -8,17 +8,16 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.base.scale.transform.TransformKind
+import jetbrains.datalore.plot.base.scale.transform.Transforms.createTransform
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuous: Boolean
     override val isContinuousDomain: Boolean = true
     override val domainLimits: ClosedRange<Double>?
 
-    val formatter: (Double) -> String
-
     override val defaultTransform: Transform
-        get() = Transforms.IDENTITY
+        get() = createTransform(TransformKind.IDENTITY, labelFormatter)
 
     constructor(
         name: String,
@@ -27,7 +26,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = null
-        formatter = { v -> v.toString() }
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -45,8 +43,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
                 upper ?: Double.POSITIVE_INFINITY
             )
         } else null
-
-        formatter = b.myFormatter
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
@@ -74,7 +70,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
         internal val myContinuousOutput: Boolean = scale.isContinuous
-        internal var myFormatter: (Double) -> String = scale.formatter
         internal var myLowerLimit: Double? = scale.domainLimits?.lowerEnd
         internal var myUpperLimit: Double? = scale.domainLimits?.upperEnd
 
@@ -96,11 +91,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
         override fun continuousTransform(v: Transform): Scale.Builder<T> {
             return transform(v)
-        }
-
-        override fun formatter(v: (Double) -> String): Scale.Builder<T> {
-            myFormatter = v
-            return this
         }
 
         override fun build(): Scale<T> {

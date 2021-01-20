@@ -251,6 +251,7 @@ object Option {
         const val DATE_TIME = "datetime"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
+        const val FORMAT = "format"
         // ToDo: TRANS
 
         // continuous scale
