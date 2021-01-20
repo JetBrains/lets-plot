@@ -263,17 +263,11 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
             val titleLabel = TextLabel(title)
             titleLabel.addClassName(Style.PLOT_TITLE)
+            titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
             titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
 
-            val titleBounds = PlotLayoutUtil.titleBounds(titleSize, preferredSize)
-            val titleLocation = if (titleBounds.width < preferredSize.x) {
-                titleLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
-                titleBounds.center
-            } else {
-                titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
-                DoubleVector(titleBounds.left, titleBounds.center.y)
-            }
-            titleLabel.moveTo(titleLocation)
+            val titleBounds = DoubleRectangle(entirePlot.origin, titleSize)
+            titleLabel.moveTo(DoubleVector(titleBounds.left, titleBounds.center.y))
             add(titleLabel)
         }
 
