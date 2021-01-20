@@ -58,12 +58,7 @@ class FacetGrid : PlotConfigDemoBase() {
                     {
                         'geom': 'point'
                     }
-                ],
-                'facet': {
-                            'name': 'grid', 
-                            'x': "${AutoMpg.cylinders.name}", 
-                            'y': "${AutoMpg.origin.name}"
-                         }
+                ]
             }
         """.trimIndent()
 

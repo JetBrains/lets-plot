@@ -16,27 +16,21 @@ internal class FacetGridPlotLayout(
     private val tileLayout: TileLayout
 ) : PlotLayoutBase() {
     private val colCount: Int = if (colLabels.isEmpty()) 1 else colLabels.size
-    private val myRowCount: Int
-    private val myFaceting: Faceting
-    private val myTotalPanelHorizontalPadding: Double
-    private val myTotalPanelVerticalPadding: Double
+    private val rowCount: Int = if (rowLabels.isEmpty()) 1 else rowLabels.size
+    private val totalPanelHorizontalPadding: Double = PANEL_PADDING * (colCount - 1)
+    private val totalPanelVerticalPadding: Double = PANEL_PADDING * (rowCount - 1)
+    private val faceting: Faceting
 
     init {
         setPadding(10.0, 10.0, 0.0, 0.0)
 
         checkArgument(!(colLabels.isEmpty() && rowLabels.isEmpty()), "No col/row labels")
 
-        myFaceting = when {
+        faceting = when {
             colLabels.isEmpty() -> Faceting.ROW
             rowLabels.isEmpty() -> Faceting.COL
             else -> Faceting.BOTH
         }
-
-//        colCount = if (colLabels.isEmpty()) 1 else colLabels.size
-        myRowCount = if (rowLabels.isEmpty()) 1 else rowLabels.size
-
-        myTotalPanelHorizontalPadding = PANEL_PADDING * (colCount - 1)
-        myTotalPanelVerticalPadding = PANEL_PADDING * (myRowCount - 1)
     }
 
     override fun doLayout(preferredSize: DoubleVector): PlotLayoutInfo {
@@ -45,7 +39,7 @@ internal class FacetGridPlotLayout(
             preferredSize.y - (paddingTop + paddingBottom)
         )
 
-        val facetTabs = when (myFaceting) {
+        val facetTabs = when (faceting) {
             Faceting.COL -> DoubleVector(0.0, FACET_TAB_HEIGHT)
             Faceting.ROW -> DoubleVector(FACET_TAB_HEIGHT, 0.0)
             Faceting.BOTH -> DoubleVector(FACET_TAB_HEIGHT, FACET_TAB_HEIGHT)
@@ -54,8 +48,8 @@ internal class FacetGridPlotLayout(
         tilesAreaSize = tilesAreaSize.subtract(facetTabs)
 
         // rough estimate (without axis. The final size will be smaller)
-        val tileWidth = (tilesAreaSize.x - myTotalPanelHorizontalPadding) / colCount
-        val tileHeight = (tilesAreaSize.y - myTotalPanelVerticalPadding) / myRowCount
+        val tileWidth = (tilesAreaSize.x - totalPanelHorizontalPadding) / colCount
+        val tileHeight = (tilesAreaSize.y - totalPanelVerticalPadding) / rowCount
 
         // initial layout
         var tileInfo = layoutTile(tileWidth, tileHeight)
@@ -68,13 +62,13 @@ internal class FacetGridPlotLayout(
             val heightDiff = tilesAreaSize.y - tilesAreaSizeNew.y
 
             // error 1 px per tile is ok
-            if (abs(widthDiff) <= colCount && abs(heightDiff) <= myRowCount) {
+            if (abs(widthDiff) <= colCount && abs(heightDiff) <= rowCount) {
                 break
             }
 
             val geomWidth = tileInfo.geomWidth() + widthDiff / colCount
             val newPanelWidth = geomWidth + tileInfo.axisThicknessY()
-            val geomHeight = tileInfo.geomHeight() + heightDiff / myRowCount
+            val geomHeight = tileInfo.geomHeight() + heightDiff / rowCount
             val newPanelHeight = geomHeight + tileInfo.axisThicknessX()
 
             // re-layout
@@ -92,14 +86,14 @@ internal class FacetGridPlotLayout(
         val tilesAreaOffset = DoubleVector(paddingLeft, paddingTop)
         val tileInfos = ArrayList<TileLayoutInfo>()
         var offsetY = 0.0
-        for (row in 0 until myRowCount) {
+        for (row in 0 until rowCount) {
             var height = geomHeight
             var geomY = 0.0
             if (row == 0) {
                 height += facetTabs.y
                 geomY = facetTabs.y
             }
-            if (row == myRowCount - 1) {
+            if (row == rowCount - 1) {
                 height += axisThicknessX
             }
 
@@ -135,7 +129,7 @@ internal class FacetGridPlotLayout(
                     TileLayoutBase.clipBounds(geomBounds),
                     tileInfo.layoutInfo.xAxisInfo,
                     tileInfo.layoutInfo.yAxisInfo,
-                    xAxisShown = row == myRowCount - 1, // show X-axis for bottom row tiles
+                    xAxisShown = row == rowCount - 1, // show X-axis for bottom row tiles
                     yAxisShown = col == 0                 // show Y-axis for leftmost tiles
                 )
                     .withOffset(tilesAreaOffset.add(offset))
@@ -163,8 +157,8 @@ internal class FacetGridPlotLayout(
     }
 
     private fun tilesAreaSize(tileInfo: MyTileInfo): DoubleVector {
-        val w = tileInfo.geomWidth() * colCount + myTotalPanelHorizontalPadding + tileInfo.axisThicknessY()
-        val h = tileInfo.geomHeight() * myRowCount + myTotalPanelVerticalPadding + tileInfo.axisThicknessX()
+        val w = tileInfo.geomWidth() * colCount + totalPanelHorizontalPadding + tileInfo.axisThicknessY()
+        val h = tileInfo.geomHeight() * rowCount + totalPanelVerticalPadding + tileInfo.axisThicknessX()
         return DoubleVector(w, h)
     }
 

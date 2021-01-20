@@ -16,7 +16,7 @@ object FacetGridBatik {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "Area plot",
+                "Facet grid",
                 plotSpecList,
                 BatikMapperDemoFactory(),
                 DoubleVector(600.0, 600.0)
