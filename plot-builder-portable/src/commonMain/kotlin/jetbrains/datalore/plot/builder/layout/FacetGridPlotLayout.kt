@@ -42,7 +42,7 @@ internal class FacetGridPlotLayout(
     override fun doLayout(preferredSize: DoubleVector): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (paddingLeft + paddingRight),
-                preferredSize.y - (paddingTop + paddingBottom)
+            preferredSize.y - (paddingTop + paddingBottom)
         )
 
         val facetTabs = when (myFaceting) {
@@ -133,10 +133,10 @@ internal class FacetGridPlotLayout(
                     bounds,
                     geomBounds,
                     TileLayoutBase.clipBounds(geomBounds),
-                        tileInfo.layoutInfo.xAxisInfo,
-                        tileInfo.layoutInfo.yAxisInfo,
-                    row == myRowCount - 1, // show X-axis for bottom row tiles
-                    col == 0                 // show Y-axis for leftmost tiles
+                    tileInfo.layoutInfo.xAxisInfo,
+                    tileInfo.layoutInfo.yAxisInfo,
+                    xAxisShown = row == myRowCount - 1, // show X-axis for bottom row tiles
+                    yAxisShown = col == 0                 // show Y-axis for leftmost tiles
                 )
                     .withOffset(tilesAreaOffset.add(offset))
                     .withFacetLabels(xFacetLabel, yFacetLabel)
