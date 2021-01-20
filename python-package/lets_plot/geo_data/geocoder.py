@@ -1,6 +1,6 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-from collections import namedtuple
+from collections import namedtuple, Iterable
 from typing import Union, List, Optional, Dict
 
 from pandas import Series
@@ -146,8 +146,8 @@ def _ensure_is_parent_list(obj):
     if isinstance(obj, Geocodes):
         return obj.as_list()
 
-    if isinstance(obj, list):
-        return obj
+    if isinstance(obj, Iterable) and not isinstance(obj, str):
+        return [v for v in obj]
 
     return [obj]
 

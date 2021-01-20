@@ -1,5 +1,6 @@
 import enum
 from abc import abstractmethod
+from collections import Iterable
 from typing import List, Optional, Union
 
 from pandas import DataFrame, Series
@@ -434,11 +435,8 @@ def _ensure_is_list(obj) -> Optional[List[str]]:
     if obj is None:
         return None
 
-    if isinstance(obj, list):
-        return obj
-
-    if isinstance(obj, Series):
-        return obj.tolist()
+    if isinstance(obj, Iterable) and not isinstance(obj, str):
+        return [v for v in obj]
 
     return [obj]
 
