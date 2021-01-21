@@ -210,7 +210,14 @@ class SmoothStat constructor(
                     }
                 }
             }
-            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+            Method.LOESS -> {
+                val evaluator = LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+                if (evaluator.canCompute) {
+                    evaluator
+                } else {
+                    return result   // empty stat data
+                }
+            }
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )
