@@ -12,4 +12,6 @@ interface Theme {
     fun axisY(): AxisTheme
 
     fun legend(): LegendTheme
+
+    fun facets(): FacetsTheme
 }

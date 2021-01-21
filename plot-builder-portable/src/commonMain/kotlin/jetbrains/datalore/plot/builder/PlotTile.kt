@@ -28,6 +28,7 @@ import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLoca
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
@@ -71,7 +72,7 @@ internal class PlotTile(
     */
 
         val geomBounds = myLayoutInfo.geomBounds
-        addFacetLabels(geomBounds)
+        addFacetLabels(geomBounds, myTheme.facets())
 
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer == null && myShowAxis) {
@@ -139,15 +140,28 @@ internal class PlotTile(
         }
     }
 
-    private fun addFacetLabels(geomBounds: DoubleRectangle) {
+    private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
         // facet X label (on top of geom area)
         if (myLayoutInfo.facetXLabel != null) {
-            val lab = TextLabel(myLayoutInfo.facetXLabel)
             val w = geomBounds.width
             val h = FACET_LABEL_HEIGHT
+
+            val hPad = 0
+            val vPad = 5
+            val rect = SvgRectElement(
+                DoubleRectangle(
+                    geomBounds.left + hPad, geomBounds.top - h + vPad,
+                    w - hPad * 2, h - vPad * 2
+                )
+            )
+            rect.strokeWidth().set(0.0)
+            rect.fillColor().set(theme.background())
+            add(rect)
+
             val x = geomBounds.left + w / 2
             val y = geomBounds.top - h / 2
 
+            val lab = TextLabel(myLayoutInfo.facetXLabel)
             lab.moveTo(x, y)
             lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
             lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
@@ -156,12 +170,25 @@ internal class PlotTile(
 
         // facet Y label (to the right from geom area)
         if (myLayoutInfo.facetYLabel != null) {
-            val lab = TextLabel(myLayoutInfo.facetYLabel)
             val w = FACET_LABEL_HEIGHT
             val h = geomBounds.height
+
+            val hPad = 5
+            val vPad = 0
+            val rect = SvgRectElement(
+                DoubleRectangle(
+                    geomBounds.right + hPad, geomBounds.top - vPad,
+                    w - hPad * 2, h - vPad * 2
+                )
+            )
+            rect.strokeWidth().set(0.0)
+            rect.fillColor().set(theme.background())
+            add(rect)
+
             val x = geomBounds.right + w / 2
             val y = geomBounds.top + h / 2
 
+            val lab = TextLabel(myLayoutInfo.facetYLabel)
             lab.moveTo(x, y)
             lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
             lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)

@@ -15,26 +15,31 @@ class ThemeConfig(options: Map<String, Any>) {
     val theme: Theme = MyTheme(options, DEF_OPTIONS)
 
     private class MyTheme internal constructor(options: Map<String, Any>, defOptions: Map<String, Any>) : Theme {
-        private val myAxisXTheme: AxisTheme
-        private val myAxisYTheme: AxisTheme
-        private val myLegendTheme: LegendTheme
+        private val axisXTheme: AxisTheme
+        private val axisYTheme: AxisTheme
+        private val legendTheme: LegendTheme
 
         init {
-            myAxisXTheme = AxisThemeConfig.X(options, defOptions)
-            myAxisYTheme = AxisThemeConfig.Y(options, defOptions)
-            myLegendTheme = LegendThemeConfig(options, defOptions)
+            axisXTheme = AxisThemeConfig.X(options, defOptions)
+            axisYTheme = AxisThemeConfig.Y(options, defOptions)
+            legendTheme = LegendThemeConfig(options, defOptions)
         }
 
         override fun axisX(): AxisTheme {
-            return myAxisXTheme
+            return axisXTheme
         }
 
         override fun axisY(): AxisTheme {
-            return myAxisYTheme
+            return axisYTheme
         }
 
         override fun legend(): LegendTheme {
-            return myLegendTheme
+            return legendTheme
+        }
+
+        override fun facets(): FacetsTheme {
+            // ToDo: configurable
+            return DEF.facets()
         }
     }
 

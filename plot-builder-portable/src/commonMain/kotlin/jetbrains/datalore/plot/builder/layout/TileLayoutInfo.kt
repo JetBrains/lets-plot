@@ -73,7 +73,7 @@ class TileLayoutInfo private constructor(
         return geomBounds.add(offset)
     }
 
-    fun withFacetLabels(xLabel: String, yLabel: String): TileLayoutInfo {
+    fun withFacetLabels(xLabel: String?, yLabel: String?): TileLayoutInfo {
         return TileLayoutInfo(
             this.plotOrigin,
             this.bounds,

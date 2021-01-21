@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 
 
 class DefaultTheme : Theme {
@@ -22,11 +23,14 @@ class DefaultTheme : Theme {
         return LEGEND_THEME
     }
 
+    override fun facets(): FacetsTheme {
+        return FACETS_THEME
+    }
+
     companion object {
         private val AXIS_THEME = DefaultAxisTheme()
 
-        private val LEGEND_THEME: LegendTheme = object :
-            LegendTheme {
+        private val LEGEND_THEME: LegendTheme = object : LegendTheme {
             override fun keySize(): Double {
                 return 23.0
             }
@@ -53,6 +57,12 @@ class DefaultTheme : Theme {
 
             override fun backgroundFill(): Color {
                 return Color.WHITE
+            }
+        }
+
+        private val FACETS_THEME: FacetsTheme = object : FacetsTheme {
+            override fun background(): Color {
+                return Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
             }
         }
     }

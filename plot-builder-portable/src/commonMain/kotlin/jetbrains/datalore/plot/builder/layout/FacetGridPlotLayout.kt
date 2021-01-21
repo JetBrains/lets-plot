@@ -99,15 +99,13 @@ internal class FacetGridPlotLayout(
 
             var offsetX = 0.0
             for (col in 0 until colCount) {
-                val xFacetLabel = if (row == 0 && colLabels.size > col)
+                val xFacetLabel = if (row == 0 && colLabels.size > col) {
                     colLabels[col]
-                else
-                    ""
+                } else null
 
-                val yFacetLabel = if (col == colCount - 1 && rowLabels.size > row)
+                val yFacetLabel = if (col == colCount - 1 && rowLabels.size > row) {
                     rowLabels[row]
-                else
-                    ""
+                } else null
 
                 var width = geomWidth
                 var geomX = 0.0
