@@ -318,25 +318,26 @@ class NamesGeocoder(Geocoder):
               closest_to: Optional[Union[Geocodes, ShapelyPointType]] = None
               ) -> 'NamesGeocoder':
         """
-        If name is not exist - error will be generated.
-        If name is exist in the Geocoder - specify extra parameters for geocoding.
+        Allows to resolve ambiguity by setting up extra parameters. Combination of name, county, state, country
+        identifies a row with an ambiguity.
+        If row with given names doesn't exist error will be generated.
 
 
         Parameters
         ----------
         name : string
-            Name in Geocoder that needs better qualificationfrom request Data can be filtered by full names at any level (only exact matching).
+            Name in Geocoder that needs better qualification.
         county : [string | None]
-            When Geocoder built with parents this field is used to identify a row for the name
+            When Geocoder built with counties this field is used to identify a row for the name.
         state : [string | None]
-            When Geocoder built with parents this field is used to identify a row for the name
+            When Geocoder built with states this field is used to identify a row for the name.
         country : [string | None]
-            When Geocoder built with parents this field is used to identify a row for the name
+            When Geocoder built with countries this field is used to identify a row for the name.
         scope : [string | Geocoder | shapely.Polygon | None]
-            Resolve ambiguity by setting scope as parent. If parent country is set then error will be shown.
-            If type is string - scope will be geocoded and used as parent.
-            If type is Geocoder  - scope will be used as parent.
-            If type is shapely.Polygon - bbox of the polygon in which geoobject centroid should be located.
+            Limits area of geocoding. If parent country is set then error will be generated.
+            If type is a string - geoobject should have geocoded scope in parents.
+            If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
+            If type is a shapely.Polygon - geoobject centroid should fall into bbox of the polygon.
         closest_to: [Geocoder | shapely.geometry.Point | None]
             Resolve ambiguity by taking closest geoobject.
 
@@ -520,7 +521,8 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion]
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
-    Returns regions object.
+    Create a Geocoder. Allows to refine ambiguous request with where method, scope that limits area of geocoding
+    or with parents.
 
     Parameters
     ----------
@@ -536,10 +538,10 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
         Parent states. Should have same size as names. Can contain strings or Geocoder objects.
     counties : [array | None]
         Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
-    scope : [array | string | Geocoder | None]
-        Limits area of geocoding. Applyed to a highest admin level of parents that are set or to names, if no parents given.
-        If all parents are set (including countries) then the scope parameter is ignored.
-        If scope is an array then geocoding will try to search objects in all scopes.
+    scope : [string | Geocoder | None]
+        Limits area of geocoding. If parent country is set then error will be generated.
+        If type is a string - geoobject should have geocoded scope in parents.
+        If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
     """
     return NamesGeocoder(level, names) \
         .scope(scope) \
@@ -551,7 +553,7 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
 def geocode_cities(names=None) -> NamesGeocoder:
     """
     Create a Geocoder object for cities. Allows to refine ambiguous request with
-    where method.
+    where method, with a scope that limits area of geocoding or with parents.
 
     geocode_cities(names)
 
@@ -579,7 +581,7 @@ def geocode_cities(names=None) -> NamesGeocoder:
 def geocode_counties(names=None) -> NamesGeocoder:
     """
     Create a Geocoder object for counties. Allows to refine ambiguous request with
-    where method.
+    where method, with a scope that limits area of geocoding or with parents.
 
     geocode_counties(names)
 
@@ -607,7 +609,7 @@ def geocode_counties(names=None) -> NamesGeocoder:
 def geocode_states(names=None) -> NamesGeocoder:
     """
     Create a Geocoder object for states. Allows to refine ambiguous request with
-    where method.
+    where method, with a scope that limits area of geocoding or with parents.
 
     geocode_states(names)
 
