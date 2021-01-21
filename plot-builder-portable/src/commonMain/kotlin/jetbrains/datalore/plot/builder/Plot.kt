@@ -256,7 +256,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // subtract title size
-        var withoutTitle = if (hasTitle()) {
+        val withoutTitle = if (hasTitle()) {
             val titleSize = PlotLayoutUtil.titleDimensions(title)
             DoubleRectangle(
                 entirePlot.origin.add(DoubleVector(0.0, titleSize.y)),
@@ -264,18 +264,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             )
         } else {
             entirePlot
-        }
-
-        if (hasTitle()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(title)
-            val titleLabel = TextLabel(title)
-            titleLabel.addClassName(Style.PLOT_TITLE)
-            titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
-            titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-
-            val titleBounds = DoubleRectangle(entirePlot.origin, titleSize)
-            titleLabel.moveTo(DoubleVector(titleBounds.left, titleBounds.center.y))
-            add(titleLabel)
         }
 
         // adjust for legend boxes
@@ -373,8 +361,29 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             add(rect)
         }
 
-        // add axis titles
+        // add plot title
+        if (hasTitle()) {
+            val titleLabel = TextLabel(title)
+            titleLabel.addClassName(Style.PLOT_TITLE)
+            titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
+            titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
 
+            val titleSize = PlotLayoutUtil.titleDimensions(title)
+            val titleBounds = DoubleRectangle(geomAreaBounds.origin.x, 0.0, titleSize.x, titleSize.y)
+            titleLabel.moveTo(DoubleVector(titleBounds.left, titleBounds.center.y))
+            add(titleLabel)
+
+            @Suppress("ConstantConditionIf")
+            if (DEBUG_DRAWING) {
+                val rect = SvgRectElement(titleBounds)
+                rect.strokeColor().set(Color.BLUE)
+                rect.strokeWidth().set(1.0)
+                rect.fillOpacity().set(0.0)
+                add(rect)
+            }
+        }
+
+        // add axis titles
         if (isAxisEnabled) {
             if (hasAxisTitleLeft()) {
                 createAxisTitle(
