@@ -11,89 +11,85 @@ Formatting provides the ability to do complex variable substitutions and value f
 ------
 <a id="number-format"></a>
 ## Number format
-Provides a wide variety of formats for numbers.
 
-Class `NumberFormat` implements number format: `NumberFormat(spec: String)`, where `spec` is a string format specifier.
-
-Function `apply(num: Number): String`, where `num` is a number for formatting, returns the formatted number.
-
-The general form of a specifier is:
+The numeric format strings are used to format common numeric types. 
+The general form of a format specifier is:
 
 ```
 [​[fill]align][sign][symbol][0][width][,][.precision][type]
 ```
 
-*`fill`* - can be any character, defaults to a space if omitted. The presence of a fill character is signaled by the `*align*` character following it,
+* *`fill`* - can be any character, defaults to a space if omitted. The presence of a fill character is signaled by the `*align*` character following it,
 which must be one of the alignment options.
 
-*`align`* - the various alignment options is as follows:
+* *`align`* - the various alignment options is as follows:
 
-* `>` - forces the field to be right-aligned within the available space (default behavior);
-* `<` - forces the field to be left-aligned within the available space;
-* `^` - forces the field to be centered within the available space;
-* `=` - like `>`, but with any sign and symbol to the left of any padding;
+    * `>` - forces the field to be right-aligned within the available space (default behavior);
+    * `<` - forces the field to be left-aligned within the available space;
+    * `^` - forces the field to be centered within the available space;
+    * `=` - like `>`, but with any sign and symbol to the left of any padding.
 
-*`sign`* can be:
+* *`sign`* can be:
 
-* `-` - nothing for zero or positive and a minus sign for negative (default behavior);
-* `+` - a plus sign for zero or positive and a minus sign for negative;
-* ` ` (space) - a space for zero or positive and a minus sign for negative.
+    * `-` - nothing for zero or positive and a minus sign for negative (default behavior);
+    * `+` - a plus sign for zero or positive and a minus sign for negative;
+    * ` ` (space) - a space for zero or positive and a minus sign for negative.
 
-*`symbol`* can be:
+* *`symbol`* can be:
 
-* `$` - apply currency symbols per the locale definition;
-* `#` - for binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
+    * `$` - apply currency symbols per the locale definition;
+    * `#` - for binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
 
-*`zero`* (`0`) option enables zero-padding; this implicitly sets *fill* to `0` and *align* to `=`.
+* *`zero`* (`0`) option enables zero-padding; this implicitly sets *fill* to `0` and *align* to `=`.
 
-*`width`* defines the minimum field width; if not specified, then the width will be determined by the content.
+* *`width`* defines the minimum field width; if not specified, then the width will be determined by the content.
 
-*`comma`* (`,`) option enables the use of a group separator, such as a comma for thousands.
+* *`comma`* (`,`) option enables the use of a group separator, such as a comma for thousands.
 
-*`precision`* depending on the *`type`*, the *`precision`* either indicates the number of digits that follow the decimal point (types `f` and `%`), or the number of significant digits (types` ​`, `e`, `g`, `r`, `s` and `p`).
+* *`precision`* depending on the *`type`*, the *`precision`* either indicates the number of digits that follow the decimal point (types `f` and `%`), or the number of significant digits (types` ​`, `e`, `g`, `r`, `s` and `p`).
 If the precision is not specified, it defaults to 6 for all types except ​ (none), which defaults to 12.
 Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`).
 
-*`type`* determines how the data should be presented:
+* *`type`* determines how the data should be presented:
 
-* `e` - exponent notation;
-* `f` - fixed point notation;
-* `g` - either decimal or exponent notation, rounded to significant digits;
-* `s` - decimal notation with an SI prefix, rounded to significant digits;
-* `%` - multiply by 100, and then decimal notation with a percent sign;
-* `b` - binary notation, rounded to integer;
-* `o` - octal notation, rounded to integer;
-* `d` - decimal notation, rounded to integer;
-* `x` - hexadecimal notation, using lower-case letters, rounded to integer;
-* `X` - hexadecimal notation, using upper-case letters, rounded to integer;
-* `c` - simple toString.
+    * `e` - exponent notation;
+    * `f` - fixed point notation;
+    * `g` - either decimal or exponent notation, rounded to significant digits;
+    * `s` - decimal notation with an SI prefix, rounded to significant digits;
+    * `%` - multiply by 100, and then decimal notation with a percent sign;
+    * `b` - binary notation, rounded to integer;
+    * `o` - octal notation, rounded to integer;
+    * `d` - decimal notation, rounded to integer;
+    * `x` - hexadecimal notation, using lower-case letters, rounded to integer;
+    * `X` - hexadecimal notation, using upper-case letters, rounded to integer;
+    * `c` - simple toString.
 
-The following SI prefixes are supported for `s` type:
+    The following SI prefixes are supported for `s` type:
 
-* `y` - yocto, 10⁻²⁴
-* `z` - zepto, 10⁻²¹
-* `a` - atto, 10⁻¹⁸
-* `f` - femto, 10⁻¹⁵
-* `p` - pico, 10⁻¹²
-* `n` - nano, 10⁻⁹
-* `µ` - micro, 10⁻⁶
-* `m` - milli, 10⁻³
-* `​` (none) - 10⁰
-* `k` - kilo, 10³
-* `M` - mega, 10⁶
-* `G` - giga, 10⁹
-* `T` - tera, 10¹²
-* `P` - peta, 10¹⁵
-* `E` - exa, 10¹⁸
-* `Z` - zetta, 10²¹
-* `Y` - yotta, 10²⁴
+    * `y` - yocto, 10⁻²⁴
+    * `z` - zepto, 10⁻²¹
+    * `a` - atto, 10⁻¹⁸
+    * `f` - femto, 10⁻¹⁵
+    * `p` - pico, 10⁻¹²
+    * `n` - nano, 10⁻⁹
+    * `µ` - micro, 10⁻⁶
+    * `m` - milli, 10⁻³
+    * `​` (none) - 10⁰
+    * `k` - kilo, 10³
+    * `M` - mega, 10⁶
+    * `G` - giga, 10⁹
+    * `T` - tera, 10¹²
+    * `P` - peta, 10¹⁵
+    * `E` - exa, 10¹⁸
+    * `Z` - zetta, 10²¹
+    * `Y` - yotta, 10²⁴
 
 
 
 <a id="examples-number-format"></a>
 ### Examples
 
-Apply NumberFormat to `number = 42`:
+Let's format the number `42`:
 ```
 08d       -->  "00000042"
 _<8d      -->  "______42"
@@ -114,11 +110,12 @@ s         -->  "42.0000"
 ```
 Some other examples:
 ```
-NumberFormat(".1f").apply(0.42)            -->  "0.4"
-NumberFormat(".3g").apply(0.4449)          -->  "0.445"
-NumberFormat(",.12g").apply(-4200000)      -->  "-4,200,000" 
-NumberFormat("10,.2f").apply(1234567.449)  -->  "1,234,567.45"
-NumberFormat("+$,.2f").apply(1e4)          -->  "+$10,000.00"
+format   number        result
+.1f      0.42          "0.4"
+.3g      0.4449        "0.445"
+,.12g    -4200000      "-4,200,000" 
+0,.2f    1234567.449   "1,234,567.45"
++$,.2f   1e4           "+$10,000.00"
 ```
 
 <a id="string-template"></a>
@@ -136,20 +133,6 @@ See: [Tooltip Customization in Lets-Plot](https://github.com/JetBrains/lets-plot
 <a id="datetime"></a>
 ## Date and time format
 Provides formats for date and time values.
-
-Class `DateTime` implements the datetime format:
-
-`DateTime(date: Date, time: Time)`
-
-* `Date` has attributes: `year`, `month` and `day`;
-* `Time` has attributes: `hours`, `minutes`, `seconds` and `milliseconds`.
-
-Class `Format` implements a date/time formatting: `Format(spec: String)`, where `spec` - string format specifier.
-
-Functions to get formatted value:
-`apply(dateTime: DateTime): String`, 
-`apply(date: Date): String`,
-`apply(time: Time): String`.
 
 The list of supported directives to format date/time values:
 * `%a` - weekday as an abbreviated name (Sun, Mon, …, Sat);
@@ -174,8 +157,7 @@ The list of supported directives to format date/time values:
 <a id="examples-datetime"></a>
 ### Examples
 
-Apply format to `DateTime(date, time)`, 
-where `date=Date(6, Month.AUGUST, 2019)`, `time=Time(4, 46, 35)`
+Let's apply the format string to the date `Aug 6, 2019` and the time `4:46:35`:
 ```
 %a  -->  "Tue"
 %A  -->  "Tuesday"

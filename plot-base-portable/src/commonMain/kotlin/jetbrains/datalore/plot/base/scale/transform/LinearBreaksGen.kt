@@ -10,11 +10,13 @@ import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.LinearBreaksHelper
 
-class LinearBreaksGen : BreaksGenerator {
+class LinearBreaksGen(
+    private val myLabelFormatter: ((Any) -> String)? = null
+) : BreaksGenerator {
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val helper = breaksHelper(domainAfterTransform, targetCount)
         val ticks = helper.breaks
-        val labelFormatter = helper.labelFormatter
+        val labelFormatter = myLabelFormatter ?: helper.labelFormatter
         val labels = ArrayList<String>()
         for (tick in ticks) {
             labels.add(labelFormatter(tick))
@@ -26,15 +28,14 @@ class LinearBreaksGen : BreaksGenerator {
         domainAfterTransform: ClosedRange<Double>,
         targetCount: Int
     ): LinearBreaksHelper {
-        val helper = LinearBreaksHelper(
+        return LinearBreaksHelper(
             domainAfterTransform.lowerEnd,
             domainAfterTransform.upperEnd,
             targetCount
         )
-        return helper
     }
 
     override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return breaksHelper(domainAfterTransform, targetCount).labelFormatter
+        return myLabelFormatter ?: breaksHelper(domainAfterTransform, targetCount).labelFormatter
     }
 }

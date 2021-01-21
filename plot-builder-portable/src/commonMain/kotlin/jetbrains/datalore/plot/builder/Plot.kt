@@ -236,50 +236,46 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     private fun buildPlotComponents() {
         val preferredSize = myPreferredSize.get()
-
-        // compute geom bounds
-        var entirePlot = DoubleRectangle(DoubleVector.ZERO, preferredSize)
+        val overallRect = DoubleRectangle(DoubleVector.ZERO, preferredSize)
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
-            val rect = SvgRectElement(entirePlot)
+            val rect = SvgRectElement(overallRect)
             rect.strokeColor().set(Color.MAGENTA)
             rect.strokeWidth().set(1.0)
             rect.fillOpacity().set(0.0)
-            onMouseMove(rect, "MAGENTA: preferred size: $entirePlot")
+            onMouseMove(rect, "MAGENTA: preferred size: $overallRect")
             add(rect)
         }
 
-        if (hasLiveMap()) {
-            entirePlot = liveMapBounds(entirePlot.origin, entirePlot.dimension)
+        // compute geom bounds
+        val entirePlot = if (hasLiveMap()) {
+            liveMapBounds(overallRect)
+        } else {
+            overallRect
         }
 
         // subtract title size
-        var withoutTitle = entirePlot
-        if (hasTitle()) {
+        val withoutTitle = if (hasTitle()) {
             val titleSize = PlotLayoutUtil.titleDimensions(title)
-            val origin = entirePlot.origin.add(DoubleVector(0.0, titleSize.y))
-            withoutTitle = DoubleRectangle(origin, entirePlot.dimension.subtract(DoubleVector(0.0, titleSize.y)))
-
-            val titleLabel = TextLabel(title)
-            titleLabel.addClassName(Style.PLOT_TITLE)
-            titleLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
-            titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-
-            val titleBounds = PlotLayoutUtil.titleBounds(titleSize, preferredSize)
-            titleLabel.moveTo(titleBounds.center)
-            add(titleLabel)
+            DoubleRectangle(
+                entirePlot.origin.add(DoubleVector(0.0, titleSize.y)),
+                entirePlot.dimension.subtract(DoubleVector(0.0, titleSize.y))
+            )
+        } else {
+            entirePlot
         }
 
         // adjust for legend boxes
         var boxesLayoutResult: LegendBoxesLayout.Result? = null
         val legendTheme = theme.legend()
-        var withoutTitleAndLegends = withoutTitle
-        if (legendTheme.position().isFixed) {
+        val withoutTitleAndLegends = if (legendTheme.position().isFixed) {
             val legendBoxesLayout =
                 LegendBoxesLayout(withoutTitle, legendTheme)
             boxesLayoutResult = legendBoxesLayout.doLayout(legendBoxInfos)
-            withoutTitleAndLegends = boxesLayoutResult.plotInnerBoundsWithoutLegendBoxes
+            boxesLayoutResult.plotInnerBoundsWithoutLegendBoxes
+        } else {
+            withoutTitle
         }
 
         @Suppress("ConstantConditionIf")
@@ -329,8 +325,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         val geomAreaBounds = PlotLayoutUtil.absoluteGeomBounds(geomAndAxis.origin, plotInfo)
         if (legendTheme.position().isOverlay) {
             // put 'overlay' in 'geom' bounds
-            val legendBoxesLayout =
-                LegendBoxesLayout(geomAreaBounds, legendTheme)
+            val legendBoxesLayout = LegendBoxesLayout(geomAreaBounds, legendTheme)
             boxesLayoutResult = legendBoxesLayout.doLayout(legendBoxInfos)
         }
 
@@ -346,14 +341,15 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 //            println("clip bounds: " + tileInfo.clipBounds)
             val tile = createTile(tilesOrigin, tileInfo, tileLayers(i))
 
-            tile.moveTo(tilesOrigin.add(tileInfo.plotOffset))
+            val plotOriginAbsolute = tilesOrigin.add(tileInfo.plotOrigin)
+            tile.moveTo(plotOriginAbsolute)
 
             add(tile)
 
             tile.liveMapFigure?.let(myLiveMapFigures::add)
 
-            val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
-            myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators)
+            val geomBoundsAbsolute = tileInfo.geomBounds.add(plotOriginAbsolute)
+            myTooltipHelper.addTileInfo(geomBoundsAbsolute, tile.targetLocators)
         }
 
         @Suppress("ConstantConditionIf")
@@ -365,8 +361,29 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             add(rect)
         }
 
-        // add axis titles
+        // add plot title
+        if (hasTitle()) {
+            val titleLabel = TextLabel(title)
+            titleLabel.addClassName(Style.PLOT_TITLE)
+            titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
+            titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
 
+            val titleSize = PlotLayoutUtil.titleDimensions(title)
+            val titleBounds = DoubleRectangle(geomAreaBounds.origin.x, 0.0, titleSize.x, titleSize.y)
+            titleLabel.moveTo(DoubleVector(titleBounds.left, titleBounds.center.y))
+            add(titleLabel)
+
+            @Suppress("ConstantConditionIf")
+            if (DEBUG_DRAWING) {
+                val rect = SvgRectElement(titleBounds)
+                rect.strokeColor().set(Color.BLUE)
+                rect.strokeWidth().set(1.0)
+                rect.fillOpacity().set(0.0)
+                add(rect)
+            }
+        }
+
+        // add axis titles
         if (isAxisEnabled) {
             if (hasAxisTitleLeft()) {
                 createAxisTitle(

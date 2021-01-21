@@ -13,11 +13,11 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 open class FunTransform(
         private val myFun: (Double?) -> Double?,
-        private val myInverse: (Double?) -> Double?) :
-        Transform, BreaksGenerator {
+        private val myInverse: (Double?) -> Double?,
+        labelFormatter: ((Any) -> String)? = null
+) : Transform, BreaksGenerator {
 
-
-    private val myLinearBreaksGen = LinearBreaksGen()
+    private val myLinearBreaksGen = LinearBreaksGen(labelFormatter)
 
     override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
         val domainBeforeTransform = MapperUtil.map(domainAfterTransform) { myInverse(it) }

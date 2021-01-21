@@ -38,12 +38,7 @@ object ScaleUtil {
             return result
         }
 
-        val formatter: (Any) -> String = if (scale is ContinuousScale) {
-            { v: Any -> scale.formatter(v as Double) }
-        } else {
-            { v: Any -> v.toString() }
-        }
-
+        val formatter: (Any) -> String = scale.labelFormatter ?: { v: Any -> v.toString() }
         // generate labels
         return breaks.map { formatter(it) }
     }
@@ -155,8 +150,10 @@ object ScaleUtil {
         }
     }
 
-    fun getBreaksGenerator(scale: Scale<*>) = when {
-        scale.hasBreaksGenerator() -> scale.breaksGenerator
-        else -> LinearBreaksGen()
+    fun getBreaksGenerator(scale: Scale<*>): BreaksGenerator {
+        return when {
+            scale.hasBreaksGenerator() -> scale.breaksGenerator
+            else -> LinearBreaksGen(scale.labelFormatter)
+        }
     }
 }
