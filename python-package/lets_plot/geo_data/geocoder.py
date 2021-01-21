@@ -573,7 +573,7 @@ def geocode_cities(names=None) -> NamesGeocoder:
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_cities(names=['moscow', 'york']).where('york', regions_state('New York')).get_geocodes()
+    >>> r = geocode_cities(['moscow', 'york']).where('york', scope=geocode_states('New York')).get_geocodes()
     """
     return NamesGeocoder('city', names)
 
@@ -601,7 +601,7 @@ def geocode_counties(names=None) -> NamesGeocoder:
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_counties(names='suffolk').get_geocodes()
+    >>> r = geocode_counties('barnstable').get_geocodes()
     """
     return NamesGeocoder('county', names)
 
@@ -629,7 +629,7 @@ def geocode_states(names=None) -> NamesGeocoder:
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_states(names='texas').get_geocodes()
+    >>> r = geocode_states('texas').get_geocodes()
     """
     return NamesGeocoder('state', names)
 
@@ -657,7 +657,7 @@ def geocode_countries(names=None) -> NamesGeocoder:
     Examples
     ---------
     >>> from lets_plot.geo_data import *
-    >>> r = geocode_countries(names='USA').get_geocodes()
+    >>> r = geocode_countries('USA').get_geocodes()
     """
     return NamesGeocoder('country', names)
 
