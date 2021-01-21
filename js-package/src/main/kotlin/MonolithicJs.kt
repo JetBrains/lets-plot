@@ -33,6 +33,8 @@ import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
+import kotlinx.browser.document
+import kotlinx.dom.createElement
 import mu.KotlinLogging
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -40,8 +42,6 @@ import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
-import kotlinx.browser.document
-import kotlinx.dom.createElement
 
 private val LOG = KotlinLogging.logger {}
 
@@ -86,7 +86,8 @@ private fun buildPlotFromProcessedSpecsIntern(
     parentElement: HTMLElement
 ) {
     val plotSize = if (width > 0 && height > 0) DoubleVector(width, height) else null
-    val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize)
+    val maxWidth = parentElement.clientWidth.toDouble()
+    val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize, maxWidth)
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
         showError(errorMessage, parentElement)

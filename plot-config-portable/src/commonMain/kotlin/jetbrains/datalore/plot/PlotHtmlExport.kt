@@ -85,7 +85,7 @@ object PlotHtmlExport {
                     val assembler = MonolithicCommon.createPlotAssembler(plotSpec) {
                         // ignore messages
                     }
-                    PlotSizeHelper.singlePlotSize(plotSpec, plotSize, assembler.facets, assembler.containsLiveMap)
+                    PlotSizeHelper.singlePlotSize(plotSpec, plotSize, null, assembler.facets, assembler.containsLiveMap)
                 }
                 PlotConfig.isGGBunchSpec(plotSpec) -> {
                     PlotSizeHelper.plotBunchSize(plotSpec)

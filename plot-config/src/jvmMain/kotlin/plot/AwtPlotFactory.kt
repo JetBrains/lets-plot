@@ -41,13 +41,14 @@ abstract class AwtPlotFactory(
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
             @Suppress("NAME_SHADOWING")
             val plotSpec = processSpecs(plotSpec, frontendOnly = false)
             buildPlotFromProcessedSpecs(
-                plotSpec, plotSize, computationMessagesHandler
+                plotSpec, plotSize, plotMaxWidth, computationMessagesHandler
             )
         } catch (e: RuntimeException) {
             handleException(e)
@@ -58,10 +59,15 @@ abstract class AwtPlotFactory(
     fun buildPlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
-            val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize)
+            val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
+                plotSpec,
+                plotSize,
+                plotMaxWidth
+            )
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
                 return createErrorLabel(errorMessage)

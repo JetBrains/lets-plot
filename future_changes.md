@@ -41,3 +41,4 @@
  - Serialize NaN and other special values as None (to fix [#282](https://github.com/JetBrains/lets-plot/issues/282))
  - Align title to the left of the plot geom area [[#289](https://github.com/JetBrains/lets-plot/issues/289)].
  - LOESS smoothing fails on small (<3) number points. 
+ - Facet grid truncated in jupyter [[#28](https://github.com/JetBrains/lets-plot-kotlin/issues/28)]
