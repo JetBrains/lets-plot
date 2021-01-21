@@ -177,6 +177,13 @@ def test_error_with_scopeand_level_detection():
     )
 
 
+def test_city_with_ambiguous_county_and_scope():
+    assert_error(
+        "Region is not found: worcester county",
+        lambda: geodata.geocode_cities('worcester').counties('worcester county').scope('usa').get_geocodes()
+    )
+
+
 def test_level_detection():
     geodata.geocode(names='boston', countries='usa').get_geocodes()
 
@@ -253,13 +260,22 @@ def test_none_parents_at_diff_levels():
 
 
 def test_where_with_parent():
-    washington_county=geodata.geocode_counties('Washington county').states('iowa').countries('usa')
+    washington_county=geodata.geocode_counties('Washington county').states('Vermont').countries('usa')
     geodata.geocode_cities(['worcester', 'worcester']) \
         .countries(['usa', 'Great Britain']) \
         .where('worcester', country='usa', scope=washington_county) \
         .get_geocodes()
 
 
-def test_city_with_ambiguous_county_and_scope():
-    geodata.geocode_cities('worcester').counties('worcester county').scope('usa').get_geocodes()
+def test_counties():
+    counties = []
+    states = []
 
+    for state in geodata.geocode_states("us-48").get_geocodes()['found name']:
+        for county in geodata.geocode_counties().states(state).scope('usa').get_geocodes()['found name']:
+            states.append(state)
+            counties.append(county)
+
+    geocoded_counties = geodata.geocode_counties(counties).states(states).scope('usa').get_boundaries('country').request
+
+    assert counties == geocoded_counties.tolist()

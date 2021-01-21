@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 import urllib.request
+import gzip
 from urllib.error import HTTPError
 
 from .json_request import RequestFormatter
@@ -22,16 +23,20 @@ class GeocodingService:
 
             request = urllib.request.Request(
                 url=get_global_str(GEOCODING_PROVIDER_URL) + '/map_data/geocoding',
-                headers={'Content-Type': 'application/json'},
+                headers={'Content-Type': 'application/json', 'Accept-Encoding': 'gzip'},
                 method='POST',
                 data=bytearray(request_str, 'utf-8')
             )
             response = urllib.request.urlopen(request)
-            response_str = response.read().decode('utf-8')
+            if response.info().get('Content-Encoding') == 'gzip':
+                content = response.read()
+                response_str = gzip.decompress(content).decode('utf-8')
+            else:
+                response_str = response.read().decode('utf-8')
+
             response_json = json.loads(response_str)
             return ResponseParser().parse(response_json)
 
         except HTTPError as e:
             raise ValueError(
                 'Geocoding server connection failure: {} {} ({})'.format(e.code, e.msg, e.filename)) from None
-
