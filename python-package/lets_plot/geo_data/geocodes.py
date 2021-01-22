@@ -122,7 +122,7 @@ class Geocodes(CanToDataFrame):
         try:
             import geopandas
         except:
-            raise ValueError('Module \'geopandas\'is required for using regions') from None
+            raise ValueError('Module \'geopandas\'is required for geocoding') from None
 
         self._level_kind: LevelKind = level_kind
         self._answers: List[Answer] = answers
