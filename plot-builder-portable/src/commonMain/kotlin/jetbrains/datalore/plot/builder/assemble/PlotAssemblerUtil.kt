@@ -221,12 +221,12 @@ internal object PlotAssemblerUtil {
         val yLevels = plotFacets.yLevels
 
         val xLabs = ArrayList<String>()
-        for (level in xLevels!!) {
+        for (level in xLevels) {
             xLabs.add(level.toString())
         }
 
         val yLabs = ArrayList<String>()
-        for (level in yLevels!!) {
+        for (level in yLevels) {
             yLabs.add(level.toString())
         }
 

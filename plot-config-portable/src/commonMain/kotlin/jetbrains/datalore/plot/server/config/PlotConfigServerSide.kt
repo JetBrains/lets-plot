@@ -87,14 +87,10 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             // replace layer data with data after stat
             for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
                 // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
-                //if (layerConfig.getStat() != Stats.IDENTITY || samplingInfoByLayerIndex.containsKey(layerIndex)) {
                 if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
                     val layerStatData = dataByLayerAfterStat[layerIndex]
                     layerConfig.replaceOwnData(layerStatData)
                 }
-                //if (samplingInfoByLayerIndex.containsKey(layerIndex)) {
-                //  PlotConfig.addComputationMessages(this, PlotSampling.generateSamplingOccurredMessage(layerConfig));
-                //}
             }
         }
 

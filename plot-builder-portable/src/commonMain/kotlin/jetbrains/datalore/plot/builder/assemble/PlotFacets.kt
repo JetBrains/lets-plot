@@ -8,13 +8,41 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.max
 
-class PlotFacets(val xVar: String?, val yVar: String?, val xLevels: List<*>?, val yLevels: List<*>?) {
+class PlotFacets(
+    val xVar: String?,
+    val yVar: String?,
+    val xLevels: List<*>,
+    val yLevels: List<*>
+) {
 
-    val isDefined: Boolean
-        get() = xVar != null || yVar != null
+    val isDefined: Boolean = xVar != null || yVar != null
+    val numTiles = max(1, xLevels.size) * max(1, yLevels.size)
 
-    fun dataSubset(data: DataFrame, xLevel: Any?, yLevel: Any?): DataFrame {
+    /**
+     * @return List of Dataframes, one Dataframe per tile.
+     *          Tiles are enumerated by rows, i.e.:
+     *          the index is computed like: row * nCols + col
+     */
+    fun dataByTile(data: DataFrame): List<DataFrame> {
+        require(isDefined) { "dataByTile() called on Undefined plot facets." }
+
+        val colLevels = if (xLevels.isEmpty()) listOf(null) else xLevels
+        val rowLevels = if (yLevels.isEmpty()) listOf(null) else yLevels
+
+        // Enumerate tiles by-row and create a Dataframe for each tile.
+        val dataByTile: MutableList<DataFrame> = ArrayList()
+        for (rowLevel in rowLevels) {
+            for (colLevel in colLevels) {
+                val tileData = dataSubset(data, colLevel, rowLevel)
+                dataByTile.add(tileData)
+            }
+        }
+        return dataByTile
+    }
+
+    private fun dataSubset(data: DataFrame, xLevel: Any?, yLevel: Any?): DataFrame {
         if (xLevel == null && yLevel == null) {
             return data
         }
@@ -51,7 +79,7 @@ class PlotFacets(val xVar: String?, val yVar: String?, val xLevels: List<*>?, va
 
     companion object {
         fun undefined(): PlotFacets {
-            return PlotFacets(null, null, null, null)
+            return PlotFacets(null, null, emptyList<Any>(), emptyList<Any>())
         }
     }
 }
