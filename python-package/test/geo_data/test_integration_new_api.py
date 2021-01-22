@@ -279,3 +279,10 @@ def test_counties():
     geocoded_counties = geodata.geocode_counties(counties).states(states).scope('usa').get_boundaries('country').request
 
     assert counties == geocoded_counties.tolist()
+
+
+def test_request_in_ambiguous_df():
+    us48 = geodata.geocode_states('us-48').get_geocodes()
+    warwick = geodata.geocode_cities('warwick').allow_ambiguous().get_geocodes()
+
+    assert_row(warwick, names='warwick', found_name='Warwick')

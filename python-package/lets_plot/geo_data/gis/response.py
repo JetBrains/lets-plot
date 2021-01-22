@@ -38,11 +38,11 @@ class Boundary(GeometryBase):
 class GeocodedFeature:
     def __init__(self,
                  id: str, name: str,
-                 highlights: Optional[List[str]],
-                 boundary: Optional[Boundary],
-                 centroid: Optional[GeoPoint],
-                 limit: Optional[GeoRect],
-                 position: Optional[GeoRect]):
+                 highlights: Optional[List[str]]=None,
+                 boundary: Optional[Boundary]=None,
+                 centroid: Optional[GeoPoint]=None,
+                 limit: Optional[GeoRect]=None,
+                 position: Optional[GeoRect]=None):
         assert_type(id, str)
         assert_type(name, str)
         assert_optional_list_type(highlights, str)

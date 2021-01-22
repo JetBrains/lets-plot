@@ -10,9 +10,9 @@ from lets_plot.geo_data import GeocodingService, SuccessResponse, Answer, Geocod
 from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, GeocodingRequest, LevelKind, RegionQuery, \
     IgnoringStrategyKind
-from lets_plot.geo_data.geocoder import geocode_countries, geocode, NamesGeocoder, geocode_cities
+from lets_plot.geo_data.geocoder import geocode_countries, geocode, NamesGeocoder, geocode_cities, geocode_states
 from lets_plot.geo_data.geocodes import Geocodes
-from .geo_data import make_answer
+from .geo_data import make_answer, assert_row
 from .request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \
     eq_map_region_with_name, eq_map_region_with_id
 
@@ -153,11 +153,7 @@ def test_where_closets_to_point():
                 GeocodedFeature(
                     id='foo_id',
                     name='foo',
-                    highlights=None,
-                    boundary=None,
-                    centroid=GeoPoint(1, 2),
-                    limit=None,
-                    position=None
+                    centroid=GeoPoint(1, 2)
                 )
             ])
     ]
@@ -191,6 +187,51 @@ def test_select_all_query_with_empty_result_should_return_empty_dataframe():
     centroids = geocoder.get_centroids()
     assert 0 == len(centroids)
 
+
+@mock.patch.object(GeocodingService, 'do_request', lambda self, reqest: SuccessResponse(
+    message='',
+    level=LevelKind.state,
+    answers=[
+        Answer(
+            features=[
+                GeocodedFeature(id='foo_id', name='foo'),
+                GeocodedFeature(id='bar_id', name='bar'),
+                GeocodedFeature(id='baz_id', name='baz'),
+            ]
+        )
+    ]
+))
+def test_for_us48_request_should_contain_feature_name():
+    states = geocode_states('us-48')
+
+    assert_row(
+        states.get_geocodes(),
+        names=['foo', 'bar', 'baz'],
+        found_name=['foo', 'bar', 'baz']
+    )
+
+
+@mock.patch.object(GeocodingService, 'do_request', lambda self, reqest: SuccessResponse(
+    message='',
+    level=LevelKind.city,
+    answers=[
+        Answer(
+            features=[
+                GeocodedFeature(id='foo1_id', name='Foo'),
+                GeocodedFeature(id='foo2_id', name='Foo'),
+                GeocodedFeature(id='foo3_id', name='Fooo'),
+            ]
+        )
+    ]
+))
+def test_allow_ambiguous_result_should_keep_request():
+    cities = geocode_cities('foo')
+
+    assert_row(
+        cities.get_geocodes(),
+        names=['foo', 'foo', 'foo'],
+        found_name=['Foo', 'Foo', 'Fooo']
+    )
 
 
 def test_allow_ambiguous():

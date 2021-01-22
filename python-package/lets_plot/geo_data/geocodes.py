@@ -43,10 +43,17 @@ class Resolution(enum.Enum):
     world_low = 1
 
 
-def select_request(query: RegionQuery, answer: Answer, feature: GeocodedFeature) -> str:
-    # exploding answers (features count > 1) don't have exact request (like us-48, it can't be a proper
-    # request for 48 features/states) and so feature name should be used as request.
-    return query.request if len(answer.features) <= 1 else feature.name
+def select_request_string(request: Optional[str], name: str) -> str:
+    if request is None:
+        return name
+
+    if len(request) == 0:
+        return name
+
+    if 'us-48' == request.lower():
+        return name
+
+    return request
 
 
 def zip_answers(queries: List, answers: List):
@@ -64,9 +71,9 @@ class PlacesDataFrameBuilder:
         self._state: List[Optional[str]] = []
         self._country: List[Optional[str]] = []
 
-    def append_row(self, request: str, found_name: str, query: Optional[RegionQuery]):
-        self._request.append(request)
-        self._found_name.append(found_name)
+    def append_row(self, query: RegionQuery, feature: GeocodedFeature):
+        self._request.append(select_request_string(query.request, feature.name))
+        self._found_name.append(feature.name)
 
         if query is None:
             self._county.append(MapRegion.name_or_none(None))
@@ -138,7 +145,7 @@ class Geocodes(CanToDataFrame):
         regions: List[MapRegion] = []
         for answer, query in zip_answers(self._answers, self._queries):
             for feature in answer.features:
-                regions.append(MapRegion.place(feature.id, select_request(query, answer, feature), self._level_kind))
+                regions.append(MapRegion.place(feature.id, select_request_string(query.request, feature.name), self._level_kind))
         return regions
 
     def as_list(self) -> List['Geocodes']:
@@ -286,7 +293,7 @@ class Geocodes(CanToDataFrame):
         # for us-48 queries doesnt' count
         for query, answer in zip_answers(self._queries, self._answers):
             for feature in answer.features:
-                places.append_row(select_request(query, answer, feature), feature.name, query)
+                places.append_row(query, feature)
 
         data = {**data, **places.build_dict()}
 

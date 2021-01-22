@@ -5,9 +5,9 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import PlacesDataFrameBuilder, zip_answers, select_request, DF_REQUEST, DF_FOUND_NAME, abstractmethod
-from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
+from lets_plot.geo_data import PlacesDataFrameBuilder, zip_answers, select_request_string, abstractmethod
 from lets_plot.geo_data.gis.request import RegionQuery
+from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 
 ShapelyPoint = shapely.geometry.Point
 ShapelyLinearRing = shapely.geometry.LinearRing
@@ -48,7 +48,7 @@ class RectGeoDataFrame:
             for feature in answer.features:
                 rects: List[GeoRect] = self._read_rect(feature)
                 for rect in rects:
-                    places.append_row(request=select_request(query, answer, feature), found_name=feature.name, query=query)
+                    places.append_row(query, feature)
                     self._lonmin.append(rect.min_lon)
                     self._latmin.append(rect.min_lat)
                     self._lonmax.append(rect.max_lon)
@@ -85,7 +85,7 @@ class CentroidsGeoDataFrame:
 
         for query, answer in zip_answers(queries, answers):
             for feature in answer.features:
-                places.append_row(request=select_request(query, answer, feature), found_name=feature.name, query=query)
+                places.append_row(query, feature)
                 self._lons.append(feature.centroid.lon)
                 self._lats.append(feature.centroid.lat)
 
@@ -103,7 +103,7 @@ class BoundariesGeoDataFrame:
         geometry = []
         for query, answer in zip_answers(queries, answers):
             for feature in answer.features:
-                places.append_row(request=select_request(query, answer, feature), found_name=feature.name, query=query)
+                places.append_row(query, feature)
                 geometry.append(self._geo_parse_geometry(feature.boundary))
 
         return _create_geo_data_frame(places.build_dict(), geometry=geometry)
