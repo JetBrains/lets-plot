@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromFill
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
@@ -53,7 +53,7 @@ class RibbonGeom : GeomBase() {
     ) {
         val coord = toLocation(p)
         if (coord != null) {
-            collector.addPoint(p.index(), helper.toClient(coord, p), 0.0, params().setColor(fromColor(p)))
+            collector.addPoint(p.index(), helper.toClient(coord, p), 0.0, params().setColor(fromFill(p)))
         }
     }
 
