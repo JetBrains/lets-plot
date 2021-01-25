@@ -13,7 +13,6 @@ from .gis.request import RequestBuilder, GeocodingRequest, RequestKind, MapRegio
     RegionQuery, LevelKind, IgnoringStrategyKind, PayloadKind, ReverseGeocodingRequest
 from .gis.response import Response, SuccessResponse
 from .type_assertion import assert_list_type
-from .._type_utils import CanToDataFrame
 
 __all__ = [
     'geocode',
@@ -104,7 +103,7 @@ def _to_geo_point(closest_place: Optional[Union[Geocodes, ShapelyPointType]]) ->
         return None
 
     if isinstance(closest_place, Geocoder):
-        closest_place = closest_place._get_geocodes()
+        closest_place = closest_place._geocode()
 
     if isinstance(closest_place, Geocodes):
         closest_place_id = closest_place.as_list()[0].unique_ids()
@@ -141,7 +140,7 @@ def _ensure_is_parent_list(obj):
         return None
 
     if isinstance(obj, Geocoder):
-        obj = obj._get_geocodes()
+        obj = obj._geocode()
 
     if isinstance(obj, Geocodes):
         return obj.as_list()
@@ -166,7 +165,7 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
         return None
 
     if isinstance(place, Geocoder):
-        place = place._get_geocodes()
+        place = place._geocode()
 
     if isinstance(place, str):
         return MapRegion.with_name(place)
@@ -178,23 +177,20 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
     raise ValueError('Unsupported parent type: ' + str(type(place)))
 
 
-class Geocoder(CanToDataFrame):
+class Geocoder:
     def get_limits(self) -> 'GeoDataFrame':
-        return self._get_geocodes().limits()
+        return self._geocode().limits()
 
     def get_centroids(self) -> 'GeoDataFrame':
-        return self._get_geocodes().centroids()
+        return self._geocode().centroids()
 
     def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
-        return self._get_geocodes().boundaries(resolution)
-
-    def to_data_frame(self):
-        return self.get_geocodes()
+        return self._geocode().boundaries(resolution)
 
     def get_geocodes(self) -> 'DataFrame':
-        return self._get_geocodes().to_data_frame()
+        return self._geocode().to_data_frame()
 
-    def _get_geocodes(self) -> Geocodes:
+    def _geocode(self) -> Geocodes:
         raise ValueError('Abstract method')
 
 
@@ -225,7 +221,7 @@ class ReverseGeocoder(Geocoder):
             .set_reverse_scope(_to_scope(scope)) \
             .build()
 
-    def _get_geocodes(self) -> Geocodes:
+    def _geocode(self) -> Geocodes:
         if self._geocodes is None:
             self._geocodes = self._geocode()
 
@@ -464,18 +460,12 @@ class NamesGeocoder(Geocoder):
         return request
 
     def _geocode(self) -> Geocodes:
-        request: GeocodingRequest = self._build_request()
-
-        response: Response = GeocodingService().do_request(request)
-
-        if not isinstance(response, SuccessResponse):
-            _raise_exception(response)
-
-        return Geocodes(response.level, response.answers, request.region_queries, self._highlights)
-
-    def _get_geocodes(self) -> Geocodes:
         if self._geocodes is None:
-            self._geocodes = self._geocode()
+            request: GeocodingRequest = self._build_request()
+            response: Response = GeocodingService().do_request(request)
+            if not isinstance(response, SuccessResponse):
+                _raise_exception(response)
+            self._geocodes = Geocodes(response.level, response.answers, request.region_queries, self._highlights)
 
         return self._geocodes
 
@@ -509,7 +499,7 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion]
         return [MapRegion.with_name(scope)]
 
     if isinstance(scope, Geocoder):
-        scope = scope._get_geocodes()
+        scope = scope._geocode()
 
     if isinstance(scope, Geocodes):
         map_regions = scope.to_map_regions()

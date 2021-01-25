@@ -28,8 +28,6 @@ GEOFUNC_TYPES = {
 }
 
 
-
-
 def regions_xy(lon, lat, level, within=None) -> Geocoder:
     raise ValueError('Function `regions_xy(...)` is deprecated. Use new function `reverse_geocode(...)`.')
 

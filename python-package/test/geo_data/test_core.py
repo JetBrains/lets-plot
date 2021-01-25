@@ -316,11 +316,3 @@ def test_regions_to_data_frame_should_skip_highlights():
     regions_df = regions.to_data_frame()
     assert [DF_ID, DF_REQUEST, DF_FOUND_NAME] == list(regions_df.columns.values)
 
-
-def test_regions_to_dict():
-    regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, [])
-    regions_dict = _standardize_value(regions)
-    assert REQUEST == regions_dict[DF_REQUEST][0]
-    assert REGION_ID == regions_dict[DF_ID][0]
-    assert REGION_NAME == regions_dict[DF_FOUND_NAME][0]
-

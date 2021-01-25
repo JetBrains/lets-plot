@@ -2907,6 +2907,9 @@ def _geom(name, *,
 
     data, mapping, data_meta = as_annotated_data(data, mapping)
 
+    if is_geocoder(data):
+        data = data.get_geocodes()
+
     if is_geo_data_frame(data):
         data = geo_data_frame_to_wgs84(data)
 

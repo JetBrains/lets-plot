@@ -4,7 +4,6 @@
 #
 import json
 import math
-from abc import abstractmethod
 from datetime import datetime
 
 from typing import Dict
@@ -75,21 +74,13 @@ def _standardize_value(v):
     if (numpy and isinstance(v, numpy.ndarray)) or (pandas and isinstance(v, pandas.Series)):
         return _standardize_value(v.tolist())
     if isinstance(v, datetime):
-        if (pandas and v is pandas.NaT):
+        if pandas and v is pandas.NaT:
             return None
         else:
             return v.timestamp() * 1000  # convert from second to millisecond
-    if isinstance(v, CanToDataFrame):
-        return standardize_dict(v.to_data_frame())
-    if (shapely and isinstance(v, shapely.geometry.base.BaseGeometry)):
+    if shapely and isinstance(v, shapely.geometry.base.BaseGeometry):
         return json.dumps(shapely.geometry.mapping(v))
     try:
         return repr(v)
     except Exception:
         raise Exception('Unsupported type: {0}({1})'.format(v, type(v)))
-
-
-class CanToDataFrame:
-    @abstractmethod
-    def to_data_frame(self):  # -> pandas.DataFrame
-        raise ValueError('Not implemented')

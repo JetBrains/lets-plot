@@ -10,7 +10,6 @@ from .gis.request import PayloadKind, RequestBuilder, RequestKind, MapRegion, Re
 from .gis.response import Answer, GeocodedFeature, Namesake, AmbiguousFeature, LevelKind
 from .gis.response import SuccessResponse, Response, AmbiguousResponse, ErrorResponse
 from .type_assertion import assert_type, assert_list_type
-from .._type_utils import CanToDataFrame
 
 NO_OBJECTS_FOUND_EXCEPTION_TEXT = 'No objects were found.'
 MULTIPLE_OBJECTS_FOUND_EXCEPTION_TEXT = "Multiple objects were found. Use all_result=True to see them."
@@ -108,7 +107,7 @@ class PlacesDataFrameBuilder:
         raise ValueError('Not implemented')
 
 
-class Geocodes(CanToDataFrame):
+class Geocodes:
     def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery],
                  highlights: bool = False):
         assert_list_type(answers, Answer)
@@ -283,7 +282,6 @@ class Geocodes(CanToDataFrame):
             CentroidsGeoDataFrame()
         )
 
-    # implements abstract in CanToDataFrame
     def to_data_frame(self) -> DataFrame:
         places = PlacesDataFrameBuilder()
 

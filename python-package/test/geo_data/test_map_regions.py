@@ -261,14 +261,14 @@ class TestMapRegions:
             .set_highlights(RUSSIA_HIGHLIGHTS) \
             .build_geocoded()
 
-        regions = Geocodes(
+        geocodes = Geocodes(
             level_kind=LevelKind.country,
             queries=features_to_queries([usa, russia]),
             answers=features_to_answers([usa, russia])
         )
 
         class StubGeocoder(Geocoder):
-            def _get_geocodes(self) -> Geocodes:
-                return regions
+            def _geocode(self) -> Geocodes:
+                return geocodes
 
         return StubGeocoder()

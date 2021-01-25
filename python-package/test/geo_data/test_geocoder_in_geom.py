@@ -1,8 +1,8 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from geopandas import GeoDataFrame
-from shapely.geometry import Point, Polygon, LinearRing, MultiPolygon
 from pandas import DataFrame
+from shapely.geometry import Point, Polygon, LinearRing, MultiPolygon
 
 from lets_plot._kbridge import _standardize_plot_spec
 from lets_plot.geo_data.geocoder import Geocoder
@@ -41,7 +41,7 @@ def test_geom_point_fetches_centroids():
     plot_spec = ggplot() + geom_point(map=geocoder)
 
     assert_map_data_meta(plot_spec)
-    assert geocoder.get_point_dict() == get_map(plot_spec)
+    assert geocoder.get_test_point_dict() == get_map(plot_spec)
 
 
 def test_geom_polygon_fetches_boundaries():
@@ -49,7 +49,7 @@ def test_geom_polygon_fetches_boundaries():
     plot_spec = ggplot() + geom_polygon(map=geocoder)
 
     assert_map_data_meta(plot_spec)
-    assert geocoder.get_polygon_dict() == get_map(plot_spec)
+    assert geocoder.get_test_polygon_dict() == get_map(plot_spec)
 
 
 def test_geom_map_fetches_boundaries():
@@ -57,7 +57,7 @@ def test_geom_map_fetches_boundaries():
     plot_spec = ggplot() + geom_map(map=geocoder)
 
     assert_map_data_meta(plot_spec)
-    assert geocoder.get_polygon_dict() == get_map(plot_spec)
+    assert geocoder.get_test_polygon_dict() == get_map(plot_spec)
 
 
 def test_geom_rect_fetches_limits():
@@ -65,7 +65,7 @@ def test_geom_rect_fetches_limits():
     plot_spec = ggplot() + geom_rect(map=geocoder)
 
     assert_map_data_meta(plot_spec)
-    assert geocoder.get_polygon_dict() == get_map(plot_spec)
+    assert geocoder.get_test_polygon_dict() == get_map(plot_spec)
 
 
 def test_geom_text_fetches_centroids():
@@ -73,7 +73,7 @@ def test_geom_text_fetches_centroids():
     plot_spec = ggplot() + geom_text(map=geocoder)
 
     assert_map_data_meta(plot_spec)
-    assert geocoder.get_point_dict() == get_map(plot_spec)
+    assert geocoder.get_test_point_dict() == get_map(plot_spec)
 
 
 def test_geom_livemap_fetches_centroids():
@@ -81,7 +81,7 @@ def test_geom_livemap_fetches_centroids():
     plot_spec = ggplot() + geom_livemap(map=geocoder)
 
     assert_map_data_meta(plot_spec)
-    assert geocoder.get_point_dict() == get_map(plot_spec)
+    assert geocoder.get_test_point_dict() == get_map(plot_spec)
 
 
 def test_data_should_call_to_dataframe():
@@ -89,8 +89,8 @@ def test_data_should_call_to_dataframe():
     plot_spec = ggplot() + geom_map(data=geocoder)
 
     layer_data = _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['data']
-    geocoder.assert_to_data_frame_invocation()
-    assert geocoder.geocodes() == layer_data
+    geocoder.assert_get_geocodes_invocation()
+    assert geocoder.get_test_geocodes() == layer_data
 
 
 def mock_geocoder() -> 'MockGeocoder':
@@ -111,23 +111,23 @@ def mock_geocoder() -> 'MockGeocoder':
 
     class MockGeocoder(Geocoder):
         def __init__(self):
-            self._to_data_frame_invoked = False
+            self._get_geocodes_invoked = False
             self._limits_fetched = False
             self._centroids_fetched = False
             self._boundaries_fetched = False
 
-        def get_point_dict(self):
+        def get_test_point_dict(self):
             return point_dict
 
-        def get_polygon_dict(self):
+        def get_test_polygon_dict(self):
             return polygon_dict
 
-        def geocodes(self) -> dict:
+        def get_test_geocodes(self) -> dict:
             return {'request': ['foo'], 'found name': ['FOO']}
 
-        def to_data_frame(self):
-            self._to_data_frame_invoked = True
-            return DataFrame(self.geocodes())
+        def get_geocodes(self):
+            self._get_geocodes_invoked = True
+            return DataFrame(self.get_test_geocodes())
 
         def get_limits(self) -> GeoDataFrame:
             self._limits_fetched = True
@@ -141,8 +141,8 @@ def mock_geocoder() -> 'MockGeocoder':
             self._boundaries_fetched = True
             return polygon_gdf
 
-        def assert_to_data_frame_invocation(self):
-            assert self._to_data_frame_invoked, 'to_data_frame() invocation expected, but not happened'
+        def assert_get_geocodes_invocation(self):
+            assert self._get_geocodes_invoked, 'to_data_frame() invocation expected, but not happened'
 
 
     return MockGeocoder()
