@@ -248,6 +248,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.BOX_PLOT,
             GeomKind.SEGMENT,
+            GeomKind.RIBBON,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(isContinuousX)
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)

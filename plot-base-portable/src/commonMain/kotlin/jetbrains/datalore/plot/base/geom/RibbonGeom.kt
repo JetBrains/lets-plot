@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromFill
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
+import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -39,24 +40,35 @@ class RibbonGeom : GeomBase() {
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val targetCollector = ctx.targetCollector
         val helper = GeomHelper(pos, coord, ctx)
+        val targetCollector = getGeomTargetCollector(ctx)
+        addTarget(aesthetics.dataPoints(), targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
+        addTarget(aesthetics.dataPoints(), targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper)
 
-        for (p in aesthetics.dataPoints()) {
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper)
-        }
     }
 
     private fun addTarget(
-        p: DataPointAesthetics,
+        dataPoints: Iterable<DataPointAesthetics>,
         collector: GeomTargetCollector,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
         helper: GeomHelper
     ) {
-        val coord = toLocation(p)
-        if (coord != null) {
-            collector.addPoint(p.index(), helper.toClient(coord, p), 0.0, params().setColor(fromFill(p)))
+        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
+            dataPoints,
+            MultiPointDataConstructor.singlePointAppender { p -> helper.toClient(toLocation(p)!!, p) },
+            MultiPointDataConstructor.reducer(0.999, false)
+        )
+
+        for (multiPointData in multiPointDataList) {
+            collector.addPath(
+                multiPointData.points,
+                multiPointData.localToGlobalIndex,
+                params().setColor(
+                    fromFill(
+                        multiPointData.aes
+                    )
+                )
+            )
         }
     }
 
