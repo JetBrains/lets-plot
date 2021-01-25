@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
-import jetbrains.datalore.plot.builder.interact.TestUtil
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
@@ -68,7 +67,7 @@ class LayerTargetLocatorTwoPointsTest {
         assertEmpty(locator, offsetXY(SECOND_POINT))
     }
 
-    @Test
+   @Test
     fun nearestXCloseToEachOther() {
         val firstTarget = 1
         val secondTarget = 2
@@ -77,13 +76,13 @@ class LayerTargetLocatorTwoPointsTest {
             LookupStrategy.NEAREST,
             LookupSpace.X,
             pointTarget(firstTarget, point(10.0, 10.0)),
-            pointTarget(secondTarget, point(13.0, 10.0))
+            pointTarget(secondTarget, point(15.0, 10.0))
         )
 
         val closerToFirst = point(11.0, 10.0)
         assertObjects(locator, closerToFirst, firstTarget)
 
-        val closerToSecond = point(12.0, 10.0)
+        val closerToSecond = point(14.0, 10.0)
         assertObjects(locator, closerToSecond, secondTarget)
     }
 
