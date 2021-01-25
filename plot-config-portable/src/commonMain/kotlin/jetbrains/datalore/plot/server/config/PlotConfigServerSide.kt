@@ -286,8 +286,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         varBindings,
                         scaleMap,
                         groupingContext,
-                        facets.xVar,
-                        facets.yVar,
+                        facets,
                         statCtx
                     ) { message ->
                         layerIndexAndSamplingMessage(
@@ -379,7 +378,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
                     listOfNotNull(layerConfig.getMapJoin()?.first) +
-                    listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName) +
+                    facets.variables +
+                    listOfNotNull(layerConfig.explicitGroupingVarName) +
                     layerConfig.tooltips.valueSources
                         .filterIsInstance<DataFrameValue>()
                         .map(DataFrameValue::getVariableName)

@@ -11,14 +11,16 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
 class PlotFacets(
-    val xVar: String?,
-    val yVar: String?,
+    private val xVar: String?,
+    private val yVar: String?,
     val xLevels: List<*>,
     val yLevels: List<*>
 ) {
 
     val isDefined: Boolean = xVar != null || yVar != null
     val numTiles = max(1, xLevels.size) * max(1, yLevels.size)
+    val variables: List<String>
+        get() = listOfNotNull(xVar, yVar)
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
@@ -49,12 +51,12 @@ class PlotFacets(
 
         val matchingIndices: MutableList<Int>
         if (xLevel == null) {                                 // all 'x'
-            val `var` = DataFrameUtil.findVariableOrFail(data, yVar!!)
-            val list = data[`var`]
+            val variable = DataFrameUtil.findVariableOrFail(data, yVar!!)
+            val list = data[variable]
             matchingIndices = SeriesUtil.matchingIndices(list, yLevel!!)
         } else if (yLevel == null) {                          // all 'y'
-            val `var` = DataFrameUtil.findVariableOrFail(data, xVar!!)
-            val list = data[`var`]
+            val variable = DataFrameUtil.findVariableOrFail(data, xVar!!)
+            val list = data[variable]
             matchingIndices = SeriesUtil.matchingIndices(list, xLevel)
         } else {
             val varX = DataFrameUtil.findVariableOrFail(data, xVar!!)

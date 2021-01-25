@@ -13,8 +13,8 @@ class FacetGrid : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             cols(),
-//            rows(),
-//            both()
+            rows(),
+            both()
         )
     }
 
