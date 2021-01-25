@@ -106,10 +106,11 @@ internal class TargetDetector(
                                 POINT_X_NEAREST_EPSILON
                             )) {
                             false
-                        } else closestPointChecker.check(DoubleVector(x, 0.0))
-
+                        } else {
+                            // Keep XY distance
+                            closestPointChecker.check(pointProjection.xy())
+                        }
                     }
-
                     LookupStrategy.NONE -> return false
 
                     else -> throw IllegalStateException()
@@ -227,7 +228,7 @@ internal class TargetDetector(
 
     companion object {
         private const val POINT_AREA_EPSILON = 0.1
-        private const val POINT_X_NEAREST_EPSILON = 2.0
+        private const val POINT_X_NEAREST_EPSILON = 4.0
         private const val RECT_X_NEAREST_EPSILON = 2.0
 
         private fun binarySearch(value: Double, length: Int, indexer: (Int) -> Double): Int {

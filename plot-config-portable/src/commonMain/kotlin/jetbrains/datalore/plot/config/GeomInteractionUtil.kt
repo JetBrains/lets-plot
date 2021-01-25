@@ -249,9 +249,9 @@ object GeomInteractionUtil {
             GeomKind.RIBBON,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(isContinuousX)
+            GeomKind.SMOOTH -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
-            GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
