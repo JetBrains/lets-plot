@@ -5,8 +5,10 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
+import kotlin.math.abs
 
 internal class LocatedTargetsPicker {
     private val myPicked = ArrayList<LookupResult>()
@@ -16,7 +18,9 @@ internal class LocatedTargetsPicker {
     val picked: List<LookupResult>
         get() = chooseBestResult()
 
-    fun addLookupResult(lookupResult: LookupResult) {
+    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null) {
+        val lookupResult = filterResults(result, coord)
+
         val distance = distance(lookupResult)
         if (!lookupResult.isCrosshairEnabled && distance > CUTOFF_DISTANCE) {
             return
@@ -37,6 +41,41 @@ internal class LocatedTargetsPicker {
             }
         }
         myAllLookupResults.add(lookupResult)
+    }
+
+    private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?): LookupResult {
+        if (coord == null || lookupResult.geomKind != GeomKind.RIBBON) {
+            return lookupResult
+        }
+
+        // For geom_ribbon: get closest targets and remove duplicates
+
+        val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
+        val minXToTarget = geomTargets
+            .map { target -> target.tipLayoutHint.coord!!.subtract(coord) }
+            .minByOrNull { abs(it.x) }?.x
+
+        val newTargets = geomTargets
+            .filter { target -> target.tipLayoutHint.coord!!.subtract(coord).x == minXToTarget }
+            .let { targets ->
+                if ((lookupResult.contextualMapping.isCrosshairEnabled)) {
+                    // without duplicates
+                    targets.distinctBy { it.hitIndex }
+                } else {
+                    // choose the closest target
+                    val minYToTarget = targets.map { it.tipLayoutHint.coord!!.y - coord.y }.minByOrNull { abs(it) }
+                    targets.filter { target ->
+                        target.tipLayoutHint.coord!!.subtract(coord).y == minYToTarget
+                    }
+                }
+            }
+        return LookupResult(
+            targets = newTargets,
+            distance = lookupResult.distance,
+            geomKind = lookupResult.geomKind,
+            contextualMapping = lookupResult.contextualMapping,
+            isCrosshairEnabled = lookupResult.isCrosshairEnabled
+        )
     }
 
     private fun chooseBestResult(): List<LookupResult> {

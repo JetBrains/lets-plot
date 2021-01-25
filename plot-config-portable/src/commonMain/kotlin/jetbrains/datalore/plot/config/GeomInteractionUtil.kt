@@ -246,6 +246,7 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.BOX_PLOT,
+            GeomKind.RIBBON,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(isContinuousX)
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
@@ -253,7 +254,6 @@ object GeomInteractionUtil {
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,
-            GeomKind.RIBBON,
             GeomKind.DENSITY2D -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {
                 when (statKind) {
