@@ -49,28 +49,17 @@ internal class LocatedTargetsPicker {
         }
 
         // Get closest targets and remove duplicates
-
         val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
 
-        val newTargets = if ((lookupResult.contextualMapping.isCrosshairEnabled)) {
-            // closest targets by X without duplicates
-            val minXToTarget = geomTargets
-                .map { target -> target.tipLayoutHint.coord!!.subtract(coord).x }
-                .minByOrNull { abs(it) }
-            geomTargets
-                .filter { target ->
-                    target.tipLayoutHint.coord!!.subtract(coord).x == minXToTarget
-                }
-                .distinctBy { it.hitIndex }
-        } else {
-            // the closest target
-            val dist = geomTargets.map { target ->
-                target.tipLayoutHint.coord!!.subtract(coord).length()
-            }.minOrNull()
-            geomTargets.filter { target ->
-                target.tipLayoutHint.coord!!.subtract(coord).length() == dist
+        val minXToTarget = geomTargets
+            .map { target -> target.tipLayoutHint.coord!!.subtract(coord).x }
+            .minByOrNull { abs(it) }
+        val newTargets = geomTargets
+            .filter { target ->
+                target.tipLayoutHint.coord!!.subtract(coord).x == minXToTarget
             }
-        }
+            .distinctBy { it.hitIndex }
+
         return LookupResult(
             targets = newTargets,
             distance = lookupResult.distance,

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -18,22 +19,19 @@ import kotlin.test.assertEquals
 class LocatedTargetsPickerForRibbonTest {
 
     @Test
-    fun `get the closest target`() {
-        val targets = createTargetLocators(isCrosshairEnabled = false)
-        val results = findTargets(targets)
-        assertLookupResults(results, listOf(FIRST_POINT_KEY))
-    }
-
-    @Test
-    fun `when anchor is used - get all targets with the given X`() {
-        val targets = createTargetLocators(isCrosshairEnabled = true)
-        val results = findTargets(targets)
-        assertLookupResults(results, listOf(FIRST_POINT_KEY, SECOND_POINT_KEY))
+    fun `get all targets with the given X`() {
+        val targets = createTargetLocators()
+        run {
+            val results = findTargets(TestUtil.point(0.0, 0.0), targets)
+            assertLookupResults(results, listOf(FIRST_POINT_KEY, SECOND_POINT_KEY))
+        }
+        run {
+            val results = findTargets(TestUtil.point(1.0, 0.0), targets)
+            assertLookupResults(results, listOf(SECOND_POINT_KEY))
+        }
     }
 
     companion object {
-        private val COORD = TestUtil.point(0.0, 0.0)
-
         private const val FIRST_POINT_KEY = 0
         private const val SECOND_POINT_KEY = 1
         private val FIRST_TARGET = TestUtil.pathTarget(
@@ -45,9 +43,8 @@ class LocatedTargetsPickerForRibbonTest {
             listOf(TestUtil.point(0.0, 2.0), TestUtil.point(1.0, 3.0))
         )
 
-        private fun createTargetLocators(isCrosshairEnabled: Boolean): List<GeomTargetLocator> {
+        private fun createTargetLocators(): List<GeomTargetLocator> {
             val contextualMappingProvider = GeomInteractionBuilder(Aes.values())
-                .setIsCrosshairEnabled(isCrosshairEnabled)
                 .univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .build()
             val contextualMapping = contextualMappingProvider.createContextualMapping(
@@ -68,12 +65,13 @@ class LocatedTargetsPickerForRibbonTest {
         }
 
         private fun findTargets(
+            cursor: DoubleVector,
             targetLocators: List<GeomTargetLocator>
         ): List<GeomTargetLocator.LookupResult> {
             val targetsPicker = LocatedTargetsPicker()
             targetLocators.forEach { locator ->
-                val lookupResult = locator.search(COORD)
-                lookupResult?.let { targetsPicker.addLookupResult(it, COORD) }
+                val lookupResult = locator.search(cursor)
+                lookupResult?.let { targetsPicker.addLookupResult(it, cursor) }
             }
             return targetsPicker.picked
         }
