@@ -88,10 +88,11 @@ object TestUtil {
     internal fun createLocator(
         lookupSpec: LookupSpec,
         contextualMapping: ContextualMapping,
-        targetPrototypes: List<TargetPrototype>
+        targetPrototypes: List<TargetPrototype>,
+        geomKind: GeomKind = GeomKind.POINT
     ): GeomTargetLocator {
         return jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator(
-            GeomKind.POINT,
+            geomKind,
             lookupSpec,
             contextualMapping,
             targetPrototypes

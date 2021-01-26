@@ -67,7 +67,7 @@ class LayerTargetLocatorTwoPointsTest {
         assertEmpty(locator, offsetXY(SECOND_POINT))
     }
 
-   @Test
+    @Test
     fun nearestXCloseToEachOther() {
         val firstTarget = 1
         val secondTarget = 2
@@ -84,6 +84,22 @@ class LayerTargetLocatorTwoPointsTest {
 
         val closerToSecond = point(14.0, 10.0)
         assertObjects(locator, closerToSecond, secondTarget)
+    }
+
+    @Test
+    fun `nearestX - both within acceptable distance`() {
+        val firstTarget = 1
+        val secondTarget = 2
+
+        val locator = createLocator(
+            LookupStrategy.NEAREST,
+            LookupSpace.X,
+            pointTarget(firstTarget, point(10.0, 10.0)),
+            pointTarget(secondTarget, point(16.0, 10.0))
+        )
+
+        val closeToBoth = point(13.0, 10.0)
+        assertObjects(locator, closeToBoth, firstTarget, secondTarget)
     }
 
     private fun createLocator(strategy: LookupStrategy, space: LookupSpace): GeomTargetLocator {
