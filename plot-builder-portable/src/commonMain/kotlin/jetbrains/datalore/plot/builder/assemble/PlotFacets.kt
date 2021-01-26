@@ -13,12 +13,14 @@ import kotlin.math.max
 class PlotFacets(
     private val xVar: String?,
     private val yVar: String?,
-    val xLevels: List<*>,
-    val yLevels: List<*>
+    private val xLevels: List<*>,
+    private val yLevels: List<*>
 ) {
 
     val isDefined: Boolean = xVar != null || yVar != null
-    val numTiles = max(1, xLevels.size) * max(1, yLevels.size)
+    val colCount: Int = max(1, xLevels.size)
+    val rowCount: Int = max(1, yLevels.size)
+    val numTiles = colCount * rowCount
     val variables: List<String>
         get() = listOfNotNull(xVar, yVar)
 
@@ -79,9 +81,48 @@ class PlotFacets(
         return dfBuilder.build()
     }
 
+    /**
+     * @return List of FacetTileInfo.
+     *          Tiles are enumerated by rows, i.e.:
+     *          the index is computed like: row * nCols + col
+     */
+    fun tileInfos(): List<FacetTileInfo> {
+        val colLabels = (if (xLevels.isEmpty()) listOf(null) else xLevels).map { it?.toString() }
+        val rowLabels = (if (yLevels.isEmpty()) listOf(null) else yLevels).map { it?.toString() }
+
+        val infos = ArrayList<FacetTileInfo>()
+        for (row in 0 until rowCount) {
+            val addColLab = row == 0
+            val hasXAxis = row == rowCount - 1
+            for (col in 0 until colCount) {
+                val addRowLab = col == colCount - 1
+                val hasYAxis = col == 0
+                infos.add(
+                    FacetTileInfo(
+                        col, row,
+                        if (addColLab) colLabels[col] else null,
+                        if (addRowLab) rowLabels[row] else null,
+                        hasXAxis, hasYAxis
+                    )
+                )
+            }
+        }
+
+        return infos
+    }
+
     companion object {
         fun undefined(): PlotFacets {
             return PlotFacets(null, null, emptyList<Any>(), emptyList<Any>())
         }
     }
+
+    class FacetTileInfo(
+        val col: Int,
+        val row: Int,
+        val colLab: String?,
+        val rowLab: String?,
+        val xAxis: Boolean,
+        val yAxis: Boolean
+    )
 }

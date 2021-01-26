@@ -34,8 +34,8 @@ class PlotAssembler private constructor(
     private var myLegendsEnabled = true
     private var myInteractionsEnabled = true
 
-    private val isFacetLayout: Boolean
-        get() = hasFacets()
+//    private val isFacetLayout: Boolean
+//        get() = hasFacets()
 
     init {
         containsLiveMap = layersByTile.flatten().any(GeomLayer::isLiveMap)
@@ -46,9 +46,9 @@ class PlotAssembler private constructor(
         myTitle = title
     }
 
-    private fun hasFacets(): Boolean {
-        return facets.isDefined
-    }
+//    private fun hasFacets(): Boolean {
+//        return facets.isDefined
+//    }
 
     private fun hasLayers(): Boolean {
         for (tileLayers in layersByTile) {
@@ -90,7 +90,6 @@ class PlotAssembler private constructor(
             //  - plot layout without axes
             val plotLayout = PlotAssemblerUtil.createPlotLayout(
                 LiveMapTileLayout(),
-                isFacetLayout,
                 facets
             )
             return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos, hasLiveMap = true)
@@ -120,7 +119,7 @@ class PlotAssembler private constructor(
 
         val plotLayout = PlotAssemblerUtil.createPlotLayout(
             XYPlotTileLayout(xAxisLayout, yAxisLayout),
-            isFacetLayout, facets
+            facets
         )
         if (!myAxisEnabled) {
             plotLayout.setPadding(0.0, 0.0, 0.0, 0.0)

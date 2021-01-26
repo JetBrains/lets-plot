@@ -80,13 +80,9 @@ object PlotSizeHelper {
     private fun defaultSinglePlotSize(facets: PlotFacets, containsLiveMap: Boolean): DoubleVector {
         var plotSize = DEF_PLOT_SIZE
         if (facets.isDefined) {
-            val xLevels = facets.xLevels
-            val yLevels = facets.yLevels
-            val columns = if (xLevels.isEmpty()) 1 else xLevels.size
-            val rows = if (yLevels.isEmpty()) 1 else yLevels.size
-            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
-            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
-            plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
+            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / facets.colCount)
+            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / facets.rowCount)
+            plotSize = DoubleVector(panelWidth * facets.colCount, panelHeight * facets.rowCount)
         } else if (containsLiveMap) {
             plotSize = DEF_LIVE_MAP_SIZE
         }
