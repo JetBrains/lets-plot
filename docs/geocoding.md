@@ -107,7 +107,7 @@ Examples:
 <br>
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/map_airports.png" alt="Couldn't load map_airports.png" width="547" height="311">                                         
 
-##Reference
+## Reference
 
 #### Levels
 Geocoding supports 4 administrative levels:
@@ -131,14 +131,14 @@ geocode(names=['florida', 'tx']).get_geocodes()
 While it is usefull it works slower and is not recomended to use on large data sets.
   
 
-Functions `geocode_cities()`, `geocode_counties()`, `geocode_states()`, `geocode_countries()` or `geocode(level=xxx)` search names only at given level or return an error.
+Functions `geocode_cities()`, `geocode_counties()`, `geocode_states()`, `geocode_countries()` or `geocode(level=xxx)` search names only at a given level or return an error.
 ```python
 geocode_states(['florida', 'tx']).get_geocodes()
 ```
 
 
 
-####Parents
+#### Parents
 `Geocoder` class provides functions for defining parents with giving administrative level - `counties()`, `states()`, `countries()`. Functions can handle single or miltiply values of types string or `Geocoder`. Number of values must match number of names in `Geocoder` so they form a table, i.e. every name associated by an index with coresponding parent. Parents will be present in result `DataFrame` to make it possible to join data and geometry via `map_join`.
 
 ```python
@@ -182,7 +182,7 @@ geocode_cities(['worcester', 'warwick']).states(s).get_geocodes()
 1 |239553   |warwick   |Warwick    |georgia
 ```
 
-#####Scope
+##### Scope
 `scope()` is a special kind of parent. `scope()` can handle a `string` or a single entry `Geocoder` object. `scope()` is not associated with any administrative level, it acts as parent for any other parents (or names if no other parents set). `scope()` can't be used with `countries()` - countries don't have parents. Typical use-case is when all names belong to the same parent - you don't need to generate list with required length to pass it as a parent, just use the `scope()` with single value.
 
 ```python
@@ -218,7 +218,7 @@ id     |request |found name
 ---------------------------
 324101 |florida |Florida
 ```
-#####Fetch all
+##### Fetch all
 
 It is possible to fetch all objects within parent - just don't set the `names` parameter. 
 
@@ -237,7 +237,7 @@ geocode_counties().states('massachusetts').get_geocodes()
 ...
 ```
 
-#####US-48 (CONUS)
+##### US-48 (CONUS)
 Geocoding supports a special name - `us-48` also known as CONUS. This name can be used as name or parent.
 ```python
 geocode_states('us-48').get_geocodes()
@@ -253,7 +253,7 @@ geocode_states('us-48').get_geocodes()
 ...
 ```
 
-####Ambiguity
+#### Ambiguity
 Often geocoding can find multiply objects for a name or don't find anything. in this case error will be generated:
  ```python
 geocode_cities(['warwick', 'worcester']).get_geocodes()
@@ -279,7 +279,7 @@ Multiple objects (14) were found for warwick:
 
 The ambiguity can be resolved in different ways.  
 
-#####`allow_ambiguous()`
+##### `allow_ambiguous()`
 
 The best way is to find an object that we search and use its parents. Function `allow_ambiguous()` converts error result into success result that can be rendered on a map or verified manually in other way.
 
@@ -296,7 +296,7 @@ geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
 4 |368499 |warwick |Warwick
 ```
 
-#####`sksip_missing()`
+##### `sksip_missing()`
 The function `drop_not_found()` removes unknown names from result.
 ```python
 geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
@@ -308,7 +308,7 @@ geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
 0 |14889 |paris	  |Paris
 ```
 
-#####`drop_not_matched()`
+##### `drop_not_matched()`
 If request contains both unknown and ambiguous names then `drop_not_matched()` function can be used to remove them all from result.
 ```python
 geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
@@ -319,7 +319,7 @@ geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
 0 |14889 |paris	  |Paris
 ```
 
-#####`where()`
+##### `where()`
 For resolving an ambiguity geocoding provides a function that can configure names individually.  
 To configure a name the function `where(...)` should be called with the place name and all given parent names.  Parents can't be changed via `where()` function call. If name and parents don't match with ones from the `where()` function an error will be generated. This is importnant for cases like this:
 ```python
@@ -388,5 +388,5 @@ geocode_cities(['worcester', 'worcester'])\
 1 |3750683 |worcester |Worcester  |United Kingdom
 ```
 
-##`map_join`
+## `map_join`
 WIP
