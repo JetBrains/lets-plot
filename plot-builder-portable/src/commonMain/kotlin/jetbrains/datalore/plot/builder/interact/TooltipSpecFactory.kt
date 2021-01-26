@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
@@ -47,6 +48,10 @@ class TooltipSpecFactory(
 
         private fun outlierHints(): Map<Aes<*>, TipLayoutHint> {
             return myGeomTarget.aesTipLayoutHints
+        }
+
+        private fun hintColors(): Map<Aes<*>, Color?> {
+            return myGeomTarget.aesTipLayoutHints.map { it.key to it.value.color }.toMap()
         }
 
         private fun outlierTooltipSpec(): List<TooltipSpec> {
@@ -95,13 +100,24 @@ class TooltipSpecFactory(
         }
 
         private fun generalTooltipSpec(): List<TooltipSpec> {
-            val generalLines = generalDataPoints().map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
+            val generalDataPoints = generalDataPoints()
+            val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
+            val colorsFromHint = hintColors()
+                .filter { it.key == Aes.Y } // geom_smooth has color
+                .filterKeys { aes -> aes in generalDataPoints.map { it.aes } }
+                .map { it.value }
+                .filterNotNull()
+            val tooltipColor = when {
+                myTooltipColor != null -> myTooltipColor
+                colorsFromHint.isNotEmpty() -> colorsFromHint.first()
+                else -> tipLayoutHint().color!!
+            }
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(
                         tipLayoutHint(),
                         lines = generalLines,
-                        fill = myTooltipColor ?: tipLayoutHint().color!!,
+                        fill = tooltipColor,
                         isOutlier = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,
