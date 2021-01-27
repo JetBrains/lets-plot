@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 abstract class PlotFacets {
@@ -93,7 +94,7 @@ abstract class PlotFacets {
             return dataByLevelKey
         }
 
-        private fun createNameLevelTuples(
+        fun createNameLevelTuples(
             variables: List<String>,
             allLevels: List<List<Any>>
         ): List<List<Pair<String, Any>>> {
@@ -123,7 +124,7 @@ abstract class PlotFacets {
     class FacetTileInfo(
         val col: Int,
         val row: Int,
-        val colLab: String?,
+        val colLabs: List<String>,
         val rowLab: String?,
         val xAxis: Boolean,
         val yAxis: Boolean

@@ -142,30 +142,54 @@ internal class PlotTile(
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
         // facet X label (on top of geom area)
-        if (myLayoutInfo.facetXLabel != null) {
+        if (myLayoutInfo.facetXLabels.isNotEmpty()) {
             val w = geomBounds.width
-            val h = FACET_LABEL_HEIGHT
+            var h = FACET_LABEL_HEIGHT * myLayoutInfo.facetXLabels.size
 
             val hPad = 0
             val vPad = 5
-            val rect = SvgRectElement(
-                DoubleRectangle(
-                    geomBounds.left + hPad, geomBounds.top - h + vPad,
-                    w - hPad * 2, h - vPad * 2
+
+            for (xLabel in myLayoutInfo.facetXLabels) {
+                val rect = SvgRectElement(
+                    DoubleRectangle(
+                        geomBounds.left + hPad, geomBounds.top - h + vPad,
+                        w - hPad * 2, h - vPad * 2
+                    )
                 )
-            )
-            rect.strokeWidth().set(0.0)
-            rect.fillColor().set(theme.background())
-            add(rect)
+                rect.strokeWidth().set(0.0)
+                rect.fillColor().set(theme.background())
+                add(rect)
 
-            val x = geomBounds.left + w / 2
-            val y = geomBounds.top - h / 2
+                val x = geomBounds.left + w / 2
+                val y = geomBounds.top - h / 2
 
-            val lab = TextLabel(myLayoutInfo.facetXLabel)
-            lab.moveTo(x, y)
-            lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-            lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
-            add(lab)
+                val lab = TextLabel(xLabel)
+                lab.moveTo(x, y)
+                lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+                lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                add(lab)
+
+                h -= FACET_LABEL_HEIGHT
+            }
+
+//            val rect = SvgRectElement(
+//                DoubleRectangle(
+//                    geomBounds.left + hPad, geomBounds.top - h + vPad,
+//                    w - hPad * 2, h - vPad * 2
+//                )
+//            )
+//            rect.strokeWidth().set(0.0)
+//            rect.fillColor().set(theme.background())
+//            add(rect)
+//
+//            val x = geomBounds.left + w / 2
+//            val y = geomBounds.top - h / 2
+//
+//            val lab = TextLabel(myLayoutInfo.facetXLabels)
+//            lab.moveTo(x, y)
+//            lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+//            lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+//            add(lab)
         }
 
         // facet Y label (to the right from geom area)
@@ -210,6 +234,14 @@ internal class PlotTile(
             axis.moveTo(geomBounds.origin)
             add(axis)
         }
+//
+//        val rect = SvgRectElement(geomBounds).apply {
+//            strokeColor().set(Color.GREEN)
+//            strokeWidth().set(1.0)
+//            fillOpacity().set(0.0)
+//        }
+//        add(rect)
+//
     }
 
     private fun buildAxis(

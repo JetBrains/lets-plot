@@ -7,16 +7,17 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
+import jetbrains.datalore.plotDemo.model.plotConfig.FacetWrapDemo
 import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 
-object FacetGridBatik {
+object FacetWrapBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(FacetGridDemo()) {
+        with(FacetWrapDemo()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "Facet grid",
+                "Facet wrap",
                 plotSpecList,
                 BatikMapperDemoFactory(),
                 DoubleVector(600.0, 600.0)

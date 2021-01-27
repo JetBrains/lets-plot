@@ -30,7 +30,7 @@ internal class FacetGridPlotLayout(
         )
 
         val facetTiles = facets.tileInfos()
-        val labsInCol = facetTiles.filter { it.colLab != null }
+        val labsInCol = facetTiles.filter { it.colLabs.isNotEmpty() }
             .map { it.row }.distinct().count()
         val labsInRow = if (facetTiles.any { it.rowLab != null }) 1 else 0
 
@@ -95,13 +95,12 @@ internal class FacetGridPlotLayout(
 
             var height = geomHeight
             var geomY = 0.0
-            if (facetTile.xAxis) {
+            if (facetTile.xAxis && facetTile.row == facets.rowCount - 1) {   // bottom row only
                 height += axisThicknessX
             }
-            if (facetTile.colLab != null) {
-                height += FACET_TAB_HEIGHT
-                geomY = FACET_TAB_HEIGHT
-            }
+            val addedHeight = FACET_TAB_HEIGHT * facetTile.colLabs.size
+            height += addedHeight
+            geomY = addedHeight
 
             val bounds = DoubleRectangle(0.0, 0.0, width, height)
             val geomBounds = DoubleRectangle(geomX, geomY, geomWidth, geomHeight)
@@ -131,7 +130,7 @@ internal class FacetGridPlotLayout(
                 yAxisShown = facetTile.yAxis
             )
                 .withOffset(tilesAreaOffset.add(offset))
-                .withFacetLabels(facetTile.colLab, facetTile.rowLab)
+                .withFacetLabels(facetTile.colLabs, facetTile.rowLab)
 
             tileInfos.add(info)
 

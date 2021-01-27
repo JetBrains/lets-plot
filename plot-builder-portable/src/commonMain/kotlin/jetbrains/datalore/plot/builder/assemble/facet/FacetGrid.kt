@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.assemble
+package jetbrains.datalore.plot.builder.assemble.facet
 
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import kotlin.math.max
 
 class FacetGrid(
@@ -76,10 +77,17 @@ class FacetGrid(
             for (col in 0 until colCount) {
                 val addRowLab = col == colCount - 1
                 val hasYAxis = col == 0
+
+                val colLabs = if (addColLab) {
+                    colLabels[col]?.let { listOf(it) } ?: emptyList()
+                } else {
+                    emptyList<String>()
+                }
+
                 infos.add(
                     FacetTileInfo(
                         col, row,
-                        if (addColLab) colLabels[col] else null,
+                        colLabs,
                         if (addRowLab) rowLabels[row] else null,
                         hasXAxis, hasYAxis
                     )

@@ -121,6 +121,15 @@ open class OptionsAccessor(
         return list as List<Number?>
     }
 
+    fun getAsStringList(option: String): List<String> {
+        val v = get(option) ?: emptyList<String>()
+        return if (v is List<*>) {
+            v.filterNotNull().map { it.toString() }
+        } else {
+            listOf(v.toString())
+        }
+    }
+
     fun getStringList(option: String): List<String> {
         val list = getList(option)
 

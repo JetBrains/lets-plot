@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class FacetGrid : PlotConfigDemoBase() {
+class FacetGridDemo : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             cols(),
