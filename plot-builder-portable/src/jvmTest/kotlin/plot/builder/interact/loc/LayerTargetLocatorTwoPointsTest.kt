@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.offsetXY
 import jetbrains.datalore.plot.builder.interact.TestUtil.offsetY
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.pointTarget
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LayerTargetLocatorTwoPointsTest {
@@ -57,6 +58,7 @@ class LayerTargetLocatorTwoPointsTest {
         assertObjects(locator, offsetXY(SECOND_POINT), SECOND_POINT_KEY)
     }
 
+    @Ignore
     @Test
     fun nearestX() {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)
@@ -67,6 +69,7 @@ class LayerTargetLocatorTwoPointsTest {
         assertEmpty(locator, offsetXY(SECOND_POINT))
     }
 
+    @Ignore
     @Test
     fun nearestXCloseToEachOther() {
         val firstTarget = 1

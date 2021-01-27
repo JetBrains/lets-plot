@@ -103,13 +103,12 @@ class TooltipSpecFactory(
             val generalDataPoints = generalDataPoints()
             val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
             val colorsFromHint = hintColors()
-                .filter { it.key == Aes.Y } // geom_smooth has color
                 .filterKeys { aes -> aes in generalDataPoints.map { it.aes } }
-                .map { it.value }
-                .filterNotNull()
-            val tooltipColor = when {
+            val hintColors = colorsFromHint.mapNotNull { it.value }
+            val tooltipColor: Color = when {
                 myTooltipColor != null -> myTooltipColor
-                colorsFromHint.isNotEmpty() -> colorsFromHint.first()
+                colorsFromHint.containsKey(Aes.Y) -> colorsFromHint[Aes.Y]!!
+                hintColors.isNotEmpty() -> hintColors.last()
                 else -> tipLayoutHint().color!!
             }
             return if (generalLines.isNotEmpty()) {

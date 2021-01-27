@@ -169,7 +169,8 @@ object GeomInteractionUtil {
         GeomKind.CROSS_BAR,
         GeomKind.ERROR_BAR,
         GeomKind.LINE_RANGE,
-        GeomKind.POINT_RANGE -> listOf(Aes.YMAX, Aes.YMIN)
+        GeomKind.POINT_RANGE,
+        GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
         GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
         GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
         else -> emptyList()
@@ -202,7 +203,6 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2DF,
             GeomKind.FREQPOLY,
             GeomKind.PATH,
-            GeomKind.SEGMENT,
             GeomKind.RIBBON,
             GeomKind.SMOOTH -> true
             else -> false
@@ -248,15 +248,14 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.BOX_PLOT,
             GeomKind.SEGMENT,
-            GeomKind.RIBBON,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(isContinuousX)
+            GeomKind.RIBBON,
             GeomKind.SMOOTH -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
             GeomKind.POINT,
             GeomKind.CONTOUR,
-            GeomKind.RIBBON,
             GeomKind.DENSITY2D -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {
                 when (statKind) {

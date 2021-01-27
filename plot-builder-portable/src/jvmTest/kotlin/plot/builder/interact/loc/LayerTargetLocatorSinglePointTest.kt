@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.offsetY
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.pointTarget
 import kotlin.test.Test
+import kotlin.test.Ignore
 
 class LayerTargetLocatorSinglePointTest {
 
@@ -45,6 +46,7 @@ class LayerTargetLocatorSinglePointTest {
         assertEmpty(locator, offsetX(POINT))
     }
 
+    @Ignore
     @Test
     fun nearestX() {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)

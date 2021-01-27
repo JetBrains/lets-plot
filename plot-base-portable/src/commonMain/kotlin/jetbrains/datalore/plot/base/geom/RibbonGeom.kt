@@ -8,13 +8,10 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromFill
-import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
+import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 class RibbonGeom : GeomBase() {
@@ -24,7 +21,13 @@ class RibbonGeom : GeomBase() {
         return GeomUtil.ordered_X(data)
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val dataPoints = dataPoints(aesthetics)
         val helper = LinesHelper(pos, coord, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
@@ -42,32 +45,37 @@ class RibbonGeom : GeomBase() {
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        addTarget(aesthetics.dataPoints(), targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
-        addTarget(aesthetics.dataPoints(), targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper)
-
+        for (p in aesthetics.dataPoints()) {
+            addPointTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
+        }
     }
 
-    private fun addTarget(
-        dataPoints: Iterable<DataPointAesthetics>,
+    private fun addPointTarget(
+        p: DataPointAesthetics,
         collector: GeomTargetCollector,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
         helper: GeomHelper
     ) {
-        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-            dataPoints,
-            MultiPointDataConstructor.singlePointAppender { p -> helper.toClient(toLocation(p)!!, p) },
-            MultiPointDataConstructor.reducer(0.999, false)
-        )
-
-        for (multiPointData in multiPointDataList) {
-            collector.addPath(
-                multiPointData.points,
-                multiPointData.localToGlobalIndex,
-                params().setColor(
-                    fromFill(
-                        multiPointData.aes
-                    )
+        val coord = toLocation(p)
+        if (coord != null) {
+            val hint = HintsCollection.HintConfigFactory()
+                .defaultObjectRadius(0.0)
+                .defaultX(p.x()!!)
+                .defaultKind(TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+                .defaultColor(
+                    p.fill()!!,
+                    alpha = null
                 )
+
+            val hintsCollection = HintsCollection(p, helper)
+                .addHint(hint.create(Aes.YMAX))
+                .addHint(hint.create(Aes.YMIN))
+
+            collector.addPoint(
+                p.index(),
+                helper.toClient(coord, p),
+                0.0,
+                params().setTipLayoutHints(hintsCollection.hints)
             )
         }
     }

@@ -18,7 +18,7 @@ import kotlin.math.max
 
 internal class LayerTargetLocator(
     private val geomKind: GeomKind,
-    lookupSpec: GeomTargetLocator.LookupSpec,
+    private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
     targetPrototypes: List<TargetPrototype>) :
     GeomTargetLocator {
@@ -105,21 +105,25 @@ internal class LayerTargetLocator(
 
         val rectCollector = Collector<GeomTarget>(
             coord,
-            myCollectingStrategy
+            myCollectingStrategy,
+            lookupSpec.lookupSpace
         )
         val pointCollector = Collector<GeomTarget>(
             coord,
-            myCollectingStrategy
+            myCollectingStrategy,
+            lookupSpec.lookupSpace
         )
         val pathCollector = Collector<GeomTarget>(
             coord,
-            myCollectingStrategy
+            myCollectingStrategy,
+            lookupSpec.lookupSpace
         )
 
         // Should always replace because of polygon with holes - only top should have tooltip.
         val polygonCollector = Collector<GeomTarget>(
             coord,
-            Collector.CollectingStrategy.REPLACE
+            Collector.CollectingStrategy.REPLACE,
+            lookupSpec.lookupSpace
         )
 
         for (target in myTargets) {
@@ -240,9 +244,17 @@ internal class LayerTargetLocator(
             get() = targetProjection as PathTargetProjection
     }
 
-    internal class Collector<T>(cursor: DoubleVector, private val myStrategy: CollectingStrategy) {
+    internal class Collector<T>(
+        cursor: DoubleVector,
+        private val myStrategy: CollectingStrategy,
+        lookupSpace: GeomTargetLocator.LookupSpace
+    ) {
         private val result = ArrayList<T>()
-        val closestPointChecker: ClosestPointChecker = ClosestPointChecker(cursor)
+        val closestPointChecker: ClosestPointChecker = if (lookupSpace == GeomTargetLocator.LookupSpace.X) {
+            ClosestPointChecker(DoubleVector(cursor.x, 0.0))
+        } else {
+            ClosestPointChecker(cursor)
+        }
 
         fun collect(data: T) {
             when (myStrategy) {

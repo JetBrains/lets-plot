@@ -16,8 +16,8 @@ import jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection.PathPoi
 
 internal class TargetDetector(
         private val locatorLookupSpace: LookupSpace,
-        private val locatorLookupStrategy: LookupStrategy) {
-
+        private val locatorLookupStrategy: LookupStrategy
+) {
     fun checkPath(cursorCoord: DoubleVector, pathProjection: PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
 
         when (locatorLookupSpace) {
@@ -99,17 +99,9 @@ internal class TargetDetector(
                     LookupStrategy.HOVER -> return MathUtil.areEqual(x, cursorCoord.x,
                         POINT_AREA_EPSILON
                     )
-
                     LookupStrategy.NEAREST -> {
-                        // Too far. Don't add this point into result list
-                        return if (!MathUtil.areEqual(closestPointChecker.target.x, x,
-                                POINT_X_NEAREST_EPSILON
-                            )) {
-                            false
-                        } else {
-                            // Keep XY distance
-                            closestPointChecker.check(pointProjection.xy())
-                        }
+                        // TODO skipping too far points - was removed for geom_ribbon
+                        return closestPointChecker.check(DoubleVector(x,0.0))
                     }
                     LookupStrategy.NONE -> return false
 
