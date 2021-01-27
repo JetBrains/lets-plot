@@ -15,7 +15,7 @@ class DataFrame private constructor(builder: Builder) {
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
-    private val myDistinctValues = HashMap<Variable, Set<*>>()
+    private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -34,7 +34,11 @@ class DataFrame private constructor(builder: Builder) {
             while (entries.hasNext()) {
                 val next = entries.next()
                 if (next.value.size != size) {
-                    throw IllegalArgumentException("All data series in data frame must have equal size\n" + dumpSizes(vectorByVar))
+                    throw IllegalArgumentException(
+                        "All data series in data frame must have equal size\n" + dumpSizes(
+                            vectorByVar
+                        )
+                    )
                 }
             }
         }
@@ -44,9 +48,9 @@ class DataFrame private constructor(builder: Builder) {
         val sb = StringBuilder()
         for ((key, value) in vectorByVar) {
             sb.append(key.name)
-                    .append(" : ")
-                    .append(value.size)
-                    .append('\n')
+                .append(" : ")
+                .append(value.size)
+                .append('\n')
         }
         return sb.toString()
     }
@@ -84,9 +88,15 @@ class DataFrame private constructor(builder: Builder) {
         return list as List<Double?>
     }
 
-    fun distinctValues(variable: Variable): Collection<Any?> {
+    fun distinctValues(variable: Variable): Collection<Any> {
         assertDefined(variable)
-        return myDistinctValues.getOrPut(variable) { LinkedHashSet(get(variable)) }
+        return myDistinctValues.getOrPut(variable) {
+            val values = LinkedHashSet(get(variable)).apply {
+                this.remove(null)
+            }
+            @Suppress("UNCHECKED_CAST")
+            return values as Collection<Any>
+        }
     }
 
     fun variables(): Set<Variable> {

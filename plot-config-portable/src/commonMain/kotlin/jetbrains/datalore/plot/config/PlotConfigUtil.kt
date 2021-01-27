@@ -123,14 +123,14 @@ object PlotConfigUtil {
             }
         }
 
-        val discreteDomainByAes = HashMap<Aes<*>, Collection<*>>()
+        val discreteDomainByAes = HashMap<Aes<*>, Collection<Any>>()
         val continuousDomainByAesRaw = HashMap<Aes<*>, ClosedRange<Double>?>()
         for ((varBinding, data) in dataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
             if (discreteMappedAes.contains(aes)) {
                 // update discrete domain
-                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any?>() } +
+                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any>() } +
                         data.distinctValues(variable)
             } else {
                 // update continuous domain

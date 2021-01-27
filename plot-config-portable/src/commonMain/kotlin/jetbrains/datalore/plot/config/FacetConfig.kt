@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.assemble.FacetGrid
 import jetbrains.datalore.plot.config.Option.Facet.NAME
 import jetbrains.datalore.plot.config.Option.Facet.X
 import jetbrains.datalore.plot.config.Option.Facet.Y
@@ -41,29 +42,29 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options,
 
     fun createFacets(dataList: List<DataFrame>): PlotFacets {
         var nameX: String? = null
-        val levelsX = LinkedHashSet<Any?>()
+        val levelsX = LinkedHashSet<Any>()
         if (hasX()) {
             nameX = x
             for (data in dataList) {
                 if (DataFrameUtil.hasVariable(data, nameX!!)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameX)
-                    levelsX.addAll(DataFrameUtil.distinctValues(data, variable))
+                    levelsX.addAll(data.distinctValues(variable))
                 }
             }
         }
 
         var nameY: String? = null
-        val levelsY = LinkedHashSet<Any?>()
+        val levelsY = LinkedHashSet<Any>()
         if (hasY()) {
             nameY = y
             for (data in dataList) {
                 if (DataFrameUtil.hasVariable(data, nameY!!)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameY)
-                    levelsY.addAll(DataFrameUtil.distinctValues(data, variable))
+                    levelsY.addAll(data.distinctValues(variable))
                 }
             }
         }
 
-        return PlotFacets(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY))
+        return FacetGrid(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY))
     }
 }

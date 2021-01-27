@@ -8,112 +8,115 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.max
 
-class PlotFacets(
-    private val xVar: String?,
-    private val yVar: String?,
-    private val xLevels: List<*>,
-    private val yLevels: List<*>
-) {
+abstract class PlotFacets {
 
-    val isDefined: Boolean = xVar != null || yVar != null
-    val colCount: Int = max(1, xLevels.size)
-    val rowCount: Int = max(1, yLevels.size)
-    val numTiles = colCount * rowCount
-    val variables: List<String>
-        get() = listOfNotNull(xVar, yVar)
+    abstract val isDefined: Boolean
+    abstract val colCount: Int
+    abstract val rowCount: Int
+    abstract val numTiles: Int
+    abstract val variables: List<String>
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
      *          Tiles are enumerated by rows, i.e.:
      *          the index is computed like: row * nCols + col
      */
-    fun dataByTile(data: DataFrame): List<DataFrame> {
-        require(isDefined) { "dataByTile() called on Undefined plot facets." }
+    abstract fun dataByTile(data: DataFrame): List<DataFrame>
 
-        val colLevels = if (xLevels.isEmpty()) listOf(null) else xLevels
-        val rowLevels = if (yLevels.isEmpty()) listOf(null) else yLevels
-
-        // Enumerate tiles by-row and create a Dataframe for each tile.
-        val dataByTile: MutableList<DataFrame> = ArrayList()
-        for (rowLevel in rowLevels) {
-            for (colLevel in colLevels) {
-                val tileData = dataSubset(data, colLevel, rowLevel)
-                dataByTile.add(tileData)
-            }
-        }
-        return dataByTile
-    }
-
-    private fun dataSubset(data: DataFrame, xLevel: Any?, yLevel: Any?): DataFrame {
-        if (xLevel == null && yLevel == null) {
-            return data
-        }
-
-        val matchingIndices: MutableList<Int>
-        if (xLevel == null) {                                 // all 'x'
-            val variable = DataFrameUtil.findVariableOrFail(data, yVar!!)
-            val list = data[variable]
-            matchingIndices = SeriesUtil.matchingIndices(list, yLevel!!)
-        } else if (yLevel == null) {                          // all 'y'
-            val variable = DataFrameUtil.findVariableOrFail(data, xVar!!)
-            val list = data[variable]
-            matchingIndices = SeriesUtil.matchingIndices(list, xLevel)
-        } else {
-            val varX = DataFrameUtil.findVariableOrFail(data, xVar!!)
-            val varY = DataFrameUtil.findVariableOrFail(data, yVar!!)
-            matchingIndices = SeriesUtil.matchingIndices(data[varX], xLevel)
-            val matchingY = SeriesUtil.matchingIndices(data[varY], yLevel)
-            // intersection
-            matchingIndices.retainAll(HashSet(matchingY))
-        }
-
-        // build the data subset
-        val dfBuilder = DataFrame.Builder()
-        val variables = data.variables()
-        for (variable in variables) {
-            val source = data[variable]
-            val target = SeriesUtil.pickAtIndices(source, matchingIndices)
-            dfBuilder.put(variable, target)
-        }
-
-        return dfBuilder.build()
-    }
 
     /**
      * @return List of FacetTileInfo.
      *          Tiles are enumerated by rows, i.e.:
      *          the index is computed like: row * nCols + col
      */
-    fun tileInfos(): List<FacetTileInfo> {
-        val colLabels = (if (xLevels.isEmpty()) listOf(null) else xLevels).map { it?.toString() }
-        val rowLabels = (if (yLevels.isEmpty()) listOf(null) else yLevels).map { it?.toString() }
-
-        val infos = ArrayList<FacetTileInfo>()
-        for (row in 0 until rowCount) {
-            val addColLab = row == 0
-            val hasXAxis = row == rowCount - 1
-            for (col in 0 until colCount) {
-                val addRowLab = col == colCount - 1
-                val hasYAxis = col == 0
-                infos.add(
-                    FacetTileInfo(
-                        col, row,
-                        if (addColLab) colLabels[col] else null,
-                        if (addRowLab) rowLabels[row] else null,
-                        hasXAxis, hasYAxis
-                    )
-                )
-            }
-        }
-
-        return infos
-    }
+    abstract fun tileInfos(): List<FacetTileInfo>
 
     companion object {
         fun undefined(): PlotFacets {
-            return PlotFacets(null, null, emptyList<Any>(), emptyList<Any>())
+            return FacetGrid(null, null, emptyList<Any>(), emptyList<Any>())
+        }
+
+        fun dataByLevelTuple(
+            data: DataFrame,
+            varNames: List<String>,
+            varLevels: List<List<Any>>
+        ): Map<List<Any>, DataFrame> {
+            require(varNames.isNotEmpty()) { "Empty list of facet variables." }
+            require(varNames.size == varNames.distinct().size) { "Facet variables must be distinct, were: $varNames." }
+            check(varNames.size == varLevels.size)
+
+            val vars = varNames.map { DataFrameUtil.findVariableOrFail(data, it) }
+
+            val indicesByVarByLevel = HashMap<String, Map<Any, List<Int>>>()
+            for ((i, variable) in vars.withIndex()) {
+                val levels = varLevels[i]
+
+                val indicesByLevel = HashMap<Any, List<Int>>()
+                for (level in levels) {
+                    val indices = SeriesUtil.matchingIndices(data[variable], level)
+                    indicesByLevel[level] = indices
+                }
+
+                indicesByVarByLevel[variable.name] = indicesByLevel
+            }
+
+            val nameLevelTuples = createNameLevelTuples(varNames, varLevels)
+
+            val dataByLevelKey = HashMap<List<Any>, DataFrame>()
+            for (nameLevelTuple in nameLevelTuples) {
+                val topName = nameLevelTuple.first().first
+                val topLevel = nameLevelTuple.first().second
+                val indices = ArrayList(indicesByVarByLevel.getValue(topName).getValue(topLevel))
+                for (i in 1 until nameLevelTuple.size) {
+                    val name = nameLevelTuple[i].first
+                    val level = nameLevelTuple[i].second
+                    val levelIndices = indicesByVarByLevel.getValue(name).getValue(level)
+                    indices.retainAll(HashSet(levelIndices))
+                }
+
+                val levelKey = nameLevelTuple.map { it.second }
+
+                // build the data subset
+                val b = DataFrame.Builder()
+                val variables = data.variables()
+                for (variable in variables) {
+                    val source = data[variable]
+                    val target = SeriesUtil.pickAtIndices(source, indices)
+                    b.put(variable, target)
+                }
+
+                val levelData = b.build()
+                dataByLevelKey[levelKey] = levelData
+            }
+
+            return dataByLevelKey
+        }
+
+        private fun createNameLevelTuples(
+            variables: List<String>,
+            allLevels: List<List<Any>>
+        ): List<List<Pair<String, Any>>> {
+            val name = variables.first()
+            val levels = allLevels.first()
+
+            val levelKeys = ArrayList<List<Pair<String, Any>>>()
+            for (level in levels) {
+                if (variables.size > 1) {
+                    val subKeys = createNameLevelTuples(
+                        variables.subList(1, variables.size),
+                        allLevels.subList(1, allLevels.size)
+                    )
+                    for (subKey in subKeys) {
+                        levelKeys.add(listOf(name to level) + subKey)
+                    }
+                } else {
+                    // exit
+                    levelKeys.add(listOf(name to level))
+                }
+            }
+
+            return levelKeys
         }
     }
 

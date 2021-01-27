@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.plot.builder.scale.GuideMapper
@@ -26,7 +25,7 @@ object GuideMappers {
         naValue: TargetT
     ): GuideMapper<TargetT> {
 
-        val domainValues = DataFrameUtil.distinctValues(data, variable)
+        val domainValues = data.distinctValues(variable)
         return discreteToDiscrete(
             domainValues,
             outputValues,
