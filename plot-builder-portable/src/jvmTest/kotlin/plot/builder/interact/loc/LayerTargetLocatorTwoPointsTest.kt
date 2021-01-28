@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.offsetXY
 import jetbrains.datalore.plot.builder.interact.TestUtil.offsetY
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.pointTarget
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LayerTargetLocatorTwoPointsTest {
@@ -58,18 +57,16 @@ class LayerTargetLocatorTwoPointsTest {
         assertObjects(locator, offsetXY(SECOND_POINT), SECOND_POINT_KEY)
     }
 
-    @Ignore
     @Test
     fun nearestX() {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)
 
         assertObjects(locator, FIRST_POINT, FIRST_POINT_KEY)
         assertObjects(locator, SECOND_POINT, SECOND_POINT_KEY)
-        assertEmpty(locator, offsetXY(FIRST_POINT))
-        assertEmpty(locator, offsetXY(SECOND_POINT))
+        assertObjects(locator, offsetXY(FIRST_POINT), FIRST_POINT_KEY)
+        assertObjects(locator, offsetXY(SECOND_POINT), SECOND_POINT_KEY)
     }
 
-    @Ignore
     @Test
     fun nearestXCloseToEachOther() {
         val firstTarget = 1
@@ -90,7 +87,7 @@ class LayerTargetLocatorTwoPointsTest {
     }
 
     @Test
-    fun `nearestX - both within acceptable distance`() {
+    fun `nearestX - points are equidistant from cursor`() {
         val firstTarget = 1
         val secondTarget = 2
 
@@ -102,6 +99,22 @@ class LayerTargetLocatorTwoPointsTest {
         )
 
         val closeToBoth = point(13.0, 10.0)
+        assertObjects(locator, closeToBoth, firstTarget, secondTarget)
+    }
+
+    @Test
+    fun `nearestX - points with the same X`() {
+        val firstTarget = 1
+        val secondTarget = 2
+
+        val locator = createLocator(
+            LookupStrategy.NEAREST,
+            LookupSpace.X,
+            pointTarget(firstTarget, point(10.0, 10.0)),
+            pointTarget(secondTarget, point(10.0, 16.0))
+        )
+
+        val closeToBoth = point(10.0, 10.0)
         assertObjects(locator, closeToBoth, firstTarget, secondTarget)
     }
 

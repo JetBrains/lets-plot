@@ -94,16 +94,14 @@ internal class TargetDetector(
 
             LookupSpace.X -> {
                 val x = pointProjection.x()
-                when (locatorLookupStrategy) {
-
-                    LookupStrategy.HOVER -> return MathUtil.areEqual(x, cursorCoord.x,
+                return when (locatorLookupStrategy) {
+                    LookupStrategy.HOVER -> MathUtil.areEqual(x, cursorCoord.x,
                         POINT_AREA_EPSILON
                     )
                     LookupStrategy.NEAREST -> {
-                        // TODO skipping too far points - was removed for geom_ribbon
-                        return closestPointChecker.check(DoubleVector(x,0.0))
+                        closestPointChecker.check(DoubleVector(x, 0.0))
                     }
-                    LookupStrategy.NONE -> return false
+                    LookupStrategy.NONE -> false
 
                     else -> throw IllegalStateException()
                 }

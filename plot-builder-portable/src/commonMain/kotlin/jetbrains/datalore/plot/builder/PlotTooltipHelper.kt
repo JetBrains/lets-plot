@@ -78,7 +78,7 @@ internal class PlotTooltipHelper {
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
-                        addLookupResult(result, plotCoord)
+                        addLookupResult(result)
                     }
                 }
             }

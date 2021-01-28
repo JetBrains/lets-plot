@@ -18,9 +18,7 @@ internal class LocatedTargetsPicker {
     val picked: List<LookupResult>
         get() = chooseBestResult()
 
-    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null) {
-        val lookupResult = filterResults(result, coord)
-
+    fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
         if (!lookupResult.isCrosshairEnabled && distance > CUTOFF_DISTANCE) {
             return
@@ -41,32 +39,6 @@ internal class LocatedTargetsPicker {
             }
         }
         myAllLookupResults.add(lookupResult)
-    }
-
-    private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?): LookupResult {
-        if (coord == null || lookupResult.geomKind !in NEAREST_BY_X) {
-            return lookupResult
-        }
-
-        // Get closest targets and remove duplicates
-        val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
-
-        val minXToTarget = geomTargets
-            .map { target -> target.tipLayoutHint.coord!!.subtract(coord).x }
-            .minByOrNull { abs(it) }
-        val newTargets = geomTargets
-            .filter { target ->
-                target.tipLayoutHint.coord!!.subtract(coord).x == minXToTarget
-            }
-            .distinctBy { it.hitIndex }
-
-        return LookupResult(
-            targets = newTargets,
-            distance = lookupResult.distance,
-            geomKind = lookupResult.geomKind,
-            contextualMapping = lookupResult.contextualMapping,
-            isCrosshairEnabled = lookupResult.isCrosshairEnabled
-        )
     }
 
     private fun chooseBestResult(): List<LookupResult> {
@@ -106,12 +78,6 @@ internal class LocatedTargetsPicker {
             GeomKind.CROSS_BAR,
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE
-        )
-        private val NEAREST_BY_X = listOf(
-            GeomKind.RIBBON,
-            GeomKind.SMOOTH,
-            GeomKind.POINT,
-            GeomKind.CONTOUR
         )
 
         private fun distance(locatedTargetList: LookupResult): Double {
