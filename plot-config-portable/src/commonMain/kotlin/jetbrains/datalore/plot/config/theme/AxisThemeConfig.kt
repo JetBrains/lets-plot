@@ -17,18 +17,18 @@ import jetbrains.datalore.plot.config.OptionsAccessor
 class AxisThemeConfig private constructor(
     options: Map<String, Any>,
     defOptions: Map<String, Any>,
-    private val myX: Boolean
+    private val isX: Boolean
 ) : OptionsAccessor(options, defOptions), AxisTheme {
 
     private fun defTheme(): AxisTheme {
-        return if (myX)
+        return if (isX)
             ThemeConfig.DEF.axisX()
         else
             ThemeConfig.DEF.axisY()
     }
 
     private fun optionSuffix(): String {
-        return if (myX)
+        return if (isX)
             "_x"
         else
             "_y"

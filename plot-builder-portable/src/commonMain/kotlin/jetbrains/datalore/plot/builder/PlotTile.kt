@@ -72,6 +72,16 @@ internal class PlotTile(
     */
 
         val geomBounds = myLayoutInfo.geomBounds
+
+        if (myTheme.plot().showInnerFrame()) {
+            val rect = SvgRectElement(geomBounds).apply {
+                strokeColor().set(myTheme.plot().innerFrameColor())
+                strokeWidth().set(1.0)
+                fillOpacity().set(0.0)
+            }
+            add(rect)
+        }
+
         addFacetLabels(geomBounds, myTheme.facets())
 
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
@@ -157,7 +167,7 @@ internal class PlotTile(
                     )
                 )
                 rect.strokeWidth().set(0.0)
-                rect.fillColor().set(theme.background())
+                rect.fillColor().set(theme.labelBackground())
                 add(rect)
 
                 val x = geomBounds.left + w / 2
@@ -206,7 +216,7 @@ internal class PlotTile(
                 )
             )
             rect.strokeWidth().set(0.0)
-            rect.fillColor().set(theme.background())
+            rect.fillColor().set(theme.labelBackground())
             add(rect)
 
             val x = geomBounds.right + w / 2
@@ -234,14 +244,6 @@ internal class PlotTile(
             axis.moveTo(geomBounds.origin)
             add(axis)
         }
-//
-//        val rect = SvgRectElement(geomBounds).apply {
-//            strokeColor().set(Color.GREEN)
-//            strokeWidth().set(1.0)
-//            fillOpacity().set(0.0)
-//        }
-//        add(rect)
-//
     }
 
     private fun buildAxis(
