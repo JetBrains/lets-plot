@@ -493,6 +493,29 @@ class TooltipConfigTest {
         assertTooltipStrings(expectedLines, lines)
     }
 
+    @Test
+    fun `use the 'group' in tooltips`() {
+        val geomLayer = buildGeomPointLayer(
+            data = mapOf(
+                "x" to listOf(1),
+                "y" to listOf(1),
+                "id" to listOf("a")
+            ),
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y",
+                "group" to "id"
+            ),
+            tooltips = mapOf(
+                TOOLTIP_LINES to listOf("^group")
+            )
+        )
+        assertTooltipStrings(
+            expected = listOf("a"),
+            actual = getGeneralTooltipStrings(geomLayer)
+        )
+    }
+
     companion object {
 
         private fun buildGeomPointLayer(

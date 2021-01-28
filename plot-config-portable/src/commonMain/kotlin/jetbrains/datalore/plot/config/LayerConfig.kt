@@ -149,7 +149,7 @@ class LayerConfig(
         tooltips = if (has(TOOLTIPS)) {
             when (get(TOOLTIPS)) {
                 is Map<*, *> -> {
-                    TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
+                    TooltipConfig(getMap(TOOLTIPS), constantsMap, explicitGroupingVarName).createTooltips()
                 }
                 NONE -> {
                     // not show tooltips
