@@ -102,13 +102,12 @@ class TooltipSpecFactory(
         private fun generalTooltipSpec(): List<TooltipSpec> {
             val generalDataPoints = generalDataPoints()
             val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
-            val colorsFromHint = hintColors()
+            val aesHintColors = hintColors()
                 .filterKeys { aes -> aes in generalDataPoints.map { it.aes } }
-            val hintColors = colorsFromHint.mapNotNull { it.value }
-            val tooltipColor: Color = when {
+            val colorFromHints = aesHintColors[Aes.Y] ?: aesHintColors.mapNotNull { it.value }.lastOrNull()
+            val tooltipColor = when {
                 myTooltipColor != null -> myTooltipColor
-                colorsFromHint.containsKey(Aes.Y) -> colorsFromHint[Aes.Y]!!
-                hintColors.isNotEmpty() -> hintColors.last()
+                colorFromHints != null -> colorFromHints
                 else -> tipLayoutHint().color!!
             }
             return if (generalLines.isNotEmpty()) {
