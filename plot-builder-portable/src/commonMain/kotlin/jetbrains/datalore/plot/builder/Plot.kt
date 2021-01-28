@@ -168,8 +168,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             coord = BogusCoordinateSystem()
         }
 
-        val tile =
-            PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
+        val tile = PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
         tile.setShowAxis(isAxisEnabled)
         tile.debugDrawing().set(DEBUG_DRAWING)
 

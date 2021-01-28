@@ -212,26 +212,13 @@ internal object PlotAssemblerUtil {
         return legendBoxInfos
     }
 
-    fun createPlotLayout(tileLayout: TileLayout, faceted: Boolean, plotFacets: PlotFacets?): PlotLayout {
-        if (!faceted) {
+    fun createPlotLayout(tileLayout: TileLayout, facets: PlotFacets): PlotLayout {
+        if (!facets.isDefined) {
             return SingleTilePlotLayout(tileLayout)
         }
 
-        val xLevels = plotFacets!!.xLevels
-        val yLevels = plotFacets.yLevels
-
-        val xLabs = ArrayList<String>()
-        for (level in xLevels!!) {
-            xLabs.add(level.toString())
-        }
-
-        val yLabs = ArrayList<String>()
-        for (level in yLevels!!) {
-            yLabs.add(level.toString())
-        }
-
         return FacetGridPlotLayout(
-            xLabs, yLabs,
+            facets,
             tileLayout
         )
     }

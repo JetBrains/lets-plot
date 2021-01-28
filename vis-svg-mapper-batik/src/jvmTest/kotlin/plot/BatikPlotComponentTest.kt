@@ -65,6 +65,7 @@ class BatikPlotComponentTest {
             val component = MonolithicAwt.buildPlotFromRawSpecs(
                 plotSpec = plotSpec,
                 plotSize = null,
+                plotMaxWidth = null,
                 svgComponentFactory = COMPONENT_FACTORY,
                 executor = AWT_EDT_EXECUTOR
             ) {

@@ -164,28 +164,26 @@ object Colors {
     }
 
     @JvmOverloads
-    fun lighter(c: Color?, factor: Double = DEFAULT_FACTOR): Color? {
-        return c?.let {
-            var r = c.red
-            var g = c.green
-            var b = c.blue
-            val alpha = c.alpha
+    fun lighter(c: Color, factor: Double = DEFAULT_FACTOR): Color {
+        var r = c.red
+        var g = c.green
+        var b = c.blue
+        val alpha = c.alpha
 
-            val i = (1.0 / (1.0 - factor)).toInt()
-            if (r == 0 && g == 0 && b == 0) {
-                return Color(i, i, i, alpha)
-            }
-            if (r > 0 && r < i) r = i
-            if (g > 0 && g < i) g = i
-            if (b > 0 && b < i) b = i
-
-            return Color(
-                min((r / factor).toInt(), 255),
-                min((g / factor).toInt(), 255),
-                min((b / factor).toInt(), 255),
-                alpha
-            )
+        val i = (1.0 / (1.0 - factor)).toInt()
+        if (r == 0 && g == 0 && b == 0) {
+            return Color(i, i, i, alpha)
         }
+        if (r > 0 && r < i) r = i
+        if (g > 0 && g < i) g = i
+        if (b > 0 && b < i) b = i
+
+        return Color(
+            min((r / factor).toInt(), 255),
+            min((g / factor).toInt(), 255),
+            min((b / factor).toInt(), 255),
+            alpha
+        )
     }
 
     fun mimicTransparency(color: Color, alpha: Double, background: Color): Color {

@@ -49,13 +49,12 @@ object PlotConfigClientSideUtil {
             dataByLayer.add(layerData)
         }
 
-        val layersDataByTile = PlotConfigUtil.toLayersDataByTile(dataByLayer, plotConfig.facets).iterator()
+        val layersDataByTile = PlotConfigUtil.toLayersDataByTile(dataByLayer, plotConfig.facets)
 
         val layerBuilders = ArrayList<GeomLayerBuilder>()
         val layersByTile = ArrayList<List<GeomLayer>>()
-        while (layersDataByTile.hasNext()) {
+        for (tileDataByLayer in layersDataByTile) {
             val panelLayers = ArrayList<GeomLayer>()
-            val tileDataByLayer = layersDataByTile.next()
 
             val isMultilayer = tileDataByLayer.size > 1
             val isLiveMap = plotConfig.layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
@@ -66,7 +65,13 @@ object PlotConfigClientSideUtil {
                 if (layerBuilders.size == layerIndex) {
                     val layerConfig = plotConfig.layerConfigs[layerIndex]
                     val geomInteraction =
-                        GeomInteractionUtil.configGeomTargets(layerConfig, plotConfig.scaleMap, isMultilayer, isLiveMap, plotConfig.theme)
+                        GeomInteractionUtil.configGeomTargets(
+                            layerConfig,
+                            plotConfig.scaleMap,
+                            isMultilayer,
+                            isLiveMap,
+                            plotConfig.theme
+                        )
 
                     layerBuilders.add(createLayerBuilder(layerConfig, /*scaleProvidersMap,*/ geomInteraction))
                 }

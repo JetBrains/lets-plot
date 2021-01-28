@@ -24,44 +24,23 @@ object PlotConfigUtil {
     fun toLayersDataByTile(dataByLayer: List<DataFrame>, facets: PlotFacets): List<List<DataFrame>> {
         // Plot consists of one or more tiles,
         // each tile consists of layers
-        val layersDataByTile = ArrayList<MutableList<DataFrame>>()
-        layersDataByTile.add(ArrayList())
 
-        // if 'facets' then slice layers by panels
-        var xLevels: List<*> = emptyList<Any>()
-        var yLevels: List<*> = emptyList<Any>()
-
-        val hasFacets = facets.isDefined
-        if (hasFacets) {
-            xLevels = facets.xLevels!!
-            yLevels = facets.yLevels!!
-            if (xLevels.isEmpty()) {
-                xLevels = listOf<Any?>(null)
+        val layersDataByTile: List<MutableList<DataFrame>> =
+            if (facets.isDefined) {
+                List(facets.numTiles) { ArrayList() }
+            } else {
+                // Just one tile.
+                listOf(ArrayList())
             }
-            if (yLevels.isEmpty()) {
-                yLevels = listOf<Any?>(null)
-            }
-
-            val numTiles = xLevels.size * yLevels.size
-            while (layersDataByTile.size < numTiles) {
-                layersDataByTile.add(ArrayList())
-            }
-        }
 
         for (layerData in dataByLayer) {
-            if (!hasFacets) {
-                layersDataByTile[0].add(layerData)
-            } else {
-                // create layer for each 'facet tile' in grid
-                for (row in yLevels.indices) {
-                    val yLevel = yLevels[row]
-                    for (col in xLevels.indices) {
-                        val xLevel = xLevels[col]
-                        val panelLayerData = facets.dataSubset(layerData, xLevel, yLevel)
-                        val panelIndex = row * xLevels.size + col
-                        layersDataByTile[panelIndex].add(panelLayerData)
-                    }
+            if (facets.isDefined) {
+                val dataByTile = facets.dataByTile(layerData)
+                for ((tileIndex, tileData) in dataByTile.withIndex()) {
+                    layersDataByTile[tileIndex].add(tileData)
                 }
+            } else {
+                layersDataByTile[0].add(layerData)
             }
         }
         return layersDataByTile
@@ -132,7 +111,9 @@ object PlotConfigUtil {
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
             require(data.has(variable)) {
-                "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
+                "Undefined variable: '${variable.name}'. Variables in data frame: ${
+                    data.variables().map { "'${it.name}'" }
+                }"
             }
 
             val aes = varBinding.aes
@@ -142,14 +123,14 @@ object PlotConfigUtil {
             }
         }
 
-        val discreteDomainByAes = HashMap<Aes<*>, Collection<*>>()
+        val discreteDomainByAes = HashMap<Aes<*>, Collection<Any>>()
         val continuousDomainByAesRaw = HashMap<Aes<*>, ClosedRange<Double>?>()
         for ((varBinding, data) in dataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
             if (discreteMappedAes.contains(aes)) {
                 // update discrete domain
-                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any?>() } +
+                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any>() } +
                         data.distinctValues(variable)
             } else {
                 // update continuous domain

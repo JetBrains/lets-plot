@@ -12,9 +12,11 @@ import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
+import kotlin.math.max
 
 object PlotSizeHelper {
     private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
+    private const val MIN_PLOT_WIDTH = 50.0  // Used somethere else?
     private const val DEF_PLOT_WIDTH = 500.0
     private const val DEF_LIVE_MAP_WIDTH = 800.0
     private val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
@@ -24,6 +26,7 @@ object PlotSizeHelper {
     fun singlePlotSize(
         plotSpec: Map<*, *>,
         plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
         facets: PlotFacets,
         containsLiveMap: Boolean
     ): DoubleVector {
@@ -34,7 +37,12 @@ object PlotSizeHelper {
             if (plotSizeSpec != null) {
                 plotSizeSpec
             } else {
-                defaultSinglePlotSize(facets, containsLiveMap)
+                val defSize = defaultSinglePlotSize(facets, containsLiveMap)
+                if (plotMaxWidth != null && plotMaxWidth < defSize.x) {
+                    defSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / defSize.x)
+                } else {
+                    defSize
+                }
             }
         }
     }
@@ -63,7 +71,7 @@ object PlotSizeHelper {
         } else {
             singlePlotSize(
                 bunchItem.featureSpec,
-                null,
+                null, null,
                 PlotFacets.undefined(), false
             )
         }
@@ -72,13 +80,9 @@ object PlotSizeHelper {
     private fun defaultSinglePlotSize(facets: PlotFacets, containsLiveMap: Boolean): DoubleVector {
         var plotSize = DEF_PLOT_SIZE
         if (facets.isDefined) {
-            val xLevels = facets.xLevels!!
-            val yLevels = facets.yLevels!!
-            val columns = if (xLevels.isEmpty()) 1 else xLevels.size
-            val rows = if (yLevels.isEmpty()) 1 else yLevels.size
-            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
-            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
-            plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
+            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / facets.colCount)
+            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / facets.rowCount)
+            plotSize = DoubleVector(panelWidth * facets.colCount, panelHeight * facets.rowCount)
         } else if (containsLiveMap) {
             plotSize = DEF_LIVE_MAP_SIZE
         }

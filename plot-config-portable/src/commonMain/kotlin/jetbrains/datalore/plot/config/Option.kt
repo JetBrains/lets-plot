@@ -295,8 +295,17 @@ object Option {
 
     object Facet {
         const val NAME = Meta.NAME
+        const val NAME_GRID = "grid"
+        const val NAME_WRAP = "wrap"
+
+        // grid
         const val X = "x"
         const val Y = "y"
+
+        // wrap
+        const val FACETS = "facets"
+        const val NCOL = "ncol"
+        const val NROW = "nrow"
     }
 
     object Mapping {

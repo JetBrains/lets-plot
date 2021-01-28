@@ -6,7 +6,6 @@
 package jetbrains.datalore.plotDemo.model.plotContainer
 
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -49,13 +48,13 @@ internal class SinCosLineData(xMapper: (Int) -> Any, size: Int) {
         }
 
         dataFrame = DataFrame.Builder()
-                .put(varX, xValues)
-                .putNumeric(varY, yValues)
-                .put(varCat, catValues)
-                .build()
+            .put(varX, xValues)
+            .putNumeric(varY, yValues)
+            .put(varCat, catValues)
+            .build()
     }
 
     fun distinctXValues(): Collection<*> {
-        return DataFrameUtil.distinctValues(dataFrame, varX)
+        return dataFrame.distinctValues(varX)
     }
 }

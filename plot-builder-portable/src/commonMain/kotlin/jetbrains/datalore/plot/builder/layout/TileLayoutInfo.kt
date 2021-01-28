@@ -25,7 +25,7 @@ class TileLayoutInfo private constructor(
     xAxisShown: Boolean,
     yAxisShown: Boolean,
 
-    val facetXLabel: String?,
+    val facetXLabels: List<String>,
     val facetYLabel: String?
 ) {
     val xAxisShown: Boolean = xAxisInfo != null && xAxisShown
@@ -48,7 +48,8 @@ class TileLayoutInfo private constructor(
         yAxisInfo,
         xAxisShown = xAxisShown,
         yAxisShown = yAxisShown,
-        facetXLabel = null, facetYLabel = null
+        facetXLabels = emptyList(),
+        facetYLabel = null
     )
 
     fun withOffset(offset: DoubleVector): TileLayoutInfo {
@@ -59,7 +60,7 @@ class TileLayoutInfo private constructor(
             this.clipBounds,
             this.xAxisInfo, this.yAxisInfo,
             this.xAxisShown, this.yAxisShown,
-            this.facetXLabel, this.facetYLabel
+            this.facetXLabels, this.facetYLabel
         )
     }
 
@@ -73,7 +74,7 @@ class TileLayoutInfo private constructor(
         return geomBounds.add(offset)
     }
 
-    fun withFacetLabels(xLabel: String, yLabel: String): TileLayoutInfo {
+    fun withFacetLabels(xLabels: List<String>, yLabel: String?): TileLayoutInfo {
         return TileLayoutInfo(
             this.plotOrigin,
             this.bounds,
@@ -81,7 +82,7 @@ class TileLayoutInfo private constructor(
             this.clipBounds,
             this.xAxisInfo, this.yAxisInfo,
             this.xAxisShown, this.yAxisShown,
-            xLabel, yLabel
+            xLabels, yLabel
         )
     }
 }

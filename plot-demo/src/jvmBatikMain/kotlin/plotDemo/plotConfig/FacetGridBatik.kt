@@ -6,13 +6,13 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plotDemo.model.plotConfig.FacetGrid
+import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
 import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 
 object FacetGridBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(FacetGrid()) {
+        with(FacetGridDemo()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(

@@ -5,65 +5,71 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.config.Option.Facet.NAME
-import jetbrains.datalore.plot.config.Option.Facet.X
-import jetbrains.datalore.plot.config.Option.Facet.Y
+import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
+import jetbrains.datalore.plot.builder.assemble.facet.FacetWrap
+import jetbrains.datalore.plot.config.Option.Facet
 
-internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options, mapOf(NAME to "grid")) {
+internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options) {
 
-    // todo: check 'name'
-    val isGrid: Boolean
-        get() = true
-
-    val x: String?
-        get() {
-            Preconditions.checkState(hasX(), "No facet x specified")
-            return getString(X)
+    fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
+        val name = getStringSafe(Facet.NAME)
+        return when (name) {
+            Facet.NAME_GRID -> createGrid(dataByLayer)
+            Facet.NAME_WRAP -> createWrap(dataByLayer)
+            else -> throw IllegalArgumentException("Facet 'grid' or 'wrap' expected but was: `$name`")
         }
-
-    val y: String?
-        get() {
-            Preconditions.checkState(hasY(), "No facet y specified")
-            return getString(Y)
-        }
-
-    private fun hasX(): Boolean {
-        return has(X)
     }
 
-    private fun hasY(): Boolean {
-        return has(Y)
-    }
-
-    fun createFacets(dataList: List<DataFrame>): PlotFacets {
+    private fun createGrid(dataByLayer: List<DataFrame>): FacetGrid {
         var nameX: String? = null
-        val levelsX = LinkedHashSet<Any?>()
-        if (hasX()) {
-            nameX = x
-            for (data in dataList) {
-                if (DataFrameUtil.hasVariable(data, nameX!!)) {
+        val levelsX = LinkedHashSet<Any>()
+        if (has(Facet.X)) {
+            nameX = getStringSafe(Facet.X)
+            for (data in dataByLayer) {
+                if (DataFrameUtil.hasVariable(data, nameX)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameX)
-                    levelsX.addAll(DataFrameUtil.distinctValues(data, variable))
+                    levelsX.addAll(data.distinctValues(variable))
                 }
             }
         }
 
         var nameY: String? = null
-        val levelsY = LinkedHashSet<Any?>()
-        if (hasY()) {
-            nameY = y
-            for (data in dataList) {
-                if (DataFrameUtil.hasVariable(data, nameY!!)) {
+        val levelsY = LinkedHashSet<Any>()
+        if (has(Facet.Y)) {
+            nameY = getStringSafe(Facet.Y)
+            for (data in dataByLayer) {
+                if (DataFrameUtil.hasVariable(data, nameY)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameY)
-                    levelsY.addAll(DataFrameUtil.distinctValues(data, variable))
+                    levelsY.addAll(data.distinctValues(variable))
                 }
             }
         }
 
-        return PlotFacets(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY))
+        return FacetGrid(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY))
+    }
+
+    private fun createWrap(dataByLayer: List<DataFrame>): FacetWrap {
+        // 'facets' cal be just one name or a list of names.
+        val facets = getAsStringList(Facet.FACETS)
+
+        val ncol = getInteger(Facet.NCOL)
+        val nrow = getInteger(Facet.NROW)
+
+        val facetLevels = ArrayList<List<Any>>()
+        for (name in facets) {
+            val levels = HashSet<Any>()
+            for (data in dataByLayer) {
+                if (DataFrameUtil.hasVariable(data, name)) {
+                    val variable = DataFrameUtil.findVariableOrFail(data, name)
+                    levels.addAll(data.get(variable).filterNotNull())
+                }
+            }
+            facetLevels.add(levels.toList())
+        }
+
+        return FacetWrap(facets, facetLevels, nrow, ncol, FacetWrap.Direction.H)
     }
 }

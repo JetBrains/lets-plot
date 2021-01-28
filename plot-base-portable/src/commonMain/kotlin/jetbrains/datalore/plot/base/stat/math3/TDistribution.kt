@@ -55,7 +55,7 @@ class TDistribution
      *
      * @return the degrees of freedom.
      */
-    val degreesOfFreedom: Double,
+    private val degreesOfFreedom: Double,
     /** Inverse cumulative probability accuracy.  */
     /** {@inheritDoc}  */
     override val solverAbsoluteAccuracy: Double = DEFAULT_INVERSE_ABSOLUTE_ACCURACY

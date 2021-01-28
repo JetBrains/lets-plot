@@ -13,12 +13,14 @@ import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.*
+import jetbrains.datalore.plot.config.Option.Mapping.GROUP
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 
 class TooltipConfig(
     opts: Map<String, Any>,
-    private val constantsMap: Map<Aes<*>, Any>
+    private val constantsMap: Map<Aes<*>, Any>,
+    private val groupingVarName: String?
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
@@ -81,14 +83,21 @@ class TooltipConfig(
                 return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
             }
 
-            return if (isAes) {
-                val aes = getAesByName(fieldName)
-                when (val constant = constantsMap[aes]) {
-                    null -> MappingValue(aes, format = format)
-                    else -> ConstantValue(constant, format)
+            return when {
+                isAes && fieldName == GROUP -> {
+                    requireNotNull(groupingVarName) { "Variable name for 'group' is not specified"}
+                    DataFrameValue(groupingVarName, format)
                 }
-            } else {
-                DataFrameValue(fieldName, format)
+                isAes -> {
+                    val aes = getAesByName(fieldName)
+                    when (val constant = constantsMap[aes]) {
+                        null -> MappingValue(aes, format = format)
+                        else -> ConstantValue(constant, format)
+                    }
+                }
+                else -> {
+                    DataFrameValue(fieldName, format)
+                }
             }
         }
 

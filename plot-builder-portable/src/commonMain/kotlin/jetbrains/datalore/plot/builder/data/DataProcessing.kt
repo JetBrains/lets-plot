@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -54,8 +55,7 @@ object DataProcessing {
         bindings: List<VarBinding>,
         scaleMap: TypedScaleMap,
         groupingContext: GroupingContext,
-        facetXVar: String?,
-        facetYVar: String?,
+        facets: PlotFacets,
         statCtx: StatContext,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
@@ -70,7 +70,7 @@ object DataProcessing {
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
-            val sd = applyStat(data, stat, bindings, scaleMap, facetXVar, facetYVar, statCtx, messageConsumer)
+            val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, messageConsumer)
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
                 @Suppress("UNCHECKED_CAST")
@@ -80,7 +80,7 @@ object DataProcessing {
         } else { // add offset to each group
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
-                var sd = applyStat(d, stat, bindings, scaleMap, facetXVar, facetYVar, statCtx, messageConsumer)
+                var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
@@ -166,8 +166,7 @@ object DataProcessing {
         stat: Stat,
         bindings: List<VarBinding>,
         scaleMap: TypedScaleMap,
-        facetXVarName: String?,
-        facetYVarName: String?,
+        facets: PlotFacets,
         statCtx: StatContext,
         compMessageConsumer: Consumer<String>
     ): DataFrame {
@@ -195,18 +194,16 @@ object DataProcessing {
 
         val statDataSize = statData[statVariables.iterator().next()].size
         val facetVars = HashSet<Variable>()
-        for (facetVarName in listOf(facetXVarName, facetYVarName)) {
-            if (!isNullOrEmpty(facetVarName)) {
-                val facetVar = DataFrameUtil.findVariableOrFail(data, facetVarName!!)
-                facetVars.add(facetVar)
-                if (data[facetVar].isNotEmpty()) {
-                    val facetLevel = data[facetVar][0]
-                    // generate series for 'facet' variable
-                    statData = statData
-                        .builder()
-                        .put(facetVar, List(statDataSize) { facetLevel })
-                        .build()
-                }
+        for (facetVarName in facets.variables) {
+            val facetVar = DataFrameUtil.findVariableOrFail(data, facetVarName)
+            facetVars.add(facetVar)
+            if (data[facetVar].isNotEmpty()) {
+                val facetLevel = data[facetVar][0]
+                // generate series for 'facet' variable
+                statData = statData
+                    .builder()
+                    .put(facetVar, List(statDataSize) { facetLevel })
+                    .build()
             }
         }
 

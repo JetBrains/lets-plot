@@ -84,9 +84,9 @@ object DataFrameUtil {
         return data.isNumeric(findVariableOrFail(data, varName))
     }
 
-    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
-        return data.distinctValues(variable)
-    }
+//    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
+//        return data.distinctValues(variable)
+//    }
 
     fun sortedCopy(variables: Iterable<DataFrame.Variable>): List<DataFrame.Variable> {
         val ordering = Ordering.from(Comparator<DataFrame.Variable> { o1, o2 -> o1.name.compareTo(o2.name) })
