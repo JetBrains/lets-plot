@@ -6,11 +6,11 @@ from enum import Enum
 from typing import Union, Optional, List
 
 from .geom import _geom
-from .util import is_geocoder, auto_join_geocoded_gdf
-from .._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, \
+from .util import is_geocoder, auto_join_geocoder
+from lets_plot._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, \
     GEOCODING_PROVIDER_URL, \
     TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
-from .._global_settings import has_global_value, get_global_val
+from lets_plot._global_settings import has_global_value, get_global_val
 
 try:
     import pandas
@@ -121,8 +121,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         other_args.pop(_display_mode)
 
     if is_geocoder(map):
+        map_join = auto_join_geocoder(map_join, map)
         map = map.get_centroids()
-        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('livemap',
                  mapping=mapping,

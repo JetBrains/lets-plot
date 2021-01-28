@@ -7,7 +7,7 @@ import numbers
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.util import as_annotated_data
-from .._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
+from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
 
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 

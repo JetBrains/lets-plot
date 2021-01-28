@@ -2,9 +2,8 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geocoder, auto_join_geocoded_gdf, \
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geocoder, auto_join_geocoder, \
     geo_data_frame_to_wgs84, as_map_join
 
 #
@@ -26,7 +25,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-               map=None, map_join=None, data_join_on=None, map_join_on=None,
+               map=None, map_join=None,
                **other_args):
     """
     Draw points defined by an x and y coordinate, as for a scatter plot.
@@ -53,10 +52,27 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
+        Keys used to join map coordinates with data.
+        first value in pair - column/columns in data
+        second value in pair - column/columns in map
+
+        When map is a GeoDataFrame:
+            map_join='state':
+                'state' is a key for both data and map.
+            map_join=[['city', 'state']]:
+                ['city', 'state'] is a key for both data and map.
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+
+        If map is a Geocoder then second value can be omitted - it will be generated automatically with columns that were used for geocoding.
+            map_join='State_Name':
+                data key - ['State_Name'], map key - ['state']
+            map_join=['City_Name', 'State_Name']:
+                data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                data key - ['City_Name', 'State_Name'], map key - ['city', 'state']. In case of extra parents
+                in a map parameter that were needed for ambituity resolving but not present in data.
+
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -102,8 +118,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     """
 
     if is_geocoder(map):
+        map_join = auto_join_geocoder(map_join, map)
         map = map.get_centroids()
-        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('point',
                  mapping=mapping,
@@ -113,12 +129,12 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 map=map, map_join=map_join,
                  **other_args)
 
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              map=None, map_join=None, data_join_on=None, map_join_on=None,
+              map=None, map_join=None,
               **other_args):
     """
     Connects observations in the order, how they appear in the data.
@@ -219,7 +235,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 map=map, map_join=map_join,
                  **other_args)
 
 
@@ -1412,7 +1428,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 map=None, map_join=None, data_join_on=None, map_join_on=None,
+                 map=None, map_join=None,
                  **other_args):
     """
     Display a filled closed path defined by the vertex coordinates of individual polygons.
@@ -1490,8 +1506,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     """
 
     if is_geocoder(map):
+        map_join = auto_join_geocoder(map_join, map)
         map = map.get_boundaries()
-        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('polygon',
                  mapping=mapping,
@@ -1501,12 +1517,12 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 map=map, map_join=map_join,
                  **other_args)
 
 
 def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-             map=None, map_join=None, data_join_on=None, map_join_on=None,
+             map=None, map_join=None,
              **other_args):
     """
     Display polygons from a reference map.
@@ -1585,8 +1601,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     """
 
     if is_geocoder(map):
+        map_join = auto_join_geocoder(map_join, map)
         map = map.get_boundaries()
-        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('map',
                  mapping=mapping,
@@ -1596,7 +1612,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 map=map, map_join=map_join,
                  **other_args)
 
 
@@ -2625,7 +2641,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              map=None, map_join=None, data_join_on=None, map_join_on=None,
+              map=None, map_join=None,
               **other_args):
     """
     Display an axis-aligned rectangle defined by two corners.
@@ -2698,8 +2714,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     """
 
     if is_geocoder(map):
+        map_join = auto_join_geocoder(map_join, map)
         map = map.get_limits()
-        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('rect',
                  mapping=mapping,
@@ -2709,7 +2725,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 map=map, map_join=map_join,
                  **other_args)
 
 
@@ -2789,7 +2805,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 
 def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              map=None, map_join=None, data_join_on=None, map_join_on=None,
+              map=None, map_join=None,
               label_format=None,
               na_text=None,
               **other_args):
@@ -2875,8 +2891,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     """
 
     if is_geocoder(map):
+        map_join = auto_join_geocoder(map_join, map)
         map = map.get_centroids()
-        map_join = auto_join_geocoded_gdf(map_join)
 
     return _geom('text',
                  mapping=mapping,
@@ -2886,7 +2902,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join, data_join_on=data_join_on, map_join_on=map_join_on,
+                 map=map, map_join=map_join,
                  label_format=label_format,
                  na_text=na_text,
                  **other_args)
@@ -2919,9 +2935,7 @@ def _geom(name, *,
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 
     kwargs['map_join'] = as_map_join(
-        kwargs.get('map_join', None),
-        kwargs.get('data_join_on', None),
-        kwargs.get('map_join_on', None)
+        kwargs.get('map_join', None)
     )
 
     return LayerSpec(geom=name,

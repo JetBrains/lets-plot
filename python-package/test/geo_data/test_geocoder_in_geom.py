@@ -1,23 +1,31 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+import pandas
+import pytest
 from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import Point, Polygon, LinearRing, MultiPolygon
 
 from lets_plot._kbridge import _standardize_plot_spec
-from lets_plot.geo_data.geocoder import Geocoder
+from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_STATE
+from lets_plot.geo_data.geocoder import Geocoder, LevelKind
 from lets_plot.plot import ggplot, geom_polygon, geom_point, geom_map, geom_rect, geom_text, geom_path, geom_livemap
 from .geo_data import get_map_data_meta, assert_error
 
 
-def geo_data_frame(geometry):
+def geo_data_frame(geometry, columns=[]):
+    data = { key: None for key in columns }
+    data['coord'] = geometry
     return GeoDataFrame(
-        data={'coord': geometry},
+        data=data,
         geometry='coord'
     )
 
 def get_map(plot_spec) -> dict:
     return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['map']
+
+def get_map_join(plot_spec) -> dict:
+    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['map_join']
 
 
 def get_data(plot_spec) -> dict:
@@ -88,9 +96,67 @@ def test_data_should_call_to_dataframe():
     geocoder = mock_geocoder()
     plot_spec = ggplot() + geom_map(data=geocoder)
 
-    layer_data = _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['data']
     geocoder.assert_get_geocodes_invocation()
-    assert geocoder.get_test_geocodes() == layer_data
+    assert geocoder.get_test_geocodes() == get_layer_spec(plot_spec, 'data')
+
+def get_layer_spec(plot_spec, spec_name):
+    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0][spec_name]
+
+@pytest.mark.parametrize('map_join,map_columns,expected', [
+    (
+            'City_Name',
+            [DF_COLUMN_CITY],
+            [['City_Name'], [DF_COLUMN_CITY]]
+    ),
+    (       # automatically use all names from map as multi-key
+            ['City_Name', 'State_Name'],
+            [DF_COLUMN_CITY, DF_COLUMN_STATE],
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
+    ),
+    (       # not all names were used for join
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]],
+            [DF_COLUMN_CITY, 'county', DF_COLUMN_STATE],
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
+    ),
+    (
+            None,
+            [DF_COLUMN_CITY, DF_COLUMN_STATE],
+            None
+    ),
+    (
+            ['City_Name', 'State_Name'],
+            [DF_COLUMN_CITY],
+            "`map_join` expected to have (1) items, but was(2)"
+    ),
+    (
+            'City_Name',
+            [DF_COLUMN_CITY, DF_COLUMN_STATE],
+            "`map_join` expected to have (2) items, but was(1)"
+    ),
+    (
+            'City_Name',
+            [DF_COLUMN_CITY, DF_COLUMN_STATE],
+            "`map_join` expected to have (2) items, but was(1)"
+    ),
+])
+def test_map_join_regions(map_join, map_columns, expected):
+    class MockGeocoder(Geocoder):
+        def get_centroids(self) -> 'GeoDataFrame':
+            return geo_data_frame([Point(-5, 17)], map_columns)
+
+        def get_geocodes(self) -> pandas.DataFrame:
+            return pandas.DataFrame(columns=map_columns)
+
+    geocoder = MockGeocoder()
+
+    if not isinstance(expected, str):
+        plot_spec = ggplot() + geom_point(map_join=map_join, map=geocoder)
+        assert get_layer_spec(plot_spec, 'map_join') == expected
+    else:
+        assert_error(
+            expected,
+            lambda :ggplot() + geom_point(map_join=map_join, map=geocoder)
+        )
 
 
 def mock_geocoder() -> 'MockGeocoder':

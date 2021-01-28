@@ -4,34 +4,28 @@
 import json
 from typing import List, Union, Callable, Any
 
-from lets_plot.geo_data import DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY
+import shapely
+from geopandas import GeoDataFrame
+from shapely.geometry import Point
+
+from lets_plot.geo_data import DF_COLUMN_ID, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTY, DF_COLUMN_STATE, DF_COLUMN_COUNTRY
+from lets_plot.geo_data.geocodes import Geocodes
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import ResponseField, GeometryKind
 from lets_plot.geo_data.gis.request import RegionQuery
-from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
+from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, \
+    GeoPoint, \
     Response, SuccessResponse, AmbiguousResponse, ErrorResponse, ResponseBuilder
-from lets_plot.geo_data.geocodes import Geocodes
-
-from pandas import DataFrame
-from shapely.geometry import Point
 
 GEOJSON_TYPE = ResponseField.boundary_type.value
 GEOJSON_COORDINATES = ResponseField.boundary_coordinates.value
 
-GEO_OBJECT_ID: str = '777'
 LEVEL: LevelKind = LevelKind.county
-TEXAS: str = 'Texas'
-REQUEST: str = 'request'
 ID: str = 'iddd'
 NAME: str = 'rrr'
-OTHER_NAME: str = 'otherrr name'
 FOUND_NAME: str = 'a'
 MESSAGE = 'msg'
 ERROR_MESSAGE = 'error msg'
-
-SUCCESS = Status.success.value
-AMBIGUOUS = Status.ambiguous.value
-ERROR = Status.error.value
 
 GJPoint = List[float]
 GJRing = List[GJPoint]
@@ -45,6 +39,8 @@ GEO_RECT_MIN_LON: float = 5
 GEO_RECT_MIN_LAT: float = 1
 GEO_RECT_MAX_LON: float = 9
 GEO_RECT_MAX_LAT: float = 7
+
+COLUMN_NAME_CITY = 'city'
 
 def run_intergration_tests() -> bool:
     import os
@@ -66,17 +62,43 @@ def assert_error(message: str, action: Callable[[], Any]):
         assert message == str(e), "'{}' != '{}'".format(message, str(e))
 
 
+def assert_request_and_found_name_are_equal(df, r=None):
+    if r is None:
+        r = range(len(df))
+
+    assert df[get_request_column_name(df)].tolist()[r.start:r.stop] == df[DF_COLUMN_FOUND_NAME].tolist()[r.start:r.stop]
+
+
+def get_request_column_name(df) -> str:
+    if COLUMN_NAME_CITY in df.columns:
+        return COLUMN_NAME_CITY
+    elif DF_COLUMN_COUNTY in df.columns:
+        return DF_COLUMN_COUNTY
+    elif DF_COLUMN_STATE in df.columns:
+        return DF_COLUMN_STATE
+    elif DF_COLUMN_COUNTRY in df.columns:
+        return DF_COLUMN_COUNTRY
+    else:
+        raise ValueError('Magic state - no expected columns')
+
+
 def assert_row(
         df,
         index: int = 0,
         names: Union[str, List] = IGNORED,
         found_name: Union[str, List] = IGNORED,
         id: Union[str, List] = IGNORED,
+        city: Union[str, List] = IGNORED,
         county: Union[str, List] = IGNORED,
         state: Union[str, List] = IGNORED,
         country: Union[str, List] = IGNORED,
         lon=None,
-        lat=None
+        lat=None,
+        lon_min=None,
+        lon_max=None,
+        lat_min=None,
+        lat_max=None,
+        boundary=None
 ):
     def assert_str(column, expected):
         if expected == IGNORED:
@@ -97,22 +119,63 @@ def assert_row(
 
         raise ValueError('Not support type of expected: {}'.format(str(type(expected))))
 
-
-    assert_str(DF_ID, id)
-    assert_str(DF_REQUEST, names)
-    assert_str(DF_FOUND_NAME, found_name)
-    assert_str(DF_PARENT_COUNTY, county)
-    assert_str(DF_PARENT_STATE, state)
-    assert_str(DF_PARENT_COUNTRY, country)
+    assert_str(get_request_column_name(df), names)
+    assert_str(DF_COLUMN_ID, id)
+    assert_str(DF_COLUMN_FOUND_NAME, found_name)
+    assert_str(COLUMN_NAME_CITY, city)
+    assert_str(DF_COLUMN_COUNTY, county)
+    assert_str(DF_COLUMN_STATE, state)
+    assert_str(DF_COLUMN_COUNTRY, country)
     if lon is not None:
         assert Point(df.geometry[index]).x == lon, 'lon {} != {}'.format(lon, Point(df.geometry[index]).x)
 
     if lat is not None:
         assert Point(df.geometry[index]).y == lat, 'lat {} != {}'.format(lat, Point(df.geometry[index]).y)
 
+    if any([v is not None for v in [lon_min, lon_max, lat_min, lat_max]]):
+        if isinstance(df, GeoDataFrame):
+            bounds = df.geometry[index].bounds
 
-def assert_found_names(df: DataFrame, names: List[str]):
-    assert names == df[DF_FOUND_NAME].tolist()
+            if lon_min is not None:
+                assert lon_min == bounds[0]
+
+            if lat_min is not None:
+                assert lat_min == bounds[1]
+
+            if lon_max is not None:
+                assert lon_max == bounds[2]
+
+            if lat_max is not None:
+                assert lat_max == bounds[3]
+        else:
+            assert GEO_RECT_MIN_LON == df.lonmin[index]
+            assert GEO_RECT_MIN_LAT == df.latmin[index]
+            assert GEO_RECT_MAX_LON == df.lonmax[index]
+            assert GEO_RECT_MAX_LAT == df.latmax[index]
+
+    if boundary is not None:
+        def assert_geo_multipolygon(geo_multipolygon, multipolygon: GJMultipolygon):
+            for i, geo_polygon in enumerate(geo_multipolygon.geoms):
+                assert_geo_polygon(geo_polygon, multipolygon[i])
+
+        def assert_geo_polygon(geo_polygon, polygon: GJPolygon):
+            assert_geo_ring(geo_polygon.exterior.coords, polygon[0])
+
+            for i, interior in enumerate(geo_polygon.interiors):
+                assert_geo_ring(interior.coords, polygon[1 + i])
+
+        def assert_geo_ring(geo_ring, ring: GJRing):
+            for i, point in enumerate(ring):
+                assert point[0] == geo_ring[i][0] # lon
+                assert point[1] == geo_ring[i][1] # lat
+
+        geometry = df.geometry[index]
+        if isinstance(geometry, shapely.geometry.Polygon):
+            assert_geo_polygon(geometry, boundary)
+
+        if isinstance(geometry, shapely.geometry.MultiPolygon):
+            assert_geo_multipolygon(geometry, boundary)
+
 
 def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Geocodes:
     return Geocodes(
@@ -263,25 +326,6 @@ def get_data_meta(plotSpec, layerIdx: int) -> dict:
 
 def get_map_data_meta(plotSpec, layerIdx: int) -> dict:
     return plotSpec.as_dict()['layers'][layerIdx]['map_data_meta']
-
-
-
-def assert_names(df: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME):
-    assert name == df[DF_REQUEST][index]
-    assert found_name == df[DF_FOUND_NAME][index]
-
-
-def assert_limit(limit: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME):
-    assert_names(limit, index, name, found_name)
-
-    min_lon = limit['lonmin'][index]
-    min_lat = limit['latmin'][index]
-    max_lon = limit['lonmax'][index]
-    max_lat = limit['latmax'][index]
-    assert GEO_RECT_MIN_LON == min_lon
-    assert GEO_RECT_MIN_LAT == min_lat
-    assert GEO_RECT_MAX_LON == max_lon
-    assert GEO_RECT_MAX_LAT == max_lat
 
 
 def feature_to_answer(feature: GeocodedFeature) -> Answer:

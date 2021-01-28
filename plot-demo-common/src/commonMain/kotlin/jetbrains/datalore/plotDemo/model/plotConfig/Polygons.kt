@@ -239,8 +239,6 @@ open class Polygons : PlotConfigDemoBase() {
           "continent"
         ]
       ],
-      "data_join_on": null,
-      "map_join_on": null,
       "color": "white"
     }
   ]

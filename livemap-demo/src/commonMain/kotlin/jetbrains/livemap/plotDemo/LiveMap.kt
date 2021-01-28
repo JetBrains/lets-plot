@@ -89,8 +89,7 @@ class LiveMap : PlotConfigDemoBase() {
                   "geocoding": {
                     "url": "http://172.31.52.145:3025"
                   },
-                  "data_join_on": "States",
-                  "map_join_on": "request"
+                  "map_join": ["States", "state"]
                 }
               ]
             }
@@ -230,8 +229,7 @@ class LiveMap : PlotConfigDemoBase() {
                   "geocoding": {
                     "url": "http://172.31.52.145:3025"
                   },
-                  "data_join_on": "States",
-                  "map_join_on": "request"
+                  "map_join": ["States", "state"]
                 }
               ]
             }

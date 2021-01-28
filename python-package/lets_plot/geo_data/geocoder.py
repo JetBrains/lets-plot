@@ -5,8 +5,7 @@ from typing import Union, List, Optional, Dict
 
 from pandas import Series
 
-from .geocodes import _to_level_kind, request_types, Geocodes, _raise_exception, \
-    _ensure_is_list
+from .geocodes import _to_level_kind, request_types, Geocodes, _raise_exception, _ensure_is_list
 from .gis.geocoding_service import GeocodingService
 from .gis.geometry import GeoRect, GeoPoint
 from .gis.request import RequestBuilder, GeocodingRequest, RequestKind, MapRegion, AmbiguityResolver, \
@@ -223,25 +222,17 @@ class ReverseGeocoder(Geocoder):
 
     def _geocode(self) -> Geocodes:
         if self._geocodes is None:
-            self._geocodes = self._geocode()
+            response: Response = GeocodingService().do_request(self._request)
+            if not isinstance(response, SuccessResponse):
+                _raise_exception(response)
+            self._geocodes = Geocodes(
+                response.level,
+                response.answers,
+                [RegionQuery(request='[{}, {}]'.format(pt.lon, pt.lat)) for pt in self._request.coordinates],
+                highlights=False
+            )
 
         return self._geocodes
-
-    def _geocode(self):
-        response: Response = GeocodingService().do_request(self._request)
-
-        if not isinstance(response, SuccessResponse):
-            _raise_exception(response)
-
-        return Geocodes(
-            response.level,
-            response.answers,
-            [
-                RegionQuery(request='[{}, {}]'.format(pt.lon, pt.lat)) for pt in self._request.coordinates
-            ],
-            False
-        )
-
 
 
 class NamesGeocoder(Geocoder):

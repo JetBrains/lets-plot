@@ -1,23 +1,22 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from typing import Union
 from unittest import mock
 
 import pytest
 from pandas import DataFrame
 
-from lets_plot._type_utils import _standardize_value
 from lets_plot.geo_data import geocode
+from lets_plot.geo_data.geocoder import _to_scope
+from lets_plot.geo_data.geocodes import _coerce_resolution, _ensure_is_list, Geocodes, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequest, PayloadKind, ExplicitRequest, \
     AmbiguityResolver
 from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint, Answer
 from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _prepare_parent, \
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
-from lets_plot.geo_data.geocodes import _coerce_resolution, _ensure_is_list, Geocodes, DF_REQUEST, DF_ID, DF_FOUND_NAME
-from lets_plot.geo_data.geocoder import _to_scope
-from .geo_data import make_geocode_region, make_success_response, features_to_answers, features_to_queries
+from .geo_data import make_geocode_region, make_success_response, features_to_answers, features_to_queries, \
+    COLUMN_NAME_CITY
 
 DATAFRAME_COLUMN_NAME = 'name'
 DATAFRAME_NAME_LIST = ['usa', 'russia']
@@ -253,7 +252,7 @@ def test_reorder_for_centroids_should_happen(mock_request):
         answers=features_to_answers([los_angeles, new_york, las_vegas, los_angeles])
     ).centroids()
 
-    assert ['Los Angeles', 'New York', 'Las Vegas', 'Los Angeles'] == df[DF_FOUND_NAME].tolist()
+    assert ['Los Angeles', 'New York', 'Las Vegas', 'Los Angeles'] == df[DF_COLUMN_FOUND_NAME].tolist()
 
 
 @pytest.mark.parametrize('arg,expected_resolution', [
@@ -314,5 +313,5 @@ def test_ensure_is_list(arg, expected_result):
 def test_regions_to_data_frame_should_skip_highlights():
     regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
     regions_df = regions.to_data_frame()
-    assert [DF_ID, DF_REQUEST, DF_FOUND_NAME] == list(regions_df.columns.values)
+    assert [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME] == list(regions_df.columns.values)
 

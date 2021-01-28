@@ -129,7 +129,7 @@ class GeoConfig(
         const val RECT_YMIN = "latmin"
         const val RECT_XMAX = "lonmax"
         const val RECT_YMAX = "latmax"
-        const val MAP_JOIN_REQUIRED_MESSAGE = "map_join or data_join_on/map_join_on is required when both data and map parameters used"
+        const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
         fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>): Boolean {
             if (combinedMappings.keys

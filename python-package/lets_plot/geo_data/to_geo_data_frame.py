@@ -5,8 +5,8 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import PlacesDataFrameBuilder, zip_answers, select_request_string, abstractmethod
-from lets_plot.geo_data.gis.request import RegionQuery
+from lets_plot.geo_data import PlacesDataFrameBuilder, zip_answers, abstractmethod
+from lets_plot.geo_data.gis.request import RegionQuery, LevelKind
 from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 
 ShapelyPoint = shapely.geometry.Point
@@ -40,9 +40,9 @@ class RectGeoDataFrame:
         self._lonmax: List[float] = []
         self._latmax: List[float] = []
 
-    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery]) -> DataFrame:
+    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery], level_kind: LevelKind) -> DataFrame:
         assert len(answers) == len(queries)
-        places = PlacesDataFrameBuilder()
+        places = PlacesDataFrameBuilder(level_kind)
 
         for query, answer in zip_answers(queries, answers):
             for feature in answer.features:
@@ -80,8 +80,8 @@ class CentroidsGeoDataFrame:
         self._lons: List[float] = []
         self._lats: List[float] = []
 
-    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery]) -> DataFrame:
-        places = PlacesDataFrameBuilder()
+    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery], level_kind: LevelKind) -> DataFrame:
+        places = PlacesDataFrameBuilder(level_kind)
 
         for query, answer in zip_answers(queries, answers):
             for feature in answer.features:
@@ -97,8 +97,8 @@ class BoundariesGeoDataFrame:
     def __init__(self):
         super().__init__()
 
-    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery]) -> DataFrame:
-        places = PlacesDataFrameBuilder()
+    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery], level_kind: LevelKind) -> DataFrame:
+        places = PlacesDataFrameBuilder(level_kind)
 
         geometry = []
         for query, answer in zip_answers(queries, answers):

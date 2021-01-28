@@ -3,12 +3,12 @@
 
 import pytest
 import shapely
-from pandas import DataFrame
 from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
-from lets_plot.geo_data import DF_FOUND_NAME
-from .geo_data import run_intergration_tests, assert_row, assert_error
+from lets_plot.geo_data import DF_COLUMN_FOUND_NAME
+from .geo_data import run_intergration_tests, assert_row, assert_error, get_request_column_name, \
+    assert_request_and_found_name_are_equal
 
 ShapelyPoint = shapely.geometry.Point
 
@@ -57,7 +57,7 @@ def test_name_columns(geometry_getter):
     pytest.param(lambda regions_obj: regions_obj.get_boundaries(5), id='boundaries(5)'),
     pytest.param(lambda regions_obj: regions_obj.get_boundaries(), id='boundaries()')
 ])
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_name_columns(geometry_getter):
     request = 'Vermont'
     found_name = 'Vermont'
@@ -167,23 +167,23 @@ def test_ambiguity_scope_boston_by_box():
     assert_row(r.get_centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_allow_ambiguous():
     r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
         .allow_ambiguous() \
         .get_geocodes()
 
-    actual = r[DF_FOUND_NAME].tolist()
+    actual = r[DF_COLUMN_FOUND_NAME].tolist()
     assert 29 == len(actual)  # 1 New York + 27 Manchester
 
 
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_drop_not_matched():
     r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
         .drop_not_matched() \
         .get_geocodes()
 
-    actual = r[DF_FOUND_NAME].tolist()
+    actual = r[DF_COLUMN_FOUND_NAME].tolist()
     assert actual == ['New York']
 
 
@@ -291,7 +291,7 @@ def test_rows_order():
     # create path preserving the order
     df = city_regions.get_centroids()
 
-    df = df.set_index('request')
+    df = df.set_index(get_request_column_name(df))
     df = df.reindex(city_names)
 
 
@@ -324,8 +324,7 @@ def test_ambiguous_not_found_with_level():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_order():
     bound = geodata.geocode(names=['Russia', 'USA', 'France', 'Japan'])
-    df = bound.get_geocodes()
-    assert ['Russia', 'USA', 'France', 'Japan'] == df['request'].tolist()
+    assert_row(bound.get_geocodes(), names=['Russia', 'USA', 'France', 'Japan'])
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -334,7 +333,7 @@ def test_resolution():
     sizes = []
     for res in range(1, 16):
         b = r.get_boundaries(res)
-        sizes.append(len(b['request']))
+        sizes.append(len(b))
 
     assert 15 == len(sizes)
 
@@ -343,30 +342,30 @@ def test_resolution():
 def test_should_copy_found_name_to_request_for_us48():
     df = geodata.geocode_states('us-48').get_geocodes()
 
-    assert len(df['request']) == 49
-    assert df['request'].equals(df['found name'])
+    assert len(df) == 49
+    assert_request_and_found_name_are_equal(df)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_us48_in_scope():
     df = geodata.geocode_states().scope('us-48').get_geocodes()
 
-    assert len(df['request']) == 49
-    assert all(len(request) > 0 for request in df.request)
+    assert 49 == len(df)
+    assert_request_and_found_name_are_equal(df)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_us48_in_name_without_level():
     df = geodata.geocode(names='us-48').get_geocodes()
 
-    assert len(df['request']) == 49
+    assert 49 == len(df)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_duplication_with_us48():
     df = geodata.geocode_states(names=['tx', 'us-48', 'tx']).get_geocodes()
 
-    assert len(df['request']) == 51
+    assert 51 == len(df)
     assert_row(df, names='tx', found_name='Texas', index=0)
     assert_row(df, names='Vermont', found_name='Vermont', index=1)
     assert_row(df, names='tx', found_name='Texas', index=50)
@@ -377,8 +376,7 @@ def test_empty_request_get_geocodes():
     orange_county = geodata.geocode_counties('orange county').scope('north carolina')
     r = geodata.geocode_cities().scope(orange_county)
     df = r.get_geocodes()
-    assert set(['Chapel Hill', 'Town of Carrboro', 'Carrboro', 'Hillsborough', 'Town of Carrboro', 'City of Durham']) == \
-           set(df['request'].tolist())
+    assert_request_and_found_name_are_equal(df)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -386,35 +384,25 @@ def test_empty_request_centroid():
     orange_county = geodata.geocode_counties('orange county').scope('north carolina')
     r = geodata.geocode_cities().scope(orange_county)
     df = r.get_centroids()
-    assert set(['Chapel Hill', 'Town of Carrboro', 'Carrboro', 'Hillsborough', 'Town of Carrboro', 'City of Durham']) == \
-           set(df['request'].tolist())
+    assert_request_and_found_name_are_equal(df)
 
 
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_highlights():
     r = geodata.geocode(level='city', names='NYC').highlights(True)
     df = r.get_geocodes()
-    assert df['found name'].tolist() == ['New York']
+    assert_row(df, found_name='New York')
     assert df['highlights'].tolist() == [['NYC']]
 
 
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_countries():
-    assert len(geodata.geocode_countries().get_centroids().request) == 217
+    df = geodata.geocode_countries().get_centroids()
+    assert 217 == len(df)
 
 
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_incorrect_group_processing():
-    c = geodata.geocode_countries().get_centroids()
-    c = list(c.request[141:142]) + list(c.request[143:144]) + list(c.request[136:137]) + list(c.request[114:134])
-    print(c)
-    c = geodata.geocode_countries(c).get_centroids()
-    r = geodata.geocode_countries(c['request'])
-    boundaries: DataFrame = r.get_boundaries(resolution=10)
-
-    assert 'group' not in boundaries.keys()
-
-
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_not_found_scope():
     assert_error(
         "Region is not found: blablabla",

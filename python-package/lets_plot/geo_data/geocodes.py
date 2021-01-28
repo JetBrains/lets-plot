@@ -14,14 +14,13 @@ from .type_assertion import assert_type, assert_list_type
 NO_OBJECTS_FOUND_EXCEPTION_TEXT = 'No objects were found.'
 MULTIPLE_OBJECTS_FOUND_EXCEPTION_TEXT = "Multiple objects were found. Use all_result=True to see them."
 
-DF_REQUEST = 'request'
-DF_ID = 'id'
-DF_FOUND_NAME = 'found name'
-DF_HIGHLIGHTS = 'highlights'
-DF_GROUP = 'group'
-DF_PARENT_COUNTRY = 'country'
-DF_PARENT_STATE = 'state'
-DF_PARENT_COUNTY = 'county'
+DF_COLUMN_ID = 'id'
+DF_COLUMN_FOUND_NAME = 'found name'
+DF_COLUMN_HIGHLIGHTS = 'highlights'
+DF_COLUMN_CITY = 'city'
+DF_COLUMN_COUNTRY = 'country'
+DF_COLUMN_STATE = 'state'
+DF_COLUMN_COUNTY = 'county'
 
 
 class Resolution(enum.Enum):
@@ -55,6 +54,19 @@ def select_request_string(request: Optional[str], name: str) -> str:
     return request
 
 
+def level_to_column_name(level_kind: LevelKind):
+    if level_kind == LevelKind.city:
+        return DF_COLUMN_CITY
+    elif level_kind == LevelKind.county:
+        return DF_COLUMN_COUNTY
+    elif level_kind == LevelKind.state:
+        return DF_COLUMN_STATE
+    elif level_kind == LevelKind.country:
+        return DF_COLUMN_COUNTRY
+    else:
+        raise ValueError('Unknown level kind: {}'.format(level_kind))
+
+
 def zip_answers(queries: List, answers: List):
     if len(queries) > 0:
         return zip(queries, answers)
@@ -63,7 +75,8 @@ def zip_answers(queries: List, answers: List):
 
 
 class PlacesDataFrameBuilder:
-    def __init__(self):
+    def __init__(self, level_kind: LevelKind):
+        self.level_kind: LevelKind = level_kind
         self._request: List[str] = []
         self._found_name: List[str] = []
         self._county: List[Optional[str]] = []
@@ -88,22 +101,25 @@ class PlacesDataFrameBuilder:
             return any(v is not None for v in column)
 
         data = {}
-        data[DF_REQUEST] = self._request
-        data[DF_FOUND_NAME] = self._found_name
+
+        request_column = level_to_column_name(self.level_kind)
+
+        data[request_column] = self._request
+        data[DF_COLUMN_FOUND_NAME] = self._found_name
 
         if contains_values(self._county):
-            data[DF_PARENT_COUNTY] = self._county
+            data[DF_COLUMN_COUNTY] = self._county
 
         if contains_values(self._state):
-            data[DF_PARENT_STATE] = self._state
+            data[DF_COLUMN_STATE] = self._state
 
         if contains_values(self._country):
-            data[DF_PARENT_COUNTRY] = self._country
+            data[DF_COLUMN_COUNTRY] = self._country
 
         return data
 
     @abstractmethod
-    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery] = []) -> DataFrame:
+    def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery], level_kind: LevelKind) -> DataFrame:
         raise ValueError('Not implemented')
 
 
@@ -283,10 +299,10 @@ class Geocodes:
         )
 
     def to_data_frame(self) -> DataFrame:
-        places = PlacesDataFrameBuilder()
+        places = PlacesDataFrameBuilder(self._level_kind)
 
         data = {}
-        data[DF_ID] = [feature.id for feature in self._geocoded_features]
+        data[DF_COLUMN_ID] = [feature.id for feature in self._geocoded_features]
 
         # for us-48 queries doesnt' count
         for query, answer in zip_answers(self._queries, self._answers):
@@ -296,7 +312,7 @@ class Geocodes:
         data = {**data, **places.build_dict()}
 
         if self._highlights:
-            data[DF_HIGHLIGHTS] = [feature.highlights for feature in self._geocoded_features]
+            data[DF_COLUMN_HIGHLIGHTS] = [feature.highlights for feature in self._geocoded_features]
 
         return DataFrame(data)
 
@@ -313,7 +329,7 @@ class Geocodes:
 
         self._join_payload(features)
 
-        return df_converter.to_data_frame(self._answers, self._queries)
+        return df_converter.to_data_frame(self._answers, self._queries, self._level_kind)
 
     def _request_builder(self, payload_kind: PayloadKind) -> RequestBuilder:
         assert_type(payload_kind, PayloadKind)
@@ -341,6 +357,21 @@ class Geocodes:
 
     def _get_features(self, feature_id: str) -> List[GeocodedFeature]:
         return [feature for feature in self._geocoded_features if feature.id == feature_id]
+
+
+    @classmethod
+    def find_name_columns(cls, geocodes_df) -> List[str]:
+        names = []
+        if DF_COLUMN_CITY in geocodes_df:
+            names.append(DF_COLUMN_CITY)
+        if DF_COLUMN_COUNTY in geocodes_df:
+            names.append(DF_COLUMN_COUNTY)
+        if DF_COLUMN_STATE in geocodes_df:
+            names.append(DF_COLUMN_STATE)
+        if DF_COLUMN_COUNTRY in geocodes_df:
+            names.append(DF_COLUMN_COUNTRY)
+
+        return names
 
 
 request_types = Optional[Union[str, List[str], Series]]

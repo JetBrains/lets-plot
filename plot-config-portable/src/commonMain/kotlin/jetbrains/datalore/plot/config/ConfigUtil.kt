@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.data.Dummies
 import jetbrains.datalore.plot.config.Option.Meta
@@ -45,7 +46,7 @@ object ConfigUtil {
         }
 
         fun computeMultiKeys(dataFrame: DataFrame, keyVarNames: List<*>): List<List<Any?>> {
-            val keyVars = keyVarNames.map { keyVarName -> variables(dataFrame)[keyVarName] ?: error("Key $keyVarName not found") }
+            val keyVars = keyVarNames.map { keyVarName -> findVariableOrFail(dataFrame, keyVarName as String)}
             return (0 until dataFrame.rowCount()).map { rowIndex -> keyVars.map { dataFrame.get(it)[rowIndex] } }
         }
 

@@ -6,13 +6,13 @@ from unittest import mock
 import pytest
 
 from lets_plot.geo_data.geocoder import Geocoder
-from lets_plot.geo_data.geocodes import _coerce_resolution, _parse_resolution, Geocodes, Resolution, DF_ID, \
-    DF_FOUND_NAME, DF_REQUEST
+from lets_plot.geo_data.geocodes import _coerce_resolution, _parse_resolution, Geocodes, Resolution
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind, \
     RegionQuery
 from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint
-from .geo_data import make_success_response, features_to_queries, features_to_answers
+from .geo_data import make_success_response, features_to_queries, features_to_answers, assert_row, \
+    assert_request_and_found_name_are_equal
 
 USA_REQUEST = 'united states'
 USA_NAME = 'USA'
@@ -29,12 +29,6 @@ RF_NAME = RUSSIA_NAME
 RF_ID = RUSSIA_ID
 
 RESOLUTION = 12
-
-
-def assert_region_df(region_object: FeatureBuilder, df, index=0):
-    assert region_object.name == df[DF_REQUEST][index]
-    assert region_object.id == df[DF_ID][index]
-    assert region_object.name == df[DF_FOUND_NAME][index]
 
 
 class TestMapRegions:
@@ -116,7 +110,7 @@ class TestMapRegions:
             answers=features_to_answers([self.foo.build_geocoded(), self.bar.build_geocoded()])
         ).to_data_frame()
 
-        assert ['FOO', 'BAR'] == df[DF_REQUEST].tolist()
+        assert_row(df, names=['FOO', 'BAR'])
 
     def test_as_list(self):
         regions = Geocodes(
@@ -127,8 +121,8 @@ class TestMapRegions:
 
         assert 2 == len(regions)
 
-        assert_region_df(self.foo, regions[0].to_data_frame())
-        assert_region_df(self.bar, regions[1].to_data_frame())
+        assert_row(regions[0].to_data_frame(), names=self.foo.name, id=self.foo.id, found_name=self.foo.name)
+        assert_row(regions[1].to_data_frame(), names=self.bar.name, id=self.bar.id, found_name=self.bar.name)
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_exploding_answers_to_data_frame_take_request_from_feature_name(self, mock_request):
@@ -168,8 +162,7 @@ class TestMapRegions:
                 .build()
         )
 
-        assert foo_name == df[DF_REQUEST][0]
-        assert bar_name == df[DF_REQUEST][1]
+        assert_request_and_found_name_are_equal(df)
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_direct_answers_take_request_from_query(self, mock_request):
@@ -207,7 +200,8 @@ class TestMapRegions:
                 .build()
         )
 
-        assert ['fooo', 'barr', 'bazz'] == df[DF_REQUEST].tolist()
+        assert_row(df, names=['fooo', 'barr', 'bazz'])
+
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_df_rows_duplication_should_be_processed_correctly(self, mock_request):
@@ -245,7 +239,7 @@ class TestMapRegions:
                 .build()
         )
 
-        assert ['foo', 'bar', 'foo'] == df[DF_REQUEST].tolist()
+        assert_row(df, names=['foo', 'bar', 'foo'])
 
 
     def make_geocoder(self) -> Geocoder:

@@ -1,26 +1,25 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 import lets_plot.geo_data as geodata
-from lets_plot.geo_data import DF_ID
-from .geo_data import assert_error, assert_row
+from .geo_data import assert_error, assert_row, assert_request_and_found_name_are_equal
 
 
 def test_us48_in_names_with_level():
     us48 = geodata.geocode_states('us-48').get_geocodes()
-    assert 49 == len(us48.id)
-    assert us48['request'].tolist() == us48['found name'].tolist()
+    assert 49 == len(us48)
+    assert_request_and_found_name_are_equal(us48)
 
 
 def test_us48_in_names_without_level():
     us48 = geodata.geocode(names='us-48').get_geocodes()
-    assert 49 == len(us48.id)
-    assert us48['request'].tolist() == us48['found name'].tolist()
+    assert 49 == len(us48)
+    assert_request_and_found_name_are_equal(us48)
 
 
 def test_us48_with_extra_names():
     us48 = geodata.geocode(names=['texas', 'us-48', 'nevada']).get_geocodes()
-    assert 51 == len(us48.id)
-    assert us48['request'][1:49].equals(us48['found name'][1:49])
+    assert 51 == len(us48)
+    assert_request_and_found_name_are_equal(us48, range(1, 49))
     assert_row(us48, index=0, names='texas', found_name='Texas')
     assert_row(us48, index=50, names='nevada', found_name='Nevada')
 
@@ -31,8 +30,8 @@ def test_us48_with_extra_and_missing_names():
         .get_geocodes()
 
     # still 51 - drop missing completley
-    assert 51 == len(us48.id)
-    assert us48['request'].tolist()[1:49] == us48['found name'].tolist()[1:49]
+    assert 51 == len(us48)
+    assert_request_and_found_name_are_equal(us48, range(1, 49))
     assert_row(us48, index=0, names='texas', found_name='Texas')
     assert_row(us48, index=50, names='nevada', found_name='Nevada')
 
