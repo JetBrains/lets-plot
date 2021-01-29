@@ -14,9 +14,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
         return listOf(
             oneFacetDef(),
             oneFacet3cols(),
-            oneFacet4rows()
-//            rows(),
-//            both()
+            oneFacet4rows(),
+            twoFacets(),
         )
     }
 
@@ -49,25 +48,20 @@ class FacetWrapDemo : PlotConfigDemoBase() {
         return plotSpec
     }
 
-//    private fun rows(): Map<String, Any> {
-//        val plotSpec = commonSpecs()
-//        plotSpec["facet"] = mapOf(
-//            "name" to "grid",
-//            "y" to AutoMpg.origin.name
-//        )
-//        return plotSpec
-//    }
+    private fun twoFacets(): Map<String, Any> {
+        val plotSpec = commonSpecs()
+        plotSpec["facet"] = mapOf(
+            "name" to "wrap",
+            "facets" to listOf(
+                AutoMpg.origin.name,
+                AutoMpg.cylinders.name,
+            ),
+            "ncol" to 5
+        )
+        return plotSpec
+    }
 
-//    private fun both(): Map<String, Any> {
-//        val plotSpec = commonSpecs()
-//        plotSpec["facet"] = mapOf(
-//            "name" to "grid",
-//            "x" to AutoMpg.cylinders.name,
-//            "y" to AutoMpg.origin.name
-//        )
-//        return plotSpec
-//    }
-
+    @Suppress("DuplicatedCode")
     private fun commonSpecs(): MutableMap<String, Any> {
         val spec = """
             {
