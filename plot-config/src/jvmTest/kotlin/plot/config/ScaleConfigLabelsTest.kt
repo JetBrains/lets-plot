@@ -150,6 +150,23 @@ class ScaleConfigLabelsTest {
     }
 
     @Test
+    fun `discrete scale parameter reverse should work with limits`() {
+        val geomLayer = geomLayer(
+            data = mapOf("value" to listOf('a', 'b', 'c')),
+            scales = listOf(
+                mapOf(
+                    Option.Scale.AES to Aes.X.name,
+                    LIMITS to listOf('a', 'b'),
+                    Option.Scale.DISCRETE_DOMAIN_REVERSE to true,
+                    FORMAT to "is {}"
+                )
+            )
+        )
+        val xLabels = getScaleLabels(geomLayer.scaleMap[Aes.X])
+        assertEquals(listOf("is b", "is a"), xLabels)
+    }
+
+    @Test
     fun datetime() {
         val instant = TimeZone.UTC.toInstant(
             DateTime(

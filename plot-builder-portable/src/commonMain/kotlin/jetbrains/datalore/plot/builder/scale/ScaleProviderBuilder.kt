@@ -178,8 +178,15 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             )
 
             if (myLimits != null) {
+                val limits = myLimits.filterNotNull().let { limits ->
+                    if (discreteDomainReverse) {
+                        limits.reversed()
+                    } else {
+                        limits
+                    }
+                }
                 scale = scale.with()
-                    .limits(myLimits.filterNotNull())
+                    .limits(limits)
                     .build()
             }
 
