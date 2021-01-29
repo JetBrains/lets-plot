@@ -377,7 +377,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
-                    listOfNotNull(layerConfig.getMapJoin()?.first) +
+                    (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
                     facets.variables +
                     listOfNotNull(layerConfig.explicitGroupingVarName) +
                     layerConfig.tooltips.valueSources

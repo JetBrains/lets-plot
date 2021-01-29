@@ -6,8 +6,8 @@ import numbers
 
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
-from lets_plot.plot.util import as_annotated_data
-from .._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
+from lets_plot.plot.util import as_annotated_data, is_geocoder
+from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
 
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
@@ -73,6 +73,9 @@ def ggplot(data=None, mapping=None):
     """
     if isinstance(data, FeatureSpec):
         raise ValueError("Object {!r} is not acceptable as 'data' argument in ggplot()".format(data.kind))
+
+    if is_geocoder(data):
+        data = data.get_geocodes()
 
     data, mapping, data_meta = as_annotated_data(data, mapping)
 

@@ -5,7 +5,6 @@ import io
 from os.path import abspath
 from typing import Union
 
-from .. import _kbridge as kbr
 from .._global_settings import is_production
 from .._version import __version__
 from ..plot.core import PlotSpec
@@ -31,6 +30,8 @@ def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
     """
     if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
         raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+
+    from .. import _kbridge as kbr
 
     svg = kbr._generate_svg(plot.as_dict())
     with io.open(filename, mode="w", encoding="utf-8") as f:
@@ -62,6 +63,9 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
         raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
 
     version = __version__ if is_production() else "latest"
+
+    from .. import _kbridge as kbr
+
     html_page = kbr._generate_static_html_page(plot.as_dict(), version, iframe)
     with io.open(filename, mode="w", encoding="utf-8") as f:
         f.write(html_page)

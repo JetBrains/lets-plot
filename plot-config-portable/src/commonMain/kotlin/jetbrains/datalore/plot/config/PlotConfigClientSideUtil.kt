@@ -114,11 +114,6 @@ object PlotConfigClientSideUtil {
             layerBuilder.pathIdVarName(GeoConfig.GEO_ID)
         }
 
-        // with map_join use data variable to group values and geometries
-        layerConfig.mergedOptions.dataJoinVariable()?.let {
-            layerBuilder.pathIdVarName(it)
-        }
-
         // variable bindings
         val bindings = layerConfig.varBindings
         for (binding in bindings) {

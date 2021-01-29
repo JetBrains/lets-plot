@@ -225,7 +225,7 @@ class LayerConfig(
         return varBindings.find { it.aes == aes }?.variable
     }
 
-    fun getMapJoin(): Pair<String, String>? {
+    fun getMapJoin(): Pair<List<*>, List<*>>? {
         if (!hasOwn(MAP_JOIN)) {
             return null
         }
@@ -234,7 +234,14 @@ class LayerConfig(
         require(mapJoin.size == 2) { "map_join require 2 parameters" }
 
         val (dataVar, mapVar) = mapJoin
-        require(dataVar is String && mapVar is String) { "map_join parameters type should be a String" }
+        require(dataVar != null)
+        require(mapVar != null)
+        require(dataVar is List<*>) {
+            "Wrong map_join parameter type: should be a list of strings, but was ${dataVar::class.simpleName}"
+        }
+        require(mapVar is List<*>) {
+            "Wrong map_join parameter type: should be a list of string, but was ${mapVar::class.simpleName}"
+        }
 
         return Pair(dataVar, mapVar)
     }

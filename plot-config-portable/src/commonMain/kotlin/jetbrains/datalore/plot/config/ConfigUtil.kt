@@ -9,6 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
+import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.data.Dummies
 import jetbrains.datalore.plot.config.Option.Meta
 
@@ -37,58 +39,54 @@ object ConfigUtil {
         return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap)
     }
 
-    /**
-     * @return All rows from the right table, and the matched rows from the left table
-     */
-    fun rightJoin(left: DataFrame, leftKey: String, right: DataFrame, rightKey: String): DataFrame {
-        val leftMap = DataFrameUtil.toMap(left)
-        if (!leftMap.containsKey(leftKey)) {
-            throw IllegalArgumentException("Can't join data: left key not found '$leftKey'")
-        }
-        val rightMap = DataFrameUtil.toMap(right)
-        if (!rightMap.containsKey(rightKey)) {
-            throw IllegalArgumentException("Can't join data: right key not found '$rightKey'")
+
+    fun join(left: DataFrame, leftKeyVariableNames: List<*>, right: DataFrame, rightKeyVariableNames    : List<*>): DataFrame {
+        require(rightKeyVariableNames.size == leftKeyVariableNames.size) {
+            "Keys count for merging should be equal, but was ${leftKeyVariableNames.size} and ${rightKeyVariableNames.size}"
         }
 
-        val leftKeyValues = leftMap.getValue(leftKey)
-        val indexByKeyValueLeft = HashMap<Any, Int>()
-        var index = 0
-        for (keyValue in leftKeyValues) {
-            indexByKeyValueLeft[keyValue!!] = index++
+        fun computeMultiKeys(dataFrame: DataFrame, keyVarNames: List<*>): List<List<Any?>> {
+            val keyVars = keyVarNames.map { keyVarName -> findVariableOrFail(dataFrame, keyVarName as String)}
+            return (0 until dataFrame.rowCount()).map { rowIndex -> keyVars.map { dataFrame.get(it)[rowIndex] } }
         }
 
-        val jointMap = HashMap<String, List<Any?>>()
-        for (key in leftMap.keys) {
-            jointMap[key] = ArrayList()
+        val leftMultiKeys = computeMultiKeys(left, leftKeyVariableNames)
+        val rightMultiKeys = computeMultiKeys(right, rightKeyVariableNames)
+
+        fun List<*>.containsDuplicates(): Boolean = toSet().size < size
+        val restrictRightDuplicates = leftMultiKeys.containsDuplicates() && rightMultiKeys.containsDuplicates()
+
+
+        val jointMap = HashMap<DataFrame.Variable, MutableList<Any?>>()
+        right.variables().forEach { variable -> jointMap[variable] = mutableListOf<Any?>() }
+        left.variables().forEach { variable -> jointMap[variable] = mutableListOf<Any?>() }
+
+        // return only first match if left and right contains duplicates to not generate m*n rows
+        fun List<*>.indicesOf(obj: Any?): List<Int> = when {
+            restrictRightDuplicates -> listOf(indexOf(obj))
+            else -> mapIndexed { i, v -> i.takeIf { v == obj } }.filterNotNull()
         }
 
-        for (key in rightMap.keys) {
-            if (leftMap.containsKey(key)) {
-                continue
-            }
-
-            val values = rightMap.getValue(key)
-            jointMap[key] = values
-        }
-
-        for (keyValue in rightMap.getValue(rightKey)) {
-            val leftIndex = indexByKeyValueLeft[keyValue]
-            for (key in leftMap.keys) {
-                val fillValue = if (leftIndex == null)
-                    null
-                else
-                    leftMap.getValue(key).get(leftIndex)
-
-                val list = jointMap[key]
-                if (list is ArrayList) {
-                    list.add(fillValue)
-                } else {
-                    throw IllegalStateException("The list should be mutable")
+        val notMatchedRightMultiKeys = rightMultiKeys.toMutableSet()
+        leftMultiKeys.forEachIndexed { leftRowIndex, leftMultiKey ->
+            rightMultiKeys.indicesOf(leftMultiKey).forEach { rightRowIndex ->
+                if (rightRowIndex >= 0) {
+                    notMatchedRightMultiKeys.remove(leftMultiKey)
+                    right.variables().forEach { jointMap[it]!!.add(right.get(it)[rightRowIndex]) }
+                    left.variables().forEach { jointMap[it]!!.add(left.get(it)[leftRowIndex]) }
                 }
             }
         }
 
-        return createDataFrame(jointMap)
+        notMatchedRightMultiKeys.forEach { notMatchedRightKey ->
+            val rightRowIndices = rightMultiKeys.indicesOf(notMatchedRightKey)
+            rightRowIndices.forEach { rightRowIndex ->
+                right.variables().forEach { jointMap[it]!!.add(right.get(it)[rightRowIndex]) }
+                left.variables().forEach { jointMap[it]!!.add(null) }
+            }
+        }
+
+        return jointMap.entries.fold(DataFrame.Builder()) { b, (variable, values) -> b.put(variable, values)}.build()
     }
 
     private fun asVarNameMap(data: Any?): Map<String, List<*>> {
@@ -138,7 +136,7 @@ object ConfigUtil {
     }
 
     private fun updateDataFrame(df: DataFrame, data: Map<String, List<*>>): DataFrame {
-        val dfVars = DataFrameUtil.variables(df)
+        val dfVars = variables(df)
         val b = df.builder()
         for ((varName, values) in data) {
             val variable = dfVars[varName] ?: DataFrameUtil.createVariable(varName)
@@ -161,7 +159,7 @@ object ConfigUtil {
             return emptyMap()
         }
 
-        val dfVariables = DataFrameUtil.variables(data)
+        val dfVariables = variables(data)
 
         val result = HashMap<Aes<*>, DataFrame.Variable>()
         val options = Option.Mapping.REAL_AES_OPTION_NAMES

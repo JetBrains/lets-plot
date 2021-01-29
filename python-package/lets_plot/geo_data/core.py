@@ -1,15 +1,8 @@
-from typing import Any, Union, List, Optional
+from typing import Any
 
 import numpy as np
-from pandas import Series
 
-from .gis.geocoding_service import GeocodingService
-from .gis.geometry import GeoPoint
-from .gis.request import RequestBuilder, RequestKind
-from .gis.response import Response, SuccessResponse
-from .regions import Regions, _raise_exception, _to_level_kind, _to_scope
-from .regions_builder import RegionsBuilder
-from .type_assertion import assert_list_type
+from .geocoder import Geocoder
 
 __all__ = [
     'distance',
@@ -35,43 +28,14 @@ GEOFUNC_TYPES = {
 }
 
 
-def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[Union[float, Series, List[float]]]) -> List[GeoPoint]:
-    if type(lon) != type(lat):
-        raise ValueError('lon and lat have different types')
-
-    if isinstance(lon, float):
-        return [GeoPoint(lon, lat)]
-
-    if isinstance(lon, Series):
-        lon = lon.tolist()
-        lat = lat.tolist()
-
-    if isinstance(lon, list):
-        assert_list_type(lon, float)
-        assert_list_type(lat, float)
-        return [GeoPoint(lo, la) for lo, la in zip(lon, lat)]
+def regions_xy(lon, lat, level, within=None) -> Geocoder:
+    raise ValueError('Function `regions_xy(...)` is deprecated. Use new function `reverse_geocode(...)`.')
 
 
-def regions_xy(lon, lat, level, within=None):
-    request = RequestBuilder() \
-        .set_request_kind(RequestKind.reverse) \
-        .set_reverse_coordinates(_to_coords(lon, lat)) \
-        .set_level(_to_level_kind(level)) \
-        .set_reverse_scope(_to_scope(within)) \
-        .build()
-
-    response: Response = GeocodingService().do_request(request)
-
-    if not isinstance(response, SuccessResponse):
-        _raise_exception(response)
-
-    return Regions(response.level, response.features, False)
-
-
-def regions_builder(level=None, request=None, within=None, highlights=False) -> RegionsBuilder:
+def regions_builder(level=None, request=None, within=None, highlights=False):
     """
     Create a RegionBuilder class by level and request. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -83,19 +47,19 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
         Data can be filtered by full names at any level (only exact matching).
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | Regions | None]
+    within : [array | string | Geocoder | None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
@@ -105,12 +69,13 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
         >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
         >>> r
     """
-    return RegionsBuilder(level, request, within, highlights)
+    raise ValueError('Function `regions_builder(...)` is deprecated. Use new function `geocode(...)`.')
+    #return Geocoder(level, request, within, highlights)
 
 
-def regions(level=None, request=None, within=None) -> Regions:
+def regions(level=None, request=None, within=None):
     """
-    Create a Regions class by level and request.
+    Create a Geocoder class by level and request.
 
     regions(level, request, within)
 
@@ -123,15 +88,15 @@ def regions(level=None, request=None, within=None) -> Regions:
         None with explicit level returns all corresponding regions, like all countries i.e. regions(level='country').
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -146,12 +111,13 @@ def regions(level=None, request=None, within=None) -> Regions:
         >>> r = regions(level='country', request=['Germany', 'USA'])
         >>> r
     """
-    return RegionsBuilder(level=level, request=request, scope=within).build()
+    raise ValueError('Function `regions(...)` is deprecated. Use new function `geocode(...)`.')
+    #return Geocoder(level=level, request=request, scope=within).build()
 
 
 def regions_country(request=None):
     """
-    Create a Regions class for country level by request.
+    Create a Geocoder class for country level by request.
 
     regions_country(request)
 
@@ -162,7 +128,7 @@ def regions_country(request=None):
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -178,12 +144,13 @@ def regions_country(request=None):
         >>> r_country = regions_country(request=['Germany', 'USA'])
         >>> r_country
     """
-    return regions('country', request, None)
+    raise ValueError('Function `regions_country(...)` is deprecated. Use new function `geocode_countries(...)`.')
+    #return regions('country', request, None)
 
 
 def regions_state(request=None, within=None):
     """
-    Create a Regions class for state level by request.
+    Create a Geocoder class for state level by request.
 
     regions_state(request, within)
 
@@ -193,15 +160,15 @@ def regions_state(request=None, within=None):
         Data can be filtered by full names at any level (only exact matching).
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then filter and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -217,12 +184,13 @@ def regions_state(request=None, within=None):
         >>> r_state = regions_state(request=['Texas', 'Iowa'], within='USA')
         >>> r_state
     """
-    return regions('state', request, within)
+    raise ValueError('Function `regions_state(...)` is deprecated. Use new function `geocode_states(...)`')
+    #return regions('state', request, within)
 
 
 def regions_county(request=None, within=None):
     """
-    Create a Regions class for county level by request.
+    Create a Geocoder class for county level by request.
 
     regions_county(request, within)
 
@@ -230,15 +198,15 @@ def regions_county(request=None, within=None):
     ----------
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -254,12 +222,13 @@ def regions_county(request=None, within=None):
         >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
         >>> r_county
     """
-    return regions('county', request, within)
+    raise ValueError('Function `regions_county(...)` is deprecated. Use new function `geocode_counties(...)`')
+    #return regions('county', request, within)
 
 
 def regions_city(request=None, within=None):
     """
-    Create a Regions class for city level by request.
+    Create a Geocoder class for city level by request.
 
     regions_city(request, within)
 
@@ -267,15 +236,15 @@ def regions_city(request=None, within=None):
     ----------
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -291,7 +260,8 @@ def regions_city(request=None, within=None):
         >>> r_city = regions_city(request=['New York', 'Los Angeles'])
         >>> r_city
     """
-    return regions('city', request, within)
+    raise ValueError('Function `regions_city(...)` is deprecated. Use new function `geocode_cities(...)`')
+    #return regions('city', request, within)
 
 
 def distance(lon0, lat0, lon1, lat1, units='km'):

@@ -586,7 +586,7 @@ class DropUnusedDataTest {
           "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
         ]
       },
-      "map_join": ["name", "id"]
+      "map_join": [["name"], ["id"]]
     }
   ]
 }
@@ -627,7 +627,7 @@ class DropUnusedDataTest {
           "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
         ]
       },
-      "map_join": ["name", "id"]
+      "map_join": [["name"], ["id"]]
     }
   ]
 }
@@ -699,7 +699,7 @@ class DropUnusedDataTest {
         "lat": [ 51.030349, 51.797754, 53.94575, 54.561879, 55.193929, 53.816229, 52.924809, 52.525588, 51.113188, 51.030349, 53.294124, 54.049078, 53.60816, 51.305902, 50.221916, 48.679365, 48.007575, 49.485266, 50.024691, 51.552493, 53.294124, 48.095702, 50.586036, 48.795295, 46.365136, 44.169607, 43.663114, 43.088157, 43.631315, 46.51655, 48.095702],
         "country": [ "UK", "UK", "UK", "UK", "UK", "UK", "UK", "UK", "UK", "UK", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "France", "France", "France", "France", "France", "France", "France", "France", "France", "France"]
       },
-      "map_join": ["Country", "country"],
+      "map_join": [["Country"], ["country"]],
       "map_data_meta": {"geodict": {}},
       "alpha": 0.3
     }
