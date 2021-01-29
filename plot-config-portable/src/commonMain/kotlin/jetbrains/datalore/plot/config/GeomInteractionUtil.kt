@@ -252,6 +252,7 @@ object GeomInteractionUtil {
                 .showAxisTooltip(isContinuousX)
             GeomKind.RIBBON,
             GeomKind.SMOOTH -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            GeomKind.BIN_2D,
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
             GeomKind.POINT,
@@ -271,7 +272,6 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
-            GeomKind.BIN_2D,
             GeomKind.MAP,
             GeomKind.RECT -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
 
