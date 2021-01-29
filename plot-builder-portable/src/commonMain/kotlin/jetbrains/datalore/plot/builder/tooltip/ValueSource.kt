@@ -12,6 +12,8 @@ interface ValueSource {
 
     val isOutlier: Boolean
 
+    val isAxis: Boolean
+
     fun initDataContext(dataContext: DataContext)
 
     fun getDataPoint(index: Int): DataPoint?

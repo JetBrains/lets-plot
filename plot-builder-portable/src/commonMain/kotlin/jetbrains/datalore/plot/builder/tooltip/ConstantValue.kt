@@ -21,6 +21,7 @@ class ConstantValue(
     }
 
     override val isOutlier: Boolean = false
+    override val isAxis: Boolean = false
 
     override fun initDataContext(dataContext: DataContext) {
     }

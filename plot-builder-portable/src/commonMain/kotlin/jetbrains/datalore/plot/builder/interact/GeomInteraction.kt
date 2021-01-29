@@ -90,6 +90,9 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             val hasGeneralTooltip = mappedTooltipLines.any { line ->
                 line.fields.none(ValueSource::isOutlier)
             }
+            val hasAxisTooltip = mappedTooltipLines.any { line ->
+                line.fields.any(ValueSource::isAxis)
+            }
 
             return ContextualMapping(
                 mappedTooltipLines,
@@ -98,6 +101,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 tooltipProperties.color,
                 ignoreInvisibleTargets,
                 hasGeneralTooltip,
+                hasAxisTooltip,
                 isCrosshairEnabled
             )
         }
