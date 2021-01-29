@@ -14,7 +14,8 @@ class FacetGridDemo : PlotConfigDemoBase() {
         return listOf(
             cols(),
             rows(),
-            both()
+            both(),
+            bothFlipped()
         )
     }
 
@@ -46,13 +47,24 @@ class FacetGridDemo : PlotConfigDemoBase() {
         return plotSpec
     }
 
+    private fun bothFlipped(): Map<String, Any> {
+        val plotSpec = commonSpecs()
+        plotSpec["facet"] = mapOf(
+            "name" to "grid",
+            "x" to AutoMpg.origin.name,
+            "y" to AutoMpg.cylinders.name
+        )
+        return plotSpec
+    }
+
     private fun commonSpecs(): MutableMap<String, Any> {
         val spec = """
             {
                 'kind': 'plot',
                 'mapping': {
                     'x': "${AutoMpg.horsepower.name}",
-                    'y': "${AutoMpg.mpg.name}"     
+                    'y': "${AutoMpg.mpg.name}",     
+                    'color': "${AutoMpg.origin.name}"     
                 },
                 'layers': [
                     {

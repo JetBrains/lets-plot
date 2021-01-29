@@ -31,10 +31,7 @@ class FacetGrid(
     override fun dataByTile(data: DataFrame): List<DataFrame> {
         require(isDefined) { "dataByTile() called on Undefined plot facets." }
 
-        val colLevels = if (xLevels.isEmpty()) listOf(null) else xLevels
-        val rowLevels = if (yLevels.isEmpty()) listOf(null) else yLevels
-
-        val dataByLevelTuple = dataByLevelTuple(
+        val dataByLevelTupleList = dataByLevelTuple(
             data,
             listOfNotNull(
                 xVar,
@@ -45,7 +42,10 @@ class FacetGrid(
                 yVar?.let { yLevels },
             )
         )
+        val dataByLevelTuple = dataByLevelTupleList.toMap()
 
+        val colLevels = if (xLevels.isEmpty()) listOf(null) else xLevels
+        val rowLevels = if (yLevels.isEmpty()) listOf(null) else yLevels
 
         val dataByTile: MutableList<DataFrame> = ArrayList()
         // Enumerate tiles by-row.
@@ -56,7 +56,6 @@ class FacetGrid(
                 dataByTile.add(tileData)
             }
         }
-
 
         return dataByTile
     }

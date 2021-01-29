@@ -68,7 +68,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
                 'kind': 'plot',
                 'mapping': {
                     'x': "${AutoMpg.horsepower.name}",
-                    'y': "${AutoMpg.mpg.name}"     
+                    'y': "${AutoMpg.mpg.name}",     
+                    'color': "${AutoMpg.origin.name}"     
                 },
                 'layers': [
                     {

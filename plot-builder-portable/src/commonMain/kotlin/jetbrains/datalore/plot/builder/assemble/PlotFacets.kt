@@ -42,10 +42,9 @@ abstract class PlotFacets {
             data: DataFrame,
             varNames: List<String>,
             varLevels: List<List<Any>>
-        ): Map<List<Any>, DataFrame> {
-            require(varNames.isNotEmpty()) { "Empty list of facet variables." }
-            require(varNames.size == varNames.distinct().size) { "Facet variables must be distinct, were: $varNames." }
-            check(varNames.size == varLevels.size)
+        ): List<Pair<List<Any>, DataFrame>> {
+            // This also checks invariants.
+            val nameLevelTuples = createNameLevelTuples(varNames, varLevels)
 
             val vars = varNames.map { DataFrameUtil.findVariableOrFail(data, it) }
 
@@ -62,9 +61,7 @@ abstract class PlotFacets {
                 indicesByVarByLevel[variable.name] = indicesByLevel
             }
 
-            val nameLevelTuples = createNameLevelTuples(varNames, varLevels)
-
-            val dataByLevelKey = HashMap<List<Any>, DataFrame>()
+            val dataByLevelKey = ArrayList<Pair<List<Any>, DataFrame>>()
             for (nameLevelTuple in nameLevelTuples) {
                 val topName = nameLevelTuple.first().first
                 val topLevel = nameLevelTuple.first().second
@@ -88,25 +85,35 @@ abstract class PlotFacets {
                 }
 
                 val levelData = b.build()
-                dataByLevelKey[levelKey] = levelData
+                dataByLevelKey.add(levelKey to levelData)
             }
 
             return dataByLevelKey
         }
 
         fun createNameLevelTuples(
-            variables: List<String>,
-            allLevels: List<List<Any>>
+            varNames: List<String>,
+            varLevels: List<List<Any>>
         ): List<List<Pair<String, Any>>> {
-            val name = variables.first()
-            val levels = allLevels.first()
+            require(varNames.isNotEmpty()) { "Empty list of facet variables." }
+            require(varNames.size == varNames.distinct().size) { "Facet variables must be distinct, were: $varNames." }
+            check(varNames.size == varLevels.size)
+            return createNameLevelTuplesIntern(varNames, varLevels)
+        }
+
+        private fun createNameLevelTuplesIntern(
+            varNames: List<String>,
+            varLevels: List<List<Any>>
+        ): List<List<Pair<String, Any>>> {
+            val name = varNames.first()
+            val levels = varLevels.first()
 
             val levelKeys = ArrayList<List<Pair<String, Any>>>()
             for (level in levels) {
-                if (variables.size > 1) {
+                if (varNames.size > 1) {
                     val subKeys = createNameLevelTuples(
-                        variables.subList(1, variables.size),
-                        allLevels.subList(1, allLevels.size)
+                        varNames.subList(1, varNames.size),
+                        varLevels.subList(1, varLevels.size)
                     )
                     for (subKey in subKeys) {
                         levelKeys.add(listOf(name to level) + subKey)
