@@ -53,7 +53,7 @@ open class DefaultTheme : Theme {
     companion object {
         private val AXIS_THEME = DefaultAxisTheme()
 
-        private val AXIS_THEME_MULTI_TILE = object : DefaultAxisTheme() {
+        private val AXIS_THEME_MULTI_TILE: AxisTheme = object : DefaultAxisTheme() {
             override fun showLine(): Boolean {
                 return false  // replaced by inner frame
             }
