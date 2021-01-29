@@ -14,12 +14,13 @@ class FacetGrid(
     private val yVar: String?,
     xLevels: List<Any>,
     yLevels: List<Any>,
-    levelOrderingByFacet: Map<String, Order>
+    xLevelOrdering: Order,
+    yLevelOrdering: Order
 ) : PlotFacets() {
 
     override val isDefined: Boolean = xVar != null || yVar != null
-    private val xLevels: List<Any> = reorderVarLevels(xVar, xLevels, levelOrderingByFacet)
-    private val yLevels: List<Any> = reorderVarLevels(yVar, yLevels, levelOrderingByFacet)
+    private val xLevels: List<Any> = reorderVarLevels(xVar, xLevels, xLevelOrdering)
+    private val yLevels: List<Any> = reorderVarLevels(yVar, yLevels, yLevelOrdering)
     override val colCount: Int = max(1, xLevels.size)
     override val rowCount: Int = max(1, yLevels.size)
     override val numTiles = colCount * rowCount

@@ -15,7 +15,8 @@ class FacetGridDemo : PlotConfigDemoBase() {
             cols(),
             rows(),
             both(),
-            bothFlipped()
+            bothFlipped(),
+            bothOrderingDesc(),
         )
     }
 
@@ -53,6 +54,17 @@ class FacetGridDemo : PlotConfigDemoBase() {
             "name" to "grid",
             "x" to AutoMpg.origin.name,
             "y" to AutoMpg.cylinders.name
+        )
+        return plotSpec
+    }
+
+    private fun bothOrderingDesc(): Map<String, Any> {
+        val plotSpec = commonSpecs()
+        plotSpec["facet"] = mapOf(
+            "name" to "grid",
+            "x" to AutoMpg.cylinders.name,
+            "y" to AutoMpg.origin.name,
+            "order" to listOf(null, "desc")
         )
         return plotSpec
     }
