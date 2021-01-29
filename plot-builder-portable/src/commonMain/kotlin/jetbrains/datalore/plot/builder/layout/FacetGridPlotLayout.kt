@@ -30,12 +30,15 @@ internal class FacetGridPlotLayout(
         )
 
         val facetTiles = facets.tileInfos()
-        val labsInCol = facetTiles.filter { it.colLabs.isNotEmpty() }
-            .map { it.row }.distinct().count()
+        val tileColLabCounts = facetTiles.firstOrNull { it.colLabs.isNotEmpty() }?.colLabs?.size ?: 0
+        val tileWithColLabInRowCount = facetTiles
+            .filter { it.colLabs.isNotEmpty() }
+            .distinctBy { it.row }.count()
+
+        val totalAddedHeight = facetColHeadHeight(tileColLabCounts) * tileWithColLabInRowCount
+
         val labsInRow = if (facetTiles.any { it.rowLab != null }) 1 else 0
-
-
-        val labsTotalDim = DoubleVector(labsInRow * FACET_TAB_HEIGHT, labsInCol * FACET_TAB_HEIGHT)
+        val labsTotalDim = DoubleVector(labsInRow * FACET_TAB_HEIGHT, totalAddedHeight)
         tilesAreaSize = tilesAreaSize.subtract(labsTotalDim)
 
         // rough estimate (without axis. The final size will be smaller)
@@ -98,7 +101,7 @@ internal class FacetGridPlotLayout(
             if (facetTile.xAxis && facetTile.row == facets.rowCount - 1) {   // bottom row only
                 height += axisThicknessX
             }
-            val addedHeight = FACET_TAB_HEIGHT * facetTile.colLabs.size
+            val addedHeight = facetColHeadHeight(facetTile.colLabs.size)
             height += addedHeight
             geomY = addedHeight
 
@@ -176,7 +179,22 @@ internal class FacetGridPlotLayout(
     }
 
     companion object {
-        private const val FACET_TAB_HEIGHT = 30.0
+        const val FACET_TAB_HEIGHT = 30.0
+        const val FACET_H_PADDING = 0
+        const val FACET_V_PADDING = 6 //5
+
         private const val PANEL_PADDING = 10.0
+
+        fun facetColLabelSize(colWidth: Double): DoubleVector {
+            return DoubleVector(colWidth - FACET_H_PADDING * 2, FACET_TAB_HEIGHT - FACET_V_PADDING * 2.0)
+        }
+
+        fun facetColHeadHeight(labCount: Int): Double {
+            return if (labCount > 0) {
+                facetColLabelSize(0.0).y * labCount + FACET_V_PADDING * 2
+            } else {
+                0.0
+            }
+        }
     }
 }

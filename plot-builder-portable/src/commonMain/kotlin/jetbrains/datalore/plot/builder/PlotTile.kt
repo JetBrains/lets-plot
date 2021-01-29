@@ -26,6 +26,11 @@ import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
+import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_H_PADDING
+import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_TAB_HEIGHT
+import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_V_PADDING
+import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColHeadHeight
+import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColLabelSize
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
@@ -72,6 +77,16 @@ internal class PlotTile(
     */
 
         val geomBounds = myLayoutInfo.geomBounds
+
+        if (myTheme.plot().showInnerFrame()) {
+            val rect = SvgRectElement(geomBounds).apply {
+                strokeColor().set(myTheme.plot().innerFrameColor())
+                strokeWidth().set(1.0)
+                fillOpacity().set(0.0)
+            }
+            add(rect)
+        }
+
         addFacetLabels(geomBounds, myTheme.facets())
 
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
@@ -142,75 +157,56 @@ internal class PlotTile(
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
         // facet X label (on top of geom area)
-        if (myLayoutInfo.facetXLabels.isNotEmpty()) {
-            val w = geomBounds.width
-            var h = FACET_LABEL_HEIGHT * myLayoutInfo.facetXLabels.size
+        val xLabels = myLayoutInfo.facetXLabels
+        if (xLabels.isNotEmpty()) {
+            val labelSize = facetColLabelSize(geomBounds.width)
+            val labelOrig = DoubleVector(
+                geomBounds.left + FACET_H_PADDING,
+                geomBounds.top - facetColHeadHeight(xLabels.size) + FACET_V_PADDING
+            )
+            var labelBounds = DoubleRectangle(
+                labelOrig, labelSize
+            )
+            for (xLabel in xLabels) {
+                val rect = SvgRectElement(labelBounds).apply {
+                    strokeWidth().set(0.0)
+                    fillColor().set(theme.labelBackground())
 
-            val hPad = 0
-            val vPad = 5
-
-            for (xLabel in myLayoutInfo.facetXLabels) {
-                val rect = SvgRectElement(
-                    DoubleRectangle(
-                        geomBounds.left + hPad, geomBounds.top - h + vPad,
-                        w - hPad * 2, h - vPad * 2
-                    )
-                )
-                rect.strokeWidth().set(0.0)
-                rect.fillColor().set(theme.background())
+//                    strokeWidth().set(1.0)
+//                    strokeColor().set(Color.BLACK)
+//                    fillOpacity().set(0.0)
+                }
                 add(rect)
 
-                val x = geomBounds.left + w / 2
-                val y = geomBounds.top - h / 2
-
+                val x = labelBounds.center.x
+                val y = labelBounds.center.y
                 val lab = TextLabel(xLabel)
                 lab.moveTo(x, y)
                 lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
                 lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
                 add(lab)
 
-                h -= FACET_LABEL_HEIGHT
+                labelBounds = labelBounds.add(DoubleVector(0.0, labelSize.y))
             }
-
-//            val rect = SvgRectElement(
-//                DoubleRectangle(
-//                    geomBounds.left + hPad, geomBounds.top - h + vPad,
-//                    w - hPad * 2, h - vPad * 2
-//                )
-//            )
-//            rect.strokeWidth().set(0.0)
-//            rect.fillColor().set(theme.background())
-//            add(rect)
-//
-//            val x = geomBounds.left + w / 2
-//            val y = geomBounds.top - h / 2
-//
-//            val lab = TextLabel(myLayoutInfo.facetXLabels)
-//            lab.moveTo(x, y)
-//            lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-//            lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
-//            add(lab)
         }
 
         // facet Y label (to the right from geom area)
         if (myLayoutInfo.facetYLabel != null) {
-            val w = FACET_LABEL_HEIGHT
-            val h = geomBounds.height
 
-            val hPad = 5
-            val vPad = 0
-            val rect = SvgRectElement(
-                DoubleRectangle(
-                    geomBounds.right + hPad, geomBounds.top - vPad,
-                    w - hPad * 2, h - vPad * 2
-                )
+            val hPad = FACET_V_PADDING
+            val vPad = FACET_H_PADDING
+
+            val labelBounds = DoubleRectangle(
+                geomBounds.right + hPad, geomBounds.top - vPad,
+                FACET_TAB_HEIGHT - hPad * 2, geomBounds.height - vPad * 2
             )
+            val rect = SvgRectElement(labelBounds)
             rect.strokeWidth().set(0.0)
-            rect.fillColor().set(theme.background())
+            rect.fillColor().set(theme.labelBackground())
             add(rect)
 
-            val x = geomBounds.right + w / 2
-            val y = geomBounds.top + h / 2
+            val x = labelBounds.center.x
+            val y = labelBounds.center.y
 
             val lab = TextLabel(myLayoutInfo.facetYLabel)
             lab.moveTo(x, y)
@@ -234,14 +230,6 @@ internal class PlotTile(
             axis.moveTo(geomBounds.origin)
             add(axis)
         }
-//
-//        val rect = SvgRectElement(geomBounds).apply {
-//            strokeColor().set(Color.GREEN)
-//            strokeWidth().set(1.0)
-//            fillOpacity().set(0.0)
-//        }
-//        add(rect)
-//
     }
 
     private fun buildAxis(
@@ -311,10 +299,6 @@ internal class PlotTile(
 
     fun debugDrawing(): Property<Boolean> {
         return myDebugDrawing
-    }
-
-    companion object {
-        private const val FACET_LABEL_HEIGHT = 30.0
     }
 }
 

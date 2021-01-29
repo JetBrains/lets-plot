@@ -144,7 +144,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private fun createTile(
         tilesOrigin: DoubleVector,
         tileInfo: TileLayoutInfo,
-        tileLayers: List<GeomLayer>
+        tileLayers: List<GeomLayer>,
+        theme: Theme
     ): PlotTile {
 
         val xScale: Scale<Double>
@@ -329,6 +330,11 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // build tiles
+        val tileTheme = if(plotInfo.tiles.size > 1) {
+            theme.multiTile()
+        } else {
+            theme
+        }
 
         val tilesOrigin = geomAndAxis.origin
         for (i in plotInfo.tiles.indices) {
@@ -338,7 +344,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 //            println("     bounds: " + tileInfo.bounds)
 //            println("geom bounds: " + tileInfo.geomBounds)
 //            println("clip bounds: " + tileInfo.clipBounds)
-            val tile = createTile(tilesOrigin, tileInfo, tileLayers(i))
+            val tile = createTile(tilesOrigin, tileInfo, tileLayers(i), tileTheme)
 
             val plotOriginAbsolute = tilesOrigin.add(tileInfo.plotOrigin)
             tile.moveTo(plotOriginAbsolute)

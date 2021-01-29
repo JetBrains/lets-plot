@@ -40,11 +40,19 @@ internal class LocatedTargetsPicker {
     }
 
     private fun chooseBestResult(): List<LookupResult> {
+        fun hasGeneralTooltip(lookupResult: LookupResult) = lookupResult.contextualMapping.hasGeneralTooltip
+        fun hasAxisTooltip(lookupResult: LookupResult) = lookupResult.contextualMapping.hasAxisTooltip
+
         return when {
-            myPicked.any { it.contextualMapping.hasGeneralTooltip } -> myPicked
-            myAllLookupResults.none { it.contextualMapping.hasGeneralTooltip } -> myPicked
+            myPicked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> myPicked
+            myAllLookupResults.none { hasGeneralTooltip(it) } -> myPicked
+            myAllLookupResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
+                listOf(myAllLookupResults.last { hasGeneralTooltip(it) && hasAxisTooltip(it) })
+            }
             else -> {
-                listOf(myAllLookupResults.last { it.contextualMapping.hasGeneralTooltip })
+                val withGeneralTooltip = myAllLookupResults.lastOrNull { hasGeneralTooltip(it) }
+                val withAxisTooltip = myAllLookupResults.lastOrNull { hasAxisTooltip(it) }
+                listOfNotNull(withGeneralTooltip, withAxisTooltip)
             }
         }
     }

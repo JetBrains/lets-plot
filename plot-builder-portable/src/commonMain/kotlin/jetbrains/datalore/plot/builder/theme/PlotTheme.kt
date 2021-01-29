@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
 
-interface FacetsTheme {
-    fun labelBackground(): Color
+interface PlotTheme {
+    fun showInnerFrame(): Boolean
+    fun innerFrameColor(): Color
 }

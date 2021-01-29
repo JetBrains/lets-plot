@@ -37,7 +37,7 @@ class LocatorByGeneralTooltipTest {
             )
         )
         val results = findTargets(targetLocators)
-        assertLookupResult(results, FIRST_POINT_KEY)
+        assertLookupResults(results, FIRST_POINT_KEY)
     }
 
     @Test
@@ -56,7 +56,7 @@ class LocatorByGeneralTooltipTest {
             )
         )
         val results = findTargets(targets)
-        assertLookupResult(results, SECOND_POINT_KEY)
+        assertLookupResults(results, SECOND_POINT_KEY)
     }
 
     @Test
@@ -79,11 +79,37 @@ class LocatorByGeneralTooltipTest {
             )
         )
         val results = findTargets(targets)
-        assertLookupResult(results, SECOND_POINT_KEY)
+        assertLookupResults(results, SECOND_POINT_KEY)
     }
 
-    private fun createContextualMapping(mappedDataAccessMock: MappedDataAccessMock): ContextualMapping {
-        val contextualMappingProvider = GeomInteractionBuilder(Aes.values()).bivariateFunction(true).build()
+    @Test
+    fun `one with a general tooltip and second with an axis tooltip - locator should choose both`() {
+        val targets = listOf(
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                ),
+                targetPrototypes = listOf(FIRST_TARGET)
+            ),
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping
+                    (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                    axisTooltips = true
+                ),
+                targetPrototypes = listOf(SECOND_TARGET)
+            )
+        )
+        val results = findTargets(targets)
+        assertLookupResults(results, FIRST_POINT_KEY, SECOND_POINT_KEY)
+    }
+
+    private fun createContextualMapping(mappedDataAccessMock: MappedDataAccessMock, axisTooltips: Boolean = false): ContextualMapping {
+        val contextualMappingProvider = GeomInteractionBuilder(Aes.values())
+            .bivariateFunction(true)
+            .axisAes(if (axisTooltips) listOf(Aes.X) else emptyList())
+            .build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,
             DataFrame.Builder().build()
@@ -101,12 +127,13 @@ class LocatorByGeneralTooltipTest {
         return targetsPicker.picked
     }
 
-    private fun assertLookupResult(results: List<LookupResult>, expectedIndex: Int) {
-        assertEquals(1, results.size)
-        assertEquals(1, results.single().targets.size)
-        val geomTarget = results.single().targets.single()
-
-        assertEquals(expectedIndex, geomTarget.hitIndex)
+    private fun assertLookupResults(results: List<LookupResult>, vararg expected: Int) {
+        assertEquals(expected.size, results.size)
+        results.forEachIndexed { index, lookupResult ->
+            assertEquals(1, lookupResult.targets.size)
+            val geomTarget = lookupResult.targets.single()
+            assertEquals(expected[index], geomTarget.hitIndex)
+        }
     }
 
     companion object {

@@ -14,4 +14,8 @@ interface Theme {
     fun legend(): LegendTheme
 
     fun facets(): FacetsTheme
+
+    fun plot(): PlotTheme
+
+    fun multiTile(): Theme
 }

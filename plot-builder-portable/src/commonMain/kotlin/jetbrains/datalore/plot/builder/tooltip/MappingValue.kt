@@ -14,7 +14,7 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 class MappingValue(
     val aes: Aes<*>,
     override val isOutlier: Boolean = false,
-    private val isAxis: Boolean = false,
+    override val isAxis: Boolean = false,
     private val format: String? = null
 ) : ValueSource {
 

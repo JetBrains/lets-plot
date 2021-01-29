@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 
-class DefaultAxisTheme : AxisTheme {
+open class DefaultAxisTheme : AxisTheme {
     override fun showLine(): Boolean {
         return true
     }
