@@ -13,13 +13,15 @@ import kotlin.math.min
 
 class FacetWrap(
     private val facets: List<String>,
-    private val levels: List<List<Any>>,
+    levels: List<List<Any>>,
     private val nrow: Int?,
     private val ncol: Int?,
-    private val direction: Direction
+    private val direction: Direction,
+    levelOrderingByFacet: Map<String, Order>
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
+    private val levels: List<List<Any>> = reorderLevels(facets, levels, levelOrderingByFacet)
     override val numTiles = numTiles(facets, levels)
     private val shape = shape(numTiles, ncol, nrow, direction)
     override val colCount: Int = shape.first

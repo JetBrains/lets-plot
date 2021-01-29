@@ -12,11 +12,14 @@ import kotlin.math.max
 class FacetGrid(
     private val xVar: String?,
     private val yVar: String?,
-    private val xLevels: List<Any>,
-    private val yLevels: List<Any>
+    xLevels: List<Any>,
+    yLevels: List<Any>,
+    levelOrderingByFacet: Map<String, Order>
 ) : PlotFacets() {
 
     override val isDefined: Boolean = xVar != null || yVar != null
+    private val xLevels: List<Any> = reorderVarLevels(xVar, xLevels, levelOrderingByFacet)
+    private val yLevels: List<Any> = reorderVarLevels(yVar, yLevels, levelOrderingByFacet)
     override val colCount: Int = max(1, xLevels.size)
     override val rowCount: Int = max(1, yLevels.size)
     override val numTiles = colCount * rowCount

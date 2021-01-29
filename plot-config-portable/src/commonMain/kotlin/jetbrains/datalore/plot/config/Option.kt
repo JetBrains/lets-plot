@@ -298,6 +298,10 @@ object Option {
         const val NAME_GRID = "grid"
         const val NAME_WRAP = "wrap"
 
+        const val LEVEL_ORDERING = "order"
+        const val LEVEL_ORDERING_ASC = "asc"
+        const val LEVEL_ORDERING_DESC = "desc"
+
         // grid
         const val X = "x"
         const val Y = "y"

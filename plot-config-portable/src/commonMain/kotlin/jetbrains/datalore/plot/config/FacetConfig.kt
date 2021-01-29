@@ -15,15 +15,32 @@ import jetbrains.datalore.plot.config.Option.Facet
 internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
-        val name = getStringSafe(Facet.NAME)
-        return when (name) {
-            Facet.NAME_GRID -> createGrid(dataByLayer)
-            Facet.NAME_WRAP -> createWrap(dataByLayer)
+        val levelOrderingByFacet = HashMap<String, PlotFacets.Order>()
+        if (has(Facet.LEVEL_ORDERING)) {
+            val levelOrdering = getMap(Facet.LEVEL_ORDERING)
+            for ((varName, dir) in levelOrdering) {
+                val order = when (dir.toString()) {
+                    Facet.LEVEL_ORDERING_ASC -> PlotFacets.Order.ASC
+                    Facet.LEVEL_ORDERING_DESC -> PlotFacets.Order.DESC
+                    else -> {
+                        throw IllegalArgumentException("Ordering direction expected: `asc` or `desc`, but was: $varName : $dir ")
+                    }
+                }
+                levelOrderingByFacet[varName] = order
+            }
+        }
+
+        return when (val name = getStringSafe(Facet.NAME)) {
+            Facet.NAME_GRID -> createGrid(dataByLayer, levelOrderingByFacet)
+            Facet.NAME_WRAP -> createWrap(dataByLayer, levelOrderingByFacet)
             else -> throw IllegalArgumentException("Facet 'grid' or 'wrap' expected but was: `$name`")
         }
     }
 
-    private fun createGrid(dataByLayer: List<DataFrame>): FacetGrid {
+    private fun createGrid(
+        dataByLayer: List<DataFrame>,
+        levelOrderingByFacet: HashMap<String, PlotFacets.Order>
+    ): FacetGrid {
         var nameX: String? = null
         val levelsX = LinkedHashSet<Any>()
         if (has(Facet.X)) {
@@ -48,10 +65,13 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             }
         }
 
-        return FacetGrid(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY))
+        return FacetGrid(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY), levelOrderingByFacet)
     }
 
-    private fun createWrap(dataByLayer: List<DataFrame>): FacetWrap {
+    private fun createWrap(
+        dataByLayer: List<DataFrame>,
+        levelOrderingByFacet: HashMap<String, PlotFacets.Order>
+    ): FacetWrap {
         // 'facets' cal be just one name or a list of names.
         val facets = getAsStringList(Facet.FACETS)
 
@@ -70,6 +90,6 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             facetLevels.add(levels.toList())
         }
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, FacetWrap.Direction.H)
+        return FacetWrap(facets, facetLevels, nrow, ncol, FacetWrap.Direction.H, levelOrderingByFacet)
     }
 }

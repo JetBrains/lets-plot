@@ -33,9 +33,10 @@ abstract class PlotFacets {
      */
     abstract fun tileInfos(): List<FacetTileInfo>
 
+
     companion object {
         fun undefined(): PlotFacets {
-            return FacetGrid(null, null, emptyList<Any>(), emptyList<Any>())
+            return FacetGrid(null, null, emptyList<Any>(), emptyList<Any>(), emptyMap())
         }
 
         fun dataByLevelTuple(
@@ -126,6 +127,38 @@ abstract class PlotFacets {
 
             return levelKeys
         }
+
+        fun reorderLevels(
+            varNames: List<String>,
+            varLevels: List<List<Any>>,
+            orderingByFacet: Map<String, Order>
+        ): List<List<Any>> {
+            val result = ArrayList<List<Any>>()
+            for ((i, name) in varNames.withIndex()) {
+                if (i >= varLevels.size) break
+                result.add(reorderVarLevels(name, varLevels[i], orderingByFacet))
+            }
+
+            return result
+        }
+
+        fun reorderVarLevels(
+            name: String?,
+            levels: List<Any>,
+            orderingByFacet: Map<String, Order>
+        ): List<Any> {
+            if (name == null) return levels
+
+            // We expect either a list of Doubles or a list of Strings.
+            @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
+            levels as List<Comparable<Any>>
+
+            return when (orderingByFacet[name]) {
+                Order.ASC -> levels.sorted()
+                Order.DESC -> levels.sortedDescending()
+                else -> levels.sorted()
+            }
+        }
     }
 
     class FacetTileInfo(
@@ -136,4 +169,8 @@ abstract class PlotFacets {
         val xAxis: Boolean,
         val yAxis: Boolean
     )
+
+    enum class Order {
+        ASC, DESC
+    }
 }
