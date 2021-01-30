@@ -28,6 +28,7 @@ internal class PlotFacetsTest {
         // "A" levels as column labels
         run {
             val dataByLevelA = PlotFacets.dataByLevelTuple(data, listOf("A"), listOf(listOf(0.0, 1.0, 2.0)))
+                .toMap()
 
             assertEquals(3, dataByLevelA.size)
 
@@ -70,7 +71,7 @@ internal class PlotFacetsTest {
                     listOf(0.0, 1.0, 2.0),
                     listOf("one", "two"),
                 )
-            )
+            ).toMap()
 
             assertEquals(6, dataByLevelAB.size)
 

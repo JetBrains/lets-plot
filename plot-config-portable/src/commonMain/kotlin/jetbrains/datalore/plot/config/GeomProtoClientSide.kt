@@ -132,11 +132,10 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     val labelFormat = opts[Text.LABEL_FORMAT] as? String
 
                     if (labelFormat != null) {
-                        geom.formatter = StringFormat(labelFormat)
-                        requireNotNull(geom.formatter)
-                        require(geom.formatter!!.argsNumber == 1) {
-                            "Wrong number of arguments in pattern \'$labelFormat\' to format label. Expected 1 argument instead of ${geom.formatter!!.argsNumber}"
-                        }
+                        geom.formatter = StringFormat.forOneArg(labelFormat)
+//                        require(geom.formatter!!.argsNumber == 1) {
+//                            "Wrong number of arguments in pattern \'$labelFormat\' to format label. Expected 1 argument instead of ${geom.formatter!!.argsNumber}"
+//                        }
                     } else {
                         throw IllegalArgumentException("Expected: label_format = 'format string'")
                     }

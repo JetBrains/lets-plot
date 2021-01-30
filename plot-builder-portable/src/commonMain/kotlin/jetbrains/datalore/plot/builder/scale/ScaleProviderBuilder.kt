@@ -68,7 +68,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         return this
     }
 
-    fun labelFormat(format: String? ): ScaleProviderBuilder<T> {
+    fun labelFormat(format: String?): ScaleProviderBuilder<T> {
         myLabelFormat = format
         return this
     }
@@ -268,7 +268,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 with.labels(myLabels)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat(myLabelFormat)::format)
+                with.labelFormatter(StringFormat.create(myLabelFormat)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)

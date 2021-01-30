@@ -302,6 +302,8 @@ object Option {
         const val LEVEL_ORDERING_ASC = "asc"
         const val LEVEL_ORDERING_DESC = "desc"
 
+        const val LEVEL_FORMAT = "format"
+
         // grid
         const val X = "x"
         const val Y = "y"

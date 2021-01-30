@@ -7,19 +7,13 @@ package jetbrains.datalore.base.stringFormat
 
 import jetbrains.datalore.base.numberFormat.NumberFormat
 
-class StringFormat(
+class StringFormat private constructor(
     private val pattern: String,
-    type: FormatType? = null
+    val formatType: FormatType
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
         STRING_FORMAT
-    }
-
-    val formatType = when {
-        type != null -> type
-        NumberFormat.isValidPattern(pattern) -> FormatType.NUMBER_FORMAT
-        else -> FormatType.STRING_FORMAT
     }
 
     private val myNumberFormatters: List<NumberFormat?>
@@ -97,5 +91,47 @@ class StringFormat(
         const val TEXT_IN_BRACES = 2
 
         fun valueInLinePattern() = "{}"
+
+        fun forOneArg(
+            pattern: String,
+            type: FormatType? = null,
+            formatFor: String? = null,
+        ): StringFormat {
+            return create(pattern, type, formatFor, 1)
+        }
+
+        fun forNArgs(
+            pattern: String,
+            type: FormatType? = null,
+            argCount: Int,
+            formatFor: String? = null
+        ): StringFormat {
+            return create(pattern, type, formatFor, argCount)
+        }
+
+        fun create(
+            pattern: String,
+            type: FormatType? = null,
+            formatFor: String? = null,
+            expectedArgs: Int = -1
+        ): StringFormat {
+            val formatType = when {
+                type != null -> type
+                NumberFormat.isValidPattern(pattern) -> FormatType.NUMBER_FORMAT
+                else -> FormatType.STRING_FORMAT
+            }
+
+            return StringFormat(pattern, formatType).also {
+                if (expectedArgs > 0) {
+                    require(it.argsNumber == expectedArgs) {
+                        @Suppress("NAME_SHADOWING")
+                        val formatFor = formatFor?.let { "to format \'$formatFor\'" } ?: ""
+                        "Wrong number of arguments in pattern \'$pattern\' $formatFor. " +
+                                "Expected $expectedArgs ${if (expectedArgs > 1) "arguments" else "argument"} " +
+                                "instead of ${it.argsNumber}"
+                    }
+                }
+            }
+        }
     }
 }

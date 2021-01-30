@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.STRING_FORMAT
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class TooltipLine(
     private val label: String?,
@@ -18,9 +18,10 @@ class TooltipLine(
 ) : TooltipLineSpec {
     constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
 
-    private val myLineFormatter = StringFormat(pattern, STRING_FORMAT).also {
-        require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
-    }
+    //    private val myLineFormatter = StringFormat(pattern, STRING_FORMAT).also {
+//        require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
+//    }
+    private val myLineFormatter = StringFormat.forNArgs(pattern, STRING_FORMAT, fields.size, "fields")
 
     fun initDataContext(dataContext: DataContext) {
         fields.forEach { it.initDataContext(dataContext) }
@@ -63,6 +64,7 @@ class TooltipLine(
             pattern = StringFormat.valueInLinePattern(),
             fields = listOf(valueSource)
         )
+
         private const val DEFAULT_LABEL_SPECIFIER = "@"
     }
 }

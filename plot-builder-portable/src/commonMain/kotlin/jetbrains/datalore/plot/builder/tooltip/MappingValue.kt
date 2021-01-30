@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.base.stringFormat.StringFormat
 
 class MappingValue(
     val aes: Aes<*>,
@@ -21,9 +21,10 @@ class MappingValue(
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = null
     private val myFormatter = format?.let {
-        StringFormat(format).also {
-            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'. Expected 1 argument instead of ${it.argsNumber}" }
-        }
+//        StringFormat(format).also {
+//            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'. Expected 1 argument instead of ${it.argsNumber}" }
+//        }
+        StringFormat.forOneArg(format, formatFor = aes.name)
     }
 
     override fun initDataContext(dataContext: DataContext) {
