@@ -93,12 +93,14 @@ class FacetWrap(
                     col, row,
                     colLabs = tileLabelTuple,
                     null,
-                    hasXAxis, hasYAxis
+                    hasXAxis, hasYAxis,
+                    trueIndex = i
                 )
             )
         }
 
-        return infos
+        // Enumeration is always 'by row'.
+        return infos.sortedWith(compareBy<FacetTileInfo> { it.row }.thenBy { it.col })
     }
 
     enum class Direction {
@@ -138,7 +140,7 @@ class FacetWrap(
             }
 
             val (w, h) = shape
-            val shapeAdjusted = when (dir) {
+            return when (dir) {
                 Direction.H -> {
                     // filling by rows
                     Pair(
@@ -154,7 +156,6 @@ class FacetWrap(
                     )
                 }
             }
-            return shapeAdjusted
         }
     }
 }

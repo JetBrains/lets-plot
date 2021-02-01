@@ -311,9 +311,12 @@ object Option {
         const val NCOL = "ncol"
         const val NROW = "nrow"
         const val FACETS_ORDER = "order"
+        const val FACETS_FILL_DIR = "dir"
 
         const val FACET_ORDER_ASC = 1
         const val FACET_ORDER_DESC = -1
+        const val FACET_FILL_VERT = "v"
+        const val FACET_FILL_HOR = "h"
     }
 
     object Mapping {

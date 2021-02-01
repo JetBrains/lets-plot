@@ -97,7 +97,7 @@ internal class FacetGridPlotLayout(
             }
 
             var height = geomHeight
-            var geomY = 0.0
+            var geomY: Double
             if (facetTile.xAxis && facetTile.row == facets.rowCount - 1) {   // bottom row only
                 height += axisThicknessX
             }
@@ -130,7 +130,8 @@ internal class FacetGridPlotLayout(
                 tileInfo.layoutInfo.xAxisInfo,
                 tileInfo.layoutInfo.yAxisInfo,
                 xAxisShown = facetTile.xAxis,
-                yAxisShown = facetTile.yAxis
+                yAxisShown = facetTile.yAxis,
+                trueIndex = facetTile.trueIndex
             )
                 .withOffset(tilesAreaOffset.add(offset))
                 .withFacetLabels(facetTile.colLabs, facetTile.rowLab)

@@ -121,7 +121,8 @@ internal class XYPlotTileLayout(
             geomBounds,
             clipBounds(geomBounds),
             xAxisInfo!!,
-            yAxisInfo
+            yAxisInfo,
+            trueIndex = 0
         )
     }
 

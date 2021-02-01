@@ -26,7 +26,9 @@ class TileLayoutInfo private constructor(
     yAxisShown: Boolean,
 
     val facetXLabels: List<String>,
-    val facetYLabel: String?
+    val facetYLabel: String?,
+
+    val trueIndex: Int     // tile index before re-ordering (in facet wrap)
 ) {
     val xAxisShown: Boolean = xAxisInfo != null && xAxisShown
     val yAxisShown: Boolean = yAxisInfo != null && yAxisShown
@@ -39,6 +41,7 @@ class TileLayoutInfo private constructor(
         yAxisInfo: AxisLayoutInfo?,
         xAxisShown: Boolean = true,
         yAxisShown: Boolean = true,
+        trueIndex: Int
     ) : this(
         DoubleVector.ZERO,
         bounds,
@@ -49,18 +52,20 @@ class TileLayoutInfo private constructor(
         xAxisShown = xAxisShown,
         yAxisShown = yAxisShown,
         facetXLabels = emptyList(),
-        facetYLabel = null
+        facetYLabel = null,
+        trueIndex
     )
 
     fun withOffset(offset: DoubleVector): TileLayoutInfo {
         return TileLayoutInfo(
             offset,
-            this.bounds,
-            this.geomBounds,
-            this.clipBounds,
-            this.xAxisInfo, this.yAxisInfo,
-            this.xAxisShown, this.yAxisShown,
-            this.facetXLabels, this.facetYLabel
+            bounds,
+            geomBounds,
+            clipBounds,
+            xAxisInfo, yAxisInfo,
+            xAxisShown, yAxisShown,
+            facetXLabels, facetYLabel,
+            trueIndex
         )
     }
 
@@ -82,7 +87,8 @@ class TileLayoutInfo private constructor(
             this.clipBounds,
             this.xAxisInfo, this.yAxisInfo,
             this.xAxisShown, this.yAxisShown,
-            xLabels, yLabel
+            xLabels, yLabel,
+            trueIndex
         )
     }
 }

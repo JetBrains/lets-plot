@@ -337,23 +337,25 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         val tilesOrigin = geomAndAxis.origin
-        for (i in plotInfo.tiles.indices) {
-            val tileInfo = plotInfo.tiles[i]
+        for (tileLayoutInfo in plotInfo.tiles) {
+//        for (i in plotInfo.tiles.indices) {
+//            val tileLayoutInfo = plotInfo.tiles[i]
+            val tileLayersIndex = tileLayoutInfo.trueIndex
 
 //            println("plot offset: " + tileInfo.plotOffset)
 //            println("     bounds: " + tileInfo.bounds)
 //            println("geom bounds: " + tileInfo.geomBounds)
 //            println("clip bounds: " + tileInfo.clipBounds)
-            val tile = createTile(tilesOrigin, tileInfo, tileLayers(i), tileTheme)
+            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), tileTheme)
 
-            val plotOriginAbsolute = tilesOrigin.add(tileInfo.plotOrigin)
+            val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
             tile.moveTo(plotOriginAbsolute)
 
             add(tile)
 
             tile.liveMapFigure?.let(myLiveMapFigures::add)
 
-            val geomBoundsAbsolute = tileInfo.geomBounds.add(plotOriginAbsolute)
+            val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
             myTooltipHelper.addTileInfo(geomBoundsAbsolute, tile.targetLocators)
         }
 

@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_D
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
 import jetbrains.datalore.plot.builder.assemble.facet.FacetWrap
 import jetbrains.datalore.plot.config.Option.Facet
+import jetbrains.datalore.plot.config.Option.Facet.FACETS_FILL_DIR
 import jetbrains.datalore.plot.config.Option.Facet.X_ORDER
 import jetbrains.datalore.plot.config.Option.Facet.Y_ORDER
 
@@ -98,7 +99,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
                 else DEF_ORDER_DIR
             )
         }
-        return FacetWrap(facets, facetLevels, nrow, ncol, FacetWrap.Direction.H, orderListFinal)
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), orderListFinal)
     }
 
 
@@ -117,5 +118,17 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
         }
     }
 
-
+    private fun getDirOption(): FacetWrap.Direction {
+        return when (val opt = get(FACETS_FILL_DIR)) {
+            null -> FacetWrap.Direction.H
+            else -> when (opt.toString().toUpperCase()) {
+                "V" -> FacetWrap.Direction.V
+                "H" -> FacetWrap.Direction.H
+                else -> throw IllegalArgumentException(
+                    "Unsupported `dir` value: $opt.\n" +
+                            "Use: 'H' (horizontal) or 'V' (vertical)."
+                )
+            }
+        }
+    }
 }

@@ -170,6 +170,11 @@ abstract class PlotFacets {
         val colLabs: List<String>,
         val rowLab: String?,
         val xAxis: Boolean,
-        val yAxis: Boolean
-    )
+        val yAxis: Boolean,
+        val trueIndex: Int     // tile index before re-ordering (in facet wrap)
+    ) {
+        override fun toString(): String {
+            return "FacetTileInfo(col=$col, row=$row, colLabs=$colLabs, rowLab=$rowLab)"
+        }
+    }
 }

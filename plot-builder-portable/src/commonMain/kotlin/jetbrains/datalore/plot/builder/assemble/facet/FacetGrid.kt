@@ -92,7 +92,8 @@ class FacetGrid(
                         col, row,
                         colLabs,
                         if (addRowLab) rowLabels[row] else null,
-                        hasXAxis, hasYAxis
+                        hasXAxis, hasYAxis,
+                        trueIndex = infos.size
                     )
                 )
             }
