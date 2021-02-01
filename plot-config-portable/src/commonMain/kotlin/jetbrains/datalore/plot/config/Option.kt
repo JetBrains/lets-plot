@@ -298,22 +298,22 @@ object Option {
         const val NAME_GRID = "grid"
         const val NAME_WRAP = "wrap"
 
-        const val LEVEL_ORDERING = "order"
-        const val LEVEL_ORDERING_ASC = "asc"
-        const val LEVEL_ORDERING_DESC = "desc"
-
         const val LEVEL_FORMAT = "format"
 
         // grid
         const val X = "x"
         const val Y = "y"
+        const val X_ORDER = "x_order"
+        const val Y_ORDER = "y_order"
 
         // wrap
         const val FACETS = "facets"
         const val NCOL = "ncol"
         const val NROW = "nrow"
-        
+        const val FACETS_ORDER = "order"
 
+        const val FACET_ORDER_ASC = 1
+        const val FACET_ORDER_DESC = -1
     }
 
     object Mapping {

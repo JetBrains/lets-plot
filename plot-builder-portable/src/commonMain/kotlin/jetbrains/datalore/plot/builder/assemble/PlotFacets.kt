@@ -35,10 +35,10 @@ abstract class PlotFacets {
 
 
     companion object {
-        val DEF_LEVEL_ORDER = Order.ASC
+        const val DEF_ORDER_DIR = 1
 
         fun undefined(): PlotFacets {
-            return FacetGrid(null, null, emptyList<Any>(), emptyList<Any>(), Order.ASC, Order.ASC)
+            return FacetGrid(null, null, emptyList<Any>(), emptyList<Any>(), 1, 1)
         }
 
         fun dataByLevelTuple(
@@ -133,7 +133,7 @@ abstract class PlotFacets {
         fun reorderLevels(
             varNames: List<String>,
             varLevels: List<List<Any>>,
-            ordering: List<Order>
+            ordering: List<Int>
         ): List<List<Any>> {
             val orderingByFacet = varNames.zip(ordering).toMap()
 
@@ -149,7 +149,7 @@ abstract class PlotFacets {
         fun reorderVarLevels(
             name: String?,
             levels: List<Any>,
-            order: Order
+            order: Int
         ): List<Any> {
             if (name == null) return levels
 
@@ -157,9 +157,9 @@ abstract class PlotFacets {
             @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
             levels as List<Comparable<Any>>
 
-            return when (order) {
-                Order.ASC -> levels.sorted()
-                Order.DESC -> levels.sortedDescending()
+            return when {
+                order < 0 -> levels.sortedDescending()
+                else -> levels.sorted()
             }
         }
     }
@@ -172,8 +172,4 @@ abstract class PlotFacets {
         val xAxis: Boolean,
         val yAxis: Boolean
     )
-
-    enum class Order {
-        ASC, DESC
-    }
 }

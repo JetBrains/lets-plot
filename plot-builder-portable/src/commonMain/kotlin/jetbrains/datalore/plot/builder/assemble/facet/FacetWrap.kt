@@ -17,11 +17,11 @@ class FacetWrap(
     private val nrow: Int?,
     private val ncol: Int?,
     private val direction: Direction,
-    levelOrdering: List<Order>
+    facetOrdering: List<Int>
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
-    private val levels: List<List<Any>> = reorderLevels(facets, levels, levelOrdering)
+    private val levels: List<List<Any>> = reorderLevels(facets, levels, facetOrdering)
     override val numTiles = numTiles(facets, levels)
     private val shape = shape(numTiles, ncol, nrow, direction)
     override val colCount: Int = shape.first

@@ -16,7 +16,7 @@ class FacetWrapDemo : PlotConfigDemoBase() {
             oneFacet3cols(),
             oneFacet4rows(),
             twoFacets(),
-            twoFacetsOrderingDesc(),
+            twoFacets_CylindersOrderDesc(),
         )
     }
 
@@ -62,7 +62,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun twoFacetsOrderingDesc(): Map<String, Any> {
+    @Suppress("FunctionName")
+    private fun twoFacets_CylindersOrderDesc(): Map<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
@@ -71,7 +72,7 @@ class FacetWrapDemo : PlotConfigDemoBase() {
                 AutoMpg.cylinders.name,
             ),
             "ncol" to 5,
-            "order" to listOf(null, "desc")
+            "order" to listOf(null, -1)
         )
         return plotSpec
     }

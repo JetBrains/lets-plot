@@ -8,46 +8,25 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_LEVEL_ORDER
+import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
 import jetbrains.datalore.plot.builder.assemble.facet.FacetWrap
 import jetbrains.datalore.plot.config.Option.Facet
+import jetbrains.datalore.plot.config.Option.Facet.X_ORDER
+import jetbrains.datalore.plot.config.Option.Facet.Y_ORDER
 
 internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
-        fun toOrderDir(dir: Any?): PlotFacets.Order {
-            return when (dir) {
-                null -> DEF_LEVEL_ORDER
-                else -> when (dir.toString().toLowerCase()) {
-                    Facet.LEVEL_ORDERING_ASC -> PlotFacets.Order.ASC
-                    Facet.LEVEL_ORDERING_DESC -> PlotFacets.Order.DESC
-                    else -> {
-                        throw IllegalArgumentException("Ordering direction expected: `asc` or `desc`, but was: `$dir`")
-                    }
-                }
-            }
-        }
-
-        val levelOrderingList = if (has(Facet.LEVEL_ORDERING)) {
-            when (val levelOrdering = get(Facet.LEVEL_ORDERING)) {
-                is List<*> -> levelOrdering.map { toOrderDir(it) }
-                else -> listOf(toOrderDir(levelOrdering))
-            }
-        } else {
-            emptyList()
-        }
-
         return when (val name = getStringSafe(Facet.NAME)) {
-            Facet.NAME_GRID -> createGrid(dataByLayer, levelOrderingList)
-            Facet.NAME_WRAP -> createWrap(dataByLayer, levelOrderingList)
+            Facet.NAME_GRID -> createGrid(dataByLayer)
+            Facet.NAME_WRAP -> createWrap(dataByLayer)
             else -> throw IllegalArgumentException("Facet 'grid' or 'wrap' expected but was: `$name`")
         }
     }
 
     private fun createGrid(
-        dataByLayer: List<DataFrame>,
-        levelOrdering: List<PlotFacets.Order>
+        dataByLayer: List<DataFrame>
     ): FacetGrid {
         var nameX: String? = null
         val levelsX = LinkedHashSet<Any>()
@@ -73,20 +52,15 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             }
         }
 
-        val xOrder = nameX?.let {
-            if (levelOrdering.isNotEmpty()) levelOrdering[0]
-            else DEF_LEVEL_ORDER
-        } ?: DEF_LEVEL_ORDER
-        val yOrder = nameY?.let {
-            if (levelOrdering.size > 1) levelOrdering[1]
-            else DEF_LEVEL_ORDER
-        } ?: DEF_LEVEL_ORDER
-        return FacetGrid(nameX, nameY, ArrayList(levelsX), ArrayList(levelsY), xOrder, yOrder)
+        return FacetGrid(
+            nameX, nameY, ArrayList(levelsX), ArrayList(levelsY),
+            getOrderOptionDef(X_ORDER),
+            getOrderOptionDef(Y_ORDER)
+        )
     }
 
     private fun createWrap(
-        dataByLayer: List<DataFrame>,
-        levelOrdering: List<PlotFacets.Order>
+        dataByLayer: List<DataFrame>
     ): FacetWrap {
         // 'facets' cal be just one name or a list of names.
         val facets = getAsStringList(Facet.FACETS)
@@ -106,13 +80,42 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             facetLevels.add(levels.toList())
         }
 
-        val levelOrderingFull = ArrayList<PlotFacets.Order>()
+        val orderList = if (has(Facet.FACETS_ORDER)) {
+            // The 'order' option can be a list or just one (Int) value.
+            when (val orderOption = get(Facet.FACETS_ORDER)) {
+                is List<*> -> orderOption.map { toOrderVal(it) }
+                else -> listOf(toOrderVal(orderOption))
+            }
+        } else {
+            emptyList()
+        }
+
+        // Add missing elements to match the factes count
+        val orderListFinal = ArrayList<Int>()
         for (i in facets.indices) {
-            levelOrderingFull.add(
-                if (i < levelOrdering.size) levelOrdering[i]
-                else DEF_LEVEL_ORDER
+            orderListFinal.add(
+                if (i < orderList.size) orderList[i]
+                else DEF_ORDER_DIR
             )
         }
-        return FacetWrap(facets, facetLevels, nrow, ncol, FacetWrap.Direction.H, levelOrderingFull)
+        return FacetWrap(facets, facetLevels, nrow, ncol, FacetWrap.Direction.H, orderListFinal)
     }
+
+
+    private fun getOrderOptionDef(optionName: String): Int {
+        return toOrderVal(get(optionName))
+    }
+
+    private fun toOrderVal(orderOption: Any?): Int {
+        return when (orderOption) {
+            null -> DEF_ORDER_DIR
+            is Number -> orderOption.toInt()
+            else -> throw IllegalArgumentException(
+                "Unsupported `order` value: $orderOption.\n" +
+                        "Use: 1 (natural) or -1 (descending)."
+            )
+        }
+    }
+
+
 }
