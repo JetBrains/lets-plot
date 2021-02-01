@@ -21,7 +21,7 @@
     </tr>
     <tr>
         <td>Python versions</td>
-        <td>3.6, 3.7, 3.8</td>
+        <td>3.6, 3.7, 3.8, 3.9</td>
     </tr>
 </table>
 
