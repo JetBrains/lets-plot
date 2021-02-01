@@ -296,7 +296,7 @@ geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
 4 |368499 |warwick |Warwick
 ```
 
-##### `sksip_missing()`
+##### `drop_not_found()`
 The function `drop_not_found()` removes unknown names from result.
 ```python
 geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
