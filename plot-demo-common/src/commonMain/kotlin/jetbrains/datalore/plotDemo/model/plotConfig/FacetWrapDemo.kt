@@ -24,7 +24,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
-            "facets" to AutoMpg.cylinders.name
+            "facets" to AutoMpg.cylinders.name,
+            "format" to "{d} cyl"
         )
         return plotSpec
     }
@@ -34,7 +35,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
             "facets" to listOf(AutoMpg.cylinders.name),     // one facet variant
-            "ncol" to 3
+            "ncol" to 3,
+            "format" to "{d} cyl"
         )
         return plotSpec
     }
@@ -44,7 +46,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
             "facets" to AutoMpg.cylinders.name,
-            "nrow" to 4
+            "nrow" to 4,
+            "format" to "{d} cyl"
         )
         return plotSpec
     }
@@ -57,7 +60,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
                 AutoMpg.origin.name,
                 AutoMpg.cylinders.name,
             ),
-            "ncol" to 5
+            "ncol" to 5,
+            "format" to listOf(null, "{d} cyl")
         )
         return plotSpec
     }
@@ -72,7 +76,8 @@ class FacetWrapDemo : PlotConfigDemoBase() {
                 AutoMpg.cylinders.name,
             ),
             "ncol" to 5,
-            "order" to listOf(null, -1)
+            "order" to listOf(null, -1),
+            "format" to listOf(null, "{d} cyl")
         )
         return plotSpec
     }

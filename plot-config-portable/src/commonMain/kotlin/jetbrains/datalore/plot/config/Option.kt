@@ -298,13 +298,13 @@ object Option {
         const val NAME_GRID = "grid"
         const val NAME_WRAP = "wrap"
 
-        const val LEVEL_FORMAT = "format"
-
         // grid
         const val X = "x"
         const val Y = "y"
         const val X_ORDER = "x_order"
         const val Y_ORDER = "y_order"
+        const val X_FORMAT = "x_format"
+        const val Y_FORMAT = "y_format"
 
         // wrap
         const val FACETS = "facets"
@@ -312,6 +312,7 @@ object Option {
         const val NROW = "nrow"
         const val FACETS_ORDER = "order"
         const val FACETS_FILL_DIR = "dir"
+        const val FACETS_FORMAT = "format"
 
         const val FACET_ORDER_ASC = 1
         const val FACET_ORDER_DESC = -1

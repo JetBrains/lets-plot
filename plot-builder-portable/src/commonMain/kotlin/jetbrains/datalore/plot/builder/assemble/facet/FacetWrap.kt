@@ -17,7 +17,8 @@ class FacetWrap(
     private val nrow: Int?,
     private val ncol: Int?,
     private val direction: Direction,
-    facetOrdering: List<Int>
+    facetOrdering: List<Int>,
+    private val facetFormatters: List<(Any) -> String>,
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
@@ -56,8 +57,8 @@ class FacetWrap(
 
         val levelTuples = createNameLevelTuples(facets, levels)
         val tileLabels = levelTuples
-            .map { it.map { it.second } }                    // get rid of 'pair'
-            .map { it.map { it.toString() } }                // to string tuples
+            .map { it.map { pair -> pair.second } }                    // get rid of 'pair'
+            .map { it.mapIndexed { i, level -> facetFormatters[i](level) } }                // to string tuples
 
         fun toCol(index: Int): Int {
             return when (direction) {

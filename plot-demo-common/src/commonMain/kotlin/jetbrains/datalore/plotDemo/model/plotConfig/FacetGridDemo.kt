@@ -24,7 +24,8 @@ class FacetGridDemo : PlotConfigDemoBase() {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "x" to AutoMpg.cylinders.name
+            "x" to AutoMpg.cylinders.name,
+            "x_format" to "{d} cyl"
         )
         return plotSpec
     }
@@ -43,7 +44,8 @@ class FacetGridDemo : PlotConfigDemoBase() {
         plotSpec["facet"] = mapOf(
             "name" to "grid",
             "x" to AutoMpg.cylinders.name,
-            "y" to AutoMpg.origin.name
+            "y" to AutoMpg.origin.name,
+            "x_format" to "{d} cyl"
         )
         return plotSpec
     }
@@ -53,7 +55,8 @@ class FacetGridDemo : PlotConfigDemoBase() {
         plotSpec["facet"] = mapOf(
             "name" to "grid",
             "x" to AutoMpg.origin.name,
-            "y" to AutoMpg.cylinders.name
+            "y" to AutoMpg.cylinders.name,
+            "y_format" to "{d} cyl"
         )
         return plotSpec
     }
@@ -65,7 +68,8 @@ class FacetGridDemo : PlotConfigDemoBase() {
             "name" to "grid",
             "x" to AutoMpg.cylinders.name,
             "y" to AutoMpg.origin.name,
-            "y_order" to -1
+            "y_order" to -1,
+            "x_format" to "{d} cyl"
         )
         return plotSpec
     }

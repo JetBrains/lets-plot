@@ -56,9 +56,7 @@ open class OptionsAccessor(
 
     fun getList(option: String): List<*> {
         val v = get(option) ?: return ArrayList<Any>()
-
         require(v is List<*>) { "Not a List: $option: ${v::class.simpleName}" }
-
         return v
     }
 
@@ -121,13 +119,23 @@ open class OptionsAccessor(
         return list as List<Number?>
     }
 
-    fun getAsStringList(option: String): List<String> {
-        val v = get(option) ?: emptyList<String>()
+    fun getAsList(option: String): List<Any?> {
+        val v = get(option) ?: emptyList<Any>()
         return if (v is List<*>) {
-            v.filterNotNull().map { it.toString() }
+            v
         } else {
-            listOf(v.toString())
+            listOf(v)
         }
+    }
+
+    fun getAsStringList(option: String): List<String> {
+//        val v = get(option) ?: emptyList<String>()
+//        return if (v is List<*>) {
+//            v.filterNotNull().map { it.toString() }
+//        } else {
+//            listOf(v.toString())
+//        }
+        return getAsList(option).filterNotNull().map { it.toString() }
     }
 
     fun getStringList(option: String): List<String> {

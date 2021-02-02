@@ -25,7 +25,8 @@ class FacetWrapDirVDemo : PlotConfigDemoBase() {
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
             "facets" to AutoMpg.cylinders.name,
-            "dir" to "V"
+            "format" to "{d} cyl",
+            "dir" to "V",
         )
         return plotSpec
     }
@@ -36,6 +37,7 @@ class FacetWrapDirVDemo : PlotConfigDemoBase() {
             "name" to "wrap",
             "facets" to listOf(AutoMpg.cylinders.name),     // one facet variant
             "ncol" to 3,
+            "format" to "{d} cyl",
             "dir" to "V"
         )
         return plotSpec
@@ -47,6 +49,7 @@ class FacetWrapDirVDemo : PlotConfigDemoBase() {
             "name" to "wrap",
             "facets" to AutoMpg.cylinders.name,
             "nrow" to 4,
+            "format" to "{d} cyl",
             "dir" to "V"
         )
         return plotSpec
@@ -60,7 +63,8 @@ class FacetWrapDirVDemo : PlotConfigDemoBase() {
                 AutoMpg.origin.name,
                 AutoMpg.cylinders.name,
             ),
-            "ncol" to 5,
+            "nrow" to 5,
+            "format" to listOf(null, "{d} cyl"),
             "dir" to "V"
         )
         return plotSpec
@@ -75,8 +79,9 @@ class FacetWrapDirVDemo : PlotConfigDemoBase() {
                 AutoMpg.origin.name,
                 AutoMpg.cylinders.name,
             ),
-            "ncol" to 5,
+            "nrow" to 5,
             "order" to listOf(null, -1),
+            "format" to listOf(null, "{d} cyl"),
             "dir" to "V"
         )
         return plotSpec

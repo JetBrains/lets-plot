@@ -5,15 +5,19 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
 import jetbrains.datalore.plot.builder.assemble.facet.FacetWrap
 import jetbrains.datalore.plot.config.Option.Facet
 import jetbrains.datalore.plot.config.Option.Facet.FACETS_FILL_DIR
+import jetbrains.datalore.plot.config.Option.Facet.X_FORMAT
 import jetbrains.datalore.plot.config.Option.Facet.X_ORDER
+import jetbrains.datalore.plot.config.Option.Facet.Y_FORMAT
 import jetbrains.datalore.plot.config.Option.Facet.Y_ORDER
 
 internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options) {
@@ -28,7 +32,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
 
     private fun createGrid(
         dataByLayer: List<DataFrame>
-    ): FacetGrid {
+    ): PlotFacets {
         var nameX: String? = null
         val levelsX = LinkedHashSet<Any>()
         if (has(Facet.X)) {
@@ -55,14 +59,16 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
 
         return FacetGrid(
             nameX, nameY, ArrayList(levelsX), ArrayList(levelsY),
-            getOrderOptionDef(X_ORDER),
-            getOrderOptionDef(Y_ORDER)
+            getOrderOption(X_ORDER),
+            getOrderOption(Y_ORDER),
+            getFormatterOption(X_FORMAT),
+            getFormatterOption(Y_FORMAT),
         )
     }
 
     private fun createWrap(
         dataByLayer: List<DataFrame>
-    ): FacetWrap {
+    ): PlotFacets {
         // 'facets' cal be just one name or a list of names.
         val facets = getAsStringList(Facet.FACETS)
 
@@ -81,38 +87,34 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             facetLevels.add(levels.toList())
         }
 
-        val orderList = if (has(Facet.FACETS_ORDER)) {
-            // The 'order' option can be a list or just one (Int) value.
-            when (val orderOption = get(Facet.FACETS_ORDER)) {
-                is List<*> -> orderOption.map { toOrderVal(it) }
-                else -> listOf(toOrderVal(orderOption))
-            }
-        } else {
-            emptyList()
+        // facet ordering
+        val orderOption = getAsList(Facet.FACETS_ORDER).map {
+            toOrderVal(it)
         }
+        // Num of order values must be same as num of factes.
+        val ordering = (orderOption + List(facets.size) { DEF_ORDER_DIR }).take(facets.size)
 
-        // Add missing elements to match the factes count
-        val orderListFinal = ArrayList<Int>()
-        for (i in facets.indices) {
-            orderListFinal.add(
-                if (i < orderList.size) orderList[i]
-                else DEF_ORDER_DIR
-            )
+        // facet formatting
+        val formatterOption = getAsList(Facet.FACETS_FORMAT).map {
+            toFormatterVal(it)
         }
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), orderListFinal)
+        // Num of formatters must be same as num of factes.
+        val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
+
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters)
     }
 
 
-    private fun getOrderOptionDef(optionName: String): Int {
+    private fun getOrderOption(optionName: String): Int {
         return toOrderVal(get(optionName))
     }
 
-    private fun toOrderVal(orderOption: Any?): Int {
-        return when (orderOption) {
+    private fun toOrderVal(optionVal: Any?): Int {
+        return when (optionVal) {
             null -> DEF_ORDER_DIR
-            is Number -> orderOption.toInt()
+            is Number -> optionVal.toInt()
             else -> throw IllegalArgumentException(
-                "Unsupported `order` value: $orderOption.\n" +
+                "Unsupported `order` value: $optionVal.\n" +
                         "Use: 1 (natural) or -1 (descending)."
             )
         }
@@ -130,5 +132,19 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
                 )
             }
         }
+    }
+
+    private fun toFormatterVal(optionVal: Any?): (Any) -> String {
+        return when (optionVal) {
+            null -> DEF_FORMATTER
+            else -> {
+                val fmt = StringFormat.create(optionVal.toString())
+                return { value: Any -> fmt.format(value) }
+            }
+        }
+    }
+
+    private fun getFormatterOption(optionName: String): (Any) -> String {
+        return toFormatterVal(get(optionName))
     }
 }

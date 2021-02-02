@@ -40,7 +40,8 @@ internal class ScaleTransformConfig private constructor(
             val stringFormat = format?.let { StringFormat.create(it) }
             val transform = Transforms.createTransform(
                 transKind = TransformKind.safeValueOf(name),
-                labelFormatter = stringFormat?.let { { value: Any -> it.format(value) } }
+//                labelFormatter = stringFormat?.let { { value: Any -> it.format(value) } }
+                labelFormatter = stringFormat?.let { { value: Any -> "it.format(value)" } }
             )
             return ScaleTransformConfig(transform, opts)
         }

@@ -15,7 +15,9 @@ class FacetGrid(
     xLevels: List<Any>,
     yLevels: List<Any>,
     xOrder: Int,
-    yOrder: Int
+    yOrder: Int,
+    private val xFormatter: (Any) -> String = DEF_FORMATTER,
+    private val yFormatter: (Any) -> String = DEF_FORMATTER,
 ) : PlotFacets() {
 
     override val isDefined: Boolean = xVar != null || yVar != null
@@ -70,8 +72,12 @@ class FacetGrid(
      *          the index is computed like: row * nCols + col
      */
     override fun tileInfos(): List<FacetTileInfo> {
-        val colLabels = (if (xLevels.isEmpty()) listOf(null) else xLevels).map { it?.toString() }
-        val rowLabels = (if (yLevels.isEmpty()) listOf(null) else yLevels).map { it?.toString() }
+        val colLabels = (if (xLevels.isEmpty()) listOf(null) else xLevels).map {
+            it?.let { xFormatter(it) }
+        }
+        val rowLabels = (if (yLevels.isEmpty()) listOf(null) else yLevels).map {
+            it?.let { yFormatter(it) }
+        }
 
         val infos = ArrayList<FacetTileInfo>()
         for (row in 0 until rowCount) {
