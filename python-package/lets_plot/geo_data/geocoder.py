@@ -192,8 +192,8 @@ class Geocoder:
     def get_geocodes(self) -> 'DataFrame':
         return self._geocode().to_data_frame()
 
-    def inc_res(self):
-        self._inc_res = 3
+    def inc_res(self, delta=3):
+        self._inc_res = delta
         return self
 
     def _geocode(self) -> Geocodes:
