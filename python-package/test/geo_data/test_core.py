@@ -8,7 +8,7 @@ from pandas import DataFrame
 
 from lets_plot.geo_data import geocode
 from lets_plot.geo_data.geocoder import _to_scope
-from lets_plot.geo_data.geocodes import _coerce_resolution, _ensure_is_list, Geocodes, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
+from lets_plot.geo_data.geocodes import _ensure_is_list, Geocodes, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequest, PayloadKind, ExplicitRequest, \
     AmbiguityResolver
@@ -217,7 +217,7 @@ def test_geocode_boundary(mock_request):
         ExplicitRequest(
             requested_payload=[PayloadKind.boundaries],
             ids=REGION_LIST,
-            resolution=_coerce_resolution(RESOLUTION)
+            resolution=RESOLUTION
         )
     )
 
@@ -253,18 +253,6 @@ def test_reorder_for_centroids_should_happen(mock_request):
     ).centroids()
 
     assert ['Los Angeles', 'New York', 'Las Vegas', 'Los Angeles'] == df[DF_COLUMN_FOUND_NAME].tolist()
-
-
-@pytest.mark.parametrize('arg,expected_resolution', [
-    (1, 1),
-    (3, 3),
-    (6, 6),
-    (9, 9),
-    (12, 12),
-    (15, 15),
-])
-def test_coerce_resolution(arg: int, expected_resolution: int):
-    assert expected_resolution == _coerce_resolution(arg)
 
 
 @pytest.mark.parametrize('location,expected_type,expected_data', [

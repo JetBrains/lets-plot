@@ -177,6 +177,9 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
 
 
 class Geocoder:
+    def __init__(self):
+        self._inc_res = 0
+
     def get_limits(self) -> 'GeoDataFrame':
         return self._geocode().limits()
 
@@ -184,10 +187,14 @@ class Geocoder:
         return self._geocode().centroids()
 
     def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
-        return self._geocode().boundaries(resolution)
+        return self._geocode().boundaries(resolution, self._inc_res)
 
     def get_geocodes(self) -> 'DataFrame':
         return self._geocode().to_data_frame()
+
+    def inc_res(self):
+        self._inc_res = 3
+        return self
 
     def _geocode(self) -> Geocodes:
         raise ValueError('Abstract method')
@@ -212,6 +219,8 @@ def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[U
 
 class ReverseGeocoder(Geocoder):
     def __init__(self, lon, lat, level: Optional[Union[str, LevelKind]], scope=None):
+        Geocoder.__init__(self)
+
         self._geocodes: Optional[Geocodes] = None
         self._request: ReverseGeocodingRequest = RequestBuilder() \
             .set_request_kind(RequestKind.reverse) \
@@ -236,10 +245,13 @@ class ReverseGeocoder(Geocoder):
 
 
 class NamesGeocoder(Geocoder):
-    def __init__(self,
-                 level: Optional[Union[str, LevelKind]] = None,
-                 request: request_types = None
-                 ):
+    def __init__(
+            self,
+            level: Optional[Union[str, LevelKind]] = None,
+            request: request_types = None
+    ):
+        Geocoder.__init__(self)
+
         self._geocodes: Optional[Geocodes] = None
         self._scope: List[Optional[MapRegion]] = []
         self._level: Optional[LevelKind] = _to_level_kind(level)

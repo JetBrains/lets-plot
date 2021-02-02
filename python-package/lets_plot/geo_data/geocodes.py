@@ -177,7 +177,7 @@ class Geocodes:
         seen_add = seen.add
         return [feature.id for feature in self._geocoded_features if not (feature.id in seen or seen_add(feature.id))]
 
-    def boundaries(self, resolution: Optional[Union[int, str, Resolution]] = None):
+    def boundaries(self, resolution: Optional[Union[int, str, Resolution]] = None, inc_res: int = 0):
         """
         Return boundaries for given regions in form of GeoDataFrame.
 
@@ -233,6 +233,9 @@ class Geocodes:
                     If n < 50 => 4
                     else => 3
 
+        inc_res: int
+            Increase auto-detected resolution.
+
         Examples
         --------
         .. jupyter-execute::
@@ -245,15 +248,21 @@ class Geocodes:
 
         if resolution is None:
             autodetected_resolution = _autodetect_resolution(self._level_kind, len(self._geocoded_features))
-            int_resolution = _coerce_resolution(autodetected_resolution.value)
+            int_resolution = max(Resolution.city_high.value, autodetected_resolution + inc_res)
         elif isinstance(resolution, int):
-            int_resolution = _coerce_resolution(resolution)
+            int_resolution = resolution
         elif isinstance(resolution, Resolution):
-            int_resolution = _coerce_resolution(resolution.value)
+            int_resolution = resolution.value
         elif isinstance(resolution, str):
-            int_resolution = _coerce_resolution(_parse_resolution(resolution).value)
+            int_resolution = _parse_resolution(resolution).value
         else:
             raise ValueError('Invalid resolution: ' + type(resolution).__name__)
+
+        if int_resolution < Resolution.world_low.value or int_resolution > Resolution.city_high.value:
+            raise ValueError(
+                "Resolution is out of range. Expected to be from ({}) to ({}), but was ({})."
+                    .format(Resolution.world_low.value, Resolution.city_high.value, int_resolution)
+            )
 
         return self._execute(
             self._request_builder(PayloadKind.boundaries)
@@ -477,43 +486,33 @@ def _ensure_is_list(obj) -> Optional[List[str]]:
     return [obj]
 
 
-def _coerce_resolution(res: int) -> int:
-    if isinstance(res, int):
-        if 1 <= res <= 15:
-            return res
-        else:
-            raise ValueError("Invalid resolution value: " + str(res))
-
-    raise ValueError("Unsupported resolution type: " + type(res).__name__)
-
-
-def _autodetect_resolution(level: LevelKind, count: int) -> Resolution:
+def _autodetect_resolution(level: LevelKind, count: int) -> int:
     if level == LevelKind.country:
         if count < 3:
-            return Resolution.world_high
+            return Resolution.world_high.value
         else:
-            return Resolution.world_low
+            return Resolution.world_low.value
 
     if level == LevelKind.state:
         if count < 3:
-            return Resolution.state_low
+            return Resolution.state_low.value
         if count < 10:
-            return Resolution.country_low
+            return Resolution.country_low.value
         else:
-            return Resolution.world_medium
+            return Resolution.world_medium.value
 
     if level == LevelKind.county:
         if count < 5:
-            return Resolution.county_low
+            return Resolution.county_low.value
         elif count < 20:
-            return Resolution.state_medium
+            return Resolution.state_medium.value
         else:
-            return Resolution.world_high
+            return Resolution.world_high.value
 
     if level == LevelKind.city:
         if count < 5:
-            return Resolution.city_low
+            return Resolution.city_low.value
         elif count < 50:
-            return Resolution.country_low
+            return Resolution.country_low.value
         else:
-            return Resolution.world_high
+            return Resolution.world_high.value

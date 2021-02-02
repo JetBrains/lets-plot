@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 
 from lets_plot.geo_data.geocoder import Geocoder
-from lets_plot.geo_data.geocodes import _coerce_resolution, _parse_resolution, Geocodes, Resolution
+from lets_plot.geo_data.geocodes import _parse_resolution, Geocodes, Resolution
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind, \
     RegionQuery
@@ -60,7 +60,7 @@ class TestMapRegions:
             ExplicitRequest(
                 requested_payload=[PayloadKind.boundaries],
                 ids=[USA_ID, RUSSIA_ID],
-                resolution=_coerce_resolution(RESOLUTION)
+                resolution=RESOLUTION
             )
         )
 
