@@ -1,7 +1,7 @@
 import enum
 from abc import abstractmethod
 from collections import Iterable
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 
 from pandas import DataFrame, Series
 
@@ -248,7 +248,7 @@ class Geocodes:
 
         if resolution is None:
             autodetected_resolution = _autodetect_resolution(self._level_kind, len(self._geocoded_features))
-            int_resolution = max(Resolution.city_high.value, autodetected_resolution + inc_res)
+            int_resolution = min(Resolution.city_high.value, autodetected_resolution + inc_res)
         elif isinstance(resolution, int):
             int_resolution = resolution
         elif isinstance(resolution, Resolution):
@@ -393,18 +393,26 @@ def _raise_exception(response: Response):
 
 def _format_error_message(response: Response) -> str:
     if isinstance(response, AmbiguousResponse):
-        not_found_names: List[str] = []
+        not_found_names: Dict = {}
         multiple_objects: List[AmbiguousFeature] = []
 
         for ambiguous_feature in response.features:
             if ambiguous_feature.total_namesake_count == 0:
-                not_found_names.append(ambiguous_feature.query)
+                not_found_names[ambiguous_feature.query] = None
 
             if ambiguous_feature.total_namesake_count > 0:
                 multiple_objects.append(ambiguous_feature)
 
         if len(not_found_names) > 0:
-            return 'No objects were found for {}.\n'.format(', '.join(not_found_names))
+            display_limit = 10
+            msg_text = 'No objects were found for '
+            if len(not_found_names) > display_limit:
+                msg_text += ', '.join(list(not_found_names.keys())[:display_limit])
+                msg_text += ' and ({}) more'.format(len(not_found_names) - display_limit)
+            else:
+                msg_text += ', '.join(list(not_found_names.keys()))
+
+            return msg_text + '.\n'
 
         if len(multiple_objects) > 0:
             message = ''

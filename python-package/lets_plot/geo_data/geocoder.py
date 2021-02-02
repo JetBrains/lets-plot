@@ -252,6 +252,10 @@ class NamesGeocoder(Geocoder):
     ):
         Geocoder.__init__(self)
 
+        self._drop_not_found = False
+        self._drop_ambiguous = False
+        self._allow_ambiguous = False
+
         self._geocodes: Optional[Geocodes] = None
         self._scope: List[Optional[MapRegion]] = []
         self._level: Optional[LevelKind] = _to_level_kind(level)
@@ -295,17 +299,18 @@ class NamesGeocoder(Geocoder):
 
     def drop_not_found(self) -> 'NamesGeocoder':
         self._reset_geocodes()
-        self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
+        self._drop_not_found = True
         return self
 
-    def drop_not_matched(self) -> 'NamesGeocoder':
+    def drop_ambiguous(self) -> 'NamesGeocoder':
         self._reset_geocodes()
-        self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_all)
+        self._drop_ambiguous = True
+        self._allow_ambiguous = False
         return self
 
     def allow_ambiguous(self) -> 'NamesGeocoder':
         self._reset_geocodes()
-        self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
+        self._drop_ambiguous = False
         self._allow_ambiguous = True
         return self
 
@@ -427,6 +432,15 @@ class NamesGeocoder(Geocoder):
             assert_parents_size(self._states, 'states')
             assert_parents_size(self._counties, 'counties')
 
+            if self._drop_ambiguous and self._drop_not_found:
+                default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_all)
+            elif self._drop_not_found: # higher priority than allow_ambiguous - it has special global in request
+                default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
+            elif self._allow_ambiguous:
+                default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
+            else:
+                default_ambiguity_resolver = AmbiguityResolver.empty()
+
             queries = []
             for i in range(len(self._names)):
                 name = self._names[i]
@@ -436,7 +450,7 @@ class NamesGeocoder(Geocoder):
 
                 scope, ambiguity_resolver = self._overridings.get(
                     QuerySpec(name, county, state, country),
-                    WhereSpec(None, self._default_ambiguity_resolver)
+                    WhereSpec(None, default_ambiguity_resolver)
                 )
 
                 query = RegionQuery(
