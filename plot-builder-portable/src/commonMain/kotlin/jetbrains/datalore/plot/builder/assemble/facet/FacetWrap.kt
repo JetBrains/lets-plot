@@ -81,12 +81,18 @@ class FacetWrap(
             }
         }
 
+        fun isBottom(col: Int, row: Int): Boolean {
+            val nextRowIndex = toIndex(col, row + 1)
+            return (row + 1) % rowCount == 0 || nextRowIndex >= numTiles
+        }
+
         val infos = ArrayList<FacetTileInfo>()
         for ((i, tileLabelTuple) in tileLabels.withIndex()) {
             val col = toCol(i)
             val row = toRow(i)
-            val nextRowIndex = toIndex(col, row + 1)
-            val hasXAxis = nextRowIndex >= numTiles
+//            val nextRowIndex = toIndex(col, row + 1)
+//            val hasXAxis = nextRowIndex >= numTiles
+            val hasXAxis = isBottom(col, row)
             val hasYAxis = col == 0
 
             infos.add(

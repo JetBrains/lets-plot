@@ -165,7 +165,7 @@ class LoessInterpolator(
         }
         val bandwidthInPoints = (bandwidth * n).toInt()
         if (bandwidthInPoints < 2) {
-            error("Number is too small: $bandwidthInPoints < 2")
+            error("LOESS 'bandwidthInPoints' is too small: $bandwidthInPoints < 2")
         }
         val res = DoubleArray(n)
         val residuals = DoubleArray(n)

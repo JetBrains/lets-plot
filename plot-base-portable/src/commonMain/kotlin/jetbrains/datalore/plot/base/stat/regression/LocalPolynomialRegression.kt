@@ -33,7 +33,12 @@ class LocalPolynomialRegression(
 
         n = xVals.size
         val degreesOfFreedom = n - 2.0
-        canCompute = (xVals.size >= 3 && degreesOfFreedom > 0)
+
+        // See: LoessInterpolator.kt:168
+        val bandwidthInPoints = (bandwidth * n).toInt()
+        val bandwidthInPointsOk = bandwidthInPoints >= 2
+
+        canCompute = (n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk)
 
         meanX = xVals.average()
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
