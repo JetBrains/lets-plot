@@ -13,15 +13,6 @@ from .gis.request import RequestBuilder, GeocodingRequest, RequestKind, MapRegio
 from .gis.response import Response, SuccessResponse
 from .type_assertion import assert_list_type
 
-__all__ = [
-    'geocode',
-    'geocode_cities',
-    'geocode_counties',
-    'geocode_states',
-    'geocode_countries',
-    'reverse_geocode'
-]
-
 NAMESAKE_MAX_COUNT = 10
 
 ShapelyPointType = 'shapely.geometry.Point'
@@ -181,18 +172,131 @@ class Geocoder:
         self._inc_res = 0
 
     def get_limits(self) -> 'GeoDataFrame':
+        """
+        Return bboxes (Polygon geometry) for given regions in form of GeoDataFrame. For regions intersecting
+        anti-meridian bbox will be divided into two and stored as two rows.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> limits = geocode_countries(['germany', 'russia']).get_limits()
+            >>> limits
+        """
         return self._geocode().limits()
 
     def get_centroids(self) -> 'GeoDataFrame':
+        """
+        Return centroids (Point geometry) for given regions in form of GeoDataFrame.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_countries(['germany', 'russia']).get_centroids()
+            >>> centroids
+        """
         return self._geocode().centroids()
 
     def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
+        """
+        Return boundaries for given regions in form of GeoDataFrame.
+
+        Parameters
+        ----------
+        resolution: [str | int | None]
+            Boundaries resolution.
+
+            int: [1-15]
+                15 - maximum quality, 1 - maximum performance:
+                 - 1-3 for world scale view
+                 - 4-6 for country scale view
+                 - 7-9 for state scale view
+                 - 10-12 for county scale view
+                 - 13-15 for city scale view
+
+            str: ['world', 'country', 'state', 'county', 'city']
+                'city' - maximum quality, 'world'  - maximum performance.
+                Corresponding numeric resolutions:
+                 - 'world' - 2
+                 - 'country' - 5
+                 - 'state' - 8
+                 - 'county' - 11
+                 - 'city' - 14
+
+            Kind of area expected to be displayed. Resolution depends on a number of objects - single state is a 'state'
+            scale view, while 50 states is a 'country' scale view.
+
+            It is allowed to use any kind of resolution for any regions, i.e. 'city' for state to see more detailed
+            boundary (when need to show zoomed part), or 'world' (when used for small preview).
+
+            None:
+                Autodetection. Uses level_kind that was used for geocoding and number of objects.
+                Prefers performance over qulity. It's expected to get pixelated geometries with autodetection.
+                Use explicit resolution or inc_res() function for better quality.
+
+                Resolution for countries:
+                    If n < 3 => 3
+                    else => 1
+
+                Resolution for states:
+                    If n < 3 => 7
+                    If n < 10 => 4
+                    else => 2
+
+                Resolution for counties:
+                    If n < 5 => 10
+                    If n < 20 => 8
+                    else => 3
+
+                Resolution for cities:
+                    If n < 5 => 13
+                    If n < 50 => 4
+                    else => 3
+
+        Examples
+        --------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> boundaries = geocode_countries(['germany', 'russia']).get_boundaries()
+            >>> boundaries
+        """
         return self._geocode().boundaries(resolution, self._inc_res)
 
     def get_geocodes(self) -> 'DataFrame':
+        """
+        Return DataFrame with metadata.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> geocodes = geocode_countries(['germany', 'russia']).get_geocodes()
+            >>> geocodes
+        """
         return self._geocode().to_data_frame()
 
     def inc_res(self, delta=3):
+        """
+        Increase auto-detected resolution for boundaries.
+
+        Parameters
+        ----------
+        delta: int
+            Value that will be added to auto-detected resolution. Default is 3.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> boundaries = geocode_countries(['germany', 'russia']).inc_res().get_boundaries()
+            >>> boundaries
+        """
         self._inc_res = delta
         return self
 
@@ -273,42 +377,197 @@ class NamesGeocoder(Geocoder):
         else:
             self._names = []
 
-    def scope(self, scope: scope_types) -> 'NamesGeocoder':
+    def scope(self, scope) -> 'NamesGeocoder':
+        """
+        Limit area of interest to resolve an ambiguity.
+
+        Parameters
+        ----------
+        scope: [str | Geocoder | shapely.geometry.Polygon]
+            Area of interest.
+
+            str:
+            Name of geo-object.
+
+            Geocoder:
+            Should contain only one object.
+
+            shapely.geometry.Polygon:
+            Rectangular area (note that bbox of the polygon is used).
+            Coordinates are expected to be in WGS84 reference system.
+
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_states('florida').scope('uruguay').get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._scope = _prepare_new_scope(scope)
         return self
 
-    def highlights(self, v: bool) -> 'NamesGeocoder':
+    def highlights(self, v: bool):
+        """
+        Add matched string to result DataFrame.
+
+        Parameters
+        ----------
+        v: bool
+            If True result DataFrame will contain column 'highlights' with string that matched the name.
+
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_states('florida').highlights(True).get_centroids()
+            >>> centroids
+        """
         self._highlights = v
         return self
 
-    def countries(self, countries: parent_types) -> 'NamesGeocoder':
+    def countries(self, countries):
+        """
+        Set parents for COUNTRY level to resolve an ambiguity or to join geometry with data via multi-key.
+
+        Parameters
+        ----------
+        countries: [str | Geocoder | array]
+            Parents for COUNTRY level.
+
+            str:
+            Name of country.
+
+            Geocoder:
+            Geocoder with countries. Should have same number of values in it as number of names of the Geocoder.
+
+            array:
+            List of country names. Should have same size as number of names of the Geocoder.
+
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_cities('boston').countries('usa').get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._countries = _make_parents(countries)
         return self
 
-    def states(self, states: parent_types) -> 'NamesGeocoder':
+    def states(self, states) -> 'NamesGeocoder':
+        """
+        Set parents for STATE level to resolve an ambiguity or to join geometry with data via multi-key.
+
+        Parameters
+        ----------
+        states: [str | Geocoder | array]
+            Parents for STATE level.
+
+            str:
+            Name of state.
+
+            Geocoder:
+            Geocoder with states. Should have same number of values in it as number of names of the Geocoder.
+
+            array:
+            List of state names. Should have same size as number of names of the Geocoder.
+
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_cities('boston').states('Massachusetts').get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._states = _make_parents(states)
         return self
 
     def counties(self, counties: parent_types) -> 'NamesGeocoder':
+        """
+        Set parents for COUNTY level to resolve an ambiguity or to join geometry with data via multi-key.
+
+        Parameters
+        ----------
+        counties: [str | Geocoder | array]
+            Parents for COUNTY level.
+
+            str:
+            Name of county.
+
+            Geocoder:
+            Geocoder with counties. Should have same number of values in it as number of names of the Geocoder.
+
+            array:
+            List of county names. Should have same size as number of names of the Geocoder.
+
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_cities('boston').counties('Suffolk County').states('Massachusetts').get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._counties = _make_parents(counties)
         return self
 
     def drop_not_found(self) -> 'NamesGeocoder':
+        """
+        Don't generate an error on objects that were not found and remove them from result.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_states(['foo', 'florida']).drop_not_found().get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._drop_not_found = True
         return self
 
     def drop_ambiguous(self) -> 'NamesGeocoder':
+        """
+        Don't generate an error on objects that have multiple matches and remove them from result.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_cities(['worcester']).drop_ambiguous()..get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._drop_ambiguous = True
         self._allow_ambiguous = False
         return self
 
     def allow_ambiguous(self) -> 'NamesGeocoder':
+        """
+        Don't generate an error on objects that have multiple matches and add them to result.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> centroids = geocode_cities(['worcester']).allow_ambiguous()..get_centroids()
+            >>> centroids
+        """
         self._reset_geocodes()
         self._drop_ambiguous = False
         self._allow_ambiguous = True
@@ -525,148 +784,3 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion]
 
     raise ValueError("Unsupported 'scope' type. Expected 'str' or 'Geocoder' but was '{}'".format(type(scope).__name__))
 
-
-def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
-    """
-    Create a Geocoder. Allows to refine ambiguous request with where method, scope that limits area of geocoding
-    or with parents.
-
-    Parameters
-    ----------
-    level : ['country' | 'state' | 'county' | 'city' | None]
-        The level of administrative division. Autodetection by default.
-    names : [array | string | None]
-        Names of objects to be geocoded.
-        For 'state' level:
-        -'US-48' returns continental part of United States (48 states) in a compact form.
-    countries : [array | None]
-        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
-    states : [array | None]
-        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
-    counties : [array | None]
-        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
-    scope : [string | Geocoder | None]
-        Limits area of geocoding. If parent country is set then error will be generated.
-        If type is a string - geoobject should have geocoded scope in parents.
-        If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
-    """
-    return NamesGeocoder(level, names) \
-        .scope(scope) \
-        .countries(countries) \
-        .states(states) \
-        .counties(counties)
-
-
-def geocode_cities(names=None) -> NamesGeocoder:
-    """
-    Create a Geocoder object for cities. Allows to refine ambiguous request with
-    where method, with a scope that limits area of geocoding or with parents.
-
-    geocode_cities(names)
-
-    Parameters
-    ----------
-    names : [array | string | None]
-        Names of objects to be geocoded.
-
-    Returns
-    -------
-    Geocoder object :
-
-    Note
-    -----
-    Geocoder allows to refine ambiguous request with where() method.
-
-    Examples
-    ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = geocode_cities(['moscow', 'york']).where('york', scope=geocode_states('New York')).get_geocodes()
-    """
-    return NamesGeocoder('city', names)
-
-
-def geocode_counties(names=None) -> NamesGeocoder:
-    """
-    Create a Geocoder object for counties. Allows to refine ambiguous request with
-    where method, with a scope that limits area of geocoding or with parents.
-
-    geocode_counties(names)
-
-    Parameters
-    ----------
-    names : [array | string | None]
-        Names of objects to be geocoded.
-
-    Returns
-    -------
-    Geocoder object :
-
-    Note
-    -----
-    Geocoder allows to refine ambiguous request with where() method.
-
-    Examples
-    ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = geocode_counties('barnstable').get_geocodes()
-    """
-    return NamesGeocoder('county', names)
-
-
-def geocode_states(names=None) -> NamesGeocoder:
-    """
-    Create a Geocoder object for states. Allows to refine ambiguous request with
-    where method, with a scope that limits area of geocoding or with parents.
-
-    geocode_states(names)
-
-    Parameters
-    ----------
-    names : [array | string | None]
-        Names of objects to be geocoded.
-
-    Returns
-    -------
-    Geocoder object :
-
-    Note
-    -----
-    Geocoder allows to refine ambiguous request with where() method.
-
-    Examples
-    ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = geocode_states('texas').get_geocodes()
-    """
-    return NamesGeocoder('state', names)
-
-
-def geocode_countries(names=None) -> NamesGeocoder:
-    """
-    Create a Geocoder object for countries. Allows to refine ambiguous request with
-    where method.
-
-    geocode_countries(names)
-
-    Parameters
-    ----------
-    names : [array | string | None]
-        Names of objects to be geocoded.
-
-    Returns
-    -------
-    Geocoder object :
-
-    Note
-    -----
-    Geocoder allows to refine ambiguous request with where() method.
-
-    Examples
-    ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = geocode_countries('USA').get_geocodes()
-    """
-    return NamesGeocoder('country', names)
-
-def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
-    return ReverseGeocoder(lon, lat, level, scope)

@@ -5,7 +5,8 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import PlacesDataFrameBuilder, zip_answers, abstractmethod
+from lets_plot.geo_data.geocodes import _zip_answers
+from lets_plot.geo_data import PlacesDataFrameBuilder, abstractmethod
 from lets_plot.geo_data.gis.request import RegionQuery, LevelKind
 from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 
@@ -44,7 +45,7 @@ class RectGeoDataFrame:
         assert len(answers) == len(queries)
         places = PlacesDataFrameBuilder(level_kind)
 
-        for query, answer in zip_answers(queries, answers):
+        for query, answer in _zip_answers(queries, answers):
             for feature in answer.features:
                 rects: List[GeoRect] = self._read_rect(feature)
                 for rect in rects:
@@ -83,7 +84,7 @@ class CentroidsGeoDataFrame:
     def to_data_frame(self, answers: List[Answer], queries: List[RegionQuery], level_kind: LevelKind) -> DataFrame:
         places = PlacesDataFrameBuilder(level_kind)
 
-        for query, answer in zip_answers(queries, answers):
+        for query, answer in _zip_answers(queries, answers):
             for feature in answer.features:
                 places.append_row(query, feature)
                 self._lons.append(feature.centroid.lon)
@@ -101,7 +102,7 @@ class BoundariesGeoDataFrame:
         places = PlacesDataFrameBuilder(level_kind)
 
         geometry = []
-        for query, answer in zip_answers(queries, answers):
+        for query, answer in _zip_answers(queries, answers):
             for feature in answer.features:
                 places.append_row(query, feature)
                 geometry.append(self._geo_parse_geometry(feature.boundary))

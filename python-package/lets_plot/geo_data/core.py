@@ -2,7 +2,7 @@ from typing import Any
 
 import numpy as np
 
-from .geocoder import Geocoder
+from .geocoder import Geocoder, ReverseGeocoder, NamesGeocoder
 
 __all__ = [
     'distance',
@@ -13,6 +13,13 @@ __all__ = [
     'regions_county',
     'regions_city',
     'regions_xy',
+
+    'geocode',
+    'geocode_cities',
+    'geocode_counties',
+    'geocode_states',
+    'geocode_countries',
+    'reverse_geocode'
 ]
 
 UNITS_DICT = {
@@ -263,6 +270,152 @@ def regions_city(request=None, within=None):
     raise ValueError('Function `regions_city(...)` is deprecated. Use new function `geocode_cities(...)`')
     #return regions('city', request, within)
 
+
+
+def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
+    """
+    Create a Geocoder. Allows to refine ambiguous request with where method, scope that limits area of geocoding
+    or with parents.
+
+    Parameters
+    ----------
+    level : ['country' | 'state' | 'county' | 'city' | None]
+        The level of administrative division. Autodetection by default.
+    names : [array | string | None]
+        Names of objects to be geocoded.
+        For 'state' level:
+        -'US-48' returns continental part of United States (48 states) in a compact form.
+    countries : [array | None]
+        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
+    states : [array | None]
+        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
+    counties : [array | None]
+        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
+    scope : [string | Geocoder | None]
+        Limits area of geocoding. If parent country is set then error will be generated.
+        If type is a string - geoobject should have geocoded scope in parents.
+        If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
+    """
+    return NamesGeocoder(level, names) \
+        .scope(scope) \
+        .countries(countries) \
+        .states(states) \
+        .counties(counties)
+
+
+def geocode_cities(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for cities. Allows to refine ambiguous request with
+    where method, with a scope that limits area of geocoding or with parents.
+
+    geocode_cities(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_cities(['moscow', 'york']).where('york', scope=geocode_states('New York')).get_geocodes()
+    """
+    return NamesGeocoder('city', names)
+
+
+def geocode_counties(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for counties. Allows to refine ambiguous request with
+    where method, with a scope that limits area of geocoding or with parents.
+
+    geocode_counties(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_counties('barnstable').get_geocodes()
+    """
+    return NamesGeocoder('county', names)
+
+
+def geocode_states(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for states. Allows to refine ambiguous request with
+    where method, with a scope that limits area of geocoding or with parents.
+
+    geocode_states(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_states('texas').get_geocodes()
+    """
+    return NamesGeocoder('state', names)
+
+
+def geocode_countries(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for countries. Allows to refine ambiguous request with
+    where method.
+
+    geocode_countries(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_countries('USA').get_geocodes()
+    """
+    return NamesGeocoder('country', names)
+
+def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
+    return ReverseGeocoder(lon, lat, level, scope)
 
 def distance(lon0, lat0, lon1, lat1, units='km'):
     """

@@ -7,10 +7,11 @@ from unittest import mock
 import shapely
 
 from lets_plot.geo_data import GeocodingService, SuccessResponse, Answer, GeocodedFeature
+from lets_plot.geo_data import  geocode, geocode_cities, geocode_states, geocode_countries
 from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, GeocodingRequest, LevelKind, RegionQuery, \
     IgnoringStrategyKind
-from lets_plot.geo_data.geocoder import geocode_countries, geocode, NamesGeocoder, geocode_cities, geocode_states
+from lets_plot.geo_data.geocoder import NamesGeocoder
 from lets_plot.geo_data.geocodes import Geocodes
 from .geo_data import make_answer, assert_row
 from .request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \

@@ -41,7 +41,7 @@ class Resolution(enum.Enum):
     world_low = 1
 
 
-def select_request_string(request: Optional[str], name: str) -> str:
+def _select_request_string(request: Optional[str], name: str) -> str:
     if request is None:
         return name
 
@@ -54,7 +54,7 @@ def select_request_string(request: Optional[str], name: str) -> str:
     return request
 
 
-def level_to_column_name(level_kind: LevelKind):
+def _level_to_column_name(level_kind: LevelKind):
     if level_kind == LevelKind.city:
         return DF_COLUMN_CITY
     elif level_kind == LevelKind.county:
@@ -67,7 +67,7 @@ def level_to_column_name(level_kind: LevelKind):
         raise ValueError('Unknown level kind: {}'.format(level_kind))
 
 
-def zip_answers(queries: List, answers: List):
+def _zip_answers(queries: List, answers: List):
     if len(queries) > 0:
         return zip(queries, answers)
     else:
@@ -84,7 +84,7 @@ class PlacesDataFrameBuilder:
         self._country: List[Optional[str]] = []
 
     def append_row(self, query: RegionQuery, feature: GeocodedFeature):
-        self._request.append(select_request_string(query.request, feature.name))
+        self._request.append(_select_request_string(query.request, feature.name))
         self._found_name.append(feature.name)
 
         if query is None:
@@ -102,7 +102,7 @@ class PlacesDataFrameBuilder:
 
         data = {}
 
-        request_column = level_to_column_name(self.level_kind)
+        request_column = _level_to_column_name(self.level_kind)
 
         data[request_column] = self._request
         data[DF_COLUMN_FOUND_NAME] = self._found_name
@@ -158,9 +158,9 @@ class Geocodes:
 
     def to_map_regions(self) -> List[MapRegion]:
         regions: List[MapRegion] = []
-        for answer, query in zip_answers(self._answers, self._queries):
+        for answer, query in _zip_answers(self._answers, self._queries):
             for feature in answer.features:
-                regions.append(MapRegion.place(feature.id, select_request_string(query.request, feature.name), self._level_kind))
+                regions.append(MapRegion.place(feature.id, _select_request_string(query.request, feature.name), self._level_kind))
         return regions
 
     def as_list(self) -> List['Geocodes']:
@@ -314,7 +314,7 @@ class Geocodes:
         data[DF_COLUMN_ID] = [feature.id for feature in self._geocoded_features]
 
         # for us-48 queries doesnt' count
-        for query, answer in zip_answers(self._queries, self._answers):
+        for query, answer in _zip_answers(self._queries, self._answers):
             for feature in answer.features:
                 places.append_row(query, feature)
 
