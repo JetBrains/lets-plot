@@ -60,9 +60,15 @@ def _detect_isolated_frame() -> bool:
     if os.path.exists("/kaggle/input"):
         return False  # Kaggle -> no iframe
 
-    # Check if we're running in an Azure Notebook
     if "AZURE_NOTEBOOKS_HOST" in os.environ:
         return True  # Azure Notebook -> iframe
+
+    if "DEEPNOTE_PROJECT_ID" in os.environ:
+        return True  # Deepnote Notebook -> iframe
+
+    if os.getenv("PLOTLY_RENDERER") == "colab":
+        # good enouth - something colab-like
+        return True  # Colab -> iframe
 
     # ToDo: other platforms: vscode, nteract, cocalc
 
