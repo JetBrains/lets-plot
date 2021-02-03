@@ -1,20 +1,45 @@
-## [1.5.6] - 2021-01-??
+## [2.0.0] - 2021-02-??
 
 ### Added
 
- - Tooltip customization API: 
+ - Python 3.9 support on all platforms.
+ - `facet_wrap()` function [[#238](https://github.com/JetBrains/lets-plot/issues/238)]
+ - In facets:
+   - Ascending/descending ordering of faceting values.
+   - Formatting of faceting values. 
+                
+   See: [Facets demo](ToDo)
+
+ - In tooltip customization API: 
     - option `color` overrides the default tooltip color:
         ```python
         geom_xxx(tooltips=layer_tooltips().color('red'))
         ```
- - Add a crosshair to an object whose general tooltip has a fixed position specified by the `anchor` option.
- - Custom formats for labels on axis scales: parameter `format`. Supported types are number and date/time.
+
+   See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md). 
+
+ - Crosshair cursor when tooltip is in fixed position specified by the `anchor` option.
+ - Scale `format` parameter: formatting tick labels on X/Y axis. Supported types are `number` and `date/time`.
+   
+   Example:
     ```python
-    ... + scale_x_datetime(format="%b %Y")
-    ... + scale_x_continuous(format='is {.2f}')
+    scale_x_datetime(format="%b %Y")
+    scale_x_continuous(format='is {.2f}')
     ```
 
 ### Changed
+                
+ - [**breaking change**] New Geocoding API!
+
+   Since Lets-Plot v2.0.0 the peviouse Geocoding API is no longer working (hence we bumped the version to 2.0.0). 
+   
+   The old version of the Geocoding backend remains on-line for a couple of release cycles
+   to continue support of prior versions of Lets-Plot.
+   
+   To learn more about Geocoding API see: [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+                                     
+
+ - The project upgraded to Kotlin v1.4.21 (was v1.4.10).
 
 ### Fixed
  
@@ -22,7 +47,9 @@
  - Option to override the default tooltip color [[#231](https://github.com/JetBrains/lets-plot/issues/231)].
  - Fix duplicate values in tooltip [[#280](https://github.com/JetBrains/lets-plot/issues/280)].
  - Kernel density estimate computation is too slow.
- - Serialize NaN and other special values as None (to fix [#282](https://github.com/JetBrains/lets-plot/issues/282))
+ - Serialize NaN and other special values as None [[#282](https://github.com/JetBrains/lets-plot/issues/282)]
  - Align title to the left of the plot geom area [[#289](https://github.com/JetBrains/lets-plot/issues/289)].
  - LOESS smoothing fails on small (<3) number points. 
  - Facet grid truncated in jupyter [[#28](https://github.com/JetBrains/lets-plot-kotlin/issues/28)]
+ - The `reverse` parameter on discrete scale with 'limits' [[#303](https://github.com/JetBrains/lets-plot/issues/289)]
+ - Tooltip on `geom_ribbon()`
