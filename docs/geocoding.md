@@ -1,3 +1,26 @@
+- [Geocoding API](#introduction)
+- [Reference](#reference)
+    - [Levels](#levels)
+    - [Parents](#parents)
+    - [Scope](#scope)
+    - [Fetch All](#fetch-all)
+    - [US-48](#us-48)
+    - [Ambiguity](#ambiguity)
+        - [allow_ambiguous()](#allow-ambiguous)
+        - [drop_not_found()](#drop-not-found)
+        - [drop_ambiguous()](#drop-ambiguous)
+        - [where()](#where)  
+            - [closest_to](#where-closest-to)  
+            - [scope](#where-scope)
+    - [Working with plot](#working-with-plot)
+        - [Plotting a `GeoDataFrame`](#plot-gdf)
+        - [Plotting a `Geocoder`](#plot-geocoder)
+        - [`map` and `map_join`](#join)
+            - [Join with `GeoDataFrame`](#join-gdf)
+            - [Join with `Geocoder`](#join-geocoder)
+    
+    
+<a id="introduction"></a>
 # Geocoding API
 
 Geocoding is the process of converting names of places into geographic coordinates.
@@ -71,7 +94,7 @@ This example returns the `DataFrame` object containing the ID of one particular 
 0 |785807 |warwick |Warwick
 ```
 Once the `Geocoder` object is available, it can be passed to any *Lets-Plot* geom 
-supporting the `map` parameter.
+supporting the `map` parameter. `map` parameter can be used to simply [draw a GeoDataFrame](#plot-gdf) or to [draw a Geocoder](#plot-geocoder). For more coplex plots parameter [map_join](#join) can be used to map data to geometries.
 
 If necessary, the `Geocoder` object can be transformed to a geopandas `GeoDataFrame` using one of `get_centroids()`, `get_boundaries()`, or `get_limits()` methods.
 
@@ -107,9 +130,11 @@ Examples:
 <br>
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/map_airports.png" alt="Couldn't load map_airports.png" width="547" height="311">                                         
 
-## Reference
+<a id="reference"></a>
+# Reference
 
-#### Levels
+<a id="levels"></a>
+## Levels
 Geocoding supports 4 administrative levels:
 - city
 - county
@@ -137,9 +162,11 @@ geocode_states(['florida', 'tx']).get_geocodes()
 ```
 
 
+<a id="parents"></a>
+## Parents
+`Geocoder` class provides functions for defining parents with giving administrative level - `counties()`, `states()`, `countries()`. Functions can handle single or miltiply values of types string or `Geocoder`. Number of values must match number of names in `Geocoder` so they form a table, i.e. every name associated by an index with coresponding parent.  
 
-#### Parents
-`Geocoder` class provides functions for defining parents with giving administrative level - `counties()`, `states()`, `countries()`. Functions can handle single or miltiply values of types string or `Geocoder`. Number of values must match number of names in `Geocoder` so they form a table, i.e. every name associated by an index with coresponding parent. Parents will be present in result `DataFrame` to make it possible to join data and geometry via `map_join`.
+Parents will be present in result `DataFrame` to make it possible to join data and geometry via [map_join](#join).
 
 ```python
 geocode_cities(['warwick', 'worcester'])\
@@ -182,7 +209,8 @@ geocode_cities(['worcester', 'warwick']).states(s).get_geocodes()
 1 |239553   |warwick   |Warwick    |georgia
 ```
 
-##### Scope
+<a id="scope"></a>
+## Scope
 `scope()` is a special kind of parent. `scope()` can handle a `string` or a single entry `Geocoder` object. `scope()` is not associated with any administrative level, it acts as parent for any other parents (or names if no other parents set). `scope()` can't be used with `countries()` - countries don't have parents. Typical use-case is when all names belong to the same parent - you don't need to generate list with required length to pass it as a parent, just use the `scope()` with single value.
 
 ```python
@@ -218,7 +246,8 @@ id     |request |found name
 ---------------------------
 324101 |florida |Florida
 ```
-##### Fetch all
+<a id="fetch-all"></a>
+## Fetch all
 
 It is possible to fetch all objects within parent - just don't set the `names` parameter. 
 
@@ -237,8 +266,9 @@ geocode_counties().states('massachusetts').get_geocodes()
 ...
 ```
 
-##### US-48 (CONUS)
-Geocoding supports a special name - `us-48` also known as CONUS. This name can be used as name or parent.
+<a id="us-48"></a>
+## US-48
+Geocoding supports a special name `us-48` for [CONUS](https://en.wikipedia.org/wiki/Contiguous_United_States). The `us-48` can be used as name or parent.
 ```python
 geocode_states('us-48').get_geocodes()
 ```
@@ -253,7 +283,8 @@ geocode_states('us-48').get_geocodes()
 ...
 ```
 
-#### Ambiguity
+<a id="ambiguity"></a>
+## Ambiguity
 Often geocoding can find multiply objects for a name or don't find anything. in this case error will be generated:
  ```python
 geocode_cities(['warwick', 'worcester']).get_geocodes()
@@ -279,9 +310,11 @@ Multiple objects (14) were found for warwick:
 
 The ambiguity can be resolved in different ways.  
 
-##### `allow_ambiguous()`
+<a id="allow-ambiguous"></a>
+### `allow_ambiguous()`
 
-The best way is to find an object that we search and use its parents. Function `allow_ambiguous()` converts error result into success result that can be rendered on a map or verified manually in other way.
+The best way is to find an object that we search and use its parents. The function converts error result into success result that can be rendered on a map or verified manually in other way.
+Overrides [drop_ambiguous()](#drop-ambiguous).
 
 ```python
 geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
@@ -296,8 +329,9 @@ geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
 4 |368499 |warwick |Warwick
 ```
 
-##### `drop_not_found()`
-The function `drop_not_found()` removes unknown names from result.
+<a id="drop-not-found"></a>
+### `drop_not_found()`
+Removes unknown names from result. Can be combined with [drop_ambiguous()](#drop-ambiguous).
 ```python
 geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
 ```
@@ -308,10 +342,11 @@ geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
 0 |14889 |paris	  |Paris
 ```
 
-##### `drop_not_matched()`
-If request contains both unknown and ambiguous names then `drop_not_matched()` function can be used to remove them all from result.
+<a id="drop-ambiguous"></a>
+### `drop_ambiguous()`
+Removes names with multiple matches from result. Can be combined with [drop_not_found()](#drop-not-found). Overrides [allow_ambiguous()](#allow_ambiguous())
 ```python
-geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
+geocode_cities(['paris', 'worcester']).drop_not_matched().get_geocodes()
 ```
 ```
   |id    |request |found name
@@ -319,7 +354,8 @@ geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
 0 |14889 |paris	  |Paris
 ```
 
-##### `where()`
+<a id="where"></a>
+### `where()`
 For resolving an ambiguity geocoding provides a function that can configure names individually.  
 To configure a name the function `where(...)` should be called with the place name and all given parent names.  Parents can't be changed via `where()` function call. If name and parents don't match with ones from the `where()` function an error will be generated. This is importnant for cases like this:
 ```python
@@ -331,7 +367,8 @@ geocode_counties(['Washington', 'Washington']).states(['oregon', 'utah']).get_ge
 0 |3674267 |Washington |Washington County |oregon
 1 |3488745 |Washington |Washington County |utah
 ```
-
+<a id="where-closest-to"></a>
+#### closest_to
 With parameter `closest_to` geocoding will take the only object that is closest to it. Parameter can be a single value `Geocoder`. 
 ```python
 boston = geocode_cities('boston')
@@ -352,7 +389,8 @@ geocode_cities('worcester').where('worcester', closest_to=shapely.geometry.Point
 ---------------------------------
 0 |3688419 |worcester |Worcester
 ```
-
+<a id="where-scope"></a>
+#### scope
 With parameter `scope` a `shapely.geometry.Polygon` can be used for limiting an area of the search (coordinates should be in WGS84 cordinate system). Notice that bbox of the polygon will be used: 
 ```python
 geocode_cities('worcester')\
@@ -388,5 +426,44 @@ geocode_cities(['worcester', 'worcester'])\
 1 |3750683 |worcester |Worcester  |United Kingdom
 ```
 
-## `map_join`
-WIP
+<a id="working-with-plot"></a>
+## Working with plot
+<a id="plot-gdf"></a>
+### Plotting a `GeoDataFrame`
+`get_xxx()` functions return GeoDataFrame which can be used as a `data` or `map` parameter (see [this](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb) or [this](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)).
+```
+ggplot() + geom_point(map=geocode_states('us-48').get_centroids())
+```
+
+<a id="plot-geocoder"></a>
+### Plotting a `Geocoder`
+Drawing geometries with `Geocoder` is as little easier than using `GeoDataFrame`. Just pass a `Geocoder` to the `map` parameter, and it's done. Layer will fetch geometry it supports:
+```
+ggplot() + geom_point(map=geocode_states('us-48'))
+```
+
+The list of geoms and corresponding fetching function they support:
+```
+geom_point(), geom_text() - get_centroids() 
+geom_map(), geom_polygon() - get_boundaries() 
+geom_rect() - get_limits() 
+```
+
+<a id="join"></a>
+### `map` and `map_join`
+Parameter `map_join` is used to join map coordinates with data. Keys used to join map coordinates with data.
+- first value in a pair is data_key (column/columns in `data`)
+- second value in a pair is a map_key (column/columns in `map`)  
+
+<a id="join-gdf"></a>
+#### Join with `GeoDataFrame`
+- `map_join='state'` - data_key = ['state'], map_key = ['state']
+- `map_join=[['city', 'state']]` - data_key = ['city', 'state'], map_key - ['city', 'state']
+- `map_join=[['City_Name', 'State_Name'], ['city', 'state']]` - data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+
+<a id="join-geocoder"></a>
+#### Join with `Geocoder`
+`Geocoder` contains metadata so is most cases map_key can be omitted - it will be generated automatically with columns that were used for geocoding.
+- `map_join='State_Name'` - data key - ['State_Name'], map key - ['state']
+- `map_join=['City_Name', 'State_Name']` - data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+- `map_join=[['City_Name', 'State_Name'], ['city', 'state']]` - data key - ['City_Name', 'State_Name'], map key - ['city', 'state']. In case of extra parents in a map parameter that were needed for ambituity resolving but not present in data.

@@ -36,7 +36,7 @@ GEOFUNC_TYPES = {
 
 
 def regions_xy(lon, lat, level, within=None) -> Geocoder:
-    raise ValueError('Function `regions_xy(...)` is deprecated. Use new function `reverse_geocode(...)`.')
+    raise ValueError('Function `regions_xy(...)` is deprecated. Use new function `reverse_geocode(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
 
 
 def regions_builder(level=None, request=None, within=None, highlights=False):
@@ -76,7 +76,7 @@ def regions_builder(level=None, request=None, within=None, highlights=False):
         >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
         >>> r
     """
-    raise ValueError('Function `regions_builder(...)` is deprecated. Use new function `geocode(...)`.')
+    raise ValueError('Function `regions_builder(...)` is deprecated. Use new function `geocode(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
     #return Geocoder(level, request, within, highlights)
 
 
@@ -118,7 +118,7 @@ def regions(level=None, request=None, within=None):
         >>> r = regions(level='country', request=['Germany', 'USA'])
         >>> r
     """
-    raise ValueError('Function `regions(...)` is deprecated. Use new function `geocode(...)`.')
+    raise ValueError('Function `regions(...)` is deprecated. Use new function `geocode(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
     #return Geocoder(level=level, request=request, scope=within).build()
 
 
@@ -151,7 +151,7 @@ def regions_country(request=None):
         >>> r_country = regions_country(request=['Germany', 'USA'])
         >>> r_country
     """
-    raise ValueError('Function `regions_country(...)` is deprecated. Use new function `geocode_countries(...)`.')
+    raise ValueError('Function `regions_country(...)` is deprecated. Use new function `geocode_countries(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
     #return regions('country', request, None)
 
 
@@ -191,7 +191,7 @@ def regions_state(request=None, within=None):
         >>> r_state = regions_state(request=['Texas', 'Iowa'], within='USA')
         >>> r_state
     """
-    raise ValueError('Function `regions_state(...)` is deprecated. Use new function `geocode_states(...)`')
+    raise ValueError('Function `regions_state(...)` is deprecated. Use new function `geocode_states(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
     #return regions('state', request, within)
 
 
@@ -229,7 +229,7 @@ def regions_county(request=None, within=None):
         >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
         >>> r_county
     """
-    raise ValueError('Function `regions_county(...)` is deprecated. Use new function `geocode_counties(...)`')
+    raise ValueError('Function `regions_county(...)` is deprecated. Use new function `geocode_counties(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
     #return regions('county', request, within)
 
 
@@ -267,7 +267,7 @@ def regions_city(request=None, within=None):
         >>> r_city = regions_city(request=['New York', 'Los Angeles'])
         >>> r_city
     """
-    raise ValueError('Function `regions_city(...)` is deprecated. Use new function `geocode_cities(...)`')
+    raise ValueError('Function `regions_city(...)` is deprecated. Use new function `geocode_cities(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
     #return regions('city', request, within)
 
 
