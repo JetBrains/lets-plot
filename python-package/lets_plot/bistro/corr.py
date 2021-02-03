@@ -41,9 +41,9 @@ class corr_plot:
     _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
     _LABELS = ['-1', '-0.5', '0', '0.5', '1']
     _LIMITS = [-1.0, 1.0]
-    _DEF_LOW_COLOR = 'red'
-    _DEF_MID_COLOR = 'light_gray'
-    _DEF_HIGH_COLOR = 'blue'
+    _DEF_LOW_COLOR = '#B3412C'
+    _DEF_MID_COLOR = '#EDEDED'
+    _DEF_HIGH_COLOR = '#326C81'
 
     def __init__(self, data, show_legend=True, flip=True, threshold=None):
         """
