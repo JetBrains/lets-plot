@@ -37,12 +37,14 @@ object GeomInteractionUtil {
         if (isLiveMap || !theme.axisX().showTooltip()) axisWithoutTooltip.add(Aes.X)
         if (isLiveMap || !theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
 
+        val isCrosshairEnabled = isCrosshairEnabled(layerConfig)
         val builder = createGeomInteractionBuilder(
             layerConfig.geomProto.renders(),
             layerConfig.geomProto.geomKind,
             layerConfig.statKind,
             multilayer,
-            isVariableContinuous(scaleMap, Aes.X)
+            isVariableContinuous(scaleMap, Aes.X),
+            isCrosshairEnabled
         )
         val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
@@ -55,7 +57,7 @@ object GeomInteractionUtil {
             .tooltipLinesSpec(layerConfig.tooltips)
             .tooltipConstants(createConstantAesList(layerConfig))
             .showAxisTooltip(!isLiveMap)
-            .setIsCrosshairEnabled(isCrosshairEnabled(layerConfig))
+            .setIsCrosshairEnabled(isCrosshairEnabled)
     }
 
     private fun createGeomInteractionBuilder(
@@ -63,11 +65,12 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         multilayer: Boolean,
-        isContinuousX: Boolean
+        isContinuousX: Boolean,
+        isCrosshairEnabled: Boolean
 
     ): GeomInteractionBuilder {
 
-        val builder = initGeomInteractionBuilder(renders, geomKind, statKind, isContinuousX)
+        val builder = initGeomInteractionBuilder(renders, geomKind, statKind, isContinuousX, isCrosshairEnabled)
 
         if (multilayer) {
             // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot.
@@ -213,7 +216,8 @@ object GeomInteractionUtil {
         renders: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind,
-        isContinuousX: Boolean
+        isContinuousX: Boolean,
+        isCrosshairEnabled: Boolean
     ): GeomInteractionBuilder {
         val builder = GeomInteractionBuilder(renders)
         if (statKind === StatKind.SMOOTH) {
@@ -250,8 +254,12 @@ object GeomInteractionUtil {
             GeomKind.SEGMENT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(isContinuousX)
-            GeomKind.RIBBON,
-            GeomKind.SMOOTH -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            GeomKind.RIBBON -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
+                builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            } else {
+                builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
+            }
             GeomKind.BIN_2D,
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,

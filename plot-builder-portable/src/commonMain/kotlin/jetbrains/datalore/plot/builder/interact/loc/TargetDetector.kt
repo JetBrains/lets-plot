@@ -102,8 +102,6 @@ internal class TargetDetector(
                         closestPointChecker.check(DoubleVector(x, 0.0))
                     }
                     LookupStrategy.NONE -> false
-
-                    else -> throw IllegalStateException()
                 }
             }
 
