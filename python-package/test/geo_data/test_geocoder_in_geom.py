@@ -7,9 +7,10 @@ from pandas import DataFrame
 from shapely.geometry import Point, Polygon, LinearRing, MultiPolygon
 
 from lets_plot._kbridge import _standardize_plot_spec
-from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_STATE
-from lets_plot.geo_data.geocoder import Geocoder, LevelKind
+from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_STATE, DF_COLUMN_COUNTY
+from lets_plot.geo_data.geocoder import Geocoder
 from lets_plot.plot import ggplot, geom_polygon, geom_point, geom_map, geom_rect, geom_text, geom_path, geom_livemap
+from plot import util
 from .geo_data import get_map_data_meta, assert_error
 
 
@@ -157,6 +158,37 @@ def test_map_join_regions(map_join, map_columns, expected):
             expected,
             lambda :ggplot() + geom_point(map_join=map_join, map=geocoder)
         )
+
+
+@pytest.mark.parametrize('map_join,geocoder_columns,expected', [
+    (
+            ['State_Name'],
+            [DF_COLUMN_STATE],
+            [['State_Name'], [DF_COLUMN_STATE]]
+    ),
+    (
+            ['City_Name', 'State_Name'],
+            [DF_COLUMN_CITY, DF_COLUMN_STATE],
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
+    ),
+    (
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]],
+            [DF_COLUMN_CITY, DF_COLUMN_STATE],
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
+    ),
+    (
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]],
+            [DF_COLUMN_CITY, DF_COLUMN_COUNTY, DF_COLUMN_STATE],
+            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
+    ),
+    (None, None, None)
+])
+def test_auto_join_geocoder(map_join, geocoder_columns, expected):
+    class MockGeocoder(Geocoder):
+        def get_geocodes(self):
+            return pandas.DataFrame(columns=geocoder_columns)
+
+    assert util.auto_join_geocoder(map_join, MockGeocoder()) == expected
 
 
 def mock_geocoder() -> 'MockGeocoder':

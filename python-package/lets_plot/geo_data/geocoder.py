@@ -280,14 +280,14 @@ class Geocoder:
         """
         return self._geocode().to_data_frame()
 
-    def inc_res(self, delta=3):
+    def inc_res(self, delta=2):
         """
         Increase auto-detected resolution for boundaries.
 
         Parameters
         ----------
         delta: int
-            Value that will be added to auto-detected resolution. Default is 3.
+            Value that will be added to auto-detected resolution. Default value is 2.
 
         Examples
         ---------
