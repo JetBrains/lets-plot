@@ -7,7 +7,7 @@ from .request import RegionQuery, MapRegion, MapRegionKind, PayloadKind, RegionQ
 from .request import Request, GeocodingRequest, ExplicitRequest, RequestBuilder, RequestKind, ReverseGeocodingRequest
 from .response import LevelKind, GeoRect
 
-PROTOCOL_VERSION = 2
+PROTOCOL_VERSION = 3
 
 
 class Field(enum.Enum):
