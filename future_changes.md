@@ -47,7 +47,10 @@
  - Option to override the default tooltip color [[#231](https://github.com/JetBrains/lets-plot/issues/231)].
  - Fix duplicate values in tooltip [[#280](https://github.com/JetBrains/lets-plot/issues/280)].
  - Kernel density estimate computation is too slow.
+ - geom_histogram should not try to handle geometries in GeoDataFrame [[#281](https://github.com/JetBrains/lets-plot/issues/281)]
  - Serialize NaN and other special values as None [[#282](https://github.com/JetBrains/lets-plot/issues/282)]
+ - Error building plot: Layer 'MAP' is not supported on Live Map. [[#285](https://github.com/JetBrains/lets-plot/issues/285)]
+ - Error in plot building: 'trans' parameter not compatible with None values in data [[#287](https://github.com/JetBrains/lets-plot/issues/287)]
  - Align title to the left of the plot geom area [[#289](https://github.com/JetBrains/lets-plot/issues/289)].
  - LOESS smoothing fails on small (<3) number points. 
  - Facet grid truncated in jupyter [[#28](https://github.com/JetBrains/lets-plot-kotlin/issues/28)]
