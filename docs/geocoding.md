@@ -7,8 +7,8 @@
     - [US-48](#us-48)
     - [Ambiguity](#ambiguity)
         - [allow_ambiguous()](#allow-ambiguous)
-        - [drop_not_found()](#drop-not-found)
-        - [drop_ambiguous()](#drop-ambiguous)
+        - [ignore_not_found()](#ignore-not-found)
+        - [ignore_all_errors()](#ignore-all-errors)
         - [where()](#where)  
             - [closest_to](#where-closest-to)  
             - [scope](#where-scope)
@@ -314,7 +314,7 @@ The ambiguity can be resolved in different ways.
 ### `allow_ambiguous()`
 
 The best way is to find an object that we search and use its parents. The function converts error result into success result that can be rendered on a map or verified manually in other way.
-Overrides [drop_ambiguous()](#drop-ambiguous).
+Can be combined with [ignore_not_found()](#ignore_not_found) to suppress the "not found" error, which has higher priority.
 
 ```python
 geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
@@ -329,11 +329,11 @@ geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
 4 |368499 |warwick |Warwick
 ```
 
-<a id="drop-not-found"></a>
-### `drop_not_found()`
-Removes unknown names from result. Can be combined with [drop_ambiguous()](#drop-ambiguous).
+<a id="ignore-not-found"></a>
+### `ignore_not_found()`
+Removes unknown names from result.
 ```python
-geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
+geocode_cities(['paris', 'foo']).ignore_not_found().get_geocodes()
 ```
 
 ```
@@ -342,17 +342,17 @@ geocode_cities(['paris', 'foo']).drop_not_found().get_geocodes()
 0 |14889 |paris	  |Paris
 ```
 
-<a id="drop-ambiguous"></a>
-### `drop_ambiguous()`
-Removes names with multiple matches from result. Can be combined with [drop_not_found()](#drop-not-found). Overrides [allow_ambiguous()](#allow_ambiguous())
+<a id="ignore-all-errors"></a>
+### `ignore_all_errors()`
+Remove not found names or names with miltiple matches.
 ```python
-geocode_cities(['paris', 'worcester']).drop_not_matched().get_geocodes()
+geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
 ```
 ```
   |id    |request |found name
 -----------------------------
 0 |14889 |paris	  |Paris
-```
+``` 
 
 <a id="where"></a>
 ### `where()`
@@ -457,13 +457,23 @@ Parameter `map_join` is used to join map coordinates with data. Keys used to joi
 
 <a id="join-gdf"></a>
 #### Join with `GeoDataFrame`
-- `map_join='state'` - data_key = ['state'], map_key = ['state']
-- `map_join=[['city', 'state']]` - data_key = ['city', 'state'], map_key - ['city', 'state']
-- `map_join=[['City_Name', 'State_Name'], ['city', 'state']]` - data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+- `map_join='state'`:  
+    same as `[['state'], ['state']]`
+- `map_join=[['city', 'state']]`:  
+    same as `[['city', 'state'], ['city', 'state']]`
+- `map_join=[['City_Name', 'State_Name'], ['city', 'state']]`:  
+    Explicitly set keys for both data and map.
 
 <a id="join-geocoder"></a>
 #### Join with `Geocoder`
-`Geocoder` contains metadata so is most cases map_key can be omitted - it will be generated automatically with columns that were used for geocoding.
-- `map_join='State_Name'` - data key - ['State_Name'], map key - ['state']
-- `map_join=['City_Name', 'State_Name']` - data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
-- `map_join=[['City_Name', 'State_Name'], ['city', 'state']]` - data key - ['City_Name', 'State_Name'], map key - ['city', 'state']. In case of extra parents in a map parameter that were needed for ambituity resolving but not present in data.
+`Geocoder` contains metadata so in most cases only data have to be provided - Lets-Plot will generate map keys automatically with columns that were used for geocoding.  
+
+
+- `map_join='State_Name'`:  
+    same as `[['State_Name'], ['state']]`
+- `map_join=['City_Name', 'State_Name']`:  
+    same as `[['City_Name', 'State_Name'], ['city', 'state']]`
+- `map_join=[['City_Name', 'State_Name'], ['city', 'state']]`:  
+    Explicitly set keys for both data and map.
+    
+**N.B.: Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided will be omitted. Data columns should follow the same order or result of join operation will be incorrect.** 

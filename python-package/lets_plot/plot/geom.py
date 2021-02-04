@@ -51,27 +51,30 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
-    map_join : str, pair
+    map_join : [str | pair]
         Keys used to join map coordinates with data.
         first value in pair - column/columns in data
         second value in pair - column/columns in map
 
         When map is a GeoDataFrame:
             map_join='state':
-                'state' is a key for both data and map.
+                same as [['state'], ['state']]
             map_join=[['city', 'state']]:
-                ['city', 'state'] is a key for both data and map.
+                same as [['city', 'state'], ['city', 'state']]
             map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+                Explicitly set keys for both data and map.
 
-        If map is a Geocoder then second value can be omitted - it will be generated automatically with columns that were used for geocoding.
+
+        If map is a Geocoder:
             map_join='State_Name':
-                data key - ['State_Name'], map key - ['state']
+                same as [['State_Name'], ['state']]
             map_join=['City_Name', 'State_Name']:
-                data key - ['City_Name', 'State_Name'], map key - ['city', 'state']
+                same as [['City_Name', 'State_Name'], ['city', 'state']]
             map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                data key - ['City_Name', 'State_Name'], map key - ['city', 'state']. In case of extra parents
-                in a map parameter that were needed for ambituity resolving but not present in data.
+                Explicitly set keys for both data and map.
+
+            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
+            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
 
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
@@ -1457,11 +1460,32 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
         Data contains coordinates of polygon vertices on map.
-    map_join : str, pair
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
+    map_join : [str | pair]
+        Keys used to join map coordinates with data.
+        first value in pair - column/columns in data
+        second value in pair - column/columns in map
+
+        When map is a GeoDataFrame:
+            map_join='state':
+                same as [['state'], ['state']]
+            map_join=[['city', 'state']]:
+                same as [['city', 'state'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+
+        If map is a Geocoder:
+            map_join='State_Name':
+                same as [['State_Name'], ['state']]
+            map_join=['City_Name', 'State_Name']:
+                same as [['City_Name', 'State_Name'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
+            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
+
+
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1551,11 +1575,32 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
         Data containing region boundaries (coordinates of polygon vertices on map).
-    map_join : str, pair
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
+    map_join : [str | pair]
+        Keys used to join map coordinates with data.
+        first value in pair - column/columns in data
+        second value in pair - column/columns in map
+
+        When map is a GeoDataFrame:
+            map_join='state':
+                same as [['state'], ['state']]
+            map_join=[['city', 'state']]:
+                same as [['city', 'state'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+
+        If map is a Geocoder:
+            map_join='State_Name':
+                same as [['State_Name'], ['state']]
+            map_join=['City_Name', 'State_Name']:
+                same as [['City_Name', 'State_Name'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
+            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
+
+
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2670,11 +2715,32 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specifies appearance, style and content.
     map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Geocoder (implicitly invoke limits())
         Bounding boxes of geometries will be drawn.
-    map_join : str, pair
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
+    map_join : [str | pair]
+        Keys used to join map coordinates with data.
+        first value in pair - column/columns in data
+        second value in pair - column/columns in map
+
+        When map is a GeoDataFrame:
+            map_join='state':
+                same as [['state'], ['state']]
+            map_join=[['city', 'state']]:
+                same as [['city', 'state'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+
+        If map is a Geocoder:
+            map_join='State_Name':
+                same as [['State_Name'], ['state']]
+            map_join=['City_Name', 'State_Name']:
+                same as [['City_Name', 'State_Name'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
+            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
+
+
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2836,11 +2902,32 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
-    map_join : str, pair
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
+    map_join : [str | pair]
+        Keys used to join map coordinates with data.
+        first value in pair - column/columns in data
+        second value in pair - column/columns in map
+
+        When map is a GeoDataFrame:
+            map_join='state':
+                same as [['state'], ['state']]
+            map_join=[['city', 'state']]:
+                same as [['city', 'state'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+
+        If map is a Geocoder:
+            map_join='State_Name':
+                same as [['State_Name'], ['state']]
+            map_join=['City_Name', 'State_Name']:
+                same as [['City_Name', 'State_Name'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
+            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
+
+
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:

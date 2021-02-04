@@ -26,7 +26,7 @@ def test_us48_with_extra_names():
 
 def test_us48_with_extra_and_missing_names():
     us48 = geodata.geocode(names=['texas', 'blahblahblah', 'us-48', 'nevada'])\
-        .drop_not_found()\
+        .ignore_not_found()\
         .get_geocodes()
 
     # still 51 - drop missing completley

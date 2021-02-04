@@ -180,8 +180,7 @@ def test_ambiguity_allow_ambiguous():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_drop_not_matched():
     r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
-        .drop_not_found() \
-        .drop_ambiguous() \
+        .ignore_all_errors() \
         .get_geocodes()
 
     actual = r[DF_COLUMN_FOUND_NAME].tolist()
@@ -192,7 +191,7 @@ def test_ambiguity_drop_not_matched():
 def test_ambiguity_drop_not_found():
     try:
         r = geodata.geocode_cities(['gotham', 'new york', 'manchester']) \
-            .drop_not_found() \
+            .ignore_not_found() \
             .get_geocodes()
     except ValueError as ex:
         str(ex).startswith('Multiple objects (27) were found for manchester')

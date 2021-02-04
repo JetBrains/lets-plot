@@ -233,8 +233,8 @@ class Geocoder:
             boundary (when need to show zoomed part), or 'world' (when used for small preview).
 
             None:
-                Autodetection. Uses level_kind that was used for geocoding and number of objects.
-                Prefers performance over qulity. It's expected to get pixelated geometries with autodetection.
+                Autodetection by level_kind used for geocoding and number of objects. In this case
+                performance is preferred over quality. The pixelated geometries can be obtained.
                 Use explicit resolution or inc_res() function for better quality.
 
                 Resolution for countries:
@@ -356,10 +356,6 @@ class NamesGeocoder(Geocoder):
     ):
         Geocoder.__init__(self)
 
-        self._drop_not_found = False
-        self._drop_ambiguous = False
-        self._allow_ambiguous = False
-
         self._geocodes: Optional[Geocodes] = None
         self._scope: List[Optional[MapRegion]] = []
         self._level: Optional[LevelKind] = _to_level_kind(level)
@@ -390,10 +386,10 @@ class NamesGeocoder(Geocoder):
             Name of geo-object.
 
             Geocoder:
-            Should contain only one object.
+            It must contain only one object.
 
             shapely.geometry.Polygon:
-            Rectangular area (note that bbox of the polygon is used).
+            Rectangular area (bounding box of the polygon).
             Coordinates are expected to be in WGS84 reference system.
 
 
@@ -402,8 +398,8 @@ class NamesGeocoder(Geocoder):
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_states('florida').scope('uruguay').get_centroids()
-            >>> centroids
+            >>> codes = geocode(names=['OH']).allow_ambiguous().highlights(True).get_geocodes()
+            >>> codes
         """
         self._reset_geocodes()
         self._scope = _prepare_new_scope(scope)
@@ -411,12 +407,12 @@ class NamesGeocoder(Geocoder):
 
     def highlights(self, v: bool):
         """
-        Add matched string to result DataFrame.
+        Add matched string to geocodes DataFrame. Doesn't affect GeoDataFrames.
 
         Parameters
         ----------
         v: bool
-            If True result DataFrame will contain column 'highlights' with string that matched the name.
+            If True geocodes DataFrame will contain column 'highlights' with string that matched the name.
 
 
         Examples
@@ -443,10 +439,10 @@ class NamesGeocoder(Geocoder):
             Name of country.
 
             Geocoder:
-            Geocoder with countries. Should have same number of values in it as number of names of the Geocoder.
+            Geocoder with countries. It must contain the same number of values as the number of names of Geocoder.
 
             array:
-            List of country names. Should have same size as number of names of the Geocoder.
+            List of country names. It must be the same size as the number of names of Geocoder.
 
 
         Examples
@@ -474,10 +470,10 @@ class NamesGeocoder(Geocoder):
             Name of state.
 
             Geocoder:
-            Geocoder with states. Should have same number of values in it as number of names of the Geocoder.
+            Geocoder with states.  It must contain the same number of values as the number of names of Geocoder.
 
             array:
-            List of state names. Should have same size as number of names of the Geocoder.
+            List of state names. It must be the same size as the number of names of Geocoder.
 
 
         Examples
@@ -505,10 +501,10 @@ class NamesGeocoder(Geocoder):
             Name of county.
 
             Geocoder:
-            Geocoder with counties. Should have same number of values in it as number of names of the Geocoder.
+            Geocoder with counties. It must contain the same number of values as the number of names of Geocoder.
 
             array:
-            List of county names. Should have same size as number of names of the Geocoder.
+            List of county names. It must be the same size as the number of names of Geocoder.
 
 
         Examples
@@ -523,7 +519,7 @@ class NamesGeocoder(Geocoder):
         self._counties = _make_parents(counties)
         return self
 
-    def drop_not_found(self) -> 'NamesGeocoder':
+    def ignore_not_found(self) -> 'NamesGeocoder':
         """
         Don't generate an error on objects that were not found and remove them from result.
 
@@ -532,14 +528,14 @@ class NamesGeocoder(Geocoder):
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_states(['foo', 'florida']).drop_not_found().get_centroids()
+            >>> centroids = geocode_states(['foo', 'florida']).ignore_not_found().get_centroids()
             >>> centroids
         """
         self._reset_geocodes()
-        self._drop_not_found = True
+        self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
         return self
 
-    def drop_ambiguous(self) -> 'NamesGeocoder':
+    def ignore_all_errors(self) -> 'NamesGeocoder':
         """
         Don't generate an error on objects that have multiple matches and remove them from result.
 
@@ -548,12 +544,11 @@ class NamesGeocoder(Geocoder):
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities(['worcester']).drop_ambiguous()..get_centroids()
+            >>> centroids = geocode_cities(['worcester']).ignore_all_errors().get_centroids()
             >>> centroids
         """
         self._reset_geocodes()
-        self._drop_ambiguous = True
-        self._allow_ambiguous = False
+        self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_all)
         return self
 
     def allow_ambiguous(self) -> 'NamesGeocoder':
@@ -569,7 +564,7 @@ class NamesGeocoder(Geocoder):
             >>> centroids
         """
         self._reset_geocodes()
-        self._drop_ambiguous = False
+        self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
         self._allow_ambiguous = True
         return self
 
@@ -691,15 +686,6 @@ class NamesGeocoder(Geocoder):
             assert_parents_size(self._states, 'states')
             assert_parents_size(self._counties, 'counties')
 
-            if self._drop_ambiguous and self._drop_not_found:
-                default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_all)
-            elif self._drop_not_found: # higher priority than allow_ambiguous - it has special global in request
-                default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
-            elif self._allow_ambiguous:
-                default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
-            else:
-                default_ambiguity_resolver = AmbiguityResolver.empty()
-
             queries = []
             for i in range(len(self._names)):
                 name = self._names[i]
@@ -709,7 +695,7 @@ class NamesGeocoder(Geocoder):
 
                 scope, ambiguity_resolver = self._overridings.get(
                     QuerySpec(name, county, state, country),
-                    WhereSpec(None, default_ambiguity_resolver)
+                    WhereSpec(None, self._default_ambiguity_resolver)
                 )
 
                 query = RegionQuery(

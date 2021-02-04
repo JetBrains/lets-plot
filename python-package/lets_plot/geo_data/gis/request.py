@@ -28,6 +28,7 @@ class RequestKind(enum.Enum):
 class IgnoringStrategyKind(enum.Enum):
     skip_all = 'skip_all'
     skip_missing = 'skip_missing'
+    skip_ambiguous = 'skip_ambiguous'
     take_namesakes = 'take_namesakes'
 
 

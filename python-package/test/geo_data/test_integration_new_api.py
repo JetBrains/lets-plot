@@ -95,7 +95,7 @@ def test_parents_lists():
 def test_with_drop_not_found():
     states = geodata.geocode_states(['texas', 'trololo', 'nevada']) \
         .countries(['usa', 'usa', 'usa']) \
-        .drop_not_found()
+        .ignore_not_found()
 
     assert_row(states.get_geocodes(), names=['texas', 'nevada'], found_name=['Texas', 'Nevada'], country=['usa', 'usa'])
     assert_row(states.get_centroids(), names=['texas', 'nevada'], found_name=['Texas', 'Nevada'], country=['usa', 'usa'])
@@ -108,7 +108,7 @@ def test_drop_not_found_with_namesakes():
     states = geodata.geocode_counties(['jefferson', 'trololo', 'jefferson']) \
         .states(['alabama', 'asd', 'arkansas']) \
         .countries(['usa', 'usa', 'usa']) \
-        .drop_not_found()
+        .ignore_not_found()
 
     assert_row(states.get_geocodes(),
                names=['jefferson', 'jefferson'],
