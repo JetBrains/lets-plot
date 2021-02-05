@@ -8,7 +8,7 @@
    - Ascending/descending ordering of faceting values.
    - Formatting of faceting values. 
                 
-   See: [Facets demo](ToDo)
+   See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
 
  - In tooltip customization API: 
     - option `color` overrides the default tooltip color:
@@ -26,6 +26,8 @@
     scale_x_datetime(format="%b %Y")
     scale_x_continuous(format='is {.2f}')
     ```
+                      
+    See also: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md)
 
 ### Changed
                 
@@ -36,7 +38,7 @@
    The old version of the Geocoding backend remains on-line for a couple of release cycles
    to continue support of prior versions of Lets-Plot.
    
-   To learn more about Geocoding API see: [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+   To learn more about Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
                                      
 
  - The project upgraded to Kotlin v1.4.21 (was v1.4.10).
