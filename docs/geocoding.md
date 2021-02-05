@@ -1,4 +1,7 @@
-- [Geocoding API](#introduction)
+# Geocoding
+
+- [Overview](#introduction)
+- [Examples](#examples)
 - [Reference](#reference)
     - [Levels](#levels)
     - [Parents](#parents)
@@ -21,7 +24,7 @@
     
     
 <a id="introduction"></a>
-# Geocoding API
+## Overview
 
 Geocoding is the process of converting names of places into geographic coordinates.
 
@@ -102,7 +105,12 @@ All coordinates are in the EPSG:4326 coordinate reference system (CRS).
 
 Note what executing geocoding queries requires an internet connection.
 
-Examples:
+<a id="examples"></a>
+## Examples
+                     
+* Variious geocoding cases with maps: [geocoding_examples.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geocoding_examples.ipynb)
+
+* Geocoding the US counties: [map_US_household_income.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_US_household_income.ipynb)
 
 * Visualization of the Titanic's voyage:
 <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_titanic.ipynb"> 
@@ -131,10 +139,10 @@ Examples:
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/map_airports.png" alt="Couldn't load map_airports.png" width="547" height="311">                                         
 
 <a id="reference"></a>
-# Reference
+## Reference
 
 <a id="levels"></a>
-## Levels
+### Levels
 Geocoding supports 4 administrative levels:
 - city
 - county
@@ -163,7 +171,7 @@ geocode_states(['florida', 'tx']).get_geocodes()
 
 
 <a id="parents"></a>
-## Parents
+### Parents
 `Geocoder` class provides functions for defining parents with giving administrative level - `counties()`, `states()`, `countries()`. Functions can handle single or miltiply values of types string or `Geocoder`. Number of values must match number of names in `Geocoder` so they form a table, i.e. every name associated by an index with coresponding parent.  
 
 Parents will be present in result `DataFrame` to make it possible to join data and geometry via [map_join](#join).
@@ -210,7 +218,7 @@ geocode_cities(['worcester', 'warwick']).states(s).get_geocodes()
 ```
 
 <a id="scope"></a>
-## Scope
+### Scope
 `scope()` is a special kind of parent. `scope()` can handle a `string` or a single entry `Geocoder` object. `scope()` is not associated with any administrative level, it acts as parent for any other parents (or names if no other parents set). `scope()` can't be used with `countries()` - countries don't have parents. Typical use-case is when all names belong to the same parent - you don't need to generate list with required length to pass it as a parent, just use the `scope()` with single value.
 
 ```python
@@ -247,7 +255,7 @@ id     |request |found name
 324101 |florida |Florida
 ```
 <a id="fetch-all"></a>
-## Fetch all
+### Fetch all
 
 It is possible to fetch all objects within parent - just don't set the `names` parameter. 
 
@@ -267,7 +275,7 @@ geocode_counties().states('massachusetts').get_geocodes()
 ```
 
 <a id="us-48"></a>
-## US-48
+### US-48
 Geocoding supports a special name `us-48` for [CONUS](https://en.wikipedia.org/wiki/Contiguous_United_States). The `us-48` can be used as name or parent.
 ```python
 geocode_states('us-48').get_geocodes()
@@ -284,7 +292,7 @@ geocode_states('us-48').get_geocodes()
 ```
 
 <a id="ambiguity"></a>
-## Ambiguity
+### Ambiguity
 Often geocoding can find multiply objects for a name or don't find anything. in this case error will be generated:
  ```python
 geocode_cities(['warwick', 'worcester']).get_geocodes()
@@ -311,7 +319,7 @@ Multiple objects (14) were found for warwick:
 The ambiguity can be resolved in different ways.  
 
 <a id="allow-ambiguous"></a>
-### `allow_ambiguous()`
+#### `allow_ambiguous()`
 
 The best way is to find an object that we search and use its parents. The function converts error result into success result that can be rendered on a map or verified manually in other way.
 Can be combined with [ignore_not_found()](#ignore_not_found) to suppress the "not found" error, which has higher priority.
@@ -330,7 +338,7 @@ geocode_cities(['warwick', 'worcester']).allow_ambiguous().get_geocodes()
 ```
 
 <a id="ignore-not-found"></a>
-### `ignore_not_found()`
+#### `ignore_not_found()`
 Removes unknown names from result.
 ```python
 geocode_cities(['paris', 'foo']).ignore_not_found().get_geocodes()
@@ -343,7 +351,7 @@ geocode_cities(['paris', 'foo']).ignore_not_found().get_geocodes()
 ```
 
 <a id="ignore-all-errors"></a>
-### `ignore_all_errors()`
+#### `ignore_all_errors()`
 Remove not found names or names with miltiple matches.
 ```python
 geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
@@ -355,7 +363,7 @@ geocode_cities(['paris', 'worcester', 'foo']).drop_not_matched().get_geocodes()
 ``` 
 
 <a id="where"></a>
-### `where()`
+#### `where()`
 For resolving an ambiguity geocoding provides a function that can configure names individually.  
 To configure a name the function `where(...)` should be called with the place name and all given parent names.  Parents can't be changed via `where()` function call. If name and parents don't match with ones from the `where()` function an error will be generated. This is importnant for cases like this:
 ```python
@@ -368,7 +376,7 @@ geocode_counties(['Washington', 'Washington']).states(['oregon', 'utah']).get_ge
 1 |3488745 |Washington |Washington County |utah
 ```
 <a id="where-closest-to"></a>
-#### closest_to
+##### closest_to
 With parameter `closest_to` geocoding will take the only object that is closest to it. Parameter can be a single value `Geocoder`. 
 ```python
 boston = geocode_cities('boston')
@@ -390,7 +398,7 @@ geocode_cities('worcester').where('worcester', closest_to=shapely.geometry.Point
 0 |3688419 |worcester |Worcester
 ```
 <a id="where-scope"></a>
-#### scope
+##### scope
 With parameter `scope` a `shapely.geometry.Polygon` can be used for limiting an area of the search (coordinates should be in WGS84 cordinate system). Notice that bbox of the polygon will be used: 
 ```python
 geocode_cities('worcester')\
@@ -427,16 +435,16 @@ geocode_cities(['worcester', 'worcester'])\
 ```
 
 <a id="working-with-plot"></a>
-## Working with plot
+### Working with plots
 <a id="plot-gdf"></a>
-### Plotting a `GeoDataFrame`
+#### Plotting a `GeoDataFrame`
 `get_xxx()` functions return GeoDataFrame which can be used as a `data` or `map` parameter (see [this](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb) or [this](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)).
 ```
 ggplot() + geom_point(map=geocode_states('us-48').get_centroids())
 ```
 
 <a id="plot-geocoder"></a>
-### Plotting a `Geocoder`
+#### Plotting a `Geocoder`
 Drawing geometries with `Geocoder` is as little easier than using `GeoDataFrame`. Just pass a `Geocoder` to the `map` parameter, and it's done. Layer will fetch geometry it supports:
 ```
 ggplot() + geom_point(map=geocode_states('us-48'))
@@ -450,13 +458,13 @@ geom_rect() - get_limits()
 ```
 
 <a id="join"></a>
-### `map` and `map_join`
+#### `map` and `map_join`
 Parameter `map_join` is used to join map coordinates with data. Keys used to join map coordinates with data.
 - first value in a pair is data_key (column/columns in `data`)
 - second value in a pair is a map_key (column/columns in `map`)  
 
 <a id="join-gdf"></a>
-#### Join with `GeoDataFrame`
+##### Join with `GeoDataFrame`
 - `map_join='state'`:  
     same as `[['state'], ['state']]`
 - `map_join=[['city', 'state']]`:  
@@ -465,7 +473,7 @@ Parameter `map_join` is used to join map coordinates with data. Keys used to joi
     Explicitly set keys for both data and map.
 
 <a id="join-geocoder"></a>
-#### Join with `Geocoder`
+##### Join with `Geocoder`
 `Geocoder` contains metadata so in most cases only data have to be provided - Lets-Plot will generate map keys automatically with columns that were used for geocoding.  
 
 
