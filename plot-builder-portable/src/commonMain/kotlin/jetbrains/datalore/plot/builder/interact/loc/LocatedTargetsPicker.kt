@@ -41,7 +41,11 @@ internal class LocatedTargetsPicker {
 
     private fun chooseBestResult(): List<LookupResult> {
         fun hasGeneralTooltip(lookupResult: LookupResult) = lookupResult.contextualMapping.hasGeneralTooltip
-        fun hasAxisTooltip(lookupResult: LookupResult) = lookupResult.contextualMapping.hasAxisTooltip
+        fun hasAxisTooltip(lookupResult: LookupResult): Boolean {
+            return lookupResult.contextualMapping.hasAxisTooltip ||
+                    // actually hline/vline have axis info in the general tooltip
+                    lookupResult.geomKind in listOf(GeomKind.V_LINE, GeomKind.H_LINE)
+        }
 
         return when {
             myPicked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> myPicked

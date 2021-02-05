@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
@@ -103,6 +104,52 @@ class LocatorByGeneralTooltipTest {
         )
         val results = findTargets(targets)
         assertLookupResults(results, FIRST_POINT_KEY, SECOND_POINT_KEY)
+    }
+
+    @Test
+    fun `locator should choose vline and hline`() {
+        run {
+            val targets = listOf(
+                createLocator(
+                    lookupSpec = lookupSpec,
+                    contextualMapping = createContextualMapping
+                        (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.XINTERCEPT)) }
+                    ),
+                    targetPrototypes = listOf(FIRST_TARGET),
+                    geomKind = GeomKind.V_LINE
+                ),
+                createLocator(
+                    lookupSpec = lookupSpec,
+                    contextualMapping = createContextualMapping(
+                        MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    ),
+                    targetPrototypes = listOf(SECOND_TARGET)
+                )
+            )
+            val results = findTargets(targets)
+            assertLookupResults(results, FIRST_POINT_KEY)
+        }
+        run {
+            val targets = listOf(
+                createLocator(
+                    lookupSpec = lookupSpec,
+                    contextualMapping = createContextualMapping(
+                        MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    ),
+                    targetPrototypes = listOf(FIRST_TARGET)
+                ),
+                createLocator(
+                    lookupSpec = lookupSpec,
+                    contextualMapping = createContextualMapping
+                        (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.YINTERCEPT)) }
+                    ),
+                    targetPrototypes = listOf(SECOND_TARGET),
+                    geomKind = GeomKind.H_LINE
+                )
+            )
+            val results = findTargets(targets)
+            assertLookupResults(results, SECOND_POINT_KEY)
+        }
     }
 
     private fun createContextualMapping(mappedDataAccessMock: MappedDataAccessMock, axisTooltips: Boolean = false): ContextualMapping {
