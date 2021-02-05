@@ -16,7 +16,7 @@ Try the following tutorials and examples to learn and evaluate various features 
 - [The 'bistro' Package](#bistro)
 - [GeoPandas Support](#geopandas)
 - [Interactive Maps](#livemap)
-- [Geocoding API](#geocoding)
+- [Geocoding](#geocoding)
 
 
 
@@ -107,8 +107,7 @@ See the `corr_plot` example in [The 'bistro' Package](#bistro).
 <a id="facets"></a>
 #### Facets
 
-* `facet_grid`: 
-[distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb)
+* `facet_grid(), facet_wrap()` : [facets.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
 
 
 <a id="ggbunch"></a>
@@ -148,7 +147,7 @@ Legend layout and axis presentation options :
 
 Sampling is a special technique of data transformation, which helps to deal with large datasets and overplotting.
 
-See: [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md).
+See examples in [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md).
 
 
 <a id="tooltip"></a>
@@ -179,7 +178,7 @@ See also [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/mas
 <a id="geopandas"></a>
 #### GeoPandas Support
 
-See [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md). 
+See examples in [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md). 
 
 
 <a id="livemap"></a>
@@ -188,14 +187,16 @@ See [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/
 The interactive map allows zooming in and out and panning around geospatial data that can be added to the base-map layer 
 using regular ggplot2 'geoms'.
 
-See [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
+See examples in [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
 
 
 <a id="geocoding"></a>
-#### Geocoding API
+#### Geocoding
 
 Geocoding is the process of converting names of places into geographic coordinates.
+         
+* [map_US_household_income.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_US_household_income.ipynb)
 
-See [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+See the "Examples" section in [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
 
