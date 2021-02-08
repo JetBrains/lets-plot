@@ -52,11 +52,30 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Specifies appearance, style and content.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
         Data containing coordinates of points.
-    map_join : str, pair, optional
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
+    map_join : [str | pair]
+        Keys used to join map coordinates with data.
+        first value in pair - column/columns in data
+        second value in pair - column/columns in map
+
+        When map is a GeoDataFrame:
+            map_join='state':
+                same as [['state'], ['state']]
+            map_join=[['city', 'state']]:
+                same as [['city', 'state'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+
+        If map is a Geocoder:
+            map_join='State_Name':
+                same as [['State_Name'], ['state']]
+            map_join=['City_Name', 'State_Name']:
+                same as [['City_Name', 'State_Name'], ['city', 'state']]
+            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+                Explicitly set keys for both data and map.
+
+            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
+            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
     symbol : string, optional
         The marker used for displaying the data. There are:
         - 'point' for circles of different size and color.
