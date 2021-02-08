@@ -4,7 +4,8 @@
 - [Customizing tooltip lines](#lines)
     - [Labels configuration](#labels-configuration)
 - [Tooltip anchor](#tooltip-anchor)
-- [Minimum width of a multi-line tooltip](#minwidth)
+- [Minimum width of a general tooltip](#minwidth)
+- [Tooltip color](#color)
 - [Examples](#examples)
 - [Outlier tooltips configuration](#outliers)
     - [Examples](#example-outliers)    
@@ -60,7 +61,7 @@ Variable's and aesthetic's formats are not interchangeable, for example, `var` f
 <a id="lines"></a>
 ### Customizing tooltip lines: `layer_tooltips().line(template)`
 
-Specifies the string template to use in a multi-line tooltip. If you add `line()`, it overrides the default tooltip.
+Specifies the string template to use in a general tooltip. If you add `line()`, it overrides the default tooltip.
 
 Variables and aesthetics can be accessed via a special syntax:
 - `^color` for aesthetic;
@@ -92,7 +93,7 @@ If you do not specify a label, the string will be centered in the tooltip. For e
 
 <a id="tooltip-anchor"></a>
 ### Tooltip anchor: `layer_tooltips().anchor(position)`
-Specifies a fixed position for multi-line tooltip.
+Specifies a fixed position for a general tooltip.
 
 The `anchor()` function accepts the following values:
 - 'top_right'
@@ -106,8 +107,12 @@ The `anchor()` function accepts the following values:
 - 'middle_left'
  
 <a id="minwidth"></a>
-### Minimum width of a multi-line tooltip: `layer_tooltips().min_width(value)`
-Specifies minimum width of a multi-line tooltip in pixels.
+### Minimum width of a general tooltip: `layer_tooltips().min_width(value)`
+Specifies a minimum width of a general tooltip in pixels.
+
+<a id="Color"></a>
+### Tooltip color: `layer_tooltips().color(value)`
+Specifies a color of a general tooltip.
 
 <a id="examples"></a>
 ### Examples
@@ -131,13 +136,13 @@ Change format for the default tooltip:
 
 ```
 ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=21, color='black',\
-                           tooltips=layer_tooltips().format('^color', '{.2f} (mpg)'))
+                           tooltips=layer_tooltips().format('^fill', '{.2f} (mpg)'))
 ```
 
 ![](examples/images/tooltips_2.png)
 
 
-Place a multi-line tooltip at the top center and define its minimum width:
+Place a general tooltip at the top center and define its minimum width:
 
 ```
 ggplot(mpg) + geom_point(aes(x='displ', y='cty', fill='drv', size='hwy'), shape=21, color='black',\
@@ -198,8 +203,22 @@ p2 + geom_boxplot(tooltips=layer_tooltips()
 Move outliers to a general tooltip:
 
 `p2 + geom_boxplot(tooltips=layer_tooltips().line('lower/upper|^lower, ^upper'))`
+
 ![](examples/images/tooltips_4.png)
-                 
+   
+Place tooltip at the top center and change its color:
+
+``` 
+p2 + geom_boxplot(tooltips=layer_tooltips()
+                   .anchor('top_center')
+                   .color('cyan')
+                   .format('^Y', '.0f')
+                   .format('^middle', '.2f')
+                   .line('@|^middle')
+                   .line('lower/upper|^lower/^upper')
+                   .line('min/max|^ymin/^ymax'))
+``` 
+![](examples/images/tooltips_7.png)          
 
 
 <a id="hiding-tooltips"></a> 
