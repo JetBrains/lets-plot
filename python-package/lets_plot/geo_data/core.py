@@ -71,6 +71,7 @@ def regions_builder(level=None, request=None, within=None, highlights=False):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
@@ -113,6 +114,7 @@ def regions(level=None, request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r = regions(level='country', request=['Germany', 'USA'])
@@ -146,6 +148,7 @@ def regions_country(request=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_country = regions_country(request=['Germany', 'USA'])
@@ -186,6 +189,7 @@ def regions_state(request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_state = regions_state(request=['Texas', 'Iowa'], within='USA')
@@ -224,6 +228,7 @@ def regions_county(request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
@@ -262,6 +267,7 @@ def regions_city(request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_city = regions_city(request=['New York', 'Los Angeles'])
