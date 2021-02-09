@@ -10,13 +10,14 @@ Try the following tutorials and examples to learn and evaluate various features 
 - [GGBunch](#ggbunch)
 - [`as_discrete()` function](#as_discrete)
 - [Export to File](#export)
+- [Formatting](#formatting)
 - [Theme](#theme)
 - [Data Sampling](#sampling)
 - [Tooltip Customization](#tooltip)
 - [The 'bistro' Package](#bistro)
 - [GeoPandas Support](#geopandas)
 - [Interactive Maps](#livemap)
-- [Geocoding API](#geocoding)
+- [Geocoding](#geocoding)
 
 
 
@@ -107,8 +108,7 @@ See the `corr_plot` example in [The 'bistro' Package](#bistro).
 <a id="facets"></a>
 #### Facets
 
-* `facet_grid`: 
-[distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb)
+* `facet_grid(), facet_wrap()` : [facets.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
 
 
 <a id="ggbunch"></a>
@@ -134,6 +134,12 @@ The `ggsave()` function is an easy way to export plot to a file in SVG or HTML f
 
 * [export_SVG_HTML.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
 
+<a id="formatting"></a>
+#### Formatting
+
+* [formatting_axes_etc](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
+* [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)
+
 
 <a id="theme"></a>
 #### Theme
@@ -148,7 +154,7 @@ Legend layout and axis presentation options :
 
 Sampling is a special technique of data transformation, which helps to deal with large datasets and overplotting.
 
-See: [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md).
+See examples in [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md).
 
 
 <a id="tooltip"></a>
@@ -179,7 +185,7 @@ See also [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/mas
 <a id="geopandas"></a>
 #### GeoPandas Support
 
-See [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md). 
+See examples in [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md). 
 
 
 <a id="livemap"></a>
@@ -188,14 +194,14 @@ See [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/
 The interactive map allows zooming in and out and panning around geospatial data that can be added to the base-map layer 
 using regular ggplot2 'geoms'.
 
-See [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
+See examples in [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
 
 
 <a id="geocoding"></a>
-#### Geocoding API
+#### Geocoding
 
 Geocoding is the process of converting names of places into geographic coordinates.
-
-See [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+         
+See the "Examples" section in [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
 
