@@ -10,6 +10,7 @@ Try the following tutorials and examples to learn and evaluate various features 
 - [GGBunch](#ggbunch)
 - [`as_discrete()` function](#as_discrete)
 - [Export to File](#export)
+- [Formatting](#formatting)
 - [Theme](#theme)
 - [Data Sampling](#sampling)
 - [Tooltip Customization](#tooltip)
@@ -133,6 +134,12 @@ The `ggsave()` function is an easy way to export plot to a file in SVG or HTML f
 
 * [export_SVG_HTML.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
 
+<a id="formatting"></a>
+#### Formatting
+
+* [formatting_axes_etc](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
+* [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)
+
 
 <a id="theme"></a>
 #### Theme
@@ -195,8 +202,6 @@ See examples in [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/m
 
 Geocoding is the process of converting names of places into geographic coordinates.
          
-* [map_US_household_income.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_US_household_income.ipynb)
-
 See the "Examples" section in [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
 

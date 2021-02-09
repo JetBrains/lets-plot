@@ -33,14 +33,14 @@
 - [GGBunch](#ggbunch)
 - [Data Sampling](#sampling)
 - [Export to File](#export)
-- [Values Formatting](#formatting)
+- [Formatting](#formatting)
 - [The 'bistro' Package](#bistro)
     - [Correlation Plot](#corr_plot)
     - [Image Matrix](#image_matrix)
 - [Geospatial](#geospatial)
     - [GeoPandas Support](#geopandas)
     - [Interactive Maps](#livemap)
-    - [Geocoding API](#geocoding)
+    - [Geocoding](#geocoding)
 - ['No Javascript' Mode](#no_js)
 - [Offline Mode](#offline)
 - [Interesting Demos](#interesting)
@@ -161,35 +161,29 @@ Note: The `ggsave()` function currently do not save images of interactive maps t
 Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
 
 <a id="formatting"></a>
-### Values Formatting
+### Formatting
 
-Lets-Plot support formatting of numeric and date-time type values.
+Lets-Plot supports formatting of values of numeric and date-time types.
 
-Complementary to the format string, *string template* is also supported.
+Complementary to the value formatting, a *string template* is also supported.
 
 For example:  
 ```
-value 67719.94988293362
+value: 67719.94988293362
 +
-string template "Mean income: £{.2s}"
+string template: "Mean income: £{.2s}"
 =
-"Mean income: £67k"
+the formatting result: "Mean income: £67k"
 ```
-An empty placeholder `{}` is also allowed in string templates.   
+An empty placeholder {} is also allowed. In this case a default string representation will be shown. This is also applicable to categorical values.   
 
 To learn more about format strings see: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md).
 
-In Lets-Plot the value formatting is applocable to:
-- tooltip text, see: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)
-- labels on X/Y axis via the `format` parameter in continuous and date-time X/Y scale functions.
-- `geom_text()` function via the `label_format` parameter. See: [Label format demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb).
+In Lets-Plot you can use formatting for:
+- tooltip text, see: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+- labels on X/Y axis. See: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb).
+- the `geom_text()` labels. See: [Label format demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb).
 - facetting values in `facet_grid()`, `facet_wrap()` functions. See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb).
-
-
-
-
-
-
 
 
 <a id="bistro"></a>
@@ -242,10 +236,16 @@ using regular ggplot geoms.
 Learn more: [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
 
 <a id="geocoding"></a>
-#### Geocoding API
+#### Geocoding
 Geocoding is the process of converting names of places into geographic coordinates.  
 
-Learn more: [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+The Lets-Plot has built-in geocoding capabilities covering the folloing administrative levels:
+- countries
+- states (US and non-US equivalents)
+- counties (and equivalents)
+- cities (and towns)
+
+Learn more: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
 <a id="no_js"></a>
 ### 'No Javascript' Mode
@@ -327,6 +327,8 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
     scale_x_datetime(format="%b %Y")
     scale_x_continuous(format='is {.2f}')
     ```
+  Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
+
   See also: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md)
 
 
@@ -341,14 +343,14 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 
 - Brand new Geocoding API.
 
-  Note: This is a **breaking change!** Hence we bumped the version to 2.0.0. 
+  Note: This is a **breaking change!** Hence we bumped the Lets-Plot version to 2.0.0. 
 
   In the Lets-Plot v2.0.0 the peviouse Geocoding API is no longer working.
 
   The old version of geocoding backend remains on-line for a couple of release cycles
   to continue support of prior Lets-Plot versions.
 
-  To learn more about Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+  To learn more about new Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
 
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
