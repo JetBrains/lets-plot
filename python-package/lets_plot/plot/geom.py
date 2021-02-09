@@ -32,28 +32,29 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Point` and `MultiPoint`)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Point` and `MultiPoint`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`), optional
@@ -158,28 +159,29 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     map : `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`), optional
@@ -270,28 +272,29 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -376,28 +379,29 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='smooth'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     method : str, default='lm'
@@ -504,28 +508,29 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='count'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -597,11 +602,11 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -609,16 +614,17 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='stack'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     bins : int, default=30
@@ -696,28 +702,24 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='bin'
+    stat : str, default='bin2d'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, default='stack'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     bins : list of int, default=[30, 30]
@@ -792,28 +794,24 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -888,28 +886,24 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -975,28 +969,29 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -1067,28 +1062,29 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=2.5
@@ -1161,28 +1157,29 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=5.0
@@ -1253,28 +1250,29 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -1341,28 +1339,24 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='contour'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     bins : int, optional
@@ -1446,28 +1440,24 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='contourf'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     bins : int, optional
@@ -1546,28 +1536,24 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`), optional
@@ -1670,28 +1656,29 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`), optional
@@ -1796,28 +1783,24 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     slope : float, optional
@@ -1878,28 +1861,24 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     yintercept : float, optional
@@ -1956,28 +1935,24 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     xintercept : float, optional
@@ -2037,30 +2012,24 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged)
-        should be used to define boxplot from your own computations via
-        lower, upper, ymin, ymax, middle aesthetics mappings (see below),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=1.0
@@ -2146,28 +2115,24 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -2231,28 +2196,29 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -2317,24 +2283,29 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default="density"
+    stat : str, default='density'
         The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     kernel : str, default='gaussian'
@@ -2418,28 +2389,24 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='density2d'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     kernel : str, default='gaussian'
@@ -2521,28 +2488,24 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='density2df'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
 
@@ -2618,28 +2581,29 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     width : float, default=0.4
@@ -2704,28 +2668,29 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='bin'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -2792,28 +2757,29 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     direction : string, default='hv'
@@ -2891,28 +2857,24 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     map : `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `limits()`), optional
@@ -3009,28 +2971,29 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     arrow : `FeatureSpec`, optional
@@ -3092,28 +3055,29 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping
+    mapping : `FeatureSpec`, optional
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, optional
+    stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default).
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, optional
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling
+    sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
-        Value 'none' will disable sampling for this layer.
-    tooltips
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`), optional
