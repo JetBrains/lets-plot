@@ -16,4 +16,8 @@ internal class BogusCoordinateSystem : CoordinateSystem {
     override fun fromClient(p: DoubleVector): DoubleVector {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
+
+    override fun contains(p: DoubleVector): Boolean {
+        throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
+    }
 }

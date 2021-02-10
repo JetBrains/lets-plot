@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
@@ -43,7 +44,7 @@ class TextGeom : GeomBase() {
             val x = p.x()
             val y = p.y()
             val text = toString(p.label())
-            if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
+            if (SeriesUtil.allFinite(x, y) && coord.contains(DoubleVector(x!!, y!!)) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p, sizeUnitRatio)
 

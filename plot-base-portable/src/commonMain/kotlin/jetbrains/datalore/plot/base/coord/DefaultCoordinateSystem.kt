@@ -5,11 +5,18 @@
 
 package jetbrains.datalore.plot.base.coord
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
-internal class DefaultCoordinateSystem(private val myToClientOffsetX: (Double) -> Double, private val myToClientOffsetY: (Double) -> Double,
-                                       private val myFromClientOffsetX: (Double) -> Double, private val myFromClientOffsetY: (Double) -> Double) :
+internal class DefaultCoordinateSystem(
+    private val myToClientOffsetX: (Double) -> Double,
+    private val myToClientOffsetY: (Double) -> Double,
+    private val myFromClientOffsetX: (Double) -> Double,
+    private val myFromClientOffsetY: (Double) -> Double,
+    private val xLim: ClosedRange<Double>?,
+    private val yLim: ClosedRange<Double>?
+) :
     CoordinateSystem {
 
     override fun toClient(p: DoubleVector): DoubleVector {
@@ -18,5 +25,9 @@ internal class DefaultCoordinateSystem(private val myToClientOffsetX: (Double) -
 
     override fun fromClient(p: DoubleVector): DoubleVector {
         return DoubleVector(myFromClientOffsetX(p.x), myFromClientOffsetY(p.y))
+    }
+
+    override fun contains(p: DoubleVector): Boolean {
+        return (xLim?.contains(p.x) ?: true) && (yLim?.contains(p.y) ?: true)
     }
 }

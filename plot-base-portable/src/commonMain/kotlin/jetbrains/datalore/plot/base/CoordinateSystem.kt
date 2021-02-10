@@ -11,4 +11,6 @@ interface CoordinateSystem {
     fun toClient(p: DoubleVector): DoubleVector
 
     fun fromClient(p: DoubleVector): DoubleVector
+
+    fun contains(p: DoubleVector): Boolean
 }
