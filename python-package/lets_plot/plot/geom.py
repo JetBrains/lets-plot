@@ -119,19 +119,48 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = np.random.uniform(-1, 1, size=100)
-        >>> y = np.random.normal(size=100)
-        >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-        >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-        >>> p = ggplot(dat) + geom_point(aes(x='x', y='y', color='y', shape='class', fill='x', size='y'))
-        >>> p += geom_point(aes(x='x', y='y'), shape=21, color='gray', fill='light_blue', size=5, alpha=0.5, stat='smooth')
-        >>> p += theme(legend_direction='horizontal') + ggsize(650, 350)
-        >>> p
+        >>> x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
+        >>> y = np.sin(x)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 100
+        >>> x = np.random.uniform(-1, 1, size=n)
+        >>> y = 25 * x ** 2 + np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}) + \\
+        >>>     geom_point(aes(x='x', y='y', fill='y'), \\
+        >>>                shape=21, size=5, color='white')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 8-11
+
+        >>> from lets_plot import *
+        >>> from lets_plot.geo_data import *
+        >>> LetsPlot.setup_html()
+        >>> data = {'city': ['New York', 'Los Angeles', 'Chicago'], \\
+        >>>         'pop_2020': [18_804_000, 12_447_000, 8_865_000]}
+        >>> centroids = geocode_cities(data['city']).get_centroids()
+        >>> ggplot() + geom_livemap() + \\
+        >>>     geom_point(aes(size='pop_2020'), \\
+        >>>                data=data, map=centroids, map_join='city', \\
+        >>>                tooltips=layer_tooltips().line('@city')
+        >>>                                         .line('population|@pop_2020')) + \\
+        >>>     ggsize(600, 450)
 
     """
 
@@ -219,34 +248,35 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 8
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> T = 100
+        >>> x = np.cumsum(np.random.normal(size=T))
+        >>> y = np.cumsum(np.random.normal(size=T))
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_path()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-13
 
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> T = 1
-        >>> N = 1000
-        >>> t = np.linspace(0, T, N)
-        >>> dt = T / N
-        >>> # brownian motions
-        >>> W1 = np.random.standard_normal(size=N)
-        >>> Wt1 = np.cumsum(W1) * np.sqrt(dt)
-        >>> W2 = np.random.standard_normal(size=N)
-        >>> Wt2 = np.cumsum(W2) * np.sqrt(dt)
-        >>> dat = {}
-        >>> dat['W1'] = Wt1
-        >>> dat['W2'] = Wt2
-        >>> dat['t'] = t
-        >>> # plot brownian motion path
-        >>> ggplot(dat) + geom_path(aes(x='W1', y='W2'))
-        >>> # transform data via melt function
-        >>> # to produce two trajectories
-        >>> dat = pd.DataFrame(dat)
-        >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
-        >>> p = ggplot(dat, aes(x='t', y='value', group='variable'))
-        >>> p += geom_path(aes(color='variable', linetype='variable'), size=1, alpha=0.5)
-        >>> p += geom_path(stat='smooth', color='red', linetype='longdash')
-        >>> p
+        >>> np.random.seed(42)
+        >>> t = np.arange(100)
+        >>> x1 = np.cumsum(np.random.normal(size=t.size))
+        >>> x2 = np.cumsum(np.random.normal(size=t.size))
+        >>> df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
+        >>> df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
+        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
+        >>>     geom_path(aes(color='variable'), size=1, alpha=0.5) + \\
+        >>>     geom_path(stat='smooth', color='red', linetype='longdash')
 
     """
     if is_geocoder(map):
@@ -324,32 +354,33 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> x = np.linspace(-4 * np.pi, 4 * np.pi, 100)
+        >>> y = np.sin(x)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_line()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-13
 
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> T = 1
-        >>> N = 1000
-        >>> t = np.linspace(0, T, N)
-        >>> dt = T / N
-        >>> # brownian motions
-        >>> W1 = np.random.standard_normal(size=N)
-        >>> Wt1 = np.cumsum(W1) * np.sqrt(dt)
-        >>> W2 = np.random.standard_normal(size=N)
-        >>> Wt2 = np.cumsum(W2) * np.sqrt(dt)
-        >>> dat = {}
-        >>> dat['W1'] = Wt1
-        >>> dat['W2'] = Wt2
-        >>> dat['t'] = t
-        >>> # transform data via melt function
-        >>> # to produce two trajectories
-        >>> dat = pd.DataFrame(dat)
-        >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
-        >>> p = ggplot(dat, aes(x='t', y='value', group='variable'))
-        >>> p += geom_line(aes(color='variable', linetype='variable'), size=1, alpha=0.5)
-        >>> p += geom_line(stat='smooth', color='red', linetype="longdash")
-        >>> p
+        >>> np.random.seed(42)
+        >>> t = np.arange(100)
+        >>> x1 = np.cumsum(np.random.normal(size=t.size))
+        >>> x2 = np.cumsum(np.random.normal(size=t.size))
+        >>> df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
+        >>> df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
+        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
+        >>>     geom_line(aes(color='variable'), size=1, alpha=0.5) + \\
+        >>>     geom_line(stat='smooth', color='red', linetype='longdash')
 
     """
     return _geom('line',
@@ -454,29 +485,53 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 50
+        >>> x = np.arange(n)
+        >>> y = x + np.random.normal(scale=10, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_point() + geom_smooth()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 100
+        >>> x = np.linspace(-2, 2, n)
+        >>> y = x ** 2 + np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_point() + geom_smooth(color='red', deg=2, se=False)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 14-15
 
         >>> import numpy as np
         >>> import pandas as pd
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> N = 100
-        >>> t = np.linspace(1, N, N)
-        >>> a = 1
-        >>> b = 0
-        >>> M = 2
-        >>> A = np.random.standard_normal(M) / N + a
-        >>> B = np.random.standard_normal(M) / N + b
-        >>> mean = np.zeros(M)
-        >>> cov = np.eye(M)
-        >>> Z = multivariate_normal.rvs(mean, cov, N)
-        >>> X = np.outer(B, t / N)
-        >>> X = X + Z.T
-        >>> X = X + (np.full((N, M), 1) * A).T
-        >>> dat = pd.DataFrame(X.T)
-        >>> dat = pd.melt(dat)
-        >>> dat["t"] = np.tile(t / N, M)
-        >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_point(aes(color='variable')) + geom_smooth(color='red')
+        >>> np.random.seed(42)
+        >>> t = np.linspace(0, 1, 100)
+        >>> mean = 1 + np.zeros(2)
+        >>> cov = np.eye(2)
+        >>> x, y = np.random.multivariate_normal(mean, cov, t.size).T
+        >>> df = pd.DataFrame({'t': t, 'x': x, 'y': y})
+        >>> df = df.melt(id_vars=['t'], value_vars=['x', 'y'])
+        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
+        >>>     geom_point(aes(color='variable'), size=3, alpha=.5) + \\
+        >>>     geom_smooth(aes(color='variable'), size=1, \\
+        >>>                 method='loess', span=.3, level=.7, seed=42)
 
     """
     return _geom('smooth',
@@ -560,22 +615,49 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
-        >>> import pandas as pd
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> N = 100
-        >>> M = 3
-        >>> mean = np.zeros(M)
-        >>> mean = np.arange(M) * 5
-        >>> cov = np.eye(M)
-        >>> X = multivariate_normal.rvs(mean, cov, N)
-        >>> X = X.astype(int) # comment this line to make variables continuous back
-        >>> dat = pd.DataFrame(X)
-        >>> dat = pd.melt(dat)
-        >>> ggplot(dat, aes(x='value')) + geom_bar(stat='bin', color='gray', fill='dark_green', size=2)
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.randint(10, size=100)}
+        >>> ggplot(data, aes(x='x')) + geom_bar()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 10
+        >>> x = np.arange(n)
+        >>> y = 1 + np.random.randint(5, size=n)
+        >>> ggplot() + \\
+        >>>     geom_bar(aes(x='x', y='y', fill='x'), data={'x': x, 'y': y}, \\
+        >>>              stat='identity', show_legend=False) + \\
+        >>>     scale_fill_discrete()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-12
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 5000
+        >>> x = np.random.normal(size=n)
+        >>> c = np.random.choice(list('abcde'), size=n)
+        >>> ggplot({'x': x, 'class': c}, aes(x='x')) + \\
+        >>>     geom_bar(aes(group='class', fill='class', color='class'), \\
+        >>>              stat='bin', sampling=sampling_pick(n=500), alpha=.3, \\
+        >>>              tooltips=layer_tooltips().line('@|@class')
+        >>>                                       .line('count|@..count..'))
 
     """
     return _geom('bar',
@@ -664,15 +746,43 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> np.random.seed(123)
-        >>> data = dict(
-        >>>     x = np.random.normal(0, 1, 100)
-        >>> )
-        >>> ggplot(data) + geom_histogram(aes(x='x'), color='black', fill='gray', size=1)
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.normal(size=1000)}
+        >>> ggplot(data, aes(x='x')) + geom_histogram()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 7
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.gamma(2.0, size=1000)}
+        >>> ggplot(data, aes(x='x')) + \\
+        >>>     geom_histogram(aes(color='x', fill='x'), bins=50)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 8-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(scale=3, size=1000)
+        >>> y = 2 * (np.round(x) % 2) - 1
+        >>> ggplot({'x': x, 'y': y}) + \\
+        >>>     geom_histogram(aes(x='x', weight='y'), \\
+        >>>                    center=0, binwidth=1, \\
+        >>>                    color='black', fill='gray', size=1)
 
     """
     return _geom('histogram',
@@ -756,20 +866,57 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 8
 
         >>> import numpy as np
         >>> from lets_plot import *
-        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
-        >>> cov=[[1, 0],
-        >>>      [0, 1]]
-        >>> x, y = np.random.multivariate_normal(mean=[0,0], cov=cov, size=400).T
-        >>>
-        >>> data = dict(
-        >>>     x = x,
-        >>>     y = y
-        >>> )
-        >>> ggplot(data) + geom_bin2d(aes(x='x', y='y'), binwidth=[0.5,0.5])
+        >>> np.random.seed(42)
+        >>> mean = np.zeros(2)
+        >>> cov = np.eye(2)
+        >>> x, y = np.random.multivariate_normal(mean, cov, 1000).T
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_bin2d()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-14
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 5000
+        >>> x = np.random.uniform(-2, 2, size=n)
+        >>> y = np.random.normal(scale=.5, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_bin2d(aes(fill='..density..'), binwidth=[.25, .24], \\
+        >>>                tooltips=layer_tooltips().format('@x', '.2f')
+        >>>                        .format('@y', '.2f').line('(@x, @y)')
+        >>>                        .line('count|@..count..')
+        >>>                        .format('@..density..', '.3f')
+        >>>                        .line('density|@..density..')) + \\
+        >>>     scale_fill_gradient(low='black', high='red')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10-11
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> mean = np.zeros(2)
+        >>> cov = [[1, .5],
+        >>>        [.5, 1]]
+        >>> x, y = np.random.multivariate_normal(mean, cov, 500).T
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_bin2d(aes(alpha='..count..'), bins=[20, 20], \\
+        >>>                color='white', fill='darkgreen') + \\
+        >>>     geom_point(size=1.5, shape=21, color='white', \\
+        >>>                fill='darkgreen') + \\
+        >>>     ggsize(600, 450)
 
     """
     return _geom('bin2d',
@@ -840,29 +987,44 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 12
 
         >>> import numpy as np
-        >>> from lets_plot import *
         >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> delta = 0.5
-        >>> center_x = 6
-        >>> center_y = 6
-        >>> x = np.arange(-5.0, 5.0, delta)
-        >>> y = np.arange(-5.0, 5.0, delta)
+        >>> n = 100
+        >>> a, b = -1, 0
+        >>> x = np.linspace(-3, 3, n)
+        >>> y = np.linspace(-3, 3, n)
         >>> X, Y = np.meshgrid(x, y)
-        >>> mu = np.array([1, 0])
-        >>> sigma = np.diag([1, 4])
-        >>> mu1 = np.array([0, 0])
-        >>> sigma1 = np.diag([4, 1])
-        >>> Z = multivariate_normal.pdf(np.dstack((X, Y)), mean=mu, cov=sigma)
-        >>> Z = Z - multivariate_normal.pdf(np.dstack((X, Y)), mean=mu1, cov=sigma1)
-        >>> x = X.reshape(-1) + center_x
-        >>> y = Y.reshape(-1) + center_y
-        >>> z = Z.reshape(-1)
-        >>> dat = dict(x=x, y=y, z=z)
-        >>> plot = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z'), width=.7, height=.7)
-        >>> plot
+        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y', color='z', fill='z')) + geom_tile()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 17
+
+        >>> import numpy as np
+        >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 25
+        >>> x = np.linspace(-1, 1, n)
+        >>> y = np.linspace(-1, 1, n)
+        >>> X, Y = np.meshgrid(x, y)
+        >>> mean = np.zeros(2)
+        >>> cov =[[1, -.5],
+        >>>       [-.5, 1]]
+        >>> rv = multivariate_normal(mean, cov)
+        >>> Z = rv.pdf(np.dstack((X, Y)))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y')) + \\
+        >>>     geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
+        >>>     scale_fill_gradient(low='yellow', high='darkgreen')
 
     """
     return _geom('tile',
