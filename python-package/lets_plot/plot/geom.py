@@ -84,33 +84,33 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     and one categorical variable, or two categorical variables.
 
     `geom_point()` understands the following aesthetics mappings:
-      - x : x-axis value.
-      - y : y-axis value.
-      - alpha : transparency level of the point. Understands numbers between 0 and 1.
-      - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-      - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-      - shape : shape of the point.
-      - size : size of the point.
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of the point. Understands numbers between 0 and 1.
+        - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+        - shape : shape of the point.
+        - size : size of the point.
 
     Note
     ----
     The conventions for the values of `map_join` parameter are as follows.
 
     When `map` is a `GeoDataFrame`:
-      - map_join='state':
-        same as [['state'], ['state']].
-      - map_join=[['city', 'state']]:
-        same as [['city', 'state'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     If `map` is a `Geocoder`:
-      - map_join='State_Name':
-        same as [['State_Name'], ['state']].
-      - map_join=['City_Name', 'State_Name']:
-        same as [['City_Name', 'State_Name'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     Generated keys follow this order: 'city', 'county', 'state', 'country'.
     Parents that were not provided will be omitted.
@@ -204,23 +204,20 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
-    geom_path connects the observations in the order in which they appear in the data.
-    geom_path lets you explore how two variables are related over time.
-    geom_path understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_path()` connects the observations in the order in which they appear in the data.
+    `geom_path()` lets you explore how two variables are related over time.
+
+    `geom_path()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        - size : line width.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -250,6 +247,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> p += geom_path(aes(color='variable', linetype='variable'), size=1, alpha=0.5)
         >>> p += geom_path(stat='smooth', color='red', linetype='longdash')
         >>> p
+
     """
     if is_geocoder(map):
         raise ValueError("Geocoding doesn't provide geometries supported by geom_path")
@@ -311,23 +309,20 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
-    geom_line connects the observations in the order of the variable on the x axis. geom_line can be used to plot
-    time series.
-    geom_line understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_line()` connects the observations in the order of the variable on the x axis.
+    `geom_line()` can be used to plot time series.
+
+    `geom_line()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        - size : line width.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -355,6 +350,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> p += geom_line(aes(color='variable', linetype='variable'), size=1, alpha=0.5)
         >>> p += geom_line(stat='smooth', color='red', linetype="longdash")
         >>> p
+
     """
     return _geom('line',
                  mapping=mapping,
@@ -438,29 +434,25 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Geom object specification.
 
     Note
-    -----
-    geom_smooth aids the eye in seeing patterns in the presence of overplotting.
-    Computed variables:
-     - y : predicted (smoothed) value
-     - ymin : lower pointwise confidence interval around the mean
-     - ymax : upper pointwise confidence interval around the mean
-     - se : standard error
+    ----
+    `geom_smooth()` aids the eye in seeing patterns in the presence of overplotting.
 
-    geom_smooth understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a layer
-       Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-       Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line of conditional mean line
-       Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-       5 = "longdash", 6 = "twodash"
-     - size : lines width
-       Defines line width for conditional mean and confidence bounds lines.
+    Computed variables:
+      - y : predicted (smoothed) value.
+      - ymin : lower pointwise confidence interval around the mean.
+      - ymax : upper pointwise confidence interval around the mean.
+      - se : standard error.
+
+    `geom_smooth()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        - size : lines width. Defines line width for conditional mean and confidence bounds lines.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -485,6 +477,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> dat = pd.melt(dat)
         >>> dat["t"] = np.tile(t / N, M)
         >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_point(aes(color='variable')) + geom_smooth(color='red')
+
     """
     return _geom('smooth',
                  mapping=mapping,
@@ -550,23 +543,22 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Geom object specification.
 
     Note
-    -----
-    geom_bar makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
-    Is intended to use for discrete data. If used for continuous data with stat='bin' produces histogram for binned
-    data. geom_bar handles no group aesthetics.
-    geom_bar understands the following aesthetics mappings:
-     - x : x-axis value (this values will produce cases or bins for bars)
-     - y : y-axis value (this value will be used to multiply the case's or bin's counts)
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling
-     - size : lines width
-        Defines bar line width
+    ----
+    `geom_bar()` makes the height of the bar proportional to the number
+    of observed variable values, mapped to x axis. Is intended to use for discrete data.
+    If used for continuous data with stat='bin' produces histogram for binned data.
+    `geom_bar()` handles no group aesthetics.
+
+    `geom_bar()` understands the following aesthetics mappings:
+        - x : x-axis value (this values will produce cases or bins for bars).
+        - y : y-axis value (this value will be used to multiply the case's or bin's counts).
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines bar line width.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -584,6 +576,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         >>> dat = pd.DataFrame(X)
         >>> dat = pd.melt(dat)
         >>> ggplot(dat, aes(x='value')) + geom_bar(stat='bin', color='gray', fill='dark_green', size=2)
+
     """
     return _geom('bar',
                  mapping=mapping,
@@ -655,23 +648,21 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Geom object specification.
 
     Note
-    -----
-    geom_histogram displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number
-    of observations in each bin.
-    geom_histogram understands the following aesthetics mappings:
-     - x : x-axis value (this values will produce cases or bins for bars)
-     - y : y-axis value, default: "..count..".
-        Alternatively: '..density..'
-     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling
-     - size : lines width
+    ----
+    `geom_histogram()` displays a 1d distribution by dividing variable
+    mapped to x axis into bins and counting the number of observations in each bin.
+
+    `geom_histogram()` understands the following aesthetics mappings:
+        - x : x-axis value (this values will produce cases or bins for bars).
+        - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -682,6 +673,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         >>>     x = np.random.normal(0, 1, 100)
         >>> )
         >>> ggplot(data) + geom_histogram(aes(x='x'), color='black', fill='gray', size=1)
+
     """
     return _geom('histogram',
                  mapping=mapping,
@@ -748,23 +740,21 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Geom object specification.
 
     Note
-    -----
-    geom_bin2d applies rectangular grid to the plane then counts observation in each cell of the grid (bin).
-    Uses geom_tile to display counts as a tile fill-color.
-    geom_histogram understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
-     - alpha : number in [0..1]
-        Transparency level of a layer
-     - color : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling, default: "..count..".
-        Alternatively: '..density..'
-     - size : lines width
+    ----
+    `geom_bin2d()` applies rectangular grid to the plane then counts observation
+    in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
+
+    `geom_bin2d()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling, default: '..count..'. Alternatively: '..density..'.
+        - size : lines width.
+        - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -780,6 +770,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>>     y = y
         >>> )
         >>> ggplot(data) + geom_bin2d(aes(x='x', y='y'), binwidth=[0.5,0.5])
+
     """
     return _geom('bin2d',
                  mapping=mapping,
@@ -834,22 +825,20 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
+    ----
     Understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles.
-     - y : y-axis coordinates of the center of rectangles.
-     - width : width of a tile.
-     - height : height of a tile.
-     - alpha : transparency level of a layer
-     - color (colour) : color of a geometry lines
-     - fill : color of geometry filling
-     - size : lines width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+        - x : x-axis coordinates of the center of rectangles.
+        - y : y-axis coordinates of the center of rectangles.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - width : width of a tile.
+        - height : height of a tile.
+        - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -874,6 +863,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> dat = dict(x=x, y=y, z=z)
         >>> plot = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z'), width=.7, height=.7)
         >>> plot
+
     """
     return _geom('tile',
                  mapping=mapping,
@@ -927,15 +917,15 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         Geom object specification.
 
     Note
-    -----
+    ----
     Understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles.
-     - y : y-axis coordinates of the center of rectangles.
-     - alpha : transparency level of a layer
-     - fill : color of geometry filling
+        - x : x-axis coordinates of the center of rectangles.
+        - y : y-axis coordinates of the center of rectangles.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - fill : color of geometry filling.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -960,6 +950,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> dat = dict(x=x, y=y, z=z)
         >>> plot = ggplot(dat, aes('x', 'y')) +  geom_raster(aes(fill='z'))
         >>> plot
+
     """
     return _geom('raster',
                  mapping=mapping,
@@ -1016,25 +1007,21 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Geom object specification.
 
     Note
-    -----
-    geom_errorbar represents a vertical interval, defined by x, ymin, ymax.
-    geom_errorbar understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - ymin : lower bound for error bar.
-     - ymax : upper bound for error bar.
-     - width : width of a bar.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+
+    `geom_errorbar()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : lower bound for error bar.
+        - ymax : upper bound for error bar.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines bar line width.
+        - width : width of a bar.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1053,6 +1040,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> x = np.arange(0, N, 1)
         >>> dat = dict(x=x, ymin=ymin, ymax=ymax)
         >>> ggplot(dat, aes(x='x')) + geom_errorbar(aes(ymin='ymin', ymax='ymax'))
+
     """
     return _geom('errorbar',
                  mapping=mapping,
@@ -1112,26 +1100,24 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Geom object specification.
 
     Note
-    -----
-    geom_crossbar represents a vertical interval, defined by x, ymin, ymax. The mean is represented by horizontal line.
-    geom_crossbar understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - ymin : lower bound for error bar.
-     - ymax : upper bound for error bar.
-     - middle : position of median bar.
-     - width : width of a bar.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling.
-     - size : lines width.
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    The mean is represented by horizontal line.
+
+    `geom_crossbar()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : lower bound for error bar.
+        - middle : position of median bar.
+        - ymax : upper bound for error bar.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - width : width of a bar.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -1147,6 +1133,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> p = ggplot(data, aes(x='dose', color='supp'))
         >>> p += geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
         >>> p
+
     """
     return _geom('crossbar',
                  mapping=mapping,
@@ -1208,26 +1195,24 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Geom object specification.
 
     Note
-    -----
-    geom_pointrange represents a vertical interval, defined by x, ymin, ymax. The mid-point is defined by y.
-    geom_pointrange understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - y : position of mid-point.
-     - ymin : lower bound for error bar.
-     - ymax : upper bound for error bar.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines.
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling.
-     - size : lines width, size of mid-point.
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - shape : shape of the mid-point
+    ----
+    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    The mid-point is defined by `y`.
+
+    `geom_pointrange()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - y : position of mid-point.
+        - ymin : lower bound for error bar.
+        - ymax : upper bound for error bar.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width, size of mid-point.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - shape : shape of the mid-point.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -1243,6 +1228,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         >>> p = ggplot(data, aes(x='dose', color='supp'))
         >>> p += geom_pointrange(aes(ymin='len_min', ymax='len_max', y='length'), fatten=5)
         >>> p
+
     """
     return _geom('pointrange',
                  mapping=mapping,
@@ -1300,23 +1286,20 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         Geom object specification.
 
     Note
-    -----
-    geom_linerange represents a vertical interval, defined by x, ymin, ymax.
-    geom_linerange understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - ymin : lower bound for line range.
-     - ymax : upper bound for line range.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-     - linetype : type of the line of tile's border
-         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-         5 = "longdash", 6 = "twodash"
+    ----
+    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+
+    `geom_linerange()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : lower bound for line range.
+        - ymax : upper bound for line range.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -1332,6 +1315,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         >>> p = ggplot(data, aes(x='dose', color='supp'))
         >>> p += geom_linerange(aes(ymin='len_min', ymax='len_max'))
         >>> p
+
     """
     return _geom('linerange',
                  mapping=mapping,
@@ -1389,25 +1373,22 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Geom object specification.
 
     Note
-    -----
-    geom_contour() displays contours of a 3d surface in 2d.
-        Computed variables:
-            level : height of a contour
-    geom_contour understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
-     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_contour()` displays contours of a 3d surface in 2d.
+
+    Computed variables:
+        - level : height of a contour.
+
+    `geom_contour()` understands the following aesthetics mappings:
+        - x : x-axis coordinates of the center of rectangles, forming a tessellation.
+        - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1433,6 +1414,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> dat = dict(x=x, y=y, z=z)
         >>> p = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z')) + geom_contour(aes(z='z', color='..level..')) + scale_color_gradient(low='dark_green', high='yellow')
         >>> p
+
     """
     return _geom('contour',
                  mapping=mapping,
@@ -1491,20 +1473,20 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Geom object specification.
 
     Note
-    -----
-    geom_contourf() fills contours of a 3d surface in 2d.
+    ----
+    `geom_contourf()` fills contours of a 3d surface in 2d.
+
     Computed variables:
-        level : height of a contour
-    geom_contour understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
-     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - fill : color of a geometry areas
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - level : height of a contour.
+
+    `geom_contourf()` understands the following aesthetics mappings:
+        - x : x-axis coordinates of the center of rectangles, forming a tessellation.
+        - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - fill : color of a geometry areas. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1530,6 +1512,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> dat = dict(x=x, y=y, z=z)
         >>> p = ggplot(dat, aes('x', 'y', z='z')) + geom_contourf(aes(fill='..level..'))
         >>> p
+
     """
     return _geom('contourf',
                  mapping=mapping,
@@ -1592,48 +1575,44 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Geom object specification.
 
     Note
-    -----
-    geom_polygon draws polygons, which are filled paths. Each vertex of the polygon requires a separate row in the
-    data.
-    geom_polygon understands the following aesthetics mappings:
-     - x : x-axis coordinates of the vertices of the polygon.
-     - y : y-axis coordinates of the vertices of the polygon.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_polygon()` draws polygons, which are filled paths.
+    Each vertex of the polygon requires a separate row in the data.
+
+    `geom_polygon()` understands the following aesthetics mappings:
+        - x : x-axis coordinates of the vertices of the polygon.
+        - y : y-axis coordinates of the vertices of the polygon.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Note
     ----
     The conventions for the values of `map_join` parameter are as follows.
 
     When `map` is a `GeoDataFrame`:
-      - map_join='state':
-        same as [['state'], ['state']].
-      - map_join=[['city', 'state']]:
-        same as [['city', 'state'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     If `map` is a `Geocoder`:
-      - map_join='State_Name':
-        same as [['State_Name'], ['state']].
-      - map_join=['City_Name', 'State_Name']:
-        same as [['City_Name', 'State_Name'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     Generated keys follow this order: 'city', 'county', 'state', 'country'.
     Parents that were not provided will be omitted.
     Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1647,6 +1626,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> val3 = [v for v in val for _ in range(3)]
         >>> dat = dict(id=id3, val=val3, x=x, y=y)
         >>> ggplot(dat, aes('x', 'y')) + geom_polygon(aes(fill='id'), alpha=0.5)
+
     """
 
     if is_geocoder(map):
@@ -1718,42 +1698,37 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Geom object specification.
 
     Note
-    -----
-    geom_map draws polygons which boundaries are specified by 'map' parameter.
-    Aesthetics of ploygons (fill etc.) are computed basing on input data and mapping
-    (see 'data' and 'mapping' arguments).
-    geom_map understands the following aesthetics:
-    - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-    - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill  : color of a geometry internals
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width
-        Defines bar line width
-    - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_map()` draws polygons which boundaries are specified by `map` parameter.
+    Aesthetics of ploygons (`fill` etc.) are computed basing on input data and mapping
+    (see `data` and `mapping` arguments).
+
+    `geom_map()` understands the following aesthetics:
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Note
     ----
     The conventions for the values of `map_join` parameter are as follows.
 
     When `map` is a `GeoDataFrame`:
-      - map_join='state':
-        same as [['state'], ['state']].
-      - map_join=[['city', 'state']]:
-        same as [['city', 'state'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     If `map` is a `Geocoder`:
-      - map_join='State_Name':
-        same as [['State_Name'], ['state']].
-      - map_join=['City_Name', 'State_Name']:
-        same as [['City_Name', 'State_Name'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     Generated keys follow this order: 'city', 'county', 'state', 'country'.
     Parents that were not provided will be omitted.
@@ -1774,6 +1749,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         >>> df = pd.DataFrame(regions, columns=['state'])
         >>> df['value'] = np.random.rand(num_of_regions)
         >>> ggplot(df) + ggtitle('Randomly colored states') + geom_map(aes(fill='value'), map=boundaries, map_join=('state', 'found name'), color='white')
+
     """
 
     if is_geocoder(map):
@@ -1837,19 +1813,14 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         Geom object specification.
 
     Note
-    -----
-    geom_abline understands the following aesthetics mappings:
-     - slope : line slope
-     - intercept : line y-intercept
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_abline()` understands the following aesthetics mappings:
+        - slope : line slope.
+        - intercept : line y-intercept.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -1858,6 +1829,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3)
+
     """
     return _geom('abline',
                  mapping=mapping,
@@ -1914,18 +1886,13 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Geom object specification.
 
     Note
-    -----
-    geom_hline understands the following aesthetics mappings:
-     - yintercept : line y-intercept
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_hline()` understands the following aesthetics mappings:
+        - yintercept : line y-intercept.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -1934,6 +1901,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_hline(yintercept=0.2, color='dark_blue', linetype='longdash', size=2)
+
     """
     return _geom('hline',
                  mapping=mapping,
@@ -1989,18 +1957,13 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Geom object specification.
 
     Note
-    -----
-    geom_hline understands the following aesthetics mappings:
-     - xintercept : line x-intercept
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_hline()` understands the following aesthetics mappings:
+        - xintercept : line x-intercept.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -2009,6 +1972,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_vline(xintercept=0.2, color='dark_green', linetype='dotdash', size=2)
+
     """
     return _geom('vline',
                  mapping=mapping,
@@ -2080,22 +2044,19 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Geom object specification.
 
     Note
-    -----
-    geom_boxplot understands the following aesthetics mappings:
-     - lower : lower hinge, 25% quantile
-     - middle : median, 50% quantile
-     - upper : upper hinge, 75% quantile
-     - ymin : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR
-     - ymax : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR
-     - width : width of boxplot [0..1]
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-     - fill : color of geometry filling
-     - size : lines width
-     - linetype : type of the line of border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_boxplot()` understands the following aesthetics mappings:
+        - lower : lower hinge, 25% quantile.
+        - middle : median, 50% quantile.
+        - upper : upper hinge, 75% quantile.
+        - ymin : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR.
+        - ymax : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - width : width of boxplot [0..1].
 
     Examples
     --------
@@ -2113,6 +2074,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> p = ggplot(data, aes(x='cond', y='rating')) + ggsize(300, 200)
         >>> p += geom_boxplot(outlier_color='red', outlier_shape=8, outlier_size=5)
         >>> p
+
     """
     return _geom('boxplot',
                  mapping=mapping,
@@ -2170,25 +2132,21 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         Geom object specification.
 
     Note
-    -----
-    geom_ribbon draws a ribbon bounded by ymin and ymax.
-    geom_ribbon understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - ymin : y-axis coordinates of the lower bound.
-     - ymax : y-axis coordinates of the upper bound.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
+    ----
+    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`.
+
+    `geom_ribbon()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : y-axis coordinates of the lower bound.
+        - ymax : y-axis coordinates of the upper bound.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2201,6 +2159,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> ymax = [0, 1, 1, 4, 5, 5]
         >>> dat = dict(id=id, x=x, ymin=ymin, ymax=ymax)
         >>> ggplot(dat) + geom_ribbon(aes(x='x', ymin='ymin', ymax='ymax', group='id', fill='id'), color='black', alpha=0.5)
+
     """
     return _geom('ribbon',
                  mapping=mapping,
@@ -2258,24 +2217,20 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
-    geom_area draws an area bounded by the data and x axis.
-    geom_area understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - y : y-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
+    ----
+    `geom_area()` draws an area bounded by the data and x axis.
+
+    `geom_area()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - y : y-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -2285,6 +2240,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> g = [1,1,1,2,2,2]
         >>> dat = dict(x=x, y=y, g=g)
         >>> ggplot(dat,aes('x','y', group='g')) + geom_area(aes(fill='g', color='g'), alpha=.2) + scale_fill_discrete() + scale_color_discrete()
+
     """
     return _geom('area',
                  mapping=mapping,
@@ -2360,28 +2316,23 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Geom object specification.
 
     Note
-    -----
-    geom_density understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
-     - weight : used by "density" stat to compute weighted density.
-
+    ----
     Density stat computes variables:
-     - ..density.. : density estimate (mapped by default)
-     - ..count.. : density * number of points
-     - ..scaled.. : density estimate, scaled to maximum of 1
+        - ..density.. : density estimate (mapped by default).
+        - ..count.. : density * number of points.
+        - ..scaled.. : density estimate, scaled to maximum of 1.
+
+    `geom_density()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - weight : used by 'density' stat to compute weighted density.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2390,6 +2341,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> x = np.random.normal(0,1,1000)
         >>> dat = dict(x=x)
         >>> ggplot(dat,aes('x')) + geom_density()
+
     """
     return _geom('density',
                  mapping=mapping,
@@ -2464,22 +2416,18 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Geom object specification.
 
     Note
-    -----
-    geom_density2d draws density function.
-    geom_density understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_density2d()` draws density function.
+
+    `geom_density2d()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2489,6 +2437,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         >>> y = np.random.normal(0,1,1000)
         >>> dat = dict(x=x, y=y)
         >>> ggplot(dat,aes('x', 'y')) + geom_density2d()
+
     """
     return _geom('density2d',
                  mapping=mapping,
@@ -2564,16 +2513,16 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Geom object specification.
 
     Note
-    -----
-    geom_density2df fills density contours.
-    geom_density understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - fill : color of geometry filling
+    ----
+    `geom_density2df()` fills density contours.
+
+    `geom_density2df()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - fill : color of geometry filling.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2583,6 +2532,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         >>> y = np.random.normal(0,1,1000)
         >>> dat = dict(x=x, y=y)
         >>> ggplot(dat,aes('x', 'y')) + geom_density2df(aes(fill='..level..'))
+
     """
     return _geom('density2df',
                  mapping=mapping,
@@ -2650,20 +2600,18 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Geom object specification.
 
     Note
-    -----
-    The jitter geometry is used to create jittered points. The scatterplot is useful for displaying the relationship
-    between two discrete variables.
-    geom_jitter understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color to paint shape's inner points
-        Is applied only to the points of shapes having inner points.
-     - shape : shape of the point
-     - size : size of the point
+    ----
+    The jitter geometry is used to create jittered points.
+    The scatterplot is useful for displaying the relationship between two discrete variables.
+
+    `geom_jitter()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a point. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+        - shape : shape of the point.
+        - size : size of the point.
 
     Examples
     --------
@@ -2678,6 +2626,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> dat = pd.DataFrame({'x': x, 'y': y})
         >>> p = ggplot(dat) + geom_jitter(aes(x='x', y='y', color='x'), height=0)
         >>> p
+
     """
     return _geom('jitter',
                  mapping=mapping,
@@ -2735,22 +2684,19 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         Geom object specification.
 
     Note
-    -----
-    geom_freqpoly connects the top points in geom_bar.
-    geom_freqpoly understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_freqpoly()` connects the top points in `geom_bar()`.
+
+    `geom_freqpoly()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2768,6 +2714,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> dat = pd.DataFrame(X)
         >>> dat = pd.melt(dat)
         >>> ggplot(dat, aes(x='value')) + geom_freqpoly(size=2)
+
     """
     return _geom('freqpoly',
                  mapping=mapping,
@@ -2828,22 +2775,19 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
-    geom_step draws steps between the observations in the order of X.
-    geom_step understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_step()` draws steps between the observations in the order of X.
+
+    `geom_step()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2868,6 +2812,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> dat = pd.DataFrame(dat)
         >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
         >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_step(aes(color='variable'), size=1, alpha=0.7)
+
     """
     return _geom('step',
                  mapping=mapping,
@@ -2929,50 +2874,46 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
-    geom_rect draws rectangles.
-    geom_rect understands the following aesthetics mappings:
-     - xmin : x-axis value
-     - xmax : x-axis value
-     - ymin : y-axis value
-     - ymax : y-axis value
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
+    ----
+    `geom_rect()` draws rectangles.
+
+    `geom_rect()` understands the following aesthetics mappings:
+        - xmin : x-axis value.
+        - xmax : x-axis value.
+        - ymin : y-axis value.
+        - ymax : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Note
     ----
     The conventions for the values of `map_join` parameter are as follows.
 
     When `map` is a `GeoDataFrame`:
-      - map_join='state':
-        same as [['state'], ['state']].
-      - map_join=[['city', 'state']]:
-        same as [['city', 'state'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     If `map` is a `Geocoder`:
-      - map_join='State_Name':
-        same as [['State_Name'], ['state']].
-      - map_join=['City_Name', 'State_Name']:
-        same as [['City_Name', 'State_Name'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     Generated keys follow this order: 'city', 'county', 'state', 'country'.
     Parents that were not provided will be omitted.
     Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -3043,29 +2984,27 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Geom object specification.
 
     Note
-    -----
-    geom_segment draws segments.
-    geom_segment understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - xend : x-axis value
-     - yend : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_segment()` draws segments.
+
+    `geom_segment()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - xend : x-axis value.
+        - yend : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]))
+
     """
     return _geom('segment',
                  mapping=mapping,
@@ -3142,58 +3081,54 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Geom object specification.
 
     Note
-    -----
+    ----
     Adds text directly to the plot.
-    geom_text understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - label : text to add to plot
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : font size
-     - family : ['sans' | 'serif' | 'mono' | any other like: "Times New Roman"]
-        Font family. The default is 'sans'
-     - fontface : ['plain' | 'bold' | 'italic' | 'bold italic']
-        Font style and weight . The default is 'plain'
-     - hjust : ['left', 'middle', 'right'] or number between 0 ('right') and 1 ('left')
-        Horizontal text alignment
-     - vjust : ['bottom', 'center', 'top'] or number between 0 ('bottom') and 1 ('top')
-        Vertical text alignment
-     - angle : Text rotation angle in degrees
+
+    `geom_text()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : font size.
+        - label : text to add to plot.
+        - family : tont family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
+        - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
+        - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('right') and 1 ('left').
+        - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
+        - angle : text rotation angle in degrees.
 
     Note
     ----
     The conventions for the values of `map_join` parameter are as follows.
 
     When `map` is a `GeoDataFrame`:
-      - map_join='state':
-        same as [['state'], ['state']].
-      - map_join=[['city', 'state']]:
-        same as [['city', 'state'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     If `map` is a `Geocoder`:
-      - map_join='State_Name':
-        same as [['State_Name'], ['state']].
-      - map_join=['City_Name', 'State_Name']:
-        same as [['City_Name', 'State_Name'], ['city', 'state']].
-      - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-        explicitly set keys for both data and map.
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
 
     Generated keys follow this order: 'city', 'county', 'state', 'country'.
     Parents that were not provided will be omitted.
     Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
+
     """
 
     if is_geocoder(map):
