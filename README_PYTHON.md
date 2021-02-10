@@ -125,6 +125,10 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <a href="https://colab.research.google.com/drive/1uYYZcG0g0kP4lJdPkpWB8aBS96ioDii2?usp=sharing" title="View at Colab"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
 </a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://deepnote.com/project/673ea421-638e-469d-8d04-5cc4c6e0258f#%2Fnotebook.ipynb" title="View at Deepnote"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_deepnote.svg" width="20" height="20">
+</a>
 <br>
 <br>
 
