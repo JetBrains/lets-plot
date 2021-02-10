@@ -200,7 +200,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -268,7 +269,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
               **other_args):
     """
     Connect points in the order of the variable on the x axis.
-    In case points need to be connected in the order in which they appear in the data, use 'geom_path'.
+    In case points need to be connected in the order in which they appear in the data,
+    use `geom_path()`.
 
     Parameters
     ----------
@@ -305,7 +307,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -431,7 +434,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -504,7 +508,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              **other_args):
     """
-    Display a bar chart which makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
+    Display a bar chart which makes the height of the bar proportional to the
+    number of observed variable values, mapped to x axis.
 
     Parameters
     ----------
@@ -541,7 +546,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -597,8 +603,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    boundary=None,
                    **other_args):
     """
-    Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
-    in each bin.
+    Displays a 1d distribution by dividing variable mapped to x axis into bins
+    and counting the number of observations in each bin.
 
     Parameters
     ----------
@@ -645,7 +651,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -697,8 +704,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                drop=None,
                **other_args):
     """
-    Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
-    in each bin.
+    Displays a 1d distribution by dividing variable mapped to x axis into bins
+    and counting the number of observations in each bin.
 
     Parameters
     ----------
@@ -737,7 +744,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -822,7 +830,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -882,7 +891,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     """
     Display rectangles with x, y values mapped to the center of the tile.
     This is a high performance special function for same-sized tiles.
-    Much faster than geom_tile but doesn't support width/height and color.
+    Much faster than `geom_tile()` but doesn't support width/height and color.
 
     Parameters
     ----------
@@ -914,7 +923,8 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1002,7 +1012,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1097,7 +1108,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1192,7 +1204,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1283,7 +1296,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1371,7 +1385,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1472,7 +1487,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1572,7 +1588,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1697,7 +1714,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1815,7 +1833,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1891,7 +1910,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -1965,7 +1985,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2007,8 +2028,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  varwidth=None,
                  **other_args):
     """
-    Display the distribution of data based on a five number summary ("minimum", first quartile (Q1), median, 
-    third quartile (Q3), and "maximum"), and "outlying" points individually.
+    Display the distribution of data based on a five number summary
+    ("minimum", first quartile (Q1), median, third quartile (Q3), and "maximum"),
+    and "outlying" points individually.
 
     Parameters
     ----------
@@ -2054,7 +2076,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2111,7 +2134,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 **other_args):
     """
-    Display a y interval defined by ymin and ymax.
+    Display a y interval defined by `ymin` and `ymax`.
 
     Parameters
     ----------
@@ -2143,7 +2166,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2192,7 +2216,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               **other_args):
     """
-    Display the development of quantitative values over an interval. This is the continuous analog of geom_bar.
+    Display the development of quantitative values over an interval.
+    This is the continuous analog of geom_bar.
 
     Parameters
     ----------
@@ -2229,7 +2254,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2330,7 +2356,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2433,7 +2460,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2508,7 +2536,6 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     tooltips : `layer_tooltips`, optional
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -2533,7 +2560,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2618,7 +2646,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2664,7 +2693,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   **other_args):
     """
-    Display a line chart which makes the y value proportional to the number of observed variable values, mapped to x axis.
+    Display a line chart which makes the y value proportional to the number
+    of observed variable values, mapped to x axis.
 
     Parameters
     ----------
@@ -2701,7 +2731,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2793,7 +2824,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -2893,7 +2925,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -3006,7 +3039,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
@@ -3104,7 +3138,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
     -----
