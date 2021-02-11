@@ -32,92 +32,136 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Point` and `MultiPoint`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer.
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
+    map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`), optional
         Data containing coordinates of points.
-    map_join : [str | pair]
+    map_join : str or list, optional
         Keys used to join map coordinates with data.
-        first value in pair - column/columns in data
-        second value in pair - column/columns in map
-
-        When map is a GeoDataFrame:
-            map_join='state':
-                same as [['state'], ['state']]
-            map_join=[['city', 'state']]:
-                same as [['city', 'state'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-
-        If map is a Geocoder:
-            map_join='State_Name':
-                same as [['State_Name'], ['state']]
-            map_join=['City_Name', 'State_Name']:
-                same as [['City_Name', 'State_Name'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
-            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
-
-    other_args :
-        Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+        If the parameter type is list then it should be a pair of values,
+        either of str type or a list of strings.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    The point geometry is used to create scatterplots. The scatterplot is useful for displaying the relationship
-    between two continuous variables, although it can also be used with one continuous and one categorical variable,
-    or two categorical variables.
-    geom_point understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of the point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of the geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color to paint shape's inner points
-        Is applied only to the points of shapes having inner points.
-     - shape : shape of the point
-     - size : size of the point
+    ----
+    The point geometry is used to create scatterplots.
+    The scatterplot is useful for displaying the relationship between
+    two continuous variables, although it can also be used with one continuous
+    and one categorical variable, or two categorical variables.
+
+    `geom_point()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of the point. Understands numbers between 0 and 1.
+        - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+        - shape : shape of the point.
+        - size : size of the point.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    When `map` is a `GeoDataFrame`:
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    If `map` is a `Geocoder`:
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    Generated keys follow this order: 'city', 'county', 'state', 'country'.
+    Parents that were not provided will be omitted.
+    Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = np.random.uniform(-1, 1, size=100)
-        >>> y = np.random.normal(size=100)
-        >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-        >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-        >>> p = ggplot(dat) + geom_point(aes(x='x', y='y', color='y', shape='class', fill='x', size='y'))
-        >>> p += geom_point(aes(x='x', y='y'), shape=21, color='gray', fill='light_blue', size=5, alpha=0.5, stat='smooth')
-        >>> p += theme(legend_direction='horizontal') + ggsize(650, 350)
-        >>> p
+        >>> x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
+        >>> y = np.sin(x)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 100
+        >>> x = np.random.uniform(-1, 1, size=n)
+        >>> y = 25 * x ** 2 + np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}) + \\
+        >>>     geom_point(aes(x='x', y='y', fill='y'), \\
+        >>>                shape=21, size=5, color='white')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 8-11
+
+        >>> from lets_plot import *
+        >>> from lets_plot.geo_data import *
+        >>> LetsPlot.setup_html()
+        >>> data = {'city': ['New York', 'Los Angeles', 'Chicago'], \\
+        >>>         'pop_2020': [18_804_000, 12_447_000, 8_865_000]}
+        >>> centroids = geocode_cities(data['city']).get_centroids()
+        >>> ggplot() + geom_livemap() + \\
+        >>>     geom_point(aes(size='pop_2020'), \\
+        >>>                data=data, map=centroids, map_join='city', \\
+        >>>                tooltips=layer_tooltips().line('@city')
+        >>>                                         .line('population|@pop_2020')) + \\
+        >>>     ggsize(600, 450)
+
     """
 
     if is_geocoder(map):
@@ -144,89 +188,96 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes LineString and MultiLineString)
+    map : `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`), optional
         Data containing coordinates of lines.
-    map_join : str, pair
+    map_join : str or list, optional
         Pair of names used to join map coordinates with data.
-        str is allowed only when used with Geocoder object - map key 'request' will be automatically added.
-        first value in pair - column in data
-        second value in pair - column in map
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+        str is allowed only when used with `Geocoder` object -
+        map key 'request' will be automatically added.
+        First value in pair - column in `data`.
+        Second value in pair - column in `map`.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_path connects the observations in the order in which they appear in the data.
-    geom_path lets you explore how two variables are related over time.
-    geom_path understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_path()` connects the observations in the order in which they appear in the data.
+    `geom_path()` lets you explore how two variables are related over time.
+
+    `geom_path()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        - size : line width.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 8
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> T = 100
+        >>> x = np.cumsum(np.random.normal(size=T))
+        >>> y = np.cumsum(np.random.normal(size=T))
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_path()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-13
 
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> T = 1
-        >>> N = 1000
-        >>> t = np.linspace(0, T, N)
-        >>> dt = T / N
-        >>> # brownian motions
-        >>> W1 = np.random.standard_normal(size=N)
-        >>> Wt1 = np.cumsum(W1) * np.sqrt(dt)
-        >>> W2 = np.random.standard_normal(size=N)
-        >>> Wt2 = np.cumsum(W2) * np.sqrt(dt)
-        >>> dat = {}
-        >>> dat['W1'] = Wt1
-        >>> dat['W2'] = Wt2
-        >>> dat['t'] = t
-        >>> # plot brownian motion path
-        >>> ggplot(dat) + geom_path(aes(x='W1', y='W2'))
-        >>> # transform data via melt function
-        >>> # to produce two trajectories
-        >>> dat = pd.DataFrame(dat)
-        >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
-        >>> p = ggplot(dat, aes(x='t', y='value', group='variable'))
-        >>> p += geom_path(aes(color='variable', linetype='variable'), size=1, alpha=0.5)
-        >>> p += geom_path(stat='smooth', color='red', linetype='longdash')
-        >>> p
+        >>> np.random.seed(42)
+        >>> t = np.arange(100)
+        >>> x1 = np.cumsum(np.random.normal(size=t.size))
+        >>> x2 = np.cumsum(np.random.normal(size=t.size))
+        >>> df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
+        >>> df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
+        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
+        >>>     geom_path(aes(color='variable'), size=1, alpha=0.5) + \\
+        >>>     geom_path(stat='smooth', color='red', linetype='longdash')
+
     """
     if is_geocoder(map):
         raise ValueError("Geocoding doesn't provide geometries supported by geom_path")
@@ -246,84 +297,91 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
               **other_args):
     """
     Connect points in the order of the variable on the x axis.
-    In case points need to be connected in the order in which they appear in the data, use 'geom_path'.
+    In case points need to be connected in the order in which they appear in the data,
+    use `geom_path()`.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-    geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_line connects the observations in the order of the variable on the x axis. geom_line can be used to plot
-    time series.
-    geom_line understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_line()` connects the observations in the order of the variable on the x axis.
+    `geom_line()` can be used to plot time series.
+
+    `geom_line()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        - size : line width.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 6
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> x = np.linspace(-4 * np.pi, 4 * np.pi, 100)
+        >>> y = np.sin(x)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_line()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-13
 
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> T = 1
-        >>> N = 1000
-        >>> t = np.linspace(0, T, N)
-        >>> dt = T / N
-        >>> # brownian motions
-        >>> W1 = np.random.standard_normal(size=N)
-        >>> Wt1 = np.cumsum(W1) * np.sqrt(dt)
-        >>> W2 = np.random.standard_normal(size=N)
-        >>> Wt2 = np.cumsum(W2) * np.sqrt(dt)
-        >>> dat = {}
-        >>> dat['W1'] = Wt1
-        >>> dat['W2'] = Wt2
-        >>> dat['t'] = t
-        >>> # transform data via melt function
-        >>> # to produce two trajectories
-        >>> dat = pd.DataFrame(dat)
-        >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
-        >>> p = ggplot(dat, aes(x='t', y='value', group='variable'))
-        >>> p += geom_line(aes(color='variable', linetype='variable'), size=1, alpha=0.5)
-        >>> p += geom_line(stat='smooth', color='red', linetype="longdash")
-        >>> p
+        >>> np.random.seed(42)
+        >>> t = np.arange(100)
+        >>> x1 = np.cumsum(np.random.normal(size=t.size))
+        >>> x2 = np.cumsum(np.random.normal(size=t.size))
+        >>> df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
+        >>> df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
+        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
+        >>>     geom_line(aes(color='variable'), size=1, alpha=0.5) + \\
+        >>>     geom_line(stat='smooth', color='red', linetype='longdash')
+
     """
     return _geom('line',
                  mapping=mapping,
@@ -351,95 +409,130 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='smooth'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    method :  smoothing method: lm (Linear Model) or loess (Locally Estimated Scatterplot Smoothing). Default - 'lm'
-    n : number of points to evaluate smoother at.
-    se : boolean, to display confidence interval around smooth. Default - True
-    level : level of confidence interval to use. Default - 0.95
-    span : number
-       Only for LOESS method. The fraction of source points closest to the current point
-       is taken into account for computing a least-squares regression. A sensible value is usually 0.25 to 0.5.
-       Default - 0.5
-    deg : degree of polynomial for linear regression model. Default - 1
-    seed : random seed for LOESS sampling.
-    max_n : maximum number of data-points for LOESS method. If this quantity exceeded random sampling
-        is applied to data. Default - 1000
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    method : str, default='lm'
+        Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
+    n : int, optional
+        Number of points to evaluate smoother at.
+    se : bool, default=True
+        Display confidence interval around smooth.
+    level : float, default=0.95
+        Level of confidence interval to use.
+    span : float, default=0.5
+        Only for 'loess' method. The fraction of source points closest
+        to the current point is taken into account for computing a least-squares regression.
+        A sensible value is usually 0.25 to 0.5.
+    deg : int, default=1
+        Degree of polynomial for linear regression model.
+    seed : int, optional
+        Random seed for 'loess' sampling.
+    max_n : int, default=1000
+        Maximum number of data-points for 'loess' method.
+        If this quantity exceeded random sampling is applied to data.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_smooth aids the eye in seeing patterns in the presence of overplotting.
-    Computed variables:
-     - y : predicted (smoothed) value
-     - ymin : lower pointwise confidence interval around the mean
-     - ymax : upper pointwise confidence interval around the mean
-     - se : standard error
+    ----
+    `geom_smooth()` aids the eye in seeing patterns in the presence of overplotting.
 
-    geom_smooth understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a layer
-       Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-       Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line of conditional mean line
-       Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-       5 = "longdash", 6 = "twodash"
-     - size : lines width
-       Defines line width for conditional mean and confidence bounds lines.
+    Computed variables:
+      - y : predicted (smoothed) value.
+      - ymin : lower pointwise confidence interval around the mean.
+      - ymax : upper pointwise confidence interval around the mean.
+      - se : standard error.
+
+    `geom_smooth()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        - size : lines width. Defines line width for conditional mean and confidence bounds lines.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 50
+        >>> x = np.arange(n)
+        >>> y = x + np.random.normal(scale=10, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_point() + geom_smooth()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 100
+        >>> x = np.linspace(-2, 2, n)
+        >>> y = x ** 2 + np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_point() + geom_smooth(color='red', deg=2, se=False)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 14-15
 
         >>> import numpy as np
         >>> import pandas as pd
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> N = 100
-        >>> t = np.linspace(1, N, N)
-        >>> a = 1
-        >>> b = 0
-        >>> M = 2
-        >>> A = np.random.standard_normal(M) / N + a
-        >>> B = np.random.standard_normal(M) / N + b
-        >>> mean = np.zeros(M)
-        >>> cov = np.eye(M)
-        >>> Z = multivariate_normal.rvs(mean, cov, N)
-        >>> X = np.outer(B, t / N)
-        >>> X = X + Z.T
-        >>> X = X + (np.full((N, M), 1) * A).T
-        >>> dat = pd.DataFrame(X.T)
-        >>> dat = pd.melt(dat)
-        >>> dat["t"] = np.tile(t / N, M)
-        >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_point(aes(color='variable')) + geom_smooth(color='red')
+        >>> np.random.seed(42)
+        >>> t = np.linspace(0, 1, 100)
+        >>> mean = 1 + np.zeros(2)
+        >>> cov = np.eye(2)
+        >>> x, y = np.random.multivariate_normal(mean, cov, t.size).T
+        >>> df = pd.DataFrame({'t': t, 'x': x, 'y': y})
+        >>> df = df.melt(id_vars=['t'], value_vars=['x', 'y'])
+        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
+        >>>     geom_point(aes(color='variable'), size=3, alpha=.5) + \\
+        >>>     geom_smooth(aes(color='variable'), size=1, \\
+        >>>                 method='loess', span=.3, level=.7, seed=42)
+
     """
     return _geom('smooth',
                  mapping=mapping,
@@ -463,74 +556,109 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              **other_args):
     """
-    Display a bar chart which makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
+    Display a bar chart which makes the height of the bar proportional to the
+    number of observed variable values, mapped to x axis.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='count'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_bar makes the height of the bar proportional to the number of observed variable values, mapped to x axis.
-    Is intended to use for discrete data. If used for continuous data with stat='bin' produces histogram for binned
-    data. geom_bar handles no group aesthetics.
-    geom_bar understands the following aesthetics mappings:
-     - x : x-axis value (this values will produce cases or bins for bars)
-     - y : y-axis value (this value will be used to multiply the case's or bin's counts)
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling
-     - size : lines width
-        Defines bar line width
+    ----
+    `geom_bar()` makes the height of the bar proportional to the number
+    of observed variable values, mapped to x axis. Is intended to use for discrete data.
+    If used for continuous data with stat='bin' produces histogram for binned data.
+    `geom_bar()` handles no group aesthetics.
+
+    `geom_bar()` understands the following aesthetics mappings:
+        - x : x-axis value (this values will produce cases or bins for bars).
+        - y : y-axis value (this value will be used to multiply the case's or bin's counts).
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines bar line width.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
-        >>> import pandas as pd
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> N = 100
-        >>> M = 3
-        >>> mean = np.zeros(M)
-        >>> mean = np.arange(M) * 5
-        >>> cov = np.eye(M)
-        >>> X = multivariate_normal.rvs(mean, cov, N)
-        >>> X = X.astype(int) # comment this line to make variables continuous back
-        >>> dat = pd.DataFrame(X)
-        >>> dat = pd.melt(dat)
-        >>> ggplot(dat, aes(x='value')) + geom_bar(stat='bin', color='gray', fill='dark_green', size=2)
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.randint(10, size=100)}
+        >>> ggplot(data, aes(x='x')) + geom_bar()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 10
+        >>> x = np.arange(n)
+        >>> y = 1 + np.random.randint(5, size=n)
+        >>> ggplot() + \\
+        >>>     geom_bar(aes(x='x', y='y', fill='x'), data={'x': x, 'y': y}, \\
+        >>>              stat='identity', show_legend=False) + \\
+        >>>     scale_fill_discrete()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-12
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 5000
+        >>> x = np.random.normal(size=n)
+        >>> c = np.random.choice(list('abcde'), size=n)
+        >>> ggplot({'x': x, 'class': c}, aes(x='x')) + \\
+        >>>     geom_bar(aes(group='class', fill='class', color='class'), \\
+        >>>              stat='bin', sampling=sampling_pick(n=500), alpha=.3, \\
+        >>>              tooltips=layer_tooltips().line('@|@class')
+        >>>                                       .line('count|@..count..'))
+
     """
     return _geom('bar',
                  mapping=mapping,
@@ -550,74 +678,112 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    boundary=None,
                    **other_args):
     """
-    Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
-    in each bin.
+    Displays a 1d distribution by dividing variable mapped to x axis into bins
+    and counting the number of observations in each bin.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, default: "bin"
-        The statistical transformation to use on the data for this layer.
-    position : string, default: "stack"
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='bin'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, default='stack'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    bins :
-        Number of bins.  Overridden by binwidth. Defaults to 30
-    binwidth :
-        The width of the bins. The default is to use bin widths that cover the range of the data. You should always
-        override this value, exploring multiple widths to find the best to illustrate the stories in your data.
-    center : number
+    bins : int, default=30
+        Number of bins. Overridden by `binwidth`.
+    binwidth : float, optional
+        The width of the bins. The default is to use bin widths that cover
+        the range of the data. You should always override this value,
+        exploring multiple widths to find the best to illustrate the stories in your data.
+    center : float, optional
         Specifies x-value to align bin centers to.
-    boundary : number
+    boundary : float, optional
         Specifies x-value to align bin boundary (i.e. point berween bins) to.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_histogram displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number
-    of observations in each bin.
-    geom_histogram understands the following aesthetics mappings:
-     - x : x-axis value (this values will produce cases or bins for bars)
-     - y : y-axis value, default: "..count..".
-        Alternatively: '..density..'
-     - weight : used by "bin" stat to compute weighted sum instead of simple count.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling
-     - size : lines width
+    ----
+    `geom_histogram()` displays a 1d distribution by dividing variable
+    mapped to x axis into bins and counting the number of observations in each bin.
+
+    `geom_histogram()` understands the following aesthetics mappings:
+        - x : x-axis value (this values will produce cases or bins for bars).
+        - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> np.random.seed(123)
-        >>> data = dict(
-        >>>     x = np.random.normal(0, 1, 100)
-        >>> )
-        >>> ggplot(data) + geom_histogram(aes(x='x'), color='black', fill='gray', size=1)
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.normal(size=1000)}
+        >>> ggplot(data, aes(x='x')) + geom_histogram()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 7
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.gamma(2.0, size=1000)}
+        >>> ggplot(data, aes(x='x')) + \\
+        >>>     geom_histogram(aes(color='x', fill='x'), bins=50)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 8-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(scale=3, size=1000)
+        >>> y = 2 * (np.round(x) % 2) - 1
+        >>> ggplot({'x': x, 'y': y}) + \\
+        >>>     geom_histogram(aes(x='x', weight='y'), \\
+        >>>                    center=0, binwidth=1, \\
+        >>>                    color='black', fill='gray', size=1)
+
     """
     return _geom('histogram',
                  mapping=mapping,
@@ -640,77 +806,118 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                drop=None,
                **other_args):
     """
-    Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
-    in each bin.
+    Displays a 1d distribution by dividing variable mapped to x axis into bins
+    and counting the number of observations in each bin.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, default: "bin"
-        The statistical transformation to use on the data for this layer.
-    position : string, default: "stack"
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='bin2d'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default='stack'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    bins : list of 2 numbers, default: [30,30]
-        Number of bins in both directions, vertical and horizontal.  Overridden by binwidth.
-    binwidth : list of 2 numbers
-        The width of the bins in both directions, vertical and horizontal. Overrides `bins`.
-        The default is to use bin widths that cover the entire range of the data.
-    drop : bool, default: True
+    bins : list of int, default=[30, 30]
+        Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+    binwidth : list of float, optional
+        The width of the bins in both directions, vertical and horizontal.
+        Overrides `bins`. The default is to use bin widths that cover the entire range of the data.
+    drop : bool, default=True
         Specifies whether to remove all bins with 0 counts.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_bin2d applies rectangular grid to the plane then counts observation in each cell of the grid (bin).
-    Uses geom_tile to display counts as a tile fill-color.
-    geom_histogram understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - weight : used by "bin" stat to compute weighted sum instead of simple count.
-     - alpha : number in [0..1]
-        Transparency level of a layer
-     - color : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling, default: "..count..".
-        Alternatively: '..density..'
-     - size : lines width
+    ----
+    `geom_bin2d()` applies rectangular grid to the plane then counts observation
+    in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
+
+    `geom_bin2d()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling, default: '..count..'. Alternatively: '..density..'.
+        - size : lines width.
+        - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 8
 
         >>> import numpy as np
         >>> from lets_plot import *
-        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
-        >>> cov=[[1, 0],
-        >>>      [0, 1]]
-        >>> x, y = np.random.multivariate_normal(mean=[0,0], cov=cov, size=400).T
-        >>>
-        >>> data = dict(
-        >>>     x = x,
-        >>>     y = y
-        >>> )
-        >>> ggplot(data) + geom_bin2d(aes(x='x', y='y'), binwidth=[0.5,0.5])
+        >>> np.random.seed(42)
+        >>> mean = np.zeros(2)
+        >>> cov = np.eye(2)
+        >>> x, y = np.random.multivariate_normal(mean, cov, 1000).T
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_bin2d()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-14
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 5000
+        >>> x = np.random.uniform(-2, 2, size=n)
+        >>> y = np.random.normal(scale=.5, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_bin2d(aes(fill='..density..'), binwidth=[.25, .24], \\
+        >>>                tooltips=layer_tooltips().format('@x', '.2f')
+        >>>                        .format('@y', '.2f').line('(@x, @y)')
+        >>>                        .line('count|@..count..')
+        >>>                        .format('@..density..', '.3f')
+        >>>                        .line('density|@..density..')) + \\
+        >>>     scale_fill_gradient(low='black', high='red')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10-11
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> mean = np.zeros(2)
+        >>> cov = [[1, .5],
+        >>>        [.5, 1]]
+        >>> x, y = np.random.multivariate_normal(mean, cov, 500).T
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_bin2d(aes(alpha='..count..'), bins=[20, 20], \\
+        >>>                color='white', fill='darkgreen') + \\
+        >>>     geom_point(size=1.5, shape=21, color='white', \\
+        >>>                fill='darkgreen') + \\
+        >>>     ggsize(600, 450)
+
     """
     return _geom('bin2d',
                  mapping=mapping,
@@ -733,76 +940,92 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
+    ----
     Understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles.
-     - y : y-axis coordinates of the center of rectangles.
-     - width : width of a tile.
-     - height : height of a tile.
-     - alpha : transparency level of a layer
-     - color (colour) : color of a geometry lines
-     - fill : color of geometry filling
-     - size : lines width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+        - x : x-axis coordinates of the center of rectangles.
+        - y : y-axis coordinates of the center of rectangles.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - width : width of a tile.
+        - height : height of a tile.
+        - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
+        :emphasize-lines: 12
 
         >>> import numpy as np
-        >>> from lets_plot import *
         >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> delta = 0.5
-        >>> center_x = 6
-        >>> center_y = 6
-        >>> x = np.arange(-5.0, 5.0, delta)
-        >>> y = np.arange(-5.0, 5.0, delta)
+        >>> n = 100
+        >>> a, b = -1, 0
+        >>> x = np.linspace(-3, 3, n)
+        >>> y = np.linspace(-3, 3, n)
         >>> X, Y = np.meshgrid(x, y)
-        >>> mu = np.array([1, 0])
-        >>> sigma = np.diag([1, 4])
-        >>> mu1 = np.array([0, 0])
-        >>> sigma1 = np.diag([4, 1])
-        >>> Z = multivariate_normal.pdf(np.dstack((X, Y)), mean=mu, cov=sigma)
-        >>> Z = Z - multivariate_normal.pdf(np.dstack((X, Y)), mean=mu1, cov=sigma1)
-        >>> x = X.reshape(-1) + center_x
-        >>> y = Y.reshape(-1) + center_y
-        >>> z = Z.reshape(-1)
-        >>> dat = dict(x=x, y=y, z=z)
-        >>> plot = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z'), width=.7, height=.7)
-        >>> plot
+        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y', color='z', fill='z')) + geom_tile()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 17
+
+        >>> import numpy as np
+        >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> n = 25
+        >>> x = np.linspace(-1, 1, n)
+        >>> y = np.linspace(-1, 1, n)
+        >>> X, Y = np.meshgrid(x, y)
+        >>> mean = np.zeros(2)
+        >>> cov =[[1, -.5],
+        >>>       [-.5, 1]]
+        >>> rv = multivariate_normal(mean, cov)
+        >>> Z = rv.pdf(np.dstack((X, Y)))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y')) + \\
+        >>>     geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
+        >>>     scale_fill_gradient(low='yellow', high='darkgreen')
+
     """
     return _geom('tile',
                  mapping=mapping,
@@ -820,49 +1043,51 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     """
     Display rectangles with x, y values mapped to the center of the tile.
     This is a high performance special function for same-sized tiles.
-    Much faster than geom_tile but doesn't support width/height and color.
+    Much faster than `geom_tile()` but doesn't support width/height and color.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
+    ----
     Understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles.
-     - y : y-axis coordinates of the center of rectangles.
-     - alpha : transparency level of a layer
-     - fill : color of geometry filling
+        - x : x-axis coordinates of the center of rectangles.
+        - y : y-axis coordinates of the center of rectangles.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - fill : color of geometry filling.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -887,6 +1112,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> dat = dict(x=x, y=y, z=z)
         >>> plot = ggplot(dat, aes('x', 'y')) +  geom_raster(aes(fill='z'))
         >>> plot
+
     """
     return _geom('raster',
                  mapping=mapping,
@@ -906,55 +1132,58 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_errorbar represents a vertical interval, defined by x, ymin, ymax.
-    geom_errorbar understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - ymin : lower bound for error bar.
-     - ymax : upper bound for error bar.
-     - width : width of a bar.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+
+    `geom_errorbar()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : lower bound for error bar.
+        - ymax : upper bound for error bar.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines bar line width.
+        - width : width of a bar.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -973,6 +1202,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> x = np.arange(0, N, 1)
         >>> dat = dict(x=x, ymin=ymin, ymax=ymax)
         >>> ggplot(dat, aes(x='x')) + geom_errorbar(aes(ymin='ymin', ymax='ymax'))
+
     """
     return _geom('errorbar',
                  mapping=mapping,
@@ -993,55 +1223,63 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer.
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    fatten : number, default: 2.5
-        A multiplicative factor applied to size of the middle bar
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    fatten : float, default=2.5
+        A multiplicative factor applied to size of the middle bar.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_crossbar represents a vertical interval, defined by x, ymin, ymax. The mean is represented by horizontal line.
-    geom_crossbar understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - ymin : lower bound for error bar.
-     - ymax : upper bound for error bar.
-     - middle : position of median bar.
-     - width : width of a bar.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling.
-     - size : lines width.
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    The mean is represented by horizontal line.
+
+    `geom_crossbar()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : lower bound for error bar.
+        - middle : position of median bar.
+        - ymax : upper bound for error bar.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - width : width of a bar.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -1057,6 +1295,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> p = ggplot(data, aes(x='dose', color='supp'))
         >>> p += geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
         >>> p
+
     """
     return _geom('crossbar',
                  mapping=mapping,
@@ -1079,55 +1318,63 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer.
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    fatten : number, default: 5.0
-        A multiplicative factor applied to size of the middle bar
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    fatten : float, default=5.0
+        A multiplicative factor applied to size of the middle bar.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_pointrange represents a vertical interval, defined by x, ymin, ymax. The mid-point is defined by y.
-    geom_pointrange understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - y : position of mid-point.
-     - ymin : lower bound for error bar.
-     - ymax : upper bound for error bar.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines.
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color of geometry filling.
-     - size : lines width, size of mid-point.
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - shape : shape of the mid-point
+    ----
+    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    The mid-point is defined by `y`.
+
+    `geom_pointrange()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - y : position of mid-point.
+        - ymin : lower bound for error bar.
+        - ymax : upper bound for error bar.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width, size of mid-point.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - shape : shape of the mid-point.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -1143,6 +1390,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         >>> p = ggplot(data, aes(x='dose', color='supp'))
         >>> p += geom_pointrange(aes(ymin='len_min', ymax='len_max', y='length'), fatten=5)
         >>> p
+
     """
     return _geom('pointrange',
                  mapping=mapping,
@@ -1163,50 +1411,57 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer.
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_linerange represents a vertical interval, defined by x, ymin, ymax.
-    geom_linerange understands the following aesthetics mappings:
-     - x : x-axis coordinates
-     - ymin : lower bound for line range.
-     - ymax : upper bound for line range.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-     - linetype : type of the line of tile's border
-         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-         5 = "longdash", 6 = "twodash"
+    ----
+    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+
+    `geom_linerange()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : lower bound for line range.
+        - ymax : upper bound for line range.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -1222,6 +1477,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         >>> p = ggplot(data, aes(x='dose', color='supp'))
         >>> p += geom_linerange(aes(ymin='len_min', ymax='len_max'))
         >>> p
+
     """
     return _geom('linerange',
                  mapping=mapping,
@@ -1243,59 +1499,58 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='contour'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    bins : int
+    bins : int, optional
         Number of levels.
-    binwidth: double
+    binwidth: float, optional
         Distance between levels.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_contour() displays contours of a 3d surface in 2d.
-        Computed variables:
-            level : height of a contour
-    geom_contour understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
-     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_contour()` displays contours of a 3d surface in 2d.
+
+    Computed variables:
+        - level : height of a contour.
+
+    `geom_contour()` understands the following aesthetics mappings:
+        - x : x-axis coordinates of the center of rectangles, forming a tessellation.
+        - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1321,6 +1576,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> dat = dict(x=x, y=y, z=z)
         >>> p = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z')) + geom_contour(aes(z='z', color='..level..')) + scale_color_gradient(low='dark_green', high='yellow')
         >>> p
+
     """
     return _geom('contour',
                  mapping=mapping,
@@ -1343,54 +1599,56 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='contourf'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    bins : int
+    bins : int, optional
         Number of levels.
-    binwidth: double
+    binwidth: float, optional
         Distance between levels.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_contourf() fills contours of a 3d surface in 2d.
+    ----
+    `geom_contourf()` fills contours of a 3d surface in 2d.
+
     Computed variables:
-        level : height of a contour
-    geom_contour understands the following aesthetics mappings:
-     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
-     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - fill : color of a geometry areas
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - level : height of a contour.
+
+    `geom_contourf()` understands the following aesthetics mappings:
+        - x : x-axis coordinates of the center of rectangles, forming a tessellation.
+        - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - fill : color of a geometry areas. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1416,6 +1674,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> dat = dict(x=x, y=y, z=z)
         >>> p = ggplot(dat, aes('x', 'y', z='z')) + geom_contourf(aes(fill='..level..'))
         >>> p
+
     """
     return _geom('contourf',
                  mapping=mapping,
@@ -1438,82 +1697,84 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
+    map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`), optional
         Data contains coordinates of polygon vertices on map.
-    map_join : [str | pair]
+    map_join : str or list, optional
         Keys used to join map coordinates with data.
-        first value in pair - column/columns in data
-        second value in pair - column/columns in map
-
-        When map is a GeoDataFrame:
-            map_join='state':
-                same as [['state'], ['state']]
-            map_join=[['city', 'state']]:
-                same as [['city', 'state'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-
-        If map is a Geocoder:
-            map_join='State_Name':
-                same as [['State_Name'], ['state']]
-            map_join=['City_Name', 'State_Name']:
-                same as [['City_Name', 'State_Name'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
-            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
-
-
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+        If the parameter type is list then it should be a pair of values,
+        either of str type or a list of strings.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_polygon draws polygons, which are filled paths. Each vertex of the polygon requires a separate row in the
-    data.
-    geom_polygon understands the following aesthetics mappings:
-     - x : x-axis coordinates of the vertices of the polygon.
-     - y : y-axis coordinates of the vertices of the polygon.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_polygon()` draws polygons, which are filled paths.
+    Each vertex of the polygon requires a separate row in the data.
+
+    `geom_polygon()` understands the following aesthetics mappings:
+        - x : x-axis coordinates of the vertices of the polygon.
+        - y : y-axis coordinates of the vertices of the polygon.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    When `map` is a `GeoDataFrame`:
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    If `map` is a `Geocoder`:
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    Generated keys follow this order: 'city', 'county', 'state', 'country'.
+    Parents that were not provided will be omitted.
+    Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -1527,6 +1788,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> val3 = [v for v in val for _ in range(3)]
         >>> dat = dict(id=id3, val=val3, x=x, y=y)
         >>> ggplot(dat, aes('x', 'y')) + geom_polygon(aes(fill='id'), alpha=0.5)
+
     """
 
     if is_geocoder(map):
@@ -1553,80 +1815,86 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Geocoder (implicitly invoke boundaries())
+    map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`), optional
         Data containing region boundaries (coordinates of polygon vertices on map).
-    map_join : [str | pair]
+    map_join : str or list, optional
         Keys used to join map coordinates with data.
-        first value in pair - column/columns in data
-        second value in pair - column/columns in map
-
-        When map is a GeoDataFrame:
-            map_join='state':
-                same as [['state'], ['state']]
-            map_join=[['city', 'state']]:
-                same as [['city', 'state'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-
-        If map is a Geocoder:
-            map_join='State_Name':
-                same as [['State_Name'], ['state']]
-            map_join=['City_Name', 'State_Name']:
-                same as [['City_Name', 'State_Name'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
-            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
-
-
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+        If the parameter type is list then it should be a pair of values,
+        either of str type or a list of strings.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_map draws polygons which boundaries are specified by 'map' parameter.
-    Aesthetics of ploygons (fill etc.) are computed basing on input data and mapping
-    (see 'data' and 'mapping' arguments).
-    geom_map understands the following aesthetics:
-    - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-    - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill  : color of a geometry internals
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width
-        Defines bar line width
-    - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_map()` draws polygons which boundaries are specified by `map` parameter.
+    Aesthetics of ploygons (`fill` etc.) are computed basing on input data and mapping
+    (see `data` and `mapping` arguments).
+
+    `geom_map()` understands the following aesthetics:
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    When `map` is a `GeoDataFrame`:
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    If `map` is a `Geocoder`:
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    Generated keys follow this order: 'city', 'county', 'state', 'country'.
+    Parents that were not provided will be omitted.
+    Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
     --------
@@ -1643,6 +1911,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         >>> df = pd.DataFrame(regions, columns=['state'])
         >>> df['value'] = np.random.rand(num_of_regions)
         >>> ggplot(df) + ggtitle('Randomly colored states') + geom_map(aes(fill='value'), map=boundaries, map_join=('state', 'found name'), color='white')
+
     """
 
     if is_geocoder(map):
@@ -1670,53 +1939,50 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    slope :
+    slope : float, optional
         The line slope.
-    intercept:
+    intercept : float, optional
         The value of y at the point where the line crosses the y axis.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_abline understands the following aesthetics mappings:
-     - slope : line slope
-     - intercept : line y-intercept
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_abline()` understands the following aesthetics mappings:
+        - slope : line slope.
+        - intercept : line y-intercept.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -1725,6 +1991,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3)
+
     """
     return _geom('abline',
                  mapping=mapping,
@@ -1747,50 +2014,47 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    yintercept:
+    yintercept : float, optional
         The value of y at the point where the line crosses the y axis.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_hline understands the following aesthetics mappings:
-     - yintercept : line y-intercept
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_hline()` understands the following aesthetics mappings:
+        - yintercept : line y-intercept.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -1799,6 +2063,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_hline(yintercept=0.2, color='dark_blue', linetype='longdash', size=2)
+
     """
     return _geom('hline',
                  mapping=mapping,
@@ -1820,50 +2085,47 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    xintercept:
+    xintercept : float, optional
         The value of x at the point where the line crosses the x axis.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_hline understands the following aesthetics mappings:
-     - xintercept : line x-intercept
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines bar line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_hline()` understands the following aesthetics mappings:
+        - xintercept : line x-intercept.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -1872,6 +2134,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_vline(xintercept=0.2, color='dark_green', linetype='dotdash', size=2)
+
     """
     return _geom('vline',
                  mapping=mapping,
@@ -1891,66 +2154,71 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  varwidth=None,
                  **other_args):
     """
-    Display the distribution of data based on a five number summary ("minimum", first quartile (Q1), median, 
-    third quartile (Q3), and "maximum"), and "outlying" points individually.
+    Display the distribution of data based on a five number summary
+    ("minimum", first quartile (Q1), median, third quartile (Q3), and "maximum"),
+    and "outlying" points individually.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged) should be used to define boxplot from your own computations via lower,
-        upper, ymin, ymax, middle aesthetics mappings (see below), "count" (counts number of points with same x-axis
-        coordinate), "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs
-        smoothing - linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='boxplot'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    fatten : number, default: 1.0
-        A multiplicative factor applied to size of the middle bar
-    outlier_color, outlier_fill, outlier_shape, outlier_size:
-        Default aesthetics for outliers.
-    varwidth:
-        if FALSE (default) make a standard box plot.
-        If TRUE, boxes are drawn with widths proportional to the square-roots of the number of
-        observations in the groups.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    fatten : float, default=1.0
+        A multiplicative factor applied to size of the middle bar.
+    outlier_color : str, optional
+        Default color aesthetic for outliers.
+    outlier_fill : str, optional
+        Default fill aesthetic for outliers.
+    outlier_shape : int, optional
+        Default shape aesthetic for outliers.
+    outlier_size : float, optional
+        Default size aesthetic for outliers.
+    varwidth : bool, default=False
+        If False make a standard box plot.
+        If True, boxes are drawn with widths proportional to the square-roots
+        of the number of observations in the groups.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_boxplot understands the following aesthetics mappings:
-     - lower : lower hinge, 25% quantile
-     - middle : median, 50% quantile
-     - upper : upper hinge, 75% quantile
-     - ymin : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR
-     - ymax : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR
-     - width : width of boxplot [0..1]
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-     - fill : color of geometry filling
-     - size : lines width
-     - linetype : type of the line of border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_boxplot()` understands the following aesthetics mappings:
+        - lower : lower hinge, 25% quantile.
+        - middle : median, 50% quantile.
+        - upper : upper hinge, 75% quantile.
+        - ymin : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR.
+        - ymax : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - width : width of boxplot [0..1].
 
     Examples
     --------
@@ -1968,6 +2236,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> p = ggplot(data, aes(x='cond', y='rating')) + ggsize(300, 200)
         >>> p += geom_boxplot(outlier_color='red', outlier_shape=8, outlier_size=5)
         >>> p
+
     """
     return _geom('boxplot',
                  mapping=mapping,
@@ -1989,59 +2258,57 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 **other_args):
     """
-    Display a y interval defined by ymin and ymax.
+    Display a y interval defined by `ymin` and `ymax`.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_ribbon draws a ribbon bounded by ymin and ymax.
-    geom_ribbon understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - ymin : y-axis coordinates of the lower bound.
-     - ymax : y-axis coordinates of the upper bound.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
+    ----
+    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`.
+
+    `geom_ribbon()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - ymin : y-axis coordinates of the lower bound.
+        - ymax : y-axis coordinates of the upper bound.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2054,6 +2321,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> ymax = [0, 1, 1, 4, 5, 5]
         >>> dat = dict(id=id, x=x, ymin=ymin, ymax=ymax)
         >>> ggplot(dat) + geom_ribbon(aes(x='x', ymin='ymin', ymax='ymax', group='id', fill='id'), color='black', alpha=0.5)
+
     """
     return _geom('ribbon',
                  mapping=mapping,
@@ -2069,58 +2337,62 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               **other_args):
     """
-    Display the development of quantitative values over an interval. This is the continuous analog of geom_bar.
+    Display the development of quantitative values over an interval.
+    This is the continuous analog of geom_bar.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_area draws an area bounded by the data and x axis.
-    geom_area understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - y : y-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
+    ----
+    `geom_area()` draws an area bounded by the data and x axis.
+
+    `geom_area()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - y : y-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -2130,6 +2402,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> g = [1,1,1,2,2,2]
         >>> dat = dict(x=x, y=y, g=g)
         >>> ggplot(dat,aes('x','y', group='g')) + geom_area(aes(fill='g', color='g'), alpha=.2) + scale_fill_discrete() + scale_color_discrete()
+
     """
     return _geom('area',
                  mapping=mapping,
@@ -2154,71 +2427,74 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
+    stat : str, default='density'
         The statistical transformation to use on the data for this layer, as a string.
-        Default: "density"
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    kernel : string
-        The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
-        "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
-        Default: "gaussian"
-    bw: string or double
-        The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double.
-    adjust: double
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float, optional
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float, optional
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n: int
-        The number of sampled points for plotting the function
-        Default: 512
-    fs_max: int
+    n : int, default=512
+        The number of sampled points for plotting the function.
+    fs_max : int, default=500
         Maximum size of data to use density computation with 'full scan'.
         For bigger data, less accurate but more efficient density computation is applied.
-        Default: 5000
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_density understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
-     - weight : used by "density" stat to compute weighted density.
-
+    ----
     Density stat computes variables:
-     - ..density.. : density estimate (mapped by default)
-     - ..count.. : density * number of points
-     - ..scaled.. : density estimate, scaled to maximum of 1
+        - ..density.. : density estimate (mapped by default).
+        - ..count.. : density * number of points.
+        - ..scaled.. : density estimate, scaled to maximum of 1.
+
+    `geom_density()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - weight : used by 'density' stat to compute weighted density.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2227,6 +2503,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         >>> x = np.random.normal(0,1,1000)
         >>> dat = dict(x=x)
         >>> ggplot(dat,aes('x')) + geom_density()
+
     """
     return _geom('density',
                  mapping=mapping,
@@ -2253,65 +2530,66 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='density2d'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    kernel : string
-        The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
-        "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
-    bw: string or double array
-        The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double array of length 2.
-    adjust: double
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or list of float, optional
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
+    adjust : float, optional
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n: int array
-        The number of sampled points for plotting the function (on x and y direction correspondingly)
-    bins : int
+    n : list of int, optional
+        The number of sampled points for plotting the function
+        (on x and y direction correspondingly).
+    bins : int, optional
         Number of levels.
-    binwidth: double
+    binwidth : float, optional
         Distance between levels.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_density2d draws density function.
-    geom_density understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    `geom_density2d()` draws density function.
+
+    `geom_density2d()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width. Defines line width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2321,6 +2599,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         >>> y = np.random.normal(0,1,1000)
         >>> dat = dict(x=x, y=y)
         >>> ggplot(dat,aes('x', 'y')) + geom_density2d()
+
     """
     return _geom('density2d',
                  mapping=mapping,
@@ -2348,59 +2627,64 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='density2df'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    kernel : string
-        The kernel we use to calculate the density function. Choose among "gaussian", "cosine", "optcosine",
-        "rectangular" (or "uniform"), "triangular", "biweight" (or "quartic"), "epanechikov" (or "parabolic")
-    bw: string or double array
-        The method (or exact value) of bandwidth. Either a string (choose among "nrd0" and "nrd"), or a double array of length 2.
-    adjust: double
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or list of float, optional
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
+    adjust : float, optional
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n: int array
-        The number of sampled points for plotting the function (on x and y direction correspondingly)
-    bins : int
+    n : list of int, optional
+        The number of sampled points for plotting the function
+        (on x and y direction correspondingly).
+    bins : int, optional
         Number of levels.
-    binwidth: double
+    binwidth : float, optional
         Distance between levels.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_density2df fills density contours.
-    geom_density understands the following aesthetics mappings:
-     - x : x-axis coordinates.
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - fill : color of geometry filling
+    ----
+    `geom_density2df()` fills density contours.
+
+    `geom_density2df()` understands the following aesthetics mappings:
+        - x : x-axis coordinates.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - fill : color of geometry filling.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2410,6 +2694,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         >>> y = np.random.normal(0,1,1000)
         >>> dat = dict(x=x, y=y)
         >>> ggplot(dat,aes('x', 'y')) + geom_density2df(aes(fill='..level..'))
+
     """
     return _geom('density2df',
                  mapping=mapping,
@@ -2436,54 +2721,59 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    width : double
-        width for jitter, default=0.4
-    height : double
-        height for jitter, default=0.4
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    width : float, default=0.4
+        Width for jitter.
+    height : float, default=0.4
+        Height for jitter.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    The jitter geometry is used to create jittered points. The scatterplot is useful for displaying the relationship
-    between two discrete variables.
-    geom_jitter understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - fill : color to paint shape's inner points
-        Is applied only to the points of shapes having inner points.
-     - shape : shape of the point
-     - size : size of the point
+    ----
+    The jitter geometry is used to create jittered points.
+    The scatterplot is useful for displaying the relationship between two discrete variables.
+
+    `geom_jitter()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a point. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+        - shape : shape of the point.
+        - size : size of the point.
 
     Examples
     --------
@@ -2498,6 +2788,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         >>> dat = pd.DataFrame({'x': x, 'y': y})
         >>> p = ggplot(dat) + geom_jitter(aes(x='x', y='y', color='x'), height=0)
         >>> p
+
     """
     return _geom('jitter',
                  mapping=mapping,
@@ -2513,56 +2804,61 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   **other_args):
     """
-    Display a line chart which makes the y value proportional to the number of observed variable values, mapped to x axis.
+    Display a line chart which makes the y value proportional to the number
+    of observed variable values, mapped to x axis.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='bin'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_freqpoly connects the top points in geom_bar.
-    geom_freqpoly understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_freqpoly()` connects the top points in `geom_bar()`.
+
+    `geom_freqpoly()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : lines width.
+        - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2580,6 +2876,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         >>> dat = pd.DataFrame(X)
         >>> dat = pd.melt(dat)
         >>> ggplot(dat, aes(x='value')) + geom_freqpoly(size=2)
+
     """
     return _geom('freqpoly',
                  mapping=mapping,
@@ -2600,54 +2897,59 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    direction: string
-        "hv" or "HV" stands for horizontal then vertical (default); "vh" or "VH" stands for vertical then horizontal
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    direction : string, default='hv'
+        'hv' or 'HV' stands for horizontal then vertical;
+        'vh' or 'VH' stands for vertical then horizontal.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_step draws steps between the observations in the order of X.
-    geom_step understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_step()` draws steps between the observations in the order of X.
+
+    `geom_step()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> import numpy as np
@@ -2672,6 +2974,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> dat = pd.DataFrame(dat)
         >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
         >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_step(aes(color='variable'), size=1, alpha=0.7)
+
     """
     return _geom('step',
                  mapping=mapping,
@@ -2693,84 +2996,86 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon)
+    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Geocoder (implicitly invoke limits())
+    map : `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `limits()`), optional
         Bounding boxes of geometries will be drawn.
-    map_join : [str | pair]
+    map_join : str or list, optional
         Keys used to join map coordinates with data.
-        first value in pair - column/columns in data
-        second value in pair - column/columns in map
-
-        When map is a GeoDataFrame:
-            map_join='state':
-                same as [['state'], ['state']]
-            map_join=[['city', 'state']]:
-                same as [['city', 'state'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-
-        If map is a Geocoder:
-            map_join='State_Name':
-                same as [['State_Name'], ['state']]
-            map_join=['City_Name', 'State_Name']:
-                same as [['City_Name', 'State_Name'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
-            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
-
-
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+        If the parameter type is list then it should be a pair of values,
+        either of str type or a list of strings.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_rect draws rectangles.
-    geom_rect understands the following aesthetics mappings:
-     - xmin : x-axis value
-     - xmax : x-axis value
-     - ymin : y-axis value
-     - ymax : y-axis value
-     - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : lines width
-        Defines line width
-     - linetype : type of the line of tile's border
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - fill : color of geometry filling
+    ----
+    `geom_rect()` draws rectangles.
+
+    `geom_rect()` understands the following aesthetics mappings:
+        - xmin : x-axis value.
+        - xmax : x-axis value.
+        - ymin : y-axis value.
+        - ymax : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - fill : color of geometry filling.
+        - size : lines width. Defines line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    When `map` is a `GeoDataFrame`:
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    If `map` is a `Geocoder`:
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    Generated keys follow this order: 'city', 'county', 'state', 'country'.
+    Parents that were not provided will be omitted.
+    Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
@@ -2802,61 +3107,66 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    arrow : optional
-        Specification for arrow head, as created by arrow() function.
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    arrow : `FeatureSpec`, optional
+        Specification for arrow head, as created by `arrow()` function.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_segment draws segments.
-    geom_segment understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - xend : x-axis value
-     - yend : y-axis value
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - linetype : type of the line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
-     - size : line width
+    ----
+    `geom_segment()` draws segments.
+
+    `geom_segment()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - xend : x-axis value.
+        - yend : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : line width.
+        - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]))
+
     """
     return _geom('segment',
                  mapping=mapping,
@@ -2880,101 +3190,107 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`, optional
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame
+    data : dict or `DataFrame`, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, optional
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`, optional
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`, optional
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
+    map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`), optional
         Data containing coordinates of points.
-    map_join : [str | pair]
+    map_join : str or list, optional
         Keys used to join map coordinates with data.
-        first value in pair - column/columns in data
-        second value in pair - column/columns in map
-
-        When map is a GeoDataFrame:
-            map_join='state':
-                same as [['state'], ['state']]
-            map_join=[['city', 'state']]:
-                same as [['city', 'state'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-
-        If map is a Geocoder:
-            map_join='State_Name':
-                same as [['State_Name'], ['state']]
-            map_join=['City_Name', 'State_Name']:
-                same as [['City_Name', 'State_Name'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
-            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
-
-
-    label_format : str
+        If the parameter type is list then it should be a pair of values,
+        either of str type or a list of strings.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    label_format : str, optional
         Format used to transform label mapping values to a string.
         Examples:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-    na_text : str
+        '.2f' -> '12.45',
+        'Num {}' -> 'Num 12.456789',
+        'TTL: {.2f}$' -> 'TTL: 12.45$'.
+    na_text : str, default='n/a'
         Text to show for missing values.
-        Default: 'n/a'
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
-        paired geom/stat.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
+    ----
     Adds text directly to the plot.
-    geom_text understands the following aesthetics mappings:
-     - x : x-axis value
-     - y : y-axis value
-     - label : text to add to plot
-     - alpha : transparency level of a point
-        Understands numbers between 0 and 1.
-     - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-     - size : font size
-     - family : ['sans' | 'serif' | 'mono' | any other like: "Times New Roman"]
-        Font family. The default is 'sans'
-     - fontface : ['plain' | 'bold' | 'italic' | 'bold italic']
-        Font style and weight . The default is 'plain'
-     - hjust : ['left', 'middle', 'right'] or number between 0 ('right') and 1 ('left')
-        Horizontal text alignment
-     - vjust : ['bottom', 'center', 'top'] or number between 0 ('bottom') and 1 ('top')
-        Vertical text alignment
-     - angle : Text rotation angle in degrees
+
+    `geom_text()` understands the following aesthetics mappings:
+        - x : x-axis value.
+        - y : y-axis value.
+        - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+        - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+        - size : font size.
+        - label : text to add to plot.
+        - family : tont family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
+        - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
+        - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('right') and 1 ('left').
+        - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
+        - angle : text rotation angle in degrees.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    When `map` is a `GeoDataFrame`:
+        - map_join='state':
+          same as [['state'], ['state']].
+        - map_join=[['city', 'state']]:
+          same as [['city', 'state'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    If `map` is a `Geocoder`:
+        - map_join='State_Name':
+          same as [['State_Name'], ['state']].
+        - map_join=['City_Name', 'State_Name']:
+          same as [['City_Name', 'State_Name'], ['city', 'state']].
+        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
+          explicitly set keys for both data and map.
+
+    Generated keys follow this order: 'city', 'county', 'state', 'country'.
+    Parents that were not provided will be omitted.
+    Data columns should follow the same order or result of join operation will be incorrect.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
+
     """
 
     if is_geocoder(map):

@@ -174,7 +174,7 @@ class Geocoder:
     def get_limits(self) -> 'GeoDataFrame':
         """
         Return bboxes (Polygon geometry) for given regions in form of GeoDataFrame. For regions intersecting
-        anti-meridian bbox will be divided into two and stored as two rows.
+        anti-meridian bbox will be divided into two parts and stored as two rows.
 
         Examples
         ---------
@@ -206,7 +206,7 @@ class Geocoder:
 
         Parameters
         ----------
-        resolution: [str | int | None]
+        resolution: [int | str | None]
             Boundaries resolution.
 
             int: [1-15]
@@ -226,14 +226,14 @@ class Geocoder:
                  - 'county' - 11
                  - 'city' - 14
 
-            Kind of area expected to be displayed. Resolution depends on a number of objects - single state is a 'state'
-            scale view, while 50 states is a 'country' scale view.
+            The resolution choice depends on kind of displayed area. The number of objects also makes sense:
+			one state looks good on a 'state' scale while 50 states is a 'country' view.
 
-            It is allowed to use any kind of resolution for any regions, i.e. 'city' for state to see more detailed
-            boundary (when need to show zoomed part), or 'world' (when used for small preview).
+            It is allowed to use any resolution for all regions. For example 'city' scale can be used for state
+			to get more detailed boundary when zoom in or 'world' for a small preview.
 
             None:
-                Autodetection by level_kind used for geocoding and number of objects. In this case
+                Auto-detection by level_kind used for geocoding and number of objects. In this case
                 performance is preferred over quality. The pixelated geometries can be obtained.
                 Use explicit resolution or inc_res() function for better quality.
 
@@ -398,8 +398,8 @@ class NamesGeocoder(Geocoder):
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> codes = geocode(names=['OH']).allow_ambiguous().highlights(True).get_geocodes()
-            >>> codes
+            >>> centroids = geocode_states('florida').scope('uruguay').get_centroids()
+            >>> centroids
         """
         self._reset_geocodes()
         self._scope = _prepare_new_scope(scope)
@@ -420,8 +420,8 @@ class NamesGeocoder(Geocoder):
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_states('florida').highlights(True).get_centroids()
-            >>> centroids
+            >>> codes = geocode(names=['OH']).allow_ambiguous().highlights(True).get_geocodes()
+            >>> codes
         """
         self._highlights = v
         return self
@@ -470,7 +470,7 @@ class NamesGeocoder(Geocoder):
             Name of state.
 
             Geocoder:
-            Geocoder with states.  It must contain the same number of values as the number of names of Geocoder.
+            Geocoder with states. It must contain the same number of values as the number of names of Geocoder.
 
             array:
             List of state names. It must be the same size as the number of names of Geocoder.
@@ -521,7 +521,7 @@ class NamesGeocoder(Geocoder):
 
     def ignore_not_found(self) -> 'NamesGeocoder':
         """
-        Don't generate an error on objects that were not found and remove them from result.
+		Remove not found objects from the result.
 
         Examples
         ---------
@@ -537,7 +537,7 @@ class NamesGeocoder(Geocoder):
 
     def ignore_all_errors(self) -> 'NamesGeocoder':
         """
-        Don't generate an error on objects that have multiple matches and remove them from result.
+        Remove objects that have multiple matches from the result.
 
         Examples
         ---------
@@ -553,14 +553,14 @@ class NamesGeocoder(Geocoder):
 
     def allow_ambiguous(self) -> 'NamesGeocoder':
         """
-        Don't generate an error on objects that have multiple matches and add them to result.
+        For objects that have multiple matches add all of them to the result.
 
         Examples
         ---------
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities(['worcester']).allow_ambiguous()..get_centroids()
+            >>> centroids = geocode_cities(['worcester']).allow_ambiguous().get_centroids()
             >>> centroids
         """
         self._reset_geocodes()
@@ -578,19 +578,18 @@ class NamesGeocoder(Geocoder):
         """
         Allows to resolve ambiguity by setting up extra parameters. Combination of name, county, state, country
         identifies a row with an ambiguity.
-        If row with given names doesn't exist error will be generated.
-
+        If row with given names does not exist error will be generated.
 
         Parameters
         ----------
         name : string
             Name in Geocoder that needs better qualification.
         county : [string | None]
-            When Geocoder built with counties this field is used to identify a row for the name.
+            If Geocoder has parent counties this field must be present to identify a row for the name
         state : [string | None]
-            When Geocoder built with states this field is used to identify a row for the name.
+            If Geocoder has parent states this field must be present to identify a row for the name
         country : [string | None]
-            When Geocoder built with countries this field is used to identify a row for the name.
+            If Geocoder has parent countries this field must be present to identify a row for the name
         scope : [string | Geocoder | shapely.Polygon | None]
             Limits area of geocoding. If parent country is set then error will be generated.
             If type is a string - geoobject should have geocoded scope in parents.

@@ -2,11 +2,8 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from collections import Iterable
 from typing import Any, Tuple, Sequence
 
-from lets_plot.geo_data import Geocodes
-from lets_plot.geo_data.geocoder import Geocoder
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
 
@@ -90,9 +87,12 @@ def is_geocoder(data: Any) -> bool:
     return any(base.__name__ == 'Geocoder' for base in type(data).mro())
 
 
-def auto_join_geocoder(map_join: Any, geocoder: Geocoder):
+def auto_join_geocoder(map_join: Any, geocoder):
     if map_join is None:
         return None
+
+    # import geo_data prints OSM attribution - minimize scope
+    from lets_plot.geo_data import Geocodes
 
     if isinstance(map_join, str):
         data_names = [map_join]

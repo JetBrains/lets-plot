@@ -33,18 +33,19 @@
 - [GGBunch](#ggbunch)
 - [Data Sampling](#sampling)
 - [Export to File](#export)
+- [Formatting](#formatting)
 - [The 'bistro' Package](#bistro)
     - [Correlation Plot](#corr_plot)
     - [Image Matrix](#image_matrix)
 - [Geospatial](#geospatial)
     - [GeoPandas Support](#geopandas)
     - [Interactive Maps](#livemap)
-    - [Geocoding API](#geocoding)
+    - [Geocoding](#geocoding)
 - ['No Javascript' Mode](#no_js)
 - [Offline Mode](#offline)
 - [Interesting Demos](#interesting)
 - [Scientific Mode in IntelliJ IDEA / PyCharm](#pycharm)
-- [What is new in 1.5.5](#new)
+- [What is new in 2.0.0](#new)
 - [Change Log](#change_log)
 - [License](#license)
 
@@ -124,6 +125,10 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <a href="https://colab.research.google.com/drive/1uYYZcG0g0kP4lJdPkpWB8aBS96ioDii2?usp=sharing" title="View at Colab"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
 </a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://deepnote.com/project/673ea421-638e-469d-8d04-5cc4c6e0258f#%2Fnotebook.ipynb" title="View at Deepnote"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_deepnote.svg" width="20" height="20">
+</a>
 <br>
 <br>
 
@@ -158,7 +163,32 @@ The `ggsave()` function is an easy way to export plot to a file in SVG or HTML f
 Note: The `ggsave()` function currently do not save images of interactive maps to SVG.
  
 Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
-  
+
+<a id="formatting"></a>
+### Formatting
+
+Lets-Plot supports formatting of values of numeric and date-time types.
+
+Complementary to the value formatting, a *string template* is also supported.
+
+For example:  
+```
+value: 67719.94988293362
++
+string template: "Mean income: £{.2s}"
+=
+the formatting result: "Mean income: £67k"
+```
+An empty placeholder {} is also allowed. In this case a default string representation will be shown. This is also applicable to categorical values.   
+
+To learn more about format strings see: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md).
+
+In Lets-Plot you can use formatting for:
+- tooltip text, see: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+- labels on X/Y axis. See: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb).
+- the `geom_text()` labels. See: [Label format demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb).
+- facetting values in `facet_grid()`, `facet_wrap()` functions. See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb).
+
 
 <a id="bistro"></a>
 ### The 'bistro' Package
@@ -210,10 +240,16 @@ using regular ggplot geoms.
 Learn more: [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
 
 <a id="geocoding"></a>
-#### Geocoding API
+#### Geocoding
 Geocoding is the process of converting names of places into geographic coordinates.  
 
-Learn more: [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+The Lets-Plot has built-in geocoding capabilities covering the folloing administrative levels:
+- countries
+- states (US and non-US equivalents)
+- counties (and equivalents)
+- cities (and towns)
+
+Learn more: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
 <a id="no_js"></a>
 ### 'No Javascript' Mode
@@ -277,27 +313,56 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 </div>
 
 <a id="new"></a>
-### What is new in 1.5.5
+### What is new in 2.0.0
+     
+- Python 3.9 support
+- Faceted plots:
+  - new `facet_wrap()` function.
+  - ordering of faceting values.
+  - formatting of faceting values.
 
-- Correlation plot
-  
-    New higher level API in [the 'bistro' package](#bistro) allowing with little efforts building of beautiful correlation plots.
-    
-- 'no javascript' mode
+  See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
 
-    Enables plots that can be rendered in notebook renderers which do not support javascript. 
-    See ['No Javascript' Mode](#no_js) for more details.    
-    
-- New tooltip anchor options: 'center' and 'middle'
 
-    See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)) for more details.
+- new `format` parameter on scales: formatting tick labels on X/Y axis.
 
-See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for more details.
+  Example:
+    ```python
+    scale_x_datetime(format="%b %Y")
+    scale_x_continuous(format='is {.2f}')
+    ```
+  Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
+
+  See also: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md)
+
+
+- Tooltips:
+  - new `color` option: overrides the default tooltip color:
+    ```python
+    geom_xxx(tooltips=layer_tooltips().color('red'))
+    ```
+    Learn more: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+  - *crosshair* cursor when tooltip is in a fixed position specified by the `anchor` option.
+
+
+- Brand new Geocoding API.
+
+  Note: This is a **breaking change!** Hence we bumped the Lets-Plot version to 2.0.0. 
+
+  In the Lets-Plot v2.0.0 the peviouse Geocoding API is no longer working.
+
+  The old version of geocoding backend remains on-line for a couple of release cycles
+  to continue support of prior Lets-Plot versions.
+
+  To learn more about new Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+
+
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
 
 <a id="change_log"></a>
 ### Change Log
 
-See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md)
 
 
 <a id="license"></a>
