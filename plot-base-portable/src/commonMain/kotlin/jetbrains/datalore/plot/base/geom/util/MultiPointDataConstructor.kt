@@ -62,7 +62,7 @@ object MultiPointDataConstructor {
         for (group in sortedGroup) {
             val multiPointData = multiPointDataCombiners[group]!!.create(group)
 
-            if (!multiPointData.points.isEmpty()) {
+            if (multiPointData.points.isNotEmpty()) {
                 result.add(multiPointData)
             }
         }

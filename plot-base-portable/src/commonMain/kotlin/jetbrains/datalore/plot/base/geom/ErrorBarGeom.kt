@@ -56,20 +56,22 @@ class ErrorBarGeom : GeomBase() {
 
             val r = DoubleRectangle(x!! - width / 2, ymin, width, height)
 
-            val g = errorBarShape(
-                helper.toClient(
-                    r,
-                    p
-                ), p
-            )
-            root.add(g)
+            if (coord.contains(r)) {
+                val g = errorBarShape(
+                    helper.toClient(
+                        r,
+                        p
+                    ), p
+                )
+                root.add(g)
 
-            buildHints(
-                DoubleRectangle(r.left, r.center.y, r.width, 0.0),
-                p,
-                ctx,
-                geomHelper
-            )
+                buildHints(
+                    DoubleRectangle(r.left, r.center.y, r.width, 0.0),
+                    p,
+                    ctx,
+                    geomHelper
+                )
+            }
         }
     }
 

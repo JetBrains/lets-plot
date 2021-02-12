@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
@@ -29,5 +30,9 @@ internal class DefaultCoordinateSystem(
 
     override fun contains(p: DoubleVector): Boolean {
         return (xLim?.contains(p.x) ?: true) && (yLim?.contains(p.y) ?: true)
+    }
+
+    override fun contains(rect: DoubleRectangle): Boolean {
+        return contains(rect.origin) && contains(rect.origin.add(rect.dimension))
     }
 }

@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.C
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.base.geometry.DoubleVector
 
 class SmoothGeom : GeomBase() {
 
@@ -30,7 +31,11 @@ class SmoothGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints()))
+        val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints())).filter { p ->
+            val x = p.x()
+            val y = p.y()
+            coord.contains(DoubleVector(x!!,y!!))
+        }
         val helper = LinesHelper(pos, coord, ctx)
 
         // Regression line

@@ -30,13 +30,13 @@ open class TileGeom : GeomBase() {
         val helper =
             RectanglesHelper(aesthetics, pos, coord, ctx)
         val slimGroup = helper.createSlimRectangles(
-            rectangleByDataPoint(ctx)
+            rectangleByDataPoint(ctx, coord)
         )
         root.add(wrap(slimGroup))
 
         RectTargetCollectorHelper(
             helper,
-            rectangleByDataPoint(ctx),
+            rectangleByDataPoint(ctx, coord),
             { p: DataPointAesthetics ->
                 HintColorUtil.fromFill(
                     p
@@ -50,23 +50,26 @@ open class TileGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(ctx: GeomContext, coord: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val x = p.x()
                 val y = p.y()
                 val w = p.width()
                 val h = p.height()
 
-                var rect: DoubleRectangle? = null
+                var result: DoubleRectangle? = null
                 if (SeriesUtil.allFinite(x, y, w, h)) {
                     val width = w!! * ctx.getResolution(Aes.X)
                     val height = h!! * ctx.getResolution(Aes.Y)
 
                     val origin = DoubleVector(x!! - width / 2, y!! - height / 2)
                     val dimensions = DoubleVector(width, height)
-                    rect = DoubleRectangle(origin, dimensions)
+                    val rect = DoubleRectangle(origin, dimensions)
+                    if(coord.contains(rect)) {
+                        result = rect
+                    }
                 }
-                rect
+                result
             }
         }
     }
