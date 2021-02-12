@@ -20,7 +20,7 @@ class StepGeom : LineGeom() {
     }
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val dataPoints = dataPoints(aesthetics)
+        val dataPoints = dataPoints(aesthetics, coord)
         val helper = LinesHelper(pos, coord, ctx)
         val pathInfos = helper.createSteps(dataPoints, myDirection)
         for (pathInfo in pathInfos) {
