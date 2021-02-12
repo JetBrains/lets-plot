@@ -30,13 +30,13 @@ class CrossBarGeom : GeomBase() {
     ) {
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, false)
+            rectangleByDataPoint(ctx, coord, isHintRect = false)
         )
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, true),
+            rectangleByDataPoint(ctx, coord, isHintRect = true),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -48,9 +48,11 @@ class CrossBarGeom : GeomBase() {
 
         private fun rectangleByDataPoint(
             ctx: GeomContext,
+            coord: CoordinateSystem,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
+                var result: DoubleRectangle? = null
                 if (!isHintRect &&
                     p.defined(Aes.X) &&
                     p.defined(Aes.YMIN) &&
@@ -62,9 +64,16 @@ class CrossBarGeom : GeomBase() {
                     val ymax = p.ymax()!!
                     val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-                    val origin = DoubleVector(x - width / 2, ymin)
-                    val dimensions = DoubleVector(width, ymax - ymin)
-                    DoubleRectangle(origin, dimensions)
+                    val rect = DoubleRectangle(
+                        origin = DoubleVector(x - width / 2, ymin),
+                        dimension = DoubleVector(width, ymax - ymin)
+                    )
+                    if (coord.contains(rect) &&
+                        coord.contains(DoubleVector(x, ymin)) &&
+                        coord.contains(DoubleVector(x, ymax))
+                    ) {
+                        result = rect
+                    }
                 } else if (isHintRect &&
                     p.defined(Aes.X) &&
                     p.defined(Aes.MIDDLE)
@@ -73,12 +82,15 @@ class CrossBarGeom : GeomBase() {
                     val middle = p.middle()!!
                     val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-                    val origin = DoubleVector(x - width / 2, middle)
-                    val dimensions = DoubleVector(width, 0.0)
-                    DoubleRectangle(origin, dimensions)
-                } else {
-                    null
+                    val rect = DoubleRectangle(
+                        origin = DoubleVector(x - width / 2, middle),
+                        dimension = DoubleVector(width, 0.0)
+                    )
+                    if (coord.contains(rect)) {
+                        result = rect
+                    }
                 }
+                result
             }
         }
     }

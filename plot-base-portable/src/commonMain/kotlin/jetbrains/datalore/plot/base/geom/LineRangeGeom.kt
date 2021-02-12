@@ -32,7 +32,8 @@ class LineRangeGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)) {
+        val dataPoints = aesthetics.dataPoints().filter { p -> rectangleByDataPoint(p, coord) != null }
+        for (p in GeomUtil.withDefined(dataPoints, Aes.X, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
             val ymin = p.ymin()!!
             val ymax = p.ymax()!!
@@ -46,7 +47,7 @@ class LineRangeGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(),
+            rectangleByDataPoint(coord),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -54,25 +55,30 @@ class LineRangeGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        fun rectangleByDataPoint(): (DataPointAesthetics) -> DoubleRectangle? {
-            return { p ->
-                if (p.defined(Aes.X) &&
-                    p.defined(Aes.YMIN) &&
-                    p.defined(Aes.YMAX)
-                ) {
-                    val x = p.x()!!
-                    val ymin = p.ymin()!!
-                    val ymax = p.ymax()!!
-                    val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
-                    val height = ymax - ymin
+        fun rectangleByDataPoint(coord: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
+            return { p -> rectangleByDataPoint(p, coord) }
+        }
 
-                    val origin = DoubleVector(x - width / 2, ymax - height / 2)
-                    val dimensions = DoubleVector(width, 0.0 )
-                    DoubleRectangle(origin, dimensions)
-                } else {
-                    null
+        fun rectangleByDataPoint(p: DataPointAesthetics, coord: CoordinateSystem): DoubleRectangle? {
+            var result: DoubleRectangle? = null
+            if (p.defined(Aes.X) &&
+                p.defined(Aes.YMIN) &&
+                p.defined(Aes.YMAX)
+            ) {
+                val x = p.x()!!
+                val ymin = p.ymin()!!
+                val ymax = p.ymax()!!
+                val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
+                val height = ymax - ymin
+
+                val origin = DoubleVector(x - width / 2, ymax - height / 2)
+                val dimensions = DoubleVector(width, 0.0 )
+                val rect = DoubleRectangle(origin, dimensions)
+                if (coord.contains(rect)) {
+                    result = rect
                 }
             }
+            return result
         }
     }
 }
