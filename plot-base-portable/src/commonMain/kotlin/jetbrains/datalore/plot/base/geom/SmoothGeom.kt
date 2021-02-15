@@ -31,24 +31,26 @@ class SmoothGeom : GeomBase() {
         coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints())).filter { p ->
-            val coord = GeomUtil.TO_LOCATION_X_Y(p)
-            coord != null && coordinateSystem.contains(coord)
+        val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints()))
+        if (dataPoints.any { p ->
+                GeomUtil.TO_LOCATION_X_Y(p)?.let { coordinateSystem.contains(it) } == true
+            }
+        ) {
+            val helper = LinesHelper(pos, coordinateSystem, ctx)
+
+            // Regression line
+            helper.setAlphaEnabled(false)
+            val regressionLines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+            appendNodes(regressionLines, root)
+
+            // Confidence interval
+            helper.setAlphaFilter(PROPORTION)
+            helper.setWidthFilter(ZERO)
+            val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
+            appendNodes(bands, root)
+
+            buildHints(dataPoints, pos, coordinateSystem, ctx)
         }
-        val helper = LinesHelper(pos, coordinateSystem, ctx)
-
-        // Regression line
-        helper.setAlphaEnabled(false)
-        val regressionLines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        appendNodes(regressionLines, root)
-
-        // Confidence interval
-        helper.setAlphaFilter(PROPORTION)
-        helper.setWidthFilter(ZERO)
-        val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
-        appendNodes(bands, root)
-
-        buildHints(dataPoints, pos, coordinateSystem, ctx)
     }
 
     private fun buildHints(

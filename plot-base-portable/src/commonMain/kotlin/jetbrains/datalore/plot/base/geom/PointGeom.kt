@@ -41,7 +41,7 @@ open class PointGeom : GeomBase() {
         coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val helper = GeomHelper(pos, coordinateSystem, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
 
         val count = aesthetics.dataPointCount()
@@ -52,7 +52,7 @@ open class PointGeom : GeomBase() {
             val p = aesthetics.dataPointAt(i)
             val x = p.x()
             val y = p.y()
-            if (SeriesUtil.allFinite(x, y) && coord.contains(DoubleVector(x!!, y!!))) {
+            if (SeriesUtil.allFinite(x, y) && coordinateSystem.contains(DoubleVector(x!!, y!!))) {
                 val location = helper.toClient(x, y, p)
 
                 val shape = p.shape()!!

@@ -20,13 +20,13 @@ object CrossBarHelper {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?
     ) {
         // rectangles
         val helper =
-            RectanglesHelper(aesthetics, pos, coord, ctx)
+            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
         val rectangles = helper.createRectangles(rectFactory)
         rectangles.forEach { root.add(it) }
     }
@@ -42,27 +42,26 @@ object CrossBarHelper {
         val helper = GeomHelper(pos, coordinateSystem, ctx)
         val elementHelper = helper.createSvgElementHelper()
 
-        for (p in GeomUtil.withDefined(
-            aesthetics.dataPoints(),
-            Aes.X,
-            Aes.WIDTH,
-            Aes.MIDDLE
-        )) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.WIDTH, Aes.MIDDLE)) {
             val x = p.x()!!
             val middle = p.middle()!!
             val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-            val line = elementHelper.createLine(
-                DoubleVector(x - width / 2, middle),
-                DoubleVector(x + width / 2, middle),
-                p
-            )
+            val start = DoubleVector(x - width / 2, middle)
+            val end = DoubleVector(x + width / 2, middle)
+            if (coordinateSystem.contains(start) && coordinateSystem.contains(end)) {
+                val line = elementHelper.createLine(
+                    start,
+                    end,
+                    p
+                )
 
-            // adjust thickness
-            val thickness = line.strokeWidth().get()!!
-            line.strokeWidth().set(thickness * fatten)
+                // adjust thickness
+                val thickness = line.strokeWidth().get()!!
+                line.strokeWidth().set(thickness * fatten)
 
-            root.add(line)
+                root.add(line)
+            }
         }
     }
 
@@ -112,9 +111,9 @@ private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) :
             val middleX = x + width * .5
             val lowerWhisker =
                 SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
-            GeomHelper.Companion.decorate(lowerWhisker, p)
+            GeomHelper.decorate(lowerWhisker, p)
             val upperWhisker = SvgLineElement(middleX, y, middleX, y + height * whiskerSize)
-            GeomHelper.Companion.decorate(upperWhisker, p)
+            GeomHelper.decorate(upperWhisker, p)
             g.children().add(lowerWhisker)
             g.children().add(upperWhisker)
         }
