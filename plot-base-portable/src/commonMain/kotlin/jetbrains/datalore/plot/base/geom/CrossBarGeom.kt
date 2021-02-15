@@ -68,10 +68,7 @@ class CrossBarGeom : GeomBase() {
                         origin = DoubleVector(x - width / 2, ymin),
                         dimension = DoubleVector(width, ymax - ymin)
                     )
-                    if (coordinateSystem.contains(rect) &&
-                        coordinateSystem.contains(DoubleVector(x, ymin)) &&
-                        coordinateSystem.contains(DoubleVector(x, ymax))
-                    ) {
+                    if (coordinateSystem.contains(rect)) {
                         result = rect
                     }
                 } else if (isHintRect &&
