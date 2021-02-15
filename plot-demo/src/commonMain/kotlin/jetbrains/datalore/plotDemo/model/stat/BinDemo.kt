@@ -30,8 +30,8 @@ open class BinDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                histogram(),
-                histogramWithLimits()
+            histogram(),
+            histogramWithLimits()
         )
     }
 
@@ -49,15 +49,15 @@ open class BinDemo : SimpleDemoBase() {
         val y = DemoUtil.gauss(count, 64, 0.0, 50.0)
 
         var scaleX = Scales.continuousDomainNumericRange("A scale")
-                .with()
-                .mapper(Mappers.mul(1.0))
-                .build()
+            .with()
+            .mapper(Mappers.mul(1.0))
+            .build()
 
         if (limits) {
             scaleX = scaleX.with()
-                    .lowerLimit(-100.0)
-                    .upperLimit(100.0)
-                    .build()
+                .lowerLimit(-100.0)
+                .upperLimit(100.0)
+                .build()
         }
 
         val groupComponent = GroupComponent()
@@ -67,14 +67,14 @@ open class BinDemo : SimpleDemoBase() {
             val varA = DataFrame.Variable("A")
             val varB = DataFrame.Variable("B")
             var data = DataFrame.Builder()
-                    .putNumeric(varA, x)
-                    .putNumeric(varB, y)
-                    .build()
+                .putNumeric(varA, x)
+                .putNumeric(varB, y)
+                .build()
 
             val scaleY = Scales.continuousDomainNumericRange("bar height")
-                    .with()
-                    .mapper(Mappers.mul(2.5))
-                    .build()
+                .with()
+                .mapper(Mappers.mul(2.5))
+                .build()
 
             // transform must happen before stat
             data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX)
@@ -83,9 +83,9 @@ open class BinDemo : SimpleDemoBase() {
             // stat uses transform vars
             val binCount = 10
 
-            val stat = Stats.bin()
-                    .binCount(binCount)
-                    .build()
+            val stat = Stats.bin(
+                binCount = binCount,
+            )
             data = stat.apply(data, SimpleStatContext(data))
 
             val statX = data.getNumeric(Stats.X)
@@ -95,11 +95,11 @@ open class BinDemo : SimpleDemoBase() {
             // build aesthetics for stat summary
             run {
                 val aes = AestheticsBuilder(statX.size)
-                        .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
-                        .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
-                        .fill(constant(Color.LIGHT_BLUE))
-                        .width(constant(.95))
-                        .build()
+                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
+                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
+                    .fill(constant(Color.LIGHT_BLUE))
+                    .width(constant(.95))
+                    .build()
 
                 val pos = PositionAdjustments.dodge(aes, 1, .95)
                 val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
@@ -115,17 +115,19 @@ open class BinDemo : SimpleDemoBase() {
             // add layer of stat points (for test)
             run {
                 val aes = AestheticsBuilder(statX.size)
-                        .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
-                        .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
-                        .color(constant(Color.BLUE))
-                        .shape(constant(NamedShape.STICK_CIRCLE))
-                        .size(constant(3.0))
-                        .build()
+                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
+                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
+                    .color(constant(Color.BLUE))
+                    .shape(constant(NamedShape.STICK_CIRCLE))
+                    .size(constant(3.0))
+                    .build()
 
                 val pos = PositionAdjustments.identity()
                 val layer =
-                    jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
-                        PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                    jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                        aes,
+                        PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
+                    )
                 groupComponent.add(layer.rootGroup)
             }
         }
@@ -133,17 +135,19 @@ open class BinDemo : SimpleDemoBase() {
         // points layer
         run {
             val aes = AestheticsBuilder(count)
-                    .x(AestheticsBuilder.listMapper(x, scaleX.mapper))
-                    .y(collection(y))
-                    .color(constant(Color.RED))
-                    .shape(constant(NamedShape.STICK_CIRCLE))
-                    .size(constant(3.0))
-                    .build()
+                .x(AestheticsBuilder.listMapper(x, scaleX.mapper))
+                .y(collection(y))
+                .color(constant(Color.RED))
+                .shape(constant(NamedShape.STICK_CIRCLE))
+                .size(constant(3.0))
+                .build()
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
-                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                    aes,
+                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
+                )
             groupComponent.add(layer.rootGroup)
         }
 

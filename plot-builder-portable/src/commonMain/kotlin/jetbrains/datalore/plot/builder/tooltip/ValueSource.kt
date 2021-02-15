@@ -10,7 +10,13 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 interface ValueSource {
 
-    fun setDataContext(dataContext: DataContext)
+    val isOutlier: Boolean
+
+    val isAxis: Boolean
+
+    fun initDataContext(dataContext: DataContext)
 
     fun getDataPoint(index: Int): DataPoint?
+
+    fun copy(): ValueSource
 }

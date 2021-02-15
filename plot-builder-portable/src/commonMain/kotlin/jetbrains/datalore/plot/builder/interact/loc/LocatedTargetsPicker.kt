@@ -9,21 +9,16 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 
 internal class LocatedTargetsPicker {
-
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
-    private var myMaxAllowedDistance = CUTOFF_DISTANCE
+    private val myAllLookupResults = ArrayList<LookupResult>()
 
     val picked: List<LookupResult>
-        get() = myPicked
-
-    fun updateMaxDistance(d: Double) {
-        myMaxAllowedDistance = d
-    }
+        get() = chooseBestResult()
 
     fun addLookupResult(lookupResult: LookupResult) {
         val distance = distance(lookupResult)
-        if (distance > myMaxAllowedDistance) {
+        if (!lookupResult.isCrosshairEnabled && distance > CUTOFF_DISTANCE) {
             return
         }
 
@@ -39,6 +34,29 @@ internal class LocatedTargetsPicker {
             myMinDistance == distance -> {
                 myPicked.clear()
                 myPicked.add(lookupResult)
+            }
+        }
+        myAllLookupResults.add(lookupResult)
+    }
+
+    private fun chooseBestResult(): List<LookupResult> {
+        fun hasGeneralTooltip(lookupResult: LookupResult) = lookupResult.contextualMapping.hasGeneralTooltip
+        fun hasAxisTooltip(lookupResult: LookupResult): Boolean {
+            return lookupResult.contextualMapping.hasAxisTooltip ||
+                    // actually hline/vline have axis info in the general tooltip
+                    lookupResult.geomKind in listOf(GeomKind.V_LINE, GeomKind.H_LINE)
+        }
+
+        return when {
+            myPicked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> myPicked
+            myAllLookupResults.none { hasGeneralTooltip(it) } -> myPicked
+            myAllLookupResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
+                listOf(myAllLookupResults.last { hasGeneralTooltip(it) && hasAxisTooltip(it) })
+            }
+            else -> {
+                val withGeneralTooltip = myAllLookupResults.lastOrNull { hasGeneralTooltip(it) }
+                val withAxisTooltip = myAllLookupResults.lastOrNull { hasAxisTooltip(it) }
+                listOfNotNull(withGeneralTooltip, withAxisTooltip)
             }
         }
     }

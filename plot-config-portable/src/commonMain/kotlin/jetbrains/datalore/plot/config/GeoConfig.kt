@@ -5,22 +5,35 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.spatial.*
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.spatial.BBOX_CALCULATOR
+import jetbrains.datalore.base.spatial.GeoJson
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.SimpleFeature
+import jetbrains.datalore.base.spatial.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.union
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.bottom
+import jetbrains.datalore.base.typedGeometry.boundingBox
+import jetbrains.datalore.base.typedGeometry.left
+import jetbrains.datalore.base.typedGeometry.limit
+import jetbrains.datalore.base.typedGeometry.right
+import jetbrains.datalore.base.typedGeometry.top
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
-import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
-import jetbrains.datalore.plot.config.ConfigUtil.createDataFrame
-import jetbrains.datalore.plot.config.ConfigUtil.rightJoin
+import jetbrains.datalore.plot.config.ConfigUtil.join
 import jetbrains.datalore.plot.config.CoordinatesCollector.*
 import jetbrains.datalore.plot.config.GeoConfig.Companion.GEO_ID
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Mapping.toAes
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
@@ -37,39 +50,24 @@ class GeoConfig(
     val mappings: Map<Aes<*>, Variable>
 
     init {
-        fun getGeoData(gdfLocation: String, keys: List<Any>?): List<Pair<Any, String>> {
-            val geoColumn: String
-            val geoDataFrame: Map<String, Any>
-            when(gdfLocation) {
-                GEO_POSITIONS -> {
-                    geoDataFrame = layerOptions.getMap(GEO_POSITIONS) ?: error("require 'map' parameter")
-                    geoColumn = layerOptions.getString(MAP_DATA_META, GDF, GEOMETRY) ?: error("Geometry column not set")
-                }
-                DATA -> {
-                    geoDataFrame = layerOptions.getMap(DATA) ?: error("require 'data' parameter")
-                    geoColumn = layerOptions.getString(DATA_META, GDF, GEOMETRY) ?: error("Geometry column not set")
-                }
+        fun getGeoDataFrame(gdfLocation: String): DataFrame {
+            val geoDataFrame: Map<String, Any> = when(gdfLocation) {
+                GEO_POSITIONS -> layerOptions.getMap(GEO_POSITIONS) ?: error("require 'map' parameter")
+                DATA -> layerOptions.getMap(DATA) ?: error("require 'data' parameter")
                 else -> error("Unknown gdf location: $gdfLocation")
             }
 
-            // If no keys provided use indicies
-            val ids = keys ?: geoDataFrame.indicies?.map(Int::toString) ?: emptyList<String>()
-            val geoJsons = geoDataFrame.getList(geoColumn)?.map { it as String } ?: error("$geoColumn not found in $gdfLocation")
-
-            return ids.zip(geoJsons)
+            return DataFrameUtil.fromMap(geoDataFrame)
         }
 
-        fun appendGeoId(
-            data: DataFrame,
-            geoData: List<Pair<Any, String>>,
-            dataKeyColumn: String
-        ): DataFrame {
-            return DataFrame.Builder(data).put(Variable(dataKeyColumn), geoData.map { (key, _) -> key }).build()
+        fun getGeometryColumn(gdfLocation: String): String = when(gdfLocation) {
+            GEO_POSITIONS -> layerOptions.getString(MAP_DATA_META, GDF, GEOMETRY) ?: error("Geometry column not set")
+            DATA -> layerOptions.getString(DATA_META, GDF, GEOMETRY) ?: error("Geometry column not set")
+            else -> error("Unknown gdf location: $gdfLocation")
         }
 
-        val dataKeyColumn: String
-        val geoData: List<Pair<Any, String>>
         val dataFrame: DataFrame
+        val geometries: Variable
 
         when {
             // (aes(color='cyl'), data=data, map=gdf) - how to join without `map_join`?
@@ -83,64 +81,44 @@ class GeoConfig(
                 require(layerOptions.has(GEO_POSITIONS)) { "'map' parameter is mandatory with MAP_DATA_META" }
 
                 val mapJoin = layerOptions.getList(MAP_JOIN) ?: error("require map_join parameter")
-                val geoKeyColumn = mapJoin[1] as String
-                val mapKeys = layerOptions
-                    .getMap(GEO_POSITIONS)
-                    ?.getList(geoKeyColumn)
-                    ?.requireNoNulls()
-                    ?: error("'$geoKeyColumn' is not found in map")
-                geoData = getGeoData(gdfLocation = GEO_POSITIONS, keys = mapKeys)
+                dataFrame = join(
+                    left = data,
+                    leftKeyVariableNames = (mapJoin[0] as List<*>),
+                    right = getGeoDataFrame(gdfLocation = GEO_POSITIONS),
+                    rightKeyVariableNames = (mapJoin[1] as List<*>)
+                )
 
-                dataFrame = data
-                dataKeyColumn = mapJoin[0] as String
+                geometries = findVariableOrFail(dataFrame, getGeometryColumn(GEO_POSITIONS))
             }
 
             // (map=gdf) - simple geometry
             with(layerOptions) { has(MAP_DATA_META, GDF, GEOMETRY) && !has(MAP_JOIN) } -> {
                 require(layerOptions.has(GEO_POSITIONS)) { "'map' parameter is mandatory with MAP_DATA_META" }
-                geoData = getGeoData(gdfLocation = GEO_POSITIONS, keys = null)
-
-                dataKeyColumn = GEO_ID
-                dataFrame = appendGeoId(data, geoData, dataKeyColumn)
+                dataFrame = getGeoDataFrame(gdfLocation = GEO_POSITIONS)
+                geometries = findVariableOrFail(dataFrame, getGeometryColumn(GEO_POSITIONS))
             }
 
             // (data=gdf)
             with(layerOptions) { has(DATA_META, GDF, GEOMETRY) && !has(GEO_POSITIONS) && !has(MAP_JOIN) } -> {
                 require(layerOptions.has(DATA)) { "'data' parameter is mandatory with DATA_META" }
-                geoData = getGeoData(gdfLocation = DATA, keys = null)
 
-                dataKeyColumn = GEO_ID
-                dataFrame = appendGeoId(data, geoData, dataKeyColumn)
+                dataFrame = data
+                geometries = findVariableOrFail(dataFrame, getGeometryColumn(DATA))
             }
 
             else -> error("GeoDataFrame not found in data or map")
         }
 
         val coordinatesCollector = when(geomKind) {
-            MAP, POLYGON -> BoundaryCoordinatesCollector()
-            LIVE_MAP, POINT, TEXT -> PointCoordinatesCollector()
-            RECT -> BboxCoordinatesCollector()
-            PATH -> PathCoordinatesCollector()
+            MAP, POLYGON -> BoundaryCoordinatesCollector(dataFrame, geometries)
+            LIVE_MAP, POINT, TEXT -> PointCoordinatesCollector(dataFrame, geometries)
+            RECT -> BboxCoordinatesCollector(dataFrame, geometries)
+            PATH -> PathCoordinatesCollector(dataFrame, geometries)
             else -> error("Unsupported geom: $geomKind")
         }
 
-        val geoFrame = coordinatesCollector
-            .append(geoData)
-            .buildCoordinatesMap()
-            .let(::createDataFrame)
-
-        dataAndCoordinates = rightJoin(
-            left = dataFrame,
-            leftKey = dataKeyColumn,
-            right = geoFrame,
-            rightKey = GEO_ID
-        )
-
-        val coordinatesAutoMapping = coordinatesCollector.mappings
-            .filterValues { coordName -> coordName in variables(dataAndCoordinates) }
-            .map { (aes, coordName) -> aes to variables(dataAndCoordinates).getValue(coordName) }
-            .toMap()
-        mappings = createAesMapping(dataAndCoordinates, mappingOptions) + coordinatesAutoMapping
+        dataAndCoordinates = coordinatesCollector.buildDataFrame()
+        mappings = createAesMapping(dataAndCoordinates, mappingOptions + coordinatesCollector.mappings)
     }
 
     companion object {
@@ -153,7 +131,15 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(layerOptions: Map<*, *>): Boolean {
+        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>): Boolean {
+            if (combinedMappings.keys
+                    .mapNotNull { it as? String }
+                    .mapNotNull { runCatching { toAes(it) }.getOrNull()} // skip "group" or invalid names
+                    .any(Aes.Companion::isPositional)
+            ) {
+                return false
+            }
+
             return layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(DATA_META, GDF, GEOMETRY)
         }
@@ -161,38 +147,38 @@ class GeoConfig(
 }
 
 internal abstract class CoordinatesCollector(
-    val mappings: Map<Aes<*>, String>
+    private val dataFrame: DataFrame,
+    private val geometries: Variable,
+    val mappings: Map<String, String>
 ) {
-    private val groupKeys = mutableListOf<Any>()
-    private val groupLengths = mutableListOf<Int>()
+    private val dupCounter = mutableListOf<Int>()
     protected val coordinates: Map<String, MutableList<Any>> = mappings.values.associateBy({ it }) { mutableListOf<Any>() }
     protected abstract val geoJsonConsumer: SimpleFeature.Consumer<LonLat>
     protected abstract val supportedFeatures: List<String>
 
-    fun append(geoData: List<Pair<Any, String>>): CoordinatesCollector {
-        geoData.forEach { (key, geoJson) ->
+    // (['a', 'b'], [2, 3]) => ['a', 'a', 'b', 'b', 'b']
+    private fun <T> duplicate(values: List<T>, frequencies: Collection<Int>) =
+        frequencies.mapIndexed { i, n -> MutableList(n) { values[i] } }.flatten()
+
+    fun buildDataFrame(): DataFrame {
+        for (geoJson in dataFrame.get(geometries)) {
             val oldRowCount = coordinates.rowCount
-            GeoJson.parse(geoJson, geoJsonConsumer)
-            groupLengths += coordinates.rowCount - oldRowCount
-            groupKeys += key
+            GeoJson.parse(geoJson as String, geoJsonConsumer)
+            dupCounter += coordinates.rowCount - oldRowCount
         }
 
         if (coordinates.rowCount == 0) {
             error("Geometries are empty or no matching types. Expected: " + supportedFeatures)
         }
 
-        return this
-    }
+        val builder = DataFrame.Builder()
+        dataFrame.variables().forEach { variable -> builder.put(variable, duplicate(dataFrame.get(variable), dupCounter)) }
+        coordinates.entries.forEach { (name, values) -> builder.put(Variable(name), values) }
 
-    fun buildCoordinatesMap(): Map<String, MutableList<Any>> {
-        require(groupLengths.size == groupKeys.size) { "Groups and ids should have same size" }
+        builder.put(Variable(GEO_ID), duplicate((0 until dataFrame.rowCount()).toList(), dupCounter))
+        builder.remove(geometries)
 
-        // (['a', 'b'], [2, 3]) => ['a', 'a', 'b', 'b', 'b']
-        fun <T> copies(values: Collection<T>, count: Collection<Int>) =
-            values.asSequence().zip(count.asSequence())
-                .fold(mutableListOf<T>()) { acc, (value, count) -> repeat(count) { acc += value }; acc }
-
-        return coordinates + (GEO_ID to copies(groupKeys, groupLengths))
+        return builder.build()
     }
 
     internal fun defaultConsumer(config: SimpleFeature.Consumer<LonLat>.() -> Unit) =
@@ -207,7 +193,7 @@ internal abstract class CoordinatesCollector(
 
     private val <K, V : List<Any>> Map<K, V>.rowCount get() = values.firstOrNull()?.size ?: 0
 
-    class PointCoordinatesCollector : CoordinatesCollector(POINT_COLUMNS) {
+    class PointCoordinatesCollector(dataFrame: DataFrame, geometries: Variable) : CoordinatesCollector(dataFrame, geometries, POINT_COLUMNS) {
         override val supportedFeatures = listOf("Point, MultiPoint")
         override val geoJsonConsumer: SimpleFeature.Consumer<LonLat> = defaultConsumer {
             onPoint = { p -> coordinates.append(p) }
@@ -215,7 +201,7 @@ internal abstract class CoordinatesCollector(
         }
     }
 
-    class PathCoordinatesCollector : CoordinatesCollector(POINT_COLUMNS) {
+    class PathCoordinatesCollector(dataFrame: DataFrame, geometries: Variable) : CoordinatesCollector(dataFrame, geometries, POINT_COLUMNS) {
         override val supportedFeatures = listOf("LineString, MultiLineString")
         override val geoJsonConsumer: SimpleFeature.Consumer<LonLat> = defaultConsumer {
             onLineString = { it.forEach { p -> coordinates.append(p) } }
@@ -223,7 +209,7 @@ internal abstract class CoordinatesCollector(
         }
     }
 
-    class BoundaryCoordinatesCollector : CoordinatesCollector(POINT_COLUMNS) {
+    class BoundaryCoordinatesCollector(dataFrame: DataFrame, geometries: Variable) : CoordinatesCollector(dataFrame, geometries, POINT_COLUMNS) {
         override val supportedFeatures = listOf("Polygon, MultiPolygon")
         override val geoJsonConsumer: SimpleFeature.Consumer<LonLat> = defaultConsumer {
             onPolygon = { it.asSequence().flatten().forEach { p -> coordinates.append(p) } }
@@ -231,7 +217,7 @@ internal abstract class CoordinatesCollector(
         }
     }
 
-    class BboxCoordinatesCollector : CoordinatesCollector(RECT_MAPPINGS) {
+    class BboxCoordinatesCollector(dataFrame: DataFrame, geometries: Variable) : CoordinatesCollector(dataFrame, geometries, RECT_MAPPINGS) {
         override val supportedFeatures = listOf("MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon")
         override val geoJsonConsumer: SimpleFeature.Consumer<LonLat> = defaultConsumer {
             fun insert(bboxes: List<Rect<LonLat>>) =
@@ -253,16 +239,16 @@ internal abstract class CoordinatesCollector(
 
     companion object {
 
-        val POINT_COLUMNS = mapOf<Aes<*>, String>(
-            Aes.X to GeoConfig.POINT_X,
-            Aes.Y to GeoConfig.POINT_Y
+        val POINT_COLUMNS = mapOf<String, String>(
+            Aes.X.name to GeoConfig.POINT_X,
+            Aes.Y.name to GeoConfig.POINT_Y
         )
 
-        val RECT_MAPPINGS = mapOf<Aes<*>, String>(
-            Aes.XMIN to GeoConfig.RECT_XMIN,
-            Aes.YMIN to GeoConfig.RECT_YMIN,
-            Aes.XMAX to GeoConfig.RECT_XMAX,
-            Aes.YMAX to GeoConfig.RECT_YMAX
+        val RECT_MAPPINGS = mapOf<String, String>(
+            Aes.XMIN.name to GeoConfig.RECT_XMIN,
+            Aes.YMIN.name to GeoConfig.RECT_YMIN,
+            Aes.XMAX.name to GeoConfig.RECT_XMAX,
+            Aes.YMAX.name to GeoConfig.RECT_YMAX
         )
 
         internal fun Map<String, MutableList<Any>>.append(p: Vec<LonLat>) {
@@ -282,8 +268,3 @@ internal abstract class CoordinatesCollector(
         }
     }
 }
-
-
-fun Map<*, *>.dataJoinVariable() = getList(MAP_JOIN)?.get(0) as? String
-private fun DataFrame.getOrFail(varName: String) = this.get(findVariableOrFail(this, varName))
-private val <K, V> Map<K, V>.indicies get() = (values.firstOrNull() as? List<*>)?.indices

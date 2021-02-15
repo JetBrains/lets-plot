@@ -60,9 +60,12 @@ if this_system == 'Windows':
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 if this_system == 'Darwin':
-    stdc_lib = 'c++'
+    stdcpp_lib = 'c++'
+    # fix for "ImportError: dlopen(...) Symbol not found: _NSGenericException" on macOS
+    extra_link = ['-framework', 'Foundation']
 else:
-    stdc_lib = 'stdc++'
+    stdcpp_lib = 'stdc++'
+    extra_link = []
 
 setup(name='lets-plot',
       license="MIT",
@@ -72,6 +75,7 @@ setup(name='lets-plot',
       author='JetBrains',
       author_email='lets-plot@jetbrains.com',
       project_urls={"Github": "https://github.com/JetBrains/lets-plot"},
+      url='https://github.com/JetBrains/lets-plot',
       description='An open source library for statistical plotting',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -81,6 +85,7 @@ setup(name='lets-plot',
           "Programming Language :: Python :: 3.6",
           "Programming Language :: Python :: 3.7",
           "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
           "Framework :: IPython",
           "Framework :: Jupyter",
           "Operating System :: MacOS",
@@ -103,10 +108,11 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', stdc_lib],
+                    libraries=['lets_plot_python_extension', stdcpp_lib],
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
+                    extra_link_args=extra_link
                     )
       ],
 

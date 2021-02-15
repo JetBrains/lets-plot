@@ -38,25 +38,28 @@ class TextGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
+        val sizeUnitRatio = getSizeUnitRatio(ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
-                GeomHelper.decorate(label, p, getSizeUnitRatio(ctx))
+                GeomHelper.decorate(label, p, sizeUnitRatio)
 
                 val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
                 root.add(label.rootGroup)
 
+                // The geom_text tooltip is similar to the geom_tile:
+                // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
                 targetCollector.addPoint(
                     p.index(),
                     loc,
-                    AesScaling.textSize(p) / 2,
+                    sizeUnitRatio * AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
-                        .setColor(HintColorUtil.fromColor(p))
-                        .setStemLength(TipLayoutHint.StemLength.NONE)
+                        .setColor(HintColorUtil.fromColor(p)),
+                    TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }
         }

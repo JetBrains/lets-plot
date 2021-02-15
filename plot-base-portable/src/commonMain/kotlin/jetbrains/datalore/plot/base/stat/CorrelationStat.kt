@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -13,20 +12,33 @@ import jetbrains.datalore.plot.base.stat.CorrelationUtil.correlationMatrix
 import jetbrains.datalore.plot.base.stat.math3.correlationPearson
 import kotlin.math.abs
 
-
-class CorrelationStat : BaseStat(DEF_MAPPING) {
-    var correlationMethod = DEF_CORRELATION_METHOD
-    var type = DEF_TYPE
+/**
+ * Computes correlation between numeric variables in data.
+ * Creates a data-frame with the following variables:
+ *   - '..x..' : X coordinates
+ *   - '..y..' : Y coordinates
+ *   - '..corr..' : correlation (in range -1..1)
+ *   - '..corr_abs..' : absolute value of correlation (in range 0..1)
+ */
+class CorrelationStat(
+    val correlationMethod: Method,
+    val type: Type,
+    val fillDiagonal: Boolean,
+    val threshold: Double
+) : BaseStat(DEF_MAPPING) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (correlationMethod != Method.PEARSON)
-            throw IllegalArgumentException(
-                "Unsupported correlation method: $correlationMethod (only pearson is currently available)"
-            )
+        require(correlationMethod == Method.PEARSON) {
+            "Unsupported correlation method: $correlationMethod (only Pearson is currently available)"
+        }
 
-        val cm = correlationMatrix(data, type, ::correlationPearson)
-        val vals = cm.getNumeric(Stats.CORR)
-        val abs: List<Double> = vals.map { abs(it!!) }
+        require(threshold in 0.0..1.0) {
+            "Threshold value:  $threshold must be in interval [0.0, 1.0]"
+        }
+
+        val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson, threshold)
+        val values = cm.getNumeric(Stats.CORR)
+        val abs: List<Double?> = values.map { it?.let(::abs) }
 
         return cm.builder().putNumeric(Stats.CORR_ABS, abs).build()
     }
@@ -53,12 +65,13 @@ class CorrelationStat : BaseStat(DEF_MAPPING) {
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.COLOR to Stats.CORR,
-            Aes.SIZE to Stats.CORR_ABS,
+            Aes.FILL to Stats.CORR,
             Aes.LABEL to Stats.CORR
         )
 
-        private val DEF_CORRELATION_METHOD = Method.PEARSON
-        private val DEF_TYPE = Type.FULL
-
+        val DEF_CORRELATION_METHOD = Method.PEARSON
+        val DEF_TYPE = Type.FULL
+        const val DEF_FILL_DIAGONAL = true
+        const val DEF_THRESHOLD = 0.0
     }
 }

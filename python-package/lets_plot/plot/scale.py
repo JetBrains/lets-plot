@@ -85,7 +85,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 # Continuous Scales
 #
 
-def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None):
+def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
     """
     Continuous position scales (x)
 
@@ -108,6 +108,11 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -140,10 +145,11 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
                   expand=expand,
                   na_value=na_value,
                   guide=None,
-                  trans=trans)
+                  trans=trans,
+                  format=format)
 
 
-def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None):
+def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
     """
     Continuous position scales (y)
 
@@ -166,6 +172,11 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         Missing values will be replaced with this value.
     trans : string
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -200,10 +211,11 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
                   expand=expand,
                   na_value=na_value,
                   guide=None,
-                  trans=trans)
+                  trans=trans,
+                  format=format)
 
 
-def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Continuous position scales (x) where trans='log10'
 
@@ -224,6 +236,11 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -250,10 +267,10 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     >>> ### Log10 scale on both axis
     >>> p + scale_y_log10() + scale_x_log10()
     """
-    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'log10')
+    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
 
 
-def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Continuous position scales (y) where trans='log10'
 
@@ -274,6 +291,11 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -300,10 +322,10 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     >>> ### Log10 scale on both axis
     >>> p + scale_y_log10() + scale_x_log10()
     """
-    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'log10')
+    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
 
 
-def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Continuous position scales (x) where trans='reverse'
 
@@ -324,6 +346,11 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -349,10 +376,10 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
     >>> p + scale_x_reverse()
     """
 
-    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'reverse')
+    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'reverse', format)
 
 
-def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Continuous position scales (y) where trans='reverse'
 
@@ -373,6 +400,11 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -398,14 +430,14 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
     >>> p + scale_y_reverse()
     """
 
-    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'reverse')
+    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'reverse', format)
 
 
 #
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
     """
     Discrete position scales (x)
 
@@ -428,6 +460,11 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         Missing values will be replaced with this value.
     reverse: boolean
         When True the scale reversed.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -463,11 +500,12 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   na_value=na_value,
                   guide=None,
                   trans=None,
+                  format=format,
                   #
                   discrete=True, reverse=reverse)
 
 
-def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Reversed discrete position scales (x)
 
@@ -488,6 +526,11 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         Defaults: multiplicative = 0, additive = 0.6.
     na_value :
         Missing values will be replaced with this value.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -498,10 +541,10 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         Reversed discrete position scales.
     """
 
-    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True)
+    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
     """
     Discrete position scales (y)
 
@@ -524,6 +567,11 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         Missing values will be replaced with this value.
     reverse: boolean
         When True the scale reversed.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -560,11 +608,12 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   na_value=na_value,
                   guide=None,
                   trans=None,
+                  format=format,
                   #
                   discrete=True, reverse=reverse)
 
 
-def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Reversed discrete position scales (y)
 
@@ -585,6 +634,11 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         Defaults: multiplicative = 0, additive = 0.6.
     na_value :
         Missing values will be replaced with this value.
+    format : string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
 
     Returns
     -------
@@ -595,7 +649,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         Reversed discrete position scales.
     """
 
-    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, reverse=True)
+    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
 
 
 #
@@ -1943,7 +1997,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 # Date-time
 #
 
-def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Continuous position scale (x)
 
@@ -1964,6 +2018,11 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
+    format : date/time format string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '%d.%m.%y' -> '06.08.19'
+        '%B %Y' -> 'August 2019'
+        '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
 
     Returns
     -------
@@ -1994,11 +2053,12 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
                   na_value=na_value,
                   guide=None,
                   trans=None,
+                  format=format,
                   #
                   datetime=True)
 
 
-def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Continuous position scale (y)
 
@@ -2019,6 +2079,11 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
+    format : date/time format string
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '%d.%m.%y' -> '06.08.19'
+        '%B %Y' -> 'August 2019'
+        '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
 
     Returns
     -------
@@ -2037,6 +2102,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
                   na_value=na_value,
                   guide=None,
                   trans=None,
+                  format=format,
                   #
                   datetime=True)
 
@@ -2208,7 +2274,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
 
 
 def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-           trans=None, **other):
+           trans=None, format=None, **other):
     """
     Create a scale (discrete or continuous)
 
@@ -2230,6 +2296,8 @@ def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=N
         Type of legend. Use 'colorbar' for continuous color bar, or 'legend' for discrete values.
     :param trans
         Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    :param format
+        A string of the format for labels on the scale. Supported types are number and date/time.
     :return:
     """
 

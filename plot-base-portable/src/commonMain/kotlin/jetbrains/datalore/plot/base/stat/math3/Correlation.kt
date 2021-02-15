@@ -13,7 +13,7 @@ fun mean(xs: DoubleArray) = xs.average()
 
 fun correlationPearson(xs: DoubleArray, ys: DoubleArray): Double {
     require(xs.size == ys.size) { "Two series must have the same size." }
-    require(xs.size > 0) { "Can't correlate empty sequences." }
+    require(xs.isNotEmpty()) { "Can't correlate empty sequences." }
 
     val mx = mean(xs)
     val my = mean(ys)
@@ -22,7 +22,7 @@ fun correlationPearson(xs: DoubleArray, ys: DoubleArray): Double {
     var d2x = 0.0
     var d2y = 0.0
 
-    for (i in 0 until xs.size) {
+    for (i in xs.indices) {
         val dx = xs[i] - mx
         val dy = ys[i] - my
 

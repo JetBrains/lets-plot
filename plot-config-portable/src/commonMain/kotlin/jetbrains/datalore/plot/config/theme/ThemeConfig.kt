@@ -6,55 +6,74 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.theme.*
+import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
+import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
 
-class ThemeConfig(options: Map<*, *>) {
+class ThemeConfig(options: Map<String, Any>) {
 
+    val theme: Theme = OneTileTheme(options)
 
-    val theme: Theme
+    private abstract class ConfiguredTheme(
+        private val options: Map<String, Any>,
+        defOptions: Map<String, Any>
+    ) : Theme {
 
-    init {
-        theme = MyTheme(options, DEF_OPTIONS)
-    }
-
-    private class MyTheme internal constructor(options: Map<*, *>, defOptions: Map<*, *>) : Theme {
-        private val myAxisXTheme: AxisTheme
-        private val myAxisYTheme: AxisTheme
-        private val myLegendTheme: LegendTheme
-        private val myTooltipTheme: TooltipTheme
-
-        init {
-            myAxisXTheme = AxisThemeConfig.X(options, defOptions)
-            myAxisYTheme = AxisThemeConfig.Y(options, defOptions)
-            myLegendTheme = LegendThemeConfig(options, defOptions)
-            myTooltipTheme = TooltipThemeConfig(options, defOptions)
-        }
+        private val axisXTheme: AxisTheme = AxisThemeConfig.X(options, defOptions)
+        private val axisYTheme: AxisTheme = AxisThemeConfig.Y(options, defOptions)
+        private val legendTheme: LegendTheme = LegendThemeConfig(options, defOptions)
 
         override fun axisX(): AxisTheme {
-            return myAxisXTheme
+            return axisXTheme
         }
 
         override fun axisY(): AxisTheme {
-            return myAxisYTheme
+            return axisYTheme
         }
 
         override fun legend(): LegendTheme {
-            return myLegendTheme
+            return legendTheme
         }
 
-        override fun tooltip(): TooltipTheme {
-            return myTooltipTheme
+        override fun facets(): FacetsTheme {
+            // ToDo: configurable
+            return DEF.facets()
+        }
+
+        override fun plot(): PlotTheme {
+            // ToDo: configurable
+            return DEF.plot()
+        }
+
+        override fun multiTile(): Theme {
+            return MultiTileTheme(options)
+        }
+    }
+
+    private class OneTileTheme(options: Map<String, Any>) :
+        ConfiguredTheme(options, DEF_OPTIONS)
+
+    private class MultiTileTheme(options: Map<String, Any>) :
+        ConfiguredTheme(options, DEF_OPTIONS_MULTI_TILE) {
+
+        override fun plot(): PlotTheme {
+            return DEF.multiTile().plot()
         }
     }
 
     companion object {
         internal val DEF: Theme = DefaultTheme()
         private val DEF_OPTIONS = mapOf(
-                LEGEND_POSITION to DEF.legend().position(),
-                LEGEND_JUSTIFICATION to DEF.legend().justification(),
-                LEGEND_DIRECTION to DEF.legend().direction()
+            LEGEND_POSITION to DEF.legend().position(),
+            LEGEND_JUSTIFICATION to DEF.legend().justification(),
+            LEGEND_DIRECTION to DEF.legend().direction()
+        )
+
+        private val DEF_OPTIONS_MULTI_TILE = DEF_OPTIONS + mapOf(
+            "${AXIS_LINE}_x" to ELEMENT_BLANK,      // replaced by inner frame
+            "${AXIS_LINE}_y" to ELEMENT_BLANK,      // replaced by inner frame
         )
     }
 }

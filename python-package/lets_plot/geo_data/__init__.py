@@ -1,6 +1,7 @@
 from .core import *
 from .map_geometry import *
-from .regions import *
+from .geocoder import *
+from .geocodes import *
 
 __all__ = (core.__all__ + map_geometry.__all__)
 

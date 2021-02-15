@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec
 
-__all__ = ['arrow', 'lon_lat']
+__all__ = ['arrow']
 
 
 #
@@ -36,7 +36,3 @@ def arrow(angle=None, length=None, ends=None, type=None):
     >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]), arrow=arrow(type='closed'))
     """
     return FeatureSpec('arrow', 'arrow', **locals())
-
-
-def lon_lat(lon, lat):
-    return FeatureSpec('deferred_procedure', 'lon_lat', lon=lon, lat=lat)

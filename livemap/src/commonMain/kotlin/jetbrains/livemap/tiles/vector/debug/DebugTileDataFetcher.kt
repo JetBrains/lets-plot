@@ -29,7 +29,7 @@ internal class DebugTileDataFetcher(
             myStats.add(cellKey, CELL_DATA_SIZE, "${tileLayers.sumBy { it.size } / 1024}Kb")
             myStats.add(cellKey, LOADING_TIME,  "${mySystemTime.getTimeMs() - start}ms")
 
-            val biggest: TileLayer? = tileLayers.maxBy { it.size }
+            val biggest: TileLayer? = tileLayers.maxByOrNull(TileLayer::size)
 
             myStats.add(cellKey, BIGGEST_LAYER, "${biggest?.name} ${(biggest?.size ?: 0) / 1024}Kb")
         }

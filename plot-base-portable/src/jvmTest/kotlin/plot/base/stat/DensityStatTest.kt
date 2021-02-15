@@ -57,11 +57,9 @@ class DensityStatTest {
         val n = 512
         val binWidth = SeriesUtil.span(SeriesUtil.range(test)!!) / (n - 1)
 
-        val stat = DensityStat()
-        stat.setN(n)
-
         for (kernel in DensityStat.Kernel.values()) { //test for different kernels
-            stat.setKernel(kernel)
+            val stat = Stats.density(n = n, kernel = kernel)
+
             val statDf = stat.apply(df, statContext(df))
             assertTrue(statDf.has(Stats.X))
             assertTrue(statDf.has(Stats.DENSITY))
@@ -79,7 +77,7 @@ class DensityStatTest {
                 SeriesUtil.sum(statDf.getNumeric(Stats.COUNT)) * binWidth,
                 length / 100.0
             ) //integral is the number of data points
-            assertEquals(1.0, statDf.getNumeric(Stats.SCALED).maxBy { v -> v!! }, 0.0) //maximum is one
+            assertEquals(1.0, statDf.getNumeric(Stats.SCALED).maxByOrNull { v -> v!! }, 0.0) //maximum is one
         }
     }
 
@@ -103,12 +101,10 @@ class DensityStatTest {
         val n2 = 256
         val binArea =
             SeriesUtil.span(SeriesUtil.range(testX)!!) / (n1 - 1) * SeriesUtil.span(
-                SeriesUtil.range(testY)!!) / (n2 - 1)
+                SeriesUtil.range(testY)!!
+            ) / (n2 - 1)
 
-        val stat = Stats.density2d()
-        stat.nx = n1
-        stat.ny = n2
-        stat.isContour = false
+        val stat = Stats.density2d(nX = n1, nY = n2, isContour = false)
 
         val statDf = stat.apply(df, statContext(df))
         assertTrue(statDf.has(Stats.X))

@@ -13,26 +13,12 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.base.util.SamplingUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.random.Random
 
 
 /**
- * See doc for stat_smooth / geom_smooth
- *
- *
- *
- *
- * Defaults:
- *
- *
- * geom = "smooth"
- * position = "identity"
- *
- *
- * Other params:
- *
  *
  * method - smoothing method: lm, glm, gam, loess, rlm
  * (For datasets with n < 1000 default is loess. For datasets with 1000 or more observations defaults to gam)
@@ -48,34 +34,28 @@ import kotlin.random.Random
  * method.args - ist of additional arguments passed on to the modelling function defined by method
  *
  *
- *
- *
- *
- *
  * Adds columns:
- *
  *
  * y    - predicted value
  * ymin - lower pointwise confidence interval around the mean
  * ymax - upper pointwise confidence interval around the mean
  * se   - standard error
  */
-class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
-    var smootherPointCount = DEF_EVAL_POINT_COUNT
-
-    // checkArgument(smoothingMethod == Method.LM or Method.LOESS, "Linear and loess models are supported only, use: method='lm' or 'loess'");
-    var smoothingMethod = DEF_SMOOTHING_METHOD
-    var confidenceLevel = DEF_CONFIDENCE_LEVEL
-    var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
-    var span = DEF_SPAN
-    var deg: Int = DEF_DEG // default degree for polynomial regression
-    var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
-    var seed: Long = DEF_SAMPLING_SEED
+class SmoothStat constructor(
+    private val smootherPointCount: Int,
+    private val smoothingMethod: Method,
+    private val confidenceLevel: Double,
+    private val displayConfidenceInterval: Boolean,
+    private val span: Double,
+    private val polynomialDegree: Int,
+    private val loessCriticalSize: Int,
+    private val samplingSeed: Long
+) : BaseStat(DEF_MAPPING) {
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
-                aes == Aes.YMIN && isDisplayConfidenceInterval ||
-                aes == Aes.YMAX && isDisplayConfidenceInterval
+                aes == Aes.YMIN && displayConfidenceInterval ||
+                aes == Aes.YMAX && displayConfidenceInterval
     }
 
     override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
@@ -100,14 +80,14 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
             Aes.X to Stats.X,
             Aes.Y to Stats.Y
         )  // also conditional Y_MIN / Y_MAX
-        private const val DEF_EVAL_POINT_COUNT = 80
-        private val DEF_SMOOTHING_METHOD = Method.LM
-        private const val DEF_CONFIDENCE_LEVEL = 0.95    // 95 %
-        private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
-        private const val DEF_SPAN = 0.5
-        private const val DEF_DEG = 1
-        private const val DEF_LOESS_CRITICAL_SIZE = 1_000
-        private const val DEF_SAMPLING_SEED = 37L
+        const val DEF_EVAL_POINT_COUNT = 80
+        val DEF_SMOOTHING_METHOD = Method.LM
+        const val DEF_CONFIDENCE_LEVEL = 0.95    // 95 %
+        const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
+        const val DEF_SPAN = 0.5
+        const val DEF_DEG = 1
+        const val DEF_LOESS_CRITICAL_SIZE = 1_000
+        const val DEF_SAMPLING_SEED = 37L
     }
 
 
@@ -127,11 +107,11 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         return true
     }
 
-    fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
-        val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$seed"
+    private fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
+        val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$samplingSeed"
         messageConsumer(msg)
 
-        return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(seed), data)
+        return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(samplingSeed), data)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -183,7 +163,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.Y, statY)
 
-        if (isDisplayConfidenceInterval) {
+        if (displayConfidenceInterval) {
             statData.putNumeric(Stats.Y_MIN, statMinY)
                 .putNumeric(Stats.Y_MAX, statMaxY)
                 .putNumeric(Stats.SE, statSE)
@@ -217,20 +197,27 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         val regression = when (smoothingMethod) {
             Method.LM -> {
                 Preconditions.checkArgument(
-                    deg >= 1,
+                    polynomialDegree >= 1,
                     "Degree of polynomial regression must be at least 1"
                 )
-                if (deg == 1) {
+                if (polynomialDegree == 1) {
                     LinearRegression(valuesX, valuesY, confidenceLevel)
                 } else {
-                    if (PolynomialRegression.canBeComputed(valuesX, valuesY, deg)) {
-                        PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
+                    if (PolynomialRegression.canBeComputed(valuesX, valuesY, polynomialDegree)) {
+                        PolynomialRegression(valuesX, valuesY, confidenceLevel, polynomialDegree)
                     } else {
                         return result   // empty stat data
                     }
                 }
             }
-            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+            Method.LOESS -> {
+                val evaluator = LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+                if (evaluator.canCompute) {
+                    evaluator
+                } else {
+                    return result   // empty stat data
+                }
+            }
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )

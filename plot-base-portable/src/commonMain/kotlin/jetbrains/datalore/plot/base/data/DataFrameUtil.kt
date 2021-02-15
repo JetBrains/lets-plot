@@ -77,16 +77,16 @@ object DataFrameUtil {
                 return `var`
             }
         }
-        throw IllegalArgumentException("Variable not found: '$varName'")
+        throw IllegalArgumentException("Variable not found: '$varName'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}")
     }
 
     fun isNumeric(data: DataFrame, varName: String): Boolean {
         return data.isNumeric(findVariableOrFail(data, varName))
     }
 
-    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
-        return data.distinctValues(variable)
-    }
+//    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
+//        return data.distinctValues(variable)
+//    }
 
     fun sortedCopy(variables: Iterable<DataFrame.Variable>): List<DataFrame.Variable> {
         val ordering = Ordering.from(Comparator<DataFrame.Variable> { o1, o2 -> o1.name.compareTo(o2.name) })
@@ -132,7 +132,7 @@ object DataFrameUtil {
                 "Map to data-frame: key expected a String but was " + key!!::class.simpleName + " : " + key
             )
             checkArgument(
-                key is String,
+                value is List<*>,
                 "Map to data-frame: value expected a List but was " + value!!::class.simpleName + " : " + value
             )
             frameBuilder.put(createVariable(key as String), value as List<*>)
@@ -171,5 +171,3 @@ object DataFrameUtil {
         return b.build()
     }
 }
-
-

@@ -5,16 +5,18 @@
 from pkgutil import extend_path
 from typing import Dict
 
-# To handle the situation when 'datalore' package is shared my modules in different locations.
+# To handle the situation when the 'lets_plot' package is shared by modules in different locations.
 __path__ = extend_path(__path__, __name__)
 
 from ._version import __version__
-from ._global_settings import _settings, is_production
+from ._global_settings import _settings, is_production, get_global_bool
+from ._global_settings import NO_JS, OFFLINE
 
 from .plot import *
 from .export import *
 from .frontend_context import *
 from .settings_utils import *
+from .bistro import *
 
 __all__ = (plot.__all__ +
            bistro.__all__ +
@@ -28,7 +30,11 @@ from .frontend_context import _configuration as cfg
 
 class LetsPlot:
     @classmethod
-    def setup_html(cls, isolated_frame: bool = None, offline: bool = None, show_status: bool = False) -> None:
+    def setup_html(cls, *,
+                   isolated_frame: bool = None,
+                   offline: bool = None,
+                   no_js: bool = None,
+                   show_status: bool = False) -> None:
         """
         Configures Lets-Plot HTML output.
         Depending on the usage LetsPlot generates different HTML to show plots.
@@ -37,15 +43,18 @@ class LetsPlot:
 
         Parameters
         ----------
-        isolated_frame : bool, optional, default None - auto-detect
-            If `True`, generate HTLM which can be used in `iframe` or in a standalone HTML document
-            If `False`, pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
-            
-        offline : bool, optional, default None - evaluated to 'connected' mode in production environment.
-            If `True`, full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
+        isolated_frame : bool
+            True - generate HTLM which can be used in `iframe` or in a standalone HTML document
+            False - pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
+            Default: None - auto-detect.
+        offline : bool
+            True - full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
             to work with notebook without the Internet connection.
-            If `False`, load Lets-Plot JS library from CDN.
-
+            False - load Lets-Plot JS library from CDN.
+            Default (None): 'connected' mode in production environment and 'offline' mode in dev environment.
+        no_js : bool
+            True - do not generate HTML+JS as an output - just static SVG image.
+            Default: False.
         show_status : bool, optional, default False
             Whether to show status of loading of the Lets-Plot JS library.
             Only applicable when the Lets-Plot JS library is preloaded.
@@ -54,8 +63,18 @@ class LetsPlot:
             raise ValueError("'isolated' argument is not boolean: {}".format(type(isolated_frame)))
         if not (isinstance(offline, bool) or offline is None):
             raise ValueError("'offline' argument is not boolean: {}".format(type(offline)))
+        if not (isinstance(no_js, bool) or no_js is None):
+            raise ValueError("'no_js' argument is not boolean: {}".format(type(no_js)))
+        if not isinstance(show_status, bool):
+            raise ValueError("'show_status' argument is not boolean: {}".format(type(show_status)))
 
-        cfg._setup_html_context(isolated_frame, offline, show_status)
+        offline = offline if offline is not None else get_global_bool(OFFLINE)
+        no_js = no_js if no_js is not None else get_global_bool(NO_JS)
+
+        cfg._setup_html_context(isolated_frame=isolated_frame,
+                                offline=offline,
+                                no_js=no_js,
+                                show_status=show_status)
 
     @classmethod
     def set(cls, settings: Dict):

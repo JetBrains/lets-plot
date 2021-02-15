@@ -5,8 +5,8 @@ from typing import Optional, List
 
 import pytest
 
-from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT, \
-    MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT, MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT, GeocodingRequest, \
+from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT, \
+    MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT, GeocodingRequest, \
     AmbiguityResolver
 from lets_plot.geo_data.gis.response import LevelKind
 
@@ -19,10 +19,9 @@ PARENT = MapRegion.with_name(REGION_STR)
 
 
 @pytest.mark.parametrize('region_queries,level,message', [
-    ([], None, MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT),
-    ([RegionQuery(None, None, REACTION_KIND_ALERT)], None, MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT),
+    ([], None, MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT),
+    ([RegionQuery(None, None, REACTION_KIND_ALERT)], None, MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT),
     ([RegionQuery(None, PARENT, REACTION_KIND_ALERT)], None, MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT),
-    ([RegionQuery(None, None, REACTION_KIND_ALERT)], LevelKind.state, MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT),
 ])
 def test_args_that_fail(region_queries: List[RegionQuery],
                         level: Optional[LevelKind],

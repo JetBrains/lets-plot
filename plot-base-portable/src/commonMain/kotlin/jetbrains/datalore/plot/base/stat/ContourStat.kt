@@ -39,13 +39,9 @@ import jetbrains.datalore.plot.base.StatContext
  *
  * level - height of contour
  */
-internal class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
+class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
 
-    private val myBinOptions: BinStatUtil.BinOptions
-
-    init {
-        myBinOptions = BinStatUtil.BinOptions(binCount, binWidth)
-    }
+    private val myBinOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.Z)
@@ -66,6 +62,8 @@ internal class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPP
     }
 
     companion object {
+        const val DEF_BIN_COUNT = 10
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y

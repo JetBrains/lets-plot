@@ -18,7 +18,7 @@ class TargetPrototype(
     internal val hitShape: HitShape,
     internal val indexMapper: (Int) -> Int,
     private val tooltipParams: TooltipParams,
-    private val tooltipKind: TipLayoutHint.Kind
+    internal val tooltipKind: TipLayoutHint.Kind
 ) {
 
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
@@ -41,6 +41,7 @@ class TargetPrototype(
             return when (hitShape.kind) {
                 POINT -> when (tooltipKind) {
                     VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill, stemLength)
+                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POINT")
                 }
 

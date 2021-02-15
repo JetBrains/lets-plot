@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.CURSOR_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
 import kotlin.math.max
 
@@ -91,7 +92,8 @@ internal class LayerTargetLocator(
                         // In this case use 0.0 as a distance - we have a direct hit.
                         max(0.0, collector.closestPointChecker.distance),
                         geomKind,
-                        contextualMapping
+                        contextualMapping,
+                        contextualMapping.isCrosshairEnabled
                 )
         )
     }
@@ -162,9 +164,14 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
+            val yOffset = when (target.prototype.tooltipKind) {
+                                    CURSOR_TOOLTIP -> rect.height / 2.0
+                                    else -> 0.0
+                                 }
+
             resultCollector.collect(
                     target.prototype.createGeomTarget(
-                            rect.origin.add(DoubleVector(rect.width / 2, 0.0)),
+                            rect.origin.add(DoubleVector(rect.width / 2, yOffset)),
                             getKeyForSingleObjectGeometry(target.prototype)
                     )
             )

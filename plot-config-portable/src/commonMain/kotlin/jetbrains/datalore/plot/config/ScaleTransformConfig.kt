@@ -5,16 +5,18 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.scale.transform.TransformKind
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 
 internal class ScaleTransformConfig private constructor(
     val transform: Transform,
     opts: Map<String, Any>
-) : OptionsAccessor(opts, emptyMap<Any, Any>()) {
+) : OptionsAccessor(opts) {
 
     companion object {
-        fun create(trans: Any): ScaleTransformConfig {
+        fun create(trans: Any, format: String?): ScaleTransformConfig {
             // trans - name (identity,log10 ...)
             //        or
             //        map with transform options
@@ -23,23 +25,23 @@ internal class ScaleTransformConfig private constructor(
                 val opts = trans as Map<String, Any>
                 return createForName(
                     ConfigUtil.featureName(opts),
-                    opts
+                    opts,
+                    format
                 )
             }
             return createForName(
                 trans.toString(),
-                HashMap()
+                HashMap(),
+                format
             )
         }
 
-        private fun createForName(name: String, opts: Map<String, Any>): ScaleTransformConfig {
-            val transform = when (name) {
-                "identity" -> Transforms.IDENTITY
-                "log10" -> Transforms.LOG10
-                "reverse" -> Transforms.REVERSE
-                "sqrt" -> Transforms.SQRT
-                else -> throw IllegalArgumentException("Can't create transform '$name'")
-            }
+        private fun createForName(name: String, opts: Map<String, Any>, format: String?): ScaleTransformConfig {
+            val stringFormat = format?.let { StringFormat.create(it) }
+            val transform = Transforms.createTransform(
+                transKind = TransformKind.safeValueOf(name),
+                labelFormatter = stringFormat?.let { { value: Any -> it.format(value) } }
+            )
             return ScaleTransformConfig(transform, opts)
         }
     }

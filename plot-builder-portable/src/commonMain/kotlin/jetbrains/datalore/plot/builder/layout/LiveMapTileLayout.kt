@@ -16,15 +16,19 @@ internal class LiveMapTileLayout : TileLayoutBase() {
             0.0,
             preferredSize
         )
-        geomBounds = geomBounds.union(DoubleRectangle(geomBounds.origin,
-            GEOM_MIN_SIZE
-        ))
+        geomBounds = geomBounds.union(
+            DoubleRectangle(
+                geomBounds.origin,
+                GEOM_MIN_SIZE
+            )
+        )
         val geomWithAxisBounds = geomBounds
         return TileLayoutInfo(
             geomWithAxisBounds,
             geomBounds,
             clipBounds(geomBounds),
-            null, null
+            null, null,
+            trueIndex = 0
         )
     }
 }

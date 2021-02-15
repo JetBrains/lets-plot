@@ -8,12 +8,14 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
-import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
-import jetbrains.datalore.plot.builder.tooltip.ValueSource
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
+import jetbrains.datalore.plot.builder.tooltip.ValueSource
+import jetbrains.datalore.plot.builder.tooltip.MappingValue
+import jetbrains.datalore.plot.builder.tooltip.ConstantValue
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
+    private var myIgnoreInvisibleTargets: Boolean = false
     lateinit var locatorLookupSpace: LookupSpace
         private set
     lateinit var locatorLookupStrategy: LookupStrategy
@@ -24,7 +26,9 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private lateinit var myTooltipAxisAes: List<Aes<*>>
     private lateinit var myTooltipAes: List<Aes<*>>
     private lateinit var myTooltipOutlierAesList: List<Aes<*>>
+    private var myTooltipConstantsAesList: Map<Aes<*>, Any>? = null
     private var myUserTooltipSpec: TooltipSpecification? = null
+    private var myIsCrosshairEnabled: Boolean = false
 
     val getAxisFromFunctionKind: List<Aes<*>>
         get() = myAxisAesFromFunctionKind ?: emptyList()
@@ -37,6 +41,12 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
 
     val tooltipLines: List<TooltipLine>
         get() = prepareTooltipValueSources()
+
+    val tooltipProperties: TooltipSpecification.TooltipProperties
+        get() = myUserTooltipSpec?.tooltipProperties ?: TooltipSpecification.TooltipProperties.NONE
+
+    val isCrosshairEnabled: Boolean
+        get() = myIsCrosshairEnabled
 
     fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
         myAxisTooltipVisibilityFromConfig = isTrue
@@ -58,8 +68,18 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return this
     }
 
+    fun tooltipConstants(constantsMap:  Map<Aes<*>, Any>): GeomInteractionBuilder {
+        myTooltipConstantsAesList = constantsMap
+        return this
+    }
+
     fun tooltipLinesSpec(tooltipSpec: TooltipSpecification): GeomInteractionBuilder {
         myUserTooltipSpec = tooltipSpec
+        return this
+    }
+
+    fun setIsCrosshairEnabled(isTrue: Boolean): GeomInteractionBuilder {
+        myIsCrosshairEnabled = isTrue
         return this
     }
 
@@ -113,11 +133,23 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return when {
             myUserTooltipSpec == null -> {
                 // No user tooltip specification => use default tooltips
-                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList)
+                defaultValueSourceTooltipLines(
+                    myTooltipAes,
+                    myTooltipAxisAes,
+                    myTooltipOutlierAesList,
+                    userDefinedValueSources = null,
+                    constantsMap = myTooltipConstantsAesList
+                )
             }
             myUserTooltipSpec!!.tooltipLinePatterns == null -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
-                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList, myUserTooltipSpec!!.valueSources)
+                defaultValueSourceTooltipLines(
+                    myTooltipAes,
+                    myTooltipAxisAes,
+                    myTooltipOutlierAesList,
+                    myUserTooltipSpec!!.valueSources,
+                    myTooltipConstantsAesList
+                )
             }
             myUserTooltipSpec!!.tooltipLinePatterns!!.isEmpty() -> {
                 // User list is empty => not show tooltips
@@ -147,6 +179,16 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return GeomInteraction(this)
     }
 
+    fun ignoreInvisibleTargets(isTrue: Boolean): GeomInteractionBuilder {
+        myIgnoreInvisibleTargets = isTrue
+        return this
+    }
+
+    fun isIgnoringInvisibleTargets(): Boolean {
+        return myIgnoreInvisibleTargets
+    }
+
+
     companion object {
         const val AREA_GEOM = true
         const val NON_AREA_GEOM = false
@@ -158,7 +200,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
             outliers: List<Aes<*>>,
-            userDefinedValueSources: List<ValueSource>? = null
+            userDefinedValueSources: List<ValueSource>? = null,
+            constantsMap: Map<Aes<*>, Any>? = null
         ): List<TooltipLine> {
             val axisValueSources = axisAes.map { aes -> MappingValue(aes, isOutlier = true, isAxis = true) }
             val outlierValueSources = outliers.map { aes ->
@@ -169,7 +212,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                 val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
                 userDefined ?: MappingValue(aes)
             }
-            return (aesValueSources + axisValueSources + outlierValueSources).map(TooltipLine.Companion::defaultLineForValueSource)
+            val constantValues = constantsMap?.map { (_, value) -> ConstantValue(value, format = null) } ?: emptyList()
+            return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
         }
     }
 }

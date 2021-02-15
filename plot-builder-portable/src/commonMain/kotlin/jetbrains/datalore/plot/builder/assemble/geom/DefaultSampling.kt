@@ -37,7 +37,7 @@ object DefaultSampling {
     // range
     val ERROR_BAR = random(500, SEED)
     val CROSS_BAR = random(500, SEED)
-    val BOX_PLOT = random(500, SEED)
+    // val BOX_PLOT = random(500, SEED) - tmp disabled (see GeomProto)
     val LINE_RANGE = random(500, SEED)
     val POINT_RANGE = random(500, SEED)
 

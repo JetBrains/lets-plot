@@ -16,7 +16,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private var myDomainValueByNumber: TreeMap<Double, Any> = TreeMap()
     private val myDomainLimits: MutableList<Any> = ArrayList<Any>()
 
-    override var breaks: List<Any?>
+    override var breaks: List<Any>
         get() {
             val breaks = super.breaks
             if (!hasDomainLimits()) {
@@ -93,7 +93,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         }
 
         if (!hasBreaks()) {
-            breaks = effectiveDomain
+            breaks = effectiveDomain.mapNotNull { it }
         }
 
         myDomainLimits.clear()
@@ -166,7 +166,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     private class MyBuilder<T> internal constructor(scale: DiscreteScale<T>) : AbstractBuilder<Any, T>(scale) {
         internal val myDomainValues: Collection<Any>
-        private var myNewBreaks: List<Any?>? = null
+        private var myNewBreaks: List<Any>? = null
         internal var myDomainLimits: List<Any> = emptyList()
 
         init {
@@ -175,11 +175,11 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         }
 
         override fun lowerLimit(v: Double): Scale.Builder<T> {
-            throw IllegalArgumentException("Not applicable to scale with discrete domain")
+            throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 
         override fun upperLimit(v: Double): Scale.Builder<T> {
-            throw IllegalArgumentException("Not applicable to scale with discrete domain")
+            throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 
         override fun limits(domainValues: List<Any>): Scale.Builder<T> {
@@ -187,7 +187,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             return this
         }
 
-        override fun breaks(l: List<*>): Scale.Builder<T> {
+        override fun breaks(l: List<Any>): Scale.Builder<T> {
             myNewBreaks = l
             // don't call super!
             return this

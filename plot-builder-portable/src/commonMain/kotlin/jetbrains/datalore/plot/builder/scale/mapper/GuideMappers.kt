@@ -7,10 +7,8 @@ package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactory
-import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
@@ -27,7 +25,7 @@ object GuideMappers {
         naValue: TargetT
     ): GuideMapper<TargetT> {
 
-        val domainValues = DataFrameUtil.distinctValues(data, variable)
+        val domainValues = data.distinctValues(variable)
         return discreteToDiscrete(
             domainValues,
             outputValues,
@@ -42,14 +40,11 @@ object GuideMappers {
     ): GuideMapper<TargetT> {
 
         val mapper = Mappers.discrete(outputValues, naValue)
-
-        // ToDo: duplicates discreteToDiscrete2 (?)
-        val breaks = ArrayList<GuideBreak<*>>()
-        for (domainValue in domainValues) {
-            breaks.add(GuideBreak(domainValue, domainValue?.toString() ?: "n/a"))
-        }
-
-        return GuideMapperWithGuideBreaks(mapper, breaks)
+        return GuideMapperWithGuideBreaks(
+            mapper,
+            domainValues.mapNotNull { it },
+            { v: Any -> v.toString() }
+        )
     }
 
     fun <TargetT> continuousToDiscrete(
@@ -59,29 +54,22 @@ object GuideMappers {
     ): GuideMapper<TargetT> {
         // quantized
         val f = Mappers.quantized(domain, outputValues, naValue)
+        var formatter: (Double) -> String = { v: Double -> v.toString() }
 
         val breakCount = outputValues.size
-        val breakValues = ArrayList<Double>()
-        val breakLabels = ArrayList<String>()
+        val breaks = ArrayList<Double>()
         if (domain != null && breakCount != 0) {
             val span = SeriesUtil.span(domain)
             val step = span / breakCount
-            val formatter = QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, step)
+            formatter = QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, step)
 
             for (i in 0 until breakCount) {
-                val `val` = domain.lowerEnd + step / 2 + i * step
-                breakValues.add(`val`)
-                breakLabels.add(formatter(`val`))
+                val value = domain.lowerEnd + step / 2 + i * step
+                breaks.add(value)
             }
         }
 
-        val breaks = ArrayList<GuideBreak<*>>()
-        val breakLabel = breakLabels.iterator()
-        for (breakValue in breakValues) {
-            breaks.add(GuideBreak(breakValue, breakLabel.next()))
-        }
-
-        return GuideMapperWithGuideBreaks(f, breaks)
+        return GuideMapperWithGuideBreaks(f, breaks, formatter)
     }
 
     fun discreteToContinuous(
@@ -91,13 +79,11 @@ object GuideMappers {
     ): GuideMapper<Double> {
 
         val mapper = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
-        val breaks = ArrayList<GuideBreak<*>>()
-        for (domainValue in domainValues) {
-            // ToDo: label formatter?
-            breaks.add(GuideBreak(domainValue!!, domainValue.toString()))
-        }
-
-        return GuideMapperWithGuideBreaks(mapper, breaks)
+        return GuideMapperWithGuideBreaks(
+            mapper,
+            domainValues.mapNotNull { it },
+            { v: Any -> v.toString() }
+        )
     }
 
     fun continuousToContinuous(

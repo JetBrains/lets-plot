@@ -14,9 +14,11 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
+import jetbrains.datalore.plot.common.text.Formatter
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
+import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
 import jetbrains.datalore.plot.config.Option.Scale.END
 import jetbrains.datalore.plot.config.Option.Scale.EXPAND
@@ -46,7 +48,7 @@ import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
 /**
  * @param <T> - target aesthetic type of the configured scale
  */
-class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
+class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
 
     @Suppress("UNCHECKED_CAST")
     val aes: Aes<T> = aesOrFail(options) as Aes<T>
@@ -161,10 +163,15 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             // ToDo: add support for 'date_breaks', 'date_labels' (see: https://ggplot2.tidyverse.org/current/scale_date.html)
-            b.transform(Transforms.identityWithBreaksGen(DateTimeBreaksGen()))
+            val dateTimeFormatter = getString(FORMAT)?.let { Formatter.time(it) }
+            b.transform(
+                Transforms.identityWithBreaksGen(
+                    DateTimeBreaksGen(dateTimeFormatter)
+                )
+            )
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
             val transformConfig =
-                ScaleTransformConfig.create(get(Option.Scale.CONTINUOUS_TRANSFORM)!!)
+                ScaleTransformConfig.create(get(Option.Scale.CONTINUOUS_TRANSFORM)!!, getString(FORMAT))
             b.transform(transformConfig.transform)
         }
 
@@ -176,10 +183,13 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             b.name(getString(NAME)!!)
         }
         if (has(BREAKS)) {
-            b.breaks(getList(BREAKS))
+            b.breaks(getList(BREAKS).mapNotNull { it })
         }
         if (has(LABELS)) {
             b.labels(getStringList(LABELS))
+        } else {
+            // Skip format is labels are defined
+            b.labelFormat(getString(FORMAT))
         }
         if (has(EXPAND)) {
             val list = getList(EXPAND)
@@ -216,7 +226,7 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
         private const val COLOR_BREWER = "color_brewer"
         private const val SIZE_AREA = "size_area"
 
-        fun aesOrFail(options: Map<*, *>): Aes<*> {
+        fun aesOrFail(options: Map<String, Any>): Aes<*> {
             val accessor = OptionsAccessor(options)
             checkArgument(accessor.has(AES), "Required parameter '$AES' is missing")
             return Option.Mapping.toAes(accessor.getString(AES)!!)

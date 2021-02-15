@@ -3,11 +3,11 @@ from typing import Dict, List, Optional, Tuple
 
 from .fluent_dict import FluentDict, FluentList
 from .geometry import GeoPoint
-from .request import RegionQuery, MapRegion, PayloadKind, RegionQueryBuilder, IgnoringStrategyKind, MapRegionBuilder
+from .request import RegionQuery, MapRegion, MapRegionKind, PayloadKind, RegionQueryBuilder, IgnoringStrategyKind, MapRegionBuilder
 from .request import Request, GeocodingRequest, ExplicitRequest, RequestBuilder, RequestKind, ReverseGeocodingRequest
 from .response import LevelKind, GeoRect
 
-PROTOCOL_VERSION = 2
+PROTOCOL_VERSION = 3
 
 
 class Field(enum.Enum):
@@ -21,7 +21,11 @@ class Field(enum.Enum):
     geo_object_list = 'ids'
     region_queries = 'region_queries'
     region_query_names = 'region_query_names'
+    region_query_countries = 'region_query_countries'
+    region_query_states = 'region_query_states'
+    region_query_counties = 'region_query_counties'
     region_query_parent = 'region_query_parent'
+    scope = 'scope'
     level = 'level'
     map_region_kind = 'kind'
     map_region_values = 'values'
@@ -63,6 +67,7 @@ class RequestFormatter:
         return RequestFormatter \
             ._common(RequestKind.geocoding, request) \
             .put(Field.region_queries, RequestFormatter._format_region_queries(request.region_queries)) \
+            .put(Field.scope, RequestFormatter._format_scope(request.scope)) \
             .put(Field.level, request.level) \
             .put(Field.namesake_example_limit, request.namesake_example_limit) \
             .put(Field.allow_ambiguous, request.allow_ambiguous)
@@ -98,6 +103,9 @@ class RequestFormatter:
             result.append(
                 FluentDict()
                     .put(Field.region_query_names, [] if query.request is None else [query.request])
+                    .put(Field.region_query_countries, RequestFormatter._format_map_region(query.country))
+                    .put(Field.region_query_states, RequestFormatter._format_map_region(query.state))
+                    .put(Field.region_query_counties, RequestFormatter._format_map_region(query.county))
                     .put(Field.ambiguity_resolver, None if query.ambiguity_resolver is None else FluentDict()
                          .put(Field.ambiguity_ignoring_strategy, query.ambiguity_resolver.ignoring_strategy)
                          .put(Field.ambiguity_box, RequestFormatter._format_box(query.ambiguity_resolver.box))
@@ -108,9 +116,21 @@ class RequestFormatter:
         return result
 
     @staticmethod
+    def _format_scope(scope: List[MapRegion]) -> List[Dict]:
+        return [RequestFormatter._format_map_region(s) for s in scope]
+
+    @staticmethod
     def _format_map_region(parent: Optional[MapRegion]) -> Optional[Dict]:
         if parent is None:
             return None
+
+        # special case - place is just a geocoded object with id and extra information, used by client
+        # server doesn't need this extra information
+        if parent.kind.value == 'place':
+            return FluentDict() \
+                .put(Field.map_region_kind, MapRegionKind.id.value) \
+                .put(Field.map_region_values, parent.values) \
+                .to_dict()
 
         return FluentDict() \
             .put(Field.map_region_kind, parent.kind.value) \

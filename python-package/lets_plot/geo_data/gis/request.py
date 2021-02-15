@@ -1,13 +1,13 @@
 import enum
 from numbers import Number
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 
 from .geometry import GeoRect, GeoPoint
 from ..type_assertion import assert_type, assert_list_type, assert_optional_type
 
-MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument: within or request.'
+MISSING_SCOPE_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument: scope or request.'
 MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument: level or request.'
-MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument. You must enter level and within or request.'
+MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT = 'Missing required argument. You must enter level and scope or request.'
 
 GeoId = str
 
@@ -28,6 +28,7 @@ class RequestKind(enum.Enum):
 class IgnoringStrategyKind(enum.Enum):
     skip_all = 'skip_all'
     skip_missing = 'skip_missing'
+    skip_ambiguous = 'skip_ambiguous'
     take_namesakes = 'take_namesakes'
 
 
@@ -45,11 +46,40 @@ MODE_BY_ID = 'by_id'
 class MapRegionKind(enum.Enum):
     id = True
     name = False
+    place = 'place'
 
 
 class MapRegion:
+    '''
+    Represents three different entities:
+    scope - ids of already geocoded objects. The only kind of MapRegion allowed to store multiply objects
+    place - already geocoded single place. In addition to id it holds administrative level and requeted name.
+            Used mostly as parent object for geocoding other objects.
+    with_name - single name, not yet geocoded.
+    '''
     @staticmethod
-    def with_ids(parent_ids: List[str]):
+    def name_or_none(place: Optional['MapRegion']):
+        if place is None:
+            return None
+
+        if place.kind == MapRegionKind.place:
+            return place.request()
+
+        if place.kind == MapRegionKind.name:
+            return place.name()
+
+        raise ValueError('MapRegion with kind \'{}\' doesn\'t have a name'.format(place.kind))
+
+
+    @staticmethod
+    def place(id: str, request: Optional[str], level_kind: LevelKind):
+        assert_type(id, str)
+        assert_optional_type(request, str)
+        assert_type(level_kind, LevelKind)
+        return MapRegion(MapRegionKind.place, [id], request, level_kind)
+
+    @staticmethod
+    def scope(parent_ids: List[str]):
         assert_list_type(parent_ids, str)
         return MapRegion(MapRegionKind.id, parent_ids)
 
@@ -58,23 +88,52 @@ class MapRegion:
         assert_type(name, str)
         return MapRegion(MapRegionKind.name, [name])
 
-    def __init__(self, kind: MapRegionKind, values: List[str]):
+    def __init__(self, kind: MapRegionKind, values: List[str], request: Optional[str] = None, level_kind: Optional[LevelKind] = None):
         assert_type(kind, MapRegionKind)
         assert_list_type(values, str)
+        assert_optional_type(request, str)
+        assert_optional_type(level_kind, LevelKind)
 
         self.kind: MapRegionKind = kind
         self.values: Tuple[str] = tuple(values, )
+        self._request:Optional[str] = request
+        self._level_kind: Optional[LevelKind] = level_kind
         self._hash = hash((self.values, self.kind))
+
+    def request(self) -> Optional[str]:
+        assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind. Expected \'place\', but was ' + str(self.kind)
+        assert_optional_type(self._request, str)
+        return self._request
+
+    def name(self) -> str:
+        assert self.kind == MapRegionKind.name, 'Invalid MapRegion kind. Expected \'name\', but was ' + str(self.kind)
+        assert_type(self.values[0], str)
+        return self.values[0]
+
+    def level_kind(self) -> Optional[LevelKind]:
+        assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind: only place contains level_kind'
+        return self._level_kind
 
     def __eq__(self, other: 'MapRegion'):
         return isinstance(other, MapRegion) \
                and self.kind == other.kind \
-               and self.values == other.values
+               and self.values == other.values \
+               and self._request == other._request \
+               and self._level_kind == other._level_kind
 
     def __ne__(self, o: object) -> bool:
         return not self == o
 
     def __str__(self):
+        if self.kind == MapRegionKind.place:
+            return '{} {} {}'.format(str(self.values), self._request, self._level_kind)
+
+        if self.kind == MapRegionKind.name:
+            return self.values[0]
+
+        if self.kind == MapRegionKind.id:
+            return ",".join(self.values)
+
         return str(self.values)
 
     def __hash__(self):
@@ -110,20 +169,36 @@ class AmbiguityResolver:
 
 
 class RegionQuery:
-    def __init__(self, request: Optional[str], scope: Optional[MapRegion], ambiguity_resolver: AmbiguityResolver):
+    def __init__(self,
+                 request: Optional[str],
+                 scope: Optional[MapRegion] = None,
+                 ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty(),
+                 country: Optional[MapRegion] = None,
+                 state: Optional[MapRegion] = None,
+                 county: Optional[MapRegion] = None
+                 ):
         assert_optional_type(request, str)
         assert_optional_type(scope, MapRegion)
         assert_type(ambiguity_resolver, AmbiguityResolver)
+        assert_optional_type(county, MapRegion)
+        assert_optional_type(state, MapRegion)
+        assert_optional_type(country, MapRegion)
 
         self.request: Optional[str] = request
         self.scope: Optional[MapRegion] = scope
         self.ambiguity_resolver: AmbiguityResolver = ambiguity_resolver
+        self.country: Optional[MapRegion] = country
+        self.state: Optional[MapRegion] = state
+        self.county: Optional[MapRegion] = county
 
     def __eq__(self, o: object) -> bool:
         return isinstance(o, RegionQuery) \
                and self.request == o.request \
                and self.scope == o.scope \
-               and self.ambiguity_resolver == o.ambiguity_resolver
+               and self.ambiguity_resolver == o.ambiguity_resolver \
+               and self.country == o.country \
+               and self.state == o.state \
+               and self.county == o.county
 
     def __ne__(self, o: object) -> bool:
         return not self == o
@@ -158,22 +233,23 @@ class GeocodingRequest(Request):
                                    level: Optional[LevelKind]) -> None:
 
         if len(region_queries) == 0 and not level:
-            raise ValueError(MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
+            raise ValueError(MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT)
 
         for query in region_queries:
             if not query.request and not level and not query.scope:
-                raise ValueError(MISSING_LEVEL_AND_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
+                raise ValueError(MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT)
 
             if not query.request and not level and query.scope:
                 raise ValueError(MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT)
 
-            if not query.request and level is not LevelKind.country and not query.scope:
-                raise ValueError(MISSING_WITHIN_OR_REQUEST_EXCEPTION_TEXT)
+            if not query.request and not level and not query.scope:
+                raise ValueError(MISSING_SCOPE_OR_REQUEST_EXCEPTION_TEXT)
 
     def __init__(self,
                  requested_payload: List[PayloadKind],
                  resolution: Optional[int],
                  region_queries: List[RegionQuery],
+                 scope: List[MapRegion],
                  level: Optional[LevelKind],
                  namesake_example_limit: int,
                  allow_ambiguous: bool
@@ -192,6 +268,7 @@ class GeocodingRequest(Request):
         assert namesake_example_limit is not None
 
         self.region_queries: List[RegionQuery] = region_queries
+        self.scope: List[MapRegion] = scope
         self.level: Optional[LevelKind] = level
         self.namesake_example_limit: int = namesake_example_limit
         self.allow_ambiguous: bool = allow_ambiguous
@@ -262,17 +339,18 @@ class ReverseGeocodingRequest(Request):
 
 class RequestBuilder:
     def __init__(self):
-        self.request_kind: RequestKind = None
+        self.request_kind: Optional[RequestKind] = None
         self.requested_payload: List[PayloadKind] = []
         self.resolution: Optional[int] = None
         self.ids: List[str] = []
         self.region_queries: List[RegionQuery] = []
+        self.scope: List[MapRegion] = []
         self.level: Optional[LevelKind] = None
         self.namesake_limit: int = 10
         self.allow_ambiguous: bool = False
 
         # reverse
-        self.reverse_coordinates: List[GeoPoint] = None
+        self.reverse_coordinates: Optional[List[GeoPoint]] = None
         self.reverse_scope: Optional[MapRegion] = None
 
     def set_reverse_coordinates(self, coordinates: List[GeoPoint]) -> 'RequestBuilder':
@@ -310,6 +388,11 @@ class RequestBuilder:
         self.region_queries = v
         return self
 
+    def set_scope(self, v: List[MapRegion]) -> 'RequestBuilder':
+        assert_list_type(v, MapRegion)
+        self.scope = v
+        return self
+
     def set_level(self, v: LevelKind) -> 'RequestBuilder':
         assert_optional_type(v, LevelKind)
         self.level = v
@@ -325,13 +408,13 @@ class RequestBuilder:
         self.allow_ambiguous = v
         return self
 
-    def build(self) -> 'Request':
+    def build(self) -> Union[ExplicitRequest, GeocodingRequest, ReverseGeocodingRequest]:
         if self.request_kind == RequestKind.explicit:
             return ExplicitRequest(self.requested_payload, self.ids, self.resolution)
 
         elif self.request_kind == RequestKind.geocoding:
-            return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.level,
-                                    self.namesake_limit, self.allow_ambiguous)
+            return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.scope,
+                                    self.level, self.namesake_limit, self.allow_ambiguous)
 
         elif self.request_kind == RequestKind.reverse:
             assert self.reverse_coordinates is not None
@@ -365,7 +448,7 @@ class MapRegionBuilder:
 
 class RegionQueryBuilder:
     def __init__(self):
-        self.request: Optional[str] = []
+        self.request: Optional[str] = None
         self.scope: Optional[MapRegion] = None
         self.ignoring_strategy: Optional[IgnoringStrategyKind] = None
         self.closest_coord: Optional[GeoPoint] = None

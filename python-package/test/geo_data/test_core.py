@@ -1,23 +1,22 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from typing import Union
 from unittest import mock
 
 import pytest
 from pandas import DataFrame
 
-from lets_plot._type_utils import _standardize_value
-from lets_plot.geo_data import regions, regions_builder
+from lets_plot.geo_data import geocode
+from lets_plot.geo_data.geocoder import _to_scope
+from lets_plot.geo_data.geocodes import _ensure_is_list, Geocodes, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequest, PayloadKind, ExplicitRequest, \
     AmbiguityResolver
-from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint
+from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint, Answer
 from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _prepare_parent, \
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
-from lets_plot.geo_data.regions import _to_scope, _coerce_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
-    DF_FOUND_NAME
-from .geo_data import make_geocode_region, make_region, make_success_response
+from .geo_data import make_geocode_region, make_success_response, features_to_answers, features_to_queries, \
+    COLUMN_NAME_CITY
 
 DATAFRAME_COLUMN_NAME = 'name'
 DATAFRAME_NAME_LIST = ['usa', 'russia']
@@ -38,10 +37,15 @@ REGION_HIGHLIGHTS = ['united states', 'united states of america']
 
 PARENT_WITH_NAME = MapRegion.with_name(REGION_NAME)
 
-REGION_QUERY_LA = RegionQuery('LA', PARENT_WITH_NAME, AmbiguityResolver())
-REGION_QUERY_NY = RegionQuery('NY', PARENT_WITH_NAME, AmbiguityResolver())
+REGION_QUERY_LA = RegionQuery('LA', None, AmbiguityResolver())
+REGION_QUERY_NY = RegionQuery('NY', None, AmbiguityResolver())
 
 NAMESAKES_EXAMPLE_LIMIT = 10
+
+
+def feature_id(answer: Answer) -> str:
+    assert len(answer.features) == 1
+    return answer.features[0].id
 
 
 def make_expected_map_region(region_kind: RegionKind, values):
@@ -54,7 +58,7 @@ def make_expected_map_region(region_kind: RegionKind, values):
 @mock.patch.object(GeocodingService, 'do_request')
 def test_regions(mock_geocoding):
     try:
-        regions(level=LEVEL, request=FILTER_LIST, within=REGION_NAME).to_data_frame()
+        geocode(level=LEVEL, names=FILTER_LIST).scope(REGION_NAME).get_geocodes()
     except Exception:
         pass  # response doesn't contain proper feature with ids - ignore
 
@@ -63,18 +67,17 @@ def test_regions(mock_geocoding):
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          level=LEVEL_KIND,
+                         scope=[MapRegion.with_name(REGION_NAME)],
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False
-                         ),
-        None, # chunk_size
-        None # progress_callback
+                         )
     )
 
 
 @mock.patch.object(GeocodingService, 'do_request')
 def test_regions_with_highlights(mock_geocoding):
     try:
-        regions_builder(level=LEVEL, request=FILTER_LIST, within=REGION_NAME, highlights=True).build()
+        geocode(level=LEVEL, names=FILTER_LIST).scope(REGION_NAME).highlights(True).get_geocodes()
     except Exception:
         pass  # response doesn't contain proper feature with ids - ignore
 
@@ -82,17 +85,18 @@ def test_regions_with_highlights(mock_geocoding):
         GeocodingRequest(requested_payload=[PayloadKind.highlights],
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
+                         scope=MapRegion.with_name(REGION_NAME),
                          level=LEVEL_KIND,
                          namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
                          allow_ambiguous=False
-                         ),
-        None, # chunk_size
-        None # progress_callback
+                         )
     )
 
+FOO_FEATURE = FeatureBuilder().set_name('fooname').set_id('fooid').build_geocoded()
+BAR_FEATURE = FeatureBuilder().set_name('barname').set_id('barid').build_geocoded()
 
-FOO = FeatureBuilder().set_query('foo').set_name('fooname').set_id('fooid').build_geocoded()
-BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').build_geocoded()
+FOO = Answer([FeatureBuilder().set_name('fooname').set_id('fooid').build_geocoded()])
+BAR = Answer([FeatureBuilder().set_name('barname').set_id('barid').build_geocoded()])
 
 @pytest.mark.parametrize('location,expected', [
     # none
@@ -106,13 +110,12 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
      ),
 
     # single region
-    (Regions(
-        LEVEL_KIND,
-        [
-            FOO,
-            BAR
-        ]),
-     MapRegion.with_ids([FOO.id, BAR.id])
+    (Geocodes(
+        level_kind=LEVEL_KIND,
+        queries=features_to_queries([FOO_FEATURE, BAR_FEATURE]),
+        answers=features_to_answers([FOO_FEATURE, BAR_FEATURE])
+    ),
+     MapRegion.scope([feature_id(FOO), feature_id(BAR)])
     ),
 
     # list of strings
@@ -127,24 +130,36 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
 
     # list of regions
     ([
-         Regions(LEVEL_KIND, [FOO]),
-         Regions(LEVEL_KIND, [BAR])
+         Geocodes(
+             level_kind=LEVEL_KIND,
+             queries=features_to_queries([FOO_FEATURE]),
+             answers=features_to_answers([FOO_FEATURE])
+         ),
+         Geocodes(
+             level_kind=LEVEL_KIND,
+             queries=features_to_queries([BAR_FEATURE]),
+             answers=features_to_answers([BAR_FEATURE]),
+         )
      ],
 
      [
-         MapRegion.with_ids([FOO.id]),
-         MapRegion.with_ids([BAR.id])
+         MapRegion.scope([feature_id(FOO)]),
+         MapRegion.scope([feature_id(BAR)])
      ]
     ),
 
     # mix of strings and regions
     ([
-         'foo',
-         Regions(LEVEL_KIND, [BAR]),
+         FOO_FEATURE.name,
+         Geocodes(
+             level_kind=LEVEL_KIND,
+             queries=features_to_queries([BAR_FEATURE]),
+             answers=features_to_answers([BAR_FEATURE])
+         )
      ],
      [
-         MapRegion.with_name(FOO.query),
-         MapRegion.with_ids([BAR.id])
+         MapRegion.with_name(FOO_FEATURE.name),
+         MapRegion.scope([feature_id(BAR)])
      ]
     )
 ])
@@ -154,18 +169,16 @@ def test_to_parent_with_name(location, expected):
 
 
 def test_to_parent_with_id():
-    assert MapRegion.with_ids(REGION_LIST) == _to_scope(make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS))
+    assert MapRegion.scope(REGION_LIST) == _to_scope(make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS))
 
 
 @mock.patch.object(GeocodingService, 'do_request')
 def test_request_remove_duplicated_ids(mock_request):
     try:
-        Regions(
-            LEVEL_KIND,
-            [
-                make_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS),
-                make_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
-            ]
+        Geocodes(
+            level_kind=LEVEL_KIND,
+            queries=features_to_queries([FOO_FEATURE, FOO_FEATURE]),
+            answers=features_to_answers([FOO_FEATURE, FOO_FEATURE])
         ).centroids()
     except ValueError:
         pass  # response doesn't contain proper feature with ids - ignore
@@ -173,7 +186,7 @@ def test_request_remove_duplicated_ids(mock_request):
     mock_request.assert_called_with(
         ExplicitRequest(
             requested_payload=[PayloadKind.centroids],
-            ids=[REGION_ID]
+            ids=[FOO_FEATURE.id]
         )
     )
 
@@ -204,7 +217,7 @@ def test_geocode_boundary(mock_request):
         ExplicitRequest(
             requested_payload=[PayloadKind.boundaries],
             ids=REGION_LIST,
-            resolution=_coerce_resolution(RESOLUTION)
+            resolution=RESOLUTION
         )
     )
 
@@ -226,38 +239,20 @@ def test_geocode_limit(mock_request):
 
 @mock.patch.object(GeocodingService, 'do_request')
 def test_reorder_for_centroids_should_happen(mock_request):
-    mock_request.return_value = make_success_response() \
-        .set_geocoded_features(
-        [
-            FeatureBuilder().set_id('2').set_query('New York').set_name('New York').set_centroid(GeoPoint(0, 0)).build_geocoded(),
-            FeatureBuilder().set_id('3').set_query('Las Vegas').set_name('Las Vegas').set_centroid(GeoPoint(0, 0)).build_geocoded(),
-            FeatureBuilder().set_id('1').set_query('Los Angeles').set_name('Los Angeles').set_centroid(GeoPoint(0, 0)).build_geocoded()
-        ]
-    ).build()
+    new_york = FeatureBuilder().set_id('2').set_query('New York').set_name('New York').set_centroid(GeoPoint(0, 0)).build_geocoded()
+    las_vegas = FeatureBuilder().set_id('3').set_query('Las Vegas').set_name('Las Vegas').set_centroid(GeoPoint(0, 0)).build_geocoded()
 
-    df = Regions(
-        LevelKind.city,
-        [
-            make_region('Los Angeles', 'Los Angeles', '1', []),
-            make_region('New York', 'New York', '2', []),
-            make_region('Las Vegas', 'Las Vegas', '3', []),
-            make_region('Los Angeles', 'Los Angeles', '1', []),
-        ]
+    los_angeles = FeatureBuilder().set_id('1').set_query('Los Angeles').set_name('Los Angeles').set_centroid(
+        GeoPoint(0, 0)).build_geocoded()
+    mock_request.return_value = make_success_response().set_geocoded_features([new_york, las_vegas, los_angeles]).build()
+
+    df = Geocodes(
+        level_kind=LevelKind.city,
+        queries=features_to_queries([los_angeles, new_york, las_vegas, los_angeles]),
+        answers=features_to_answers([los_angeles, new_york, las_vegas, los_angeles])
     ).centroids()
 
-    assert ['Los Angeles', 'New York', 'Las Vegas', 'Los Angeles'] == df[DF_FOUND_NAME].tolist()
-
-
-@pytest.mark.parametrize('arg,expected_resolution', [
-    (1, 1),
-    (3, 3),
-    (6, 6),
-    (9, 9),
-    (12, 12),
-    (15, 15),
-])
-def test_coerce_resolution(arg: int, expected_resolution: int):
-    assert expected_resolution == _coerce_resolution(arg)
+    assert ['Los Angeles', 'New York', 'Las Vegas', 'Los Angeles'] == df[DF_COLUMN_FOUND_NAME].tolist()
 
 
 @pytest.mark.parametrize('location,expected_type,expected_data', [
@@ -306,13 +301,5 @@ def test_ensure_is_list(arg, expected_result):
 def test_regions_to_data_frame_should_skip_highlights():
     regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
     regions_df = regions.to_data_frame()
-    assert [DF_REQUEST, DF_ID, DF_FOUND_NAME] == list(regions_df.columns.values)
-
-
-def test_regions_to_dict():
-    regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, [])
-    regions_dict = _standardize_value(regions)
-    assert REQUEST == regions_dict[DF_REQUEST][0]
-    assert REGION_ID == regions_dict[DF_ID][0]
-    assert REGION_NAME == regions_dict[DF_FOUND_NAME][0]
+    assert [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME] == list(regions_df.columns.values)
 

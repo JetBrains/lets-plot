@@ -77,7 +77,7 @@ class TooltipBox(
             lines,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
-            tooltipMinWidth = tooltipMinWidth.takeUnless { isOutlier }
+            tooltipMinWidth = tooltipMinWidth
         )
     }
 
@@ -212,7 +212,7 @@ class TooltipBox(
             val maxLabelWidth = linesInfo
                 .mapNotNull { (_, labelComponent, _) -> labelComponent }
                 .map { it.rootGroup.bBox.width }
-                .max() ?: 0.0
+                .maxOrNull() ?: 0.0
             var maxLineWidth = tooltipMinWidth ?: 0.0
             linesInfo.forEach { (_, labelComponent, valueComponent) ->
                 val valueWidth = valueComponent.rootGroup.bBox.width

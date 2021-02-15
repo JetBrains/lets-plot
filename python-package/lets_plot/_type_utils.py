@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 import json
-from abc import abstractmethod
+import math
 from datetime import datetime
 
 from typing import Dict
@@ -49,17 +49,22 @@ def is_float(v):
 def is_number(v):
     return is_int(v) or is_float(v)
 
+
 def _standardize_value(v):
     if v is None:
         return v
     if isinstance(v, bool):
         return bool(v)
-    if is_int(v):
-        return int(v)
     if isinstance(v, str):
         return str(v)
     if is_float(v):
-        return float(v)
+        if math.isfinite(v):
+            return float(v)
+        # None for special values like 'nan' etc. because
+        # some json parsers (like com.google.gson.Gson) do not handle them well.
+        return None
+    if is_int(v):
+        return int(v)
     if is_dict_or_dataframe(v):
         return standardize_dict(v)
     if isinstance(v, list):
@@ -69,21 +74,13 @@ def _standardize_value(v):
     if (numpy and isinstance(v, numpy.ndarray)) or (pandas and isinstance(v, pandas.Series)):
         return _standardize_value(v.tolist())
     if isinstance(v, datetime):
-        if (pandas and v is pandas.NaT):
+        if pandas and v is pandas.NaT:
             return None
         else:
             return v.timestamp() * 1000  # convert from second to millisecond
-    if isinstance(v, CanToDataFrame):
-        return standardize_dict(v.to_data_frame())
-    if (shapely and isinstance(v, shapely.geometry.base.BaseGeometry)):
+    if shapely and isinstance(v, shapely.geometry.base.BaseGeometry):
         return json.dumps(shapely.geometry.mapping(v))
     try:
         return repr(v)
     except Exception:
         raise Exception('Unsupported type: {0}({1})'.format(v, type(v)))
-
-
-class CanToDataFrame:
-    @abstractmethod
-    def to_data_frame(self):  # -> pandas.DataFrame
-        pass

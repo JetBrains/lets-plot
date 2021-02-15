@@ -7,13 +7,14 @@ from .fluent_dict import FluentDict
 from .geometry import Ring
 from .response import Multipolygon, GeoPoint, GeoRect, Boundary, Polygon
 from .response import Response, ResponseBuilder, SuccessResponse, AmbiguousResponse
-from .response import Status, LevelKind, GeocodedFeature, AmbiguousFeature, Namesake, NamesakeParent, FeatureBuilder
+from .response import Status, LevelKind, Answer, GeocodedFeature, AmbiguousFeature, Namesake, NamesakeParent, FeatureBuilder
 
 
 class ResponseField(Enum):
     status = 'status'
     message = 'message'
     data = 'data'
+    answers = 'answers'
     features = 'features'
     geocoded_data = 'good_features'
     incorrect_data = 'bad_features'
@@ -66,7 +67,7 @@ class ResponseParser:
             .visit_enum_existing(ResponseField.level, LevelKind, response.set_level)
 
         if response.status == Status.success:
-            data_dict.visit(ResponseField.features, partial(ResponseParser._parse_geocoded_features, response=response))
+            data_dict.visit(ResponseField.answers, partial(ResponseParser._parse_answers, response=response))
         elif response.status == Status.ambiguous:
             data_dict.visit(ResponseField.features, partial(ResponseParser._parse_ambiguous_features, response=response))
         else:
@@ -75,23 +76,27 @@ class ResponseParser:
         return response.build()
 
     @staticmethod
-    def _parse_geocoded_features(features_json: List[Dict], response: ResponseBuilder):
-        geocoded_features: List[GeocodedFeature] = []
-        for feature_json in features_json:
-            feature = FeatureBuilder()
-            FluentDict(feature_json) \
-                .visit_str(ResponseField.query, feature.set_query) \
-                .visit_str(ResponseField.geo_object_id, feature.set_id) \
-                .visit_str(ResponseField.name, feature.set_name) \
-                .visit_str_list_optional(ResponseField.highlights, feature.set_highlights) \
-                .visit_str_existing(ResponseField.boundary, lambda json: feature.set_boundary(GeoJson().parse_geometry(json))) \
-                .visit_object_optional(ResponseField.centroid, lambda json: feature.set_centroid(ResponseParser._parse_point(json))) \
-                .visit_object_optional(ResponseField.limit, lambda json: feature.set_limit(ResponseParser._parse_rect(json))) \
-                .visit_object_optional(ResponseField.position, lambda json: feature.set_position(ResponseParser._parse_rect(json)))
+    def _parse_answers(answers_json: List[Dict], response: ResponseBuilder):
+        answers: List[Answer] = []
+        for answer_json in answers_json:
+            features_json = answer_json.get(ResponseField.features.value, [])
+            geocoded_features: List[GeocodedFeature] = []
+            for feature_json in features_json:
+                feature = FeatureBuilder()
 
-            geocoded_features.append(feature.build_geocoded())
+                FluentDict(feature_json) \
+                    .visit_str(ResponseField.geo_object_id, feature.set_id) \
+                    .visit_str(ResponseField.name, feature.set_name) \
+                    .visit_str_list_optional(ResponseField.highlights, feature.set_highlights) \
+                    .visit_str_existing(ResponseField.boundary, lambda json: feature.set_boundary(GeoJson().parse_geometry(json))) \
+                    .visit_object_optional(ResponseField.centroid, lambda json: feature.set_centroid(ResponseParser._parse_point(json))) \
+                    .visit_object_optional(ResponseField.limit, lambda json: feature.set_limit(ResponseParser._parse_rect(json))) \
+                    .visit_object_optional(ResponseField.position, lambda json: feature.set_position(ResponseParser._parse_rect(json)))
 
-        response.set_geocoded_features(geocoded_features)
+                geocoded_features.append(feature.build_geocoded())
+            answers.append(Answer(geocoded_features))
+
+        response.set_answers(answers)
 
     @staticmethod
     def _parse_ambiguous_features(features_json: List[Dict], response: ResponseBuilder):
@@ -146,7 +151,7 @@ class ResponseFormatter:
                 .put(ResponseField.message, response.message) \
                 .put(ResponseField.data, FluentDict()
                      .put(ResponseField.level, response.level.value)
-                     .put(ResponseField.features, list(map(ResponseFormatter._format_geocoded_feature, response.features)))) \
+                     .put(ResponseField.answers, list(map(ResponseFormatter._format_answer, response.answers)))) \
                 .to_dict()
         elif isinstance(response, AmbiguousResponse):
             return FluentDict() \
@@ -158,16 +163,24 @@ class ResponseFormatter:
                 .to_dict()
 
     @staticmethod
-    def _format_geocoded_feature(feature: GeocodedFeature) -> Dict:
+    def _format_answer(answer: Answer) -> Dict:
+        features = []
+        for feature in answer.features:
+            features.append(
+                FluentDict() \
+                .put(ResponseField.geo_object_id, feature.id) \
+                .put(ResponseField.name, feature.name) \
+                .put(ResponseField.boundary, ResponseFormatter._format_boundary(feature.boundary)) \
+                .put(ResponseField.centroid, ResponseFormatter._format_centroid(feature.centroid)) \
+                .put(ResponseField.limit, ResponseFormatter._format_rect(feature.limit)) \
+                .put(ResponseField.position, ResponseFormatter._format_rect(feature.position)) \
+                .to_dict()
+            )
+
         return FluentDict() \
-            .put(ResponseField.query, feature.query) \
-            .put(ResponseField.geo_object_id, feature.id) \
-            .put(ResponseField.name, feature.name) \
-            .put(ResponseField.boundary, ResponseFormatter._format_boundary(feature.boundary)) \
-            .put(ResponseField.centroid, ResponseFormatter._format_centroid(feature.centroid)) \
-            .put(ResponseField.limit, ResponseFormatter._format_rect(feature.limit)) \
-            .put(ResponseField.position, ResponseFormatter._format_rect(feature.position)) \
+            .put(ResponseField.features, features) \
             .to_dict()
+
 
     @staticmethod
     def _format_centroid(point: Optional[GeoPoint]) -> Optional[Dict]:

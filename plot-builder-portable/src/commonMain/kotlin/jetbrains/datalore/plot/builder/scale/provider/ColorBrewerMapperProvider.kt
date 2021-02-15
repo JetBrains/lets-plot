@@ -10,9 +10,7 @@ import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.MapperUtil
-import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.scale.GuideMapper
-import jetbrains.datalore.plot.builder.scale.WithGuideBreaks
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorPalette.Qualitative.Set2
@@ -36,11 +34,7 @@ class ColorBrewerMapperProvider(
     private val paletteNameOrIndex: Any?,
     private val direction: Double?,
     naValue: Color
-) : MapperProviderBase<Color>(naValue),
-    WithGuideBreaks {
-
-    override val guideBreaks: List<GuideBreak<*>>
-        get() = emptyList()
+) : MapperProviderBase<Color>(naValue) {
 
     init {
         require(paletteNameOrIndex?.let {

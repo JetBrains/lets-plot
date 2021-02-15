@@ -1,15 +1,8 @@
-from typing import Any, Union, List, Optional
+from typing import Any
 
 import numpy as np
-from pandas import Series
 
-from .gis.geocoding_service import GeocodingService
-from .gis.geometry import GeoPoint
-from .gis.request import RequestBuilder, RequestKind
-from .gis.response import Response, SuccessResponse
-from .regions import Regions, _raise_exception, _to_level_kind, _to_scope
-from .regions_builder import RegionsBuilder
-from .type_assertion import assert_list_type
+from .geocoder import Geocoder, ReverseGeocoder, NamesGeocoder
 
 __all__ = [
     'distance',
@@ -20,6 +13,13 @@ __all__ = [
     'regions_county',
     'regions_city',
     'regions_xy',
+
+    'geocode',
+    'geocode_cities',
+    'geocode_counties',
+    'geocode_states',
+    'geocode_countries',
+    'reverse_geocode'
 ]
 
 UNITS_DICT = {
@@ -35,43 +35,14 @@ GEOFUNC_TYPES = {
 }
 
 
-def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[Union[float, Series, List[float]]]) -> List[GeoPoint]:
-    if type(lon) != type(lat):
-        raise ValueError('lon and lat have different types')
-
-    if isinstance(lon, float):
-        return [GeoPoint(lon, lat)]
-
-    if isinstance(lon, Series):
-        lon = lon.tolist()
-        lat = lat.tolist()
-
-    if isinstance(lon, list):
-        assert_list_type(lon, float)
-        assert_list_type(lat, float)
-        return [GeoPoint(lo, la) for lo, la in zip(lon, lat)]
+def regions_xy(lon, lat, level, within=None) -> Geocoder:
+    raise ValueError('Function `regions_xy(...)` is deprecated. Use new function `reverse_geocode(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
 
 
-def regions_xy(lon, lat, level, within=None):
-    request = RequestBuilder() \
-        .set_request_kind(RequestKind.reverse) \
-        .set_reverse_coordinates(_to_coords(lon, lat)) \
-        .set_level(_to_level_kind(level)) \
-        .set_reverse_scope(_to_scope(within)) \
-        .build()
-
-    response: Response = GeocodingService().do_request(request)
-
-    if not isinstance(response, SuccessResponse):
-        _raise_exception(response)
-
-    return Regions(response.level, response.features, False)
-
-
-def regions_builder(level=None, request=None, within=None, highlights=False) -> RegionsBuilder:
+def regions_builder(level=None, request=None, within=None, highlights=False):
     """
     Create a RegionBuilder class by level and request. Allows to refine ambiguous request with
-    where method. build() method creates Regions object or shows details for ambiguous result.
+    where method. build() method creates Geocoder object or shows details for ambiguous result.
 
     regions_builder(level, request, within)
 
@@ -83,34 +54,36 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
         Data can be filtered by full names at any level (only exact matching).
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | Regions | None]
+    within : [array | string | Geocoder | None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    RegionsBuilder object :
+    Geocoder object :
 
     Note
     -----
-    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
+    regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Geocoder object
 
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
         >>> r
     """
-    return RegionsBuilder(level, request, within, highlights)
+    raise ValueError('Function `regions_builder(...)` is deprecated. Use new function `geocode(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
+    #return Geocoder(level, request, within, highlights)
 
 
-def regions(level=None, request=None, within=None) -> Regions:
+def regions(level=None, request=None, within=None):
     """
-    Create a Regions class by level and request.
+    Create a Geocoder class by level and request.
 
     regions(level, request, within)
 
@@ -123,15 +96,15 @@ def regions(level=None, request=None, within=None) -> Regions:
         None with explicit level returns all corresponding regions, like all countries i.e. regions(level='country').
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -141,17 +114,19 @@ def regions(level=None, request=None, within=None) -> Regions:
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r = regions(level='country', request=['Germany', 'USA'])
         >>> r
     """
-    return RegionsBuilder(level=level, request=request, scope=within).build()
+    raise ValueError('Function `regions(...)` is deprecated. Use new function `geocode(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
+    #return Geocoder(level=level, request=request, scope=within).build()
 
 
 def regions_country(request=None):
     """
-    Create a Regions class for country level by request.
+    Create a Geocoder class for country level by request.
 
     regions_country(request)
 
@@ -162,7 +137,7 @@ def regions_country(request=None):
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -173,17 +148,19 @@ def regions_country(request=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_country = regions_country(request=['Germany', 'USA'])
         >>> r_country
     """
-    return regions('country', request, None)
+    raise ValueError('Function `regions_country(...)` is deprecated. Use new function `geocode_countries(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
+    #return regions('country', request, None)
 
 
 def regions_state(request=None, within=None):
     """
-    Create a Regions class for state level by request.
+    Create a Geocoder class for state level by request.
 
     regions_state(request, within)
 
@@ -193,15 +170,15 @@ def regions_state(request=None, within=None):
         Data can be filtered by full names at any level (only exact matching).
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then filter and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -212,17 +189,19 @@ def regions_state(request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_state = regions_state(request=['Texas', 'Iowa'], within='USA')
         >>> r_state
     """
-    return regions('state', request, within)
+    raise ValueError('Function `regions_state(...)` is deprecated. Use new function `geocode_states(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
+    #return regions('state', request, within)
 
 
 def regions_county(request=None, within=None):
     """
-    Create a Regions class for county level by request.
+    Create a Geocoder class for county level by request.
 
     regions_county(request, within)
 
@@ -230,15 +209,15 @@ def regions_county(request=None, within=None):
     ----------
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -249,17 +228,19 @@ def regions_county(request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
         >>> r_county
     """
-    return regions('county', request, within)
+    raise ValueError('Function `regions_county(...)` is deprecated. Use new function `geocode_counties(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
+    #return regions('county', request, within)
 
 
 def regions_city(request=None, within=None):
     """
-    Create a Regions class for city level by request.
+    Create a Geocoder class for city level by request.
 
     regions_city(request, within)
 
@@ -267,15 +248,15 @@ def regions_city(request=None, within=None):
     ----------
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
-    within : [array | string | Regions| None]
+    within : [array | string | Geocoder| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
-        If within is Regions then request will be searched in any of these regions.
+        If within is Geocoder then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-    Regions object :
+    Geocoder object :
 
     Note
     -----
@@ -286,13 +267,161 @@ def regions_city(request=None, within=None):
     Examples
     ---------
     .. jupyter-execute::
+        :raises: ValueError
 
         >>> from lets_plot.geo_data import *
         >>> r_city = regions_city(request=['New York', 'Los Angeles'])
         >>> r_city
     """
-    return regions('city', request, within)
+    raise ValueError('Function `regions_city(...)` is deprecated. Use new function `geocode_cities(...)`.\n See https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md for details.')
+    #return regions('city', request, within)
 
+
+
+def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
+    """
+    Create a Geocoder. Allows to refine ambiguous request with where method, scope that limits area of geocoding
+    or with parents.
+
+    Parameters
+    ----------
+    level : ['country' | 'state' | 'county' | 'city' | None]
+        The level of administrative division. Autodetection by default.
+    names : [array | string | None]
+        Names of objects to be geocoded.
+        For 'state' level:
+        -'US-48' returns continental part of United States (48 states) in a compact form.
+    countries : [array | None]
+        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
+    states : [array | None]
+        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
+    counties : [array | None]
+        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
+    scope : [string | Geocoder | None]
+        Limits area of geocoding. If parent country is set then error will be generated.
+        If type is a string - geoobject should have geocoded scope in parents.
+        If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
+    """
+    return NamesGeocoder(level, names) \
+        .scope(scope) \
+        .countries(countries) \
+        .states(states) \
+        .counties(counties)
+
+
+def geocode_cities(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for cities. Allows to refine ambiguous request with
+    where method, with a scope that limits area of geocoding or with parents.
+
+    geocode_cities(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_cities(['moscow', 'york']).where('york', scope=geocode_states('New York')).get_geocodes()
+    """
+    return NamesGeocoder('city', names)
+
+
+def geocode_counties(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for counties. Allows to refine ambiguous request with
+    where method, with a scope that limits area of geocoding or with parents.
+
+    geocode_counties(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_counties('barnstable').get_geocodes()
+    """
+    return NamesGeocoder('county', names)
+
+
+def geocode_states(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for states. Allows to refine ambiguous request with
+    where method, with a scope that limits area of geocoding or with parents.
+
+    geocode_states(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_states('texas').get_geocodes()
+    """
+    return NamesGeocoder('state', names)
+
+
+def geocode_countries(names=None) -> NamesGeocoder:
+    """
+    Create a Geocoder object for countries. Allows to refine ambiguous request with
+    where method.
+
+    geocode_countries(names)
+
+    Parameters
+    ----------
+    names : [array | string | None]
+        Names of objects to be geocoded.
+
+    Returns
+    -------
+    Geocoder object :
+
+    Note
+    -----
+    Geocoder allows to refine ambiguous request with where() method.
+
+    Examples
+    ---------
+    >>> from lets_plot.geo_data import *
+    >>> r = geocode_countries('USA').get_geocodes()
+    """
+    return NamesGeocoder('country', names)
+
+def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
+    return ReverseGeocoder(lon, lat, level, scope)
 
 def distance(lon0, lat0, lon1, lat1, units='km'):
     """

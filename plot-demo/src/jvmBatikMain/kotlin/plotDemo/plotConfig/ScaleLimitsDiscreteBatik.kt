@@ -19,7 +19,7 @@ object ScaleLimitsDiscreteBatik {
                 "Scale limits (discrete)",
                 plotSpecList,
                 BatikMapperDemoFactory(),
-                DoubleVector(600.0, 400.0)
+                plotSize = DoubleVector(600.0, 200.0)
             )
         }
     }

@@ -11,9 +11,9 @@ import kotlin.math.*
 
 object DensityStatUtil {
 
-    private val DEF_STEP_SIZE = 0.5
+    private const val DEF_STEP_SIZE = 0.5
 
-    fun stdDev(data: List<Double>): Double {
+    private fun stdDev(data: List<Double>): Double {
         var sum = 0.0
         var counter = 0.0
 
@@ -29,6 +29,7 @@ object DensityStatUtil {
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {
         val mySize = valuesX.size
+
         @Suppress("UNCHECKED_CAST")
         val valuesXFinite = valuesX.filter { SeriesUtil.isFinite(it) } as List<Double>
         val dataSummary = FiveNumberSummary(valuesXFinite)
@@ -69,21 +70,48 @@ object DensityStatUtil {
         }
     }
 
-    internal fun densityFunction(
-            valuesX: List<Double?>,
-            ker: (Double) -> Double,
-            bw: Double,
-            ad: Double,
-            weightX: List<Double?>): (Double) -> Double {
-        val a = bw * ad
-        return { d ->
+    internal fun densityFunctionFullScan(
+        xs: List<Double>,
+        weights: List<Double>,
+        ker: (Double) -> Double,
+        bw: Double,
+        ad: Double
+    ): (Double) -> Double {
+        val h = bw * ad
+        return { x ->
             var sum = 0.0
-            var value: Double
-            for (i in valuesX.indices) {
-                value = valuesX[i]!!
-                sum += ker((d - value) / a) * weightX[i]!!
+            for (i in xs.indices) {
+                sum += ker((x - xs[i]) / h) * weights[i]
             }
-            sum / a
+            sum / h
+        }
+    }
+
+    internal fun densityFunctionFast(
+        xs: List<Double>,  // must be ordered!
+        weights: List<Double>,
+        ker: (Double) -> Double,
+        bw: Double,
+        ad: Double
+    ): (Double) -> Double {
+        val h = bw * ad
+        val cutoff = h * 5
+
+        return { x ->
+            var sum = 0.0
+            var from = xs.binarySearch(x - cutoff)
+            if (from < 0) {
+                from = -from - 1
+            }
+            var to = xs.binarySearch(x + cutoff)
+            if (to < 0) {
+                to = -to - 1
+            }
+
+            for (i in (from until to)) {
+                sum += ker((x - xs[i]) / h) * weights[i]
+            }
+            sum / h
         }
     }
 
@@ -113,7 +141,10 @@ object DensityStatUtil {
             "epanechikov", "parabolic" -> DensityStat.Kernel.EPANECHNIKOV
             "optcosine" -> DensityStat.Kernel.OPTCOSINE
             "cosine" -> DensityStat.Kernel.COSINE
-            else -> throw IllegalArgumentException("Unsupported kernel method: $method")
+            else -> throw IllegalArgumentException(
+                "Unsupported kernel method: '$method'.\n" +
+                        "Use one of: gaussian, rectangular, triangular, biweight, epanechikov, optcosine, cos."
+            )
         }
     }
 
@@ -121,12 +152,21 @@ object DensityStatUtil {
         return when (bw) {
             "nrd0" -> DensityStat.BandWidthMethod.NRD0
             "nrd" -> DensityStat.BandWidthMethod.NRD
-            else -> throw IllegalArgumentException("Unsupported bandwidth method: $bw")
+            else -> throw IllegalArgumentException(
+                "Unsupported bandwidth method: '$bw'.\n" +
+                        "Use one of: nrd0, nrd."
+            )
         }
     }
 
     fun createRawMatrix(
-            values: List<Double?>, list: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weight: List<Double?>): Array<DoubleArray> {
+        values: List<Double?>,
+        list: List<Double>,
+        ker: (Double) -> Double,
+        bw: Double,
+        ad: Double,
+        weight: List<Double?>
+    ): Array<DoubleArray> {
         val a = bw * ad
         val n = values.size
         val x = list.size

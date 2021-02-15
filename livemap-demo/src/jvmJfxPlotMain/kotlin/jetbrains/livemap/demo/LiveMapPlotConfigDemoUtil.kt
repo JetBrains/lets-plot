@@ -25,6 +25,7 @@ object LiveMapPlotConfigDemoUtil {
             return MonolithicAwtLM.buildPlotFromRawSpecs(
                 plotSpec,
                 plotSize,
+                null,
                 factory::createSvgComponent,
                 factory.createPlotEdtExecutor()
             ) {

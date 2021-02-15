@@ -3,7 +3,7 @@ from typing import Union, Optional, List
 
 from pandas import DataFrame
 
-from .regions import Regions
+from .geocodes import Geocodes
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}
 LOCATION_RECTANGLE_COLUMNS = {'lonmin', 'latmin', 'lonmax', 'latmax'}
@@ -19,11 +19,11 @@ class RegionKind(Enum):
     data_frame = 'data_frame'
 
 
-def _prepare_parent(parent: Union[str, Regions]) -> Optional[dict]:
+def _prepare_parent(parent: Union[str, Geocodes]) -> Optional[dict]:
     if not parent:
         return None
 
-    if isinstance(parent, Regions):
+    if isinstance(parent, Geocodes):
         kind = RegionKind.region_ids
         value = parent.unique_ids()
 
@@ -37,12 +37,12 @@ def _prepare_parent(parent: Union[str, Regions]) -> Optional[dict]:
     return {'type': kind.value, 'data': value}
 
 
-def _prepare_location(location: Union[str, Regions, List[float], DataFrame]) -> Optional[dict]:
+def _prepare_location(location: Union[str, Geocodes, List[float], DataFrame]) -> Optional[dict]:
     if location is None:
         return None
 
     value = location
-    if isinstance(location, Regions):
+    if isinstance(location, Geocodes):
         kind = RegionKind.region_ids
         value = location.unique_ids()
 

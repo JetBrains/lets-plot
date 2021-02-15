@@ -34,6 +34,7 @@ interface GeomTargetLocator {
         val targets: List<GeomTarget>,
         open val distance: Double,
         open val geomKind: GeomKind,
-        val contextualMapping: ContextualMapping
+        open val contextualMapping: ContextualMapping,
+        val isCrosshairEnabled: Boolean
     )
 }

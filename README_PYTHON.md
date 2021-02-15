@@ -21,7 +21,7 @@
     </tr>
     <tr>
         <td>Python versions</td>
-        <td>3.6, 3.7, 3.8</td>
+        <td>3.6, 3.7, 3.8, 3.9</td>
     </tr>
 </table>
 
@@ -33,15 +33,19 @@
 - [GGBunch](#ggbunch)
 - [Data Sampling](#sampling)
 - [Export to File](#export)
-- [Cloud Notebooks](#cloud_based)
+- [Formatting](#formatting)
+- [The 'bistro' Package](#bistro)
+    - [Correlation Plot](#corr_plot)
+    - [Image Matrix](#image_matrix)
 - [Geospatial](#geospatial)
     - [GeoPandas Support](#geopandas)
     - [Interactive Maps](#livemap)
-    - [Geocoding API](#geocoding)
-- [Interesting Demos](#interesting)
+    - [Geocoding](#geocoding)
+- ['No Javascript' Mode](#no_js)
 - [Offline Mode](#offline)
+- [Interesting Demos](#interesting)
 - [Scientific Mode in IntelliJ IDEA / PyCharm](#pycharm)
-- [What is new in 1.5.3](#new)
+- [What is new in 2.0.0](#new)
 - [Change Log](#change_log)
 - [License](#license)
 
@@ -85,6 +89,8 @@ pip install lets-plot
 <a id="start"></a>
 ### Quick start with Jupyter
 
+You can use Lets-Plot in Jupyter notebook or other notebook of your choice, like Datalore, Kaggle or Colab.
+ 
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
@@ -118,6 +124,10 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <span>&nbsp;&nbsp;</span>
 <a href="https://colab.research.google.com/drive/1uYYZcG0g0kP4lJdPkpWB8aBS96ioDii2?usp=sharing" title="View at Colab"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
+</a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://deepnote.com/project/673ea421-638e-469d-8d04-5cc4c6e0258f#%2Fnotebook.ipynb" title="View at Deepnote"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_deepnote.svg" width="20" height="20">
 </a>
 <br>
 <br>
@@ -153,17 +163,63 @@ The `ggsave()` function is an easy way to export plot to a file in SVG or HTML f
 Note: The `ggsave()` function currently do not save images of interactive maps to SVG.
  
 Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
+
+<a id="formatting"></a>
+### Formatting
+
+Lets-Plot supports formatting of values of numeric and date-time types.
+
+Complementary to the value formatting, a *string template* is also supported.
+
+For example:  
+```
+value: 67719.94988293362
++
+string template: "Mean income: £{.2s}"
+=
+the formatting result: "Mean income: £67k"
+```
+An empty placeholder {} is also allowed. In this case a default string representation will be shown. This is also applicable to categorical values.   
+
+To learn more about format strings see: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md).
+
+In Lets-Plot you can use formatting for:
+- tooltip text, see: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+- labels on X/Y axis. See: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb).
+- the `geom_text()` labels. See: [Label format demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb).
+- facetting values in `facet_grid()`, `facet_wrap()` functions. See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb).
+
+
+<a id="bistro"></a>
+### The 'bistro' Package
+
+The 'bistro' package is a collection of higher level API functions, each allows 
+to create a certain kind of plot with a single function call instead of combining a plethora of plot features manually.
+
+<a id="corr_plot"></a>
+#### Correlation Plot 
+
+`from lets_plot.bistro.corr`
+
+The `corr_plot()` function creates a fluent builder object offering a set of methods for 
+configuring of beautiful correlation plots. A call to the terminal `build()` method in the end 
+will create a resulting plot object.    
+
+Example: [correlation_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/correlation_plot.ipynb)
   
+<a id="image_matrix"></a>
+#### Image Matrix 
 
-<a id="cloud_based"></a>
-### Cloud Notebooks
+`from lets_plot.bistro.im`
 
-Examples:
+The `image_matrix()` function arranges a set of images in a grid.
+ 
+Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
 
-* [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
-* [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart)
-* [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
-  
+The `image_matrix()` function uses `geom_image` under the hood, so you might want to check out these demos as well:
+* [image_101.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_101.ipynb)
+* [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
+ 
 <a id="geospatial"></a>
 ### Geospatial  
   
@@ -184,19 +240,39 @@ using regular ggplot geoms.
 Learn more: [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
 
 <a id="geocoding"></a>
-#### Geocoding API
+#### Geocoding
 Geocoding is the process of converting names of places into geographic coordinates.  
 
-Learn more: [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+The Lets-Plot has built-in geocoding capabilities covering the folloing administrative levels:
+- countries
+- states (US and non-US equivalents)
+- counties (and equivalents)
+- cities (and towns)
 
-<a id="interesting"></a>
-### Interesting Demos
+Learn more: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
-A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/klein_bottle.png" alt="Couldn't load klein_bottle.png" width="498" height="386">
-<br>
- 
-  
+<a id="no_js"></a>
+### 'No Javascript' Mode
+
+In the 'no javascript' mode Lets-Plot genetares plots as bare-bones SVG images.
+
+This mode is halpfull when there is a requirement to render notebooks in an 'ipnb' renderer which does not suppopt javascript 
+(like GitHub's built-in renderer).    
+
+Activate 'no javascript' mode using the `LetsPlot.setup_html()` method call:
+```python
+from lets_plot import *
+
+LetsPlot.setup_html(no_js=True)
+```
+
+Alternativaly, you can set up the environment variable:
+```
+LETS_PLOT_NO_JS = true   (other accepted values are: 1, t, y, yes)
+``` 
+
+Note: interactive maps do not support the 'no javascript' mode.
+
 <a id="offline"></a>
 ### Offline Mode
 
@@ -209,7 +285,15 @@ from lets_plot import *
 LetsPlot.setup_html(offline=True)
 ```
  
+Note: internet connection is still required for interactive maps and geocoding API.
   
+<a id="interesting"></a>
+### Interesting Demos
+
+A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/klein_bottle.png" alt="Couldn't load klein_bottle.png" width="498" height="386">
+<br>
+ 
 <a id="pycharm"></a>
 ### Scientific mode in IntelliJ IDEA / PyCharm
 
@@ -229,41 +313,56 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 </div>
 
 <a id="new"></a>
-### What is new in 1.5.3
+### What is new in 2.0.0
+     
+- Python 3.9 support
+- Faceted plots:
+  - new `facet_wrap()` function.
+  - ordering of faceting values.
+  - formatting of faceting values.
 
-- Tooltip Customization
+  See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
 
-    New API for customization of tooltip contents and its position (see [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
 
-- Attribution when Configuring 3-rd Party Map-tiles
+- new `format` parameter on scales: formatting tick labels on X/Y axis.
 
-    New arguments in the `maptiles_zxy()` function allowing configuring attributions
-when using 3-rd party map-tiles as a base-map layer.
+  Example:
+    ```python
+    scale_x_datetime(format="%b %Y")
+    scale_x_continuous(format='is {.2f}')
+    ```
+  Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
 
-    See [The Gallery of Base-maps](https://www.kaggle.com/alshan/the-gallery-of-basemaps).     
- 
-- Formatting lables in `geom_text()`
+  See also: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md)
 
-    New parameter, 'label_format' to define a formatting pattern.
 
-    See demo: [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)   
- 
-- Export to File
+- Tooltips:
+  - new `color` option: overrides the default tooltip color:
+    ```python
+    geom_xxx(tooltips=layer_tooltips().color('red'))
+    ```
+    Learn more: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+  - *crosshair* cursor when tooltip is in a fixed position specified by the `anchor` option.
 
-    The `ggsave()` function is an easy way to export plot to a file in SVG or HTML formats.
- 
-    Note: The `ggsave()` function currently do not save images of interactive maps to SVG.
- 
-    Example: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
 
-- Fixed 'HUE' Scale and Other Fixes
+- Brand new Geocoding API.
 
-    See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for details.
+  Note: This is a **breaking change!** Hence we bumped the Lets-Plot version to 2.0.0. 
+
+  In the Lets-Plot v2.0.0 the peviouse Geocoding API is no longer working.
+
+  The old version of geocoding backend remains on-line for a couple of release cycles
+  to continue support of prior Lets-Plot versions.
+
+  To learn more about new Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+
+
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
 
 <a id="change_log"></a>
 ### Change Log
 
-See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md)
 
 
 <a id="license"></a>

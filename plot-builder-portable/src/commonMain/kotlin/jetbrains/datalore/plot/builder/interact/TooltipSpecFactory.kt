@@ -6,12 +6,9 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.MappedDataAccess.MappedData
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
@@ -26,8 +23,11 @@ class TooltipSpecFactory(
     }
 
     private inner class Helper(private val myGeomTarget: GeomTarget) {
-        private val myDataAccess: MappedDataAccess = contextualMapping.dataContext.mappedDataAccess
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
+        private val myTooltipAnchor = contextualMapping.tooltipAnchor
+        private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
+        private val myTooltipColor = contextualMapping.tooltipColor
+        private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -101,8 +101,11 @@ class TooltipSpecFactory(
                     TooltipSpec(
                         tipLayoutHint(),
                         lines = generalLines,
-                        fill = tipLayoutHint().color!!,
-                        isOutlier = false
+                        fill = myTooltipColor ?: tipLayoutHint().color!!,
+                        isOutlier = false,
+                        anchor = myTooltipAnchor,
+                        minWidth = myTooltipMinWidth,
+                        isCrosshairEnabled = myIsCrosshairEnabled
                     )
                 )
             } else {
@@ -121,9 +124,7 @@ class TooltipSpecFactory(
         private fun generalDataPoints(): List<DataPoint> {
             val nonOutlierDataPoints = myDataPoints.filterNot(DataPoint::isOutlier)
             val outliers = outlierDataPoints().mapNotNull(DataPoint::aes)
-            val generalAesList = removeDiscreteDuplicatedMappings(
-                aesWithoutOutliers = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outliers
-            )
+            val generalAesList = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outliers
             return nonOutlierDataPoints.filter { dataPoint ->
                 when (dataPoint.aes){
                     null -> true                // get all not aes (variables, text)
@@ -131,31 +132,6 @@ class TooltipSpecFactory(
                     else -> false               // skip others (axis)
                 }
             }
-        }
-
-        private fun removeDiscreteDuplicatedMappings(aesWithoutOutliers: List<Aes<*>>): List<Aes<*>> {
-            if (aesWithoutOutliers.isEmpty()) {
-                return emptyList()
-            }
-
-            val mappingsToShow = HashMap<String, Pair<Aes<*>, MappedData<*>>>()
-            for (aes in aesWithoutOutliers) {
-                if (!isMapped(aes)) {
-                    continue
-                }
-
-                val mappingToCheck = getMappedData(aes)
-                if (!mappingsToShow.containsKey(mappingToCheck.label)) {
-                    mappingsToShow[mappingToCheck.label] = Pair(aes, mappingToCheck)
-                    continue
-                }
-
-                val mappingToShow = mappingsToShow[mappingToCheck.label]?.second
-                if (!mappingToShow!!.isContinuous && mappingToCheck.isContinuous) {
-                    mappingsToShow[mappingToCheck.label] = Pair(aes, mappingToCheck)
-                }
-            }
-            return mappingsToShow.values.map { pair -> pair.first }
         }
 
         private fun createHintForAxis(aes: Aes<*>): TipLayoutHint {
@@ -172,14 +148,6 @@ class TooltipSpecFactory(
                 )
                 else -> error("Not an axis aes: $aes")
             }
-        }
-
-        private fun isMapped(aes: Aes<*>): Boolean {
-            return myDataAccess.isMapped(aes)
-        }
-
-        private fun <T> getMappedData(aes: Aes<T>): MappedData<T> {
-            return myDataAccess.getMappedData(aes, hitIndex())
         }
     }
 }

@@ -5,17 +5,22 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
-import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.*
+import jetbrains.datalore.plot.config.Option.Mapping.GROUP
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 
 class TooltipConfig(
-    opts: Map<*, *>,
-    private val constantsMap: Map<Aes<*>, Any>
+    opts: Map<String, Any>,
+    private val constantsMap: Map<Aes<*>, Any>,
+    private val groupingVarName: String?
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
@@ -43,7 +48,12 @@ class TooltipConfig(
             val lines = tooltipLines?.map(::parseLine)
             return TooltipSpecification(
                 myValueSources.map { it.value },
-                lines
+                lines,
+                TooltipSpecification.TooltipProperties(
+                    anchor = readAnchor(),
+                    minWidth = readMinWidth(),
+                    color = readColor()
+                )
             )
         }
 
@@ -73,14 +83,21 @@ class TooltipConfig(
                 return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
             }
 
-            return if (isAes) {
-                val aes = getAesByName(fieldName)
-                when (val constant = constantsMap[aes]) {
-                    null -> MappingValue(aes, format = format)
-                    else -> ConstantValue(constant, format)
+            return when {
+                isAes && fieldName == GROUP -> {
+                    requireNotNull(groupingVarName) { "Variable name for 'group' is not specified"}
+                    DataFrameValue(groupingVarName, format)
                 }
-            } else {
-                DataFrameValue(fieldName, format)
+                isAes -> {
+                    val aes = getAesByName(fieldName)
+                    when (val constant = constantsMap[aes]) {
+                        null -> MappingValue(aes, format = format)
+                        else -> ConstantValue(constant, format)
+                    }
+                }
+                else -> {
+                    DataFrameValue(fieldName, format)
+                }
             }
         }
 
@@ -148,14 +165,65 @@ class TooltipConfig(
         private fun aesField(aesName: String) = Pair(aesName, true)
 
         private fun varField(aesName: String) = Pair(aesName, false)
+
+        private fun readAnchor(): TooltipAnchor? {
+            if (!has(Option.Layer.TOOLTIP_ANCHOR)) {
+                return null
+            }
+
+            return when (val anchor = getString(Option.Layer.TOOLTIP_ANCHOR)) {
+                "top_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.LEFT)
+                "top_center" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.CENTER)
+                "top_right" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.RIGHT)
+                "middle_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.MIDDLE, TooltipAnchor.HorizontalAnchor.LEFT)
+                "middle_center" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.MIDDLE,
+                    TooltipAnchor.HorizontalAnchor.CENTER
+                )
+                "middle_right" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.MIDDLE,
+                    TooltipAnchor.HorizontalAnchor.RIGHT
+                )
+                "bottom_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.LEFT)
+                "bottom_center" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.BOTTOM,
+                    TooltipAnchor.HorizontalAnchor.CENTER
+                )
+                "bottom_right" -> TooltipAnchor(
+                    TooltipAnchor.VerticalAnchor.BOTTOM,
+                    TooltipAnchor.HorizontalAnchor.RIGHT
+                )
+                else -> throw IllegalArgumentException(
+                    "Illegal value $anchor, ${Option.Layer.TOOLTIP_ANCHOR}, expected values are: " +
+                            "'top_left'/'top_center'/'top_right'/" +
+                            "'middle_left'/'middle_center'/'middle_right'/" +
+                            "'bottom_left'/'bottom_center'/'bottom_right'"
+                )
+            }
+        }
+
+        private fun readMinWidth(): Double? {
+            if (has(Option.Layer.TOOLTIP_MIN_WIDTH)) {
+                return getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+            }
+            return null
+        }
+
+        private fun readColor(): Color? {
+            if (has(Option.Layer.TOOLTIP_COLOR)) {
+                val colorName = getString(Option.Layer.TOOLTIP_COLOR)
+                return colorName?.let(Colors::parseColor)
+            }
+            return null
+        }
     }
 
     companion object {
-        private const val AES_NAME_PREFIX = "$"
+        private const val AES_NAME_PREFIX = "^"
         private const val VARIABLE_NAME_PREFIX = "@"
         private const val LABEL_SEPARATOR = "|"
 
-        // escaping ('\$', '\@') or aes name ('$aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$|\\@)|(\$\w+)|@(([\w$@]+)|(\{(.*?)})|\.{2}\w+\.{2})""")
+        // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{(.*?)})|\.{2}\w+\.{2})""")
     }
 }

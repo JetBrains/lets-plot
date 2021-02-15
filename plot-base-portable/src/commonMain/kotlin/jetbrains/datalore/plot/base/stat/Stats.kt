@@ -88,40 +88,161 @@ object Stats {
         return CountStat()
     }
 
-    fun bin(): BinStatBuilder {
-        return BinStatBuilder()
+    fun bin(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null
+    ): BinStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (boundary != null) {
+            xPosKind = BinStat.XPosKind.BOUNDARY
+            xPosValue = boundary
+        } else if (center != null) {
+            xPosKind = BinStat.XPosKind.CENTER
+            xPosValue = center
+        }
+
+        return BinStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue
+        )
     }
 
-    fun smooth(): SmoothStat {
-        return SmoothStat()
+    fun smooth(
+        smootherPointCount: Int = SmoothStat.DEF_EVAL_POINT_COUNT,
+        smoothingMethod: SmoothStat.Method = SmoothStat.DEF_SMOOTHING_METHOD,
+        confidenceLevel: Double = SmoothStat.DEF_CONFIDENCE_LEVEL,
+        displayConfidenceInterval: Boolean = SmoothStat.DEF_DISPLAY_CONFIDENCE_INTERVAL,
+        span: Double = SmoothStat.DEF_SPAN,
+        polynomialDegree: Int = SmoothStat.DEF_DEG,
+        loessCriticalSize: Int = SmoothStat.DEF_LOESS_CRITICAL_SIZE,
+        samplingSeed: Long = SmoothStat.DEF_SAMPLING_SEED
+    ): SmoothStat {
+        return SmoothStat(
+            smootherPointCount = smootherPointCount,
+            smoothingMethod = smoothingMethod,
+            confidenceLevel = confidenceLevel,
+            displayConfidenceInterval = displayConfidenceInterval,
+            span = span,
+            polynomialDegree = polynomialDegree,
+            loessCriticalSize = loessCriticalSize,
+            samplingSeed = samplingSeed
+        )
     }
 
-    fun corr(): CorrelationStat {
-        return CorrelationStat()
+    fun corr(
+        correlationMethod: CorrelationStat.Method = CorrelationStat.DEF_CORRELATION_METHOD,
+        type: CorrelationStat.Type = CorrelationStat.DEF_TYPE,
+        fillDiagonal: Boolean = CorrelationStat.DEF_FILL_DIAGONAL,
+        threshold: Double = CorrelationStat.DEF_THRESHOLD
+    ): CorrelationStat {
+        return CorrelationStat(
+            correlationMethod = correlationMethod,
+            type = type,
+            fillDiagonal = fillDiagonal,
+            threshold = threshold
+        )
     }
 
-    fun contour(): ContourStatBuilder {
-        return ContourStatBuilder()
+    fun contour(
+        binCount: Int = ContourStat.DEF_BIN_COUNT,
+        binWidth: Double? = null
+    ): ContourStat {
+        return ContourStat(
+            binCount = binCount,
+            binWidth = binWidth
+        )
     }
 
-    fun contourf(): ContourfStatBuilder {
-        return ContourfStatBuilder()
+    fun contourf(
+        binCount: Int = ContourStat.DEF_BIN_COUNT,
+        binWidth: Double? = null
+    ): ContourfStat {
+        return ContourfStat(
+            binCount = binCount,
+            binWidth = binWidth
+        )
     }
 
-    fun boxplot(): BoxplotStat {
-        return BoxplotStat()
+    fun boxplot(
+        whiskerIQRRatio: Double = BoxplotStat.DEF_WHISKER_IQR_RATIO,
+        computeWidth: Boolean = BoxplotStat.DEF_COMPUTE_WIDTH
+    ): BoxplotStat {
+        return BoxplotStat(whiskerIQRRatio, computeWidth)
     }
 
-    fun density(): DensityStat {
-        return DensityStat()
+    fun density(
+        bandWidth: Double? = null,
+        bandWidthMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW,
+        adjust: Double = DensityStat.DEF_ADJUST,
+        kernel: DensityStat.Kernel = DensityStat.DEF_KERNEL,
+        n: Int = DensityStat.DEF_N,
+        fullScalMax: Int = DensityStat.DEF_FULL_SCAN_MAX
+    ): DensityStat {
+        return DensityStat(
+            bandWidth = bandWidth,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            n = n,
+            fullScalMax = fullScalMax
+        )
     }
 
-    fun density2d(): AbstractDensity2dStat {
-        return Density2dStat()
+    fun density2d(
+        bandWidthX: Double? = null,
+        bandWidthY: Double? = null,
+        bandWidthMethod: DensityStat.BandWidthMethod = AbstractDensity2dStat.DEF_BW,  // Used is `bandWidth` is not set.
+        adjust: Double = AbstractDensity2dStat.DEF_ADJUST,
+        kernel: DensityStat.Kernel = AbstractDensity2dStat.DEF_KERNEL,
+        nX: Int = AbstractDensity2dStat.DEF_N,
+        nY: Int = AbstractDensity2dStat.DEF_N,
+        isContour: Boolean = AbstractDensity2dStat.DEF_CONTOUR,
+        binCount: Int = AbstractDensity2dStat.DEF_BIN_COUNT,
+        binWidth: Double = AbstractDensity2dStat.DEF_BIN_WIDTH
+    ): AbstractDensity2dStat {
+        return Density2dStat(
+            bandWidthX = bandWidthX,
+            bandWidthY = bandWidthY,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            nX = nX,
+            nY = nY,
+            isContour = isContour,
+            binCount = binCount,
+            binWidth = binWidth
+        )
     }
 
-    fun density2df(): AbstractDensity2dStat {
-        return Density2dfStat()
+    fun density2df(
+        bandWidthX: Double? = null,
+        bandWidthY: Double? = null,
+        bandWidthMethod: DensityStat.BandWidthMethod,  // Used is `bandWidth` is not set.
+        adjust: Double = AbstractDensity2dStat.DEF_ADJUST,
+        kernel: DensityStat.Kernel = AbstractDensity2dStat.DEF_KERNEL,
+        nX: Int = AbstractDensity2dStat.DEF_N,
+        nY: Int = AbstractDensity2dStat.DEF_N,
+        isContour: Boolean = AbstractDensity2dStat.DEF_CONTOUR,
+        binCount: Int = AbstractDensity2dStat.DEF_BIN_COUNT,
+        binWidth: Double = AbstractDensity2dStat.DEF_BIN_WIDTH
+    ): AbstractDensity2dStat {
+        return Density2dfStat(
+            bandWidthX = bandWidthX,
+            bandWidthY = bandWidthY,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            nX = nX,
+            nY = nY,
+            isContour = isContour,
+            binCount = binCount,
+            binWidth = binWidth
+        )
     }
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {

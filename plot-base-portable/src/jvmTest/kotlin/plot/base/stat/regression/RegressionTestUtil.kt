@@ -55,10 +55,10 @@ internal object RegressionTestUtil {
         val inXLog = inX.joinToString(transform = Double::toString)
         val inYLog = inY.joinToString(transform = Double::toString)
 
-        val step = (inX.max()!! - inX.min()!!) / inX.size * 2
+        val step = (inX.maxOrNull()!! - inX.minOrNull()!!) / inX.size * 2
 
-        val log = generateSequence(inX.min()!!) { it + step }
-            .takeWhile { it < inX.max()!! }
+        val log = generateSequence(inX.minOrNull()!!) { it + step }
+            .takeWhile { it < inX.maxOrNull()!! }
             .map { Pair( it, regression.evalX(it)) }
 
         println("val inX = listOf($inXLog)")

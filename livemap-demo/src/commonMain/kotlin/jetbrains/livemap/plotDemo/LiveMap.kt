@@ -12,7 +12,10 @@ import kotlin.random.Random
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            multiLayerTooltips()
+            barWithNanValuesInData(),
+            //pieWithNullValuesInData(),
+            //barWithNullValuesInData()
+//            multiLayerTooltips()
 //            mapJoinBar(),
 //            antiMeridian(),
 //            tooltips(),
@@ -23,6 +26,216 @@ class LiveMap : PlotConfigDemoBase() {
 //            bunch(),
 //           facet()
         )
+    }
+
+    private fun pieWithNullValuesInData(): Map<String, Any> {
+        val spec = """
+            {
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "data": {
+                    "States": [
+                      "Alabama", "Alabama", "Alabama", 
+                      "Alaska", "Alaska", "Alaska",
+                      "Arizona", "Arizona", "Arizona",
+                      "Arkansas", "Arkansas", "Arkansas"
+                    ],
+                    "Item": [
+                      "State Debt", "Local Debt", "Gross State Product",
+                      "State Debt", "Local Debt", "Gross State Product",
+                      "State Debt", "Local Debt", "Gross State Product",
+                      "State Debt", "Local Debt", "Gross State Product"
+                    ],
+                    "Values": [
+                      10.7, 26.1, 228.0,
+                      5.9, 3.5, 55.7,
+                      34.9, 23.5, 355.7,
+                      13.3, 30.5, 361.1
+                    ]
+                  },
+                  "mapping": {
+                    "sym_y": "Values",
+                    "fill": "Item"
+                  },
+                  "map_data_meta": {
+                    "geodataframe": {
+                      "geometry": "geometry"
+                    }
+                  },
+                  "map": {
+                    "request": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
+                    "found name": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
+                    "geometry": [
+                      "{\"type\": \"Point\", \"coordinates\": [-86.7421099329499, 32.6446247845888]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-119.994112927034, 37.277335524559]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-152.012666774028, 63.0759818851948]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-111.665190827228, 34.1682100296021]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-116.666956541192, 38.5030842572451]}"
+                    ]
+                  },
+                  "map_join": [
+                    ["States"],
+                    ["request"]
+                  ],
+                  "display_mode": "pie",
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "wss://tiles.datalore.jetbrains.com",
+                    "theme": "color",
+                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+                  },
+                  "geocoding": {
+                    "url": "http://172.31.52.145:3025"
+                  },
+                  "map_join": ["States", "state"]
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun pieWithNanValuesInData(): Map<String, Any> {
+        val spec = """{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "livemap",
+      "data": {
+        "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+        "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+        "z": [1, 2, 4, 44, null, 30, 123, 543, 231],
+        "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
+      },
+      "mapping": {
+        "x": "x",
+        "y": "y",
+        "sym_y": "z",
+        "fill": "c"
+      },
+      "display_mode": "pie",
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "ws://10.0.0.127:3933",
+        "theme": null,
+        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+      },
+      "geocoding": {
+        "url": "http://localhost:3020"
+      }
+    }
+  ]
+}""".trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun barWithNanValuesInData(): Map<String, Any> {
+        val spec = """{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "livemap",
+      "data": {
+        "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+        "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+        "z": [100, 200, 400, 144, null, 230, 123, 543, -231],
+        "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
+      },
+      "mapping": {
+        "x": "x",
+        "y": "y",
+        "sym_y": "z",
+        "fill": "c"
+      },
+      "display_mode": "bar",
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "ws://10.0.0.127:3933",
+        "theme": null,
+        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+      },
+      "geocoding": {
+        "url": "http://localhost:3020"
+      }
+    }
+  ]
+}""".trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun barWithNullValuesInData(): Map<String, Any> {
+        val spec = """
+            {
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "data": {
+                    "States": [
+                      "Alabama", "Alabama", "Alabama",
+                      "Alaska", "Alaska", "Alaska",
+                      "Arizona", "Arizona", "Arizona",
+                      "Arkansas", "Arkansas", "Arkansas"
+                    ],
+                    "Item": [
+                      "State Debt", "Local Debt", "Gross State Product",
+                      "State Debt", "Local Debt", "Gross State Product",
+                      "State Debt", "Local Debt", "Gross State Product",
+                      "State Debt", "Local Debt", "Gross State Product"
+                    ],
+                    "Values": [
+                      10.7, 26.1, 228.0,
+                      5.9, 3.5, 55.7,
+                      34.9, 23.5, 355.7,
+                      13.3, 30.5, 361.1
+                    ]
+                  },
+                  "mapping": {
+                    "sym_y": "Values",
+                    "fill": "Item"
+                  },
+                  "map_data_meta": {
+                    "geodataframe": {
+                      "geometry": "geometry"
+                    }
+                  },
+                  "map": {
+                    "request": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
+                    "found name": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
+                    "geometry": [
+                      "{\"type\": \"Point\", \"coordinates\": [-86.7421099329499, 32.6446247845888]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-119.994112927034, 37.277335524559]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-152.012666774028, 63.0759818851948]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-111.665190827228, 34.1682100296021]}",
+                      "{\"type\": \"Point\", \"coordinates\": [-116.666956541192, 38.5030842572451]}"
+                    ]
+                  },
+                  "map_join": [
+                    ["States"],
+                    ["request"]
+                  ],
+                  "display_mode": "bar",
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "wss://tiles.datalore.jetbrains.com",
+                    "theme": "color",
+                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+                  },
+                  "geocoding": {
+                    "url": "http://172.31.52.145:3025"
+                  },
+                  "map_join": ["States", "state"]
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun multiLayerTooltips(): Map<String, Any> {

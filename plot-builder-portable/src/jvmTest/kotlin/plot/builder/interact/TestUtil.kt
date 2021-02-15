@@ -78,14 +78,24 @@ object TestUtil {
         val targetsList = ArrayList<TargetPrototype>()
         targetsList.addAll(list)
 
-        val geomKind = GeomKind.POINT
-        val lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
-        val contextualMapping = mock(ContextualMapping::class.java)
+        return createLocator(
+            lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
+            contextualMapping = mock(ContextualMapping::class.java),
+            targetPrototypes = targetsList
+        )
+    }
+
+    internal fun createLocator(
+        lookupSpec: LookupSpec,
+        contextualMapping: ContextualMapping,
+        targetPrototypes: List<TargetPrototype>,
+        geomKind: GeomKind = GeomKind.POINT
+    ): GeomTargetLocator {
         return jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator(
             geomKind,
             lookupSpec,
             contextualMapping,
-            targetsList
+            targetPrototypes
         )
     }
 

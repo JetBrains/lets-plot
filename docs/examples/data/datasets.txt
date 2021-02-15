@@ -12,3 +12,7 @@ Dataset:	US_household_income_2017.csv
 Source:     https://www.kaggle.com/goldenoakresearch/us-household-income-stats-geo-locations?select=kaggle_income.csv
 License:    Only proper citing is required:
             Golden Oak Research Group, LLC. “U.S. Income Database Kaggle”. Publication: 5, August 2017. Accessed, 17, July 2020.
+
+Dataset:	Ames_house_prices_train.csv
+Source:     https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data?select=train.csv
+            (c) Kaggle (https://www.kaggle.com/terms)

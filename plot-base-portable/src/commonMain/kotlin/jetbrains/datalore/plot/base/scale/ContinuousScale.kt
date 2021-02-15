@@ -8,18 +8,22 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.base.scale.transform.TransformKind
+import jetbrains.datalore.plot.base.scale.transform.Transforms.createTransform
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuous: Boolean
     override val isContinuousDomain: Boolean = true
     override val domainLimits: ClosedRange<Double>?
 
-
     override val defaultTransform: Transform
-        get() = Transforms.IDENTITY
+        get() = createTransform(TransformKind.IDENTITY, labelFormatter)
 
-    constructor(name: String, mapper: ((Double?) -> T?), continuousOutput: Boolean) : super(name, mapper) {
+    constructor(
+        name: String,
+        mapper: ((Double?) -> T?),
+        continuousOutput: Boolean
+    ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = null
 
@@ -66,13 +70,8 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
         internal val myContinuousOutput: Boolean = scale.isContinuous
-        internal var myLowerLimit: Double?
-        internal var myUpperLimit: Double?
-
-        init {
-            myLowerLimit = scale.domainLimits?.lowerEnd
-            myUpperLimit = scale.domainLimits?.upperEnd
-        }
+        internal var myLowerLimit: Double? = scale.domainLimits?.lowerEnd
+        internal var myUpperLimit: Double? = scale.domainLimits?.upperEnd
 
         override fun lowerLimit(v: Double): Scale.Builder<T> {
             require(!v.isNaN()) { "`lower` can't be $v" }

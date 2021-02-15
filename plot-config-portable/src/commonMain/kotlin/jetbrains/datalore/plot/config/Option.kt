@@ -85,6 +85,9 @@ object Option {
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_LINES = "tooltip_lines"
         const val TOOLTIP_FORMATS = "tooltip_formats"
+        const val TOOLTIP_ANCHOR = "tooltip_anchor"
+        const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
+        const val TOOLTIP_COLOR = "tooltip_color"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
     }
@@ -148,7 +151,7 @@ object Option {
 
         object Text {
             const val LABEL_FORMAT = "label_format"
-            const val NA_VALUE = "na_value"
+            const val NA_TEXT = "na_text"
             const val SIZE_UNIT = "size_unit"
         }
 
@@ -175,6 +178,67 @@ object Option {
         }
     }
 
+    object Stat {
+        object Boxplot {
+            const val COEF = "coef"
+            const val VARWIDTH = "varwidth"
+        }
+
+        object Bin {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val CENTER = "center"
+            const val BOUNDARY = "boundary"
+        }
+
+        object Bin2d {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val DROP = "drop"
+        }
+
+        object Contour {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+        }
+
+        object Corr {
+            const val METHOD = "method"
+            const val TYPE = "type"
+            const val FILL_DIAGONAL = "diag"
+            const val THRESHOLD = "threshold"
+        }
+
+        object Smooth {
+            const val POINT_COUNT = "n"
+            const val METHOD = "method"
+            const val CONFIDENCE_LEVEL = "level"
+            const val DISPLAY_CONFIDENCE_INTERVAL = "se"
+            const val SPAN = "span"
+            const val POLYNOMIAL_DEGREE = "deg"
+            const val LOESS_CRITICAL_SIZE = "max_n"
+            const val SAMPLING_SEED = "seed"
+        }
+
+        object Density {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"     // number or string (method name)
+            const val ADJUST = "adjust"
+            const val FULL_SCAN_MAX = "fs_max"  // use 'full scan' when the input size is < 'fs_max'
+        }
+
+        object Density2d {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"     // list of two numbers, one number or string (method name)
+            const val ADJUST = "adjust"
+            const val IS_CONTOUR = "contour"
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+        }
+    }
+
     object Scale {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"
@@ -187,6 +251,7 @@ object Option {
         const val DATE_TIME = "datetime"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
+        const val FORMAT = "format"
         // ToDo: TRANS
 
         // continuous scale
@@ -194,27 +259,34 @@ object Option {
 
         // discrete scale output values
         const val OUTPUT_VALUES = "values"
+
         // shape scale
         const val SHAPE_SOLID = "solid"
+
         // gradient scale
         const val LOW = "low"
         const val MID = "mid"
         const val HIGH = "high"
         const val MIDPOINT = "midpoint"
+
         // hue scale
         const val HUE_RANGE = "h"
         const val CHROMA = "c"
         const val LUMINANCE = "l"
         const val START_HUE = "h_start"
         const val DIRECTION = "direction"
+
         // grey scale
         const val START = "start"
         const val END = "end"
+
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
+
         // range
         const val RANGE = "range"
+
         // max_size for scale_size_area
         const val MAX_SIZE = "max_size"
 
@@ -223,8 +295,29 @@ object Option {
 
     object Facet {
         const val NAME = Meta.NAME
+        const val NAME_GRID = "grid"
+        const val NAME_WRAP = "wrap"
+
+        // grid
         const val X = "x"
         const val Y = "y"
+        const val X_ORDER = "x_order"
+        const val Y_ORDER = "y_order"
+        const val X_FORMAT = "x_format"
+        const val Y_FORMAT = "y_format"
+
+        // wrap
+        const val FACETS = "facets"
+        const val NCOL = "ncol"
+        const val NROW = "nrow"
+        const val FACETS_ORDER = "order"
+        const val FACETS_FILL_DIR = "dir"
+        const val FACETS_FORMAT = "format"
+
+        const val FACET_ORDER_ASC = 1
+        const val FACET_ORDER_DESC = -1
+        const val FACET_FILL_VERT = "v"
+        const val FACET_FILL_HOR = "h"
     }
 
     object Mapping {
@@ -298,8 +391,8 @@ object Option {
         const val LEGEND_JUSTIFICATION = "legend_justification"
         const val LEGEND_DIRECTION = "legend_direction"
 
-        const val TOOLTIP_ANCHOR = "tooltip_anchor"
-        const val TOOLTIP_WIDTH = "tooltip_width"
+        // view element
+        const val ELEMENT_BLANK = "blank"
     }
 
     object GeomName {

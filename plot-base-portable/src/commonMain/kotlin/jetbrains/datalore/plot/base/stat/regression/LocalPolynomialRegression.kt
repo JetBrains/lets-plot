@@ -5,11 +5,9 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.stat.math3.LoessInterpolator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialSplineFunction
 import jetbrains.datalore.plot.base.stat.math3.TDistribution
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -18,20 +16,30 @@ class LocalPolynomialRegression(
     xs: List<Double?>,
     ys: List<Double?>,
     confidenceLevel: Double,
-    private val myBandwidth: Double
+    private val bandwidth: Double
 ) : RegressionEvaluator(xs, ys, confidenceLevel) {
+
+    val canCompute: Boolean
 
     private val n: Int
     private val meanX: Double
     private val sumXX: Double
     private val sy: Double
     private val tcritical: Double
-    private val myPolynomial: PolynomialSplineFunction
+    private lateinit var polynomial: PolynomialSplineFunction
 
     init {
         val (xVals, yVals) = averageByX(xs, ys)
 
         n = xVals.size
+        val degreesOfFreedom = n - 2.0
+
+        // See: LoessInterpolator.kt:168
+        val bandwidthInPoints = (bandwidth * n).toInt()
+        val bandwidthInPointsOk = bandwidthInPoints >= 2
+
+        canCompute = (n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk)
+
         meanX = xVals.average()
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
 
@@ -44,11 +52,16 @@ class LocalPolynomialRegression(
             sqrt(sse / (n - 2))
         }
 
-        myPolynomial = getPoly(xVals, yVals)
 
-        tcritical = run {
+        if (canCompute) {
+            polynomial = getPoly(xVals, yVals)
+        }
+
+        tcritical = if (canCompute) {
             val alpha = 1.0 - confidenceLevel
-            TDistribution(n - 2.0).inverseCumulativeProbability(1.0 - alpha / 2.0)
+            TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
+        } else {
+            Double.NaN
         }
     }
 
@@ -63,7 +76,7 @@ class LocalPolynomialRegression(
         // half-width of confidence interval for estimated mean y
         val halfConfidenceInterval = tcritical * se
 
-        val yHat = myPolynomial.value(x)!!
+        val yHat = polynomial.value(x)!!
 
         return EvalResult(
             yHat,
@@ -74,6 +87,6 @@ class LocalPolynomialRegression(
     }
 
     private fun getPoly(xVals: DoubleArray, yVals: DoubleArray): PolynomialSplineFunction {
-        return LoessInterpolator(myBandwidth, 4).interpolate(xVals, yVals)
+        return LoessInterpolator(bandwidth, 4).interpolate(xVals, yVals)
     }
 }

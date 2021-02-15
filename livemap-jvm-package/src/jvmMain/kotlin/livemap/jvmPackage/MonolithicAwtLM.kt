@@ -46,12 +46,13 @@ object MonolithicAwtLM {
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotFromRawSpecs(plotSpec, plotSize, computationMessagesHandler)
+            .buildPlotFromRawSpecs(plotSpec, plotSize, plotMaxWidth, computationMessagesHandler)
     }
 
     private fun createPlotFactory(
@@ -103,7 +104,7 @@ object MonolithicAwtLM {
         plotComponent: JComponent,
         size: DoubleVector
     ): JComponent {
-        val plotBounds = Rectangle(0,0, size.x.toInt(), size.y.toInt())
+        val plotBounds = Rectangle(0, 0, size.x.toInt(), size.y.toInt())
 
         plotComponent.bounds = plotBounds
 

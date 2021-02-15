@@ -45,7 +45,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             AB_LINE -> DefaultSampling.AB_LINE
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
-            BOX_PLOT -> DefaultSampling.BOX_PLOT
+            BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
             RIBBON -> DefaultSampling.RIBBON
             AREA -> DefaultSampling.AREA
             DENSITY -> DefaultSampling.DENSITY

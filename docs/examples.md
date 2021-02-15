@@ -10,22 +10,22 @@ Try the following tutorials and examples to learn and evaluate various features 
 - [GGBunch](#ggbunch)
 - [`as_discrete()` function](#as_discrete)
 - [Export to File](#export)
+- [Formatting](#formatting)
 - [Theme](#theme)
 - [Data Sampling](#sampling)
 - [Tooltip Customization](#tooltip)
+- [The 'bistro' Package](#bistro)
 - [GeoPandas Support](#geopandas)
 - [Interactive Maps](#livemap)
-- [Geocoding API](#geocoding)
-- [Cloud-based notebooks](#cloud_based)
-- [Interesting demos](#interesting)
-- [Tooltip Customization](#tooltip)
+- [Geocoding](#geocoding)
 
 
 
 <a id="quickstart"></a>
 #### Quickstart and User Guide
 
-- Quickstart: <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb"> 
+- Quickstart: 
+            <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb"> 
                 <img src="https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.png" width="109" height="20" align="left">
             </a>
             <span>&nbsp;&nbsp;</span>
@@ -39,6 +39,10 @@ Try the following tutorials and examples to learn and evaluate various features 
             <span>&nbsp;&nbsp;</span>
             <a href="https://colab.research.google.com/drive/1uYYZcG0g0kP4lJdPkpWB8aBS96ioDii2?usp=sharing" title="View at Colab"> 
                 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
+            </a>
+            <span>&nbsp;&nbsp;</span>
+            <a href="https://deepnote.com/project/673ea421-638e-469d-8d04-5cc4c6e0258f#%2Fnotebook.ipynb" title="View at Deepnote"> 
+                <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_deepnote.svg" width="20" height="20">
             </a>
 
 - [user_guide.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/guide/user_guide.ipynb)
@@ -71,16 +75,21 @@ Try the following tutorials and examples to learn and evaluate various features 
 
 `geom_image, geom_raster`
 
-`geom_image()` displays an image specified by a ndarray with shape (n,m) or (n,m,3) or (n,m,4).
+`geom_image()`: displays an image specified by a ndarray with shape (n,m) or (n,m,3) or (n,m,4).
 
 * [image_101.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_101.ipynb)
-* [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
-* [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb) 
+* [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb)
+
+See also: `image_matrix` in [The 'bistro' Package](#bistro).
 
 `geom_text`, label format
 
 [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)
 
+`stat_corr`
+
+See the `corr_plot` example in [The 'bistro' Package](#bistro).
+ 
 
 <a id="pos"></a>
 #### Position Adjustment
@@ -103,8 +112,7 @@ Try the following tutorials and examples to learn and evaluate various features 
 <a id="facets"></a>
 #### Facets
 
-`facet_grid`: 
-[distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb)
+* `facet_grid(), facet_wrap()` : [facets.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
 
 
 <a id="ggbunch"></a>
@@ -120,7 +128,7 @@ GGBunch allows to show a collection of plots on one figure. Each plot in the col
 <a id="as_discrete"></a>
 #### `as_discrete()` function 
 
-[geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
+* [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
 
 
 <a id="export"></a>
@@ -128,7 +136,13 @@ GGBunch allows to show a collection of plots on one figure. Each plot in the col
 
 The `ggsave()` function is an easy way to export plot to a file in SVG or HTML formats.
 
-[export_SVG_HTML.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
+* [export_SVG_HTML.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
+
+<a id="formatting"></a>
+#### Formatting
+
+* [formatting_axes_etc](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
+* [label_format.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb)
 
 
 <a id="theme"></a>
@@ -136,7 +150,7 @@ The `ggsave()` function is an easy way to export plot to a file in SVG or HTML f
 
 Legend layout and axis presentation options : 
  
-[legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
+* [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
 
 
 <a id="sampling"></a>
@@ -144,7 +158,7 @@ Legend layout and axis presentation options :
 
 Sampling is a special technique of data transformation, which helps to deal with large datasets and overplotting.
 
-See: [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md).
+See examples in [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md).
 
 
 <a id="tooltip"></a>
@@ -160,10 +174,22 @@ See: [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/blob/master/
 See also [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
 
 
+<a id="bistro"></a>
+### The 'bistro' Package
+
+#### `from lets_plot.bistro.corr`
+
+`corr_plot`: [correlation_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/correlation_plot.ipynb)
+
+#### `from lets_plot.bistro.im`
+
+`image_matrix`: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb) 
+
+
 <a id="geopandas"></a>
 #### GeoPandas Support
 
-See [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md). 
+See examples in [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md). 
 
 
 <a id="livemap"></a>
@@ -172,14 +198,14 @@ See [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/
 The interactive map allows zooming in and out and panning around geospatial data that can be added to the base-map layer 
 using regular ggplot2 'geoms'.
 
-See [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
+See examples in [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
 
 
 <a id="geocoding"></a>
-#### Geocoding API
+#### Geocoding
 
 Geocoding is the process of converting names of places into geographic coordinates.
-
-See [Geocoding API](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+         
+See the "Examples" section in [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
 
 

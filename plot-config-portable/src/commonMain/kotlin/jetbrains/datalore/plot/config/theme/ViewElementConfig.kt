@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.config.ConfigUtil
+import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
 import jetbrains.datalore.plot.config.OptionsAccessor
 
 /**
@@ -15,18 +16,18 @@ import jetbrains.datalore.plot.config.OptionsAccessor
  */
 internal class ViewElementConfig private constructor(
     private val name: String,
-    options: Map<*, *>
+    options: Map<String, Any>
 ) : OptionsAccessor(options) {
 
     val isBlank: Boolean
-        get() = BLANK == name
+        get() = ELEMENT_BLANK == name
 
     init {
-        checkState(BLANK == name, "Only 'element_blank' is supported")
+        checkState(ELEMENT_BLANK == name, "Only 'element_blank' is supported")
     }
 
     companion object {
-        private const val BLANK = "blank"
+//        private const val BLANK = "blank"
 
         fun create(elem: Any): ViewElementConfig {
             // element - name (like blank)

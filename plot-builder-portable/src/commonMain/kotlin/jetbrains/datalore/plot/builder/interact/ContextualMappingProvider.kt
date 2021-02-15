@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 interface ContextualMappingProvider {
@@ -17,8 +16,14 @@ interface ContextualMappingProvider {
         val NONE = object : ContextualMappingProvider {
             override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
                 return ContextualMapping(
-                    DataContext(dataFrame, dataAccess),
-                    tooltipLines = emptyList()
+                    tooltipLines = emptyList(),
+                    tooltipAnchor = null,
+                    tooltipMinWidth = null,
+                    tooltipColor = null,
+                    ignoreInvisibleTargets = false,
+                    hasGeneralTooltip = false,
+                    hasAxisTooltip = false,
+                    isCrosshairEnabled = false
                 )
             }
         }

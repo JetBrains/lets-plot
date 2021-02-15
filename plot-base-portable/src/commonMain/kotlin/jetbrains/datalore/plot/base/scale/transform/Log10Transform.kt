@@ -11,10 +11,15 @@ import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.log10
 import kotlin.math.pow
 
-internal class Log10Transform : FunTransform(
+internal class Log10Transform(
+    private val myLabelFormatter: ((Any) -> String)? = null
+) : FunTransform(
     F,
     F_INVERSE
 ) {
+    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return myLabelFormatter ?: super.labelFormatter(domainAfterTransform, targetCount)
+    }
 
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val transformedBreaks = LinearBreaksGen()
@@ -40,8 +45,8 @@ internal class Log10Transform : FunTransform(
             } else {
                 step = domainValue - newDomainValues[i - 1]
             }
-            val formatter = NumericBreakFormatter(domainValue, step, true)
-            labels.add(formatter.apply(domainValue))
+            val formatter = myLabelFormatter ?: NumericBreakFormatter(domainValue, step, true)::apply
+            labels.add(formatter(domainValue))
         }
 
         return ScaleBreaks(newDomainValues, transformValues, labels)
@@ -50,7 +55,7 @@ internal class Log10Transform : FunTransform(
     companion object {
         private val F: (Double?) -> Double? = { v ->
             if (v != null)
-                log10(v)
+                log10(v).takeIf { !it.isNaN() }
             else
                 null
         }

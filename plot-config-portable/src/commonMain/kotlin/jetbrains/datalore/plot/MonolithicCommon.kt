@@ -31,7 +31,7 @@ object MonolithicCommon {
     ): List<String> {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
-        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, plotSize)
+        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, plotSize, plotMaxWidth = null)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
@@ -57,7 +57,8 @@ object MonolithicCommon {
 
     fun buildPlotsFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?
+        plotSize: DoubleVector?,
+        plotMaxWidth: Double?
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
@@ -72,7 +73,8 @@ object MonolithicCommon {
                     listOf(
                         buildSinglePlotFromProcessedSpecs(
                             plotSpec,
-                            plotSize
+                            plotSize,
+                            plotMaxWidth
                         )
                     )
                 )
@@ -96,7 +98,8 @@ object MonolithicCommon {
             var buildInfo =
                 buildSinglePlotFromProcessedSpecs(
                     plotSpec,
-                    PlotSizeHelper.bunchItemSize(bunchItem)
+                    PlotSizeHelper.bunchItemSize(bunchItem),
+                    plotMaxWidth = null
                 )
 
             buildInfo = PlotBuildInfo(
@@ -115,7 +118,8 @@ object MonolithicCommon {
 
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?
+        plotSize: DoubleVector?,
+        plotMaxWidth: Double?
     ): PlotBuildInfo {
 
         val computationMessages = ArrayList<String>()
@@ -124,7 +128,10 @@ object MonolithicCommon {
         }
 
         val preferredSize = ValueProperty(
-            PlotSizeHelper.singlePlotSize(plotSpec, plotSize, assembler.facets, assembler.containsLiveMap)
+            PlotSizeHelper.singlePlotSize(
+                plotSpec,
+                plotSize, plotMaxWidth, assembler.facets, assembler.containsLiveMap
+            )
         )
 
         return PlotBuildInfo(

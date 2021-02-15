@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 
-internal class ArrowSpecConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
+internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : OptionsAccessor(options) {
 
     fun createArrowSpec(): ArrowSpec {
         // See R function arrow(): https://www.rdocumentation.org/packages/grid/versions/3.4.1/topics/arrow
@@ -54,7 +54,8 @@ internal class ArrowSpecConfig private constructor(options: Map<*, *>) : Options
             if (options is Map<*, *>) {
                 val name = ConfigUtil.featureName(options)
                 if ("arrow" == name) {
-                    return ArrowSpecConfig(options)
+                    @Suppress("UNCHECKED_CAST")
+                    return ArrowSpecConfig(options as Map<String, Any>)
                 }
             }
             throw IllegalArgumentException("Expected: 'arrow = arrow(...)'")

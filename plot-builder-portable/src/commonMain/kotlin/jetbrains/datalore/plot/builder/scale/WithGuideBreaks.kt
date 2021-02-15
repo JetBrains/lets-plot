@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-interface WithGuideBreaks {
-    val guideBreaks: List<GuideBreak<*>>
+interface WithGuideBreaks<DomainT> {
+    val breaks: List<DomainT>
+    val formatter: (DomainT) -> String
 }

@@ -17,46 +17,47 @@ class GeomTargetInteractionUnivariateFunctionTest {
     @Test
     fun withNoMappings_ShouldAddEmptyTooltipText() {
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .build()
+            .build()
 
         assertNoTooltips(targetTooltipSpec)
     }
 
     @Test
-    fun whenPositionalXVar_ShouldAddEmptyTooltipText() {
+    fun whenPositionalXVar_ShouldAddTooltipText() {
         val mapping = continuous(Aes.X)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .variable(mapping)
-                .build()
+            .variable(mapping)
+            .build()
 
         assertText(targetTooltipSpec, mapping.shortTooltipText())
     }
 
     @Test
-    fun whenPositionalNonNumericXVar_ShouldAddEmptyTooltipText() {
+    fun whenPositionalDiscreteXVar_ShouldAddTooltipText() {
+        val mapping = discrete(Aes.X)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .variable(discrete(Aes.X))
-                .build()
+            .variable(mapping)
+            .build()
 
-        assertNoTooltips(targetTooltipSpec)
+        assertText(targetTooltipSpec, mapping.shortTooltipText())
     }
 
     @Test
     fun whenPositionalYVar_ShouldAddTooltipText() {
         val mapping = continuous(Aes.Y)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .variable(mapping)
-                .build()
+            .variable(mapping)
+            .build()
 
         assertText(targetTooltipSpec, mapping.shortTooltipText())
     }
 
     @Test
-    fun whenPositionalNonNumericYVar_ShouldAddTooltipText() {
+    fun whenPositionalDiscreteYVar_ShouldAddTooltipText() {
         val mapping = discrete(Aes.Y)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .variable(mapping)
-                .build()
+            .variable(mapping)
+            .build()
 
         assertText(targetTooltipSpec, mapping.shortTooltipText())
     }
@@ -65,18 +66,18 @@ class GeomTargetInteractionUnivariateFunctionTest {
     fun whenWidthVar_ShouldAddTooltipText() {
         val mapping = continuous(Aes.WIDTH)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .variable(mapping)
-                .build()
+            .variable(mapping)
+            .build()
 
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }
 
     @Test
-    fun whenNonNumericWidthVar_ShouldAddTooltipText() {
+    fun whenDiscreteWidthVar_ShouldAddTooltipText() {
         val mapping = discrete(Aes.WIDTH)
         val targetTooltipSpec = createUnivariateFunctionBuilder()
-                .variable(mapping)
-                .build()
+            .variable(mapping)
+            .build()
 
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }

@@ -41,16 +41,15 @@ open class TooltipAnchor : PlotConfigDemoBase() {
         }
 
         private fun withTooltipAnchor(anchor: String): Map<String, Any> {
-            val allPositionals = "\$Y"
-            val aesYMin = "\$ymin"
-            val aesYMax = "\$ymax"
-            val aesMiddle = "\$middle"
-            val aesLower = "\$lower"
-            val aesUpper = "\$upper"
+            val allPositionals = "^Y"
+            val aesYMin = "^ymin"
+            val aesYMax = "^ymax"
+            val aesMiddle = "^middle"
+            val aesLower = "^lower"
+            val aesUpper = "^upper"
             val spec = """{
                     'kind': 'plot',
                     'ggtitle': {'text': '$anchor'},
-                    'theme':   {'tooltip_anchor': '$anchor'},
                     'mapping': {
                         'x': 'cond',
                         'y': 'rating',
@@ -68,7 +67,8 @@ open class TooltipAnchor : PlotConfigDemoBase() {
                                     'min/max|$aesYMin/$aesYMax',
                                     'lower/upper|$aesLower/$aesUpper',
                                     '@|$aesMiddle'
-                                 ]
+                                 ],
+                                'tooltip_anchor': '$anchor'
                              }
                         }
                     ]
@@ -98,26 +98,24 @@ open class TooltipAnchor : PlotConfigDemoBase() {
         private fun bottom_center(): Map<String, Any> = withTooltipAnchor("bottom_center")
 
         private fun overCursor(): Map<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'sepal length (cm)'," +
-                    "             'group': 'target'," +
-                    "             'color': 'sepal width (cm)'," +
-                    "             'fill': 'target'" +
-                    "           }," +
-                    "    'theme': {" +
-                    "       'tooltip_anchor': 'top_right'" +
-                    "           }," +
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'area'," +
-                    "                   'stat': 'density'," +
-                    "                   'position' : 'identity'," +
-                    "                   'alpha': 0.7" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """{
+                       'kind': 'plot',
+                       'mapping': {
+                                 'x': 'sepal length (cm)',
+                                 'group': 'target',
+                                 'color': 'sepal width (cm)',
+                                 'fill': 'target'
+                               },
+                       'layers': [
+                                   {
+                                      'geom': 'area',
+                                       'stat': 'density',
+                                       'position' : 'identity',
+                                       'alpha': 0.7,
+                                       'tooltips' : { 'tooltip_anchor': 'top_right' }
+                                   }
+                               ]
+                    }"""
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = Iris.df

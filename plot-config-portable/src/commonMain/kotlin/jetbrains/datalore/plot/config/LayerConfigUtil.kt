@@ -26,14 +26,16 @@ internal object LayerConfigUtil {
         return defaultPos
     }
 
-    fun initConstants(layerConfig: OptionsAccessor): Map<Aes<*>, Any> {
+    fun initConstants(layerConfig: OptionsAccessor, exclude: Set<Aes<*>>): Map<Aes<*>, Any> {
         val result = HashMap<Aes<*>, Any>()
         for (option in Option.Mapping.REAL_AES_OPTION_NAMES) {
-            val optionValue = layerConfig[option]
-            if (optionValue != null) {
-                val aes = Option.Mapping.toAes(option)
-                val variable = AesOptionConversion.apply(aes, optionValue)
-                result[aes] = variable!!
+            val aes = Option.Mapping.toAes(option)
+            if (aes !in exclude) {
+                layerConfig[option]?.run {
+                    val constantValue = AesOptionConversion.apply(aes, this)
+                        ?: throw IllegalArgumentException("Can't convert to '$option' value: $this")
+                    result[aes] = constantValue
+                }
             }
         }
 
@@ -57,7 +59,7 @@ internal object LayerConfigUtil {
                     data.has(variable) -> VarBinding(variable, aes)
                     variable.isStat && !clientSide -> VarBinding(variable, aes) // 'stat' is not yet built.
                     else -> throw IllegalArgumentException(
-                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables()}"
+                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
                     )
                 }
                 result.add(binding)

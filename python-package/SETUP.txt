@@ -29,4 +29,4 @@ Run tests against `lets-plot` package installed in the module environment.
 
 - Install dev version of Lets-Plot to `lets-plot-python-module` environment:
     conda activate lets-plot-python-module
-    pip install --no-index --find-links=dist/ lets-plot --no-deps
+    pip install --no-index --find-links=dist/ lets-plot --no-deps --force-reinstall

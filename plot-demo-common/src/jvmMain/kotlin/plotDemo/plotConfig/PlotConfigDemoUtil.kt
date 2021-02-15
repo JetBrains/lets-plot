@@ -29,6 +29,7 @@ object PlotConfigDemoUtil {
             return MonolithicAwt.buildPlotFromRawSpecs(
                 plotSpec,
                 plotSize,
+                null,
                 factory::createSvgComponent,
                 factory.createPlotEdtExecutor()
             ) {

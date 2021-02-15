@@ -10,7 +10,6 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
@@ -36,7 +35,7 @@ class BarPlotResizeDemo private constructor(
         val varCat = sclData.varCat
         val data = sclData.dataFrame
 
-        val categories = ArrayList(DataFrameUtil.distinctValues(data, varCat))
+        val categories = ArrayList(data.distinctValues(varCat))
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
         val fillScale = Scales.pureDiscrete("C", categories, colors, Color.GRAY)
 
