@@ -16,12 +16,12 @@ object BarTooltipHelper {
         hintAesList: List<Aes<Double>>,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         colorFactory: (DataPointAesthetics) -> Color
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val helper = GeomHelper(pos, coordinateSystem, ctx)
 
         for (p in aesthetics.dataPoints()) {
             val rect = rectFactory(p) ?: continue

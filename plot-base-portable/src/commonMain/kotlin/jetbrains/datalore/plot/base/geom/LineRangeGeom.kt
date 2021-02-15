@@ -26,13 +26,13 @@ class LineRangeGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
-        val dataPoints = aesthetics.dataPoints().filter { p -> rectangleByDataPoint(p, coord) != null }
+        val dataPoints = aesthetics.dataPoints().filter { p -> rectangleByDataPoint(p, coordinateSystem) != null }
         for (p in GeomUtil.withDefined(dataPoints, Aes.X, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
             val ymin = p.ymin()!!
@@ -46,8 +46,8 @@ class LineRangeGeom : GeomBase() {
 
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(coord),
+            aesthetics, pos, coordinateSystem, ctx,
+            rectangleByDataPoint(coordinateSystem),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -55,11 +55,11 @@ class LineRangeGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        fun rectangleByDataPoint(coord: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
-            return { p -> rectangleByDataPoint(p, coord) }
+        fun rectangleByDataPoint(coordinateSystem: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
+            return { p -> rectangleByDataPoint(p, coordinateSystem) }
         }
 
-        fun rectangleByDataPoint(p: DataPointAesthetics, coord: CoordinateSystem): DoubleRectangle? {
+        fun rectangleByDataPoint(p: DataPointAesthetics, coordinateSystem: CoordinateSystem): DoubleRectangle? {
             var result: DoubleRectangle? = null
             if (p.defined(Aes.X) &&
                 p.defined(Aes.YMIN) &&
@@ -74,7 +74,7 @@ class LineRangeGeom : GeomBase() {
                 val origin = DoubleVector(x - width / 2, ymax - height / 2)
                 val dimensions = DoubleVector(width, 0.0 )
                 val rect = DoubleRectangle(origin, dimensions)
-                if (coord.contains(rect)) {
+                if (coordinateSystem.contains(rect)) {
                     result = rect
                 }
             }

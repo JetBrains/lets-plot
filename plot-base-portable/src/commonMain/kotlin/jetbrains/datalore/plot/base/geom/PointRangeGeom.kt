@@ -33,12 +33,12 @@ class PointRangeGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
         val helper = geomHelper.createSvgElementHelper()
-        val dataPoints = aesthetics.dataPoints().filter { p -> rectangleByDataPoint(p, fattenMidPoint, coord) != null }
+        val dataPoints = aesthetics.dataPoints().filter { p -> rectangleByDataPoint(p, fattenMidPoint, coordinateSystem) != null }
 
         for (p in GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
@@ -49,7 +49,7 @@ class PointRangeGeom : GeomBase() {
             // vertical line
             val start = DoubleVector(x, ymin)
             val end = DoubleVector(x, ymax)
-            if (coord.contains(start) && coord.contains(end)) {
+            if (coordinateSystem.contains(start) && coordinateSystem.contains(end)) {
                 val line = helper.createLine(start, end, p)
                 root.add(line)
             }
@@ -68,8 +68,8 @@ class PointRangeGeom : GeomBase() {
 
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(fattenMidPoint, coord),
+            aesthetics, pos, coordinateSystem, ctx,
+            rectangleByDataPoint(fattenMidPoint, coordinateSystem),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -79,11 +79,11 @@ class PointRangeGeom : GeomBase() {
 
         const val DEF_FATTEN = 5.0
 
-        fun rectangleByDataPoint(fatten: Double, coord: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
-            return { p -> rectangleByDataPoint(p, fatten, coord) }
+        fun rectangleByDataPoint(fatten: Double, coordinateSystem: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
+            return { p -> rectangleByDataPoint(p, fatten, coordinateSystem) }
         }
 
-        fun rectangleByDataPoint(p: DataPointAesthetics, fatten: Double, coord: CoordinateSystem): DoubleRectangle? {
+        fun rectangleByDataPoint(p: DataPointAesthetics, fatten: Double, coordinateSystem: CoordinateSystem): DoubleRectangle? {
             var result: DoubleRectangle? = null
             if (p.defined(Aes.X) &&
                 p.defined(Aes.Y)
@@ -99,7 +99,7 @@ class PointRangeGeom : GeomBase() {
                 val origin = DoubleVector(x - width / 2, y)
                 val dimensions = DoubleVector(width, 0.0 )
                 val rect = DoubleRectangle(origin, dimensions)
-                if (coord.contains(rect)) {
+                if (coordinateSystem.contains(rect)) {
                     result = rect
                 }
             }

@@ -18,18 +18,20 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePo
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 open class AreaGeom : GeomBase() {
 
-    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.ordered_X(aesthetics.dataPoints())
+    protected fun dataPoints(aesthetics: Aesthetics, coordinateSystem: CoordinateSystem): Iterable<DataPointAesthetics> {
+        return GeomUtil.ordered_X(aesthetics.dataPoints()).filter { p ->
+            val coord = GeomUtil.TO_LOCATION_X_Y(p)
+            coord != null && coordinateSystem.contains(coord)
+        }
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val dataPoints = dataPoints(aesthetics)
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+        val dataPoints = dataPoints(aesthetics, coordinateSystem)
 
-        val helper = LinesHelper(pos, coord, ctx)
+        val helper = LinesHelper(pos, coordinateSystem, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
         paths.reverse()
         appendNodes(paths, root)
@@ -40,18 +42,13 @@ open class AreaGeom : GeomBase() {
         val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
         appendNodes(lines, root)
 
-        buildHints(aesthetics, pos, coord, ctx)
+        buildHints(aesthetics, pos, coordinateSystem, ctx)
     }
 
-    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
-        val dataPoints = dataPoints(aesthetics).filter { p ->
-            val x = p.x()
-            val y = p.y()
-            SeriesUtil.allFinite(x, y) && coord.contains(DoubleVector(x!!,y!!))
-        }
+    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints,
+                dataPoints(aesthetics, coordinateSystem),
                 singlePointAppender { p -> toClient(geomHelper, p) },
                 reducer(0.999, false)
         )

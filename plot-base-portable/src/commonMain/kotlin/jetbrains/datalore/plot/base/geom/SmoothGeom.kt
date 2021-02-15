@@ -28,15 +28,14 @@ class SmoothGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints())).filter { p ->
-            val x = p.x()
-            val y = p.y()
-            coord.contains(DoubleVector(x!!,y!!))
+            val coord = GeomUtil.TO_LOCATION_X_Y(p)
+            coord != null && coordinateSystem.contains(coord)
         }
-        val helper = LinesHelper(pos, coord, ctx)
+        val helper = LinesHelper(pos, coordinateSystem, ctx)
 
         // Regression line
         helper.setAlphaEnabled(false)
@@ -49,16 +48,16 @@ class SmoothGeom : GeomBase() {
         val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
         appendNodes(bands, root)
 
-        buildHints(dataPoints, pos, coord, ctx)
+        buildHints(dataPoints, pos, coordinateSystem, ctx)
     }
 
     private fun buildHints(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val helper = GeomHelper(pos, coordinateSystem, ctx)
 
         for (p in dataPoints) {
             val xCoord = p.x()!!

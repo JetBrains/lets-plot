@@ -17,9 +17,9 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class RectGeom : GeomBase() {
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
         val helper =
-            RectanglesHelper(aesthetics, pos, coord, ctx)
+            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
         helper.createRectangles(Companion::rectangleByDataPoint).forEach(root::add)
         RectTargetCollectorHelper(
             rectanglesHelper = helper,

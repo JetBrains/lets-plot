@@ -19,9 +19,9 @@ class StepGeom : LineGeom() {
         myDirection = Direction.toDirection(dir)
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val dataPoints = dataPoints(aesthetics, coord)
-        val helper = LinesHelper(pos, coord, ctx)
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+        val dataPoints = dataPoints(aesthetics, coordinateSystem)
+        val helper = LinesHelper(pos, coordinateSystem, ctx)
         val pathInfos = helper.createSteps(dataPoints, myDirection)
         for (pathInfo in pathInfos) {
             root.add(pathInfo.path.rootGroup)

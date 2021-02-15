@@ -25,18 +25,18 @@ class CrossBarGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         CrossBarHelper.buildBoxes(
-            root, aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, coord, isHintRect = false)
+            root, aesthetics, pos, coordinateSystem, ctx,
+            rectangleByDataPoint(ctx, coordinateSystem, isHintRect = false)
         )
-        CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
+        CrossBarHelper.buildMidlines(root, aesthetics, pos, coordinateSystem, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, coord, isHintRect = true),
+            aesthetics, pos, coordinateSystem, ctx,
+            rectangleByDataPoint(ctx, coordinateSystem, isHintRect = true),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -48,7 +48,7 @@ class CrossBarGeom : GeomBase() {
 
         private fun rectangleByDataPoint(
             ctx: GeomContext,
-            coord: CoordinateSystem,
+            coordinateSystem: CoordinateSystem,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->

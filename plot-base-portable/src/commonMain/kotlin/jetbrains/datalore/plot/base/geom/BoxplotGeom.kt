@@ -33,15 +33,15 @@ class BoxplotGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         CrossBarHelper.buildBoxes(
-            root, aesthetics, pos, coord, ctx,
+            root, aesthetics, pos, coordinateSystem, ctx,
             rectangleByDataPoint(ctx)
         )
-        buildLines(root, aesthetics, pos, coord, ctx)
-        buildOutliers(root, aesthetics, pos, coord, ctx)
+        buildLines(root, aesthetics, pos, coordinateSystem, ctx)
+        buildOutliers(root, aesthetics, pos, coordinateSystem, ctx)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
@@ -54,12 +54,12 @@ class BoxplotGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
+        CrossBarHelper.buildMidlines(root, aesthetics, pos, coordinateSystem, ctx, fattenMidline)
 
-        val helper = GeomHelper(pos, coord, ctx)
+        val helper = GeomHelper(pos, coordinateSystem, ctx)
         val elementHelper = helper.createSvgElementHelper()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
@@ -115,12 +115,12 @@ class BoxplotGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         val outlierAesthetics = getOutliersAesthetics(aesthetics)
         PointGeom()
-            .buildIntern(root, outlierAesthetics, pos, coord, ctx.withTargetCollector(NullGeomTargetCollector()))
+            .buildIntern(root, outlierAesthetics, pos, coordinateSystem, ctx.withTargetCollector(NullGeomTargetCollector()))
     }
 
     private fun getOutliersAesthetics(aesthetics: Aesthetics): Aesthetics {

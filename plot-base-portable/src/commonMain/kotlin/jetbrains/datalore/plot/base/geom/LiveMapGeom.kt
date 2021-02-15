@@ -29,7 +29,7 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         throw IllegalStateException("Not applicable to live map")

@@ -18,24 +18,26 @@ open class PolygonGeom : GeomBase() {
     }
 
     override fun buildIntern(
-        root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem,
+        root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
-        val targetCollector = getGeomTargetCollector(ctx)
-        val linesHelper = LinesHelper(pos, coord, ctx)
-
-        val geomConstructor =
-            LinePathConstructor(
-                targetCollector,
-                dataPoints,
-                linesHelper,
-                true
+        val bbox = aesBoundingBox(aesthetics)
+        if (coordinateSystem.contains(bbox)) {
+            val targetCollector = getGeomTargetCollector(ctx)
+            val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
+            val geomConstructor =
+                LinePathConstructor(
+                    targetCollector,
+                    dataPoints,
+                    linesHelper,
+                    true
+                )
+            appendNodes(
+                geomConstructor.construct(),
+                root
             )
-        appendNodes(
-            geomConstructor.construct(),
-            root
-        )
+        }
     }
 
     companion object {

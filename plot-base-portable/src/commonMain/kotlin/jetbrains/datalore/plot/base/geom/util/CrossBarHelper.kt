@@ -35,11 +35,11 @@ object CrossBarHelper {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext,
         fatten: Double
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val helper = GeomHelper(pos, coordinateSystem, ctx)
         val elementHelper = helper.createSvgElementHelper()
 
         for (p in GeomUtil.withDefined(

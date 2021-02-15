@@ -15,9 +15,9 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
 class RectanglesHelper(
     private val myAesthetics: Aesthetics,
     pos: PositionAdjustment,
-    coord: CoordinateSystem,
+    coordinateSystem: CoordinateSystem,
     ctx: GeomContext
-) : GeomHelper(pos, coord, ctx) {
+) : GeomHelper(pos, coordinateSystem, ctx) {
 
     fun createRectangles(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?): MutableList<SvgNode> {
         val result = ArrayList<SvgNode>()

@@ -20,15 +20,15 @@ open class BarGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         val helper =
-            RectanglesHelper(aesthetics, pos, coord, ctx)
+            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
         val rectangles = helper.createRectangles(
             rectangleByDataPoint(
                 ctx,
-                coord
+                coordinateSystem
             )
         )
         rectangles.reverse()
@@ -41,8 +41,8 @@ open class BarGeom : GeomBase() {
 //            .collectTo(ctx.targetCollector)
         BarTooltipHelper.collectRectangleTargets(
             emptyList(),
-            aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, coord),
+            aesthetics, pos, coordinateSystem, ctx,
+            rectangleByDataPoint(ctx, coordinateSystem),
             { HintColorUtil.fromFill(it) }
         )
     }
@@ -52,7 +52,7 @@ open class BarGeom : GeomBase() {
 
         private fun rectangleByDataPoint(
             ctx: GeomContext,
-            coord: CoordinateSystem
+            coordinateSystem: CoordinateSystem
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 var result: DoubleRectangle? = null
@@ -61,7 +61,7 @@ open class BarGeom : GeomBase() {
                 val w = p.width()
                 if (SeriesUtil.allFinite(x, y, w)) {
                     val rect = GeomUtil.rectangleByDataPoint(p, ctx)
-                    if (coord.contains(rect)) {
+                    if (coordinateSystem.contains(rect)) {
                         result = rect
                     }
                 }

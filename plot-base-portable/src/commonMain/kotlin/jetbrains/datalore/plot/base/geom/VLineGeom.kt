@@ -31,10 +31,10 @@ class VLineGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
         val viewPort = aesViewPort(aesthetics)
@@ -52,7 +52,7 @@ class VLineGeom : GeomBase() {
                     val dimensions = DoubleVector(width, 0.0)
                     val rect = DoubleRectangle(origin, dimensions)
 
-                    if (coord.contains(rect)) {
+                    if (coordinateSystem.contains(rect)) {
                         val line = helper.createLine(start, end, p)
                         lines.add(line)
 

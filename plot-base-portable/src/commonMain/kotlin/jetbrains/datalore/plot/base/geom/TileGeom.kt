@@ -24,19 +24,19 @@ open class TileGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
         val helper =
-            RectanglesHelper(aesthetics, pos, coord, ctx)
+            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
         val slimGroup = helper.createSlimRectangles(
-            rectangleByDataPoint(ctx, coord)
+            rectangleByDataPoint(ctx, coordinateSystem)
         )
         root.add(wrap(slimGroup))
 
         RectTargetCollectorHelper(
             helper,
-            rectangleByDataPoint(ctx, coord),
+            rectangleByDataPoint(ctx, coordinateSystem),
             { p: DataPointAesthetics ->
                 HintColorUtil.fromFill(
                     p
@@ -50,7 +50,7 @@ open class TileGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun rectangleByDataPoint(ctx: GeomContext, coord: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(ctx: GeomContext, coordinateSystem: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val x = p.x()
                 val y = p.y()
@@ -65,7 +65,7 @@ open class TileGeom : GeomBase() {
                     val origin = DoubleVector(x!! - width / 2, y!! - height / 2)
                     val dimensions = DoubleVector(width, height)
                     val rect = DoubleRectangle(origin, dimensions)
-                    if(coord.contains(rect)) {
+                    if (coordinateSystem.contains(rect)) {
                         result = rect
                     }
                 }

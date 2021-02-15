@@ -19,7 +19,10 @@ open class PathGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    protected open fun dataPoints(aesthetics: Aesthetics, coord: CoordinateSystem): Iterable<DataPointAesthetics> {
+    protected open fun dataPoints(
+        aesthetics: Aesthetics,
+        coordinateSystem: CoordinateSystem
+    ): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())
     }
 
@@ -27,23 +30,28 @@ open class PathGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics, coord)
-        val targetCollector = getGeomTargetCollector(ctx)
-        val linesHelper = LinesHelper(pos, coord, ctx)
+        val dataPoints = dataPoints(aesthetics, coordinateSystem)
+        if (dataPoints.any { p ->
+                GeomUtil.TO_LOCATION_X_Y(p)?.let { coordinateSystem.contains(it) } == true
+            }
+        ) {
+            val targetCollector = getGeomTargetCollector(ctx)
+            val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
 
-        val geomConstructor = LinePathConstructor(
-            targetCollector,
-            dataPoints,
-            linesHelper,
-            false
-        )
-        appendNodes(
-            geomConstructor.construct(),
-            root
-        )
+            val geomConstructor = LinePathConstructor(
+                targetCollector,
+                dataPoints,
+                linesHelper,
+                false
+            )
+            appendNodes(
+                geomConstructor.construct(),
+                root
+            )
+        }
     }
 
     companion object {

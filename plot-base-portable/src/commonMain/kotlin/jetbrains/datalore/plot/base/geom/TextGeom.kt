@@ -34,17 +34,17 @@ class TextGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val helper = GeomHelper(pos, coordinateSystem, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val sizeUnitRatio = getSizeUnitRatio(ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
             val text = toString(p.label())
-            if (SeriesUtil.allFinite(x, y) && coord.contains(DoubleVector(x!!, y!!)) && !Strings.isNullOrEmpty(text)) {
+            if (SeriesUtil.allFinite(x, y) && coordinateSystem.contains(DoubleVector(x!!, y!!)) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p, sizeUnitRatio)
 

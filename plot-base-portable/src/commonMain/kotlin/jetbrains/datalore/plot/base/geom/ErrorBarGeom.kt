@@ -36,12 +36,12 @@ class ErrorBarGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = LinesHelper(pos, coord, ctx)
+        val helper = LinesHelper(pos, coordinateSystem, ctx)
         val dataPoints = dataPoints(aesthetics)
-        val geomHelper = GeomHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
 
         for (p in dataPoints) {
             val x = p.x()
@@ -56,7 +56,7 @@ class ErrorBarGeom : GeomBase() {
 
             val r = DoubleRectangle(x!! - width / 2, ymin, width, height)
 
-            if (coord.contains(r)) {
+            if (coordinateSystem.contains(r)) {
                 val g = errorBarShape(
                     helper.toClient(
                         r,
