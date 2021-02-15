@@ -19,10 +19,7 @@ open class PathGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    protected open fun dataPoints(
-        aesthetics: Aesthetics,
-        coordinateSystem: CoordinateSystem
-    ): Iterable<DataPointAesthetics> {
+    protected open fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())
     }
 
@@ -33,7 +30,7 @@ open class PathGeom : GeomBase() {
         coordinateSystem: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics, coordinateSystem)
+        val dataPoints = dataPoints(aesthetics)
         if (dataPoints.any { p ->
                 GeomUtil.TO_LOCATION_X_Y(p)?.let { coordinateSystem.contains(it) } == true
             }

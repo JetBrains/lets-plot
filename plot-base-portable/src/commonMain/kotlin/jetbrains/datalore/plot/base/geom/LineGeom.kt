@@ -12,11 +12,8 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil
 
 open class LineGeom : PathGeom() {
 
-    override fun dataPoints(aesthetics: Aesthetics, coordinateSystem: CoordinateSystem): Iterable<DataPointAesthetics> {
-        return GeomUtil.ordered_X(super.dataPoints(aesthetics, coordinateSystem)).filter { p ->
-            val coord = GeomUtil.TO_LOCATION_X_Y(p)
-            coord != null && coordinateSystem.contains(coord)
-        }
+    override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+        return GeomUtil.ordered_X(super.dataPoints(aesthetics))
     }
 
     companion object {

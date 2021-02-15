@@ -21,34 +21,35 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 open class AreaGeom : GeomBase() {
 
-    protected fun dataPoints(aesthetics: Aesthetics, coordinateSystem: CoordinateSystem): Iterable<DataPointAesthetics> {
-        return GeomUtil.ordered_X(aesthetics.dataPoints()).filter { p ->
-            val coord = GeomUtil.TO_LOCATION_X_Y(p)
-            coord != null && coordinateSystem.contains(coord)
-        }
+    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+        return GeomUtil.ordered_X(aesthetics.dataPoints())
     }
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
-        val dataPoints = dataPoints(aesthetics, coordinateSystem)
+        val dataPoints = dataPoints(aesthetics)
+        if (dataPoints.any { p ->
+                GeomUtil.TO_LOCATION_X_Y(p)?.let { coordinateSystem.contains(it) } == true
+            }
+        ) {
+            val helper = LinesHelper(pos, coordinateSystem, ctx)
+            val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
+            paths.reverse()
+            appendNodes(paths, root)
 
-        val helper = LinesHelper(pos, coordinateSystem, ctx)
-        val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
-        paths.reverse()
-        appendNodes(paths, root)
+            //if you want to retain the side edges of area: comment out the following codes,
+            // and switch decorate method in LinesHelper.createbands
+            helper.setAlphaEnabled(false)
+            val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+            appendNodes(lines, root)
 
-        //if you want to retain the side edges of area: comment out the following codes,
-        // and switch decorate method in LinesHelper.createbands
-        helper.setAlphaEnabled(false)
-        val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        appendNodes(lines, root)
-
-        buildHints(aesthetics, pos, coordinateSystem, ctx)
+            buildHints(aesthetics, pos, coordinateSystem, ctx)
+        }
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
         val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints(aesthetics, coordinateSystem),
+                aesthetics.dataPoints(),
                 singlePointAppender { p -> toClient(geomHelper, p) },
                 reducer(0.999, false)
         )
