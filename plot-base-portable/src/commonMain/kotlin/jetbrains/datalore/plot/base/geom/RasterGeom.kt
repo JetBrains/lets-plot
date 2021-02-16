@@ -29,13 +29,13 @@ class RasterGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = FilledSquareLegendKeyElementFactory()
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val iter = with_X_Y(aesthetics.dataPoints()).iterator()
         if (!iter.hasNext()) {
             return
         }
         val randomP = iter.next()
-        val helper = GeomHelper(pos, coordinateSystem, ctx)
+        val helper = GeomHelper(pos, coord, ctx)
 
         // Find size of image (row x col)
         val boundsXY =

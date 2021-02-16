@@ -20,13 +20,13 @@ object CrossBarHelper {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?
     ) {
         // rectangles
         val helper =
-            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
+            RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(rectFactory)
         rectangles.forEach { root.add(it) }
     }
@@ -35,11 +35,11 @@ object CrossBarHelper {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext,
         fatten: Double
     ) {
-        val helper = GeomHelper(pos, coordinateSystem, ctx)
+        val helper = GeomHelper(pos, coord, ctx)
         val elementHelper = helper.createSvgElementHelper()
 
         for (p in GeomUtil.withDefined(

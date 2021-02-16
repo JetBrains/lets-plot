@@ -18,18 +18,18 @@ open class PolygonGeom : GeomBase() {
     }
 
     override fun buildIntern(
-        root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem,
+        root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
         val targetCollector = getGeomTargetCollector(ctx)
-        val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
+        val linesHelper = LinesHelper(pos, coord, ctx)
         val geomConstructor =
             LinePathConstructor(
                 targetCollector,
                 dataPoints,
                 linesHelper,
-                coordinateSystem,
+                coord,
                 myClosePath = true
             )
         appendNodes(

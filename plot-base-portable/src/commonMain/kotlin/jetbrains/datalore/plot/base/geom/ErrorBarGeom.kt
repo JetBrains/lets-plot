@@ -36,12 +36,12 @@ class ErrorBarGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = LinesHelper(pos, coordinateSystem, ctx)
+        val helper = LinesHelper(pos, coord, ctx)
         val dataPoints = dataPoints(aesthetics)
-        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
 
         for (p in dataPoints) {
             val x = p.x()
@@ -69,7 +69,7 @@ class ErrorBarGeom : GeomBase() {
                 p,
                 ctx,
                 geomHelper,
-                coordinateSystem
+                coord
             )
         }
     }
@@ -79,7 +79,7 @@ class ErrorBarGeom : GeomBase() {
         p: DataPointAesthetics,
         ctx: GeomContext,
         geomHelper: GeomHelper,
-        coordinateSystem: CoordinateSystem
+        coord: CoordinateSystem
     ) {
         val clientRect = geomHelper.toClient(rect, p)
 
@@ -98,7 +98,7 @@ class ErrorBarGeom : GeomBase() {
             params()
                 .setTipLayoutHints(hints)
                 .setColor(fromColor(p)),
-            coordinateSystem
+            coord
         )
     }
 

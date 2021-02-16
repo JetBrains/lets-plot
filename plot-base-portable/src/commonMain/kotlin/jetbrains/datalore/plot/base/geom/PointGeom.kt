@@ -38,10 +38,10 @@ open class PointGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coordinateSystem, ctx)
+        val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
 
         val count = aesthetics.dataPointCount()
@@ -60,7 +60,7 @@ open class PointGeom : GeomBase() {
                 targetCollector.addPoint(
                     i, location, sizeUnitRatio * shape.size(p) / 2,
                     tooltipParams(p),
-                    coordinateSystem
+                    coord
                 )
                 val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)

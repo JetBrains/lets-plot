@@ -20,8 +20,8 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.render.svg.LinePath
 
-open class LinesHelper(pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) :
-    GeomHelper(pos, coordinateSystem, ctx) {
+open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
+    GeomHelper(pos, coord, ctx) {
 
     private var myAlphaFilter = { v: Double? -> v }
     private var myWidthFilter = { v: Double? -> v }

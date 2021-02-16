@@ -33,10 +33,10 @@ class PointRangeGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.YMIN, Aes.YMAX)) {
@@ -66,7 +66,7 @@ class PointRangeGeom : GeomBase() {
 
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coordinateSystem, ctx,
+            aesthetics, pos, coord, ctx,
             rectangleByDataPoint(fattenMidPoint),
             { HintColorUtil.fromColor(it) }
         )

@@ -25,10 +25,10 @@ open class AreaGeom : GeomBase() {
         return GeomUtil.ordered_X(aesthetics.dataPoints())
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val dataPoints = dataPoints(aesthetics)
 
-        val helper = LinesHelper(pos, coordinateSystem, ctx)
+        val helper = LinesHelper(pos, coord, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
         paths.reverse()
         appendNodes(paths, root)
@@ -39,11 +39,11 @@ open class AreaGeom : GeomBase() {
         val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
         appendNodes(lines, root)
 
-        buildHints(aesthetics, pos, coordinateSystem, ctx)
+        buildHints(aesthetics, pos, coord, ctx)
     }
 
-    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
-        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
+    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
                 aesthetics.dataPoints(),
                 singlePointAppender { p -> toClient(geomHelper, p) },
@@ -56,7 +56,7 @@ open class AreaGeom : GeomBase() {
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
                 setupTooltipParams(multiPointData.aes),
-                coordinateSystem
+                coord
             )
         }
     }

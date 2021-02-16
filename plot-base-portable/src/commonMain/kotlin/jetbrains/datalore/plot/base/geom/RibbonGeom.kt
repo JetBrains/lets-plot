@@ -23,9 +23,9 @@ class RibbonGeom : GeomBase() {
         return GeomUtil.ordered_X(data)
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val dataPoints = dataPoints(aesthetics)
-        val helper = LinesHelper(pos, coordinateSystem, ctx)
+        val helper = LinesHelper(pos, coord, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
         appendNodes(paths, root)
 
@@ -35,16 +35,16 @@ class RibbonGeom : GeomBase() {
         lines.addAll(helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_YMIN))
         appendNodes(lines, root)
 
-        buildHints(aesthetics, pos, coordinateSystem, ctx)
+        buildHints(aesthetics, pos, coord, ctx)
     }
 
-    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val targetCollector = ctx.targetCollector
-        val helper = GeomHelper(pos, coordinateSystem, ctx)
+        val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper, coordinateSystem)
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper, coordinateSystem)
+            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper, coord)
+            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper, coord)
         }
     }
 

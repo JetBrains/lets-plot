@@ -28,10 +28,10 @@ abstract class GeomBase : Geom {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        buildIntern(root, aesthetics, pos, coordinateSystem, ctx)
+        buildIntern(root, aesthetics, pos, coord, ctx)
     }
 
     protected fun getGeomTargetCollector(ctx: GeomContext): GeomTargetCollector {
@@ -42,7 +42,7 @@ abstract class GeomBase : Geom {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     )
 

@@ -22,13 +22,13 @@ import kotlin.math.PI
  */
 internal class PieGeom(private val myCenter: DoubleVector, private val myRadius: Double) : GeomBase() {
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
-        val helper = PieHelper(pos, coordinateSystem, ctx)
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+        val helper = PieHelper(pos, coord, ctx)
         val segments = helper.createSegments(aesthetics, myCenter, myRadius)
         appendNodes(segments, root)
     }
 
-    private class PieHelper internal constructor(pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) : LinesHelper(pos, coordinateSystem, ctx) {
+    private class PieHelper internal constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : LinesHelper(pos, coord, ctx) {
 
         internal fun createSegments(aesthetics: Aesthetics, center: DoubleVector, radius: Double): List<LinePath> {
             val result = ArrayList<LinePath>()

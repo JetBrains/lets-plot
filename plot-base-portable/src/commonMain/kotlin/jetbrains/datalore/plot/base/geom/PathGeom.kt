@@ -27,18 +27,18 @@ open class PathGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
         val targetCollector = getGeomTargetCollector(ctx)
-        val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
+        val linesHelper = LinesHelper(pos, coord, ctx)
 
         val geomConstructor = LinePathConstructor(
             targetCollector,
             dataPoints,
             linesHelper,
-            coordinateSystem,
+            coord,
             myClosePath = false
         )
         appendNodes(

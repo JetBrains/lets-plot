@@ -31,11 +31,11 @@ class HLineGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
 
-        val geomHelper = GeomHelper(pos, coordinateSystem, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
         val viewPort = aesViewPort(aesthetics)
@@ -59,7 +59,7 @@ class HLineGeom : GeomBase() {
                         geomHelper.toClient(rect, p),
                         GeomTargetCollector.TooltipParams.params()
                             .setColor(HintColorUtil.fromColor(p)),
-                        coordinateSystem,
+                        coord,
                         TipLayoutHint.Kind.CURSOR_TOOLTIP
                     )
                 }

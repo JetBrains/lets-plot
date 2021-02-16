@@ -20,11 +20,11 @@ open class BarGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val helper =
-            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
+            RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(
             rectangleByDataPoint(ctx)
         )
@@ -38,7 +38,7 @@ open class BarGeom : GeomBase() {
 //            .collectTo(ctx.targetCollector)
         BarTooltipHelper.collectRectangleTargets(
             emptyList(),
-            aesthetics, pos, coordinateSystem, ctx,
+            aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx),
             { HintColorUtil.fromFill(it) }
         )

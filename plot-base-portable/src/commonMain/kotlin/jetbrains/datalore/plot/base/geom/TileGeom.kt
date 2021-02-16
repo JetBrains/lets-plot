@@ -24,11 +24,11 @@ open class TileGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val helper =
-            RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
+            RectanglesHelper(aesthetics, pos, coord, ctx)
         val slimGroup = helper.createSlimRectangles(
             rectangleByDataPoint(ctx)
         )
@@ -43,7 +43,7 @@ open class TileGeom : GeomBase() {
                 )
             },
             TipLayoutHint.Kind.CURSOR_TOOLTIP,
-            coordinateSystem
+            coord
         )
             .collectTo(ctx.targetCollector)
     }

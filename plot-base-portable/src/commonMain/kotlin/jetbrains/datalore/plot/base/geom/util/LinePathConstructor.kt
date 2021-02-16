@@ -17,7 +17,7 @@ class LinePathConstructor(
     private val myTargetCollector: GeomTargetCollector,
     private val myDataPoints: Iterable<DataPointAesthetics>,
     private val myLinesHelper: LinesHelper,
-    private val myCoordinateSystem: CoordinateSystem,
+    private val myCoord: CoordinateSystem,
     private val myClosePath: Boolean
 ) {
 
@@ -50,7 +50,7 @@ class LinePathConstructor(
                             multiPointData.aes
                         )
                     ),
-                    myCoordinateSystem
+                    myCoord
                 )
             } else {
                 myTargetCollector.addPath(
@@ -61,7 +61,7 @@ class LinePathConstructor(
                             multiPointData.aes
                         )
                     ),
-                    myCoordinateSystem
+                    myCoord
                 )
             }
 

@@ -20,7 +20,7 @@ import jetbrains.datalore.vis.svg.SvgImageElement
  */
 class ImageGeom(private val imageUrl: String) : GeomBase() {
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         if (aesthetics.isEmpty) return
         val p = aesthetics.dataPointAt(0)
         val boundsAes = DoubleRectangle.span(
@@ -28,7 +28,7 @@ class ImageGeom(private val imageUrl: String) : GeomBase() {
                 DoubleVector(p.xmax()!!, p.ymax()!!))
 
         // translate to client coordinates
-        val helper = GeomHelper(pos, coordinateSystem, ctx)
+        val helper = GeomHelper(pos, coord, ctx)
         val boundsClient = helper.toClient(boundsAes, p)
 
         val svgImageElement = SvgImageElement(

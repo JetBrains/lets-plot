@@ -34,10 +34,10 @@ class TextGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coordinateSystem, ctx)
+        val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val sizeUnitRatio = getSizeUnitRatio(ctx)
         for (p in aesthetics.dataPoints()) {
@@ -60,7 +60,7 @@ class TextGeom : GeomBase() {
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p)),
-                    coordinateSystem,
+                    coord,
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

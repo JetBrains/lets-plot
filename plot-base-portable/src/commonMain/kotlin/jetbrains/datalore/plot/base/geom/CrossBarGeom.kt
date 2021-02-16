@@ -25,17 +25,17 @@ class CrossBarGeom : GeomBase() {
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
-        coordinateSystem: CoordinateSystem,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         CrossBarHelper.buildBoxes(
-            root, aesthetics, pos, coordinateSystem, ctx,
+            root, aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx, false)
         )
-        CrossBarHelper.buildMidlines(root, aesthetics, pos, coordinateSystem, ctx, fattenMidline)
+        CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coordinateSystem, ctx,
+            aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx, true),
             { HintColorUtil.fromColor(it) }
         )
