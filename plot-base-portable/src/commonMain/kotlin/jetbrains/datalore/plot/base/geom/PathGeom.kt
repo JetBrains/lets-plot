@@ -39,13 +39,12 @@ open class PathGeom : GeomBase() {
             dataPoints,
             linesHelper,
             coord,
-            myClosePath = false
+            false
         )
         appendNodes(
             geomConstructor.construct(),
             root
         )
-
     }
 
     companion object {

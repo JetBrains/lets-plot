@@ -30,7 +30,7 @@ open class PolygonGeom : GeomBase() {
                 dataPoints,
                 linesHelper,
                 coord,
-                myClosePath = true
+                true
             )
         appendNodes(
             geomConstructor.construct(),
