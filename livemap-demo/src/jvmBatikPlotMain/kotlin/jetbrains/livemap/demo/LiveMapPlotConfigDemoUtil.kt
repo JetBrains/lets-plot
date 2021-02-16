@@ -25,6 +25,7 @@ object LiveMapPlotConfigDemoUtil {
             return MonolithicBatikLM.buildPlotFromRawSpecs(
                 plotSpec,
                 plotSize,
+                null,
                 factory::createSvgComponent,
                 factory.createPlotEdtExecutor()
             ) {

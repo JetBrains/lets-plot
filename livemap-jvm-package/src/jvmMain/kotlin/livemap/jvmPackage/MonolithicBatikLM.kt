@@ -45,12 +45,13 @@ object MonolithicBatikLM {
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotFromRawSpecs(plotSpec, plotSize, computationMessagesHandler)
+            .buildPlotFromRawSpecs(plotSpec, plotSize, plotMaxWidth, computationMessagesHandler)
     }
 
     private fun createPlotFactory(
