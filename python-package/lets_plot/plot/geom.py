@@ -99,6 +99,12 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
