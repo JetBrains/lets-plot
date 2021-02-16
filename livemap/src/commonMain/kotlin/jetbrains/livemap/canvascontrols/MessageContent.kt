@@ -6,6 +6,7 @@
 package jetbrains.livemap.canvascontrols
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.drawLater
 import jetbrains.datalore.vis.canvas.Context2d
@@ -50,9 +51,14 @@ internal class MessageContent(private val message: String) : CanvasContent {
             fillRect(0.0, 0.0, dimension.x, dimension.y)
 
             setTextBaseline(TextBaseline.TOP)
-            setTextAlign(TextAlign.LEFT)
+            setTextAlign(TextAlign.START)
             setFillStyle(FONT_COLOR)
-            setFont("400 " + FONT_SIZE + "px/" + FONT_HEIGHT + "px Helvetica, Arial, sans-serif")
+            setFont(
+                Context2d.Font(
+                    fontSize = FONT_SIZE,
+                    fontFamily = "Helvetica, Arial, sans-serif"
+                )
+            )
 
             val height = FONT_HEIGHT * lines.size
             var width = 0.0
@@ -69,8 +75,8 @@ internal class MessageContent(private val message: String) : CanvasContent {
     companion object {
         private const val FONT_SIZE = 17.0
         private const val FONT_HEIGHT = 21.25
-        private const val FONT_COLOR = "#B3B3B3"
-        private const val BACKGROUND_COLOR = "#FFFFFF"
+        private val FONT_COLOR = Color(179, 179, 179)
+        private val BACKGROUND_COLOR = Color.WHITE
     }
 
 }

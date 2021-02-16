@@ -55,7 +55,7 @@ internal class TileDataRendererImpl(
         val tasks = ArrayList<() -> Unit>()
 
         if (tileFeatures.isNotEmpty() && mapConfig != null) {
-            tasks.add { ctx.setFillStyle(mapConfig.tileSheetBackgrounds[layerKind.toString()]!!.toCssColor()) }
+            tasks.add { ctx.setFillStyle(mapConfig.tileSheetBackgrounds[layerKind.toString()]) }
             tasks.add { ctx.fillRect(0.0, 0.0, size.x, size.y) }
             tasks.addAll(tileFeaturesDrawTasks(ctx, tileFeatures, layerKind, cellKey.length))
         } else {
@@ -104,13 +104,13 @@ internal class TileDataRendererImpl(
 
     private fun Context2d.drawDummyTile(size: DoubleVector) {
         save()
-        setFillStyle(Color.GRAY.toCssColor())
+        setFillStyle(Color.GRAY)
         fillRect(0.0, 0.0, size.x, size.y)
 
-        setStrokeStyle(Color.WHITE.toCssColor())
+        setStrokeStyle(Color.WHITE)
         strokeRect(0.0, 0.0, size.x, size.y)
 
-        setStrokeStyle(Color.LIGHT_GRAY.toCssColor())
+        setStrokeStyle(Color.LIGHT_GRAY)
         moveTo(0.0, 0.0)
         lineTo(size.x, size.y)
         moveTo(0.0, size.y)

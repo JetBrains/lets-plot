@@ -9,6 +9,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontStyle
+import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontWeight
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.projection.Client
 import kotlin.math.abs
@@ -24,7 +27,12 @@ class TextSpec(
     vjust: Double,
     textMeasurer: TextMeasurer
 ) {
-    val font = "$fontface ${size}px $family"
+    val font = Context2d.Font(
+        fontStyle = fontface.extractFontStyle(),
+        fontWeight = fontface.extractFontWeight(),
+        fontSize = size.toDouble(),
+        fontFamily = family
+    )
     val dimension: Vec<Client>
     val alignment: Vec<Client>
     val angle: Double = toRadians(-degreeAngle)

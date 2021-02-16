@@ -8,6 +8,7 @@ package jetbrains.datalore.vis.swing
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -26,6 +27,7 @@ class BatikMapperComponent(
 
     init {
         isFocusable = true
+        background = Color(0,0,0,0)
 
         myHelper =
             BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)

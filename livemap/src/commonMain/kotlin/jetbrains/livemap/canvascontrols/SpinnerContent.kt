@@ -7,6 +7,7 @@ package jetbrains.livemap.canvascontrols
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
@@ -46,8 +47,11 @@ internal class SpinnerContent : CanvasContent {
 
     private fun Context2d.drawStaticElements() {
         save()
+        setFont(Context2d.Font(
+            fontSize = FONT_SIZE,
+            fontFamily = "Helvetica, Arial, sans-serif")
+        )
 
-        setFont("400 " + FONT_SIZE + "px Helvetica, Arial, sans-serif")
         val textWidth = measureText(LOADING_TEXT)
 
         val spinnerWidth = 2 * RADIUS + LINE_WIDTH
@@ -59,7 +63,7 @@ internal class SpinnerContent : CanvasContent {
         fillRect(0.0, 0.0, dimension.x.toDouble(), dimension.y.toDouble())
 
         setTextBaseline(Context2d.TextBaseline.MIDDLE)
-        setTextAlign(Context2d.TextAlign.LEFT)
+        setTextAlign(Context2d.TextAlign.START)
         setFillStyle(FONT_COLOR)
         fillText(LOADING_TEXT, (dimension.x + width) / 2 - textWidth, dimension.y / 2.0)
 
@@ -85,7 +89,7 @@ internal class SpinnerContent : CanvasContent {
         restore()
     }
 
-    private fun Context2d.drawSpinnerArc(color: String, startAngle: Double, arcAngle: Double) {
+    private fun Context2d.drawSpinnerArc(color: Color, startAngle: Double, arcAngle: Double) {
         setLineWidth(LINE_WIDTH)
         setStrokeStyle(color)
         beginPath()
@@ -94,17 +98,17 @@ internal class SpinnerContent : CanvasContent {
     }
 
     companion object {
-        private const val BACKGROUND_COLOR = "#FFFFFF"
+        private val BACKGROUND_COLOR = Color.WHITE
+        private val CIRCLE_COLOR = Color(232, 232, 232)
+        private val FONT_COLOR = Color(97, 97, 97)
+        private val ARC_COLOR = Color(0, 191, 255)
         private const val LINE_WIDTH = 0.9
         private const val RADIUS = 11.5
         private const val BACK_RADIUS = RADIUS + LINE_WIDTH
-        private const val CIRCLE_COLOR = "#E8E8E8"
-        private const val ARC_COLOR = "#00BFFF"
         private const val ARC_LENGTH = PI / 2
         private const val LOOP_DURATION: Long = 1000
         private const val SPACE = 15.0
         private const val LOADING_TEXT = "Loading..."
         private const val FONT_SIZE = 12.0
-        private const val FONT_COLOR = "#616161"
     }
 }

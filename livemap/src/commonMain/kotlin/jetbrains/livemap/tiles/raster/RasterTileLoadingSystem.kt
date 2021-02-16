@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.spatial.projectOrigin
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
 import jetbrains.livemap.LiveMapContext
@@ -75,7 +76,7 @@ class RasterTileLoadingSystem(
                                 } else {
                                     4.0
                                 }
-                            tileCtx.setFont("10.0px sherif")
+                            tileCtx.setFont(Context2d.Font())
                             tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
                             tileCanvas.takeSnapshot()
                         } else {

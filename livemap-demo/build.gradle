@@ -4,10 +4,13 @@ plugins {
 }
 
 kotlin {
+    jvm()
     jvm("jvmJfx")
     jvm("jvmRawJfx")
+    jvm("jvmRawAwt")
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
+    jvm("jvmBatikPlot")
     js() {
         browser {
             dceTask {
@@ -24,6 +27,16 @@ kotlin {
                         "lets-plot-livemap-demo.jetbrains.livemap.demo.rasterTilesDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.demo.rectDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.demo.textDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.pathDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.drawImageDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.scaleRotateTranslateDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineJoinLineCapDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.fillRectStrokeRectDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineDashDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.textAlignAndBaselineDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.textStyleDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.sectorDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.saveRestoreDemo",
                 )
             }
         }
@@ -62,18 +75,34 @@ kotlin {
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
+        jvmMain {
+            dependsOn allJvm
+            dependencies {
+                implementation project(':livemap-jvm-package')
+            }
+        }
+
         jvmJfxMain {
             dependsOn allJvm
         }
         jvmJfxPlotMain {
-            dependsOn allJvm
+            dependsOn jvmMain
             dependencies {
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')
-                implementation project(':livemap-jvm-package')
+            }
+        }
+        jvmBatikPlotMain {
+            dependsOn jvmMain
+            dependencies {
+                implementation project(':vis-demo-common-batik')
+                implementation project(':vis-svg-mapper-batik')
             }
         }
         jvmRawJfxMain {
+            dependsOn allJvm
+        }
+        jvmRawAwtMain {
             dependsOn allJvm
         }
         jvmBrowserMain {
