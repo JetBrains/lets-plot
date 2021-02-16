@@ -78,8 +78,7 @@ class SmoothGeom : GeomBase() {
             ctx.targetCollector.addPoint(
                 p.index(), clientCoord, objectRadius,
                 params()
-                    .setTipLayoutHints(hintsCollection.hints),
-                coord
+                    .setTipLayoutHints(hintsCollection.hints)
             )
         }
     }

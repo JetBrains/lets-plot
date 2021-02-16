@@ -19,7 +19,6 @@ interface GeomTargetCollector {
         point: DoubleVector,
         radius: Double,
         tooltipParams: TooltipParams,
-        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.VERTICAL_TOOLTIP
     )
 
@@ -27,7 +26,6 @@ interface GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
-        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
     )
 
@@ -35,7 +33,6 @@ interface GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
-        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
     )
 
@@ -43,7 +40,6 @@ interface GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
-        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.CURSOR_TOOLTIP
     )
 

@@ -38,7 +38,6 @@ open class PathGeom : GeomBase() {
             targetCollector,
             dataPoints,
             linesHelper,
-            coord,
             false
         )
         appendNodes(

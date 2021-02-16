@@ -68,8 +68,7 @@ class ErrorBarGeom : GeomBase() {
                 DoubleRectangle(r.left, r.center.y, r.width, 0.0),
                 p,
                 ctx,
-                geomHelper,
-                coord
+                geomHelper
             )
         }
     }
@@ -78,8 +77,7 @@ class ErrorBarGeom : GeomBase() {
         rect: DoubleRectangle,
         p: DataPointAesthetics,
         ctx: GeomContext,
-        geomHelper: GeomHelper,
-        coord: CoordinateSystem
+        geomHelper: GeomHelper
     ) {
         val clientRect = geomHelper.toClient(rect, p)
 
@@ -97,8 +95,7 @@ class ErrorBarGeom : GeomBase() {
             p.index(), clientRect,
             params()
                 .setTipLayoutHints(hints)
-                .setColor(fromColor(p)),
-            coord
+                .setColor(fromColor(p))
         )
     }
 

@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
@@ -60,7 +59,6 @@ class TextGeom : GeomBase() {
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p)),
-                    coord,
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

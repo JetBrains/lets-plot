@@ -18,14 +18,13 @@ class RectTargetCollectorHelper(
     private val rectanglesHelper: RectanglesHelper,
     private val rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
     private val fillByDataPoint: (DataPointAesthetics) -> Color,
-    private val tooltipKind: TipLayoutHint.Kind,
-    private val coord: CoordinateSystem
+    private val tooltipKind: TipLayoutHint.Kind
 ) {
 
     fun collectTo(targetCollector: GeomTargetCollector) {
         rectanglesHelper.iterateRectangleGeometry(rectangleByDataPoint)
         { p, rectangle ->
-            targetCollector.addRectangle(p.index(), rectangle, tooltipParams(p), coord, tooltipKind)
+            targetCollector.addRectangle(p.index(), rectangle, tooltipParams(p), tooltipKind)
         }
     }
 

@@ -55,8 +55,7 @@ open class AreaGeom : GeomBase() {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                setupTooltipParams(multiPointData.aes),
-                coord
+                setupTooltipParams(multiPointData.aes)
             )
         }
     }

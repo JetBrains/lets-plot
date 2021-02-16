@@ -59,7 +59,6 @@ class HLineGeom : GeomBase() {
                         geomHelper.toClient(rect, p),
                         GeomTargetCollector.TooltipParams.params()
                             .setColor(HintColorUtil.fromColor(p)),
-                        coord,
                         TipLayoutHint.Kind.CURSOR_TOOLTIP
                     )
                 }

@@ -57,8 +57,7 @@ class VLineGeom : GeomBase() {
                         p.index(),
                         geomHelper.toClient(rect, p),
                         GeomTargetCollector.TooltipParams.params()
-                            .setColor(HintColorUtil.fromColor(p)),
-                        coord
+                            .setColor(HintColorUtil.fromColor(p))
                     )
                 }
             }

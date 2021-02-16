@@ -59,8 +59,7 @@ open class PointGeom : GeomBase() {
 
                 targetCollector.addPoint(
                     i, location, sizeUnitRatio * shape.size(p) / 2,
-                    tooltipParams(p),
-                    coord
+                    tooltipParams(p)
                 )
                 val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)

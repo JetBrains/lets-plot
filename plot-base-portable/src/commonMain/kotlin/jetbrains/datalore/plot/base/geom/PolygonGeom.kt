@@ -29,7 +29,6 @@ open class PolygonGeom : GeomBase() {
                 targetCollector,
                 dataPoints,
                 linesHelper,
-                coord,
                 true
             )
         appendNodes(
