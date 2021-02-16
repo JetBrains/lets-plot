@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomKind
@@ -34,9 +33,6 @@ class LayerTargetCollectorWithLocator(
                 return;
             }
         }
-        if (!coordinateSystem.containsClientPoint(point)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.point(point, radius),
@@ -58,9 +54,6 @@ class LayerTargetCollectorWithLocator(
                 return
             }
         }
-        if (!coordinateSystem.containsClientRect(rectangle)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.rect(rectangle),
@@ -77,9 +70,6 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        if (points.none(coordinateSystem::containsClientPoint)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.path(points),
@@ -96,10 +86,6 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        val bbox = DoubleRectangles.boundingBox(points)
-        if (!coordinateSystem.containsClientRect(bbox)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),
@@ -121,7 +107,8 @@ class LayerTargetCollectorWithLocator(
                 geomKind,
                 lookupSpec,
                 contextualMapping,
-                myTargets
+                myTargets,
+                coordinateSystem
             )
         }
         return myLocator!!.search(coord)

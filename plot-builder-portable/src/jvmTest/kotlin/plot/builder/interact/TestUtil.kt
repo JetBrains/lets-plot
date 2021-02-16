@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
@@ -95,7 +96,8 @@ object TestUtil {
             geomKind,
             lookupSpec,
             contextualMapping,
-            targetPrototypes
+            targetPrototypes,
+            Coords.create(DoubleVector.ZERO)
         )
     }
 

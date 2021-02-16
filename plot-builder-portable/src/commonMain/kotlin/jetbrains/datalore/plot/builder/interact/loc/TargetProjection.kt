@@ -20,20 +20,20 @@ import kotlin.math.min
 
 internal open class TargetProjection
 
-internal class PointTargetProjection private constructor(val data: Any) : TargetProjection() {
+internal class PointTargetProjection private constructor(val data: DoubleVector) : TargetProjection() {
 
     fun x(): Double {
-        return data as Double
+        return data.x
     }
 
     fun xy(): DoubleVector {
-        return data as DoubleVector
+        return data
     }
 
     companion object {
         fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection {
             return when (lookupSpace) {
-                X -> PointTargetProjection(p.x)
+                X -> PointTargetProjection(p)
                 XY -> PointTargetProjection(p)
                 NONE -> undefinedLookupSpaceError()
             }
@@ -41,20 +41,20 @@ internal class PointTargetProjection private constructor(val data: Any) : Target
     }
 }
 
-internal class RectTargetProjection private constructor(val data: Any) : TargetProjection() {
+internal class RectTargetProjection private constructor(val data: DoubleRectangle) : TargetProjection() {
 
     fun x(): DoubleRange {
-        return data as DoubleRange
+        return DoubleRange.withStartAndEnd(data.left, data.right)
     }
 
     fun xy(): DoubleRectangle {
-        return data as DoubleRectangle
+        return data
     }
 
     companion object {
         fun create(rect: DoubleRectangle, lookupSpace: LookupSpace): RectTargetProjection {
             return when (lookupSpace) {
-                X -> RectTargetProjection(DoubleRange.withStartAndEnd(rect.left, rect.right))
+                X -> RectTargetProjection(rect)
                 XY -> RectTargetProjection(rect)
                 NONE -> undefinedLookupSpaceError()
             }
