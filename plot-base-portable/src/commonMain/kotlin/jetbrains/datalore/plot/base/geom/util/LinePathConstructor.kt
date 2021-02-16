@@ -17,8 +17,8 @@ class LinePathConstructor(
     private val myTargetCollector: GeomTargetCollector,
     private val myDataPoints: Iterable<DataPointAesthetics>,
     private val myLinesHelper: LinesHelper,
-    private val myClosePath: Boolean,
-    private val myCoordinateSystem: CoordinateSystem
+    private val myCoordinateSystem: CoordinateSystem,
+    private val myClosePath: Boolean
 ) {
 
     fun construct(): List<LinePath> {

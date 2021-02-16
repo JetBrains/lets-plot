@@ -46,7 +46,6 @@ class VLineGeom : GeomBase() {
                 if (viewPort.xRange().contains(intercept!!)) {
                     val start = DoubleVector(intercept, viewPort.top)
                     val end = DoubleVector(intercept, viewPort.bottom)
-
                     val line = helper.createLine(start, end, p)
                     lines.add(line)
 

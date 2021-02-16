@@ -29,14 +29,13 @@ open class PolygonGeom : GeomBase() {
                 targetCollector,
                 dataPoints,
                 linesHelper,
-                true,
-                coordinateSystem
+                coordinateSystem,
+                myClosePath = true
             )
         appendNodes(
             geomConstructor.construct(),
             root
         )
-
     }
 
     companion object {

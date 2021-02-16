@@ -53,7 +53,7 @@ open class PointGeom : GeomBase() {
             val x = p.x()
             val y = p.y()
             if (SeriesUtil.allFinite(x, y)) {
-                val location = helper.toClient(x, y, p)
+                val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
 

@@ -38,8 +38,8 @@ open class PathGeom : GeomBase() {
             targetCollector,
             dataPoints,
             linesHelper,
-            false,
-            coordinateSystem
+            coordinateSystem,
+            myClosePath = false
         )
         appendNodes(
             geomConstructor.construct(),

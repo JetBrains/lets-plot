@@ -32,7 +32,6 @@ class SmoothGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints()))
-
         val helper = LinesHelper(pos, coordinateSystem, ctx)
 
         // Regression line
@@ -47,7 +46,6 @@ class SmoothGeom : GeomBase() {
         appendNodes(bands, root)
 
         buildHints(dataPoints, pos, coordinateSystem, ctx)
-
     }
 
     private fun buildHints(
