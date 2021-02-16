@@ -1038,7 +1038,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                 **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1064,9 +1064,6 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
-        Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1121,7 +1118,6 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=tooltips,
                  **other_args)
 
 
@@ -1930,7 +1926,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                 slope=None,
                 intercept=None,
                 **other_args):
@@ -1956,9 +1952,6 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
-        Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
     slope : float, optional
         The line slope.
     intercept : float, optional
@@ -2000,7 +1993,6 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=tooltips,
                  slope=slope,
                  intercept=intercept,
                  **other_args)
@@ -2712,7 +2704,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                 width=None,
                 height=None,
                 **other_args):
@@ -2743,9 +2735,6 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
-        Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
     width : float, default=0.4
         Width for jitter.
     height : float, default=0.4
@@ -2797,7 +2786,6 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=tooltips,
                  width=width, height=height, **other_args)
 
 
@@ -2889,7 +2877,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
               direction=None,
               **other_args):
     """
@@ -2919,9 +2907,6 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
-        Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
     direction : string, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
@@ -2983,7 +2968,6 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=tooltips,
                  direction=direction,
                  **other_args)
 
@@ -3101,7 +3085,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, arrow=None,
-                 tooltips=None, **other_args):
+                 **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -3129,9 +3113,6 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     sampling : `FeatureSpec`, optional
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
-        Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
     arrow : `FeatureSpec`, optional
         Specification for arrow head, as created by `arrow()` function.
     other_args
@@ -3175,7 +3156,6 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=tooltips,
                  arrow=arrow,
                  **other_args)
 
