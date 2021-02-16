@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 
 interface GeomTargetCollector {
@@ -18,6 +19,7 @@ interface GeomTargetCollector {
         point: DoubleVector,
         radius: Double,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.VERTICAL_TOOLTIP
     )
 
@@ -25,6 +27,7 @@ interface GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
     )
 
@@ -32,6 +35,7 @@ interface GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
     )
 
@@ -39,6 +43,7 @@ interface GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: Kind = Kind.CURSOR_TOOLTIP
     )
 

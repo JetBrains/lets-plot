@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.interact
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 
 class NullGeomTargetCollector : GeomTargetCollector {
@@ -15,6 +16,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
         point: DoubleVector,
         radius: Double,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }
@@ -23,6 +25,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }
@@ -31,6 +34,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }
@@ -39,6 +43,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }

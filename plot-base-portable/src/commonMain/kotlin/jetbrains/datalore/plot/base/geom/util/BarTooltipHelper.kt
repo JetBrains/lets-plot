@@ -46,7 +46,8 @@ object BarTooltipHelper {
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))
-                    .setColor(colorFactory(p))
+                    .setColor(colorFactory(p)),
+                coordinateSystem
             )
         }
     }

@@ -28,11 +28,12 @@ internal class DefaultCoordinateSystem(
         return DoubleVector(myFromClientOffsetX(p.x), myFromClientOffsetY(p.y))
     }
 
-    override fun contains(p: DoubleVector): Boolean {
-        return (xLim?.contains(p.x) ?: true) && (yLim?.contains(p.y) ?: true)
+    override fun containsClientPoint(p: DoubleVector): Boolean {
+        val coord = fromClient(p)
+        return (xLim?.contains(coord.x) ?: true) && (yLim?.contains(coord.y) ?: true)
     }
 
-    override fun contains(rect: DoubleRectangle): Boolean {
-        return contains(rect.origin) && contains(rect.origin.add(rect.dimension))
+    override fun containsClientRect(rect: DoubleRectangle): Boolean {
+        return containsClientPoint(rect.origin) && containsClientPoint(rect.origin.add(rect.dimension))
     }
 }

@@ -47,22 +47,21 @@ class HLineGeom : GeomBase() {
                 if (viewPort.yRange().contains(intercept!!)) {
                     val start = DoubleVector(viewPort.left, intercept)
                     val end = DoubleVector(viewPort.right, intercept)
+                    val line = helper.createLine(start, end, p)
+                    lines.add(line)
+
                     val h = AesScaling.strokeWidth(p)
                     val origin = DoubleVector(start.x, intercept - h/2 - 2.0)
                     val dimensions = DoubleVector(viewPort.dimension.x, h + 4.0)
                     val rect = DoubleRectangle(origin, dimensions)
-                    if (coordinateSystem.contains(rect)) {
-                        val line = helper.createLine(start, end, p)
-                        lines.add(line)
-
-                        ctx.targetCollector.addRectangle(
-                            p.index(),
-                            geomHelper.toClient(rect, p),
-                            GeomTargetCollector.TooltipParams.params()
-                                .setColor(HintColorUtil.fromColor(p)),
-                            TipLayoutHint.Kind.CURSOR_TOOLTIP
-                        )
-                    }
+                    ctx.targetCollector.addRectangle(
+                        p.index(),
+                        geomHelper.toClient(rect, p),
+                        GeomTargetCollector.TooltipParams.params()
+                            .setColor(HintColorUtil.fromColor(p)),
+                        coordinateSystem,
+                        TipLayoutHint.Kind.CURSOR_TOOLTIP
+                    )
                 }
             }
         }

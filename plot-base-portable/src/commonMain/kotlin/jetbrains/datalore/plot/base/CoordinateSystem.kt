@@ -13,7 +13,7 @@ interface CoordinateSystem {
 
     fun fromClient(p: DoubleVector): DoubleVector
 
-    fun contains(p: DoubleVector): Boolean
+    fun containsClientPoint(p: DoubleVector): Boolean
 
-    fun contains(rect: DoubleRectangle): Boolean
+    fun containsClientRect(rect: DoubleRectangle): Boolean
 }

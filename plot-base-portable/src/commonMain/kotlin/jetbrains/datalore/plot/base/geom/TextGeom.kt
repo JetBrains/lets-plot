@@ -44,7 +44,7 @@ class TextGeom : GeomBase() {
             val x = p.x()
             val y = p.y()
             val text = toString(p.label())
-            if (SeriesUtil.allFinite(x, y) && coordinateSystem.contains(DoubleVector(x!!, y!!)) && !Strings.isNullOrEmpty(text)) {
+            if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p, sizeUnitRatio)
 
@@ -60,6 +60,7 @@ class TextGeom : GeomBase() {
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p)),
+                    coordinateSystem,
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

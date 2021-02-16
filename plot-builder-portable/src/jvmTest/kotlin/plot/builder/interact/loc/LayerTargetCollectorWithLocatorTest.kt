@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import org.mockito.Mockito
@@ -88,7 +89,8 @@ class LayerTargetCollectorWithLocatorTest {
                     index = 0,
                     point = point,
                     radius = radius,
-                    tooltipParams = GeomTargetCollector.TooltipParams.params().setColor(color)
+                    tooltipParams = GeomTargetCollector.TooltipParams.params().setColor(color),
+                    coordinateSystem = null
                 )
             }
         }
@@ -98,7 +100,8 @@ class LayerTargetCollectorWithLocatorTest {
                 addRectangle(
                     index = 0,
                     rectangle = rect,
-                    tooltipParams = GeomTargetCollector.TooltipParams.params().setColor(color)
+                    tooltipParams = GeomTargetCollector.TooltipParams.params().setColor(color),
+                    coordinateSystem = null
                 )
             }
         }

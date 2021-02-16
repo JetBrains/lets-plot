@@ -47,22 +47,20 @@ class VLineGeom : GeomBase() {
                     val start = DoubleVector(intercept, viewPort.top)
                     val end = DoubleVector(intercept, viewPort.bottom)
 
+                    val line = helper.createLine(start, end, p)
+                    lines.add(line)
+
                     val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
                     val origin = DoubleVector(intercept - width / 2, end.y)
                     val dimensions = DoubleVector(width, 0.0)
                     val rect = DoubleRectangle(origin, dimensions)
-
-                    if (coordinateSystem.contains(rect)) {
-                        val line = helper.createLine(start, end, p)
-                        lines.add(line)
-
-                        ctx.targetCollector.addRectangle(
-                            p.index(),
-                            geomHelper.toClient(rect, p),
-                            GeomTargetCollector.TooltipParams.params()
-                                .setColor(HintColorUtil.fromColor(p))
-                        )
-                    }
+                    ctx.targetCollector.addRectangle(
+                        p.index(),
+                        geomHelper.toClient(rect, p),
+                        GeomTargetCollector.TooltipParams.params()
+                            .setColor(HintColorUtil.fromColor(p)),
+                        coordinateSystem
+                    )
                 }
             }
         }

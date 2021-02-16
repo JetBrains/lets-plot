@@ -30,13 +30,13 @@ class CrossBarGeom : GeomBase() {
     ) {
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coordinateSystem, ctx,
-            rectangleByDataPoint(ctx, coordinateSystem, isHintRect = false)
+            rectangleByDataPoint(ctx, false)
         )
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coordinateSystem, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coordinateSystem, ctx,
-            rectangleByDataPoint(ctx, coordinateSystem, isHintRect = true),
+            rectangleByDataPoint(ctx, true),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -48,11 +48,9 @@ class CrossBarGeom : GeomBase() {
 
         private fun rectangleByDataPoint(
             ctx: GeomContext,
-            coordinateSystem: CoordinateSystem,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                var result: DoubleRectangle? = null
                 if (!isHintRect &&
                     p.defined(Aes.X) &&
                     p.defined(Aes.YMIN) &&
@@ -64,13 +62,9 @@ class CrossBarGeom : GeomBase() {
                     val ymax = p.ymax()!!
                     val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-                    val rect = DoubleRectangle(
-                        origin = DoubleVector(x - width / 2, ymin),
-                        dimension = DoubleVector(width, ymax - ymin)
-                    )
-                    if (coordinateSystem.contains(rect)) {
-                        result = rect
-                    }
+                    val origin = DoubleVector(x - width / 2, ymin)
+                    val dimensions = DoubleVector(width, ymax - ymin)
+                    DoubleRectangle(origin, dimensions)
                 } else if (isHintRect &&
                     p.defined(Aes.X) &&
                     p.defined(Aes.MIDDLE)
@@ -79,15 +73,12 @@ class CrossBarGeom : GeomBase() {
                     val middle = p.middle()!!
                     val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-                    val rect = DoubleRectangle(
-                        origin = DoubleVector(x - width / 2, middle),
-                        dimension = DoubleVector(width, 0.0)
-                    )
-                    if (coordinateSystem.contains(rect)) {
-                        result = rect
-                    }
+                    val origin = DoubleVector(x - width / 2, middle)
+                    val dimensions = DoubleVector(width, 0.0)
+                    DoubleRectangle(origin, dimensions)
+                } else {
+                    null
                 }
-                result
             }
         }
     }

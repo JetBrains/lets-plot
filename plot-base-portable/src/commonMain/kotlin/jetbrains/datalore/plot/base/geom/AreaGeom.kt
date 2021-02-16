@@ -27,23 +27,19 @@ open class AreaGeom : GeomBase() {
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
         val dataPoints = dataPoints(aesthetics)
-        if (dataPoints.any { p ->
-                GeomUtil.TO_LOCATION_X_Y(p)?.let { coordinateSystem.contains(it) } == true
-            }
-        ) {
-            val helper = LinesHelper(pos, coordinateSystem, ctx)
-            val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
-            paths.reverse()
-            appendNodes(paths, root)
 
-            //if you want to retain the side edges of area: comment out the following codes,
-            // and switch decorate method in LinesHelper.createbands
-            helper.setAlphaEnabled(false)
-            val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-            appendNodes(lines, root)
+        val helper = LinesHelper(pos, coordinateSystem, ctx)
+        val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
+        paths.reverse()
+        appendNodes(paths, root)
 
-            buildHints(aesthetics, pos, coordinateSystem, ctx)
-        }
+        //if you want to retain the side edges of area: comment out the following codes,
+        // and switch decorate method in LinesHelper.createbands
+        helper.setAlphaEnabled(false)
+        val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+        appendNodes(lines, root)
+
+        buildHints(aesthetics, pos, coordinateSystem, ctx)
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coordinateSystem: CoordinateSystem, ctx: GeomContext) {
@@ -57,9 +53,10 @@ open class AreaGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         for (multiPointData in multiPointDataList) {
             targetCollector.addPath(
-                    multiPointData.points,
-                    multiPointData.localToGlobalIndex,
-                    setupTooltipParams(multiPointData.aes)
+                multiPointData.points,
+                multiPointData.localToGlobalIndex,
+                setupTooltipParams(multiPointData.aes),
+                coordinateSystem
             )
         }
     }

@@ -42,26 +42,27 @@ object CrossBarHelper {
         val helper = GeomHelper(pos, coordinateSystem, ctx)
         val elementHelper = helper.createSvgElementHelper()
 
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.WIDTH, Aes.MIDDLE)) {
+        for (p in GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.X,
+            Aes.WIDTH,
+            Aes.MIDDLE
+        )) {
             val x = p.x()!!
             val middle = p.middle()!!
             val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-            val start = DoubleVector(x - width / 2, middle)
-            val end = DoubleVector(x + width / 2, middle)
-            if (coordinateSystem.contains(start) && coordinateSystem.contains(end)) {
-                val line = elementHelper.createLine(
-                    start,
-                    end,
-                    p
-                )
+            val line = elementHelper.createLine(
+                DoubleVector(x - width / 2, middle),
+                DoubleVector(x + width / 2, middle),
+                p
+            )
 
-                // adjust thickness
-                val thickness = line.strokeWidth().get()!!
-                line.strokeWidth().set(thickness * fatten)
+            // adjust thickness
+            val thickness = line.strokeWidth().get()!!
+            line.strokeWidth().set(thickness * fatten)
 
-                root.add(line)
-            }
+            root.add(line)
         }
     }
 
@@ -96,12 +97,12 @@ private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) :
             width,
             boxHeight
         )
-        GeomHelper.Companion.decorate(rect, p)
+        GeomHelper.decorate(rect, p)
 
         // lines
         val middleY = y + height * .5
         val middle = SvgLineElement(x, middleY, x + width, middleY)
-        GeomHelper.Companion.decorate(middle, p)
+        GeomHelper.decorate(middle, p)
 
         val g = SvgGElement()
         g.children().add(rect)

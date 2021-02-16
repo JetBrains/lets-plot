@@ -56,26 +56,31 @@ class ErrorBarGeom : GeomBase() {
 
             val r = DoubleRectangle(x!! - width / 2, ymin, width, height)
 
-            if (coordinateSystem.contains(r)) {
-                val g = errorBarShape(
-                    helper.toClient(
-                        r,
-                        p
-                    ), p
-                )
-                root.add(g)
+            val g = errorBarShape(
+                helper.toClient(
+                    r,
+                    p
+                ), p
+            )
+            root.add(g)
 
-                buildHints(
-                    DoubleRectangle(r.left, r.center.y, r.width, 0.0),
-                    p,
-                    ctx,
-                    geomHelper
-                )
-            }
+            buildHints(
+                DoubleRectangle(r.left, r.center.y, r.width, 0.0),
+                p,
+                ctx,
+                geomHelper,
+                coordinateSystem
+            )
         }
     }
 
-    private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
+    private fun buildHints(
+        rect: DoubleRectangle,
+        p: DataPointAesthetics,
+        ctx: GeomContext,
+        geomHelper: GeomHelper,
+        coordinateSystem: CoordinateSystem
+    ) {
         val clientRect = geomHelper.toClient(rect, p)
 
         val hint = HintConfigFactory()
@@ -92,7 +97,8 @@ class ErrorBarGeom : GeomBase() {
             p.index(), clientRect,
             params()
                 .setTipLayoutHints(hints)
-                .setColor(fromColor(p))
+                .setColor(fromColor(p)),
+            coordinateSystem
         )
     }
 

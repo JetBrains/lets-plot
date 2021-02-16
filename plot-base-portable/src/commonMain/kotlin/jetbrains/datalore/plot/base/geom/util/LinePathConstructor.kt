@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
+import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
@@ -16,7 +17,8 @@ class LinePathConstructor(
     private val myTargetCollector: GeomTargetCollector,
     private val myDataPoints: Iterable<DataPointAesthetics>,
     private val myLinesHelper: LinesHelper,
-    private val myClosePath: Boolean
+    private val myClosePath: Boolean,
+    private val myCoordinateSystem: CoordinateSystem
 ) {
 
     fun construct(): List<LinePath> {
@@ -47,7 +49,8 @@ class LinePathConstructor(
                         HintColorUtil.fromFill(
                             multiPointData.aes
                         )
-                    )
+                    ),
+                    myCoordinateSystem
                 )
             } else {
                 myTargetCollector.addPath(
@@ -57,7 +60,8 @@ class LinePathConstructor(
                         HintColorUtil.fromColor(
                             multiPointData.aes
                         )
-                    )
+                    ),
+                    myCoordinateSystem
                 )
             }
 

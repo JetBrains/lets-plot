@@ -52,14 +52,15 @@ open class PointGeom : GeomBase() {
             val p = aesthetics.dataPointAt(i)
             val x = p.x()
             val y = p.y()
-            if (SeriesUtil.allFinite(x, y) && coordinateSystem.contains(DoubleVector(x!!, y!!))) {
+            if (SeriesUtil.allFinite(x, y)) {
                 val location = helper.toClient(x, y, p)
 
                 val shape = p.shape()!!
 
                 targetCollector.addPoint(
                     i, location, sizeUnitRatio * shape.size(p) / 2,
-                    tooltipParams(p)
+                    tooltipParams(p),
+                    coordinateSystem
                 )
                 val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)

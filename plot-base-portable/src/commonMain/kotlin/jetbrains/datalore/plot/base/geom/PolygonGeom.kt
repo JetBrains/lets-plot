@@ -22,22 +22,21 @@ open class PolygonGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
-        val bbox = aesBoundingBox(aesthetics)
-        if (coordinateSystem.contains(bbox)) {
-            val targetCollector = getGeomTargetCollector(ctx)
-            val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
-            val geomConstructor =
-                LinePathConstructor(
-                    targetCollector,
-                    dataPoints,
-                    linesHelper,
-                    true
-                )
-            appendNodes(
-                geomConstructor.construct(),
-                root
+        val targetCollector = getGeomTargetCollector(ctx)
+        val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
+        val geomConstructor =
+            LinePathConstructor(
+                targetCollector,
+                dataPoints,
+                linesHelper,
+                true,
+                coordinateSystem
             )
-        }
+        appendNodes(
+            geomConstructor.construct(),
+            root
+        )
+
     }
 
     companion object {

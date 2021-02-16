@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 class TooltipsAndCoordLimitsTest {
 
     @Test
-    fun geom_points() {
+    fun `geom points`() {
 
         val data = "{'x': [1, 2, 3], 'y': [0, 0, 0] }"
         val spec = """
@@ -33,9 +33,7 @@ class TooltipsAndCoordLimitsTest {
         """.trimIndent()
 
         run {
-            val withoutCoordLimits = """{ $spec }"""
-
-            val opts = parsePlotSpec(withoutCoordLimits)
+            val opts = parsePlotSpec("{ $spec }")
             val plot = DemoAndTest.createPlot(opts)
             val geomBounds = plot.getGeomBounds(DoubleVector(200.0, 100.0))
             assertNotNull(geomBounds)
@@ -54,11 +52,11 @@ class TooltipsAndCoordLimitsTest {
         }
 
         run {
-            val withCoordLimits = """{ 
+            val fullSpec = """{ 
                 $spec, 
-                'coord': { 'name': 'cartesian', 'ratio': 1.0, 'xlim': [ 1.1,  2.9 ] }
+                'coord': { 'name': 'cartesian', 'xlim': [ 1.1,  2.9 ] }
             }"""
-            val opts = parsePlotSpec(withCoordLimits)
+            val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)
             val geomBounds = plot.getGeomBounds(DoubleVector(200.0, 100.0))
             assertNotNull(geomBounds)
@@ -78,7 +76,7 @@ class TooltipsAndCoordLimitsTest {
     }
 
     @Test
-    fun `lines - at least one point should be within limits`() {
+    fun `path - at least one point should be within limits`() {
         val data = "{'x': [1, 2, 3], 'y': [0, 0, 0] }"
         val spec = """
             'kind': 'plot',
@@ -96,7 +94,7 @@ class TooltipsAndCoordLimitsTest {
             // points are within xlim
             val fullSpec = """{ 
                 $spec, 
-                'coord': { 'name': 'cartesian', 'ratio': 1.0, 'xlim': [ 1,  2 ] }
+                'coord': { 'name': 'cartesian', 'xlim': [ 1,  2 ] }
             }"""
             val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)
@@ -111,7 +109,7 @@ class TooltipsAndCoordLimitsTest {
             // outside
             val fullSpec = """{ 
                 $spec, 
-                'coord': { 'name': 'cartesian', 'ratio': 1.0, 'xlim': [ 0,  0.5 ] }
+                'coord': { 'name': 'cartesian', 'xlim': [ 0,  0.5 ] }
             }"""
             val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)
@@ -143,7 +141,7 @@ class TooltipsAndCoordLimitsTest {
             // bbox is inside limits
             val fullSpec = """{ 
                 $spec, 
-                'coord': { 'name': 'cartesian', 'ratio': 1.0, 'xlim': [ 0,  4] }
+                'coord': { 'name': 'cartesian', 'xlim': [ 0,  4] }
             }"""
             val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)
@@ -158,7 +156,48 @@ class TooltipsAndCoordLimitsTest {
             // outside
             val fullSpec = """{ 
                 $spec, 
-                'coord': { 'name': 'cartesian', 'ratio': 1.0, 'xlim': [ 1,  2] }
+                'coord': { 'name': 'cartesian', 'xlim': [ 0,  2] }
+            }"""
+            val opts = parsePlotSpec(fullSpec)
+            val plot = DemoAndTest.createPlot(opts)
+
+            val geomBounds = plot.getGeomBounds(DoubleVector(200.0, 100.0))
+            assertNotNull(geomBounds)
+
+            assertNoTooltips(plot.createTooltipSpecs(geomBounds.center))
+        }
+    }
+
+    @Test
+    fun `rectangle - all vertices should be inside limits`() {
+        val spec = """
+            'kind': 'plot',
+            'ggsize': { 'width': 400, 'height': 200 },
+            'layers': [
+                         {
+                            'geom':  { 'name': 'rect' },
+                            'mapping': { 'xmin': [0], 'xmax': [3], 'ymin': [0], 'ymax': [3] },
+                            'tooltips': {'tooltip_lines': ['^xmin, ^xmax']}
+                          }
+                      ]
+        """.trimIndent()
+
+        run {
+            // inside
+            val opts = parsePlotSpec("{ $spec }")
+            val plot = DemoAndTest.createPlot(opts)
+
+            val geomBounds = plot.getGeomBounds(DoubleVector(200.0, 100.0))
+            assertNotNull(geomBounds)
+
+            assertTooltips(plot.createTooltipSpecs(geomBounds.center))
+        }
+
+        run {
+            // outside
+            val fullSpec = """{ 
+                $spec, 
+                'coord': { 'name': 'cartesian', 'ylim': [ 1,  2] }
             }"""
             val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)

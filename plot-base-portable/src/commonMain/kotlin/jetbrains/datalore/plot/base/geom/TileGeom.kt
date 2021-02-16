@@ -30,19 +30,20 @@ open class TileGeom : GeomBase() {
         val helper =
             RectanglesHelper(aesthetics, pos, coordinateSystem, ctx)
         val slimGroup = helper.createSlimRectangles(
-            rectangleByDataPoint(ctx, coordinateSystem)
+            rectangleByDataPoint(ctx)
         )
         root.add(wrap(slimGroup))
 
         RectTargetCollectorHelper(
             helper,
-            rectangleByDataPoint(ctx, coordinateSystem),
+            rectangleByDataPoint(ctx),
             { p: DataPointAesthetics ->
                 HintColorUtil.fromFill(
                     p
                 )
             },
-            TipLayoutHint.Kind.CURSOR_TOOLTIP
+            TipLayoutHint.Kind.CURSOR_TOOLTIP,
+            coordinateSystem
         )
             .collectTo(ctx.targetCollector)
     }
@@ -50,26 +51,23 @@ open class TileGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun rectangleByDataPoint(ctx: GeomContext, coordinateSystem: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val x = p.x()
                 val y = p.y()
                 val w = p.width()
                 val h = p.height()
 
-                var result: DoubleRectangle? = null
+                var rect: DoubleRectangle? = null
                 if (SeriesUtil.allFinite(x, y, w, h)) {
                     val width = w!! * ctx.getResolution(Aes.X)
                     val height = h!! * ctx.getResolution(Aes.Y)
 
                     val origin = DoubleVector(x!! - width / 2, y!! - height / 2)
                     val dimensions = DoubleVector(width, height)
-                    val rect = DoubleRectangle(origin, dimensions)
-                    if (coordinateSystem.contains(rect)) {
-                        result = rect
-                    }
+                    rect = DoubleRectangle(origin, dimensions)
                 }
-                result
+                rect
             }
         }
     }

@@ -6,7 +6,9 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 
@@ -24,6 +26,7 @@ class LayerTargetCollectorWithLocator(
         point: DoubleVector,
         radius: Double,
         tooltipParams: GeomTargetCollector.TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
@@ -31,7 +34,9 @@ class LayerTargetCollectorWithLocator(
                 return;
             }
         }
-
+        if (coordinateSystem != null && !coordinateSystem.containsClientPoint(point)) {
+            return
+        }
         addTarget(
             TargetPrototype(
                 HitShape.point(point, radius),
@@ -46,12 +51,16 @@ class LayerTargetCollectorWithLocator(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
             if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.getColor().alpha == 0) {
                 return
             }
+        }
+        if (coordinateSystem != null && !coordinateSystem.containsClientRect(rectangle)) {
+            return
         }
         addTarget(
             TargetPrototype(
@@ -67,8 +76,12 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
+        if (coordinateSystem != null && points.none(coordinateSystem::containsClientPoint)) {
+            return
+        }
         addTarget(
             TargetPrototype(
                 HitShape.path(points),
@@ -83,8 +96,15 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
+        coordinateSystem: CoordinateSystem?,
         tooltipKind: TipLayoutHint.Kind
     ) {
+        if (coordinateSystem != null) {
+            val bbox = DoubleRectangles.boundingBox(points)
+            if (!coordinateSystem.containsClientRect(bbox)) {
+                return
+            }
+        }
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),

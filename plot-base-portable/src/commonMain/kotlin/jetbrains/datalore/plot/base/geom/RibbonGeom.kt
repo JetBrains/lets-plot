@@ -43,17 +43,21 @@ class RibbonGeom : GeomBase() {
         val helper = GeomHelper(pos, coordinateSystem, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper)
+            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper, coordinateSystem)
+            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper, coordinateSystem)
         }
     }
 
-    private fun addTarget(p: DataPointAesthetics, collector: GeomTargetCollector, toLocation: (DataPointAesthetics) -> DoubleVector?,
-                          helper: GeomHelper
+    private fun addTarget(
+        p: DataPointAesthetics,
+        collector: GeomTargetCollector,
+        toLocation: (DataPointAesthetics) -> DoubleVector?,
+        helper: GeomHelper,
+        coordinateSystem: CoordinateSystem
     ) {
         val coord = toLocation(p)
         if (coord != null) {
-            collector.addPoint(p.index(), helper.toClient(coord, p), 0.0, params().setColor(fromFill(p)))
+            collector.addPoint(p.index(), helper.toClient(coord, p), 0.0, params().setColor(fromFill(p)), coordinateSystem)
         }
     }
 

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
@@ -17,13 +18,14 @@ class RectTargetCollectorHelper(
     private val rectanglesHelper: RectanglesHelper,
     private val rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
     private val fillByDataPoint: (DataPointAesthetics) -> Color,
-    private val tooltipKind: TipLayoutHint.Kind
+    private val tooltipKind: TipLayoutHint.Kind,
+    private val coordinateSystem: CoordinateSystem
 ) {
 
     fun collectTo(targetCollector: GeomTargetCollector) {
         rectanglesHelper.iterateRectangleGeometry(rectangleByDataPoint)
         { p, rectangle ->
-            targetCollector.addRectangle(p.index(), rectangle, tooltipParams(p), tooltipKind)
+            targetCollector.addRectangle(p.index(), rectangle, tooltipParams(p), coordinateSystem, tooltipKind)
         }
     }
 

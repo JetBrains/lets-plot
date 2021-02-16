@@ -38,14 +38,14 @@ class BoxplotGeom : GeomBase() {
     ) {
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coordinateSystem, ctx,
-            rectangleByDataPoint(ctx, coordinateSystem)
+            rectangleByDataPoint(ctx)
         )
         buildLines(root, aesthetics, pos, coordinateSystem, ctx)
         buildOutliers(root, aesthetics, pos, coordinateSystem, ctx)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coordinateSystem, ctx,
-            rectangleByDataPoint(ctx, coordinateSystem),
+            rectangleByDataPoint(ctx),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -169,9 +169,8 @@ class BoxplotGeom : GeomBase() {
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
-        private fun rectangleByDataPoint(ctx: GeomContext, coordinateSystem: CoordinateSystem): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                var result: DoubleRectangle? = null
                 if (p.defined(Aes.X) &&
                     p.defined(Aes.LOWER) &&
                     p.defined(Aes.UPPER) &&
@@ -184,13 +183,10 @@ class BoxplotGeom : GeomBase() {
 
                     val origin = DoubleVector(x - width / 2, lower)
                     val dimensions = DoubleVector(width, upper - lower)
-
-                    val rect = DoubleRectangle(origin, dimensions)
-                    if (coordinateSystem.contains(rect)) {
-                        result = rect
-                    }
+                    DoubleRectangle(origin, dimensions)
+                } else {
+                    null
                 }
-                result
             }
         }
     }

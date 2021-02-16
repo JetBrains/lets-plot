@@ -31,24 +31,21 @@ open class PathGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
-        if (dataPoints.any { p ->
-                GeomUtil.TO_LOCATION_X_Y(p)?.let { coordinateSystem.contains(it) } == true
-            }
-        ) {
-            val targetCollector = getGeomTargetCollector(ctx)
-            val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
+        val targetCollector = getGeomTargetCollector(ctx)
+        val linesHelper = LinesHelper(pos, coordinateSystem, ctx)
 
-            val geomConstructor = LinePathConstructor(
-                targetCollector,
-                dataPoints,
-                linesHelper,
-                false
-            )
-            appendNodes(
-                geomConstructor.construct(),
-                root
-            )
-        }
+        val geomConstructor = LinePathConstructor(
+            targetCollector,
+            dataPoints,
+            linesHelper,
+            false,
+            coordinateSystem
+        )
+        appendNodes(
+            geomConstructor.construct(),
+            root
+        )
+
     }
 
     companion object {
