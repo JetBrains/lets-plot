@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 
 interface GeomTargetCollector {

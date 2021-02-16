@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 

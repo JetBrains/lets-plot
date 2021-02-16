@@ -30,6 +30,7 @@ open class PathGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+
         val dataPoints = dataPoints(aesthetics)
         val targetCollector = getGeomTargetCollector(ctx)
         val linesHelper = LinesHelper(pos, coord, ctx)

@@ -26,7 +26,9 @@ open class BarGeom : GeomBase() {
         val helper =
             RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(
-            rectangleByDataPoint(ctx)
+            rectangleByDataPoint(
+                ctx
+            )
         )
         rectangles.reverse()
         rectangles.forEach { root.add(it) }

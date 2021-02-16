@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.C
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.base.geometry.DoubleVector
 
 class SmoothGeom : GeomBase() {
 

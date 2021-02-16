@@ -73,12 +73,7 @@ class ErrorBarGeom : GeomBase() {
         }
     }
 
-    private fun buildHints(
-        rect: DoubleRectangle,
-        p: DataPointAesthetics,
-        ctx: GeomContext,
-        geomHelper: GeomHelper
-    ) {
+    private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
         val clientRect = geomHelper.toClient(rect, p)
 
         val hint = HintConfigFactory()

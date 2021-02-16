@@ -24,6 +24,7 @@ open class PolygonGeom : GeomBase() {
         val dataPoints = dataPoints(aesthetics)
         val targetCollector = getGeomTargetCollector(ctx)
         val linesHelper = LinesHelper(pos, coord, ctx)
+
         val geomConstructor =
             LinePathConstructor(
                 targetCollector,
