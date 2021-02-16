@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.MathUtil
@@ -17,15 +16,10 @@ import jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection.PathPoi
 
 internal class TargetDetector(
         private val locatorLookupSpace: LookupSpace,
-        private val locatorLookupStrategy: LookupStrategy,
-        private val coordinateSystem: CoordinateSystem
-) {
+        private val locatorLookupStrategy: LookupStrategy) {
 
     fun checkPath(cursorCoord: DoubleVector, pathProjection: PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
-        val points = pathProjection.points.map(PathTargetProjection.PathPoint::originalCoord)
-        if (points.none(coordinateSystem::containsClientPoint)) {
-            return null
-        }
+
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
@@ -96,9 +90,6 @@ internal class TargetDetector(
     }
 
     fun checkPoint(cursorCoord: DoubleVector, pointProjection: PointTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        if (!coordinateSystem.containsClientPoint(pointProjection.xy())) {
-            return false
-        }
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
@@ -141,9 +132,6 @@ internal class TargetDetector(
     }
 
     fun checkRect(cursorCoord: DoubleVector, rectProjection: RectTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        if (!coordinateSystem.containsClientRect(rectProjection.xy())) {
-            return false
-        }
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
@@ -184,9 +172,6 @@ internal class TargetDetector(
     }
 
     fun checkPolygon(cursorCoord: DoubleVector, polygonProjection: PolygonTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        if (polygonProjection.xy().any { !coordinateSystem.containsClientRect(it.bbox) }) {
-            return false
-        }
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
