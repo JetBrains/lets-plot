@@ -37,6 +37,7 @@ class HLineGeom : GeomBase() {
 
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
+        helper.setAlphaEnabled(true)
 
         val viewPort = aesViewPort(aesthetics)
 

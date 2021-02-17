@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.SvgElement
@@ -120,6 +121,12 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
     }
 
     inner class SvgElementHelper {
+        private var myAlphaEnabled = false
+
+        fun setAlphaEnabled(b: Boolean) {
+            myAlphaEnabled = b
+        }
+
         fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
@@ -129,7 +136,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
                 start.x, start.y,
                 end.x, end.y
             )
-            decorate(line, p)
+            decorate(line, p, myAlphaEnabled)
             return line
         }
     }
@@ -223,11 +230,12 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             return conversionMap.getOrElse(o, { def })
         }
 
-        fun decorate(node: SvgNode, p: DataPointAesthetics) {
+        fun decorate(node: SvgNode, p: DataPointAesthetics, alphaEnabled: Boolean = ALPHA_CONTROLS_BOTH) {
             if (node is SvgShape) {
                 decorateShape(
                     node as SvgShape,
-                    p
+                    p,
+                    alphaEnabled
                 )
             }
 
@@ -239,8 +247,8 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             }
         }
 
-        private fun decorateShape(shape: SvgShape, p: DataPointAesthetics) {
-            AestheticsUtil.updateStroke(shape, p)
+        private fun decorateShape(shape: SvgShape, p: DataPointAesthetics, alphaEnabled: Boolean) {
+            AestheticsUtil.updateStroke(shape, p, alphaEnabled)
             AestheticsUtil.updateFill(shape, p)
             shape.strokeWidth().set(AesScaling.strokeWidth(p))
         }
