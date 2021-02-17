@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.DemoAndTest
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -108,8 +107,8 @@ class TooltipsAndCoordLimitsTest {
         run {
             // outside
             val fullSpec = """{ 
-                $spec, 
-                'coord': { 'name': 'cartesian', 'xlim': [ 0,  0.5 ] }
+                $spec,
+                'coord': { 'name': 'cartesian', 'ylim': [ 0.5, 1 ] }
             }"""
             val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)
@@ -176,7 +175,7 @@ class TooltipsAndCoordLimitsTest {
             'layers': [
                          {
                             'geom':  { 'name': 'rect' },
-                            'mapping': { 'xmin': [0], 'xmax': [3], 'ymin': [0], 'ymax': [3] },
+                            'mapping': { 'xmin': [1], 'xmax': [3], 'ymin': [1], 'ymax': [3] },
                             'tooltips': {'tooltip_lines': ['^xmin, ^xmax']}
                           }
                       ]
@@ -197,7 +196,7 @@ class TooltipsAndCoordLimitsTest {
             // outside
             val fullSpec = """{ 
                 $spec, 
-                'coord': { 'name': 'cartesian', 'ylim': [ 1,  2] }
+                'coord': { 'name': 'cartesian', 'xlim': [ 1,  2] }
             }"""
             val opts = parsePlotSpec(fullSpec)
             val plot = DemoAndTest.createPlot(opts)

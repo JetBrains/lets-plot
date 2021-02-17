@@ -22,13 +22,25 @@ class GeomCoord(private val myCoord: CoordinateSystem) {
     }
 
     fun toClient(r: DoubleRectangle): DoubleRectangle {
+        return translateRect(r) { coord: DoubleVector ->
+            myCoord.toClient(coord)
+        }
+    }
+
+    fun fromClient(r: DoubleRectangle): DoubleRectangle {
+        return translateRect(r) { coord: DoubleVector ->
+            myCoord.fromClient(coord)
+        }
+    }
+
+    private fun translateRect(r: DoubleRectangle, toLocation: (DoubleVector) -> DoubleVector): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
         var r = r
         val xy1 = r.origin
         val xy2 = DoubleVector(r.right, r.bottom)
 
-        val xy1cl = myCoord.toClient(xy1)
-        val xy2cl = myCoord.toClient(xy2)
+        val xy1cl = toLocation(xy1)
+        val xy2cl = toLocation(xy2)
         if (xy1 != xy1cl || xy2 != xy2cl) {
             val xMin = min(xy1cl.x, xy2cl.x)
             val yMin = min(xy1cl.y, xy2cl.y)
