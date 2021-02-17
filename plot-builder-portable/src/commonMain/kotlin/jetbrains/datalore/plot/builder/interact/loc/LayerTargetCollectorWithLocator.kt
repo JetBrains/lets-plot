@@ -6,11 +6,9 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.geom.util.GeomCoord
 import jetbrains.datalore.plot.base.interact.*
 
 class LayerTargetCollectorWithLocator(
@@ -35,8 +33,7 @@ class LayerTargetCollectorWithLocator(
                 return;
             }
         }
-        val coord = coordinateSystem.fromClient(point)
-        if (coordinateSystem.xLim?.contains(coord.x) == false || coordinateSystem.yLim?.contains(coord.y) == false) {
+        if (!coordinateSystem.isPointInLimits(point)) {
             return
         }
         addTarget(
@@ -60,8 +57,7 @@ class LayerTargetCollectorWithLocator(
                 return
             }
         }
-        val fromClientRect = GeomCoord(coordinateSystem).fromClient(rectangle)
-        if (coordinateSystem.xLim?.encloses(fromClientRect.xRange()) == false || coordinateSystem.yLim?.encloses(fromClientRect.yRange()) == false) {
+        if (!coordinateSystem.isRectInLimits(rectangle)) {
             return
         }
         addTarget(
@@ -80,12 +76,7 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        if (points
-                .map(coordinateSystem::fromClient)
-                .none { coord ->
-                    coordinateSystem.xLim?.contains(coord.x) != false && coordinateSystem.yLim?.contains(coord.y) != false
-                }
-        ) {
+        if (!coordinateSystem.isPathInLimits(points)) {
             return
         }
         addTarget(
@@ -104,8 +95,7 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        val bbox = DoubleRectangles.boundingBox(points.map(coordinateSystem::fromClient))
-        if (coordinateSystem.xLim?.encloses(bbox.xRange()) == false || coordinateSystem.yLim?.encloses(bbox.yRange()) == false) {
+        if (!coordinateSystem.isPolygonInLimits(points)) {
             return
         }
         addTarget(

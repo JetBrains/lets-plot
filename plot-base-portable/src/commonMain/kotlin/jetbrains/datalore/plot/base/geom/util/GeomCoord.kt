@@ -22,15 +22,11 @@ class GeomCoord(private val myCoord: CoordinateSystem) {
     }
 
     fun toClient(r: DoubleRectangle): DoubleRectangle {
-        return translateRect(r) { coord: DoubleVector ->
-            myCoord.toClient(coord)
-        }
+        return translateRect(r) { coord -> myCoord.toClient(coord) }
     }
 
     fun fromClient(r: DoubleRectangle): DoubleRectangle {
-        return translateRect(r) { coord: DoubleVector ->
-            myCoord.fromClient(coord)
-        }
+        return translateRect(r) { coord -> myCoord.fromClient(coord) }
     }
 
     private fun translateRect(r: DoubleRectangle, toLocation: (DoubleVector) -> DoubleVector): DoubleRectangle {
