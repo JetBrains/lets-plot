@@ -75,9 +75,9 @@ object AestheticsUtil {
         return p.size()!! * 2
     }
 
-    fun updateStroke(shape: SvgShape, p: DataPointAesthetics, alphaEnabled: Boolean) {
+    fun updateStroke(shape: SvgShape, p: DataPointAesthetics, applyAlpha: Boolean) {
         shape.strokeColor().set(p.color())
-        if (solid(p.color()!!) && alphaEnabled) {
+        if (solid(p.color()!!) && applyAlpha) {
             shape.strokeOpacity().set(p.alpha())
         }
     }

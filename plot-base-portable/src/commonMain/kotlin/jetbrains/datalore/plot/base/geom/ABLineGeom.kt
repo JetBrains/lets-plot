@@ -32,7 +32,7 @@ class ABLineGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
-        helper.setAlphaEnabled(true)
+        helper.setStrokeAlphaEnabled(true)
 
         val viewPort = aesViewPort(aesthetics)
         val boundaries = Iterables.toList(viewPort.parts)

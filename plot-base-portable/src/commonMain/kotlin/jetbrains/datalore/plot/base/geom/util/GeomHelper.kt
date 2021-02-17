@@ -121,10 +121,10 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
     }
 
     inner class SvgElementHelper {
-        private var myAlphaEnabled = false
+        private var myStrokeAlphaEnabled = false
 
-        fun setAlphaEnabled(b: Boolean) {
-            myAlphaEnabled = b
+        fun setStrokeAlphaEnabled(b: Boolean) {
+            myStrokeAlphaEnabled = b
         }
 
         fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
@@ -136,7 +136,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
                 start.x, start.y,
                 end.x, end.y
             )
-            decorate(line, p, myAlphaEnabled)
+            decorate(line, p, myStrokeAlphaEnabled)
             return line
         }
     }
@@ -230,12 +230,12 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             return conversionMap.getOrElse(o, { def })
         }
 
-        fun decorate(node: SvgNode, p: DataPointAesthetics, alphaEnabled: Boolean = ALPHA_CONTROLS_BOTH) {
+        fun decorate(node: SvgNode, p: DataPointAesthetics, applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH) {
             if (node is SvgShape) {
                 decorateShape(
                     node as SvgShape,
                     p,
-                    alphaEnabled
+                    applyAlphaToAll
                 )
             }
 
@@ -247,8 +247,8 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             }
         }
 
-        private fun decorateShape(shape: SvgShape, p: DataPointAesthetics, alphaEnabled: Boolean) {
-            AestheticsUtil.updateStroke(shape, p, alphaEnabled)
+        private fun decorateShape(shape: SvgShape, p: DataPointAesthetics, applyAlphaToAll: Boolean) {
+            AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
             AestheticsUtil.updateFill(shape, p)
             shape.strokeWidth().set(AesScaling.strokeWidth(p))
         }
