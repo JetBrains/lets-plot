@@ -97,12 +97,12 @@ private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) :
             width,
             boxHeight
         )
-        GeomHelper.Companion.decorate(rect, p)
+        GeomHelper.decorate(rect, p)
 
         // lines
         val middleY = y + height * .5
         val middle = SvgLineElement(x, middleY, x + width, middleY)
-        GeomHelper.Companion.decorate(middle, p)
+        GeomHelper.decorate(middle, p)
 
         val g = SvgGElement()
         g.children().add(rect)
@@ -112,9 +112,9 @@ private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) :
             val middleX = x + width * .5
             val lowerWhisker =
                 SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
-            GeomHelper.Companion.decorate(lowerWhisker, p)
+            GeomHelper.decorate(lowerWhisker, p)
             val upperWhisker = SvgLineElement(middleX, y, middleX, y + height * whiskerSize)
-            GeomHelper.Companion.decorate(upperWhisker, p)
+            GeomHelper.decorate(upperWhisker, p)
             g.children().add(lowerWhisker)
             g.children().add(upperWhisker)
         }
