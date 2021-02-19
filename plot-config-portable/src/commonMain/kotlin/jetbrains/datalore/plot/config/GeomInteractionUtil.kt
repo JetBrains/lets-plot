@@ -72,7 +72,7 @@ object GeomInteractionUtil {
 
         val builder = initGeomInteractionBuilder(renders, geomKind, statKind, isContinuousX, isCrosshairEnabled)
 
-        if (multilayer) {
+        if (multilayer && !isCrosshairEnabled) {
             // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot.
             // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
             // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
