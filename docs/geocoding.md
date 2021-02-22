@@ -108,14 +108,15 @@ Note that an internet connection is required to execute geocoding queries.
 ## Examples
                      
 * Various geocoding cases with maps: [geocoding_examples.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geocoding_examples.ipynb)
+                      
+* Mapping US Household Income:
+<a href="https://www.kaggle.com/alshan/mapping-us-household-income" title="View at Kaggle">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+</a>
 
 * Geocoding the US counties: [map_US_household_income.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_US_household_income.ipynb)
 
 * Visualization of the Titanic's voyage:
-<a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_titanic.ipynb"> 
-    <img src="https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.png" width="109" height="20" align="left">
-</a>
-<span>&nbsp;&nbsp;</span>
 <a href="https://view.datalore.io/notebook/1h4h0HMctRKJLY64PBe63a" title="View in Datalore"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_datalore.svg" width="20" height="20">
 </a>
