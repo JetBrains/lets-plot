@@ -140,6 +140,9 @@ Note that an internet connection is required to execute geocoding queries.
 
 <a id="reference"></a>
 ## Reference
+     
+The ['geocoding_reference'](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geocoding_reference.ipynb) 
+notebook contains a demonstration code covering use-cases presented in this section. 
 
 <a id="levels"></a>
 ### Levels
