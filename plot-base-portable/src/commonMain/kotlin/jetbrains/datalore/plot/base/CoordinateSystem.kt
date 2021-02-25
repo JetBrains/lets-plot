@@ -22,6 +22,8 @@ interface CoordinateSystem {
 
     fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean
 
+    fun isPointVisible(p: DoubleVector): Boolean
+
     val xLimitRange: ClosedRange<Double>?
 
     val yLimitRange: ClosedRange<Double>?

@@ -35,6 +35,10 @@ internal class BogusCoordinateSystem : CoordinateSystem {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
+    override fun isPointVisible(p: DoubleVector): Boolean {
+        throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
+    }
+
     override val xLimitRange: ClosedRange<Double>
         get() = throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
 

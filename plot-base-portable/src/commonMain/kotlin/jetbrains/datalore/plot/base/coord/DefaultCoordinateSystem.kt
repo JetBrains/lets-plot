@@ -33,8 +33,7 @@ internal class DefaultCoordinateSystem(
     }
 
     override fun isPointInLimits(p: DoubleVector): Boolean {
-        val coord = fromClient(p)
-        return (xLim?.contains(coord.x) ?: true) && (yLim?.contains(coord.y) ?: true)
+        return checkPointForLimits(p) { fromClient(it) }
     }
 
     override fun isRectInLimits(rect: DoubleRectangle): Boolean {
@@ -49,6 +48,15 @@ internal class DefaultCoordinateSystem(
     override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
         val bbox = DoubleRectangles.boundingBox(polygon)
         return isRectInLimits(bbox)
+    }
+
+    override fun isPointVisible(p: DoubleVector): Boolean {
+        return checkPointForLimits(p) { it }
+    }
+
+    private fun checkPointForLimits(p: DoubleVector, toLocation: (DoubleVector) -> DoubleVector): Boolean {
+        val coord = toLocation(p)
+        return (xLim?.contains(coord.x) ?: true) && (yLim?.contains(coord.y) ?: true)
     }
 
     override val xLimitRange: ClosedRange<Double>?
