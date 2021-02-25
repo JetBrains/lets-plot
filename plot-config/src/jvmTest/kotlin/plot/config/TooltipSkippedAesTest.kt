@@ -181,8 +181,9 @@ class TooltipSkippedAesTest {
     companion object {
 
         private fun createGeomLayers(spec: String): List<GeomLayer> {
-            val plotSpec = PlotConfigServerSide.processTransform(parsePlotSpec(spec))
-            return PlotConfigClientSideUtil.createPlotAssembler(plotSpec).layersByTile.single()
+            val transformed = PlotConfigServerSide.processTransform(parsePlotSpec(spec))
+            val config = PlotConfigClientSide.create(transformed) {}
+            return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single()
         }
 
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {

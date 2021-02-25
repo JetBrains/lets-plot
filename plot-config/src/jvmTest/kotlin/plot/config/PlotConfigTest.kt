@@ -31,7 +31,7 @@ class PlotConfigTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        val plotConfig = PlotConfigClientSide.create(opts)
+        val plotConfig = PlotConfigClientSide.create(opts) {}
 
         val scaleConfigs = plotConfig.createScaleConfigs(plotConfig.getList(SCALES))
         assertEquals(1, scaleConfigs.size.toLong())

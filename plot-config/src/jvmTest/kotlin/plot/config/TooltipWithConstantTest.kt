@@ -99,7 +99,8 @@ class TooltipWithConstantTest {
             "layers": [  { $layerSpec } ]
         }"""
         val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(parsePlotSpec(spec))
-        return PlotConfigClientSideUtil.createPlotAssembler(transformed).layersByTile.single().single()
+        val config = PlotConfigClientSide.create(transformed) {}
+        return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single().single()
     }
 
     private fun getTooltipLines(geomLayer: GeomLayer): List<String> {

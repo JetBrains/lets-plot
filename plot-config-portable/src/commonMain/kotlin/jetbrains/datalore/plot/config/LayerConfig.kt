@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
@@ -74,6 +75,10 @@ class LayerConfig(
             checkState(!clientSide)
             return mySamplings
         }
+
+    val isLiveMap: Boolean
+        get() = geomProto.geomKind == GeomKind.LIVE_MAP
+
 
     init {
         val (layerMappings, layerData) = createDataFrame(

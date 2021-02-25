@@ -15,7 +15,7 @@ object TestUtil {
 
 
     fun assertClientWontFail(opts: Map<String, Any>): PlotConfigClientSide {
-        return PlotConfigClientSide.create(opts)
+        return PlotConfigClientSide.create(opts) {}
     }
 
     fun getPlotData(plotSpec: Map<String, Any>): Map<String, Any> {
@@ -41,7 +41,7 @@ object TestUtil {
     private fun getMap(opts: Map<String, Any>, key: String): Map<String, Any> {
         val map = opts[key]
         @Suppress("UNCHECKED_CAST")
-        return map as?  Map<String, Any> ?: emptyMap()
+        return map as? Map<String, Any> ?: emptyMap()
     }
 
     fun checkOptionsClientSide(opts: Map<String, Any>, expectedNumLayers: Int) {

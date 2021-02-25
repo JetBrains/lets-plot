@@ -7,6 +7,7 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import kotlin.math.round
 
 object PlotHtmlExport {
@@ -82,10 +83,15 @@ object PlotHtmlExport {
 
             return when {
                 PlotConfig.isPlotSpec(plotSpec) -> {
-                    val assembler = MonolithicCommon.createPlotAssembler(plotSpec) {
-                        // ignore messages
-                    }
-                    PlotSizeHelper.singlePlotSize(plotSpec, plotSize, null, assembler.facets, assembler.containsLiveMap)
+//                    val assembler = MonolithicCommon.createPlotAssembler(plotSpec) {
+//                        // ignore messages
+//                    }
+//                    PlotSizeHelper.singlePlotSize(plotSpec, plotSize, null, assembler.facets, assembler.containsLiveMap)
+                    val config = PlotConfigClientSide.create(plotSpec) { /*ignore messages*/ }
+                    PlotSizeHelper.singlePlotSize(
+                        plotSpec, plotSize, null,
+                        config.facets, config.containsLiveMap
+                    )
                 }
                 PlotConfig.isGGBunchSpec(plotSpec) -> {
                     PlotSizeHelper.plotBunchSize(plotSpec)
