@@ -193,7 +193,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`)
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -214,14 +214,12 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`)
+    map : `GeoDataFrame`
         Data containing coordinates of lines.
     map_join : str or list
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with `Geocoder` object -
-        map key 'request' will be automatically added.
-        First value in pair - column in `data`.
-        Second value in pair - column in `map`.
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -245,6 +243,31 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
         - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
         - size : line width.
+
+    Note
+    ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
@@ -1801,7 +1824,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`)
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1817,12 +1840,10 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`)
+    map : `GeoDataFrame` or `Geocoder`
         Data contains coordinates of polygon vertices on map.
     map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -1851,27 +1872,30 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
@@ -1963,7 +1987,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`)
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1984,12 +2008,10 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`)
+    map : `GeoDataFrame` or `Geocoder`
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -2018,27 +2040,30 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
@@ -3560,7 +3585,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`)
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3576,12 +3601,10 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `limits()`)
+    map : `GeoDataFrame` or `Geocoder`
         Bounding boxes of geometries will be drawn.
     map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -3612,27 +3635,30 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `limits()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
@@ -3801,7 +3827,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3822,12 +3848,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`)
+    map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     label_format : str
@@ -3868,27 +3892,30 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
