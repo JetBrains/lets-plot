@@ -298,6 +298,31 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
       - map_join=['County_name', 'State_Name']
 
+    Note
+    ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
+
     Examples
     --------
     .. jupyter-execute::
@@ -1991,6 +2016,12 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -2152,6 +2183,12 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Note
+    ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
 
     Note
     ----
@@ -3858,6 +3895,12 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `limits()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -4111,6 +4154,12 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('right') and 1 ('left').
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
     - angle : text rotation angle in degrees.
+
+    Note
+    ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
 
     Note
     ----
