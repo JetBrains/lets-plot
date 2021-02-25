@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
@@ -20,4 +21,8 @@ interface CoordinateSystem {
     fun isPathInLimits(path: List<DoubleVector>): Boolean
 
     fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean
+
+    val xLimitRange: ClosedRange<Double>?
+
+    val yLimitRange: ClosedRange<Double>?
 }

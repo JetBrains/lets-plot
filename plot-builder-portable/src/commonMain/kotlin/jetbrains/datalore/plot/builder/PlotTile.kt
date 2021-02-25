@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
@@ -31,6 +30,7 @@ import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACE
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_V_PADDING
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColHeadHeight
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColLabelSize
+import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
@@ -149,7 +149,12 @@ internal class PlotTile(
             val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
-                layerComponent.clipBounds(DoubleRectangle(ZERO, geomBounds.dimension))
+
+                val xRange = myCoord.xLimitRange ?: ClosedRange(0.0, geomBounds.width)
+                val yRange = myCoord.yLimitRange ?: ClosedRange(0.0, geomBounds.height)
+                val clipRect = GeometryUtil.doubleRange(xRange, yRange)
+
+                layerComponent.clipBounds(clipRect)
                 add(layerComponent)
             }
         }

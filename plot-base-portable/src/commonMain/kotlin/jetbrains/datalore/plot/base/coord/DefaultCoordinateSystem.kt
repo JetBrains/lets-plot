@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.base.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.Comparables.max
+import jetbrains.datalore.base.gcommon.collect.Comparables.min
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -47,5 +49,20 @@ internal class DefaultCoordinateSystem(
     override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
         val bbox = DoubleRectangles.boundingBox(polygon)
         return isRectInLimits(bbox)
+    }
+
+    override val xLimitRange: ClosedRange<Double>?
+        get() = xLim?.let { range -> convertRange(range, myToClientOffsetX) }
+
+    override val yLimitRange: ClosedRange<Double>?
+        get() = yLim?.let { range -> convertRange(range, myToClientOffsetY) }
+
+    private fun convertRange(range: ClosedRange<Double>, translate: (Double) -> Double): ClosedRange<Double> {
+        val l = translate(range.lowerEnd)
+        val u = translate(range.upperEnd)
+        return ClosedRange(
+            min(l, u),
+            max(l, u),
+        )
     }
 }
