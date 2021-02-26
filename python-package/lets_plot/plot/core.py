@@ -61,7 +61,7 @@ def aes(x=None, y=None, **other):
         LetsPlot.setup_html()
         ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
                                 color='black', alpha=.5, size=1)
-        
+
     """
 
     return FeatureSpec('mapping', name=None, x=x, y=y, **other)
