@@ -3,14 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.swing.simple
+package jetbrains.datalore.vis.swing
 
-import jetbrains.datalore.vis.swing.ApplicationContext
-import jetbrains.datalore.vis.swing.PlotComponentProvider
-import jetbrains.datalore.vis.swing.PlotPanel
 import java.awt.Component
 
-class SimplePlotPanel(
+class DefaultPlotPanel(
     plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
     applicationContext: ApplicationContext = SimpleApplicationContext(),

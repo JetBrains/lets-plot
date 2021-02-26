@@ -6,8 +6,7 @@
 package jetbrains.datalore.simpleViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
-import jetbrains.datalore.vis.swing.simple.batik.PlotViewerWindow
-import java.awt.Dimension
+import jetbrains.datalore.vis.swing.batik.PlotViewerWindow
 
 object FacetGridViewerBatik {
     @JvmStatic
