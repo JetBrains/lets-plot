@@ -109,7 +109,7 @@ class LiveMapUiSystem(
                 val attributionText = Text().apply {
                     color = c
                     fontFamily = CONTRIBUTORS_FONT_FAMILY
-                    fontHeight = 11.0
+                    fontSize = 11.0
                     text = listOf(part.text)
                 }
 

@@ -10,18 +10,21 @@ import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
-import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
+import jetbrains.datalore.plot.config.GeomInteractionUtil
+import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
+import jetbrains.datalore.plot.config.Option.Meta
+import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class GeomInteractionBuilderCreationTest {
 
@@ -36,6 +39,7 @@ class GeomInteractionBuilderCreationTest {
             Aes.FILL.name to listOf(4.0)
         )
         val plotOpts = mutableMapOf(
+            Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
             LAYERS to listOf(
                 mapOf(
@@ -57,6 +61,7 @@ class GeomInteractionBuilderCreationTest {
         )
 
         val plotOpts = mutableMapOf(
+            Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
             LAYERS to listOf(
                 mapOf(
@@ -81,6 +86,7 @@ class GeomInteractionBuilderCreationTest {
             Aes.SIZE.name to listOf(1.0)
         )
         val plotOpts = mutableMapOf(
+            Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
             LAYERS to listOf(
                 mapOf(
@@ -148,6 +154,7 @@ class GeomInteractionBuilderCreationTest {
             emptyList()
         }
         val plotOpts = mutableMapOf(
+            Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
             LAYERS to listOf(
                 mapOf(
@@ -161,8 +168,8 @@ class GeomInteractionBuilderCreationTest {
 
     private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>): GeomInteractionBuilder {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
-        val plotConfig = PlotConfigClientSide.create(plotSpec)
-        val layerConfig = PlotConfigClientSide.create(plotSpec).layerConfigs.first()
+        val plotConfig = PlotConfigClientSide.create(plotSpec) {}
+        val layerConfig = plotConfig.layerConfigs.first()
         return GeomInteractionUtil.createGeomInteractionBuilder(
             layerConfig = layerConfig,
             scaleMap = plotConfig.scaleMap,

@@ -29,7 +29,8 @@ class GeoConfigTest {
     private val point = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
     private val multiPoint = """{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 4.0], [5.0, 6.0]]}"""
     private val lineString = """{\"type\": \"LineString\", \"coordinates\": [[7.0, 8.0], [9.0, 10.0]]}"""
-    private val multiLineString = """{\"type\": \"MultiLineString\", \"coordinates\": [[[11.0, 12.0], [13.0, 14.0]], [[15.0, 16.0], [17.0, 18.0]]]}"""
+    private val multiLineString =
+        """{\"type\": \"MultiLineString\", \"coordinates\": [[[11.0, 12.0], [13.0, 14.0]], [[15.0, 16.0], [17.0, 18.0]]]}"""
     private val polygon = """
 |{
 |   \"type\": \"Polygon\", 
@@ -93,7 +94,8 @@ class GeoConfigTest {
         """.trimMargin()
 
     private fun `aes(color='kind'), data=gdf`(geom: String): GeomLayer {
-        return singleGeomLayer("""
+        return singleGeomLayer(
+            """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -109,7 +111,7 @@ class GeoConfigTest {
 
     @Test
     fun `geom_point(aes(color='kind'), gdf)`() {
-        `aes(color='kind'), data=gdf`(geom="point")
+        `aes(color='kind'), data=gdf`(geom = "point")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "kind")
@@ -117,7 +119,7 @@ class GeoConfigTest {
 
     @Test
     fun `geom_rect(aes(color='kind'), gdf)`() {
-        `aes(color='kind'), data=gdf`(geom="rect")
+        `aes(color='kind'), data=gdf`(geom = "rect")
             .assertBinding(Aes.XMIN, RECT_XMIN)
             .assertBinding(Aes.XMAX, RECT_XMAX)
             .assertBinding(Aes.YMIN, RECT_YMIN)
@@ -127,24 +129,25 @@ class GeoConfigTest {
 
     @Test
     fun `geom_polygon(aes(color = 'kind'), gdf)`() {
-        `aes(color='kind'), data=gdf`(geom="polygon")
+        `aes(color='kind'), data=gdf`(geom = "polygon")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "kind")
             .assertGroups(polygonSequence(0) + multiPolygonSequence(1))
-            .assertAes(Aes.COLOR, polygonSequence(Color(102,194,165)) + multiPolygonSequence(Color(252,141,98)))
+            .assertAes(Aes.COLOR, polygonSequence(Color(102, 194, 165)) + multiPolygonSequence(Color(252, 141, 98)))
     }
 
     @Test
     fun `geom_path(aes(color = 'kind'), gdf)`() {
-        `aes(color='kind'), data=gdf`(geom="path")
+        `aes(color='kind'), data=gdf`(geom = "path")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "kind")
     }
 
     private fun `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom: String): GeomLayer {
-        return singleGeomLayer("""
+        return singleGeomLayer(
+            """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -162,7 +165,7 @@ class GeoConfigTest {
 
     @Test
     fun `geom_point(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
-        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom="point")
+        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "point")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "value")
@@ -170,7 +173,7 @@ class GeoConfigTest {
 
     @Test
     fun `geom_polygon(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
-        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom="polygon")
+        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "polygon")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "value")
@@ -180,7 +183,7 @@ class GeoConfigTest {
 
     @Test
     fun `geom_path(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
-        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom="path")
+        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "path")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "value")
@@ -188,7 +191,7 @@ class GeoConfigTest {
 
     @Test
     fun `geom_rect(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
-        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom="rect")
+        `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "rect")
             .assertBinding(Aes.XMIN, RECT_XMIN)
             .assertBinding(Aes.XMAX, RECT_XMAX)
             .assertBinding(Aes.YMIN, RECT_YMIN)
@@ -197,7 +200,8 @@ class GeoConfigTest {
     }
 
     private fun `map=gdf`(geom: String): GeomLayer {
-        return singleGeomLayer("""
+        return singleGeomLayer(
+            """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -206,36 +210,39 @@ class GeoConfigTest {
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}}
             |    }]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
     }
 
-    private fun singleGeomLayer(spec: String) =
-        createPlotAssembler(parsePlotSpec(spec)).layersByTile.single().single()
+    private fun singleGeomLayer(spec: String): GeomLayer {
+        val config = PlotConfigClientSide.create(parsePlotSpec(spec)) {}
+        return createPlotAssembler(config).layersByTile.single().single()
+    }
 
     @Test
     fun `geom_point(map=gdf)`() {
-        `map=gdf`(geom="point")
+        `map=gdf`(geom = "point")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
     }
 
     @Test
     fun `geom_polygon(map=gdf)`() {
-        `map=gdf`(geom="polygon")
+        `map=gdf`(geom = "polygon")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
     }
 
     @Test
     fun `geom_path(map=gdf)`() {
-        `map=gdf`(geom="path")
+        `map=gdf`(geom = "path")
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
     }
 
     @Test
     fun `geom_rect(map=gdf)`() {
-        `map=gdf`(geom="rect")
+        `map=gdf`(geom = "rect")
             .assertBinding(Aes.XMIN, RECT_XMIN)
             .assertBinding(Aes.XMAX, RECT_XMAX)
             .assertBinding(Aes.YMIN, RECT_YMIN)
@@ -245,7 +252,9 @@ class GeoConfigTest {
     @Test
     fun `aes(color'fig'), data=df, map=gdf without map_join should fail`() {
         // don't know how to join data with map without id columns.
-        assertEquals(MAP_JOIN_REQUIRED_MESSAGE, failedTransformToClientPlotConfig("""
+        assertEquals(
+            MAP_JOIN_REQUIRED_MESSAGE, failedTransformToClientPlotConfig(
+                """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -256,14 +265,15 @@ class GeoConfigTest {
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}}
             |    }]
             |}""".trimMargin()
-        )
+            )
         )
     }
 
 
     @Test
     fun `should not throw error on data key missing in map`() {
-        singleGeomLayer("""
+        singleGeomLayer(
+            """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -284,7 +294,8 @@ class GeoConfigTest {
 
     @Test
     fun `should not fail if map has extra entries`() {
-        singleGeomLayer("""
+        singleGeomLayer(
+            """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -347,7 +358,8 @@ class GeoConfigTest {
 
         val europe = Color(102, 194, 165)
         val asia = Color(252, 141, 98)
-        singleGeomLayer("""
+        singleGeomLayer(
+            """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -462,7 +474,8 @@ class GeoConfigTest {
 
     @Test
     fun `should not trigger when positional mapping exist`() {
-        singleGeomLayer("""
+        singleGeomLayer(
+            """
             |{
             |  "kind": "plot",
             |  "layers": [
@@ -506,14 +519,14 @@ class GeoConfigTest {
     private fun GeomLayer.assertGroups(expected: Collection<*>): GeomLayer {
         val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
             .aesthetics.dataPoints().map(DataPointAesthetics::group)
-        assertEquals(expected, actualGroups,"Aes valeus didn't match")
+        assertEquals(expected, actualGroups, "Aes valeus didn't match")
         return this
     }
 
     private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
         val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
             .aesthetics.dataPoints().map { it.get(aes) }
-        assertEquals(expected, actualGroups,"Aes valeus didn't match")
+        assertEquals(expected, actualGroups, "Aes valeus didn't match")
         return this
     }
 }

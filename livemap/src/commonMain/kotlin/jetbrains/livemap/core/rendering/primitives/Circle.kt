@@ -38,11 +38,11 @@ class Circle : RenderBox {
     override fun render(ctx: Context2d) {
         ctx.beginPath()
         ctx.arc(center.x, center.y, dimension.x / 2.0, 0.0, 2 * PI)
-        fillColor?.let { ctx.setFillStyle(it.toCssColor()) }
+        fillColor?.let { ctx.setFillStyle(it) }
         ctx.fill()
 
         strokeWidth?.let { ctx.setLineWidth(it) }
-        strokeColor?.let { ctx.setStrokeStyle(it.toCssColor()) }
+        strokeColor?.let { ctx.setStrokeStyle(it) }
         ctx.stroke()
     }
 }

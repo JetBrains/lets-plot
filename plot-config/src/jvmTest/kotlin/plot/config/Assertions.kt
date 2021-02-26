@@ -26,7 +26,7 @@ fun failedTransformToClientPlotConfig(spec: String): String {
         .let(ServerSideTestUtil::serverTransformWithoutEncoding)
         .let {
             try {
-                PlotConfigClientSide.create(it)
+                PlotConfigClientSide.create(it) {}
             } catch (e: Throwable) {
                 return@let e.localizedMessage as String
             }

@@ -246,8 +246,8 @@ internal class LayerDataPointAestheticsProcessor(
 
                 return { p ->
                     if (SeriesUtil.allFinite(p.x(), p.y(), p.width(), p.height())) {
-                        val w = nonZero(p.width()!! * d.x, 0.1)
-                        val h = nonZero(p.height()!! * d.y, 0.1)
+                        val w = nonZero(p.width()!! * d.x, 1.0)
+                        val h = nonZero(p.height()!! * d.y, 1.0)
                         GeomUtil.rectToGeometry(
                             p.x()!! - w / 2,
                             p.y()!! - h / 2,

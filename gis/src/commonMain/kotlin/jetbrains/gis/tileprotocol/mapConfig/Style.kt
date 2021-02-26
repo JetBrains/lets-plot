@@ -17,7 +17,7 @@ class Style {
     var lineDash: List<Double>? = null
     var labelField: String? = null
     var fontStyle: String? = null
-    var fontface: String? = null
+    var fontFamily: String? = null
     var textTransform: String? = null
     var size: Double? = null
     var wrapWidth: Double? = null

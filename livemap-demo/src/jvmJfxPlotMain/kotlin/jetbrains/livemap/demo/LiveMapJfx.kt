@@ -28,7 +28,7 @@ object LiveMapJfx {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             LiveMapPlotConfigDemoUtil.show(
-                "LiveMap",
+                "LiveMap Jfx",
                 plotSpecList,
                 SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
                 demoComponentSize

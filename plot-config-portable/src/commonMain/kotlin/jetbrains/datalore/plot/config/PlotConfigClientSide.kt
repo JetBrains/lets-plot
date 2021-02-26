@@ -86,10 +86,14 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             return plotSpec
         }
 
-        /**
-         * Tests only (?)
-         */
-        fun create(plotSpec: Map<String, Any>): PlotConfigClientSide {
+        fun create(
+            plotSpec: Map<String, Any>,
+            computationMessagesHandler: ((List<String>) -> Unit)
+        ): PlotConfigClientSide {
+            val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
+            if (computationMessages.isNotEmpty()) {
+                computationMessagesHandler(computationMessages)
+            }
             return PlotConfigClientSide(plotSpec)
         }
     }

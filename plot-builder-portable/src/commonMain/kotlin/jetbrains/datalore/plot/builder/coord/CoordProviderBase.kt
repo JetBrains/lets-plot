@@ -54,15 +54,19 @@ internal abstract class CoordProviderBase(
         yDomain: ClosedRange<Double>,
         yAxisLength: Double
     ): CoordinateSystem {
+        val mapperX = linearMapper(xDomain, xAxisLength)
+        val mapperY = linearMapper(yDomain, yAxisLength)
         return Coords.create(
             MapperUtil.map(
                 xDomain,
-                linearMapper(xDomain, xAxisLength)
+                mapperX
             ),
             MapperUtil.map(
                 yDomain,
-                linearMapper(yDomain, yAxisLength)
-            )
+                mapperY
+            ),
+            xLim?.let { MapperUtil.map(it, mapperX) },
+            yLim?.let { MapperUtil.map(it, mapperY) }
         )
     }
 

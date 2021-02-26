@@ -8,8 +8,8 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
@@ -41,14 +41,20 @@ object DemoAndTest {
             throw IllegalArgumentException(errorMessage)
         }
 
-        if (computationMessagesHandler != null) {
-            val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
-            if (!computationMessages.isEmpty()) {
-                computationMessagesHandler(computationMessages)
+//        if (computationMessagesHandler != null) {
+//            val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
+//            if (!computationMessages.isEmpty()) {
+//                computationMessagesHandler(computationMessages)
+//            }
+//        }
+//
+        val config = PlotConfigClientSide.create(plotSpec) { messages ->
+            if (computationMessagesHandler != null && messages.isNotEmpty()) {
+                computationMessagesHandler(messages)
             }
         }
 
-        val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
+        val assembler = PlotConfigClientSideUtil.createPlotAssembler(config)
         return assembler.createPlot()
     }
 

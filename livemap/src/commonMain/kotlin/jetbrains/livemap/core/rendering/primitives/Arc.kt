@@ -40,7 +40,7 @@ class Arc : RenderBox {
         ctx.arc(center.x, center.y, dimension.x / 2.0, startAngle, startAngle + angle)
 
         strokeWidth?.let { ctx.setLineWidth(it) }
-        strokeColor?.let { ctx.setStrokeStyle(it.toCssColor()) }
+        strokeColor?.let { ctx.setStrokeStyle(it) }
         ctx.stroke()
     }
 }

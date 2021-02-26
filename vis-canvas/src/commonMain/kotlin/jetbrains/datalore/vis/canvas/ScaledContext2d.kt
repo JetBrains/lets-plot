@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
 internal class ScaledContext2d(private val myContext2d: Context2d, private val myScale: Double) :
@@ -20,10 +20,6 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         return value / myScale
     }
 
-    private fun descaled(value: DoubleVector): DoubleVector {
-        return value.mul(1.0 / myScale)
-    }
-
     private fun scaled(values: DoubleArray): DoubleArray {
         if (myScale == 1.0) {
             return values
@@ -35,8 +31,8 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         return res
     }
 
-    private fun scaled(font: String): String {
-        return CssStyleUtil.scaleFont(font, myScale)
+    private fun scaled(font: Context2d.Font): Context2d.Font {
+        return font.copy(fontSize = font.fontSize * myScale)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
@@ -111,11 +107,11 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.restore()
     }
 
-    override fun setFillStyle(color: String?) {
+    override fun setFillStyle(color: Color?) {
         myContext2d.setFillStyle(color)
     }
 
-    override fun setStrokeStyle(color: String?) {
+    override fun setStrokeStyle(color: Color?) {
         myContext2d.setStrokeStyle(color)
     }
 
@@ -123,7 +119,7 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.setGlobalAlpha(alpha)
     }
 
-    override fun setFont(f: String) {
+    override fun setFont(f: Context2d.Font) {
         myContext2d.setFont(scaled(f))
     }
 
@@ -163,10 +159,6 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.bezierCurveTo(scaled(cp1x), scaled(cp1y), scaled(cp2x), scaled(cp2y), scaled(x), scaled(y))
     }
 
-    override fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double) {
-        myContext2d.quadraticCurveTo(scaled(cpx), scaled(cpy), scaled(x), scaled(y))
-    }
-
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
         myContext2d.setLineJoin(lineJoin)
     }
@@ -197,10 +189,6 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
 
     override fun measureText(str: String): Double {
         return descaled(myContext2d.measureText(str))
-    }
-
-    override fun measureText(str: String, font: String): DoubleVector {
-        return descaled(myContext2d.measureText(str, scaled(font)))
     }
 
     override fun clearRect(rect: DoubleRectangle) {

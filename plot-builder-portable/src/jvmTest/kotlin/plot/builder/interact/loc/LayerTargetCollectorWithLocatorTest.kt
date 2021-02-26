@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
-import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import org.mockito.Mockito
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -119,7 +119,8 @@ class LayerTargetCollectorWithLocatorTest {
             return LayerTargetCollectorWithLocator(
                 geomKind = geomKind,
                 lookupSpec = builder.createLookupSpec(),
-                contextualMapping = contextualMapping
+                contextualMapping = contextualMapping,
+                coordinateSystem = Coords.create(origin = DoubleVector.ZERO)
             )
         }
     }
