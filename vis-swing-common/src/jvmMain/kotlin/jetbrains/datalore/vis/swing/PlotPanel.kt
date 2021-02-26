@@ -17,6 +17,7 @@ abstract class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
     application: ApplicationContext,
+    refreshRate: Int = 500  // ms
 ) : JPanel(), Disposable {
     init {
         layout = GridBagLayout() // to center a single child component
@@ -30,7 +31,8 @@ abstract class PlotPanel(
         })
 
         val providedComponent = if (preferredSizeFromPlot) {
-            // Presumably, the outer frame will honor the 'preferred size' of plot component
+            // Build the plot component now with its default size.
+            // So that the container could take plot's preferred size in account.
             rebuildProvidedComponent(null)
         } else {
             null
@@ -38,12 +40,13 @@ abstract class PlotPanel(
 
         addComponentListener(
             ResizeHook(
-                skipFirstRun = preferredSizeFromPlot,
+                plotPanel = this,
                 lastProvidedComponent = providedComponent,
                 plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
                 plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
                 thumbnailIconConsumer = null,
-                application = application
+                application = application,
+                refreshRate = refreshRate
             )
         )
     }
@@ -82,31 +85,34 @@ abstract class PlotPanel(
     }
 
     private class ResizeHook(
-        private var skipFirstRun: Boolean,
+        plotPanel: PlotPanel,
         private var lastProvidedComponent: JComponent?,
         private val plotPreferredSize: (Dimension) -> Dimension,
         private val plotComponentFactory: (Dimension) -> JComponent,
         private var thumbnailIconConsumer: Consumer<in ImageIcon?>?,
-        private val application: ApplicationContext
+        private val application: ApplicationContext,
+        refreshRate: Int // ms
 
     ) : ComponentAdapter() {
+        private var skipThisRun = lastProvidedComponent != null
+
         private var lastPreferredSize: Dimension? = null
 
-        private var runningTimer: Timer = Timer(0) {}
+        private val refreshTimer: Timer = Timer(refreshRate) {
+            rebuildPlotComponent(plotPanel)
+        }.apply { isRepeats = false }
 
         override fun componentResized(e: ComponentEvent?) {
-            if(!runningTimer.isRunning && skipFirstRun) {
-                skipFirstRun = false
+            if (!refreshTimer.isRunning && skipThisRun) {
+                // When in IDEA pligin we can not modify our state
+                // withou letting the application know.
+                application.runWriteAction() {
+                    skipThisRun = false
+                }
                 return
             }
-            runningTimer.stop()
-            runningTimer = Timer(500, ActionListener {
-                val plotContainer = e!!.component!!
-                rebuildPlotComponent(plotContainer)
-            }).apply {
-                isRepeats = false
-            }
-            runningTimer.start()
+            refreshTimer.stop()
+            refreshTimer.restart()
         }
 
         private fun rebuildPlotComponent(plotContainer: Component) {
@@ -147,7 +153,11 @@ abstract class PlotPanel(
                 }
             }
 
-            application.invokeLater(action) { false }
+            application.invokeLater(action) {
+                // "expired"
+                // Other timer is running? Weird but lets wait for the next action.
+                refreshTimer.isRunning
+            }
         }
     }
 }
