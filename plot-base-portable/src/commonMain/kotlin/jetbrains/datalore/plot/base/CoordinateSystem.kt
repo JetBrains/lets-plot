@@ -14,17 +14,15 @@ interface CoordinateSystem {
 
     fun fromClient(p: DoubleVector): DoubleVector
 
-    fun isPointInLimits(p: DoubleVector): Boolean
+    fun isPointInLimits(p: DoubleVector, isClient: Boolean = true): Boolean
 
-    fun isRectInLimits(rect: DoubleRectangle): Boolean
+    fun isRectInLimits(rect: DoubleRectangle, isClient: Boolean = true): Boolean
 
-    fun isPathInLimits(path: List<DoubleVector>): Boolean
+    fun isPathInLimits(path: List<DoubleVector>, isClient: Boolean = true): Boolean
 
-    fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean
+    fun isPolygonInLimits(polygon: List<DoubleVector>, isClient: Boolean = true): Boolean
 
-    fun isPointVisible(p: DoubleVector): Boolean
+    val xClientLimit: ClosedRange<Double>?
 
-    val xLimitRange: ClosedRange<Double>?
-
-    val yLimitRange: ClosedRange<Double>?
+    val yClientLimit: ClosedRange<Double>?
 }

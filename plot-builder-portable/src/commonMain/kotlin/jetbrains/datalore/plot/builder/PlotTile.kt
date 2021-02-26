@@ -150,8 +150,8 @@ internal class PlotTile(
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
 
-                val xRange = myCoord.xLimitRange ?: ClosedRange(0.0, geomBounds.width)
-                val yRange = myCoord.yLimitRange ?: ClosedRange(0.0, geomBounds.height)
+                val xRange = myCoord.xClientLimit ?: ClosedRange(0.0, geomBounds.width)
+                val yRange = myCoord.yClientLimit ?: ClosedRange(0.0, geomBounds.height)
                 val clipRect = GeometryUtil.doubleRange(xRange, yRange)
 
                 layerComponent.clipBounds(clipRect)

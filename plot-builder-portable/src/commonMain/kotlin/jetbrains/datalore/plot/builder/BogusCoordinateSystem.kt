@@ -19,29 +19,25 @@ internal class BogusCoordinateSystem : CoordinateSystem {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isPointInLimits(p: DoubleVector): Boolean {
+    override fun isPointInLimits(p: DoubleVector, isClient: Boolean): Boolean {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isRectInLimits(rect: DoubleRectangle): Boolean {
+    override fun isRectInLimits(rect: DoubleRectangle, isClient: Boolean): Boolean {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isPathInLimits(path: List<DoubleVector>): Boolean {
+    override fun isPathInLimits(path: List<DoubleVector>, isClient: Boolean): Boolean {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
+    override fun isPolygonInLimits(polygon: List<DoubleVector>, isClient: Boolean): Boolean {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isPointVisible(p: DoubleVector): Boolean {
-        throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
-    }
-
-    override val xLimitRange: ClosedRange<Double>
+    override val xClientLimit: ClosedRange<Double>
         get() = throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
 
-    override val yLimitRange: ClosedRange<Double>
+    override val yClientLimit: ClosedRange<Double>
         get() = throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
 }

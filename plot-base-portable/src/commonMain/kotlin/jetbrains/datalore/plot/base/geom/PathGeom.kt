@@ -60,7 +60,7 @@ open class PathGeom : GeomBase() {
         val dataPoints = dataPoints(aesthetics).filter { p ->
             val x = p.x()
             val y = p.y()
-            SeriesUtil.allFinite(x, y) && coord.isPointVisible(DoubleVector(x!!,y!!))
+            SeriesUtil.allFinite(x, y) && coord.isPointInLimits(DoubleVector(x!!,y!!), isClient = false)
         }
 
         LinePathConstructor(
