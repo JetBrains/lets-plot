@@ -36,13 +36,13 @@ class PieSectorComponent : EcsComponent {
 }
 
 class StyleComponent : EcsComponent {
-    var fillColor: String? = null
-    var strokeColor: String? = null
+    var fillColor: Color? = null
+    var strokeColor: Color? = null
     var strokeWidth: Double = 0.0
     var lineDash: DoubleArray? = null
 }
 
 fun StyleComponent.setLineDash(lineDash: List<Double>) { this.lineDash = lineDash.toDoubleArray() }
-fun StyleComponent.setFillColor(fillColor: Color) { this.fillColor = fillColor.toCssColor() }
-fun StyleComponent.setStrokeColor(strokeColor: Color) { this.strokeColor = strokeColor.toCssColor() }
+fun StyleComponent.setFillColor(fillColor: Color) { this.fillColor = fillColor }
+fun StyleComponent.setStrokeColor(strokeColor: Color) { this.strokeColor = strokeColor }
 fun StyleComponent.setStrokeWidth(strokeWidth: Double) { this.strokeWidth = strokeWidth }

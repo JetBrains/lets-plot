@@ -50,7 +50,9 @@ include 'base-portable',
         'jvm-package:jvm-publish-common',
         'jvm-package:jvm-publish-jfx',
         'jvm-package:jvm-publish-batik',
-        'test-common'
+        'test-common',
+        'vis-swing-common',
+        'vis-swing-batik'
 
 
 

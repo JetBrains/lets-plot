@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_COLOR
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
+import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
@@ -49,6 +50,7 @@ class TooltipColorTest {
                 TOOLTIP_COLOR to tooltipColor
             )
             val plotOpts = mutableMapOf(
+                Meta.KIND to Meta.Kind.PLOT,
                 MAPPING to mapOf(Aes.X.name to listOf(1.0), Aes.Y.name to listOf(1.0)),
                 LAYERS to listOf(
                     mapOf(
@@ -58,7 +60,8 @@ class TooltipColorTest {
                 )
             )
             val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts)
-            return PlotConfigClientSideUtil.createPlotAssembler(transformed).layersByTile.single().single()
+            val config = PlotConfigClientSide.create(transformed) {}
+            return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single().single()
         }
 
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {

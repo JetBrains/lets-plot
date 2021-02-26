@@ -10,10 +10,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.PlotContainerPortable
-//import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.config.*
-//import jetbrains.datalore.plot.livemap.LiveMapUtil
+import jetbrains.datalore.plot.config.BunchConfig
+import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svgToString.SvgToString
 
@@ -123,17 +124,24 @@ object MonolithicCommon {
     ): PlotBuildInfo {
 
         val computationMessages = ArrayList<String>()
-        val assembler = createPlotAssembler(plotSpec) {
+        val config = PlotConfigClientSide.create(plotSpec) {
             computationMessages.addAll(it)
         }
+//        val assembler = createPlotAssembler(plotSpec) {
+//            computationMessages.addAll(it)
+//        }
 
         val preferredSize = ValueProperty(
             PlotSizeHelper.singlePlotSize(
                 plotSpec,
-                plotSize, plotMaxWidth, assembler.facets, assembler.containsLiveMap
+                plotSize,
+                plotMaxWidth,
+                config.facets,
+                config.containsLiveMap
             )
         )
 
+        val assembler = createPlotAssembler(config)
         return PlotBuildInfo(
             assembler,
             plotSpec,
@@ -144,16 +152,17 @@ object MonolithicCommon {
     }
 
     internal fun createPlotAssembler(
-        plotSpec: MutableMap<String, Any>,
-        computationMessagesHandler: ((List<String>) -> Unit)
+//        plotSpec: MutableMap<String, Any>,
+//        computationMessagesHandler: ((List<String>) -> Unit)
+        config: PlotConfigClientSide
     ): PlotAssembler {
 
-        val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
-        if (computationMessages.isNotEmpty()) {
-            computationMessagesHandler(computationMessages)
-        }
+//        val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
+//        if (computationMessages.isNotEmpty()) {
+//            computationMessagesHandler(computationMessages)
+//        }
 
-        return PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
+        return PlotConfigClientSideUtil.createPlotAssembler(config)
     }
 
     private fun throwTestingErrors() {

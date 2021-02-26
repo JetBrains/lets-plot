@@ -10,20 +10,31 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 object Coords {
-    fun create(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>): CoordinateSystem {
+    fun create(
+        xRange: ClosedRange<Double>,
+        yRange: ClosedRange<Double>,
+        xLim: ClosedRange<Double>? = null,
+        yLim: ClosedRange<Double>? = null
+    ): CoordinateSystem {
         val origin = DoubleVector(
             originX(xRange),
             originY(yRange)
         )
-        return create(origin)
+        return create(origin, xLim, yLim)
     }
 
-    fun create(origin: DoubleVector): CoordinateSystem {
+    fun create(
+        origin: DoubleVector,
+        xLim: ClosedRange<Double>? = null,
+        yLim: ClosedRange<Double>? = null
+    ): CoordinateSystem {
         return DefaultCoordinateSystem(
             toClientOffsetX(origin.x),
             toClientOffsetY(origin.y),
             fromClientOffsetX(origin.x),
-            fromClientOffsetY(origin.y)
+            fromClientOffsetY(origin.y),
+            xLim,
+            yLim
         )
     }
 

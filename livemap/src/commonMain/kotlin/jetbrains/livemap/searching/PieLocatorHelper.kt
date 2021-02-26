@@ -29,7 +29,7 @@ class PieLocatorHelper : LocatorHelper {
     }
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor?.let(::parseRGB)
+        return target.get<StyleComponent>().fillColor
     }
 
     private fun isCoordinateInPieSector(coord: Vec<Client>, origin: Vec<Client>, pieSector: PieSectorComponent): Boolean {

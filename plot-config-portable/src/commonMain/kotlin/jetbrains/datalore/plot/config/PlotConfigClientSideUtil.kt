@@ -31,11 +31,18 @@ object PlotConfigClientSideUtil {
         return guideOptionsByAes
     }
 
-    fun createPlotAssembler(opts: Map<String, Any>): PlotAssembler {
-        val config = PlotConfigClientSide.create(opts)
+//    fun createPlotAssembler(opts: Map<String, Any>): PlotAssembler {
+//        return createPlotAssembler(PlotConfigClientSide(opts))
+//    }
+
+    fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
-        val assembler =
-            PlotAssembler.multiTile(config.scaleMap, layersByTile, config.coordProvider, config.theme)
+        val assembler = PlotAssembler.multiTile(
+            config.scaleMap,
+            layersByTile,
+            config.coordProvider,
+            config.theme
+        )
         assembler.setTitle(config.title)
         assembler.setGuideOptionsMap(config.guideOptionsMap)
         assembler.facets = config.facets

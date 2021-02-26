@@ -48,8 +48,11 @@ class RibbonGeom : GeomBase() {
         }
     }
 
-    private fun addTarget(p: DataPointAesthetics, collector: GeomTargetCollector, toLocation: (DataPointAesthetics) -> DoubleVector?,
-                          helper: GeomHelper
+    private fun addTarget(
+        p: DataPointAesthetics,
+        collector: GeomTargetCollector,
+        toLocation: (DataPointAesthetics) -> DoubleVector?,
+        helper: GeomHelper
     ) {
         val coord = toLocation(p)
         if (coord != null) {

@@ -10,6 +10,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation project(':base')
                 implementation project(':base-portable')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-builder-portable')

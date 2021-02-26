@@ -32,8 +32,9 @@ The following `ggplot2` geometry can be used with interactive maps:
 
 Examples:
 
-* [map_quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_quickstart.ipynb)
-* [map_california_housing.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map-california-housing/map_california_housing.ipynb)
+* Interactive maps: quick start: <a href="https://datalore.jetbrains.com/view/notebook/cwDq8gX5UGidzo65RY85yP" title="View in Datalore">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_datalore.svg" width="20" height="20">
+  </a>
 * Visualization of the Titanic's Voyage: <a href="https://view.datalore.jetbrains.com/notebook/1h4h0HMctRKJLY64PBe63a?force_sso=true" title="View in Datalore"> 
                                              <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_datalore.svg" width="20" height="20">
                                          </a>
@@ -55,5 +56,9 @@ Examples:
                                          <a href="https://colab.research.google.com/drive/1lwOyQx0UMBHFiLtXQZhXQpv5Z3M2XJI4?usp=sharing" title="View at Colab"> 
                                            <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
                                          </a>
+* Mapping US Household Income:          <a href="https://www.kaggle.com/alshan/mapping-us-household-income" title="View at Kaggle">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+  </a>
+* [map_california_housing.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map-california-housing/map_california_housing.ipynb)
                                          
  

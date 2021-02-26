@@ -67,6 +67,7 @@ kotlin {
             dependencies {
                 implementation project(':vis-svg-mapper-batik')
                 implementation project(':vis-demo-common-batik')
+                implementation project(':vis-swing-batik')
             }
         }
         jvmJfxMain {

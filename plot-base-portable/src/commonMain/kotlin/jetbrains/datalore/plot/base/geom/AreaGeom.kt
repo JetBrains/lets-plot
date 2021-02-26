@@ -53,9 +53,9 @@ open class AreaGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         for (multiPointData in multiPointDataList) {
             targetCollector.addPath(
-                    multiPointData.points,
-                    multiPointData.localToGlobalIndex,
-                    setupTooltipParams(multiPointData.aes)
+                multiPointData.points,
+                multiPointData.localToGlobalIndex,
+                setupTooltipParams(multiPointData.aes)
             )
         }
     }

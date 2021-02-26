@@ -92,6 +92,7 @@ class DropUnusedDataTest {
 
         val bins = 6
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "             'x': 'x'" +
                 "           }," +
@@ -138,6 +139,7 @@ class DropUnusedDataTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'layers': [" +
                 "               {" +
                 "                  'geom':  {" +
@@ -167,6 +169,7 @@ class DropUnusedDataTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'layers': [" +
@@ -209,6 +212,7 @@ class DropUnusedDataTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'layers': [" +
@@ -249,6 +253,7 @@ class DropUnusedDataTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'layers': [" +
@@ -293,6 +298,7 @@ class DropUnusedDataTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'layers': [" +
@@ -331,6 +337,7 @@ class DropUnusedDataTest {
         val bins = 20
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "             'x': 'x'," +
                 "             'y': 'y'," +
@@ -369,6 +376,7 @@ class DropUnusedDataTest {
         val bins = 20
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "             'x': 'x'," +
                 "             'y': 'y'," +
@@ -414,6 +422,7 @@ class DropUnusedDataTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'mapping': {" +
@@ -461,6 +470,7 @@ class DropUnusedDataTest {
 
         val bins = 6
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "             'x': 'x'" +
                 "           }," +
@@ -501,6 +511,7 @@ class DropUnusedDataTest {
         val bins = 20
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "             'x': 'x'," +
                 "             'y': 'y'" +

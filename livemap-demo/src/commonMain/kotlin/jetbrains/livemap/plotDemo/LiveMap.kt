@@ -15,16 +15,16 @@ class LiveMap : PlotConfigDemoBase() {
             barWithNanValuesInData(),
             //pieWithNullValuesInData(),
             //barWithNullValuesInData()
-//            multiLayerTooltips(),
-//            mapJoinBar()
-//            antiMeridian()
-//            tooltips()
+//            multiLayerTooltips()
+//            mapJoinBar(),
+//            antiMeridian(),
+//            tooltips(),
 //            symbol_point(),
 //            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
 //            bunch(),
-//            facet()
+//           facet()
         )
     }
 

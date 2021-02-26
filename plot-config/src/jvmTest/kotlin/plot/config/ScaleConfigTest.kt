@@ -173,6 +173,7 @@ class ScaleConfigTest {
         """.trimIndent()
 
         val opts = parsePlotSpec(spec)
-        PlotConfigClientSideUtil.createPlotAssembler(opts)
+        val config = PlotConfigClientSide.create(opts) {}
+        PlotConfigClientSideUtil.createPlotAssembler(config)
     }
 }

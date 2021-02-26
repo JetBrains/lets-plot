@@ -23,6 +23,9 @@ object PlotSizeHelper {
     private val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
 
 
+    /**
+     * Plot spec can be either raw or processed
+     */
     fun singlePlotSize(
         plotSpec: Map<*, *>,
         plotSize: DoubleVector?,
@@ -65,6 +68,9 @@ object PlotSizeHelper {
         return plotBounds
     }
 
+    /**
+     * Expects 'processed specs' (aka client specs)
+     */
     internal fun bunchItemSize(bunchItem: BunchConfig.BunchItem): DoubleVector {
         return if (bunchItem.hasSize()) {
             bunchItem.size

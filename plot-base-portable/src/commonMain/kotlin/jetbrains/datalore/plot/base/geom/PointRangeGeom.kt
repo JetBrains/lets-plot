@@ -91,7 +91,7 @@ class PointRangeGeom : GeomBase() {
                     val width = shapeSize + strokeWidth
 
                     val origin = DoubleVector(x - width / 2, y)
-                    val dimensions = DoubleVector(width, 0.0 )
+                    val dimensions = DoubleVector(width, 0.0)
                     DoubleRectangle(origin, dimensions)
                 } else {
                     null

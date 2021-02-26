@@ -222,7 +222,8 @@ class ScaleConfigLabelsTest {
             SCALES to scales
         )
         val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts)
-        return PlotConfigClientSideUtil.createPlotAssembler(transformed).layersByTile.single().single()
+        val config = PlotConfigClientSide.create(transformed) {}
+        return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single().single()
     }
 
     private fun getScaleLabels(

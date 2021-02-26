@@ -10,18 +10,21 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.shape.FillRule
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.shape.StrokeLineJoin
-import javafx.scene.text.Font
-import javafx.scene.text.Text
-import javafx.scene.text.TextAlignment
+import javafx.scene.text.*
+import javafx.scene.text.Font.font
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.CssFontParser
 import javafx.scene.paint.Color as JavafxColor
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
+
+    init {
+        setLineCap(Context2d.LineCap.BUTT)
+    }
+
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): StrokeLineJoin {
         return when (lineJoin) {
             Context2d.LineJoin.BEVEL -> StrokeLineJoin.BEVEL
@@ -40,10 +43,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
 
     private fun convertTextBaseline(baseline: Context2d.TextBaseline): VPos {
         return when (baseline) {
-            Context2d.TextBaseline.ALPHABETIC -> VPos.BOTTOM
+            Context2d.TextBaseline.ALPHABETIC -> VPos.BASELINE
             Context2d.TextBaseline.BOTTOM -> VPos.BOTTOM
-            Context2d.TextBaseline.HANGING -> VPos.TOP
-            Context2d.TextBaseline.IDEOGRAPHIC -> VPos.BOTTOM
             Context2d.TextBaseline.MIDDLE -> VPos.CENTER
             Context2d.TextBaseline.TOP -> VPos.TOP
         }
@@ -53,19 +54,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         return when (align) {
             Context2d.TextAlign.CENTER -> TextAlignment.CENTER
             Context2d.TextAlign.END -> TextAlignment.RIGHT
-            Context2d.TextAlign.LEFT -> TextAlignment.LEFT
-            Context2d.TextAlign.RIGHT -> TextAlignment.RIGHT
             Context2d.TextAlign.START -> TextAlignment.LEFT
         }
     }
 
-    private fun convertCssFont(fontString: String): Font {
-        val parser = CssFontParser.create(fontString)
-                ?: throw IllegalStateException("Could not parse css font string: $fontString")
-
-        val family = parser.fontFamily
-        val size = parser.fontSize
-        return if (size == null) Font.font(family) else Font.font(family, size)
+    private fun Color.toJavafxColor(): JavafxColor {
+        return JavafxColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
@@ -126,16 +120,29 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
-        var s = toDegrees(startAngle)
-        var e = toDegrees(endAngle)
+        var start = toDegrees(startAngle) % 360
+        var end = toDegrees(endAngle) % 360
+        var length: Double
 
-        if (anticlockwise) {
-            s = if (s < e) s + 360 else s
+        if (start == end && startAngle != endAngle) {
+            length = 360.0
         } else {
-            e = if (e < s) e + 360 else e
+            if (start > end && end < 0) {
+                end += 360
+            } else if (start > end && end >=0 ) {
+                start -= 360
+            }
+
+            length = end - start
         }
 
-        myContext2d.arc(x, y, radius, radius, -s, s - e )
+        if (anticlockwise) {
+            if (length != 0.0 && length != 360.0) {
+                length -= 360
+            }
+        }
+
+        myContext2d.arc(x, y, radius, radius, -start, -length )
     }
 
     override fun save() {
@@ -146,20 +153,35 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.restore()
     }
 
-    override fun setFillStyle(color: String?) {
-        myContext2d.fill = if (color != null) JavafxColor.valueOf(color) else null
+    override fun setFillStyle(color: Color?) {
+        myContext2d.fill = color?.toJavafxColor() ?: JavafxColor.BLACK
     }
 
-    override fun setStrokeStyle(color: String?) {
-        myContext2d.stroke = if (color != null) JavafxColor.valueOf(color) else null
+    override fun setStrokeStyle(color: Color?) {
+        myContext2d.stroke = color?.toJavafxColor() ?: JavafxColor.BLACK
     }
 
     override fun setGlobalAlpha(alpha: Double) {
         myContext2d.globalAlpha = alpha
     }
 
-    override fun setFont(f: String) {
-        myContext2d.font = convertCssFont(f)
+    private fun Context2d.Font.toJavaFxFont(): Font {
+        val weight: FontWeight = when (fontWeight) {
+            Context2d.Font.FontWeight.NORMAL -> FontWeight.NORMAL
+            Context2d.Font.FontWeight.BOLD -> FontWeight.BOLD
+        }
+
+        val posture: FontPosture = when (fontStyle) {
+            Context2d.Font.FontStyle.NORMAL -> FontPosture.REGULAR
+            Context2d.Font.FontStyle.ITALIC -> FontPosture.ITALIC
+        }
+
+        // In Javafx FontPosture will not work, for fonts without italics
+        return font(fontFamily, weight, posture, fontSize)
+    }
+
+    override fun setFont(f: Context2d.Font) {
+        myContext2d.font = f.toJavaFxFont()
     }
 
     override fun setLineWidth(lineWidth: Double) {
@@ -198,10 +220,6 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
-    override fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double) {
-        myContext2d.quadraticCurveTo(cpx, cpy, x, y)
-    }
-
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
         myContext2d.lineJoin = convertLineJoin(lineJoin)
     }
@@ -230,12 +248,6 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         val text = Text(str)
         text.font = myContext2d.font
         return text.layoutBounds.width
-    }
-
-    override fun measureText(str: String, font: String): DoubleVector {
-        val text = Text(str)
-        text.font = convertCssFont(font)
-        return DoubleVector(text.layoutBounds.width, text.layoutBounds.height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {

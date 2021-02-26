@@ -42,6 +42,9 @@ abstract class PlotConfig(
     protected open val isClientSide: Boolean
         get() = false
 
+    val containsLiveMap: Boolean
+        get() = layerConfigs.any(LayerConfig::isLiveMap)
+
     init {
 
         val (plotMappings, plotData) = DataMetaUtil.createDataFrame(

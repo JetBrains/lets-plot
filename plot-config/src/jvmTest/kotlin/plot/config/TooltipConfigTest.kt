@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
+import jetbrains.datalore.plot.config.Option.Meta.KIND
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
@@ -533,6 +534,7 @@ class TooltipConfigTest {
             tooltips: Any?
         ): GeomLayer {
             val plotOpts = mutableMapOf(
+                KIND to Option.Meta.Kind.PLOT,
                 DATA to data,
                 MAPPING to mapping,
                 LAYERS to listOf(
@@ -543,7 +545,8 @@ class TooltipConfigTest {
                 )
             )
             val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts)
-            return PlotConfigClientSideUtil.createPlotAssembler(transformed).layersByTile.single().single()
+            val config = PlotConfigClientSide.create(transformed) {}
+            return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single().single()
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {

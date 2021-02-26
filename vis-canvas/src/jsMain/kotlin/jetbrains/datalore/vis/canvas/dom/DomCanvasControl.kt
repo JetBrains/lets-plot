@@ -49,7 +49,7 @@ class DomCanvasControl(
 ) : CanvasControl {
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
-        return object : DomAnimationTimer(myRootElement) {
+        return object : DomAnimationTimer() {
             override fun handle(millisTime: Long) {
                 eventHandler.onEvent(millisTime)
             }

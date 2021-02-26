@@ -19,7 +19,7 @@ import jetbrains.livemap.rendering.StyleComponent
 class BarLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor?.let(::parseRGB)
+        return target.get<StyleComponent>().fillColor
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
