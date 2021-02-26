@@ -7,6 +7,7 @@ package jetbrains.datalore.simpleViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
 import jetbrains.datalore.vis.swing.simple.batik.PlotViewerWindow
+import java.awt.Dimension
 
 object AreaViewerBatik {
     @JvmStatic

@@ -10,9 +10,12 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback
 import jetbrains.datalore.vis.swing.PlotComponentProvider
+import javax.swing.JComponent
+import javax.swing.JScrollPane
+import javax.swing.ScrollPaneConstants
 import javax.swing.SwingUtilities
 
-class PlotComponentProviderBatik(
+class DefaultPlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,
     var executor: (() -> Unit) -> Unit = AWT_EDT_EXECUTOR,
@@ -26,7 +29,7 @@ class PlotComponentProviderBatik(
 ) {
 
     companion object {
-        private val LOG = PortableLogging.logger(PlotComponentProviderBatik::class)
+        private val LOG = PortableLogging.logger(DefaultPlotComponentProviderBatik::class)
 
         private val SVG_COMPONENT_FACTORY_BATIK =
             { svg: SvgSvgElement -> BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK) }
@@ -49,6 +52,20 @@ class PlotComponentProviderBatik(
             // Just invoke in the current thread.
             assert(SwingUtilities.isEventDispatchThread()) { "Not an Event Dispatch Thread (EDT)." }
             runnable.invoke()
+        }
+    }
+
+    /**
+     * Override when in in IDEA plugin.
+     * Use: JBScrollPane
+     */
+    override fun createScrollPane(plotComponent: JComponent): JScrollPane {
+        return JScrollPane(
+            plotComponent,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        ).apply {
+            border = null
         }
     }
 }

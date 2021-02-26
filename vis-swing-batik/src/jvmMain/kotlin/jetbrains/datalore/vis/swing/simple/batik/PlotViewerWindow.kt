@@ -15,7 +15,7 @@ import javax.swing.*
 class PlotViewerWindow(
     title: String,
     private val rawSpec: MutableMap<String, Any>,
-    private val winsowSize: Dimension? = null,
+    private val windowSize: Dimension? = null,
     private val preserveAspectRatio: Boolean = false
 ) : JFrame(title) {
     private val rootPanel: JPanel
@@ -34,8 +34,8 @@ class PlotViewerWindow(
         SwingUtilities.invokeLater {
             createWindowContent()
 
-            if (winsowSize != null) {
-                this.size = winsowSize
+            if (windowSize != null) {
+                this.size = windowSize
             } else {
                 this.pack()
             }
@@ -55,7 +55,7 @@ class PlotViewerWindow(
         // Pre-process figure specifications
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
 
-        val componentProvider = PlotComponentProviderBatik(
+        val componentProvider = DefaultPlotComponentProviderBatik(
             processedSpec = processedSpec,
             preserveAspectRatio = preserveAspectRatio,
             computationMessagesHandler = { messages ->
@@ -79,7 +79,7 @@ class PlotViewerWindow(
 
         val plotPanel = SimplePlotPanel(
             plotComponentProvider = componentProvider,
-            preferredSizeFromPlot = winsowSize == null,
+            preferredSizeFromPlot = windowSize == null,
         )
 
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT

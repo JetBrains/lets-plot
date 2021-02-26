@@ -34,6 +34,7 @@ abstract class PlotPanel(
             // Build the plot component now with its default size.
             // So that the container could take plot's preferred size in account.
             rebuildProvidedComponent(null)
+            // ToDo : updateThumbnailIcon()  here.
         } else {
             null
         }
@@ -85,7 +86,7 @@ abstract class PlotPanel(
     }
 
     private class ResizeHook(
-        plotPanel: PlotPanel,
+        private val plotPanel: PlotPanel,
         private var lastProvidedComponent: JComponent?,
         private val plotPreferredSize: (Dimension) -> Dimension,
         private val plotComponentFactory: (Dimension) -> JComponent,
@@ -99,7 +100,7 @@ abstract class PlotPanel(
         private var lastPreferredSize: Dimension? = null
 
         private val refreshTimer: Timer = Timer(refreshRate) {
-            rebuildPlotComponent(plotPanel)
+            rebuildPlotComponent()
         }.apply { isRepeats = false }
 
         override fun componentResized(e: ComponentEvent?) {
@@ -111,46 +112,47 @@ abstract class PlotPanel(
                 }
                 return
             }
+
             refreshTimer.stop()
+
+            if (lastProvidedComponent is JScrollPane) {
+                lastProvidedComponent?.preferredSize = e?.component?.size
+                lastProvidedComponent?.size = e?.component?.size
+                plotPanel.revalidate()
+                return
+            }
+
             refreshTimer.restart()
         }
 
-        private fun rebuildPlotComponent(plotContainer: Component) {
+        private fun rebuildPlotComponent() {
             val action = Runnable {
 
-                val plotContainerSize = plotContainer.size
+                val plotContainerSize = plotPanel.size
                 if (plotContainerSize == null) return@Runnable
 
-                if (lastProvidedComponent is JScrollPane) {
-                    // GGBunch - do not rebuid: it is constant size.
-                    lastProvidedComponent!!.preferredSize = plotContainerSize
-                    lastProvidedComponent!!.size = plotContainerSize
-                } else {
+                check(!(lastProvidedComponent is JScrollPane)) { "Unexpected JScrollPane" }
 
-                    // Single plot
-                    val preferredSize: Dimension = plotPreferredSize(plotContainerSize)
-                    if (lastPreferredSize == preferredSize) {
-                        // No change in size => no need to rebuild plot component
-                        return@Runnable
-                    }
-                    lastPreferredSize = preferredSize
-                    val updateThumbnail = lastProvidedComponent == null
-                    lastProvidedComponent = plotComponentFactory(plotContainerSize)
-                    if (updateThumbnail && thumbnailIconConsumer != null) {
-                        // ToDo
+                // Either updating an existing "single" plot or
+                // creating a new plot (single or GGBunch) for a first time.
+                val preferredSize: Dimension = plotPreferredSize(plotContainerSize)
+                if (lastPreferredSize == preferredSize) {
+                    // No change in size => no need to rebuild plot component
+                    return@Runnable
+                }
+                lastPreferredSize = preferredSize
+                val updateThumbnail = lastProvidedComponent == null
+                lastProvidedComponent = plotComponentFactory(plotContainerSize)
+                if (updateThumbnail && thumbnailIconConsumer != null) {
+                    // ToDo
 //                        com.jetbrains.plugins.letsPlot.figure.ComponentFigure.updateThumbnailIcon(
 //                            com.jetbrains.plugins.letsPlot.figure.ComponentFigure.actualPlotComponent(
 //                                myLastProvidedComponent
 //                            ), myThumbnailIconConsumer
 //                        )
-                    }
-
-                    plotContainer.revalidate()
-
-                    // ToDo: In IDEA plugin ("SciVew"):
-                    // revalidate somethin to force tabbed pane to repaint after resizing
-                    // "thumbnailIconConsumer"?
                 }
+
+                plotPanel.revalidate()
             }
 
             application.invokeLater(action) {

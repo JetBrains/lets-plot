@@ -8,10 +8,11 @@ import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
+import javax.swing.JScrollPane
 import kotlin.math.ceil
 import kotlin.math.floor
 
-open class PlotComponentProvider(
+abstract class PlotComponentProvider(
     private val processedSpec: MutableMap<String, Any>,
     private val preserveAspectRatio: Boolean,
     private val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
@@ -29,13 +30,26 @@ open class PlotComponentProvider(
             DoubleVector(preferredSize.width.toDouble(), preferredSize.height.toDouble())
         }
 
-        return createPlotComponent(
+        val plotComponent = createPlotComponent(
             processedSpec, plotSize,
             svgComponentFactory,
             executor,
             computationMessagesHandler
         )
+        return if (PlotConfig.isGGBunchSpec(processedSpec)) {
+            // GGBunch is always 'original' size => add a scroll pane.
+            val scrollPane = createScrollPane(plotComponent)
+            containerSize?.run {
+                scrollPane.preferredSize = containerSize
+                scrollPane.size = containerSize
+            }
+            scrollPane
+        } else {
+            plotComponent
+        }
     }
+
+    protected abstract fun createScrollPane(plotComponent: JComponent): JScrollPane
 
     companion object {
         private fun createPlotComponent(
