@@ -28,6 +28,20 @@ class DefaultPlotComponentProviderBatik(
     computationMessagesHandler = computationMessagesHandler
 ) {
 
+    /**
+     * Override when in in IDEA plugin.
+     * Use: JBScrollPane
+     */
+    override fun createScrollPane(plotComponent: JComponent): JScrollPane {
+        return JScrollPane(
+            plotComponent,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        ).apply {
+            border = null
+        }
+    }
+
     companion object {
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderBatik::class)
 
@@ -52,20 +66,6 @@ class DefaultPlotComponentProviderBatik(
             // Just invoke in the current thread.
             assert(SwingUtilities.isEventDispatchThread()) { "Not an Event Dispatch Thread (EDT)." }
             runnable.invoke()
-        }
-    }
-
-    /**
-     * Override when in in IDEA plugin.
-     * Use: JBScrollPane
-     */
-    override fun createScrollPane(plotComponent: JComponent): JScrollPane {
-        return JScrollPane(
-            plotComponent,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
-        ).apply {
-            border = null
         }
     }
 }

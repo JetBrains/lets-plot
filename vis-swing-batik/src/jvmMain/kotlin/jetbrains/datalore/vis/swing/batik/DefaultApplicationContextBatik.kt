@@ -3,12 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.swing
+package jetbrains.datalore.vis.swing.batik
 
 import jetbrains.datalore.vis.swing.ApplicationContext
 import javax.swing.SwingUtilities
 
-class SimpleApplicationContext : ApplicationContext {
+class DefaultApplicationContextBatik : ApplicationContext {
     override fun runWriteAction(action: Runnable) {
         action.run()
     }

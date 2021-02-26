@@ -3,12 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.simpleViewer
+package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
-import jetbrains.datalore.vis.swing.batik.PlotViewerWindow
+import jetbrains.datalore.vis.swing.jfx.PlotViewerWindow
+import java.awt.Dimension
 
-object AreaViewerBatik {
+object AreaViewerJfx {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Area()) {

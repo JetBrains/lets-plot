@@ -10,7 +10,7 @@ import java.awt.Component
 class DefaultPlotPanel(
     plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
-    applicationContext: ApplicationContext = SimpleApplicationContext(),
+    applicationContext: ApplicationContext
 ) :
     PlotPanel(
         plotComponentProvider,
