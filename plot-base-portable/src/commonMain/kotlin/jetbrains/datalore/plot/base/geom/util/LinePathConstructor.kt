@@ -62,17 +62,8 @@ class LinePathConstructor(
     private fun createMultiPointDataByGroup(): List<MultiPointData> {
         return MultiPointDataConstructor.createMultiPointDataByGroup(
             myDataPoints,
-            singlePointAppender { p ->
-                myLinesHelper.toClient(
-                    GeomUtil.TO_LOCATION_X_Y(
-                        p
-                    )!!, p
-                )
-            },
-            reducer(
-                DROP_POINT_DISTANCE,
-                myClosePath
-            )
+            singlePointAppender { p -> myLinesHelper.toClient(GeomUtil.TO_LOCATION_X_Y(p)!!, p) },
+            reducer(DROP_POINT_DISTANCE, myClosePath)
         )
     }
 

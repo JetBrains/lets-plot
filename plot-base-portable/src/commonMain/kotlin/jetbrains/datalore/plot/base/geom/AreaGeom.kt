@@ -51,9 +51,9 @@ open class AreaGeom : GeomBase() {
             SeriesUtil.allFinite(x, y) && coord.isPointInLimits(DoubleVector(x!!,y!!), isClient = false)
         }
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints,
-                singlePointAppender { p -> toClient(geomHelper, p) },
-                reducer(0.999, false)
+            dataPoints,
+            singlePointAppender { p -> toClient(geomHelper, p) },
+            reducer(0.999, false)
         )
 
         val targetCollector = getGeomTargetCollector(ctx)
