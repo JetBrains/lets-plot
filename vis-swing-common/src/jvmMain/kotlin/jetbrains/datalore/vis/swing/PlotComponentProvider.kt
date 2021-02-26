@@ -12,19 +12,20 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 open class PlotComponentProvider(
-    private var processedSpec: MutableMap<String, Any>,
-    private var svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-    private var executor: (() -> Unit) -> Unit,
-    private var computationMessagesHandler: ((List<String>) -> Unit)
+    private val processedSpec: MutableMap<String, Any>,
+    private val preserveAspectRatio: Boolean,
+    private val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+    private val executor: (() -> Unit) -> Unit,
+    private val computationMessagesHandler: (List<String>) -> Unit
 ) {
 
     fun getPreferredSize(containerSize: Dimension): Dimension {
-        return preferredFigureSize(processedSpec, containerSize)
+        return preferredFigureSize(processedSpec, preserveAspectRatio, containerSize)
     }
 
     fun createComponent(containerSize: Dimension?): JComponent {
         val plotSize = containerSize?.let {
-            val preferredSize = preferredFigureSize(processedSpec, containerSize)
+            val preferredSize = getPreferredSize(containerSize)
             DoubleVector(preferredSize.width.toDouble(), preferredSize.height.toDouble())
         }
 
@@ -54,24 +55,32 @@ open class PlotComponentProvider(
             )
         }
 
-        private fun preferredFigureSize(figureSpec: Map<String, Any>, containerSize: Dimension): Dimension {
+        private fun preferredFigureSize(
+            figureSpec: Map<String, Any>,
+            preserveAspectRatio: Boolean,
+            containerSize: Dimension
+        ): Dimension {
             val width = containerSize.width
             val height = containerSize.height
 
             return when {
                 PlotConfig.isGGBunchSpec(figureSpec) -> {
-                    // don't scale GGBunch size
+                    // Don't scale GGBunch.
                     val bunchSize = PlotSizeHelper.plotBunchSize(figureSpec)
                     Dimension(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
                 }
                 PlotConfig.isPlotSpec(figureSpec) -> {
-                    // for single plot: scale component to fit in requested size
-//                    val aspectRatio = PlotSizeHelper.figureAspectRatio(figureSpec)
+                    // Singe plot has flexible size.
+                    if (!preserveAspectRatio) {
+                        return containerSize
+                    }
+
                     val config = PlotConfigClientSide.create(figureSpec) { /*ignore messages*/ }
                     val defaultSize = PlotSizeHelper.singlePlotSize(
                         figureSpec, null, null,
                         config.facets, config.containsLiveMap
                     )
+
                     val aspectRatio = defaultSize.x / defaultSize.y
 
                     if (aspectRatio >= 1.0) {

@@ -15,7 +15,8 @@ import javax.swing.*
 class PlotViewerWindow(
     title: String,
     private val rawSpec: MutableMap<String, Any>,
-    private val winsowSize: Dimension? = null
+    private val winsowSize: Dimension? = null,
+    private val preserveAspectRatio: Boolean = false
 ) : JFrame(title) {
     private val rootPanel: JPanel
 
@@ -56,16 +57,10 @@ class PlotViewerWindow(
 
         val componentProvider = PlotComponentProviderBatik(
             processedSpec = processedSpec,
+            preserveAspectRatio = preserveAspectRatio,
             computationMessagesHandler = { messages ->
-                val mmm = messages
-//                val mmm = listOf("a computation message one.")
-//                val mmm = listOf(
-//                    "a computation message one. Long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long",
-//                    "a computation message two.",
-//                    "a computation message three.",
-//                )
-                if (mmm.isNotEmpty()) {
-                    val text = mmm.joinToString(
+                if (messages.isNotEmpty()) {
+                    val text = messages.joinToString(
                         separator = "<br>",
                         prefix = "<html>",
                         postfix = "</html>"
@@ -84,7 +79,7 @@ class PlotViewerWindow(
 
         val plotPanel = SimplePlotPanel(
             plotComponentProvider = componentProvider,
-            preferredSizeFromPlot = winsowSize == null
+            preferredSizeFromPlot = winsowSize == null,
         )
 
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT

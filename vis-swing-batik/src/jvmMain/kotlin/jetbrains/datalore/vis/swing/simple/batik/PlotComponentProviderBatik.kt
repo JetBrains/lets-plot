@@ -14,10 +14,12 @@ import javax.swing.SwingUtilities
 
 class PlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
+    preserveAspectRatio: Boolean,
     var executor: (() -> Unit) -> Unit = AWT_EDT_EXECUTOR,
-    computationMessagesHandler: ((List<String>) -> Unit)
+    computationMessagesHandler: (List<String>) -> Unit
 ) : PlotComponentProvider(
     processedSpec = processedSpec,
+    preserveAspectRatio = preserveAspectRatio,
     svgComponentFactory = SVG_COMPONENT_FACTORY_BATIK,
     executor = executor,
     computationMessagesHandler = computationMessagesHandler

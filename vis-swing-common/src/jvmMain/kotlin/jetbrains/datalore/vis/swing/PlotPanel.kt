@@ -16,8 +16,8 @@ import javax.swing.*
 abstract class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
+    refreshRate: Int = 500,  // ms
     application: ApplicationContext,
-    refreshRate: Int = 500  // ms
 ) : JPanel(), Disposable {
     init {
         layout = GridBagLayout() // to center a single child component

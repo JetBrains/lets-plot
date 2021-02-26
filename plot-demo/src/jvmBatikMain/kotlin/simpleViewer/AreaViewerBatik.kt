@@ -7,7 +7,6 @@ package jetbrains.datalore.simpleViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
 import jetbrains.datalore.vis.swing.simple.batik.PlotViewerWindow
-import java.awt.Dimension
 
 object AreaViewerBatik {
     @JvmStatic
@@ -19,8 +18,9 @@ object AreaViewerBatik {
                 PlotViewerWindow(
                     "Area plot",
                     spec,
-                    null
-//                    Dimension(900, 700)
+                    null,
+//                    Dimension(900, 700),
+                    preserveAspectRatio = false
                 ).open()
             }
         }

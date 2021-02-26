@@ -13,12 +13,12 @@ import java.awt.Component
 class SimplePlotPanel(
     plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
-    applicationContext: ApplicationContext = SimpleApplicationContext()
+    applicationContext: ApplicationContext = SimpleApplicationContext(),
 ) :
     PlotPanel(
         plotComponentProvider,
         preferredSizeFromPlot,
-        applicationContext
+        application = applicationContext
     ) {
     override fun handleChildRemoved(child: Component) {
         // Nothing is needed.
