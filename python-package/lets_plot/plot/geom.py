@@ -120,14 +120,15 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
-        >>> y = np.sin(x)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
+        y = np.sin(x)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
 
     |
 
