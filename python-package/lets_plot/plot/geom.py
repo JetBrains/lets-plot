@@ -32,11 +32,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Point` and `MultiPoint`), optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -46,23 +46,21 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`), optional
+    map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
-    map_join : str or list, optional
+    map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -94,39 +92,43 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
-        >>> y = np.sin(x)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
+        y = np.sin(x)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
 
     |
 
@@ -153,13 +155,13 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         >>> from lets_plot.geo_data import *
         >>> LetsPlot.setup_html()
         >>> data = {'city': ['New York', 'Los Angeles', 'Chicago'], \\
-        >>>         'pop_2020': [18_804_000, 12_447_000, 8_865_000]}
+        >>>         'est_pop_2019': [8_336_817, 3_979_576, 2_693_976]}
         >>> centroids = geocode_cities(data['city']).get_centroids()
         >>> ggplot() + geom_livemap() + \\
-        >>>     geom_point(aes(size='pop_2020'), \\
+        >>>     geom_point(aes(size='est_pop_2019'), \\
         >>>                data=data, map=centroids, map_join='city', \\
         >>>                tooltips=layer_tooltips().line('@city')
-        >>>                                         .line('population|@pop_2020')) + \\
+        >>>                                         .line('population|@est_pop_2019')) + \\
         >>>     ggsize(600, 450)
 
     """
@@ -188,11 +190,11 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`), optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -202,25 +204,23 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `LineString` and `MultiLineString`), optional
+    map : `GeoDataFrame`
         Data containing coordinates of lines.
-    map_join : str or list, optional
-        Pair of names used to join map coordinates with data.
-        str is allowed only when used with `Geocoder` object -
-        map key 'request' will be automatically added.
-        First value in pair - column in `data`.
-        Second value in pair - column in `map`.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -245,6 +245,31 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
         - size : line width.
 
+    Note
+    ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
+
     Examples
     --------
     .. jupyter-execute::
@@ -253,30 +278,28 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> T = 100
-        >>> x = np.cumsum(np.random.normal(size=T))
-        >>> y = np.cumsum(np.random.normal(size=T))
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_path()
+        >>> n = 100
+        >>> t = np.linspace(0, 2 * np.pi, n)
+        >>> data = {'x': t * np.sin(t), 'y': t * np.cos(t)}
+        >>> ggplot(data, aes(x='x', y='y')) + geom_path()
 
     |
 
     .. jupyter-execute::
-        :emphasize-lines: 12-13
+        :emphasize-lines: 11
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
+        >>> T = 50
         >>> np.random.seed(42)
-        >>> t = np.arange(100)
-        >>> x1 = np.cumsum(np.random.normal(size=t.size))
-        >>> x2 = np.cumsum(np.random.normal(size=t.size))
-        >>> df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
-        >>> df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
-        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
-        >>>     geom_path(aes(color='variable'), size=1, alpha=0.5) + \\
-        >>>     geom_path(stat='smooth', color='red', linetype='longdash')
+        >>> x = np.cumsum(np.random.normal(size=2*T))
+        >>> y = np.cumsum(np.random.normal(size=2*T))
+        >>> c = [0] * T + [1] * T
+        >>> data = {'x': x, 'y': y, 'c': c}
+        >>> ggplot(data, aes(x='x', y='y', group='c')) + \\
+        >>>     geom_path(aes(color='c'), size=2, alpha=.5) + \\
+        >>>     scale_color_discrete()
 
     """
     if is_geocoder(map):
@@ -302,11 +325,11 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -316,15 +339,15 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -409,11 +432,11 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='smooth'
@@ -423,20 +446,20 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
-    n : int, optional
+    n : int
         Number of points to evaluate smoother at.
     se : bool, default=True
         Display confidence interval around smooth.
@@ -448,7 +471,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         A sensible value is usually 0.25 to 0.5.
     deg : int, default=1
         Degree of polynomial for linear regression model.
-    seed : int, optional
+    seed : int
         Random seed for 'loess' sampling.
     max_n : int, default=1000
         Maximum number of data-points for 'loess' method.
@@ -561,11 +584,11 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='count'
@@ -575,15 +598,15 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -683,11 +706,11 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -702,21 +725,21 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     bins : int, default=30
         Number of bins. Overridden by `binwidth`.
-    binwidth : float, optional
+    binwidth : float
         The width of the bins. The default is to use bin widths that cover
         the range of the data. You should always override this value,
         exploring multiple widths to find the best to illustrate the stories in your data.
-    center : float, optional
+    center : float
         Specifies x-value to align bin centers to.
-    boundary : float, optional
+    boundary : float
         Specifies x-value to align bin boundary (i.e. point berween bins) to.
     other_args
         Other arguments passed on to the layer.
@@ -811,11 +834,11 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin2d'
@@ -825,15 +848,15 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     bins : list of int, default=[30, 30]
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
-    binwidth : list of float, optional
+    binwidth : list of float
         The width of the bins in both directions, vertical and horizontal.
         Overrides `bins`. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
@@ -940,24 +963,24 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -1017,8 +1040,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         >>> y = np.linspace(-1, 1, n)
         >>> X, Y = np.meshgrid(x, y)
         >>> mean = np.zeros(2)
-        >>> cov =[[1, -.5],
-        >>>       [-.5, 1]]
+        >>> cov = [[1, -.5],
+        >>>        [-.5, 1]]
         >>> rv = multivariate_normal(mean, cov)
         >>> Z = rv.pdf(np.dstack((X, Y)))
         >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
@@ -1047,21 +1070,21 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
     other_args
@@ -1086,29 +1109,26 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 17
 
         >>> import numpy as np
-        >>> from lets_plot import *
         >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> delta = 0.5
-        >>> center_x = 6
-        >>> center_y = 6
-        >>> x = np.arange(-5.0, 5.0, delta)
-        >>> y = np.arange(-5.0, 5.0, delta)
+        >>> np.random.seed(42)
+        >>> n = 25
+        >>> x = np.linspace(-1, 1, n)
+        >>> y = np.linspace(-1, 1, n)
         >>> X, Y = np.meshgrid(x, y)
-        >>> mu = np.array([1, 0])
-        >>> sigma = np.diag([1, 4])
-        >>> mu1 = np.array([0, 0])
-        >>> sigma1 = np.diag([4, 1])
-        >>> Z = multivariate_normal.pdf(np.dstack((X, Y)), mean=mu, cov=sigma)
-        >>> Z = Z - multivariate_normal.pdf(np.dstack((X, Y)), mean=mu1, cov=sigma1)
-        >>> x = X.reshape(-1) + center_x
-        >>> y = Y.reshape(-1) + center_y
-        >>> z = Z.reshape(-1)
-        >>> dat = dict(x=x, y=y, z=z)
-        >>> plot = ggplot(dat, aes('x', 'y')) +  geom_raster(aes(fill='z'))
-        >>> plot
+        >>> mean = np.zeros(2)
+        >>> cov = [[1, -.5],
+        >>>        [-.5, 1]]
+        >>> rv = multivariate_normal(mean, cov)
+        >>> Z = rv.pdf(np.dstack((X, Y)))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data) + \\
+        >>>     geom_raster(aes(x='x', y='y', fill='z')) + \\
+        >>>     scale_fill_gradient(low='#54278f', high='#f2f0f7')
 
     """
     return _geom('raster',
@@ -1128,11 +1148,11 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1142,15 +1162,15 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -1181,23 +1201,39 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> data = {
+        >>>     'x': ['a', 'b', 'c', 'd'],
+        >>>     'ymin': [5, 7, 3, 5],
+        >>>     'ymax': [8, 11, 6, 9],
+        >>> }
+        >>> ggplot(data, aes(x='x')) + \\
+        >>>     geom_errorbar(aes(ymin='ymin', ymax='ymax'))
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 13-14
 
         >>> import numpy as np
+        >>> import pandas as pd
         >>> from lets_plot import *
-        >>> from scipy.stats import multivariate_normal
         >>> LetsPlot.setup_html()
-        >>> N = 10
-        >>> M = 10
-        >>> m = np.random.random(M) * 5.0
-        >>> cov = np.eye(M)
-        >>> W = np.random.multivariate_normal(m, cov, N)
-        >>> se = W.std(axis=1)
-        >>> mean = W.mean(axis=1)
-        >>> ymin = mean - se
-        >>> ymax = mean + se
-        >>> x = np.arange(0, N, 1)
-        >>> dat = dict(x=x, ymin=ymin, ymax=ymax)
-        >>> ggplot(dat, aes(x='x')) + geom_errorbar(aes(ymin='ymin', ymax='ymax'))
+        >>> np.random.seed(42)
+        >>> n = 1000
+        >>> x = np.random.randint(10, size=n)
+        >>> y = np.sqrt(x) + np.random.normal(scale=.3, size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y})
+        >>> err_df = df.groupby('x').agg({'y': ['min', 'max']}).reset_index()
+        >>> err_df.columns = ['x', 'ymin', 'ymax']
+        >>> ggplot() + \\
+        >>>     geom_errorbar(aes(x='x', ymin='ymin', ymax='ymax'), \\
+        >>>                   data=err_df, width=.5, color='red') + \\
+        >>>     geom_point(aes(x='x', y='y'), data=df) + \\
+        >>>     scale_x_continuous(breaks=list(range(10)))
 
     """
     return _geom('errorbar',
@@ -1219,11 +1255,11 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1233,15 +1269,15 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=2.5
@@ -1277,20 +1313,40 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 10
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> data = dict(
-        >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
-        >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
-        >>>     length = [13.23, 22.70, 26.06, 7.98, 16.77, 26.14],
-        >>>     len_min = [11.83, 21.2, 24.50, 4.24, 15.26, 23.35],
-        >>>     len_max = [15.63, 24.9, 27.11, 10.72, 19.28, 28.93]
-        >>> )
-        >>>
-        >>> p = ggplot(data, aes(x='dose', color='supp'))
-        >>> p += geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
-        >>> p
+        >>> data = {
+        >>>     'x': ['a', 'b', 'c', 'd'],
+        >>>     'ymin': [5, 7, 3, 5],
+        >>>     'middle': [6.5, 9, 4.5, 7],
+        >>>     'ymax': [8, 11, 6, 9],
+        >>> }
+        >>> ggplot(data, aes(x='x')) + \\
+        >>>     geom_crossbar(aes(ymin='ymin', middle='middle', ymax='ymax'))
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 14-15
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 800
+        >>> cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(list(cat_list.keys()), n)
+        >>> y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y})
+        >>> err_df = df.groupby('x').agg({'y': ['min', 'median', 'max']}).reset_index()
+        >>> err_df.columns = ['x', 'ymin', 'ymedian', 'ymax']
+        >>> ggplot() + \\
+        >>>     geom_crossbar(aes(x='x', ymin='ymin', middle='ymedian', ymax='ymax', fill='x'), \\
+        >>>                   data=err_df, width=.6, fatten=5) + \\
+        >>>     geom_jitter(aes(x='x', y='y'), data=df, width=.3, shape=1, color='black', alpha=.5)
 
     """
     return _geom('crossbar',
@@ -1314,11 +1370,11 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1328,15 +1384,15 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=5.0
@@ -1372,20 +1428,40 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 10
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> data = dict(
-        >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
-        >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
-        >>>     length = [13.23, 22.70, 26.06, 7.98, 16.77, 26.14],
-        >>>     len_min = [11.83, 21.2, 24.50, 4.24, 15.26, 23.35],
-        >>>     len_max = [15.63, 24.9, 27.11, 10.72, 19.28, 28.93]
-        >>> )
-        >>>
-        >>> p = ggplot(data, aes(x='dose', color='supp'))
-        >>> p += geom_pointrange(aes(ymin='len_min', ymax='len_max', y='length'), fatten=5)
-        >>> p
+        >>> data = {
+        >>>     'x': ['a', 'b', 'c', 'd'],
+        >>>     'ymin': [5, 7, 3, 5],
+        >>>     'y': [6.5, 9, 4.5, 7],
+        >>>     'ymax': [8, 11, 6, 9],
+        >>> }
+        >>> ggplot(data, aes(x='x', y='y')) + \\
+        >>>     geom_pointrange(aes(ymin='ymin', ymax='ymax'))
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 14-16
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 800
+        >>> cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(list(cat_list.keys()), n)
+        >>> y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y})
+        >>> err_df = df.groupby('x').agg({'y': ['min', 'mean', 'max']}).reset_index()
+        >>> err_df.columns = ['x', 'ymin', 'ymean', 'ymax']
+        >>> ggplot(err_df, aes(x='x', y='ymean')) + \\
+        >>>     geom_pointrange(aes(ymin='ymin', ymax='ymax', fill='x'), \\
+        >>>                     show_legend=False, fatten=10, shape=4, \\
+        >>>                     color='red', size=1)
 
     """
     return _geom('pointrange',
@@ -1407,11 +1483,11 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1421,15 +1497,15 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -1459,20 +1535,40 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> data = dict(
-        >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
-        >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
-        >>>     length = [13.23, 22.70, 26.06, 7.98, 16.77, 26.14],
-        >>>     len_min = [11.83, 21.2, 24.50, 4.24, 15.26, 23.35],
-        >>>     len_max = [15.63, 24.9, 27.11, 10.72, 19.28, 28.93]
-        >>> )
-        >>>
-        >>> p = ggplot(data, aes(x='dose', color='supp'))
-        >>> p += geom_linerange(aes(ymin='len_min', ymax='len_max'))
-        >>> p
+        >>> data = {
+        >>>     'x': ['a', 'b', 'c', 'd'],
+        >>>     'ymin': [5, 7, 3, 5],
+        >>>     'ymax': [8, 11, 6, 9],
+        >>> }
+        >>> ggplot(data, aes(x='x')) + \\
+        >>>     geom_linerange(aes(ymin='ymin', ymax='ymax'))
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 14-15
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 800
+        >>> cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(list(cat_list.keys()), n)
+        >>> y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y})
+        >>> err_df = df.groupby('x').agg({'y': ['min', 'max']}).reset_index()
+        >>> err_df.columns = ['x', 'ymin', 'ymax']
+        >>> ggplot() + \\
+        >>>     geom_linerange(aes(x='x', ymin='ymin', ymax='ymax', fill='x'), \\
+        >>>                     data=err_df, show_legend=False, color='black', size=1) + \\
+        >>>     geom_point(aes(x='x', y='y'), data=df, size=4, alpha=.1, color='black', \\
+        >>>                tooltips=layer_tooltips().line('@y'))
 
     """
     return _geom('linerange',
@@ -1495,29 +1591,29 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contour'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth: float, optional
+    binwidth: float
         Distance between levels.
     other_args
         Other arguments passed on to the layer.
@@ -1548,30 +1644,44 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 16
 
         >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
         >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> delta = 0.5
-        >>> center_x = 6
-        >>> center_y = 6
-        >>> x = np.arange(-5.0, 5.0, delta)
-        >>> y = np.arange(-5.0, 5.0, delta)
+        >>> np.random.seed(42)
+        >>> n = 25
+        >>> x = np.linspace(-1, 1, n)
+        >>> y = np.linspace(-1, 1, n)
         >>> X, Y = np.meshgrid(x, y)
-        >>> mu = np.array([1, 0])
-        >>> sigma = np.diag([1, 4])
-        >>> mu1 = np.array([0, 0])
-        >>> sigma1 = np.diag([4, 1])
-        >>> Z = multivariate_normal.pdf(np.dstack((X, Y)), mean=mu, cov=sigma)
-        >>> Z = Z - multivariate_normal.pdf(np.dstack((X, Y)), mean=mu1, cov=sigma1)
-        >>> x = X.reshape(-1) + center_x
-        >>> y = Y.reshape(-1) + center_y
-        >>> z = Z.reshape(-1)
-        >>> dat = dict(x=x, y=y, z=z)
-        >>> p = ggplot(dat, aes('x', 'y')) + geom_tile(aes(fill='z')) + geom_contour(aes(z='z', color='..level..')) + scale_color_gradient(low='dark_green', high='yellow')
-        >>> p
+        >>> mean = np.zeros(2)
+        >>> cov = [[1, .5],
+        >>>        [.5, 1]]
+        >>> rv = multivariate_normal(mean, cov)
+        >>> Z = rv.pdf(np.dstack((X, Y)))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y', z='z')) + geom_contour()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 13
+
+        >>> import numpy as np
+        >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 100
+        >>> a, b = -1, 0
+        >>> x = np.linspace(-3, 3, n)
+        >>> y = np.linspace(-3, 3, n)
+        >>> X, Y = np.meshgrid(x, y)
+        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y', z='z')) + \\
+        >>>     geom_contour(aes(color='..level..'), bins=3, size=1) + \\
+        >>>     scale_color_gradient(low='#dadaeb', high='#3f007d')
 
     """
     return _geom('contour',
@@ -1595,29 +1705,29 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contourf'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth: float, optional
+    binwidth: float
         Distance between levels.
     other_args
         Other arguments passed on to the layer.
@@ -1646,30 +1756,44 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 16
 
         >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
         >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> delta = 0.5
-        >>> center_x = 6
-        >>> center_y = 6
-        >>> x = np.arange(-5.0, 5.0, delta)
-        >>> y = np.arange(-5.0, 5.0, delta)
+        >>> np.random.seed(42)
+        >>> n = 25
+        >>> x = np.linspace(-1, 1, n)
+        >>> y = np.linspace(-1, 1, n)
         >>> X, Y = np.meshgrid(x, y)
-        >>> mu = np.array([1, 0])
-        >>> sigma = np.diag([1, 4])
-        >>> mu1 = np.array([0, 0])
-        >>> sigma1 = np.diag([4, 1])
-        >>> Z = multivariate_normal.pdf(np.dstack((X, Y)), mean=mu, cov=sigma)
-        >>> Z = Z - multivariate_normal.pdf(np.dstack((X, Y)), mean=mu1, cov=sigma1)
-        >>> x = X.reshape(-1) + center_x
-        >>> y = Y.reshape(-1) + center_y
-        >>> z = Z.reshape(-1)
-        >>> dat = dict(x=x, y=y, z=z)
-        >>> p = ggplot(dat, aes('x', 'y', z='z')) + geom_contourf(aes(fill='..level..'))
-        >>> p
+        >>> mean = np.zeros(2)
+        >>> cov = [[1, .5],
+        >>>        [.5, 1]]
+        >>> rv = multivariate_normal(mean, cov)
+        >>> Z = rv.pdf(np.dstack((X, Y)))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y', z='z')) + geom_contourf()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 13
+
+        >>> import numpy as np
+        >>> from scipy.stats import multivariate_normal
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 100
+        >>> a, b = -1, 0
+        >>> x = np.linspace(-3, 3, n)
+        >>> y = np.linspace(-3, 3, n)
+        >>> X, Y = np.meshgrid(x, y)
+        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        >>> ggplot(data, aes(x='x', y='y', z='z')) + \\
+        >>>     geom_contourf(aes(fill='..level..'), bins=3, size=0) + \\
+        >>>     scale_fill_gradient(low='#dadaeb', high='#3f007d')
 
     """
     return _geom('contourf',
@@ -1693,32 +1817,30 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`), optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`), optional
+    map : `GeoDataFrame` or `Geocoder`
         Data contains coordinates of polygon vertices on map.
-    map_join : str or list, optional
+    map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -1747,43 +1869,90 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
 
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> id = ["A", "B", "C", "D", "E", "F"]
-        >>> val = np.random.uniform(3, 3.5, 6)
-        >>> x = np.random.uniform(1, 3, 18)
-        >>> y = np.random.uniform(0, 3, 18)
-        >>> id3 = [v for v in id for _ in range(3)]
-        >>> val3 = [v for v in val for _ in range(3)]
-        >>> dat = dict(id=id3, val=val3, x=x, y=y)
-        >>> ggplot(dat, aes('x', 'y')) + geom_polygon(aes(fill='id'), alpha=0.5)
+        >>> n = 7
+        >>> t = np.linspace(0, 2 * np.pi, 2 * n + 1)
+        >>> r = np.concatenate((np.tile([1, .5], n), [1]))
+        >>> data = {'x': r * np.cos(t), 'y': r * np.sin(t)}
+        >>> ggplot(data, aes(x='x', y='y')) + \\
+        >>>     geom_polygon() + \\
+        >>>     coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 16-17
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from scipy.spatial import Voronoi
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 30
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y})
+        >>> v = Voronoi(list(zip(x, y)))
+        >>> v_df = pd.DataFrame([(i, *v.vertices[v_id]) for i, r in enumerate(v.regions) \\
+        >>>                                             for v_id in r if any(r) and not -1 in r],
+        >>>                     columns=['id', 'x', 'y'])
+        >>> ggplot() + \\
+        >>>     geom_polygon(aes(x='x', y='y', group='id', fill='id'), \\
+        >>>                  data=v_df, show_legend=False, color='white') + \\
+        >>>     geom_point(aes(x='x', y='y'), data=df, shape=21, color='black', fill='white') + \\
+        >>>     scale_fill_discrete() + \\
+        >>>     coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-12
+
+        >>> from lets_plot import *
+        >>> from lets_plot.geo_data import *
+        >>> LetsPlot.setup_html()
+        >>> data = {'city': ['New York', 'Philadelphia'], \\
+        >>>         'est_pop_2019': [8_336_817, 1_584_064]}
+        >>> boundaries = geocode_cities(data['city']).get_boundaries(resolution=15)
+        >>> ggplot() + \\
+        >>> geom_livemap() + \\
+        >>>     geom_polygon(data=data, map=boundaries, map_join='city', \\
+        >>>                  color='black', fill='black', alpha=.1, \\
+        >>>                  tooltips=layer_tooltips().line('@city')\\
+        >>>                                           .line('population|@est_pop_2019'))
 
     """
 
@@ -1811,11 +1980,11 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`), optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1825,23 +1994,21 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `boundaries()`), optional
+    map : `GeoDataFrame` or `Geocoder`
         Data containing region boundaries (coordinates of polygon vertices on map).
-    map_join : str or list, optional
+    map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -1870,43 +2037,58 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 5
 
-        >>> import pandas as pd
-        >>> import numpy as np
         >>> from lets_plot import *
-        >>> import lets_plot.geo_data as gd
+        >>> from lets_plot.geo_data import *
         >>> LetsPlot.setup_html()
-        >>> boundaries = gd.geocode_states(['Texas', 'Iowa', 'Arizona']).scope('US-48').get_boundaries()
-        >>> regions = np.unique(boundaries['found name'])
-        >>> num_of_regions = len(regions)
-        >>> df = pd.DataFrame(regions, columns=['state'])
-        >>> df['value'] = np.random.rand(num_of_regions)
-        >>> ggplot(df) + ggtitle('Randomly colored states') + geom_map(aes(fill='value'), map=boundaries, map_join=('state', 'found name'), color='white')
+        >>> country = geocode_countries('Italy').get_boundaries(resolution=6)
+        >>> ggplot() + geom_map(data=country)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 8-11
+
+        >>> from lets_plot import *
+        >>> from lets_plot.geo_data import *
+        >>> LetsPlot.setup_html()
+        >>> data = {'city': ['New York', 'Philadelphia'], \\
+        >>>         'est_pop_2019': [8_336_817, 1_584_064]}
+        >>> boundaries = geocode_cities(data['city']).get_boundaries()
+        >>> ggplot() + \\
+        >>>     geom_map(data=data, map=boundaries, map_join='city', \\
+        >>>              color='#006d2c', fill='#edf8e9', size=.5, \\
+        >>>              tooltips=layer_tooltips().line('@city')\\
+        >>>                                       .line('population|@est_pop_2019'))
 
     """
 
@@ -1935,26 +2117,26 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    slope : float, optional
+    slope : float
         The line slope.
-    intercept : float, optional
+    intercept : float
         The value of y at the point where the line crosses the y axis.
     other_args
         Other arguments passed on to the layer.
@@ -1980,10 +2162,37 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 3
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3)
+        >>> ggplot() + geom_abline(slope=0)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 17-18
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n, m = 10, 3
+        >>> np.random.seed(42)
+        >>> ids = np.arange(m).astype(str)
+        >>> x = np.linspace(0, 1, n)
+        >>> y = x + np.random.uniform(size=(m, n))
+        >>> df = pd.DataFrame({'id': np.repeat(ids, n),
+        >>>                    'x': np.tile(x, m),
+        >>>                    'y': y.reshape(m * n)})
+        >>> slope = np.corrcoef(y, x)[0, :-1] * y.std(axis=1) / x.std()
+        >>> intercept = y.mean(axis=1) - slope * x.mean()
+        >>> reg_df = pd.DataFrame({'id': ids, 'slope': slope, 'intercept': intercept})
+        >>> ggplot() + \\
+        >>>     geom_abline(aes(slope='slope', intercept='intercept', color='id'), \\
+        >>>                 data=reg_df, size=1, linetype='dashed') + \\
+        >>>     geom_point(aes(x='x', y='y', color='id', fill='id'), \\
+        >>>                data=df, size=4, shape=21, alpha=.5)
 
     """
     return _geom('abline',
@@ -2006,27 +2215,27 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    yintercept : float, optional
+    yintercept : float
         The value of y at the point where the line crosses the y axis.
     other_args
         Other arguments passed on to the layer.
@@ -2051,10 +2260,34 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 3
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_hline(yintercept=0.2, color='dark_blue', linetype='longdash', size=2)
+        >>> ggplot() + geom_hline(yintercept=0)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 15-16
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 100
+        >>> classes = ['a', 'b', 'c']
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> c = np.random.choice(classes, size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y, 'c': c})
+        >>> bounds_df = pd.DataFrame([(cl, df[df.c == cl].y.max()) for cl in classes], \\
+        >>>                          columns=['c', 'ymax'])
+        >>> ggplot() + \\
+        >>>     geom_hline(aes(yintercept='ymax', color='c'), \\
+        >>>                data=bounds_df, size=.2, linetype='longdash') + \\
+        >>>     geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
     return _geom('hline',
@@ -2077,27 +2310,27 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    xintercept : float, optional
+    xintercept : float
         The value of x at the point where the line crosses the x axis.
     other_args
         Other arguments passed on to the layer.
@@ -2122,10 +2355,34 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 3
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_vline(xintercept=0.2, color='dark_green', linetype='dotdash', size=2)
+        >>> ggplot() + geom_vline(xintercept=0)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 15-16
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 100
+        >>> classes = ['a', 'b', 'c']
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> c = np.random.choice(classes, size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y, 'c': c})
+        >>> bounds_df = pd.DataFrame([(cl, df[df.c == cl].x.max()) for cl in classes], \\
+        >>>                          columns=['c', 'xmax'])
+        >>> ggplot() + \\
+        >>>     geom_vline(aes(xintercept='xmax', color='c'), \\
+        >>>                data=bounds_df, size=.2, linetype='longdash') + \\
+        >>>     geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
     return _geom('vline',
@@ -2152,35 +2409,35 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=1.0
         A multiplicative factor applied to size of the middle bar.
-    outlier_color : str, optional
+    outlier_color : str
         Default color aesthetic for outliers.
-    outlier_fill : str, optional
+    outlier_fill : str
         Default fill aesthetic for outliers.
-    outlier_shape : int, optional
+    outlier_shape : int
         Default shape aesthetic for outliers.
-    outlier_size : float, optional
+    outlier_size : float
         Default size aesthetic for outliers.
     varwidth : bool, default=False
         If False make a standard box plot.
@@ -2215,19 +2472,75 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
 
-        >>> from pandas import DataFrame
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> np.random.seed(123)
-        >>> data = DataFrame(dict(
-        >>>     cond=np.repeat(['A','B'], 200),
-        >>>     rating=np.concatenate((np.random.normal(0, 1, 200), np.random.normal(.8, 1, 200)))
-        >>> ))
-        >>> p = ggplot(data, aes(x='cond', y='rating')) + ggsize(300, 200)
-        >>> p += geom_boxplot(outlier_color='red', outlier_shape=8, outlier_size=5)
-        >>> p
+        >>> n = 100
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(['a', 'b', 'c'], size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_boxplot()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 100
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_boxplot(fatten=5, varwidth=True, \\
+        >>>                  outlier_shape=8, outlier_size=5)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 16-17
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 100
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(['a', 'b', 'c'], size=n)
+        >>> y = np.random.normal(size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y})
+        >>> agg_df = df.groupby('x').agg({'y': [
+        >>>     'min', lambda s: np.quantile(s, 1/3),
+        >>>     'median', lambda s: np.quantile(s, 2/3), 'max'
+        >>> ]}).reset_index()
+        >>> agg_df.columns = ['x', 'y0', 'y33', 'y50', 'y66', 'y100']
+        >>> ggplot(agg_df, aes(x='x')) + \\
+        >>>     geom_boxplot(aes(ymin='y0', lower='y33', middle='y50', \\
+        >>>                      upper='y66', ymax='y100'), stat='identity')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10-13
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n, m = 100, 5
+        >>> np.random.seed(42)
+        >>> df = pd.DataFrame({'x%s' % i: np.random.normal(size=n) \\
+        >>>                    for i in range(1, m + 1)})
+        >>> ggplot(df.melt()) + \\
+        >>>     geom_boxplot(aes(x='variable', y='value', color='variable', \\
+        >>>                      fill='variable', outlier_color='variable'), \\
+        >>>                  outlier_shape=21, outlier_size=4, size=2, \\
+        >>>                  alpha=.5, width=.5, show_legend=False)
 
     """
     return _geom('boxplot',
@@ -2254,24 +2567,24 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -2302,17 +2615,39 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 10
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> id = ["A", "A", "A", "B", "B", "B"]
-        >>> x = [1, 2, 4, 1, 3, 4]
-        >>> ymin = [-1, 0, 0, 3, 3, 4]
-        >>> ymax = [0, 1, 1, 4, 5, 5]
-        >>> dat = dict(id=id, x=x, ymin=ymin, ymax=ymax)
-        >>> ggplot(dat) + geom_ribbon(aes(x='x', ymin='ymin', ymax='ymax', group='id', fill='id'), color='black', alpha=0.5)
+        >>> n = 10
+        >>> np.random.seed(42)
+        >>> x = np.arange(n)
+        >>> ymin = np.random.randint(-5, 0, size=n)
+        >>> ymax = np.random.randint(1, 6, size=n)
+        >>> ggplot({'x': x, 'ymin': ymin, 'ymax': ymax}, aes(x='x')) + \\
+        >>>     geom_ribbon(aes(ymin='ymin', ymax='ymax'))
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 11-15
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 30
+        >>> tmean = 20
+        >>> np.random.seed(42)
+        >>> day = np.arange(1, n + 1)
+        >>> tmin = tmean - (1 + np.abs(np.random.normal(size=n)))
+        >>> tmax = tmean + (1 + np.abs(np.random.normal(size=n)))
+        >>> ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
+        >>>     geom_ribbon(aes(x='day', ymin='tmin', ymax='tmax'), \\
+        >>>                 color='#bd0026', fill='#fd8d3c', size=2, \\
+        >>>                 tooltips=layer_tooltips().line('@|@day')\\
+        >>>                     .format('tmin', '.1f').line('min temp|@tmin')\\
+        >>>                     .format('tmax', '.1f').line('max temp|@tmax'))
 
     """
     return _geom('ribbon',
@@ -2334,11 +2669,11 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2348,15 +2683,15 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -2386,14 +2721,41 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
 
+        >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = [1,3,4,1,3,4]
-        >>> y = [1,1,2,3,4,2]
-        >>> g = [1,1,1,2,2,2]
-        >>> dat = dict(x=x, y=y, g=g)
-        >>> ggplot(dat,aes('x','y', group='g')) + geom_area(aes(fill='g', color='g'), alpha=.2) + scale_fill_discrete() + scale_color_discrete()
+        >>> n = 20
+        >>> np.random.seed(42)
+        >>> x = np.arange(n)
+        >>> y = np.cumsum(np.abs(np.random.uniform(size=n)))
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_area()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 15-18
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 30
+        >>> np.random.seed(42)
+        >>> day = np.arange(1, n + 1)
+        >>> tmin = -1 - np.abs(np.random.normal(size=n))
+        >>> tmax = 1 + np.abs(np.random.normal(size=n))
+        >>> tooltips = layer_tooltips().line('@|@day')\\
+        >>>                            .format('tmin', '.1f')\\
+        >>>                            .line('min temp|@tmin')\\
+        >>>                            .format('tmax', '.1f')\\
+        >>>                            .line('max temp|@tmax')
+        >>> ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
+        >>>     geom_area(aes(x='day', y='tmin'), color='#0571b0', \\
+        >>>               fill='#92c5de', tooltips=tooltips) + \\
+        >>>     geom_area(aes(x='day', y='tmax'), color='#ca0020', \\
+        >>>               fill='#f4a582', tooltips=tooltips)
 
     """
     return _geom('area',
@@ -2419,11 +2781,11 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density'
@@ -2433,25 +2795,25 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
         'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
-    bw : str or float, optional
+    bw : str or float
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float.
-    adjust : float, optional
+    adjust : float
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
     n : int, default=512
         The number of sampled points for plotting the function.
@@ -2488,13 +2850,74 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = np.random.normal(0,1,1000)
-        >>> dat = dict(x=x)
-        >>> ggplot(dat,aes('x')) + geom_density()
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=1000)
+        >>> ggplot({'x': x}, aes(x='x')) + geom_density()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-15
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 300
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> c = np.random.choice(['a', 'b', 'c'], size=n)
+        >>> ggplot({'x': x, 'c': c}, aes(x='x')) + \\
+        >>>     geom_density(aes(group='c', color='c', fill='c'), alpha=.2, \\
+        >>>                  tooltips=layer_tooltips().format('..density..', '.3f')\\
+        >>>                                           .line('density|@..density..')\\
+        >>>                                           .format('..count..', '.1f')\\
+        >>>                                           .line('count|@..count..')\\
+        >>>                                           .format('..scaled..', '.2f')\\
+        >>>                                           .line('scaled|@..scaled..'))
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=1000)
+        >>> p = ggplot({'x': x}, aes(x='x'))
+        >>> bunch = GGBunch()
+        >>> for i, bw in enumerate([.1, .2, .4]):
+        >>>     for j, n in enumerate([16, 64, 256]):
+        >>>         bunch.add_plot(p + geom_density(kernel='epanechikov', bw=bw, n=n) + \\
+        >>>                            ggtitle('bw={0}, n={1}'.format(bw, n)),
+        >>>                        j * 300, i * 200, 300, 200)
+        >>> bunch.show()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10-11
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=1000)
+        >>> y = np.sign(x)
+        >>> p = ggplot({'x': x, 'y': y}, aes(x='x'))
+        >>> bunch = GGBunch()
+        >>> for i, adjust in [(i, .5 * (1 + i)) for i in range(3)]:
+        >>>     bunch.add_plot(p + geom_density(aes(weight='y'), kernel='cosine', \\
+        >>>                                     adjust=adjust) + \\
+        >>>                        ggtitle('adjust={0}'.format(adjust)),
+        >>>                    i * 300, 0, 300, 200)
+        >>> bunch.show()
 
     """
     return _geom('density',
@@ -2522,41 +2945,41 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2d'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
         'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
-    bw : str or list of float, optional
+    bw : str or list of float
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
-    adjust : float, optional
+    adjust : float
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n : list of int, optional
+    n : list of int
         The number of sampled points for plotting the function
         (on x and y direction correspondingly).
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth : float, optional
+    binwidth : float
         Distance between levels.
     other_args
         Other arguments passed on to the layer.
@@ -2575,6 +2998,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     `geom_density2d()` understands the following aesthetics mappings:
         - x : x-axis coordinates.
+        - y : y-axis coordinates.
         - alpha : transparency level of a layer. Understands numbers between 0 and 1.
         - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
         - size : lines width. Defines line width.
@@ -2583,14 +3007,76 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
 
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = np.random.normal(0,1,1000)
-        >>> y = np.random.normal(0,1,1000)
-        >>> dat = dict(x=x, y=y)
-        >>> ggplot(dat,aes('x', 'y')) + geom_density2d()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_density2d()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_density2d(aes(color='..group..'), size=1, show_legend=False) + \\
+        >>>     scale_color_brewer(type='seq', palette='GnBu', direction=-1)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        >>> bunch = GGBunch()
+        >>> for i, bw in enumerate([.2, .4]):
+        >>>     for j, n in enumerate([16, 256]):
+        >>>         bunch.add_plot(p + geom_density2d(kernel='epanechikov', bw=bw, n=n) + \\
+        >>>                            ggtitle('bw={0}, n={1}'.format(bw, n)),
+        >>>                        j * 400, i * 400, 400, 400)
+        >>> bunch.show()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-13
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        >>> bunch = GGBunch()
+        >>> for i, adjust in enumerate([1.5, 2.5]):
+        >>>     for j, bins in enumerate([5, 15]):
+        >>>         bunch.add_plot(p + geom_density2d(kernel='cosine', \\
+        >>>                                           adjust=adjust, bins=bins) + \\
+        >>>                            ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
+        >>>                        j * 400, i * 400, 400, 400)
+        >>> bunch.show()
 
     """
     return _geom('density2d',
@@ -2619,41 +3105,41 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2df'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
         'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
-    bw : str or list of float, optional
+    bw : str or list of float
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
-    adjust : float, optional
+    adjust : float
         Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
-    n : list of int, optional
+    n : list of int
         The number of sampled points for plotting the function
         (on x and y direction correspondingly).
-    bins : int, optional
+    bins : int
         Number of levels.
-    binwidth : float, optional
+    binwidth : float
         Distance between levels.
     other_args
         Other arguments passed on to the layer.
@@ -2678,14 +3164,78 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
 
         >>> import numpy as np
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = np.random.normal(0,1,1000)
-        >>> y = np.random.normal(0,1,1000)
-        >>> dat = dict(x=x, y=y)
-        >>> ggplot(dat,aes('x', 'y')) + geom_density2df(aes(fill='..level..'))
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_density2df()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_density2df(aes(fill='..group..'), show_legend=False) + \\
+        >>>     scale_fill_brewer(type='seq', palette='GnBu', direction=-1)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-13
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        >>> bunch = GGBunch()
+        >>> for i, bw in enumerate([.2, .4]):
+        >>>     for j, n in enumerate([16, 256]):
+        >>>         bunch.add_plot(p + geom_density2df(kernel='epanechikov', bw=bw, n=n, \\
+        >>>                                            size=.5, color='white') + \\
+        >>>                            ggtitle('bw={0}, n={1}'.format(bw, n)),
+        >>>                        j * 400, i * 400, 400, 400)
+        >>> bunch.show()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 12-14
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.normal(size=n)
+        >>> y = np.random.normal(size=n)
+        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        >>> bunch = GGBunch()
+        >>> for i, adjust in enumerate([1.5, 2.5]):
+        >>>     for j, bins in enumerate([5, 15]):
+        >>>         bunch.add_plot(p + geom_density2df(kernel='cosine', \\
+        >>>                                            size=.5, color='white', \\
+        >>>                                            adjust=adjust, bins=bins) + \\
+        >>>                            ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
+        >>>                        j * 400, i * 400, 400, 400)
+        >>> bunch.show()
 
     """
     return _geom('density2df',
@@ -2713,11 +3263,11 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2727,18 +3277,18 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
     width : float, default=0.4
-        Width for jitter.
+        Amount of horizontal variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
     height : float, default=0.4
-        Height for jitter.
+        Amount of vertical variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2767,16 +3317,37 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 10
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> x = np.random.randint(3, size=100)
-        >>> y = np.random.normal(size=100)
-        >>> dat = pd.DataFrame({'x': x, 'y': y})
-        >>> p = ggplot(dat) + geom_jitter(aes(x='x', y='y', color='x'), height=0)
-        >>> p
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.randint(-5, 6, size=n)
+        >>> y = np.random.randint(10, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_point(color='red', shape=3, size=10) + \\
+        >>>     geom_jitter()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9-11
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 6000
+        >>> np.random.seed(42)
+        >>> x = np.random.choice(list('abcde'), size=n)
+        >>> y = np.random.normal(size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_jitter(aes(color='x', size='y'), \\
+        >>>                 sampling=sampling_random(n=600, seed=60), \\
+        >>>                 show_legend=False, width=.25) + \\
+        >>>     scale_color_grey(start=.75, end=0) + \\
+        >>>     scale_size(range=[1, 3])
 
     """
     return _geom('jitter',
@@ -2797,11 +3368,11 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -2811,15 +3382,15 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     other_args
@@ -2848,22 +3419,32 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 6
 
         >>> import numpy as np
-        >>> import pandas as pd
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> N = 100
-        >>> M = 3
-        >>> mean = np.zeros(M)
-        >>> mean = np.arange(M) * 5
-        >>> cov = np.eye(M)
-        >>> X = multivariate_normal.rvs(mean, cov, N)
-        >>> X = X.astype(int) # comment this line to make variables continuous back
-        >>> dat = pd.DataFrame(X)
-        >>> dat = pd.melt(dat)
-        >>> ggplot(dat, aes(x='value')) + geom_freqpoly(size=2)
+        >>> np.random.seed(42)
+        >>> data = {'x': np.random.normal(size=1000)}
+        >>> ggplot(data, aes(x='x')) + geom_freqpoly()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> np.random.seed(42)
+        >>> x = np.random.gamma(2.0, size=n)
+        >>> c = np.random.choice(['a', 'b', 'c'], size=n)
+        >>> ggplot({'x': x, 'c': c}, aes(x='x')) + \\
+        >>>     geom_freqpoly(aes(color='c'), size=1) + \\
+        >>>     geom_point(aes(color='c'), stat='bin', \\
+        >>>                shape=21, fill='white', size=3) + \\
+        >>>     facet_grid(x='c')
 
     """
     return _geom('freqpoly',
@@ -2885,11 +3466,11 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2899,12 +3480,12 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
     direction : string, default='hv'
@@ -2936,29 +3517,34 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 9
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 20
+        >>> np.random.seed(42)
+        >>> x = np.arange(n)
+        >>> y = np.random.randint(5, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_step() + \\
+        >>>     coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10
 
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> T = 1
-        >>> N = 1000
-        >>> t = np.linspace(0, T, N)
-        >>> dt = T / N
-        >>> # brownian motions
-        >>> W1 = np.random.standard_normal(size=N)
-        >>> Wt1 = np.cumsum(W1) * np.sqrt(dt)
-        >>> W2 = np.random.standard_normal(size=N)
-        >>> Wt2 = np.cumsum(W2) * np.sqrt(dt)
-        >>> dat = {}
-        >>> dat['W1'] = Wt1
-        >>> dat['W2'] = Wt2
-        >>> dat['t'] = t
-        >>> # transform data via melt function
-        >>> # to produce two trajectories
-        >>> dat = pd.DataFrame(dat)
-        >>> dat = pd.melt(dat, id_vars=['t'], value_vars=['W1', 'W2'])
-        >>> ggplot(dat, aes(x='t', y='value', group='variable')) + geom_step(aes(color='variable'), size=1, alpha=0.7)
+        >>> n = 100
+        >>> np.random.seed(42)
+        >>> t = np.arange(n)
+        >>> x = np.cumsum(np.random.normal(size=n).astype(int))
+        >>> ggplot({'t': t, 'x': x}, aes(x='t', y='x')) + \\
+        >>>     geom_step(direction='vh', color='#f03b20', size=1)
 
     """
     return _geom('step',
@@ -2980,32 +3566,30 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`), optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`) or `Geocoder` (implicitly invoke `limits()`), optional
+    map : `GeoDataFrame` or `Geocoder`
         Bounding boxes of geometries will be drawn.
-    map_join : str or list, optional
+    map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     other_args
@@ -3036,35 +3620,64 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `limits()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 3
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_rect(aes(xmin=[3], xmax=[4], ymin=[6], ymax=[10]), alpha=0.5, color='black', size=1)
+        >>> ggplot() + geom_rect(xmin=-1, xmax=1, ymin=-1, ymax=1)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 16-18
+
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 1000
+        >>> centers = {'a': (-2, -2), 'b': (3, 0), 'c': (0, 3)}
+        >>> np.random.seed(42)
+        >>> c = np.random.choice(list(centers.keys()), size=n)
+        >>> x = np.array([centers[k][0] for k in c]) + np.random.normal(size=n)
+        >>> y = np.array([centers[k][1] for k in c]) + np.random.normal(size=n)
+        >>> df = pd.DataFrame({'x': x, 'y': y, 'c': c}).sort_values(by='c')
+        >>> agg_df = df.groupby('c').agg({'x': ['min', 'max'], \\
+        >>>                               'y': ['min', 'max']}).reset_index()
+        >>> agg_df.columns = ['c', 'xmin', 'xmax', 'ymin', 'ymax']
+        >>> ggplot() + \\
+        >>>     geom_rect(aes(xmin='xmin', xmax='xmax', ymin='ymin', \\
+        >>>                   ymax='ymax', color='c', fill='c'), \\
+        >>>               data=agg_df, alpha=.2) + \\
+        >>>     geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
 
@@ -3091,11 +3704,11 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3105,15 +3718,15 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    arrow : `FeatureSpec`, optional
+    arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     other_args
         Other arguments passed on to the layer.
@@ -3143,10 +3756,31 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 3
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]))
+        >>> ggplot() + geom_segment(x=0, y=0, xend=1, yend=1)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 11-12
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> T = 25
+        >>> np.random.seed(42)
+        >>> t = [0, *np.random.normal(size=T)]
+        >>> x = np.cumsum(np.cos(t))
+        >>> y = np.cumsum(np.sin(t))
+        >>> data = {'x': x[:-1], 'y': y[:-1], 'xend': x[1:], 'yend': y[1:]}
+        >>> ggplot(data, aes(x='x', y='y')) + \\
+        >>>     geom_segment(aes(xend='xend', yend='yend', color='xend'), \\
+        >>>                  arrow=arrow(type='closed', angle=10)) + \\
+        >>>     scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
+        >>>     coord_fixed()
 
     """
     return _geom('segment',
@@ -3170,11 +3804,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`, optional
+    mapping : `FeatureSpec`
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`, optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3184,26 +3818,24 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, optional
+    position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`, optional
+    sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    tooltips : `layer_tooltips`, optional
+    tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : `GeoDataFrame` (supported shapes `Point` and `MultiPoint`) or `Geocoder` (implicitly invoke `centroids()`), optional
+    map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
-    map_join : str or list, optional
+    map_join : str or list
         Keys used to join map coordinates with data.
-        If the parameter type is list then it should be a pair of values,
-        either of str type or a list of strings.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    label_format : str, optional
+    label_format : str
         Format used to transform label mapping values to a string.
         Examples:
         '.2f' -> '12.45',
@@ -3241,35 +3873,77 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Note
     ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    Note
+    ----
     The conventions for the values of `map_join` parameter are as follows.
 
-    When `map` is a `GeoDataFrame`:
-        - map_join='state':
-          same as [['state'], ['state']].
-        - map_join=[['city', 'state']]:
-          same as [['city', 'state'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+    - Joining data and `GeoDataFrame` object
 
-    If `map` is a `Geocoder`:
-        - map_join='State_Name':
-          same as [['State_Name'], ['state']].
-        - map_join=['City_Name', 'State_Name']:
-          same as [['City_Name', 'State_Name'], ['city', 'state']].
-        - map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-          explicitly set keys for both data and map.
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+        - map_join=['State_Name', 'state']
+        - map_join=[['State_Name'], ['state']]
 
-    Generated keys follow this order: 'city', 'county', 'state', 'country'.
-    Parents that were not provided will be omitted.
-    Data columns should follow the same order or result of join operation will be incorrect.
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+        - map_join='State_Name'
+        - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+        - map_join=['County_name', 'State_Name']
 
     Examples
     --------
     .. jupyter-execute::
+        :emphasize-lines: 3
 
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
+        >>> ggplot() + geom_text(x=0, y=0, label='Lorem ipsum')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 10-11
+
+        >>> import numpy as np
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+        >>> n = 10
+        >>> np.random.seed(42)
+        >>> x = np.arange(n)
+        >>> y = np.random.normal(loc=10, scale=2, size=n)
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        >>>     geom_bar(stat='identity', fill='#2b8cbe', tooltips='none') + \\
+        >>>     geom_text(aes(label='y'), position=position_nudge(y=1), \\
+        >>>               label_format='.1f', angle=45, color='#2b8cbe')
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 13-15
+
+        >>> from lets_plot import *
+        >>> from lets_plot.geo_data import *
+        >>> LetsPlot.setup_html()
+        >>> cities = ['New York', 'Los Angeles', 'Chicago']
+        >>> states = ['NY', 'CA', 'IL']
+        >>> titles = ['{0} ({1})'.format(city, state) \\
+        >>>           for city, state in zip(cities, states)]
+        >>> data = {'city': cities, 'state': states, 'title': titles}
+        >>> centroids = geocode_cities(data['city']).get_centroids()
+        >>> ggplot(data) + \\
+        >>>     geom_point(map=centroids, map_join='city', \\
+        >>>                shape=21, color='black', fill='#f03b20') + \\
+        >>>     geom_text(aes(label='title'), map=centroids, \\
+        >>>               map_join='city', size=8, vjust=1, \\
+        >>>               family='Optima', fontface='bold')
 
     """
 
