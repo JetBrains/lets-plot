@@ -36,21 +36,30 @@ def aes(x=None, y=None, **other):
     Examples
     --------
     .. jupyter-execute::
-        :emphasize-lines: 11, 12
+        :emphasize-lines: 10, 11
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
+	>>> n = 100
         >>> np.random.seed(42)
-        >>> n = 100
         >>> x = np.random.uniform(-1, 1, size=n)
         >>> y = 25 * x ** 2 + np.random.normal(size=n)
-        >>> data = pd.DataFrame({'x': x, 'y': y})
-        >>> data['class'] = ['0' if data['x'][i] < 0 else '1' for i in range(n)]
-        >>> ggplot(data) + geom_point(aes('x', 'y', color='y', shape='class', size='x')) + \\
-        >>>     geom_point(aes(x='x', y='y'), shape=21, color='gray', \\
-        >>>                fill='light_blue', size=5, alpha=0.5, stat='smooth')
+        >>> c = np.where(x < 0, '0', '1')
+        >>> ggplot({'x': x, 'y': y, 'c': c}) + \\
+        >>>     geom_point(aes('x', 'y', color='y', shape='c', size='x')) + \\
+        >>>     geom_line(aes(x='x', y='y'), stat='smooth', size=1)
+
+    |
+
+    .. jupyter-execute::
+        :emphasize-lines: 3
+
+        >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
+	>>> ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
+        >>>                 		color='black', alpha=0.5, size=1)
+        
     """
 
     return FeatureSpec('mapping', name=None, x=x, y=y, **other)
@@ -99,20 +108,16 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     Examples
     ---------
     .. jupyter-execute::
-        :emphasize-lines: 12
+        :emphasize-lines: 8
 
         >>> import numpy as np
-        >>> import pandas as pd
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
+        >>> n = 50
         >>> np.random.seed(42)
-        >>> n = 100
         >>> x = np.random.uniform(-1, 1, size=n)
         >>> y = 25 * x ** 2 + np.random.normal(size=n)
-        >>> data = pd.DataFrame({'x': x, 'y': y})
-        >>> data['class'] = (x >= 0).astype(int).astype(str)
-        >>> ggplot(data, aes(x='x', y='y', group='class', color='class')) + \\
-        >>>     layer(geom='point', stat='smooth', position='identity')
+        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + layer(geom='point')
 
     """
     # todo: other parameters: inherit.aes = TRUE, subset = NULL, show.legend = NA
