@@ -9,7 +9,7 @@ __all__ = ['aes', 'layer']
 
 def aes(x=None, y=None, **other):
     """
-    Define aesthetic mappings
+    Define aesthetic mappings.
 
     Parameters
     ----------
@@ -36,29 +36,31 @@ def aes(x=None, y=None, **other):
     Examples
     --------
     .. jupyter-execute::
-        :emphasize-lines: 10, 11
+        :linenos:
+        :emphasize-lines: 10-11
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-	>>> n = 100
-        >>> np.random.seed(42)
-        >>> x = np.random.uniform(-1, 1, size=n)
-        >>> y = 25 * x ** 2 + np.random.normal(size=n)
-        >>> c = np.where(x < 0, '0', '1')
-        >>> ggplot({'x': x, 'y': y, 'c': c}) + \\
-        >>>     geom_point(aes('x', 'y', color='y', shape='c', size='x')) + \\
-        >>>     geom_line(aes(x='x', y='y'), stat='smooth', size=1)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        c = np.where(x < 0, '0', '1')
+        ggplot({'x': x, 'y': y, 'c': c}) + \\
+            geom_point(aes('x', 'y', color='y', shape='c', size='x')) + \\
+            geom_smooth(aes(x='x', y='y'), deg=2, size=1)
 
     |
 
     .. jupyter-execute::
-        :emphasize-lines: 3
+        :linenos:
+        :emphasize-lines: 3-4
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-	>>> ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
-        >>>                 		color='black', alpha=0.5, size=1)
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
+                                color='black', alpha=.5, size=1)
         
     """
 
@@ -108,16 +110,17 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     Examples
     ---------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 50
-        >>> np.random.seed(42)
-        >>> x = np.random.uniform(-1, 1, size=n)
-        >>> y = 25 * x ** 2 + np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + layer(geom='point')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + layer(geom='point')
 
     """
     # todo: other parameters: inherit.aes = TRUE, subset = NULL, show.legend = NA
