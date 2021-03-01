@@ -17,7 +17,7 @@ import javax.swing.ScrollPaneConstants
 class DefaultPlotComponentProviderJfx(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,
-    var executor: (() -> Unit) -> Unit = JFX_EDT_EXECUTOR,
+    var executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotComponentProvider(
     processedSpec = processedSpec,
@@ -46,7 +46,5 @@ class DefaultPlotComponentProviderJfx(
 
         private val SVG_COMPONENT_FACTORY_JFX =
             { svg: SvgSvgElement -> SceneMapperJfxPanel(svg, listOf(Style.JFX_PLOT_STYLESHEET)) }
-
-        private val JFX_EDT_EXECUTOR = DefaultApplicationContextJfx.JFX_EDT_EXECUTOR
     }
 }

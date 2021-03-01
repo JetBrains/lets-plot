@@ -13,12 +13,11 @@ import jetbrains.datalore.vis.swing.PlotComponentProvider
 import javax.swing.JComponent
 import javax.swing.JScrollPane
 import javax.swing.ScrollPaneConstants
-import javax.swing.SwingUtilities
 
 class DefaultPlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,
-    var executor: (() -> Unit) -> Unit = AWT_EDT_EXECUTOR,
+    var executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotComponentProvider(
     processedSpec = processedSpec,
@@ -62,10 +61,10 @@ class DefaultPlotComponentProviderBatik(
             }
         }
 
-        private val AWT_EDT_EXECUTOR = { runnable: () -> Unit ->
-            // Just invoke in the current thread.
-            assert(SwingUtilities.isEventDispatchThread()) { "Not an Event Dispatch Thread (EDT)." }
-            runnable.invoke()
-        }
+//        private val AWT_EDT_EXECUTOR = { runnable: () -> Unit ->
+//            // Just invoke in the current thread.
+//            assert(SwingUtilities.isEventDispatchThread()) { "Not an Event Dispatch Thread (EDT)." }
+//            runnable.invoke()
+//        }
     }
 }

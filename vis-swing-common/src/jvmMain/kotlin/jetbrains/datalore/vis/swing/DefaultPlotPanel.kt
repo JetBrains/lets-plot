@@ -10,13 +10,16 @@ import java.awt.Component
 class DefaultPlotPanel(
     plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
+    refreshRate: Int,  // ms
     applicationContext: ApplicationContext
 ) :
     PlotPanel(
         plotComponentProvider,
         preferredSizeFromPlot,
-        application = applicationContext
+        refreshRate = refreshRate,
+        applicationContext = applicationContext
     ) {
+
     override fun handleChildRemoved(child: Component) {
         // Nothing is needed.
     }

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
-import jetbrains.datalore.vis.swing.batik.PlotViewerWindow
+import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
 
 object AreaViewerBatik {
     @JvmStatic
@@ -15,7 +15,7 @@ object AreaViewerBatik {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             for (spec in plotSpecList) {
-                PlotViewerWindow(
+                PlotViewerWindowBatik(
                     "Area plot",
                     spec,
                     null,

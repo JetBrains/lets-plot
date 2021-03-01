@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
-import jetbrains.datalore.vis.swing.batik.PlotViewerWindow
+import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
 
 object GGBunchViewerBatik {
     @JvmStatic
@@ -14,7 +14,7 @@ object GGBunchViewerBatik {
         with(GGBunch()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotViewerWindow(
+            PlotViewerWindowBatik(
                 "GGBunch",
                 plotSpecList.first(),
 //                windowSize = Dimension(400, 300)

@@ -16,8 +16,8 @@ import javax.swing.*
 abstract class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
-    refreshRate: Int = 500,  // ms
-    application: ApplicationContext,
+    refreshRate: Int,  // ms
+    applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
     init {
         layout = GridBagLayout() // to center a single child component
@@ -46,7 +46,7 @@ abstract class PlotPanel(
                 plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
                 plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
                 thumbnailIconConsumer = null,
-                application = application,
+                applicationContext = applicationContext,
                 refreshRate = refreshRate
             )
         )
@@ -91,7 +91,7 @@ abstract class PlotPanel(
         private val plotPreferredSize: (Dimension) -> Dimension,
         private val plotComponentFactory: (Dimension) -> JComponent,
         private var thumbnailIconConsumer: Consumer<in ImageIcon?>?,
-        private val application: ApplicationContext,
+        private val applicationContext: ApplicationContext,
         refreshRate: Int // ms
 
     ) : ComponentAdapter() {
@@ -107,7 +107,7 @@ abstract class PlotPanel(
             if (!refreshTimer.isRunning && skipThisRun) {
                 // When in IDEA pligin we can not modify our state
                 // withou letting the application know.
-                application.runWriteAction() {
+                applicationContext.runWriteAction() {
                     skipThisRun = false
                 }
                 return
@@ -155,7 +155,7 @@ abstract class PlotPanel(
                 plotPanel.revalidate()
             }
 
-            application.invokeLater(action) {
+            applicationContext.invokeLater(action) {
                 // "expired"
                 // Other timer is running? Weird but lets wait for the next action.
                 refreshTimer.isRunning

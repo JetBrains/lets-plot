@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.swing.batik
+package jetbrains.datalore.vis.swing.jfx
 
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.swing.DefaultPlotPanel
@@ -12,11 +12,12 @@ import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
 
-class PlotViewerWindow(
+class PlotViewerWindowJfx(
     title: String,
     private val rawSpec: MutableMap<String, Any>,
     private val windowSize: Dimension? = null,
-    private val preserveAspectRatio: Boolean = false
+    private val preserveAspectRatio: Boolean = false,
+    private val refreshRate: Int = 300,  // ms
 ) : JFrame(title) {
     private val rootPanel: JPanel
 
@@ -55,9 +56,10 @@ class PlotViewerWindow(
         // Pre-process figure specifications
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
 
-        val componentProvider = DefaultPlotComponentProviderBatik(
+        val componentProvider = DefaultPlotComponentProviderJfx(
             processedSpec = processedSpec,
             preserveAspectRatio = preserveAspectRatio,
+            executor = DefaultSwingContextJfx.JFX_EDT_EXECUTOR,
             computationMessagesHandler = { messages ->
                 if (messages.isNotEmpty()) {
                     val text = messages.joinToString(
@@ -80,6 +82,8 @@ class PlotViewerWindow(
         val plotPanel = DefaultPlotPanel(
             plotComponentProvider = componentProvider,
             preferredSizeFromPlot = windowSize == null,
+            refreshRate = refreshRate,
+            applicationContext = DefaultSwingContextJfx()
         )
 
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT
