@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.data.AutoMpg
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 class FacetGridDemo : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             cols(),
             rows(),
@@ -20,7 +20,7 @@ class FacetGridDemo : PlotConfigDemoBase() {
         )
     }
 
-    private fun cols(): Map<String, Any> {
+    private fun cols(): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
@@ -30,7 +30,7 @@ class FacetGridDemo : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun rows(): Map<String, Any> {
+    private fun rows(): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
@@ -39,7 +39,7 @@ class FacetGridDemo : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun both(): Map<String, Any> {
+    private fun both(): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
@@ -50,7 +50,7 @@ class FacetGridDemo : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun bothFlipped(): Map<String, Any> {
+    private fun bothFlipped(): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
@@ -62,7 +62,7 @@ class FacetGridDemo : PlotConfigDemoBase() {
     }
 
     @Suppress("FunctionName")
-    private fun both_YOrderingDesc(): Map<String, Any> {
+    private fun both_YOrderingDesc(): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",

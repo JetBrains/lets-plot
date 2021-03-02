@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 open class BarPlot : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             fancy()
@@ -23,7 +23,7 @@ open class BarPlot : PlotConfigDemoBase() {
                 "   }"
 
 
-        fun basic(): Map<String, Any> {
+        fun basic(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -41,7 +41,7 @@ open class BarPlot : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun fancy(): Map<String, Any> {
+        fun fancy(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +

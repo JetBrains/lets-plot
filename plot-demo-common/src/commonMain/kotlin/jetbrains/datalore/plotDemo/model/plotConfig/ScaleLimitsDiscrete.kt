@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             tiles(),
             tilesLimitsReversed(),
@@ -21,24 +21,24 @@ open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
 
     companion object {
 
-        fun tiles(): Map<String, Any> {
+        fun tiles(): MutableMap<String, Any> {
             return getSpec("{'x':['a', 'b', 'c', 'd', 'e']}", "['b', 'c', 'e']")
         }
 
-        fun tilesLimitsReversed(): Map<String, Any> {
+        fun tilesLimitsReversed(): MutableMap<String, Any> {
             return getSpec("{'x':['a', 'b', 'c', 'd', 'e']}", "['e', 'c', 'b']")
         }
 
-        fun tilesNoLimitsFlagReverse(): Map<String, Any> {
+        fun tilesNoLimitsFlagReverse(): MutableMap<String, Any> {
             return getSpec("{'x':['a', 'b', 'c']}", null, reverse = true)
         }
 
-        fun tilesWithLimitsFlagReverse(): Map<String, Any> {
+        fun tilesWithLimitsFlagReverse(): MutableMap<String, Any> {
             return getSpec("{'x':['a', 'b', 'c']}", "['a', 'b', 'c']", reverse = true)
         }
 
 
-        fun getSpec(data: String, limits: String?, reverse: Boolean = false): Map<String, Any> {
+        fun getSpec(data: String, limits: String?, reverse: Boolean = false): MutableMap<String, Any> {
             val spec = """
 {
     'mapping':{}, 

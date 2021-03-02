@@ -5,21 +5,16 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
 object AreaBatik {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Area()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
+            PlotSpecsViewerDemoWindowBatik.show(
                 "Area plot",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                DoubleVector(600.0, 600.0)
+                plotSpecList()
             )
         }
     }

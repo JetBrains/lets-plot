@@ -7,19 +7,15 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.CoordLim
 import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
 object CoordLimBatik {
     @JvmStatic
     fun main(args: Array<String>) {
         with(CoordLim()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            @Suppress("SpellCheckingInspection")
-            PlotConfigDemoUtil.show(
+            PlotSpecsViewerDemoWindowBatik.show(
                 "coord x/y limits",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                demoComponentSize
+                plotSpecList()
             )
         }
     }

@@ -6,19 +6,15 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
 object BarPlotBatik {
     @JvmStatic
     fun main(args: Array<String>) {
         with(BarPlot()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
+            PlotSpecsViewerDemoWindowBatik.show(
                 "Bar plot",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                demoComponentSize
+                plotSpecList()
             )
         }
     }

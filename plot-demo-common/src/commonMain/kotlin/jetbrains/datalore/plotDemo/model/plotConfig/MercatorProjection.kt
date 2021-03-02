@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 open class MercatorProjection : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             polygon_noProjection(),
             polygon_Mercator(),
@@ -49,35 +49,35 @@ open class MercatorProjection : PlotConfigDemoBase() {
         )
 
         @Suppress("FunctionName")
-        fun polygon_noProjection(): Map<String, Any> {
+        fun polygon_noProjection(): MutableMap<String, Any> {
             spec["coord"] = mapOf("name" to "fixed")
             spec["ggtitle"] = mapOf("text" to "coord_fixed (no projection)")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
-        fun polygon_Mercator(): Map<String, Any> {
+        fun polygon_Mercator(): MutableMap<String, Any> {
             spec["coord"] = mapOf("name" to "map")
             spec["ggtitle"] = mapOf("text" to "coord_map (Mercator)")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
-        fun polygon_Mercator_ZoomOut_Y(): Map<String, Any> {
+        fun polygon_Mercator_ZoomOut_Y(): MutableMap<String, Any> {
             spec["coord"] = coord_map_spec(yLim = ClosedRange(64.0, 75.0))
             spec["ggtitle"] = mapOf("text" to "Zoom-out Y")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
-        fun polygon_Mercator_ZoomOut_X(): Map<String, Any> {
+        fun polygon_Mercator_ZoomOut_X(): MutableMap<String, Any> {
             spec["coord"] = coord_map_spec(xLim = ClosedRange(15.0, 35.0))
             spec["ggtitle"] = mapOf("text" to "Zoom-out X")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
-        fun polygon_Mercator_ZoomIn_Y(): Map<String, Any> {
+        fun polygon_Mercator_ZoomIn_Y(): MutableMap<String, Any> {
             spec["coord"] = coord_map_spec(yLim = ClosedRange(69.2, 69.8))
             spec["ggtitle"] = mapOf("text" to "Zoom-in Y")
             return HashMap(spec)

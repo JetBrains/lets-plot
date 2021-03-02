@@ -5,21 +5,19 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import java.awt.Dimension
 
 object FacetGridBatik {
     @JvmStatic
     fun main(args: Array<String>) {
         with(FacetGridDemo()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
+            PlotSpecsViewerDemoWindowBatik.show(
                 "Facet grid",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                DoubleVector(600.0, 600.0)
+                plotSpecList(),
+                2,
+                Dimension(600, 400)
             )
         }
     }
