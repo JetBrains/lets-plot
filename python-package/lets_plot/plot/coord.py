@@ -123,7 +123,7 @@ def coord_map(xlim=None, ylim=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 5
 
         from lets_plot import *
         from lets_plot.geo_data import *
