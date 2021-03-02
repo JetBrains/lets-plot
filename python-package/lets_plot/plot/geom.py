@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geocoder, auto_join_geocoder, \
-    geo_data_frame_to_wgs84, as_map_join
+    geo_data_frame_to_wgs84, as_map_join, get_geo_data_frame_meta
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -3983,11 +3983,11 @@ def _geom(name, *,
     if is_geocoder(data):
         data = data.get_geocodes()
 
-    if is_geo_data_frame(data):
-        data = geo_data_frame_to_wgs84(data)
-
     if is_geo_data_frame(kwargs.get('map', None)):
         kwargs['map'] = geo_data_frame_to_wgs84(kwargs['map'])
+    elif is_geo_data_frame(data):
+        data = geo_data_frame_to_wgs84(data)
+        data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 

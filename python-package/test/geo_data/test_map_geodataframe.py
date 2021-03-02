@@ -14,8 +14,10 @@ POINT = Point(-12.34, 56.78)
 
 POLYGON = Polygon(
     LinearRing([(1, 1), (1, 9), (9, 9), (9, 1)]),
-    [LinearRing([(2, 2), (3, 2), (3, 3), (2, 3)]),
-     LinearRing([(4, 4), (6, 4), (6, 6), (4, 6)])]
+    [
+        LinearRing([(2, 2), (3, 2), (3, 3), (2, 3)]),
+        LinearRing([(4, 4), (6, 4), (6, 6), (4, 6)])
+    ]
 )
 
 MULTIPOLYGON = MultiPolygon([
@@ -26,12 +28,20 @@ MULTIPOLYGON = MultiPolygon([
 names = ['A', 'B', 'C']
 geoms = [POINT, POLYGON, MULTIPOLYGON]
 
+EXPECTED_GDF_META = {
+    'geodataframe': {
+        'geometry': 'coord'
+    }
+}
 
 def make_geodataframe() -> GeoDataFrame:
     return GeoDataFrame(
-        data={'name': names,
-              'coord': geoms},
-        geometry='coord')
+        data={
+            'name': names,
+            'coord': geoms
+        },
+        geometry='coord'
+    )
 
 
 def test_geodataframe_should_be_mapped():
@@ -50,16 +60,18 @@ def test_plot_should_has_meta_data_for_geodataframe():
         'geodataframe': {'geometry': 'coord'}
     }
 
-    assert expected_data_meta == get_data_meta(plotSpec, 0)
+    assert EXPECTED_GDF_META == get_data_meta(plotSpec, 0)
 
 
 def test_plot_should_has_meta_map_for_geodataframe():
     plotSpec = ggplot() + geom_polygon(map=make_geodataframe())
 
-    expected_map_data_meta = {
-        'geodataframe': {
-            'geometry': 'coord'
-        }
-    }
+    assert EXPECTED_GDF_META == get_map_data_meta(plotSpec, 0)
 
-    assert expected_map_data_meta == get_map_data_meta(plotSpec, 0)
+
+def test_when_both_data_and_map_are_gdf_should_has_geodataframe_meta_only_for_map():
+    plotSpec = ggplot() + geom_polygon(data=make_geodataframe(), map=make_geodataframe())
+
+    assert EXPECTED_GDF_META == get_map_data_meta(plotSpec, 0)
+    assert {} == get_data_meta(plotSpec, 0)
+
