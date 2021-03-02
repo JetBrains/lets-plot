@@ -10,3 +10,4 @@
 
 - Fix tooltips appearing outside the specified x/y limits.
 - Clippath in accordance to the given limits [[#189](https://github.com/JetBrains/lets-plot/issues/189)].
+- Treat a data as DataFrame if both data and map are GeoDataFrames [[#343](https://github.com/JetBrains/lets-plot/issues/343)].
