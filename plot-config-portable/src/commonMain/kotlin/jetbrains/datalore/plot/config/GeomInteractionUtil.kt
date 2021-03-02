@@ -202,6 +202,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2DF,
             GeomKind.FREQPOLY,
             GeomKind.PATH,
+            GeomKind.SEGMENT,
             GeomKind.RIBBON,
             GeomKind.SMOOTH -> true
             else -> false
@@ -246,6 +247,7 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.BOX_PLOT,
+            GeomKind.SEGMENT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(isContinuousX)
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)

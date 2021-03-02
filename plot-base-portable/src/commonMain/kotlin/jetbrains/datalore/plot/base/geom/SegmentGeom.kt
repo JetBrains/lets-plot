@@ -13,6 +13,8 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.decorate
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -34,6 +36,7 @@ class SegmentGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val targetCollector = getGeomTargetCollector(ctx)
         val helper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
 
@@ -43,6 +46,13 @@ class SegmentGeom : GeomBase() {
                 val end = DoubleVector(p.xend()!!, p.yend()!!)
                 val line = helper.createLine(start, end, p)
                 root.add(line)
+
+                targetCollector.addPath(
+                    listOf(coord.toClient(start), coord.toClient(end)),
+                    { p.index() },
+                    GeomTargetCollector.TooltipParams.params()
+                        .setColor(HintColorUtil.fromColor(p))
+                )
 
                 if (arrowSpec != null) {
                     val clientX1 = line.x1().get()!!
