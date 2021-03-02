@@ -6,20 +6,16 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.BarPlotDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
 
-class BarPlotDemoBatik : BarPlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Bar plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            BarPlotDemoBatik().show()
+object BarPlotDemoBatik {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        with(BarPlotDemo()) {
+            PlotObjectsViewerDemoWindowBatik.show(
+                "Bar plot",
+                plotList = createPlots()
+            )
         }
     }
 }

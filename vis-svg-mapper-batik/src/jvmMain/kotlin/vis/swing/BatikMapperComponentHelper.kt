@@ -22,21 +22,20 @@ import java.awt.event.MouseEvent
 
 
 class BatikMapperComponentHelper private constructor(
-    val nodeContainer: SvgNodeContainer,
+    private val svgRoot: SvgSvgElement,
     val messageCallback: BatikMessageCallback
 ) {
+    internal val nodeContainer = SvgNodeContainer(svgRoot)
 
-    private var myGraphicsNode: GraphicsNode? = null
-    private var myMapper: SvgRootDocumentMapper? = null
+    private val myGraphicsNode: GraphicsNode
+    private val myMapper: SvgRootDocumentMapper
     private val myUserAgent: UserAgent
-    private var myBridgeContext: BridgeContext? = null
-    private var mySvgRoot: SvgSvgElement? = null
-
+    private val myBridgeContext: BridgeContext
 
     val preferredSize: Dimension
         get() {
-            val w = mySvgRoot!!.width().get()?.toInt() ?: throw IllegalStateException("SVG width is not defined")
-            val h = mySvgRoot!!.height().get()?.toInt() ?: throw IllegalStateException("SVG height is not defined")
+            val w = svgRoot.width().get()?.toInt() ?: throw IllegalStateException("SVG width is not defined")
+            val h = svgRoot.height().get()?.toInt() ?: throw IllegalStateException("SVG height is not defined")
             return Dimension(w, h)
         }
 
@@ -56,68 +55,47 @@ class BatikMapperComponentHelper private constructor(
                 messageCallback.handleException(e)
             }
         }
-    }
 
-    private fun setSvg(svgRoot: SvgSvgElement) {
-        clear()
-        checkArgument(svgRoot.isAttached(), "SvgSvgElement must be attached to SvgNodeContainer")
-        mySvgRoot = svgRoot
-        createGraphicsNode()
-    }
-
-    internal fun clear() {
-        if (mySvgRoot != null) {
-            mySvgRoot = null
-            myUserAgent.eventDispatcher.rootNode = null
-
-            if (myMapper!!.isAttached) {
-                myMapper!!.detachRoot()
-            }
-            myMapper = null
-
-            myBridgeContext!!.dispose()
-            myBridgeContext = null
-
-            myGraphicsNode = null
-        }
-    }
-
-    private fun createGraphicsNode() {
-        if (mySvgRoot == null) return
-
+        // Set-up GraphicsNode
         myBridgeContext = BridgeContext(myUserAgent)
-        myBridgeContext!!.isDynamic = true
+        myBridgeContext.isDynamic = true
 
         // Build Batik SVG model.
-        myMapper = SvgRootDocumentMapper(mySvgRoot!!)
-        myMapper!!.attachRoot()
+        myMapper = SvgRootDocumentMapper(svgRoot)
+        myMapper.attachRoot()
 
         // Build graphic nodes
         val builder = GVTBuilder()
-        myGraphicsNode = builder.build(myBridgeContext, myMapper!!.target)
+        myGraphicsNode = builder.build(myBridgeContext, myMapper.target)
 
         myUserAgent.eventDispatcher.rootNode = myGraphicsNode
     }
 
-    fun paint(g: Graphics2D) {
-        if (myGraphicsNode != null) {
-            myGraphicsNode!!.paint(g)
+    internal fun dispose() {
+        if (myMapper.isAttached) {
+            myMapper.detachRoot()
+
+            // Detach current Svg root.
+            nodeContainer.root().set(SvgSvgElement())
+
+            myUserAgent.eventDispatcher.rootNode = null
+
+            myBridgeContext.dispose()
         }
+    }
+
+    fun paint(g: Graphics2D) {
+        myGraphicsNode.paint(g)
     }
 
     fun handleMouseEvent(e: MouseEvent) {
         myUserAgent.eventDispatcher.dispatchEvent(e)
     }
 
-
     companion object {
         fun forUnattached(svgRoot: SvgSvgElement, messageCallback: BatikMessageCallback): BatikMapperComponentHelper {
             checkArgument(!svgRoot.isAttached(), "SvgSvgElement must be unattached")
-            // element must be attached
-            val nodeContainer = SvgNodeContainer(svgRoot)
-            val helper = BatikMapperComponentHelper(nodeContainer, messageCallback)
-            helper.setSvg(svgRoot)
-            return helper
+            return BatikMapperComponentHelper(svgRoot, messageCallback)
         }
     }
 }

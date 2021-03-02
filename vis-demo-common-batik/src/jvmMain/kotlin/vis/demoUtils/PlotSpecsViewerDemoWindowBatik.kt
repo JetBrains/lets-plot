@@ -49,7 +49,7 @@ class PlotSpecsViewerDemoWindowBatik(
         SwingUtilities.invokeLater {
             rootPanel.layout = GridLayout(0, min(maxCol, specList.size))
 
-            createWindowContent(plotSize)
+            createWindowContent()
 
             pack()
             setLocationRelativeTo(null)  // move to the screen center
@@ -57,7 +57,7 @@ class PlotSpecsViewerDemoWindowBatik(
         }
     }
 
-    private fun createWindowContent(plotSize: Dimension?) {
+    private fun createWindowContent() {
         for (spec in specList) {
             rootPanel.add(createPlotComponent(spec, plotSize))
         }

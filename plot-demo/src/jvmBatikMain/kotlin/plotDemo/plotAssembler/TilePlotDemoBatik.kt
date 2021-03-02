@@ -6,20 +6,16 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.TilePlotDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
 
-class TilePlotDemoBatik : TilePlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Tile plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            TilePlotDemoBatik().show()
+object TilePlotDemoBatik {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        with(TilePlotDemo()) {
+            PlotObjectsViewerDemoWindowBatik.show(
+                "Tile plot",
+                plotList = createPlots()
+            )
         }
     }
 }

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback
-import jetbrains.datalore.vis.swing.PlotComponentProvider
+import jetbrains.datalore.vis.swing.PlotSpecComponentProvider
 import javax.swing.JComponent
 import javax.swing.JScrollPane
 import javax.swing.ScrollPaneConstants
@@ -19,7 +19,7 @@ class DefaultPlotComponentProviderBatik(
     preserveAspectRatio: Boolean,
     var executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
-) : PlotComponentProvider(
+) : PlotSpecComponentProvider(
     processedSpec = processedSpec,
     preserveAspectRatio = preserveAspectRatio,
     svgComponentFactory = SVG_COMPONENT_FACTORY_BATIK,

@@ -6,20 +6,16 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.RasterImagePlotDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
 
-class RasterImagePlotDemoBatik : RasterImagePlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Raster image plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            RasterImagePlotDemoBatik().show()
+object RasterImagePlotDemoBatik {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        with(RasterImagePlotDemo()) {
+            PlotObjectsViewerDemoWindowBatik.show(
+                "Raster image plot",
+                plotList = createPlots()
+            )
         }
     }
 }

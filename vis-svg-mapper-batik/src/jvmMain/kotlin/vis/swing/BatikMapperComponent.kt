@@ -29,8 +29,7 @@ class BatikMapperComponent(
         isFocusable = true
         background = Color(0,0,0,0)
 
-        myHelper =
-            BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
+        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
         myHelper.nodeContainer.addListener(object : SvgNodeContainerAdapter() {
             override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
@@ -97,7 +96,7 @@ class BatikMapperComponent(
 
     override fun dispose() {
         require(!myIsDisposed) { "Alreadey disposed." }
-        myHelper.clear()
+        myHelper.dispose()
     }
 
     companion object {
