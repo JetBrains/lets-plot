@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotAssembler
 import jetbrains.datalore.plotDemo.model.plotAssembler.LinearRegressionPlotDemo
 import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
 
-object LinearRegressionPlotDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(LinearRegressionPlotDemo()) {
-            PlotObjectsViewerDemoWindowBatik.show(
-                "Linear regression plot",
-                plotList = createPlots()
-            )
-        }
+fun main(args: Array<String>) {
+    with(LinearRegressionPlotDemo()) {
+        PlotObjectsViewerDemoWindowBatik(
+            "Linear regression plot",
+            plotList = createPlots()
+        ).open()
     }
 }

@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotAssembler
 import jetbrains.datalore.plotDemo.model.plotAssembler.LinePlotDemo
 import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
 
-object LinePlotDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(LinePlotDemo()) {
-            PlotObjectsViewerDemoWindowBatik.show(
-                "Line plot",
-                plotList = createPlots()
-            )
-        }
+fun main(args: Array<String>) {
+    with(LinePlotDemo()) {
+        PlotObjectsViewerDemoWindowBatik(
+            "Line plot",
+            plotList = createPlots()
+        ).open()
     }
 }

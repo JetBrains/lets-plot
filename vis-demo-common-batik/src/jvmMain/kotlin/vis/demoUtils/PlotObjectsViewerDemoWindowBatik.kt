@@ -10,9 +10,6 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.swing.BatikMapperComponent
-import jetbrains.datalore.vis.swing.DefaultPlotPanel
-import jetbrains.datalore.vis.swing.PlotComponentProvider
-import jetbrains.datalore.vis.swing.batik.DefaultSwingContextBatik
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
@@ -72,42 +69,7 @@ class PlotObjectsViewerDemoWindowBatik(
             )
         )
 
-        val plotPanel = DefaultPlotPanel(
-            plotComponentProvider = MyPlotComponentProvider(plotContainer),
-            preferredSizeFromPlot = false,
-            refreshRate = 300,
-            applicationContext = DefaultSwingContextBatik()
-        )
-
-        plotPanel.preferredSize = plotSize
-//
-//        plotPanel.alignmentX = Component.CENTER_ALIGNMENT
-        return plotPanel
-    }
-
-    companion object {
-        fun show(
-            title: String,
-            plotList: List<Plot>,
-            maxCol: Int = 2,
-            plotSize: Dimension = Dimension(500, 350)
-        ) {
-            PlotObjectsViewerDemoWindowBatik(title, plotList, maxCol, plotSize).open()
-        }
-    }
-
-    private class MyPlotComponentProvider(private val plotContainer: PlotContainer) : PlotComponentProvider {
-        override fun getPreferredSize(containerSize: Dimension): Dimension {
-            return containerSize
-        }
-
-        override fun createComponent(containerSize: Dimension?): JComponent {
-            assert(containerSize != null)
-
-            plotContainer.clearContent()
-            plotContainer.ensureContentBuilt()
-            val svgRoot = plotContainer.svg
-            return BatikMapperComponent(svgRoot, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
-        }
+        plotContainer.ensureContentBuilt()
+        return BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
     }
 }

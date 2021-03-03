@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotAssembler
 import jetbrains.datalore.plotDemo.model.plotAssembler.TilePlotDemo
 import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
 
-object TilePlotDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(TilePlotDemo()) {
-            PlotObjectsViewerDemoWindowBatik.show(
-                "Tile plot",
-                plotList = createPlots()
-            )
-        }
+fun main(args: Array<String>) {
+    with(TilePlotDemo()) {
+        PlotObjectsViewerDemoWindowBatik(
+            "Tile plot",
+            plotList = createPlots()
+        ).open()
     }
 }
