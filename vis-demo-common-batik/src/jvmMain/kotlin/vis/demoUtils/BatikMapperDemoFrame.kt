@@ -18,17 +18,7 @@ class BatikMapperDemoFrame(
     size: Dimension = FRAME_SIZE
 ) : SwingDemoFrame(title, size) {
 
-    override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-        return Companion.createSvgComponent(
-            svgRoot
-        )
-    }
-
     companion object {
-//        fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String) {
-//            BatikMapperDemoFrame(title).showSvg(svgRoots, size)
-//        }
-
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
             return BatikMapperComponent(
                 svgRoot,

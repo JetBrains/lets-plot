@@ -5,10 +5,6 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.vis.svg.SvgSvgElement
-import java.awt.Color
-import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
 
@@ -25,9 +21,14 @@ abstract class SwingDemoFrame(
 //            panel.background = Color.WHITE
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(MARGIN_LEFT, 0)))
-            panel.add(Box.createRigidArea(Dimension(0,
-                SPACE_V
-            )))
+            panel.add(
+                Box.createRigidArea(
+                    Dimension(
+                        0,
+                        SPACE_V
+                    )
+                )
+            )
             panel.initContent()
 
             if (scroll) {
@@ -42,35 +43,20 @@ abstract class SwingDemoFrame(
         }
     }
 
-    fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector) {
-        show {
-            for (svgRoot in svgRoots) {
-                val component = createSvgComponent(svgRoot)
-
-                component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-
-                val dimension = Dimension(size.x.toInt(), size.y.toInt())
-                component.minimumSize = dimension
-                component.maximumSize = dimension
-                component.alignmentX = Component.LEFT_ALIGNMENT
-
-                addVSpace(this)
-                add(component)
-            }
-        }
-    }
-
-    abstract fun createSvgComponent(svgRoot: SvgSvgElement): JComponent
-
     companion object {
         val FRAME_SIZE = Dimension(800, 1200)
         private const val MARGIN_LEFT = 50
         const val SPACE_V = 5
 
         private fun addVSpace(container: JPanel) {
-            container.add(Box.createRigidArea(Dimension(0,
-                SPACE_V
-            )))
+            container.add(
+                Box.createRigidArea(
+                    Dimension(
+                        0,
+                        SPACE_V
+                    )
+                )
+            )
         }
     }
 }

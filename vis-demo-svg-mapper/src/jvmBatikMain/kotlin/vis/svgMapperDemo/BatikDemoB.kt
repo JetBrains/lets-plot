@@ -16,5 +16,4 @@ fun main() {
         "Svg Elements (B)",
         listOf(svgRoot)
     ).open()
-
 }

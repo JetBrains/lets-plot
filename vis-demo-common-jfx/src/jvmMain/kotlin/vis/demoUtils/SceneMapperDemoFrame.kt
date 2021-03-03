@@ -5,12 +5,10 @@
 
 package jetbrains.datalore.vis.demoUtils
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFrame
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Dimension
-import javax.swing.JComponent
 
 class SceneMapperDemoFrame(
     title: String,
@@ -18,18 +16,7 @@ class SceneMapperDemoFrame(
     size: Dimension = FRAME_SIZE
 ) : SwingDemoFrame(title, size) {
 
-    override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent =
-        createSvgComponent(
-            svgRoot,
-            stylesheets
-        )
-
     companion object {
-        fun showSvg(svgRoots: List<SvgSvgElement>, stylesheets: List<String>, size: DoubleVector, title: String) {
-            SceneMapperDemoFrame(title, stylesheets)
-                .showSvg(svgRoots, size)
-        }
-
         fun createSvgComponent(svgRoot: SvgSvgElement, stylesheets: List<String>) =
             SceneMapperJfxPanel(svgRoot, stylesheets)
     }
