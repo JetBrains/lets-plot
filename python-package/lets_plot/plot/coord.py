@@ -48,6 +48,7 @@ def coord_cartesian(xlim=None, ylim=None):
                 'g': ['a', 'a', 'b', 'b', 'c', 'c']}
         ggplot(data) + geom_line(aes(x='x', y='y', group='g')) + \\
             coord_cartesian(xlim=(4, 23), ylim=(3, 22))
+
     """
 
     return _coord('cartesian', xlim=xlim, ylim=ylim)
@@ -92,6 +93,7 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
         y = 25 * x ** 2 + np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_point() + coord_fixed(ratio=.2, ylim=(7, 20))
+
     """
 
     return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim)
@@ -123,7 +125,7 @@ def coord_map(xlim=None, ylim=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         from lets_plot.geo_data import *
@@ -131,6 +133,7 @@ def coord_map(xlim=None, ylim=None):
         us = geocode_states('US-48').get_boundaries(4)
         ggplot() + geom_map(map=us, fill='gray', color='white') + \\
             coord_map(xlim=(-130, -100))
+
     """
 
     return _coord('map', xlim=xlim, ylim=ylim)
