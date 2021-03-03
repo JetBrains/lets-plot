@@ -16,7 +16,7 @@ def arrow(angle=None, length=None, ends=None, type=None):
     Parameters
     ----------
     angle : int
-        The angle of the arrow head in degrees (smaller numbers produce narrower, pointier arrows). 
+        The angle of the arrow head in degrees (smaller numbers produce narrower, pointer arrows). 
         Essentially describes the width of the arrow head.
     length : int
         The length of the arrow head (px).
@@ -34,7 +34,7 @@ def arrow(angle=None, length=None, ends=None, type=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 4-10
+        :emphasize-lines: 5, 7, 9, 11
         
         from lets_plot import *
         LetsPlot.setup_html()
@@ -44,9 +44,9 @@ def arrow(angle=None, length=None, ends=None, type=None):
             geom_segment(aes(x=[3], y=[6], xend=[3], yend=[9]), \\
                         arrow=arrow(type='open')) + \\
             geom_segment(aes(x=[4], y=[7], xend=[5], yend=[10]), \\
-                        arrow=arrow(type='closed', ends='both', length = 23)) + \\
+                        arrow=arrow(type='closed', ends='both', length=23)) + \\
             geom_segment(aes(x=[5], y=[8], xend=[7], yend=[7]), \\
-                        arrow=arrow(type='open', ends='first', angle = 120, length = 23))
+                        arrow=arrow(type='open', ends='first', angle=120, length=23))
 
     """
 

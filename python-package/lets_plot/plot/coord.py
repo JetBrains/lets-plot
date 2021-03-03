@@ -22,7 +22,7 @@ def coord_cartesian(xlim=None, ylim=None):
     Parameters
     ----------
     xlim : list
-        Limits (2 elements)for the x axis.
+        Limits (2 elements) for the x axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
     ylim : list
@@ -63,7 +63,7 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
     ylim : list
-        Limits (2 elements) for the y axis.
+        Limits (2 numbers) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
