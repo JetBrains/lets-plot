@@ -13,7 +13,7 @@ object LiveMapBatik {
     fun main(args: Array<String>) {
         with(LiveMap()) {
             @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+            val plotSpecList = plotSpecList()
             LiveMapPlotConfigDemoUtil.show(
                 "LiveMap Batik",
                 plotSpecList,

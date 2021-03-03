@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.swing.jfx
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.swing.PlotComponentProvider
+import jetbrains.datalore.vis.swing.PlotSpecComponentProvider
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import javax.swing.JComponent
 import javax.swing.JScrollPane
@@ -19,7 +19,7 @@ class DefaultPlotComponentProviderJfx(
     preserveAspectRatio: Boolean,
     var executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
-) : PlotComponentProvider(
+) : PlotSpecComponentProvider(
     processedSpec = processedSpec,
     preserveAspectRatio = preserveAspectRatio,
     svgComponentFactory = SVG_COMPONENT_FACTORY_JFX,
