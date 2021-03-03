@@ -6,20 +6,16 @@
 package jetbrains.datalore.plotDemo.geom
 
 import jetbrains.datalore.plotDemo.model.geom.PointDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 
-class PointDemoBatik : PointDemo() {
-
-    private fun show() {
-        val demoModels = createModels()
-        val svgRoots = createSvgRoots(demoModels)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Point geom")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            PointDemoBatik().show()
+object PointDemoBatik {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        with(PointDemo()) {
+            SvgViewerDemoWindowBatik(
+                "Points SVG",
+                createSvgRoots(createModels())
+            ).open()
         }
     }
 }
