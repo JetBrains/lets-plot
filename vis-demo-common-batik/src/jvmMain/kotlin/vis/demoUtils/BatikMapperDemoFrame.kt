@@ -25,9 +25,9 @@ class BatikMapperDemoFrame(
     }
 
     companion object {
-        fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String) {
-            BatikMapperDemoFrame(title).showSvg(svgRoots, size)
-        }
+//        fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String) {
+//            BatikMapperDemoFrame(title).showSvg(svgRoots, size)
+//        }
 
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
             return BatikMapperComponent(

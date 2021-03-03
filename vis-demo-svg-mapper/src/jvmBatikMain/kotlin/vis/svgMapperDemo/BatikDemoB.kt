@@ -5,15 +5,16 @@
 
 package jetbrains.datalore.vis.svgMapperDemo
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 import jetbrains.datalore.vis.svgDemoModel.b.DemoModelB
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
 
 fun main() {
-    val svgRoots = listOf(DemoModelB.createModel())
-    BatikMapperDemoFrame.showSvg(
-        svgRoots,
-        DoubleVector(500.0, 300.0),
-        "Svg Elements"
-    )
+    val svgRoot = DemoModelB.createModel()
+    svgRoot.width().set(500.0)
+    svgRoot.height().set(500.0)
+    SvgViewerDemoWindowBatik(
+        "Svg Elements (B)",
+        listOf(svgRoot)
+    ).open()
+
 }
