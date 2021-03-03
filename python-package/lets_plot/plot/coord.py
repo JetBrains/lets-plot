@@ -21,12 +21,12 @@ def coord_cartesian(xlim=None, ylim=None):
 
     Parameters
     ----------
-    xlim : list of numbers (2 elements)
-        Limits for the x axis.
+    xlim : list
+        Limits (2 elements)for the x axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
-    ylim : list of numbers (2 elements)
-        Limits for the y axis.
+    ylim : list
+        Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
@@ -34,14 +34,15 @@ def coord_cartesian(xlim=None, ylim=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 7
 
         from lets_plot import *
-        from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        ggplot() + geom_map(map=geocode_states('US-48').get_boundaries(4), \\
-                            fill='black', color='white', alpha=.7) + \\
-            coord_cartesian(xlim=[-130, -60], ylim=[None, 50])
+        data = {'x': [0, 8, 12, 17, 20, 26],
+                'y': [0, 8, 12, 17, 20, 26],
+                'g': ['a', 'a', 'b', 'b', 'c', 'c']}
+        ggplot(data) + geom_line(aes(x='x', y='y', group='g')) + \\
+            coord_cartesian(xlim=(4, 23), ylim=(3, 22))
     """
 
     return _coord('cartesian', xlim=xlim, ylim=ylim)
@@ -53,16 +54,16 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
 
     Parameters
     ----------
-    ratio : number
+    ratio : float
         The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis.
         ratio = 1, ensures that one unit on the x-axis is the same length as one unit on the y-axis.
         Ratios higher than one make units on the y-axis longer than units on the x-axis, and vice versa.
-    xlim : list of numbers (2 elements)
-        Limits for the x axis.
+    xlim : list
+        Limits (2 numbers) for the x axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
-    ylim : list of numbers (2 elements)
-        Limits for the y axis.
+    ylim : list
+        Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
@@ -71,13 +72,17 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 9
 
+        import numpy as np
         from lets_plot import *
-        from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        ggplot() + geom_map(map=geocode_countries('Italy').get_boundaries(5)) + \\
-            coord_fixed(ratio=.7, xlim=[None, 30], ylim=[35, 50])
+        n = 30
+        np.random.seed(42)
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_point() + coord_fixed(ratio=.2, xlim=(-1, 1))
     """
 
     return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim)
@@ -91,12 +96,12 @@ def coord_map(xlim=None, ylim=None):
 
     Parameters
     ----------
-    xlim : list of numbers (2 elements)
-        Limits for the x axis.
+    xlim : list
+        Limits (2 elements) for the x axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
-    ylim : list of numbers (2 elements)
-        Limits for the y axis.
+    ylim : list
+        Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
@@ -104,13 +109,14 @@ def coord_map(xlim=None, ylim=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        ggplot() + geom_map(map=geocode_states('Texas').get_boundaries(), size=1) + \\
-            coord_map(xlim=(-110, None), ylim=(20, 40))
+        us = geocode_states('US-48').get_boundaries(4)
+        ggplot() + geom_map(map=us, fill='gray', color='white') + \\
+            coord_map(xlim=(-120, -115))
     """
 
     return _coord('map', xlim=xlim, ylim=ylim)
