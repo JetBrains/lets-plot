@@ -132,7 +132,7 @@ def coord_map(xlim=None, ylim=None, flip=False):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         from lets_plot.geo_data import *
