@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.LinearRegressionPlotDemo
-import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowBatik
 
 fun main() {
     with(LinearRegressionPlotDemo()) {
-        PlotObjectsViewerDemoWindowBatik(
+        PlotObjectsDemoWindowBatik(
             "Linear regression plot",
             plotList = createPlots()
         ).open()

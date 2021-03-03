@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Raster
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
     with(Raster()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "geom_raster",
             plotSpecList()
         )

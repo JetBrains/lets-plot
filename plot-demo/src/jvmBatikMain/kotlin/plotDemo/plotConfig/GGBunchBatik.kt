@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
     with(GGBunch()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "GGBunch",
             plotSpecList()
         ).open()

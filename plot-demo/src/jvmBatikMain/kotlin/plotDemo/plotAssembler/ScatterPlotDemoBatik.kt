@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.ScatterPlotDemo
-import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowBatik
 
 fun main() {
     with(ScatterPlotDemo()) {
-        PlotObjectsViewerDemoWindowBatik(
+        PlotObjectsDemoWindowBatik(
             "Scatter plot",
             plotList = createPlots()
         ).open()

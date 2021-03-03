@@ -6,12 +6,12 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.MercatorProjection
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 import java.awt.Dimension
 
 fun main() {
     with(MercatorProjection()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "Mercator projection",
             plotSpecList(),
             2,

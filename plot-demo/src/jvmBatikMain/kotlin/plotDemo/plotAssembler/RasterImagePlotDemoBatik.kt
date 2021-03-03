@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.RasterImagePlotDemo
-import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowBatik
 
 fun main() {
     with(RasterImagePlotDemo()) {
-        PlotObjectsViewerDemoWindowBatik(
+        PlotObjectsDemoWindowBatik(
             "Raster image plot",
             plotList = createPlots()
         ).open()

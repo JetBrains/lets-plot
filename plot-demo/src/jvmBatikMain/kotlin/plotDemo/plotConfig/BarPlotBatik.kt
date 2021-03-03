@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
     with(BarPlot()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "Bar plot",
             plotSpecList()
         ).open()

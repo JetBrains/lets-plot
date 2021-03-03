@@ -6,13 +6,13 @@
 package jetbrains.datalore.plotDemo.plotContainer
 
 import jetbrains.datalore.plotDemo.model.plotContainer.BarPlotResizeDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotResizableDemoWindowBatik
 
-object BarPlotResizeContinuousXDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.continuousX(),
-            BatikMapperDemoFactory()
-        )
+fun main() {
+    with(BarPlotResizeDemo.continuousX()) {
+        PlotResizableDemoWindowBatik(
+            "Bar plot (X-continuous)",
+            plot = createPlot()
+        ).open()
     }
 }

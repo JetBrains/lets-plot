@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.ImageGeom
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
     with(ImageGeom()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "image_geom",
             plotSpecList()
         ).open()

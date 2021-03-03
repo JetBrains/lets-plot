@@ -6,12 +6,12 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.ScaleLimitsDiscrete
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 import java.awt.Dimension
 
 fun main() {
     with(ScaleLimitsDiscrete()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "Scale limits (discrete)",
             plotSpecList(),
             2,

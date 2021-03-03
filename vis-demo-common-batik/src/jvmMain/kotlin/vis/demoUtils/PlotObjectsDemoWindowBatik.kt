@@ -16,7 +16,7 @@ import java.awt.GridLayout
 import javax.swing.*
 import kotlin.math.min
 
-class PlotObjectsViewerDemoWindowBatik(
+class PlotObjectsDemoWindowBatik(
     title: String,
     private val plotList: List<Plot>,
     private val maxCol: Int = 2,
@@ -28,6 +28,7 @@ class PlotObjectsViewerDemoWindowBatik(
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
         rootPanel = JPanel()
+        rootPanel.layout = GridLayout(0, min(maxCol, plotList.size))
         rootPanel.background = Color.WHITE
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
@@ -43,8 +44,6 @@ class PlotObjectsViewerDemoWindowBatik(
 
     fun open() {
         SwingUtilities.invokeLater {
-            rootPanel.layout = GridLayout(0, min(maxCol, plotList.size))
-
             createWindowContent()
 
             pack()

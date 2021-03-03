@@ -6,12 +6,12 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.FacetWrapDirVDemo
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 import java.awt.Dimension
 
 fun main() {
     with(FacetWrapDirVDemo()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "Facet wrap",
             plotSpecList(),
             2,

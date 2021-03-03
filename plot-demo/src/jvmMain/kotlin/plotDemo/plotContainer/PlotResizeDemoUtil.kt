@@ -94,7 +94,7 @@ object PlotResizeDemoUtil {
         plotSizeProp: ReadableProperty<DoubleVector>,
         factory: SwingDemoFactory
     ): JComponent {
-        val plot = demo.createPlot(plotSizeProp)
+        val plot = demo.createPlotContainer(plotSizeProp)
 
         return MonolithicAwt.buildPlotComponent(
             plot,

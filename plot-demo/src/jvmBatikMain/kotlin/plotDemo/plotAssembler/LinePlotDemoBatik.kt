@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.LinePlotDemo
-import jetbrains.datalore.vis.demoUtils.PlotObjectsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowBatik
 
 fun main() {
     with(LinePlotDemo()) {
-        PlotObjectsViewerDemoWindowBatik(
+        PlotObjectsDemoWindowBatik(
             "Line plot",
             plotList = createPlots()
         ).open()

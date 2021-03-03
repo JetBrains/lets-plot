@@ -6,12 +6,12 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.ScaleLimitsContinuous
-import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 import java.awt.Dimension
 
 fun main() {
     with(ScaleLimitsContinuous()) {
-        PlotSpecsViewerDemoWindowBatik(
+        PlotSpecsDemoWindowBatik(
             "Scale limits (continuous)",
             plotSpecList(),
             2,

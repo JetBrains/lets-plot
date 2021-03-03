@@ -16,7 +16,7 @@ import java.awt.GridLayout
 import javax.swing.*
 import kotlin.math.min
 
-class PlotSpecsViewerDemoWindowBatik(
+class PlotSpecsDemoWindowBatik(
     title: String,
     private val specList: List<MutableMap<String, Any>>,
     private val maxCol: Int = 3,
@@ -28,6 +28,7 @@ class PlotSpecsViewerDemoWindowBatik(
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
         rootPanel = JPanel()
+        rootPanel.layout = GridLayout(0, min(maxCol, specList.size))
         rootPanel.background = Color.WHITE
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
@@ -47,8 +48,6 @@ class PlotSpecsViewerDemoWindowBatik(
 
     fun open() {
         SwingUtilities.invokeLater {
-            rootPanel.layout = GridLayout(0, min(maxCol, specList.size))
-
             createWindowContent()
 
             pack()
