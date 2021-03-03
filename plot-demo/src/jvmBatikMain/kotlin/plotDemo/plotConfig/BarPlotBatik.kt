@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
-object BarPlotBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(BarPlot()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Bar plot",
-                plotSpecList()
-            )
-        }
+fun main() {
+    with(BarPlot()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Bar plot",
+            plotSpecList()
+        ).open()
     }
 }

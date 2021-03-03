@@ -9,16 +9,13 @@ import jetbrains.datalore.plotDemo.model.plotConfig.ScaleLimitsDiscrete
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 import java.awt.Dimension
 
-object ScaleLimitsDiscreteBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ScaleLimitsDiscrete()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Scale limits (discrete)",
-                plotSpecList(),
-                2,
-                Dimension(600, 200)
-            )
-        }
+fun main() {
+    with(ScaleLimitsDiscrete()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Scale limits (discrete)",
+            plotSpecList(),
+            2,
+            Dimension(600, 200)
+        ).open()
     }
 }

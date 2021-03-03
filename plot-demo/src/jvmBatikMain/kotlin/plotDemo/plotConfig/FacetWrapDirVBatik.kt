@@ -9,16 +9,13 @@ import jetbrains.datalore.plotDemo.model.plotConfig.FacetWrapDirVDemo
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 import java.awt.Dimension
 
-object FacetWrapDirVBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(FacetWrapDirVDemo()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Facet wrap",
-                plotSpecList(),
-                2,
-                Dimension(600, 600)
-            )
-        }
+fun main() {
+    with(FacetWrapDirVDemo()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Facet wrap",
+            plotSpecList(),
+            2,
+            Dimension(600, 600)
+        ).open()
     }
 }

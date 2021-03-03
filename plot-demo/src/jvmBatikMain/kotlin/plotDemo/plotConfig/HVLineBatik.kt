@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.plotDemo.model.plotConfig.HVLine
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
-object HVLineBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(HVLine()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "hline & vline plot",
-                plotSpecList()
-            )
-        }
+fun main() {
+    with(HVLine()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "hline & vline plot",
+            plotSpecList()
+        ).open()
     }
 }

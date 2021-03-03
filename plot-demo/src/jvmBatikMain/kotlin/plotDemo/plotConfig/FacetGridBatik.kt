@@ -9,16 +9,13 @@ import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 import java.awt.Dimension
 
-object FacetGridBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(FacetGridDemo()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Facet grid",
-                plotSpecList(),
-                2,
-                Dimension(600, 400)
-            )
-        }
+fun main() {
+    with(FacetGridDemo()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Facet grid",
+            plotSpecList(),
+            2,
+            Dimension(600, 400)
+        ).open()
     }
 }

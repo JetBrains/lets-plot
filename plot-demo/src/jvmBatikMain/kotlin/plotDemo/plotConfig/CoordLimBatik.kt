@@ -6,17 +6,13 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.CoordLim
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
-object CoordLimBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(CoordLim()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "coord x/y limits",
-                plotSpecList()
-            )
-        }
+fun main() {
+    with(CoordLim()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "coord x/y limits",
+            plotSpecList()
+        ).open()
     }
 }

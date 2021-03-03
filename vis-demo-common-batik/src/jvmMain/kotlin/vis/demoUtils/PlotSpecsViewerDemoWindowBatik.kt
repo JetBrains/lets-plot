@@ -90,15 +90,4 @@ class PlotSpecsViewerDemoWindowBatik(
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT
         return plotPanel
     }
-
-    companion object {
-        fun show(
-            title: String,
-            specList: List<MutableMap<String, Any>>,
-            maxCol: Int = 3,
-            plotSize: Dimension? = null,
-        ) {
-            PlotSpecsViewerDemoWindowBatik(title, specList, maxCol, plotSize).open()
-        }
-    }
 }

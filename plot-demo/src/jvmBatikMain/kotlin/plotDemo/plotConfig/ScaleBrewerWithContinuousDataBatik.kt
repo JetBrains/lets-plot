@@ -8,15 +8,12 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.plotDemo.model.plotConfig.ScaleBrewerWithContinuousData
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
-object ScaleBrewerWithContinuousDataBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ScaleBrewerWithContinuousData()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Scale Brewer with discrete data",
-                plotSpecList(),
-                2
-            )
-        }
+fun main() {
+    with(ScaleBrewerWithContinuousData()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Scale Brewer with discrete data",
+            plotSpecList(),
+            2
+        ).open()
     }
 }

@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.plotDemo.model.plotConfig.Raster
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
-object RasterBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Raster()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "geom_raster",
-                plotSpecList()
-            )
-        }
+fun main() {
+    with(Raster()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "geom_raster",
+            plotSpecList()
+        )
     }
 }

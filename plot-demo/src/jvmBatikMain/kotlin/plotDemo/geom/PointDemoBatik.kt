@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.geom
 import jetbrains.datalore.plotDemo.model.geom.PointDemo
 import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 
-object PointDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(PointDemo()) {
-            SvgViewerDemoWindowBatik(
-                "Points SVG",
-                createSvgRoots(createModels())
-            ).open()
-        }
+fun main() {
+    with(PointDemo()) {
+        SvgViewerDemoWindowBatik(
+            "Points SVG",
+            createSvgRoots(createModels())
+        ).open()
     }
 }

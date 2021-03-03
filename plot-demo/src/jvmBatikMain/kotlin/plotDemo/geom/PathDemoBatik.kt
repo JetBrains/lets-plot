@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.geom
 import jetbrains.datalore.plotDemo.model.geom.PathDemo
 import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 
-object PathDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(PathDemo()) {
-            SvgViewerDemoWindowBatik(
-                "Path SVG",
-                createSvgRoots(createModels())
-            ).open()
-        }
+fun main() {
+    with(PathDemo()) {
+        SvgViewerDemoWindowBatik(
+            "Path SVG",
+            createSvgRoots(createModels())
+        ).open()
     }
 }

@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 
-object AreaBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Area()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Area plot",
-                plotSpecList()
-            )
-        }
+fun main() {
+    with(Area()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Area plot",
+            plotSpecList()
+        ).open()
     }
 }

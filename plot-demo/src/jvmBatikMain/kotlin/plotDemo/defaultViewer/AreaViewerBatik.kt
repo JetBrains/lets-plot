@@ -7,23 +7,19 @@ package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
 import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
-import java.awt.Dimension
 
-object AreaViewerBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Area()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            for (spec in plotSpecList) {
-                PlotViewerWindowBatik(
-                    "Area plot",
-                    spec,
-                    null,
+fun main(args: Array<String>) {
+    with(Area()) {
+        @Suppress("UNCHECKED_CAST")
+        val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+        for (spec in plotSpecList) {
+            PlotViewerWindowBatik(
+                "Area plot",
+                spec,
+                null,
 //                    Dimension(900, 700),
-                    preserveAspectRatio = false
-                ).open()
-            }
+                preserveAspectRatio = false
+            ).open()
         }
     }
 }

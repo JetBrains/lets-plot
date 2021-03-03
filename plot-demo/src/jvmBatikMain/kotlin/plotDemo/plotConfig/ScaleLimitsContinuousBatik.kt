@@ -9,16 +9,13 @@ import jetbrains.datalore.plotDemo.model.plotConfig.ScaleLimitsContinuous
 import jetbrains.datalore.vis.demoUtils.PlotSpecsViewerDemoWindowBatik
 import java.awt.Dimension
 
-object ScaleLimitsContinuousBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ScaleLimitsContinuous()) {
-            PlotSpecsViewerDemoWindowBatik.show(
-                "Scale limits (continuous)",
-                plotSpecList(),
-                2,
-                Dimension(500, 200)
-            )
-        }
+fun main() {
+    with(ScaleLimitsContinuous()) {
+        PlotSpecsViewerDemoWindowBatik(
+            "Scale limits (continuous)",
+            plotSpecList(),
+            2,
+            Dimension(500, 200)
+        ).open()
     }
 }

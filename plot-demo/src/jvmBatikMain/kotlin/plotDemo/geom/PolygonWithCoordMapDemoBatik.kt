@@ -8,14 +8,11 @@ package jetbrains.datalore.plotDemo.geom
 import jetbrains.datalore.plotDemo.model.geom.PolygonWithCoordMapDemo
 import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 
-object PolygonWithCoordMapDemoBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(PolygonWithCoordMapDemo()) {
-            SvgViewerDemoWindowBatik(
-                "Polygon with CoordMap SVG",
-                createSvgRoots(createModels())
-            ).open()
-        }
+fun main() {
+    with(PolygonWithCoordMapDemo()) {
+        SvgViewerDemoWindowBatik(
+            "Polygon with CoordMap SVG",
+            createSvgRoots(createModels())
+        ).open()
     }
 }
