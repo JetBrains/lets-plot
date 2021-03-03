@@ -22,7 +22,6 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':vis-svg-portable')
-                api project(':vis-demo-common')
             }
         }
         jvmMain {
@@ -33,6 +32,7 @@ kotlin {
                 implementation project(':vis-svg-mapper-batik')
                 implementation project(':vis-swing-common')
                 implementation project(':vis-swing-batik')
+                implementation project(':vis-demo-common')
             }
         }
     }

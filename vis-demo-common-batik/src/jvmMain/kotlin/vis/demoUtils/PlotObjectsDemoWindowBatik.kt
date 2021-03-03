@@ -9,56 +9,24 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.vis.demoUtils.swing.PlotObjectsDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
-import java.awt.Color
 import java.awt.Dimension
-import java.awt.GridLayout
-import javax.swing.*
-import kotlin.math.min
+import javax.swing.JComponent
 
 class PlotObjectsDemoWindowBatik(
     title: String,
-    private val plotList: List<Plot>,
-    private val maxCol: Int = 2,
-    private val plotSize: Dimension = Dimension(500, 350)
-) : JFrame(title) {
-    private val rootPanel: JPanel
+    plotList: List<Plot>,
+    maxCol: Int = 2,
+    plotSize: Dimension = Dimension(500, 350)
+) : PlotObjectsDemoWindowBase(
+    title,
+    plotList = plotList,
+    maxCol = maxCol,
+    plotSize = plotSize
+) {
 
-    init {
-        defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-
-        rootPanel = JPanel()
-        rootPanel.layout = GridLayout(0, min(maxCol, plotList.size))
-//        rootPanel.background = Color.WHITE
-        rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-
-        // Fixed plot size
-        val scrollPane = JScrollPane(
-            rootPanel,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
-
-        )
-        contentPane.add(scrollPane)
-    }
-
-    fun open() {
-        SwingUtilities.invokeLater {
-            createWindowContent()
-
-            pack()
-            setLocationRelativeTo(null)  // move to the screen center
-            isVisible = true
-        }
-    }
-
-    private fun createWindowContent() {
-        for (plot in plotList) {
-            rootPanel.add(createPlotComponent(plot, plotSize))
-        }
-    }
-
-    private fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
+    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
         val plotContainer = PlotContainer(
             plot, ValueProperty(
                 DoubleVector(

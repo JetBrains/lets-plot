@@ -10,55 +10,30 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.DefaultPlotPanel
 import jetbrains.datalore.vis.swing.PlotComponentProvider
 import jetbrains.datalore.vis.swing.batik.DefaultSwingContextBatik
-import java.awt.Color
 import java.awt.Dimension
-import java.awt.GridLayout
-import javax.swing.*
+import javax.swing.JComponent
 
 class PlotResizableDemoWindowBatik(
     title: String,
-    private val plot: Plot,
+    plot: Plot,
     plotSize: Dimension = Dimension(500, 350)
-) : JFrame(title) {
-    
-    private val rootPanel: JPanel
-    private val plotSizeProperty = ValueProperty(
-        DoubleVector(
-            plotSize.getWidth(),
-            plotSize.getHeight(),
+) : PlotResizableDemoWindowBase(
+    title,
+    plot = plot,
+    plotSize = plotSize
+) {
+    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
+        val plotSizeProperty = ValueProperty(
+            DoubleVector(
+                plotSize.getWidth(),
+                plotSize.getHeight(),
+            )
         )
-    )
-
-    init {
-        defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-
-        rootPanel = JPanel()
-        rootPanel.layout = GridLayout()
-        rootPanel.background = Color.WHITE
-        rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-
-        contentPane.add(rootPanel)
-    }
-
-    fun open() {
-        SwingUtilities.invokeLater {
-            createWindowContent()
-
-            pack()
-            setLocationRelativeTo(null)  // move to the screen center
-            isVisible = true
-        }
-    }
-
-    private fun createWindowContent() {
-        rootPanel.add(createPlotComponent(plot))
-    }
-
-    private fun createPlotComponent(plot: Plot): JComponent {
         val plotContainer = PlotContainer(plot, plotSizeProperty)
 
         return DefaultPlotPanel(
