@@ -109,12 +109,11 @@ abstract class GuideConfig private constructor(opts: Map<String, Any>) : Options
         }
 
         private fun createForName(name: String, guideOptions: Map<String, Any>): GuideConfig {
-            if (COLOR_BAR == name || COLOR_BAR_GB == name) {
-                return ColorBarConfig(guideOptions)
+            return when {
+                COLOR_BAR == name || COLOR_BAR_GB == name -> ColorBarConfig(guideOptions)
+                NONE == name -> GuideNoneConfig()
+                else -> LegendConfig(guideOptions)
             }
-            return if (NONE == name) {
-                GuideNoneConfig()
-            } else LegendConfig(guideOptions)
         }
     }
 }
