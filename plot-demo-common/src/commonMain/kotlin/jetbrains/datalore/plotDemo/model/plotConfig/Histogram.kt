@@ -14,7 +14,7 @@ import jetbrains.datalore.plotDemo.model.util.DemoUtil
  * www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
 open class Histogram : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             basicWithVLine(),
@@ -48,7 +48,7 @@ open class Histogram : PlotConfigDemoBase() {
         //===========================
 
 
-        fun basic(): Map<String, Any> {
+        fun basic(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -67,7 +67,7 @@ open class Histogram : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun basicWithVLine(): Map<String, Any> {
+        fun basicWithVLine(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -91,7 +91,7 @@ open class Histogram : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withWeights(): Map<String, Any> {
+        fun withWeights(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -111,7 +111,7 @@ open class Histogram : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun densityMapping(): Map<String, Any> {
+        fun densityMapping(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +

@@ -12,7 +12,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
  * see: www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/
  */
 open class BarAndLine : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultBarDiscreteX(),
             barDiscreteXFill(),
@@ -31,7 +31,7 @@ open class BarAndLine : PlotConfigDemoBase() {
 
         //===========================
 
-        fun defaultBarDiscreteX(): Map<String, Any> {
+        fun defaultBarDiscreteX(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -51,7 +51,7 @@ open class BarAndLine : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun barDiscreteXFill(): Map<String, Any> {
+        fun barDiscreteXFill(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -72,7 +72,7 @@ open class BarAndLine : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun barDiscreteXFillMappedInGeom(): Map<String, Any> {
+        fun barDiscreteXFillMappedInGeom(): MutableMap<String, Any> {
             // Must be same result as in the method above
             val spec = "{" +
                     "   'kind': 'plot'," +
@@ -96,7 +96,7 @@ open class BarAndLine : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun barDiscreteXFillAndBlackOutline(): Map<String, Any> {
+        fun barDiscreteXFillAndBlackOutline(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -118,7 +118,7 @@ open class BarAndLine : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun barDiscreteXTitleAxisLabelsNarrowWidth(): Map<String, Any> {
+        fun barDiscreteXTitleAxisLabelsNarrowWidth(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +

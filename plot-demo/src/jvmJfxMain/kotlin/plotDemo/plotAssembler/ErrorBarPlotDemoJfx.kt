@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotAssembler
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotAssembler.ErrorBarPlotDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowJfx
 
-class ErrorBarPlotDemoJfx : ErrorBarPlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Error-bar plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            ErrorBarPlotDemoJfx().show()
-        }
+fun main() {
+    with(ErrorBarPlotDemo()) {
+        PlotObjectsDemoWindowJfx(
+            "Error-bar plot",
+            plotList = createPlots()
+        ).open()
     }
 }

@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.SharedPieces
 
 open class Polygons : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             join()
@@ -18,7 +18,7 @@ open class Polygons : PlotConfigDemoBase() {
     }
 
     companion object {
-        fun basic(): Map<String, Any> {
+        fun basic(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     //        "   'data': " + ourData +
@@ -43,7 +43,7 @@ open class Polygons : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun join(): Map<String, Any> {
+        fun join(): MutableMap<String, Any> {
 
 
             val spec = """

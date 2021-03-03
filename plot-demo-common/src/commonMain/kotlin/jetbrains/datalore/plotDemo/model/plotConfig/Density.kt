@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 open class Density : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             withWeights()
@@ -24,7 +24,7 @@ open class Density : PlotConfigDemoBase() {
         //===========================
 
 
-        fun basic(): Map<String, Any> {
+        fun basic(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -43,7 +43,7 @@ open class Density : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withWeights(): Map<String, Any> {
+        fun withWeights(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +

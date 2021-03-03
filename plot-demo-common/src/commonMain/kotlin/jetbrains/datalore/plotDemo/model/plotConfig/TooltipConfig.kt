@@ -12,7 +12,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 class TooltipConfig : PlotConfigDemoBase() {
 
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             mpg(),
             basic(),
@@ -32,7 +32,7 @@ class TooltipConfig : PlotConfigDemoBase() {
     private val originCar = "@{origin of car}"
 
 
-    private fun mpg(): Map<String, Any> {
+    private fun mpg(): MutableMap<String, Any> {
         val spec = """
         {
            'kind': 'plot',
@@ -70,7 +70,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun redefineDefaults(): Map<String, Any> {
+    private fun redefineDefaults(): MutableMap<String, Any> {
         val spec = """
         {
            'kind': 'plot',
@@ -99,7 +99,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun basic(): Map<String, Any> {
+    private fun basic(): MutableMap<String, Any> {
         val spec = """
         {
            'kind': 'plot',
@@ -123,7 +123,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun tooltipAesList(): Map<String, Any> {
+    private fun tooltipAesList(): MutableMap<String, Any> {
         val spec = """
         {
            'kind': 'plot',
@@ -155,7 +155,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun tooltipEmptyList(): Map<String, Any> {
+    private fun tooltipEmptyList(): MutableMap<String, Any> {
         val spec = """
         {
            'kind': 'plot',
@@ -182,7 +182,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun outliers(): Map<String, Any> {
+    private fun outliers(): MutableMap<String, Any> {
         val spec = """{
       'data': {
             'hwy': [4.2, 11.5, 7.3, 5.8, 6.4, 10.0],

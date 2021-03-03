@@ -9,16 +9,18 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.vis.swing.BatikMapperComponent
+import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
 import kotlin.math.min
 
-class PlotObjectsDemoWindowBatik(
+class PlotObjectsDemoWindowJfx(
     title: String,
     private val plotList: List<Plot>,
+    private val stylesheets: List<String> = listOf(Style.JFX_PLOT_STYLESHEET),
     private val maxCol: Int = 2,
     private val plotSize: Dimension = Dimension(500, 350)
 ) : JFrame(title) {
@@ -69,6 +71,6 @@ class PlotObjectsDemoWindowBatik(
         )
 
         plotContainer.ensureContentBuilt()
-        return BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
+        return SceneMapperJfxPanel(plotContainer.svg, stylesheets)
     }
 }

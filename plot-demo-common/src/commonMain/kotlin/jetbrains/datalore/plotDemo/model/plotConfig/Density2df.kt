@@ -10,13 +10,13 @@ import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 class Density2df : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             sepalLength()
         )
     }
 
-    private fun sepalLength(): Map<String, Any> {
+    private fun sepalLength(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +

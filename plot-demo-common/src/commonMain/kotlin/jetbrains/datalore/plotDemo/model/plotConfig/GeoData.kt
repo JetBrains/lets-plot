@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 class GeoData : PlotConfigDemoBase() {
 
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             mapGeoDataFrame_MapJoin(),
             mapGeoDataFrame_NoMapJoin_MixedShapes("polygon"),
@@ -31,7 +31,7 @@ class GeoData : PlotConfigDemoBase() {
         private const val multipolygon =
             """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"""
 
-        private fun mapGeoDict_MapJoin(): Map<String, Any> {
+        private fun mapGeoDict_MapJoin(): MutableMap<String, Any> {
             val spec = """
 {
   "ggtitle": {"text": "mapJoinDict"},
@@ -63,7 +63,7 @@ class GeoData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        private fun mapGeoDataFrame_MapJoin(): Map<String, Any> {
+        private fun mapGeoDataFrame_MapJoin(): MutableMap<String, Any> {
             val spec = """
             |{
             |    "ggtitle": {"text": "mapGeoDataFrame_MapJoin"},

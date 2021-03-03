@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 open class BarOverlaidPlot : PlotConfigDemoBase() {
 
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             overBars(),
             overBarsAndPoint(),
@@ -20,7 +20,7 @@ open class BarOverlaidPlot : PlotConfigDemoBase() {
 
     companion object {
 
-        private fun overBars(): Map<String, Any> {
+        private fun overBars(): MutableMap<String, Any> {
             val spec = """
             |{'kind': 'plot',
             | 'data': {'letter': ['A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F','A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F'],
@@ -43,7 +43,7 @@ open class BarOverlaidPlot : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        private fun overBarsAndPoint(): Map<String, Any> {
+        private fun overBarsAndPoint(): MutableMap<String, Any> {
             val spec = """
             |{'kind': 'plot',
             | 'data': {'letter': ['A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F','A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F'],
@@ -70,7 +70,7 @@ open class BarOverlaidPlot : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        private fun overBarsAndLine(): Map<String, Any> {
+        private fun overBarsAndLine(): MutableMap<String, Any> {
             val spec = """
             |{'kind': 'plot',
             | 'data': {'letter': ['A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F','A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F'],

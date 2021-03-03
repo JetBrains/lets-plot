@@ -5,22 +5,17 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotConfig.AllColorScales
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
+import java.awt.Dimension
 
-object AllColorScalesJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(AllColorScales()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "Color Scales",
-                plotSpecList,
-                SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(AllColorScales()) {
+        PlotSpecsDemoWindowJfx(
+            "Color Scales",
+            plotSpecList(),
+            plotSize = Dimension(600, 150),
+            maxCol = 2
+        ).open()
     }
 }

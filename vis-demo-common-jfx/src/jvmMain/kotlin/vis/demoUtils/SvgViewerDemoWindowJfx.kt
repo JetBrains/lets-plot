@@ -5,22 +5,19 @@
 
 package jetbrains.datalore.vis.demoUtils
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.plot.builder.Plot
-import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.vis.swing.BatikMapperComponent
+import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Color
-import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
 import kotlin.math.min
 
-class PlotObjectsDemoWindowBatik(
+class SvgViewerDemoWindowJfx(
     title: String,
-    private val plotList: List<Plot>,
+    private val svgRoots: List<SvgSvgElement>,
+    private val stylesheets: List<String> = listOf(Style.JFX_PLOT_STYLESHEET),
     private val maxCol: Int = 2,
-    private val plotSize: Dimension = Dimension(500, 350)
 ) : JFrame(title) {
     private val rootPanel: JPanel
 
@@ -28,9 +25,9 @@ class PlotObjectsDemoWindowBatik(
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
         rootPanel = JPanel()
-        rootPanel.layout = GridLayout(0, min(maxCol, plotList.size))
-//        rootPanel.background = Color.WHITE
+        rootPanel.layout = GridLayout(0, min(maxCol, svgRoots.size), 5, 5)
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+
 
         // Fixed plot size
         val scrollPane = JScrollPane(
@@ -53,22 +50,18 @@ class PlotObjectsDemoWindowBatik(
     }
 
     private fun createWindowContent() {
-        for (plot in plotList) {
-            rootPanel.add(createPlotComponent(plot, plotSize))
+        for (svgRoot in svgRoots) {
+            rootPanel.add(createPlotComponent(svgRoot))
         }
     }
 
-    private fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
-        val plotContainer = PlotContainer(
-            plot, ValueProperty(
-                DoubleVector(
-                    plotSize.getWidth(),
-                    plotSize.getHeight(),
-                )
-            )
+    private fun createPlotComponent(svgRoot: SvgSvgElement): JComponent {
+        val component = SceneMapperJfxPanel(
+            svgRoot,
+            stylesheets
         )
 
-        plotContainer.ensureContentBuilt()
-        return BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
+        component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
+        return component
     }
 }

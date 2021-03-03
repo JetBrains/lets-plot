@@ -20,6 +20,7 @@ kotlin {
                 implementation project(':vis-svg-portable')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
+                implementation project(':plot-config-portable')
                 api project(':vis-demo-common')
             }
         }

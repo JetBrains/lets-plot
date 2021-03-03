@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 class AsDiscrete : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             plotData_DiscreteGroup(),
             fillFactor(),
@@ -40,7 +40,7 @@ class AsDiscrete : PlotConfigDemoBase() {
     """.trimMargin()
 
 
-    private fun plotData_DiscreteGroup(): Map<String, Any> {
+    private fun plotData_DiscreteGroup(): MutableMap<String, Any> {
         val spec = """
             {
               "kind": "plot",
@@ -72,7 +72,7 @@ class AsDiscrete : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun layerData_DiscreteGroup(): Map<String, Any> {
+    private fun layerData_DiscreteGroup(): MutableMap<String, Any> {
         val spec = """
             {
               "kind": "plot",
@@ -101,7 +101,7 @@ class AsDiscrete : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun smoothStatAsDiscrete(): Map<String, Any> {
+    private fun smoothStatAsDiscrete(): MutableMap<String, Any> {
         val spec = """
             {
               "mapping": {
@@ -131,7 +131,8 @@ class AsDiscrete : PlotConfigDemoBase() {
         """.trimIndent()
         return parsePlotSpec(spec)
     }
-    private fun smoothStatWithGroup(): Map<String, Any> {
+
+    private fun smoothStatWithGroup(): MutableMap<String, Any> {
         val spec = """
             {
               "data": $smoothData,
@@ -164,7 +165,7 @@ class AsDiscrete : PlotConfigDemoBase() {
     }
 
 
-    private fun fillFactor(): Map<String, Any> {
+    private fun fillFactor(): MutableMap<String, Any> {
 
         val spec = """
 {
@@ -183,7 +184,7 @@ class AsDiscrete : PlotConfigDemoBase() {
     }
 
 
-    private fun fillFactorWithScaleColor(): Map<String, Any> {
+    private fun fillFactorWithScaleColor(): MutableMap<String, Any> {
 
         val spec = """
 {
@@ -204,7 +205,7 @@ class AsDiscrete : PlotConfigDemoBase() {
     }
 
 
-    private fun fillAndColorFactor(): Map<String, Any> {
+    private fun fillAndColorFactor(): MutableMap<String, Any> {
 
         val spec = """
 {

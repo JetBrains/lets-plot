@@ -5,25 +5,15 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
-import jetbrains.datalore.plotDemo.model.plotConfig.CrossBar
 import jetbrains.datalore.plotDemo.model.plotConfig.PointRange
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object PointRangeJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(PointRange()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            @Suppress("SpellCheckingInspection")
-            PlotConfigDemoUtil.show(
-                "PointRange",
-                plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                DoubleVector(600.0, 300.0)
-            )
-        }
+fun main() {
+    with(PointRange()) {
+        PlotSpecsDemoWindowJfx(
+            "PointRange",
+            plotSpecList()
+        ).open()
     }
 }
+

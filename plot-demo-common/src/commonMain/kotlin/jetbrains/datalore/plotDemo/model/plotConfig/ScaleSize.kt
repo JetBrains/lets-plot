@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 @Suppress("DuplicatedCode")
 class ScaleSize : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultRange(),
             customRange(),
@@ -20,7 +20,7 @@ class ScaleSize : PlotConfigDemoBase() {
         )
     }
 
-    private fun defaultRange(): Map<String, Any> {
+    private fun defaultRange(): MutableMap<String, Any> {
         val spec = """
             |{
             |   'kind': 'plot',
@@ -43,7 +43,7 @@ class ScaleSize : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun customRange(): Map<String, Any> {
+    private fun customRange(): MutableMap<String, Any> {
         val spec = """
             |{
             |   'kind': 'plot',
@@ -67,7 +67,7 @@ class ScaleSize : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun areaScale(): Map<String, Any> {
+    private fun areaScale(): MutableMap<String, Any> {
         val spec = """
             |{
             |   'kind': 'plot',
@@ -91,7 +91,7 @@ class ScaleSize : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun areaScaleWithMaxSize(): Map<String, Any> {
+    private fun areaScaleWithMaxSize(): MutableMap<String, Any> {
         val spec = """
             |{
             |   'kind': 'plot',
@@ -117,7 +117,7 @@ class ScaleSize : PlotConfigDemoBase() {
     }
 
 
-    private fun areaScaleWithMaxSizeAndNoZeroVal(): Map<String, Any> {
+    private fun areaScaleWithMaxSizeAndNoZeroVal(): MutableMap<String, Any> {
         val spec = """
             |{
             |   'kind': 'plot',

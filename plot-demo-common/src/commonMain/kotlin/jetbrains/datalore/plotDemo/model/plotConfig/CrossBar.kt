@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 @Suppress("DuplicatedCode")
 class CrossBar : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             adjustWidth(),
@@ -18,7 +18,7 @@ class CrossBar : PlotConfigDemoBase() {
         )
     }
 
-    private fun basic(): Map<String, Any> {
+    private fun basic(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
@@ -43,7 +43,7 @@ class CrossBar : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun adjustWidth(): Map<String, Any> {
+    private fun adjustWidth(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
@@ -70,7 +70,7 @@ class CrossBar : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun adjustMidlineAndFill(): Map<String, Any> {
+    private fun adjustMidlineAndFill(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],

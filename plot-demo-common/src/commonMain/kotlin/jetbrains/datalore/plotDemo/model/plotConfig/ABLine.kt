@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.SharedPieces
 
 open class ABLine : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             lineDefaultAlone(),
             lineDefault(),
@@ -22,7 +22,7 @@ open class ABLine : PlotConfigDemoBase() {
 
 
     companion object {
-        private fun lineDefaultAlone(): Map<String, Any> {
+        private fun lineDefaultAlone(): MutableMap<String, Any> {
             val spec = "    {" +
                     "   'kind': 'plot'," +
                     "   'layers': [" +
@@ -36,7 +36,7 @@ open class ABLine : PlotConfigDemoBase() {
             return HashMap(parsePlotSpec(spec))
         }
 
-        private fun lineDefault(): Map<String, Any> {
+        private fun lineDefault(): MutableMap<String, Any> {
             val abLine = "               {" +
                     "             'geom': 'abline'," +
                     "             'size': 3" +
@@ -45,7 +45,7 @@ open class ABLine : PlotConfigDemoBase() {
             return SharedPieces.samplePolyAndPointsPlotWith(abLine, emptyMap())
         }
 
-        private fun negativeSlope(): Map<String, Any> {
+        private fun negativeSlope(): MutableMap<String, Any> {
             val abLine = "               {" +
                     "             'geom': 'abline'," +
                     "             'slope': '-2'," +
@@ -55,7 +55,7 @@ open class ABLine : PlotConfigDemoBase() {
             return SharedPieces.samplePolyAndPointsPlotWith(abLine, emptyMap())
         }
 
-        private fun zeroSlope(): Map<String, Any> {
+        private fun zeroSlope(): MutableMap<String, Any> {
             val abLine = "               {" +
                     "             'geom': 'abline'," +
                     "             'intercept': '1'," +
@@ -66,7 +66,7 @@ open class ABLine : PlotConfigDemoBase() {
             return SharedPieces.samplePolyAndPointsPlotWith(abLine, emptyMap())
         }
 
-        private fun variableInterceptAndSlope(): Map<String, Any> {
+        private fun variableInterceptAndSlope(): MutableMap<String, Any> {
             val intercept = ArrayList<Double>()
             val slope = ArrayList<Double>()
             for (i in 0..9) {
@@ -84,10 +84,13 @@ open class ABLine : PlotConfigDemoBase() {
                     "                        }" +
                     "           }"
 
-            return SharedPieces.samplePolyAndPointsPlotWith(abLine, mapOf(
+            return SharedPieces.samplePolyAndPointsPlotWith(
+                abLine,
+                mutableMapOf(
                     "intercept" to intercept,
                     "slope" to slope
-            ))
+                )
+            )
         }
     }
 }
