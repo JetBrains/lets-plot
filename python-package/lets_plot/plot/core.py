@@ -118,6 +118,13 @@ def _specs_to_dict(opts_raw):
 
     return opts
 
+def merge_dicts(dict_a, dict_b):
+    result = {}
+    for key, value in dict_a.items():
+        if value is None and key in dict_b:
+            value = dict_b[key]
+        result[key] = value
+    return result
 
 class FeatureSpec():
     def __init__(self, kind, name, **kwargs):
@@ -182,6 +189,7 @@ class PlotSpec(FeatureSpec):
             plot + geom ->  plot[layers] += new layer(geom)
             plot + scale -> plot[scales] += scale
             plot + [feature]  -> plot + each feature in []
+            plot + theme + theme -> merged theme
         """
         if isinstance(other, PlotSpec):
             # pass and fail
@@ -199,6 +207,10 @@ class PlotSpec(FeatureSpec):
 
             if other.kind == 'scale':
                 plot.__scales.append(other)
+                return plot
+
+            if other.kind == 'theme' and other.kind in plot.as_dict():
+                plot.props()[other.kind] = merge_dicts(plot.as_dict()[other.kind], other.as_dict())
                 return plot
 
             if isinstance(other, FeatureSpecArray):
