@@ -67,7 +67,6 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
-
     Examples
     --------
     .. jupyter-execute::
@@ -82,7 +81,7 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
         x = np.random.uniform(-1, 1, size=n)
         y = 25 * x ** 2 + np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-            geom_point() + coord_fixed(ratio=.2, xlim=(-1, 1))
+            geom_point() + coord_fixed(ratio=.2, ylim=(7, 20))
     """
 
     return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim)
