@@ -119,7 +119,7 @@ class LiveMap : PlotConfigDemoBase() {
       "display_mode": "pie",
       "tiles": {
         "kind": "vector_lets_plot",
-        "url": "ws://10.0.0.127:3933",
+        "url": "wss://tiles.datalore.jetbrains.com",
         "theme": null,
         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
       },
@@ -154,7 +154,8 @@ class LiveMap : PlotConfigDemoBase() {
       "display_mode": "bar",
       "tiles": {
         "kind": "vector_lets_plot",
-        "url": "ws://10.0.0.127:3933",
+        "url": "wss://tiles.datalore.jetbrains.com",
+        "url": "wss://tiles.datalore.jetbrains.com",
         "theme": null,
         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
       },
@@ -265,7 +266,7 @@ class LiveMap : PlotConfigDemoBase() {
                     "geom": "livemap",
                     "tiles": {
                         "kind": "vector_lets_plot",
-                        "url": "ws://10.0.0.127:3933",
+                        "url": "wss://tiles.datalore.jetbrains.com",
                         "theme": "dark",
                         "attribution": "Map data <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap</a> contributors"
                     }
@@ -318,7 +319,7 @@ class LiveMap : PlotConfigDemoBase() {
         "attribution": "<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>"
       },
       "geocoding": {
-        "url": "http://10.0.0.127:3020"
+        "url": "https://geo2.datalore.jetbrains.com"
       },
       "map": {
         "State": [ "Alabama", "Alaska", "Arizona"],
@@ -390,7 +391,7 @@ class LiveMap : PlotConfigDemoBase() {
       "geodesic": null,
       "tiles": {
         "kind": "vector_lets_plot",
-        "url": "ws://10.0.0.127:3933",
+        "url": "wss://tiles.datalore.jetbrains.com",
         "theme": null
       },
       "geocoding": {}
@@ -473,7 +474,7 @@ class LiveMap : PlotConfigDemoBase() {
                   "geom": "livemap",
                   "tiles": {
                     "kind": "vector_lets_plot",
-                    "url": "ws://10.0.0.127:3933",
+                    "url": "wss://tiles.datalore.jetbrains.com",
                     "theme": null
                   },
                   "geocoding": {}
@@ -523,7 +524,7 @@ class LiveMap : PlotConfigDemoBase() {
                       "symbol": "point",
                       "tiles": {
                         "kind": "vector_lets_plot",
-                        "url": "ws://10.0.0.127:3933",
+                        "url": "wss://tiles.datalore.jetbrains.com",
                         "theme": null
                       },
                       "size": 50
@@ -548,7 +549,7 @@ class LiveMap : PlotConfigDemoBase() {
       "geom": "livemap",
       "tiles": {
         "kind": "vector_lets_plot",
-        "url": "ws://10.0.0.127:3933",
+        "url": "wss://tiles.datalore.jetbrains.com",
         "theme": null
       }
     },
