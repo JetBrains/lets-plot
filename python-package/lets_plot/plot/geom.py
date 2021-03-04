@@ -1669,7 +1669,6 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         :emphasize-lines: 13
 
         >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> n = 100
@@ -1781,7 +1780,6 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         :emphasize-lines: 13
 
         >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
         >>> n = 100
