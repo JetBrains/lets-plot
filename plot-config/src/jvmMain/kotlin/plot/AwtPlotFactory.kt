@@ -29,14 +29,31 @@ import javax.swing.JLabel
 
 private val LOG = KotlinLogging.logger {}
 
-abstract class AwtPlotFactory(
+open class AwtPlotFactory(
     val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
     val executor: (() -> Unit) -> Unit
 ) {
 
-    abstract fun buildPlotComponent(
-        plotBuildInfo: MonolithicCommon.PlotBuildInfo
-    ): JComponent
+    open fun buildPlotComponent(plotBuildInfo: MonolithicCommon.PlotBuildInfo): JComponent {
+        val assembler = plotBuildInfo.plotAssembler
+
+        if (assembler.containsLiveMap) {
+            return AwtLiveMapFactoryUtil.buildLiveMapComponent(
+                assembler,
+                plotBuildInfo.processedPlotSpec,
+                plotBuildInfo.size,
+                svgComponentFactory,
+                executor
+            )
+        }
+
+        val plot = assembler.createPlot()
+        val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+
+//        require(!plotContainer.isLiveMap) { "geom_livemap is not enabled" }
+
+        return buildPlotComponent(plotContainer)
+    }
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -88,40 +105,13 @@ abstract class AwtPlotFactory(
         }
     }
 
-    fun buildPlotComponent(
-        plotContainer: PlotContainer
-    ): JComponent {
-        plotContainer.ensureContentBuilt()
-        val svg = plotContainer.svg
-
-        if (plotContainer.isLiveMap) {
-            // Plot transparent for live-map base layer to be visible.
-            svg.addClass(Style.PLOT_TRANSPARENT)
-        }
-
-        val plotComponent: JComponent = svgComponentFactory(svg)
-
-        plotComponent.addMouseListener(object : MouseAdapter() {
-            override fun mouseExited(e: MouseEvent) {
-                super.mouseExited(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        plotComponent.addMouseMotionListener(object : MouseAdapter() {
-            override fun mouseMoved(e: MouseEvent) {
-                super.mouseMoved(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        return plotComponent
+    fun buildPlotComponent(plotContainer: PlotContainer): JComponent {
+        return buildPlotComponent(
+            plotContainer,
+            svgComponentFactory,
+            executor
+        )
     }
-
 
     private fun buildGGBunchComponent(
         plotInfos: List<MonolithicCommon.PlotBuildInfo>
@@ -205,5 +195,44 @@ abstract class AwtPlotFactory(
 
         // Frontend transforms
         return PlotConfigClientSideJvmJs.processTransform(plotSpec)
+    }
+
+
+    companion object {
+        fun buildPlotComponent(
+            plotContainer: PlotContainer,
+            svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+            executor: (() -> Unit) -> Unit
+        ): JComponent {
+            plotContainer.ensureContentBuilt()
+            val svg = plotContainer.svg
+
+            if (plotContainer.isLiveMap) {
+                // Plot transparent for live-map base layer to be visible.
+                svg.addClass(Style.PLOT_TRANSPARENT)
+            }
+
+            val plotComponent: JComponent = svgComponentFactory(svg)
+
+            plotComponent.addMouseListener(object : MouseAdapter() {
+                override fun mouseExited(e: MouseEvent) {
+                    super.mouseExited(e)
+                    executor {
+                        plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                    }
+                }
+            })
+
+            plotComponent.addMouseMotionListener(object : MouseAdapter() {
+                override fun mouseMoved(e: MouseEvent) {
+                    super.mouseMoved(e)
+                    executor {
+                        plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                    }
+                }
+            })
+
+            return plotComponent
+        }
     }
 }

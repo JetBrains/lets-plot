@@ -23,6 +23,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':vis-svg-portable')
+                implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-base')
                 implementation project(':plot-common-portable')
@@ -30,6 +31,7 @@ kotlin {
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
+                implementation project(':plot-livemap')
             }
         }
         commonTest {
