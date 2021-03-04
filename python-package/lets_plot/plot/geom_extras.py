@@ -39,13 +39,13 @@ def arrow(angle=None, length=None, ends=None, type=None):
         from lets_plot import *
         LetsPlot.setup_html()
         ggplot() + \\
-            geom_segment(aes(x=3, y=6, xend=4, yend=10), \\
+            geom_segment(x=2, y=10, xend=4, yend=9, \\
                         arrow=arrow(type='closed')) + \\
-            geom_segment(aes(x=3, y=6, xend=3, yend=9), \\
+            geom_segment(x=3, y=6, xend=3, yend=9, \\
                         arrow=arrow(type='open')) + \\
-            geom_segment(aes(x=4, y=7, xend=5, yend=10), \\
+            geom_segment(x=4, y=7, xend=5, yend=10, \\
                         arrow=arrow(type='closed', ends='both', length=23)) + \\
-            geom_segment(aes(x=5, y=8, xend=7, yend=7), \\
+            geom_segment(x=5, y=8, xend=7, yend=7, \\
                         arrow=arrow(type='open', ends='first', angle=120, length=23))
 
     """
