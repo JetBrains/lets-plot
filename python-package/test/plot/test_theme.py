@@ -2,39 +2,58 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import lets_plot as gg
+from lets_plot import element_blank
 from lets_plot.plot import theme
 from lets_plot.plot.geom import _geom
 
 
-def test_theme_merge_opts():
-    geom = _geom('geom')
-    theme_opts1 = theme(axis_line='blank', axis_title='blank')
-    theme_opts2 = theme(axis_text='blank', axis_tooltip='blank')
-
-    spec = gg.ggplot() + theme_opts1 + geom + theme_opts2
+def test_theme_options_should_be_merged():
+    spec = gg.ggplot() + _geom('foo') + \
+           theme(axis_line='blank', axis_title='blank') + \
+           theme(axis_text='blank', axis_tooltip='blank')
     expected_theme = {
         'axis_title': 'blank',
         'axis_text': 'blank',
         'axis_line': 'blank',
         'axis_tooltip': 'blank'
     }
-    assert_theme(spec, expected_theme)
+    assert expected_theme == spec.props()['theme']
 
 
-def test_theme_override_opts():
-    geom = _geom('geom')
-    theme_opts = theme(axis_tooltip='blank', legend_position='none')
-    overridden_opts = theme(legend_position='bottom')
-
-    spec = gg.ggplot() + theme_opts + geom + overridden_opts
-    assert_theme(spec, {'axis_tooltip': 'blank', 'legend_position': 'bottom'})
+def test_override_theme_option_with_none():
+    spec = gg.ggplot() + _geom('foo') + theme(legend_position='bottom') + theme(legend_position='none')
+    assert 'none' == spec.as_dict()['theme']['legend_position']
 
 
-def test_theme_geom_in_opts():
-    geom = _geom('geom')
+def test_override_theme_none_option_with_value():
+    spec = gg.ggplot() + _geom('foo') + theme(legend_position='none') + theme(legend_position='bottom')
+    assert 'bottom' == spec.as_dict()['theme']['legend_position']
+
+
+def test_element_blank_in_theme_option():
+    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip=element_blank())
+    assert 'blank' == spec.as_dict()['theme']['axis_tooltip']['name']
+    assert isinstance(spec.props()['theme']['axis_tooltip'], type(element_blank()))
+
+
+def test_blank_values_in_theme_options():
+    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip=element_blank()) + theme(axis_title='blank')
+    assert 'blank' == spec.as_dict()['theme']['axis_tooltip']['name']
+    assert 'blank' == spec.as_dict()['theme']['axis_title']
+
+
+def test_override_theme_option_with_element_blank():
+    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip='bar') + theme(axis_tooltip=element_blank())
+    assert 'blank' == spec.as_dict()['theme']['axis_tooltip']['name']
+
+
+def test_override_theme_blank_option_with_value():
+    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip=element_blank()) + theme(axis_tooltip='bar')
+    assert 'bar' == spec.as_dict()['theme']['axis_tooltip']
+
+
+def test_unexpected_FeatureSpec_in_theme_option_wont_break_anything():
+    geom = _geom('foo')
     spec = gg.ggplot() + geom + theme(legend_position=geom)
-    assert_theme(spec, {'legend_position': geom})
-
-
-def assert_theme(spec, expected):
-    assert spec.props()['theme'] == expected
+    assert geom == spec.props()['theme']['legend_position']
+    assert isinstance(spec.props()['theme']['legend_position'], type(geom))
