@@ -204,7 +204,7 @@ class PlotSpec(FeatureSpec):
 
             if other.kind == 'theme':
                 new_theme_options = {k: v for k, v in other.as_dict().items() if v is not None}
-                plot.props()['theme'] = {**plot.as_dict().get('theme', {}), **new_theme_options}
+                plot.props()['theme'] = {**plot.props().get('theme', {}), **new_theme_options}
                 return plot
 
             if isinstance(other, FeatureSpecArray):
