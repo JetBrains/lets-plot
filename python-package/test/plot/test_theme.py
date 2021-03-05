@@ -9,25 +9,26 @@ from lets_plot.plot.core import FeatureSpec
 
 
 def test_theme_options_should_be_merged():
-    spec = gg.ggplot() + _geom('foo') + \
-           theme(axis_line='blank', axis_title='blank') + \
-           theme(axis_text='blank', axis_tooltip='blank')
+    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip='blank') + theme(legend_position='bottom')
     expected_theme = {
-        'axis_title': 'blank',
-        'axis_text': 'blank',
-        'axis_line': 'blank',
-        'axis_tooltip': 'blank'
+        'axis_tooltip': 'blank',
+        'legend_position': 'bottom'
     }
     assert expected_theme == spec.as_dict()['theme']
 
 
-def test_override_theme_option_with_none():
+def test_override_theme_option():
     spec = gg.ggplot() + _geom('foo') + theme(legend_position='bottom') + theme(legend_position='none')
     assert 'none' == spec.as_dict()['theme']['legend_position']
 
 
-def test_override_theme_none_option_with_value():
-    spec = gg.ggplot() + _geom('foo') + theme(legend_position='none') + theme(legend_position='bottom')
+def test_override_theme_None_option_with_value():
+    spec = gg.ggplot() + _geom('foo') + theme(legend_position=None) + theme(legend_position='bottom')
+    assert 'bottom' == spec.as_dict()['theme']['legend_position']
+
+
+def test_None_theme_option_not_override_the_previous():
+    spec = gg.ggplot() + _geom('foo') + theme(legend_position='bottom') + theme(legend_position=None)
     assert 'bottom' == spec.as_dict()['theme']['legend_position']
 
 
@@ -35,19 +36,3 @@ def test_element_blank_in_theme_option():
     spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip=element_blank())
     assert 'blank' == spec.as_dict()['theme']['axis_tooltip']['name']
     assert isinstance(spec.props()['theme']['axis_tooltip'], FeatureSpec)
-
-
-def test_blank_values_in_theme_options():
-    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip=element_blank()) + theme(axis_title='blank')
-    assert 'blank' == spec.as_dict()['theme']['axis_tooltip']['name']
-    assert 'blank' == spec.as_dict()['theme']['axis_title']
-
-
-def test_override_theme_option_with_element_blank():
-    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip='bar') + theme(axis_tooltip=element_blank())
-    assert 'blank' == spec.as_dict()['theme']['axis_tooltip']['name']
-
-
-def test_override_theme_blank_option_with_value():
-    spec = gg.ggplot() + _geom('foo') + theme(axis_tooltip=element_blank()) + theme(axis_tooltip='bar')
-    assert 'bar' == spec.as_dict()['theme']['axis_tooltip']
