@@ -119,11 +119,6 @@ def _specs_to_dict(opts_raw):
     return opts
 
 
-def merge_dicts_ignoring_none(dict_a, dict_b):
-    dict_a.update({k: v for k, v in dict_b.items() if v is not None})
-    return dict_a
-
-
 class FeatureSpec():
     def __init__(self, kind, name, **kwargs):
         self.kind = kind
@@ -207,8 +202,9 @@ class PlotSpec(FeatureSpec):
                 plot.__scales.append(other)
                 return plot
 
-            if other.kind == 'theme' and other.kind in plot.as_dict():
-                plot.props()[other.kind] = merge_dicts_ignoring_none(plot.as_dict()[other.kind], other.as_dict())
+            if other.kind == 'theme':
+                new_theme_options = {k: v for k, v in other.as_dict().items() if v is not None}
+                plot.props()['theme'] = {**plot.as_dict().get('theme', {}), **new_theme_options}
                 return plot
 
             if isinstance(other, FeatureSpecArray):
