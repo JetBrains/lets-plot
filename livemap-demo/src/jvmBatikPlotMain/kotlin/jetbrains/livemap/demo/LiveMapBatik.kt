@@ -23,7 +23,8 @@ object LiveMapBatik {
 
             PlotSpecsDemoWindowBatik(
                 "LiveMap (Batik)",
-                plotSpecList()
+                plotSpecList(),
+                maxCol = 2
             ).open()
 
         }

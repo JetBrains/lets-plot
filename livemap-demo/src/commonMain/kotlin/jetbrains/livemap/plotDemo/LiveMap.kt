@@ -17,10 +17,10 @@ class LiveMap : PlotConfigDemoBase() {
             //barWithNullValuesInData()
 //            multiLayerTooltips()
 //            mapJoinBar(),
-//            antiMeridian(),
+            antiMeridian(),
 //            tooltips(),
-//            symbol_point(),
-//            geom_point()
+            symbol_point(),
+            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
 //            bunch(),
@@ -244,10 +244,10 @@ class LiveMap : PlotConfigDemoBase() {
         val rnd = Random(0)
         val data = """
             {
-                "x": [${ (0..n).map { rnd.nextDouble(-2.0, 2.0) }.joinToString() }],
-                "y": [${ (0..n).map { rnd.nextDouble(-2.0, 2.0) }.joinToString() }],
-                "v": [${ (0..n).map { rnd.nextDouble(0.0, 200_000.0) }.joinToString() }],
-                "age": [${ (0..n).map { rnd.nextInt(0, 70) }.joinToString() }]
+                "x": [${(0..n).map { rnd.nextDouble(-2.0, 2.0) }.joinToString()}],
+                "y": [${(0..n).map { rnd.nextDouble(-2.0, 2.0) }.joinToString()}],
+                "v": [${(0..n).map { rnd.nextDouble(0.0, 200_000.0) }.joinToString()}],
+                "age": [${(0..n).map { rnd.nextInt(0, 70) }.joinToString()}]
             }
         """.trimIndent()
 
@@ -459,6 +459,7 @@ class LiveMap : PlotConfigDemoBase() {
 }""".trimIndent()
         return parsePlotSpec(spec)
     }
+
     private fun tooltips(): MutableMap<String, Any> {
         val spec = """
             {
@@ -504,8 +505,8 @@ class LiveMap : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-        fun symbol_point(): MutableMap<String, Any> {
-            val spec = """
+    fun symbol_point(): MutableMap<String, Any> {
+        val spec = """
                 {
                   "data": {
                     "request": ["Texas", "Nevada", "Iowa"],
@@ -532,11 +533,11 @@ class LiveMap : PlotConfigDemoBase() {
                   ]
                 }
             """.trimIndent()
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
-        private fun geom_point(): MutableMap<String, Any> {
-            val spec = """{
+    private fun geom_point(): MutableMap<String, Any> {
+        val spec = """{
   "data": {
     "request": ["Texas", "Nevada", "Iowa"],
     "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
@@ -564,11 +565,11 @@ class LiveMap : PlotConfigDemoBase() {
     }
   ]
 }"""
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
-        fun basic(): MutableMap<String, Any> {
-            val spec = """
+    fun basic(): MutableMap<String, Any> {
+        val spec = """
                 {
                     "kind": "plot", 
                     "layers": [
@@ -580,11 +581,11 @@ class LiveMap : PlotConfigDemoBase() {
                 }
             """.trimIndent()
 
-            return parsePlotSpec(spec)
-        }
-        
-        fun facetBars(): MutableMap<String, Any> {
-            val spec = """{
+        return parsePlotSpec(spec)
+    }
+
+    fun facetBars(): MutableMap<String, Any> {
+        val spec = """{
                 "ggtitle":{
                     "text":"Facet bars"
                 },
@@ -606,11 +607,11 @@ class LiveMap : PlotConfigDemoBase() {
                     }
                 ]
             }"""
-            return parsePlotSpec(spec)
-        }
-        
-        fun points(): MutableMap<String, Any> {
-            val spec = """{
+        return parsePlotSpec(spec)
+    }
+
+    fun points(): MutableMap<String, Any> {
+        val spec = """{
                 "ggtitle": {"text": "Points on map"}, 
                 "data": {"lon": [-100.420313, -91.016016], "lat": [34.835461, 38.843142], "clr": ["one", "two"]}, 
                 "kind": "plot", 
@@ -627,11 +628,11 @@ class LiveMap : PlotConfigDemoBase() {
                 ]
             }""".trimMargin()
 
-            return parsePlotSpec(spec)
-        }
-        
-        fun bunch(): MutableMap<String, Any> {
-            val spec = """{
+        return parsePlotSpec(spec)
+    }
+
+    fun bunch(): MutableMap<String, Any> {
+        val spec = """{
                 "kind": "ggbunch", 
                 "items": [
                     {
@@ -663,12 +664,12 @@ class LiveMap : PlotConfigDemoBase() {
                 ]
             }""".trimIndent()
 
-            return parsePlotSpec(spec)
-            
-        }
+        return parsePlotSpec(spec)
 
-        fun facet(): MutableMap<String, Any> {
-            val spec = """{
+    }
+
+    fun facet(): MutableMap<String, Any> {
+        val spec = """{
                 "data":{
                     "lon":[
                         -100.420313,
@@ -704,11 +705,11 @@ class LiveMap : PlotConfigDemoBase() {
                     }
                 ]
             }"""
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
-        fun pointsWithZoomAndLocation(): MutableMap<String, Any> {
-            val spec = """{
+    fun pointsWithZoomAndLocation(): MutableMap<String, Any> {
+        val spec = """{
                 "ggtitle": {"text": "Points with zoom and location"}, 
                 "data": {
                     "lon": [-100.420313, -91.016016], 
@@ -733,11 +734,11 @@ class LiveMap : PlotConfigDemoBase() {
                 ]
             }""".trimMargin()
 
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
-        fun setLocation(): MutableMap<String, Any> {
-            val spec = """{
+    fun setLocation(): MutableMap<String, Any> {
+        val spec = """{
                 "ggtitle": {"text": "Set location"}, 
                 "kind": "plot",
                 "layers": [
@@ -751,11 +752,11 @@ class LiveMap : PlotConfigDemoBase() {
                     }
                 ]
             }"""
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
-        fun setZoom(): MutableMap<String, Any> {
-            val spec = """{
+    fun setZoom(): MutableMap<String, Any> {
+        val spec = """{
                 "ggtitle": {"text": "Set zoom and default location"}, 
                 "kind": "plot",
                 "layers": [
@@ -766,11 +767,11 @@ class LiveMap : PlotConfigDemoBase() {
                     }
                 ]
             }"""
-            return parsePlotSpec(spec)
-        }
-        
-        fun wrongRasterTileUrl(): MutableMap<String, Any> {
-            val spec = """{
+        return parsePlotSpec(spec)
+    }
+
+    fun wrongRasterTileUrl(): MutableMap<String, Any> {
+        val spec = """{
                 "ggtitle": {"text": "Wrong tile url"}, 
                 "kind": "plot",
                 "layers": [
@@ -780,11 +781,11 @@ class LiveMap : PlotConfigDemoBase() {
                     }
                 ]
             }"""
-            return parsePlotSpec(spec)
-        }
-        
-        fun fourPointsTwoLayers(): MutableMap<String, Any> {
-            val spec = """{
+        return parsePlotSpec(spec)
+    }
+
+    fun fourPointsTwoLayers(): MutableMap<String, Any> {
+        val spec = """{
                 "data":{
                     "x":[29.777834, 29.778033],
                     "y":[59.991666, 59.988106],
@@ -824,11 +825,11 @@ class LiveMap : PlotConfigDemoBase() {
             }
                 """
 
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
-        fun pointAndText(): MutableMap<String, Any> {
-            val spec = """{
+    fun pointAndText(): MutableMap<String, Any> {
+        val spec = """{
                 "data":{
                     "x":[29.777834, 29.778033],
                     "y":[59.991666, 59.988106]
@@ -871,7 +872,7 @@ class LiveMap : PlotConfigDemoBase() {
                     }
                 ]
             }"""
-            return parsePlotSpec(spec)
-        }
+        return parsePlotSpec(spec)
+    }
 
 }
