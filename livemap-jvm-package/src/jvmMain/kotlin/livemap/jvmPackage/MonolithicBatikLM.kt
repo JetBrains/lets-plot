@@ -21,12 +21,8 @@ import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import java.awt.Color
-import java.awt.Cursor
-import java.awt.Dimension
+import java.awt.*
 import java.awt.EventQueue.invokeLater
-import java.awt.Graphics
-import java.awt.Rectangle
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
@@ -103,15 +99,15 @@ object MonolithicBatikLM {
         plotComponent: JComponent,
         size: DoubleVector
     ): JComponent {
-        val plotBounds = Rectangle(0,0, size.x.toInt(), size.y.toInt())
+        val plotBounds = Rectangle(0, 0, size.x.toInt(), size.y.toInt())
 
         plotComponent.bounds = plotBounds
 
         // Fix background color for jfx
-        val panel = object : DisposableJPanel() {
+        val panel = object : DisposableJPanel(null) {
             override fun paint(g: Graphics?) {
                 g?.color = Color.WHITE
-                g?.fillRect(0,0, this.width, this.height)
+                g?.fillRect(0, 0, this.width, this.height)
                 super.paint(g)
             }
         }
@@ -120,7 +116,7 @@ object MonolithicBatikLM {
 
         val timer = AwtRepaintTimer(panel::repaint)
 
-        liveMapFigures.forEach {canvasFigure ->
+        liveMapFigures.forEach { canvasFigure ->
             val canvasBounds = canvasFigure.bounds().get()
 
             val layerPanel = JPanel()

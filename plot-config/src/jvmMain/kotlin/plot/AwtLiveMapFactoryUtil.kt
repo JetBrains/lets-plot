@@ -61,8 +61,7 @@ object AwtLiveMapFactoryUtil {
 //        )
         return AwtLiveMapPanel(
             plotContainer.liveMapFigures as List<CanvasFigure>,
-            plotComponent,
-            preferredSize.get()
+            plotComponent
         )
     }
 

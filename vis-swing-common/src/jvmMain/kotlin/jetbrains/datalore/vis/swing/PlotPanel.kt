@@ -1,10 +1,7 @@
 package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.registration.Disposable
-import java.awt.Color
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.GridBagLayout
+import java.awt.*
 import java.awt.event.*
 import java.util.function.Consumer
 import javax.swing.*
@@ -20,7 +17,10 @@ abstract class PlotPanel(
     applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
     init {
-        layout = GridBagLayout() // to center a single child component
+        // Layout a single child component.
+        // GridBagLayout seem to work better than FlowLayout
+        // whan re-sizing component.
+        layout = GridBagLayout()
         background = Color.WHITE
 
         // Extra clean-up on 'dispose'.
@@ -105,8 +105,8 @@ abstract class PlotPanel(
 
         override fun componentResized(e: ComponentEvent?) {
             if (!refreshTimer.isRunning && skipThisRun) {
-                // When in IDEA pligin we can not modify our state
-                // withou letting the application know.
+                // When in IDEA pligin we can modify our state
+                // only in a command.
                 applicationContext.runWriteAction() {
                     skipThisRun = false
                 }

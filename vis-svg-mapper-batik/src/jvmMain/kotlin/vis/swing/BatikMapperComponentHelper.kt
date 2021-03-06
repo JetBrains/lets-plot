@@ -19,6 +19,7 @@ import org.apache.batik.gvt.event.EventDispatcher
 import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.event.MouseEvent
+import kotlin.math.ceil
 
 
 class BatikMapperComponentHelper private constructor(
@@ -34,8 +35,12 @@ class BatikMapperComponentHelper private constructor(
 
     val preferredSize: Dimension
         get() {
-            val w = svgRoot.width().get()?.toInt() ?: throw IllegalStateException("SVG width is not defined")
-            val h = svgRoot.height().get()?.toInt() ?: throw IllegalStateException("SVG height is not defined")
+            val w = svgRoot.width().get()?.let {
+                ceil(it).toInt()
+            } ?: throw IllegalStateException("SVG width is not defined")
+            val h = svgRoot.height().get()?.let {
+                ceil(it).toInt()
+            } ?: throw IllegalStateException("SVG height is not defined")
             return Dimension(w, h)
         }
 

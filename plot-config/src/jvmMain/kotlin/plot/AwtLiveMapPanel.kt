@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
@@ -19,14 +18,20 @@ import javax.swing.JPanel
 
 class AwtLiveMapPanel(
     liveMapFigures: List<CanvasFigure>,
-    plotComponent: JComponent,
-    size: DoubleVector
-) : DisposableJPanel() {
+    plotComponent: JComponent
+) : DisposableJPanel(null) {
     private val mappers: MutableList<() -> Unit> = ArrayList()
 
     init {
-        val plotBounds = Rectangle(0, 0, size.x.toInt(), size.y.toInt())
-        plotComponent.bounds = plotBounds
+        background = Color.WHITE
+        preferredSize = plotComponent.preferredSize
+
+        // layout
+        plotComponent.bounds = Rectangle(
+            0, 0,
+            preferredSize.width,
+            preferredSize.height
+        )
 
         this.add(plotComponent)
 
@@ -63,14 +68,14 @@ class AwtLiveMapPanel(
         }
 
         // Fixed panel minimum size for scroll pane
-        val plotDimensions = Dimension(
-            plotBounds.width,
-            plotBounds.height
-        )
+//        val plotDimensions = Dimension(
+//            plotBounds.width,
+//            plotBounds.height
+//        )
 
-        this.preferredSize = plotDimensions
-        this.minimumSize = plotDimensions
-        this.maximumSize = plotDimensions
+//        this.preferredSize = plotDimensions
+//        this.minimumSize = plotDimensions
+//        this.maximumSize = plotDimensions
 
         this.addComponentListener(object : ComponentAdapter() {
             override fun componentResized(e: ComponentEvent?) {
@@ -83,10 +88,10 @@ class AwtLiveMapPanel(
         })
     }
 
-    override fun paint(g: Graphics?) {
-        // Fix background color
-        g?.color = Color.WHITE
-        g?.fillRect(0, 0, this.width, this.height)
-        super.paint(g)
-    }
+//    override fun paint(g: Graphics?) {
+//        // Fix background color
+//        g?.color = Color.WHITE
+//        g?.fillRect(0, 0, this.width, this.height)
+//        super.paint(g)
+//    }
 }

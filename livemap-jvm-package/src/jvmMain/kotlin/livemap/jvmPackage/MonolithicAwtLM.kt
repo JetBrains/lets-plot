@@ -109,7 +109,7 @@ object MonolithicAwtLM {
         plotComponent.bounds = plotBounds
 
         // Fix background color for jfx
-        val panel = DisposableJPanel()
+        val panel = DisposableJPanel(null)
         panel.background = Color.WHITE
 
         panel.add(plotComponent)

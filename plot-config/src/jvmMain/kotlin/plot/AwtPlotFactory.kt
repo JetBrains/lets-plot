@@ -117,7 +117,7 @@ open class AwtPlotFactory(
         plotInfos: List<MonolithicCommon.PlotBuildInfo>
     ): JComponent {
 
-        val bunchComponent = DisposableJPanel()
+        val bunchComponent = DisposableJPanel(null)
 
         bunchComponent.border = null
         bunchComponent.background = Colors.parseColor(Defaults.BACKDROP_COLOR).let {

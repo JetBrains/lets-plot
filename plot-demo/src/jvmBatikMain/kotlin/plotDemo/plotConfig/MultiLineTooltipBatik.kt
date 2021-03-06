@@ -14,6 +14,6 @@ fun main() {
             "Multi-line tooltips plot",
             plotSpecList(),
             2
-        )
+        ).open()
     }
 }
