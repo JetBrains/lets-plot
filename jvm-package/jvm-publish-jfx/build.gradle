@@ -15,9 +15,8 @@ kotlin {
                 compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':mapper-core')
-                api project(':vis-svg-mapper')
                 api project(':vis-svg-mapper-jfx')
+                api project(':vis-swing-jfx')
                 api project(':vis-demo-common')
                 api project(':vis-demo-common-jfx')
             }

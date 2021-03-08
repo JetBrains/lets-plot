@@ -15,7 +15,9 @@ plugins {
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
+        'mapper-core',
         'vis-canvas',
+        'vis-svg-mapper',
         'vis-svg-portable',
         'plot-base-portable',
         'plot-base',
@@ -25,20 +27,19 @@ def include_sources_letsPlotJvmCommon = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
+        'vis-swing-common',
 ]
 
 def include_sources_letsPlotJvmJfx = [
-        'mapper-core',
-        'vis-svg-mapper',
         'vis-svg-mapper-jfx',
+        'vis-swing-jfx',
         'vis-demo-common',
         'vis-demo-common-jfx',
 ]
 
 def include_sources_letsPlotJvmBatik = [
-        'mapper-core',
-        'vis-svg-mapper',
         'vis-svg-mapper-batik',
+        'vis-swing-batik',
         'vis-demo-common',
         'vis-demo-common-batik',
 ]
@@ -51,8 +52,8 @@ configurations {
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "2.0.1-alpha1"
-    project.ext.js_artifact_version = "2.0.1.dev1"
+    version = "2.0.1-alpha2"
+    project.ext.js_artifact_version = "2.0.1.dev2"
     // see also: python-package/lets_plot/_version.py
 
     repositories {
