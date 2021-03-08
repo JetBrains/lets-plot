@@ -78,7 +78,6 @@ kotlin {
         jvmMain {
             dependsOn allJvm
             dependencies {
-                implementation project(':livemap-jvm-package')
             }
         }
 

@@ -12,21 +12,11 @@ object LiveMapBatik {
     @JvmStatic
     fun main(args: Array<String>) {
         with(LiveMap()) {
-//            @Suppress("UNCHECKED_CAST")
-//            val plotSpecList = plotSpecList()
-//            LiveMapPlotConfigDemoUtil.show(
-//                "LiveMap Batik",
-//                plotSpecList,
-//                BatikMapperDemoFactory(),
-//                demoComponentSize
-//            )
-
             PlotSpecsDemoWindowBatik(
                 "LiveMap (Batik)",
                 plotSpecList(),
                 maxCol = 2
             ).open()
-
         }
     }
 }

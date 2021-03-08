@@ -12,23 +12,7 @@ import jetbrains.livemap.plotDemo.LiveMap
 object LiveMapJfx {
     @JvmStatic
     fun main(args: Array<String>) {
-
-//        val latch = CountDownLatch(1)
-//        SwingUtilities.invokeLater {
-//            JFXPanel() // initializes JavaFX environment
-//            latch.countDown()
-//        }
-//        latch.await()
-//
         with(LiveMap()) {
-//            @Suppress("UNCHECKED_CAST")
-//            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-//            LiveMapPlotConfigDemoUtil.show(
-//                "LiveMap Jfx",
-//                plotSpecList,
-//                SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
-//                demoComponentSize
-//            )
             PlotSpecsDemoWindowJfx(
                 "LiveMap (JavaFX)",
                 plotSpecList(),
