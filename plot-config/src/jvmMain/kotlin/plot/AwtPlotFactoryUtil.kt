@@ -29,12 +29,13 @@ import javax.swing.JLabel
 
 private val LOG = KotlinLogging.logger {}
 
-open class AwtPlotFactory(
-    val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-    val executor: (() -> Unit) -> Unit
-) {
+internal object AwtPlotFactoryUtil {
 
-    open fun buildPlotComponent(plotBuildInfo: MonolithicCommon.PlotBuildInfo): JComponent {
+    private fun buildPlotComponent(
+        plotBuildInfo: MonolithicCommon.PlotBuildInfo,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
+    ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
 
         if (assembler.containsLiveMap) {
@@ -50,33 +51,39 @@ open class AwtPlotFactory(
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
 
-//        require(!plotContainer.isLiveMap) { "geom_livemap is not enabled" }
-
-        return buildPlotComponent(plotContainer)
+        return buildPlotComponent(plotContainer, svgComponentFactory, executor)
     }
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
             @Suppress("NAME_SHADOWING")
             val plotSpec = processSpecs(plotSpec, frontendOnly = false)
             buildPlotFromProcessedSpecs(
-                plotSpec, plotSize, plotMaxWidth, computationMessagesHandler
+                plotSpec,
+                plotSize,
+                plotMaxWidth,
+                svgComponentFactory,
+                executor,
+                computationMessagesHandler
             )
         } catch (e: RuntimeException) {
             handleException(e)
         }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
     fun buildPlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
@@ -95,26 +102,26 @@ open class AwtPlotFactory(
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotComponent(success.buildInfos[0])
+                return buildPlotComponent(
+                    success.buildInfos[0],
+                    svgComponentFactory, executor
+                )
             }
             // ggbunch
-            return buildGGBunchComponent(success.buildInfos)
+            return buildGGBunchComponent(
+                success.buildInfos,
+                svgComponentFactory, executor
+            )
 
         } catch (e: RuntimeException) {
             handleException(e)
         }
     }
 
-    fun buildPlotComponent(plotContainer: PlotContainer): JComponent {
-        return buildPlotComponent(
-            plotContainer,
-            svgComponentFactory,
-            executor
-        )
-    }
-
     private fun buildGGBunchComponent(
-        plotInfos: List<MonolithicCommon.PlotBuildInfo>
+        plotInfos: List<MonolithicCommon.PlotBuildInfo>,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
     ): JComponent {
 
         val bunchComponent = DisposableJPanel(null)
@@ -130,7 +137,10 @@ open class AwtPlotFactory(
         }
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotComponent(plotInfo)
+            val plotComponent = buildPlotComponent(
+                plotInfo,
+                svgComponentFactory, executor
+            )
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
@@ -198,41 +208,39 @@ open class AwtPlotFactory(
     }
 
 
-    companion object {
-        fun buildPlotComponent(
-            plotContainer: PlotContainer,
-            svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-            executor: (() -> Unit) -> Unit
-        ): JComponent {
-            plotContainer.ensureContentBuilt()
-            val svg = plotContainer.svg
+    fun buildPlotComponent(
+        plotContainer: PlotContainer,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
+    ): JComponent {
+        plotContainer.ensureContentBuilt()
+        val svg = plotContainer.svg
 
-            if (plotContainer.isLiveMap) {
-                // Plot transparent for live-map base layer to be visible.
-                svg.addClass(Style.PLOT_TRANSPARENT)
-            }
-
-            val plotComponent: JComponent = svgComponentFactory(svg)
-
-            plotComponent.addMouseListener(object : MouseAdapter() {
-                override fun mouseExited(e: MouseEvent) {
-                    super.mouseExited(e)
-                    executor {
-                        plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
-                    }
-                }
-            })
-
-            plotComponent.addMouseMotionListener(object : MouseAdapter() {
-                override fun mouseMoved(e: MouseEvent) {
-                    super.mouseMoved(e)
-                    executor {
-                        plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
-                    }
-                }
-            })
-
-            return plotComponent
+        if (plotContainer.isLiveMap) {
+            // Plot transparent for live-map base layer to be visible.
+            svg.addClass(Style.PLOT_TRANSPARENT)
         }
+
+        val plotComponent: JComponent = svgComponentFactory(svg)
+
+        plotComponent.addMouseListener(object : MouseAdapter() {
+            override fun mouseExited(e: MouseEvent) {
+                super.mouseExited(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                }
+            }
+        })
+
+        plotComponent.addMouseMotionListener(object : MouseAdapter() {
+            override fun mouseMoved(e: MouseEvent) {
+                super.mouseMoved(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                }
+            }
+        })
+
+        return plotComponent
     }
 }

@@ -20,8 +20,13 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
-        return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotFromRawSpecs(plotSpec, plotSize, plotMaxWidth, computationMessagesHandler)
+        return AwtPlotFactoryUtil.buildPlotFromRawSpecs(
+            plotSpec,
+            plotSize,
+            plotMaxWidth,
+            svgComponentFactory, executor,
+            computationMessagesHandler
+        )
     }
 
     fun buildPlotFromProcessedSpecs(
@@ -32,8 +37,13 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
-        return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotFromProcessedSpecs(plotSpec, plotSize, plotMaxWidth, computationMessagesHandler)
+        return AwtPlotFactoryUtil.buildPlotFromProcessedSpecs(
+            plotSpec,
+            plotSize,
+            plotMaxWidth,
+            svgComponentFactory, executor,
+            computationMessagesHandler
+        )
     }
 
     fun buildPlotComponent(
@@ -41,28 +51,10 @@ object MonolithicAwt {
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-        return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotComponent(plotContainer)
-    }
-
-    private fun createPlotFactory(
-        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): AwtPlotFactory {
-//        return object : AwtPlotFactory(svgComponentFactory, executor) {
-//            override fun buildPlotComponent(
-//                plotBuildInfo: PlotBuildInfo
-//            ): JComponent {
-//                val assembler = plotBuildInfo.plotAssembler
-//                val plot = assembler.createPlot()
-//                val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-//
-//                require(!plotContainer.isLiveMap) { "geom_livemap is not enabled" }
-//
-//                return buildPlotComponent(plotContainer)
-//            }
-//        }
-        return AwtPlotFactory(svgComponentFactory, executor)
+        return AwtPlotFactoryUtil.buildPlotComponent(
+            plotContainer,
+            svgComponentFactory, executor
+        )
     }
 
     /**

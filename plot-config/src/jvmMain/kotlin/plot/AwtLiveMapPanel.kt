@@ -35,6 +35,7 @@ class AwtLiveMapPanel(
 
         this.add(plotComponent)
 
+        // ToDo: use timer only then neeeded (zooming, dragging)
         val timer = AwtRepaintTimer(this::repaint)
 
         liveMapFigures.forEach { canvasFigure ->
@@ -67,18 +68,10 @@ class AwtLiveMapPanel(
             }
         }
 
-        // Fixed panel minimum size for scroll pane
-//        val plotDimensions = Dimension(
-//            plotBounds.width,
-//            plotBounds.height
-//        )
-
-//        this.preferredSize = plotDimensions
-//        this.minimumSize = plotDimensions
-//        this.maximumSize = plotDimensions
 
         this.addComponentListener(object : ComponentAdapter() {
             override fun componentResized(e: ComponentEvent?) {
+                // Used just once.
                 this@AwtLiveMapPanel.removeComponentListener(this)
                 EventQueue.invokeLater {
                     mappers.forEach { it() }
@@ -87,11 +80,4 @@ class AwtLiveMapPanel(
             }
         })
     }
-
-//    override fun paint(g: Graphics?) {
-//        // Fix background color
-//        g?.color = Color.WHITE
-//        g?.fillRect(0, 0, this.width, this.height)
-//        super.paint(g)
-//    }
 }

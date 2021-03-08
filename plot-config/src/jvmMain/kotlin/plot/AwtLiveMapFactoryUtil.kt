@@ -21,7 +21,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
-object AwtLiveMapFactoryUtil {
+internal object AwtLiveMapFactoryUtil {
     fun buildLiveMapComponent(
         assembler: PlotAssembler,
         processedSpec: MutableMap<String, Any>,
@@ -34,7 +34,7 @@ object AwtLiveMapFactoryUtil {
 
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, preferredSize)
-        val plotComponent = AwtPlotFactory.buildPlotComponent(
+        val plotComponent = AwtPlotFactoryUtil.buildPlotComponent(
             plotContainer,
             svgComponentFactory,
             executor
@@ -54,11 +54,6 @@ object AwtLiveMapFactoryUtil {
         cursorServiceConfig.pointerSetter { plotComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
 
         @Suppress("UNCHECKED_CAST")
-//        return buildPlotLiveMapComponent(
-//            plotContainer.liveMapFigures as List<CanvasFigure>,
-//            plotComponent,
-//            preferredSize.get()
-//        )
         return AwtLiveMapPanel(
             plotContainer.liveMapFigures as List<CanvasFigure>,
             plotComponent
