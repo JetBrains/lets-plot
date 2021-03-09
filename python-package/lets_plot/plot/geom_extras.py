@@ -20,10 +20,10 @@ def arrow(angle=None, length=None, ends=None, type=None):
         Essentially describes the width of the arrow head.
     length : int
         The length of the arrow head (px).
-    ends : str
-        Indicating which ends of the line to draw arrow heads ['last' | 'first' | 'both'].
-    type : str
-        Indicating whether the arrow head should be a closed triangle ['open' | 'closed'].
+    ends : {'last', 'first', 'both'}
+        Indicating which ends of the line to draw arrow heads.
+    type : {'open', 'closed'}
+        Indicating whether the arrow head should be a closed triangle.
         
     Returns
     -------
