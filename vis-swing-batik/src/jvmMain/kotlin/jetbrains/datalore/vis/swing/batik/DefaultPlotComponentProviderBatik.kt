@@ -14,10 +14,13 @@ import javax.swing.JComponent
 import javax.swing.JScrollPane
 import javax.swing.ScrollPaneConstants
 
-class DefaultPlotComponentProviderBatik(
+/**
+ * Inherited by the IdeaPlotComponentProviderBatik class in IDEA plugin.
+ */
+open class DefaultPlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,
-    var executor: (() -> Unit) -> Unit,
+    executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotSpecComponentProvider(
     processedSpec = processedSpec,

@@ -23,7 +23,8 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':vis-svg-portable')
-                implementation project(':vis-canvas')
+//                implementation project(':vis-svg-mapper')
+//                implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-base')
                 implementation project(':plot-common-portable')
@@ -31,7 +32,6 @@ kotlin {
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
-                implementation project(':plot-livemap')
             }
         }
         commonTest {
@@ -47,6 +47,8 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 implementation project(':vis-svg-mapper')
+                compileOnly project(':vis-canvas')
+                compileOnly project(':plot-livemap')
             }
         }
         jvmTest {

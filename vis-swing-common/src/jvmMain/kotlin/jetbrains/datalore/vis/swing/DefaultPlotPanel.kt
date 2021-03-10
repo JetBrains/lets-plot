@@ -7,7 +7,11 @@ package jetbrains.datalore.vis.swing
 
 import java.awt.Component
 
-class DefaultPlotPanel(
+
+/**
+ * Inherited by the IdeaPlotPanel class in IDEA plugin.
+ */
+open class DefaultPlotPanel(
     plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
     refreshRate: Int,  // ms
@@ -20,6 +24,11 @@ class DefaultPlotPanel(
         applicationContext = applicationContext
     ) {
 
+    /**
+     * Overridden in IDEA plugin.
+     *  - checks for an instance of `com.intellij.openapi.Disposable`
+     *  - invokes `com.intellij.openapi.Disposer.dispose(child)`
+     */
     override fun handleChildRemoved(child: Component) {
         // Nothing is needed.
     }

@@ -14,10 +14,10 @@ import javax.swing.JComponent
 import javax.swing.JScrollPane
 import javax.swing.ScrollPaneConstants
 
-class DefaultPlotComponentProviderJfx(
+open class DefaultPlotComponentProviderJfx(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,
-    var executor: (() -> Unit) -> Unit,
+    executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotSpecComponentProvider(
     processedSpec = processedSpec,

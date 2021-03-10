@@ -6,10 +6,9 @@
 package jetbrains.livemap.plotDemo
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import kotlin.random.Random
 
-class LiveMap : PlotConfigDemoBase() {
+class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             barWithNanValuesInData(),

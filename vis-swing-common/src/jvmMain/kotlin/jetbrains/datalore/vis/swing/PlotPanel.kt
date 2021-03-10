@@ -6,10 +6,6 @@ import java.awt.event.*
 import java.util.function.Consumer
 import javax.swing.*
 
-/**
- * Note:
- *  - In IDEA plugin: inherit this calss and implement `com.intellij.openapi.Disposable`
- */
 abstract class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
@@ -52,11 +48,6 @@ abstract class PlotPanel(
         )
     }
 
-    /**
-     * Note:
-     * - In IDEA plugin: check for an instance of `com.intellij.openapi.Disposable`
-     *      "is Disposable -> Disposer.dispose(child)"
-     */
     protected abstract fun handleChildRemoved(child: Component)
 
     private fun rebuildProvidedComponent(containerSize: Dimension?): JComponent {

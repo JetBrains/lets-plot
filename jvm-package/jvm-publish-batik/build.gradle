@@ -13,18 +13,19 @@ kotlin {
             dependencies {
                 compileOnly kotlin('stdlib-common')
                 compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
-                compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':vis-svg-mapper-batik')
-                api project(':vis-swing-batik')
-                api project(':vis-demo-common')
-                api project(':vis-demo-common-batik')
             }
         }
         jvmMain {
             dependencies {
                 compileOnly kotlin('stdlib-jdk8')
                 compileOnly "org.slf4j:slf4j-simple:$slf4j_version"
+
+                compileOnly project(':jvm-package:jvm-publish-common')
+                api project(':vis-svg-mapper-batik')
+                api project(':vis-swing-common')
+                api project(':vis-swing-batik')
+                api project(':vis-demo-common')
+                api project(':vis-demo-common-batik')
             }
         }
     }

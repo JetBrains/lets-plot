@@ -27,11 +27,11 @@ def include_sources_letsPlotJvmCommon = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
-        'vis-swing-common',
 ]
 
 def include_sources_letsPlotJvmJfx = [
         'vis-svg-mapper-jfx',
+        'vis-swing-common',
         'vis-swing-jfx',
         'vis-demo-common',
         'vis-demo-common-jfx',
@@ -39,6 +39,7 @@ def include_sources_letsPlotJvmJfx = [
 
 def include_sources_letsPlotJvmBatik = [
         'vis-svg-mapper-batik',
+        'vis-swing-common',
         'vis-swing-batik',
         'vis-demo-common',
         'vis-demo-common-batik',
@@ -57,6 +58,10 @@ allprojects {
     // see also: python-package/lets_plot/_version.py
 
     repositories {
+//        maven {
+//            url = uri("$rootDir/.maven-publish-dev-repo")
+//        }
+
         mavenCentral()
         jcenter()
     }

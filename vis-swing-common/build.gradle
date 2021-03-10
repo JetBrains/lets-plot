@@ -16,6 +16,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-config-portable')
+                implementation project(':plot-config')
                 implementation project(':vis-svg-portable')
             }
         }
@@ -23,7 +24,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-                implementation project(':plot-config')
+//                implementation project(':plot-config')
             }
         }
     }
