@@ -6,12 +6,11 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.SharedPieces.rasterData_Blue
 import jetbrains.datalore.plotDemo.model.SharedPieces.rasterData_RGB
 
 @Suppress("DuplicatedCode")
-class Raster : PlotConfigDemoBase() {
+class Raster {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             rasterPlotSpecs(rasterData_Blue(), scaleFillIdentity = false),

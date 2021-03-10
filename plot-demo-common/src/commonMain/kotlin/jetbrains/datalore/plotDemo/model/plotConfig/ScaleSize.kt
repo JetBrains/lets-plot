@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 @Suppress("DuplicatedCode")
-class ScaleSize : PlotConfigDemoBase() {
+class ScaleSize {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultRange(),

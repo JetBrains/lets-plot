@@ -8,9 +8,8 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class TooltipConfig : PlotConfigDemoBase() {
+class TooltipConfig {
 
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(

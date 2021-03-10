@@ -7,9 +7,8 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class FacetWrapDemo : PlotConfigDemoBase() {
+class FacetWrapDemo {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             oneFacetDef(),

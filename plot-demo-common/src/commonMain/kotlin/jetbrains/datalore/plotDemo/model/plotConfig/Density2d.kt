@@ -7,9 +7,8 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class Density2d : PlotConfigDemoBase() {
+class Density2d {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             sepalLength()

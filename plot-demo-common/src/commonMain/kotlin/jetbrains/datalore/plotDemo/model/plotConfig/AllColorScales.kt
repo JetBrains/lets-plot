@@ -5,14 +5,12 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
 import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
+open class AllColorScales {
 
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(

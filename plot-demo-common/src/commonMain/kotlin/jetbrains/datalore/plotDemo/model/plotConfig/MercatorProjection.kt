@@ -7,9 +7,8 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class MercatorProjection : PlotConfigDemoBase() {
+open class MercatorProjection {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             polygon_noProjection(),

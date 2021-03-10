@@ -6,9 +6,8 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class LegendShowByGeom : PlotConfigDemoBase() {
+open class LegendShowByGeom {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultLegend(),

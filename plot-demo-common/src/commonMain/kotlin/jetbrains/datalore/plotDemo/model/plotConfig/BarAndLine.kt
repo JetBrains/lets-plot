@@ -6,12 +6,11 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 /**
  * see: www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/
  */
-open class BarAndLine : PlotConfigDemoBase() {
+open class BarAndLine {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultBarDiscreteX(),

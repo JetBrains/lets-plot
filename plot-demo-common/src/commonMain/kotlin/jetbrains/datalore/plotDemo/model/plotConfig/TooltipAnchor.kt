@@ -7,10 +7,9 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
-open class TooltipAnchor : PlotConfigDemoBase() {
+open class TooltipAnchor {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             top_right(),

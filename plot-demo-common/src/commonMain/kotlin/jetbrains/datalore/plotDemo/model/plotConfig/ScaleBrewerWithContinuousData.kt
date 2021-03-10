@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import kotlin.random.Random
 
-open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
+open class ScaleBrewerWithContinuousData {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             tiles(),

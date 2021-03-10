@@ -6,11 +6,10 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.SharedPieces.sampleImageDataUrl3x3
 
 @Suppress("DuplicatedCode")
-class ImageGeom : PlotConfigDemoBase() {
+class ImageGeom {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             image_3x3()

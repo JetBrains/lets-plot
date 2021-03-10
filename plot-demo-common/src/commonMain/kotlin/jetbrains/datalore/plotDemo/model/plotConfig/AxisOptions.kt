@@ -5,11 +5,9 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
+open class AxisOptions {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultAxis(),

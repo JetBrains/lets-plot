@@ -6,11 +6,10 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 // see: www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
 @Suppress("DuplicatedCode")
-class ErrorBar : PlotConfigDemoBase() {
+class ErrorBar {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             withLinesAndPoints(),

@@ -6,14 +6,13 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
 /**
  * See 'Plotting distributions'
  * www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
-open class Histogram : PlotConfigDemoBase() {
+open class Histogram {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),

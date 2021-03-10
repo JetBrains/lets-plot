@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
-open class Bin2d : PlotConfigDemoBase() {
+open class Bin2d {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),

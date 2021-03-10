@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 @Suppress("DuplicatedCode")
-class CrossBar : PlotConfigDemoBase() {
+class CrossBar {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),

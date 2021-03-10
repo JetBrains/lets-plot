@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.SharedPieces
 
-open class ABLine : PlotConfigDemoBase() {
+open class ABLine {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             lineDefaultAlone(),

@@ -6,9 +6,8 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class ScaleLimitsContinuous : PlotConfigDemoBase() {
+open class ScaleLimitsContinuous {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             colorbarNoLims(),

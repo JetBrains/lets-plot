@@ -10,10 +10,9 @@ import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Month
 import jetbrains.datalore.base.datetime.tz.TimeZone.Companion.UTC
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import kotlin.random.Random
 
-open class DateTimeScaleX : PlotConfigDemoBase() {
+class DateTimeScaleX {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             plot("hours", hour),

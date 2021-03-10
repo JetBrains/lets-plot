@@ -7,9 +7,8 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class HVLine : PlotConfigDemoBase() {
+class HVLine {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             hline(),
