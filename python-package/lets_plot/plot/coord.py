@@ -30,6 +30,11 @@ def coord_cartesian(xlim=None, ylim=None):
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
+
     Examples
     --------
     .. jupyter-execute::
@@ -67,6 +72,11 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
 
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
+
     Examples
     --------
     .. jupyter-execute::
@@ -103,6 +113,11 @@ def coord_map(xlim=None, ylim=None):
         Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
 
     Examples
     --------
