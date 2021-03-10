@@ -9,38 +9,59 @@ __all__ = ['aes', 'layer']
 
 def aes(x=None, y=None, **other):
     """
-    Define aesthetic mappings
+    Define aesthetic mappings.
 
     Parameters
     ----------
-    x, y, ... : List of name value pairs giving aesthetics to map to variables.
-    The names for x and y aesthetics are typically omitted because they are so common; all other aesthetics must be named.
+    x, y, ... :
+        List of name value pairs giving aesthetics to map to variables.
+        The names for x and y aesthetics are typically omitted because they are so common; all other aesthetics must be named.
 
     Returns
     -------
-        aesthetic mapping specification
+    `FeatureSpec`
+        Aesthetic mapping specification.
 
     Note
-    -----
-        Generates aesthetic mappings that describe how variables in the data are projected to visual properties
-        (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
-        colour to color.
+    ----
+    Generates aesthetic mappings that describe how variables in the data are projected to visual properties
+    (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
+    colour to color.
 
-        Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
-        some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
-        depend on the value of a variable, he/she should project this variable to the color aesthetic via
-        aesthetic mapping.
+    Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
+    some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
+    depend on the value of a variable, he/she should project this variable to the color aesthetic via
+    aesthetic mapping.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> x = np.random.uniform(-1, 1, size=100)
-    >>> y = np.random.normal(size=100)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-    >>> ggplot(dat) + geom_point(aes(x='x', y='y', color='y', shape='class', fill='x', size='y')) +
-    ... geom_point(shape=21, color='red', fill='green', size=5, stat='smooth')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        c = np.where(x < 0, '0', '1')
+        ggplot({'x': x, 'y': y, 'c': c}) + \\
+            geom_point(aes('x', 'y', color='y', shape='c', size='x')) + \\
+            geom_smooth(aes(x='x', y='y'), deg=2, size=1)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3-4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
+                                color='black', alpha=.5, size=1)
+        
     """
 
     return FeatureSpec('mapping', name=None, x=x, y=y, **other)
@@ -48,26 +69,29 @@ def aes(x=None, y=None, **other):
 
 def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs):
     """
-    Create a new layer
+    Create a new layer.
 
     Parameters
     ----------
-    geom: string
-        The geometric object to use to display the data
-    stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    data : dictionary or pandas DataFrame, optional
+    geom : str
+        The geometric object to use to display the data.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    mapping : dictionary, optional
-        Set of aesthetic mappings created by aes. Aesthetic mappings describe the way that variables in the data are
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    position : string, optional
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
     kwargs:
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -75,28 +99,31 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-        A layer is a combination of data, stat and geom with a potential position adjustment. Usually layers are created
-        using geom_* or stat_* calls but they can be created directly using this function.
+    ----
+    A layer is a combination of data, stat and geom with a potential position adjustment. Usually layers are created
+    using geom_* or stat_* calls but they can be created directly using this function.
 
     Examples
     ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> x = np.random.uniform(-1, 1, size=100)
-    >>> y = np.random.normal(size=100)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-    >>> ggplot(dat, aes(x='x', y='y', group='class', color='class')) + layer(geom='point', stat='smooth', position='identity')
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
 
-
-    todo: other parameters:
-    inherit.aes = TRUE, subset = NULL, show.legend = NA
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + layer(geom='point')
 
     """
+    # todo: other parameters: inherit.aes = TRUE, subset = NULL, show.legend = NA
 
     return LayerSpec(**locals())
 
