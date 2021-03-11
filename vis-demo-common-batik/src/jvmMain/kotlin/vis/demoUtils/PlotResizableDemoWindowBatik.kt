@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
-import jetbrains.datalore.vis.swing.DefaultPlotPanel
 import jetbrains.datalore.vis.swing.PlotComponentProvider
+import jetbrains.datalore.vis.swing.PlotPanel
 import jetbrains.datalore.vis.swing.batik.DefaultSwingContextBatik
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -36,10 +36,10 @@ class PlotResizableDemoWindowBatik(
         )
         val plotContainer = PlotContainer(plot, plotSizeProperty)
 
-        return DefaultPlotPanel(
+        return PlotPanel(
             plotComponentProvider = MyPlotComponentProvider(plotContainer, plotSizeProperty),
             preferredSizeFromPlot = true,
-            refreshRate = 100,
+            repaintDelay = 100,
             applicationContext = DefaultSwingContextBatik()
         )
     }

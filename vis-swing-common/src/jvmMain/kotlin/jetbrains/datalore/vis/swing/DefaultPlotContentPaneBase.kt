@@ -20,7 +20,7 @@ import javax.swing.JPanel
 abstract class DefaultPlotContentPaneBase(
     rawSpec: MutableMap<String, Any>,
     private val preferredSizeFromPlot: Boolean,
-    private val refreshRate: Int,  // ms
+    private val repaintDelay: Int,  // ms
     private val applicationContext: ApplicationContext
 
 ) : Disposable, JPanel() {
@@ -72,7 +72,7 @@ abstract class DefaultPlotContentPaneBase(
         val plotPanel = createPlotPanel(
             plotComponentProvider = componentProvider,
             preferredSizeFromPlot = preferredSizeFromPlot,
-            refreshRate = refreshRate,
+            repaintDelay = repaintDelay,
             applicationContext = applicationContext
         )
 
@@ -91,13 +91,13 @@ abstract class DefaultPlotContentPaneBase(
     protected open fun createPlotPanel(
         plotComponentProvider: PlotComponentProvider,
         preferredSizeFromPlot: Boolean,
-        refreshRate: Int,  // ms
+        repaintDelay: Int,  // ms
         applicationContext: ApplicationContext
     ): PlotPanel {
-        return DefaultPlotPanel(
+        return PlotPanel(
             plotComponentProvider = plotComponentProvider,
             preferredSizeFromPlot = preferredSizeFromPlot,
-            refreshRate = refreshRate,
+            repaintDelay = repaintDelay,
             applicationContext = applicationContext
         )
     }

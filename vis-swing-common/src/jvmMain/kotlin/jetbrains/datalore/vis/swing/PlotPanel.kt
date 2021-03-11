@@ -6,10 +6,10 @@ import java.awt.event.*
 import java.util.function.Consumer
 import javax.swing.*
 
-abstract class PlotPanel(
+open class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
-    refreshRate: Int,  // ms
+    repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
     init {
@@ -22,7 +22,7 @@ abstract class PlotPanel(
         // Extra clean-up on 'dispose'.
         addContainerListener(object : ContainerAdapter() {
             override fun componentRemoved(e: ContainerEvent) {
-                handleChildRemovedIntern(this@PlotPanel, e.child)
+                handleChildRemovedIntern(e.child)
             }
         })
 
@@ -43,12 +43,34 @@ abstract class PlotPanel(
                 plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
                 thumbnailIconConsumer = null,
                 applicationContext = applicationContext,
-                refreshRate = refreshRate
+                repaintDelay = repaintDelay
             )
         )
     }
 
-    protected abstract fun handleChildRemoved(child: Component)
+    final override fun dispose() {
+        removeAll()
+    }
+
+    /**
+     * Dispose the "provided" plot component.
+     */
+    private fun handleChildRemovedIntern(child: Component) {
+        this.handleChildRemoved(child)
+        when (child) {
+            is Disposable -> child.dispose()
+            is JScrollPane -> {
+                handleChildRemovedIntern(child.viewport.view)
+            }
+        }
+    }
+
+    /**
+     * Override for a custom disposal of child.
+     */
+    open fun handleChildRemoved(child: Component) {
+        // Nothing is needed.
+    }
 
     private fun rebuildProvidedComponent(containerSize: Dimension?): JComponent {
         removeAll()
@@ -57,24 +79,6 @@ abstract class PlotPanel(
         return providedComponent
     }
 
-    final override fun dispose() {
-        removeAll()
-    }
-
-    companion object {
-        /**
-         * Dispose provided plot component
-         */
-        private fun handleChildRemovedIntern(panel: PlotPanel, child: Component) {
-            panel.handleChildRemoved(child)
-            when (child) {
-                is Disposable -> child.dispose()
-                is JScrollPane -> {
-                    handleChildRemovedIntern(panel, child.viewport.view)
-                }
-            }
-        }
-    }
 
     private class ResizeHook(
         private val plotPanel: PlotPanel,
@@ -83,14 +87,14 @@ abstract class PlotPanel(
         private val plotComponentFactory: (Dimension) -> JComponent,
         private var thumbnailIconConsumer: Consumer<in ImageIcon?>?,
         private val applicationContext: ApplicationContext,
-        refreshRate: Int // ms
+        repaintDelay: Int // ms
 
     ) : ComponentAdapter() {
         private var skipThisRun = lastProvidedComponent != null
 
         private var lastPreferredSize: Dimension? = null
 
-        private val refreshTimer: Timer = Timer(refreshRate) {
+        private val refreshTimer: Timer = Timer(repaintDelay) {
             rebuildPlotComponent()
         }.apply { isRepeats = false }
 

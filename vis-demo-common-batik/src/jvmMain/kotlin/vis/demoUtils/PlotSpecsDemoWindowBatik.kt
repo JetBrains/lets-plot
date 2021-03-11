@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.demoUtils.swing.PlotSpecsDemoWindowBase
-import jetbrains.datalore.vis.swing.DefaultPlotPanel
+import jetbrains.datalore.vis.swing.PlotPanel
 import jetbrains.datalore.vis.swing.batik.DefaultPlotComponentProviderBatik
 import jetbrains.datalore.vis.swing.batik.DefaultSwingContextBatik
 import java.awt.Component
@@ -39,10 +39,10 @@ class PlotSpecsDemoWindowBatik(
             }
         }
 
-        val plotPanel = DefaultPlotPanel(
+        val plotPanel = PlotPanel(
             plotComponentProvider = componentProvider,
             preferredSizeFromPlot = plotSize == null,
-            refreshRate = 300,
+            repaintDelay = 300,
             applicationContext = DefaultSwingContextBatik()
         )
 

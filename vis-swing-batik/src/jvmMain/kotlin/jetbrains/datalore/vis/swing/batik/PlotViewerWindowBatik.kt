@@ -17,7 +17,7 @@ class PlotViewerWindowBatik(
     windowSize: Dimension? = null,
     private val rawSpec: MutableMap<String, Any>,
     private val preserveAspectRatio: Boolean = false,
-    private val refreshRate: Int = 300,  // ms,
+    private val repaintDelay: Int = 300,  // ms,
     private val applicationContext: ApplicationContext = DefaultSwingContextBatik()
 ) : PlotViewerWindowBase(
     title,
@@ -28,7 +28,7 @@ class PlotViewerWindowBatik(
         return object : DefaultPlotContentPaneBase(
             rawSpec = rawSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,
-            refreshRate = refreshRate,
+            repaintDelay = repaintDelay,
             applicationContext = applicationContext
         ) {
             override fun createPlotComponentProvider(
