@@ -8,7 +8,10 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.*
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintsCollection
+import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -37,7 +40,7 @@ class RibbonGeom : GeomBase() {
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val targetCollector = getGeomTargetCollector(ctx)
+        val targetCollector = ctx.targetCollector
         val helper = GeomHelper(pos, coord, ctx)
         for (p in aesthetics.dataPoints()) {
             addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
