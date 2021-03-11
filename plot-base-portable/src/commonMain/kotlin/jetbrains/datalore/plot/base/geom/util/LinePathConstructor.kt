@@ -23,10 +23,10 @@ class LinePathConstructor(
         val linePaths = ArrayList<LinePath>()
         val multiPointDataList = createMultiPointDataByGroup()
         for (multiPointData in multiPointDataList) {
-            if (withHints) {
-                buildHints(multiPointDataList)
-            }
-            linePaths.addAll(myLinesHelper.createPaths(multiPointData.aes, multiPointData.points, myClosePath))
+           linePaths.addAll(myLinesHelper.createPaths(multiPointData.aes, multiPointData.points, myClosePath))
+        }
+        if (withHints) {
+            buildHints(multiPointDataList)
         }
         return linePaths
     }
