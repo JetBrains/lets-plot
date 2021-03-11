@@ -206,6 +206,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2DF,
             GeomKind.FREQPOLY,
             GeomKind.PATH,
+            GeomKind.SEGMENT,
             GeomKind.RIBBON,
             GeomKind.SMOOTH -> true
             else -> false

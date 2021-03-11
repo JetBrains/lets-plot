@@ -83,6 +83,14 @@ internal class LocatedTargetsPicker {
             GeomKind.POINT_RANGE
         )
 
+        private val UNIVARIATE_LINES = listOf(
+            GeomKind.DENSITY,
+            GeomKind.FREQPOLY,
+            GeomKind.LINE,
+            GeomKind.AREA,
+            GeomKind.SEGMENT
+        )
+
         private fun distance(locatedTargetList: LookupResult, coord: DoubleVector?): Double {
             val distance = locatedTargetList.distance
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
@@ -108,7 +116,7 @@ internal class LocatedTargetsPicker {
         }
 
         private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?): LookupResult {
-            if (coord == null || lookupResult.geomKind !in UNIVARIATE_GEOMS) {
+            if (coord == null || lookupResult.geomKind !in UNIVARIATE_LINES) {
                 return lookupResult
             }
 
