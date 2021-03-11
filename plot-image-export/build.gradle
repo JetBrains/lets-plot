@@ -144,6 +144,7 @@ publishing {
     }
     repositories {
         maven {
+//            url = uri("$rootDir/.maven-publish-dev-repo")
             url = uri("https://jetbrains.bintray.com/lets-plot-maven")
         }
     }

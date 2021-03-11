@@ -5,29 +5,48 @@
 
 package jetbrains.datalore.vis.swing.jfx
 
-import jetbrains.datalore.plot.MonolithicCommon
+import jetbrains.datalore.vis.swing.ApplicationContext
+import jetbrains.datalore.vis.swing.DefaultPlotContentPaneBase
 import jetbrains.datalore.vis.swing.PlotComponentProvider
 import jetbrains.datalore.vis.swing.PlotViewerWindowBase
 import java.awt.Dimension
+import javax.swing.JComponent
 
 class PlotViewerWindowJfx(
     title: String,
+    windowSize: Dimension? = null,
     private val rawSpec: MutableMap<String, Any>,
-    private val windowSize: Dimension? = null,
     private val preserveAspectRatio: Boolean = false,
     private val refreshRate: Int = 300,  // ms
+    private val applicationContext: ApplicationContext = DefaultSwingContextJfx()
 ) : PlotViewerWindowBase(
     title,
     windowSize = windowSize,
-    refreshRate = refreshRate,
-    applicationContext = DefaultSwingContextJfx()
 ) {
 
-    override fun createPlotComponentProvider(
+    override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
+        return object : DefaultPlotContentPaneBase(
+            rawSpec = rawSpec,
+            preferredSizeFromPlot = preferredSizeFromPlot,
+            refreshRate = refreshRate,
+            applicationContext = applicationContext
+        ) {
+            override fun createPlotComponentProvider(
+                processedSpec: MutableMap<String, Any>,
+                computationMessagesHandler: (List<String>) -> Unit
+            ): PlotComponentProvider {
+                return this@PlotViewerWindowJfx.createPlotComponentProvider(
+                    processedSpec,
+                    computationMessagesHandler
+                )
+            }
+        }
+    }
+
+    private fun createPlotComponentProvider(
+        processedSpec: MutableMap<String, Any>,
         computationMessagesHandler: (List<String>) -> Unit
     ): PlotComponentProvider {
-        // Pre-process figure specifications
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
         return DefaultPlotComponentProviderJfx(
             processedSpec = processedSpec,
             preserveAspectRatio = preserveAspectRatio,

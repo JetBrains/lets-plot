@@ -17,8 +17,8 @@ object AreaViewerJfx {
             for (spec in plotSpecList) {
                 PlotViewerWindowJfx(
                     "Area plot",
-                    spec,
                     null,
+                    spec,
 //                    Dimension(900, 700),
                     preserveAspectRatio = false
                 ).open()

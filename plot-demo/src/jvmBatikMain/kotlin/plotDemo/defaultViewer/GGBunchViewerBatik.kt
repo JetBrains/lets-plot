@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
         PlotViewerWindowBatik(
             "GGBunch",
-            plotSpecList.first(),
+            rawSpec = plotSpecList.first(),
 //                windowSize = Dimension(400, 300)
         ).open()
     }

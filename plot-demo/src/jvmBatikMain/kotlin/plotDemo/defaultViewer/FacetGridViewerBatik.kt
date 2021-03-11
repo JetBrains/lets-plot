@@ -14,8 +14,8 @@ fun main(args: Array<String>) {
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
         PlotViewerWindowBatik(
             "Facet grid",
-            plotSpecList.last(),
-            null
+            null,
+            plotSpecList.last()
 //                    Dimension(900, 700)
         ).open()
     }

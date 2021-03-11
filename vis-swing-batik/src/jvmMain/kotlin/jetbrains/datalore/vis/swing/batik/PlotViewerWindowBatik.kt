@@ -5,28 +5,45 @@
 
 package jetbrains.datalore.vis.swing.batik
 
-import jetbrains.datalore.plot.MonolithicCommon
+import jetbrains.datalore.vis.swing.ApplicationContext
+import jetbrains.datalore.vis.swing.DefaultPlotContentPaneBase
 import jetbrains.datalore.vis.swing.PlotComponentProvider
 import jetbrains.datalore.vis.swing.PlotViewerWindowBase
 import java.awt.Dimension
+import javax.swing.JComponent
 
 class PlotViewerWindowBatik(
     title: String,
+    windowSize: Dimension? = null,
     private val rawSpec: MutableMap<String, Any>,
-    private val windowSize: Dimension? = null,
     private val preserveAspectRatio: Boolean = false,
-    private val refreshRate: Int = 300,  // ms
+    private val refreshRate: Int = 300,  // ms,
+    private val applicationContext: ApplicationContext = DefaultSwingContextBatik()
 ) : PlotViewerWindowBase(
     title,
     windowSize = windowSize,
-    refreshRate = refreshRate,
-    applicationContext = DefaultSwingContextBatik()
 ) {
-    override fun createPlotComponentProvider(
+
+    override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
+        return object : DefaultPlotContentPaneBase(
+            rawSpec = rawSpec,
+            preferredSizeFromPlot = preferredSizeFromPlot,
+            refreshRate = refreshRate,
+            applicationContext = applicationContext
+        ) {
+            override fun createPlotComponentProvider(
+                processedSpec: MutableMap<String, Any>,
+                computationMessagesHandler: (List<String>) -> Unit
+            ): PlotComponentProvider {
+                return this@PlotViewerWindowBatik.createPlotComponentProvider(processedSpec, computationMessagesHandler)
+            }
+        }
+    }
+
+    private fun createPlotComponentProvider(
+        processedSpec: MutableMap<String, Any>,
         computationMessagesHandler: (List<String>) -> Unit
     ): PlotComponentProvider {
-        // Pre-process figure specifications
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
         return DefaultPlotComponentProviderBatik(
             processedSpec = processedSpec,
             preserveAspectRatio = preserveAspectRatio,

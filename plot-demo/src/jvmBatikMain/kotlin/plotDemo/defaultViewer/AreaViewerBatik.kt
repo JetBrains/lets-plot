@@ -15,8 +15,8 @@ fun main(args: Array<String>) {
         for (spec in plotSpecList) {
             PlotViewerWindowBatik(
                 "Area plot",
-                spec,
                 null,
+                spec,
 //                    Dimension(900, 700),
                 preserveAspectRatio = false
             ).open()
