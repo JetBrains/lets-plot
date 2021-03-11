@@ -15,8 +15,8 @@ object MultiLineTooltipBrowser {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
                 "Overlaid bars plot",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }

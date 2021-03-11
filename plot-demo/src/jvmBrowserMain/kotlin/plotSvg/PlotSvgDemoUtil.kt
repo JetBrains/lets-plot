@@ -18,7 +18,7 @@ object PlotSvgDemoUtil {
     fun show(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector
+        plotSize: DoubleVector = DoubleVector(400.0, 300.0)
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(

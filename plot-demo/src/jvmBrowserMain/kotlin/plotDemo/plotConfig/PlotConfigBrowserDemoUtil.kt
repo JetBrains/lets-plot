@@ -22,7 +22,7 @@ object PlotConfigBrowserDemoUtil {
     fun show(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector,
+        plotSize: DoubleVector = DoubleVector(400.0, 300.0),
         applyBackendTransform: Boolean = true
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
@@ -54,6 +54,7 @@ object PlotConfigBrowserDemoUtil {
         }
 
         val plotSpecListJs = StringBuilder("[\n")
+
         @Suppress("UNCHECKED_CAST")
         var first = true
         for (spec in plotSpecList) {
