@@ -2,9 +2,11 @@
 
 ### Added
 
-- The 'alpha' parameter for lines [[#139](https://github.com/JetBrains/lets-plot/issues/139)].
-- Tooltips for geom_segment [[#296](https://github.com/JetBrains/lets-plot/issues/296)].
-- The 'guides' function [[#52](https://github.com/JetBrains/lets-plot/issues/52)].
+- The `alpha` parameter for lines [[#139](https://github.com/JetBrains/lets-plot/issues/139)].
+- Tooltips for `geom_segment()` [[#296](https://github.com/JetBrains/lets-plot/issues/296)].
+- The `guides()` function [[#52](https://github.com/JetBrains/lets-plot/issues/52)].
+- New Java **Swing plot components** to enable embedding Lets-Plot charts into JVM applications.
+  - See: `vis-swing-common, vis-swing-batik, vis-swing-jfx` modules. 
 
 ### Changed
                 
