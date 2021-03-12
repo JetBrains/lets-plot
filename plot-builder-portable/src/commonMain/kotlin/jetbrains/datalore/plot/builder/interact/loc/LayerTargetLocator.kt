@@ -18,7 +18,7 @@ import kotlin.math.max
 
 internal class LayerTargetLocator(
     private val geomKind: GeomKind,
-    lookupSpec: GeomTargetLocator.LookupSpec,
+    private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
     targetPrototypes: List<TargetPrototype>) :
     GeomTargetLocator {
@@ -30,19 +30,28 @@ internal class LayerTargetLocator(
     private val mySimpleGeometry = setOf(GeomKind.RECT, GeomKind.POLYGON)
 
     private val myCollectingStrategy: Collector.CollectingStrategy =
-            if (geomKind in mySimpleGeometry) {
+        when {
+            geomKind in mySimpleGeometry -> {
                 // fix overlapping tooltips under cursor
                 Collector.CollectingStrategy.REPLACE
-            } else if (lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X) {
+            }
+            lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X && lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NEAREST -> {
+                // collect all with a minimum distance from cursor
+                Collector.CollectingStrategy.APPEND_IF_EQUAL
+            }
+            lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X -> {
                 Collector.CollectingStrategy.APPEND
-            } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER) {
+            }
+            lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER -> {
                 Collector.CollectingStrategy.APPEND
-            } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NONE ||
-                    lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.NONE) {
+            }
+            lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NONE || lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.NONE -> {
                 Collector.CollectingStrategy.IGNORE
-            } else {
+            }
+            else -> {
                 Collector.CollectingStrategy.REPLACE
             }
+        }
 
     init {
         fun toProjection(prototype: TargetPrototype): TargetProjection {
@@ -105,21 +114,25 @@ internal class LayerTargetLocator(
 
         val rectCollector = Collector<GeomTarget>(
             coord,
-            myCollectingStrategy
+            myCollectingStrategy,
+            lookupSpec.lookupSpace
         )
         val pointCollector = Collector<GeomTarget>(
             coord,
-            myCollectingStrategy
+            myCollectingStrategy,
+            lookupSpec.lookupSpace
         )
         val pathCollector = Collector<GeomTarget>(
             coord,
-            myCollectingStrategy
+            myCollectingStrategy,
+            lookupSpec.lookupSpace
         )
 
         // Should always replace because of polygon with holes - only top should have tooltip.
         val polygonCollector = Collector<GeomTarget>(
             coord,
-            Collector.CollectingStrategy.REPLACE
+            Collector.CollectingStrategy.REPLACE,
+            lookupSpec.lookupSpace
         )
 
         for (target in myTargets) {
@@ -240,14 +253,30 @@ internal class LayerTargetLocator(
             get() = targetProjection as PathTargetProjection
     }
 
-    internal class Collector<T>(cursor: DoubleVector, private val myStrategy: CollectingStrategy) {
+    internal class Collector<T>(
+        cursor: DoubleVector,
+        private val myStrategy: CollectingStrategy,
+        lookupSpace: GeomTargetLocator.LookupSpace
+    ) {
         private val result = ArrayList<T>()
-        val closestPointChecker: ClosestPointChecker = ClosestPointChecker(cursor)
+        val closestPointChecker: ClosestPointChecker = if (lookupSpace == GeomTargetLocator.LookupSpace.X) {
+            ClosestPointChecker(DoubleVector(cursor.x, 0.0))
+        } else {
+            ClosestPointChecker(cursor)
+        }
+        private var myLastAddedDistance: Double = -1.0
 
         fun collect(data: T) {
             when (myStrategy) {
                 CollectingStrategy.APPEND -> add(data)
                 CollectingStrategy.REPLACE -> replace(data)
+                CollectingStrategy.APPEND_IF_EQUAL -> {
+                    if (myLastAddedDistance == closestPointChecker.distance) {
+                        add(data)
+                    } else {
+                        replace(data)
+                    }
+                }
                 CollectingStrategy.IGNORE -> return
             }
         }
@@ -262,16 +291,19 @@ internal class LayerTargetLocator(
 
         private fun add(data: T) {
             result.add(data)
+            myLastAddedDistance = closestPointChecker.distance
         }
 
         private fun replace(locationData: T) {
             result.clear()
             result.add(locationData)
+            myLastAddedDistance = closestPointChecker.distance
         }
 
         internal enum class CollectingStrategy {
             APPEND,
             REPLACE,
+            APPEND_IF_EQUAL,
             IGNORE
         }
     }
