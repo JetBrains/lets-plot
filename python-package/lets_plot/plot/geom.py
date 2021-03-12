@@ -133,36 +133,38 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 100
-        >>> x = np.random.uniform(-1, 1, size=n)
-        >>> y = 25 * x ** 2 + np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}) + \\
-        >>>     geom_point(aes(x='x', y='y', fill='y'), \\
-        >>>                shape=21, size=5, color='white')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}) + \\
+            geom_point(aes(x='x', y='y', fill='y'), \\
+                       shape=21, size=5, color='white')
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8-11
 
-        >>> from lets_plot import *
-        >>> from lets_plot.geo_data import *
-        >>> LetsPlot.setup_html()
-        >>> data = {'city': ['New York', 'Los Angeles', 'Chicago'], \\
-        >>>         'est_pop_2019': [8_336_817, 3_979_576, 2_693_976]}
-        >>> centroids = geocode_cities(data['city']).get_centroids()
-        >>> ggplot() + geom_livemap() + \\
-        >>>     geom_point(aes(size='est_pop_2019'), \\
-        >>>                data=data, map=centroids, map_join='city', \\
-        >>>                tooltips=layer_tooltips().line('@city')
-        >>>                                         .line('population|@est_pop_2019')) + \\
-        >>>     ggsize(600, 450)
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        data = {'city': ['New York', 'Los Angeles', 'Chicago'], \\
+                'est_pop_2019': [8_336_817, 3_979_576, 2_693_976]}
+        centroids = geocode_cities(data['city']).get_centroids()
+        ggplot() + geom_livemap() + \\
+            geom_point(aes(size='est_pop_2019'), \\
+                       data=data, map=centroids, map_join='city', \\
+                       tooltips=layer_tooltips().line('@city')
+                                                .line('population|@est_pop_2019')) + \\
+            ggsize(600, 450)
 
     """
 
@@ -273,33 +275,35 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> t = np.linspace(0, 2 * np.pi, n)
-        >>> data = {'x': t * np.sin(t), 'y': t * np.cos(t)}
-        >>> ggplot(data, aes(x='x', y='y')) + geom_path()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        t = np.linspace(0, 2 * np.pi, n)
+        data = {'x': t * np.sin(t), 'y': t * np.cos(t)}
+        ggplot(data, aes(x='x', y='y')) + geom_path()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 11
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> T = 50
-        >>> np.random.seed(42)
-        >>> x = np.cumsum(np.random.normal(size=2*T))
-        >>> y = np.cumsum(np.random.normal(size=2*T))
-        >>> c = [0] * T + [1] * T
-        >>> data = {'x': x, 'y': y, 'c': c}
-        >>> ggplot(data, aes(x='x', y='y', group='c')) + \\
-        >>>     geom_path(aes(color='c'), size=2, alpha=.5) + \\
-        >>>     scale_color_discrete()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        T = 50
+        np.random.seed(42)
+        x = np.cumsum(np.random.normal(size=2*T))
+        y = np.cumsum(np.random.normal(size=2*T))
+        c = [0] * T + [1] * T
+        data = {'x': x, 'y': y, 'c': c}
+        ggplot(data, aes(x='x', y='y', group='c')) + \\
+            geom_path(aes(color='c'), size=2, alpha=.5) + \\
+            scale_color_discrete()
 
     """
     if is_geocoder(map):
@@ -377,33 +381,35 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> x = np.linspace(-4 * np.pi, 4 * np.pi, 100)
-        >>> y = np.sin(x)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_line()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = np.linspace(-4 * np.pi, 4 * np.pi, 100)
+        y = np.sin(x)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_line()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 12-13
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> t = np.arange(100)
-        >>> x1 = np.cumsum(np.random.normal(size=t.size))
-        >>> x2 = np.cumsum(np.random.normal(size=t.size))
-        >>> df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
-        >>> df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
-        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
-        >>>     geom_line(aes(color='variable'), size=1, alpha=0.5) + \\
-        >>>     geom_line(stat='smooth', color='red', linetype='longdash')
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        t = np.arange(100)
+        x1 = np.cumsum(np.random.normal(size=t.size))
+        x2 = np.cumsum(np.random.normal(size=t.size))
+        df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
+        df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
+        ggplot(df, aes(x='t', y='value', group='variable')) + \\
+            geom_line(aes(color='variable'), size=1, alpha=0.5) + \\
+            geom_line(stat='smooth', color='red', linetype='longdash')
 
     """
     return _geom('line',
@@ -508,53 +514,56 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 50
-        >>> x = np.arange(n)
-        >>> y = x + np.random.normal(scale=10, size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_point() + geom_smooth()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 50
+        x = np.arange(n)
+        y = x + np.random.normal(scale=10, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_point() + geom_smooth()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 100
-        >>> x = np.linspace(-2, 2, n)
-        >>> y = x ** 2 + np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_point() + geom_smooth(color='red', deg=2, se=False)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.linspace(-2, 2, n)
+        y = x ** 2 + np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_point() + geom_smooth(color='red', deg=2, se=False)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 14-15
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> t = np.linspace(0, 1, 100)
-        >>> mean = 1 + np.zeros(2)
-        >>> cov = np.eye(2)
-        >>> x, y = np.random.multivariate_normal(mean, cov, t.size).T
-        >>> df = pd.DataFrame({'t': t, 'x': x, 'y': y})
-        >>> df = df.melt(id_vars=['t'], value_vars=['x', 'y'])
-        >>> ggplot(df, aes(x='t', y='value', group='variable')) + \\
-        >>>     geom_point(aes(color='variable'), size=3, alpha=.5) + \\
-        >>>     geom_smooth(aes(color='variable'), size=1, \\
-        >>>                 method='loess', span=.3, level=.7, seed=42)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        t = np.linspace(0, 1, 100)
+        mean = 1 + np.zeros(2)
+        cov = np.eye(2)
+        x, y = np.random.multivariate_normal(mean, cov, t.size).T
+        df = pd.DataFrame({'t': t, 'x': x, 'y': y})
+        df = df.melt(id_vars=['t'], value_vars=['x', 'y'])
+        ggplot(df, aes(x='t', y='value', group='variable')) + \\
+            geom_point(aes(color='variable'), size=3, alpha=.5) + \\
+            geom_smooth(aes(color='variable'), size=1, \\
+                        method='loess', span=.3, level=.7, seed=42)
 
     """
     return _geom('smooth',
@@ -638,49 +647,52 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> data = {'x': np.random.randint(10, size=100)}
-        >>> ggplot(data, aes(x='x')) + geom_bar()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.randint(10, size=100)}
+        ggplot(data, aes(x='x')) + geom_bar()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 10
-        >>> x = np.arange(n)
-        >>> y = 1 + np.random.randint(5, size=n)
-        >>> ggplot() + \\
-        >>>     geom_bar(aes(x='x', y='y', fill='x'), data={'x': x, 'y': y}, \\
-        >>>              stat='identity', show_legend=False) + \\
-        >>>     scale_fill_discrete()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 10
+        x = np.arange(n)
+        y = 1 + np.random.randint(5, size=n)
+        ggplot() + \\
+            geom_bar(aes(x='x', y='y', fill='x'), data={'x': x, 'y': y}, \\
+                     stat='identity', show_legend=False) + \\
+            scale_fill_discrete()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-12
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 5000
-        >>> x = np.random.normal(size=n)
-        >>> c = np.random.choice(list('abcde'), size=n)
-        >>> ggplot({'x': x, 'class': c}, aes(x='x')) + \\
-        >>>     geom_bar(aes(group='class', fill='class', color='class'), \\
-        >>>              stat='bin', sampling=sampling_pick(n=500), alpha=.3, \\
-        >>>              tooltips=layer_tooltips().line('@|@class')
-        >>>                                       .line('count|@..count..'))
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 5000
+        x = np.random.normal(size=n)
+        c = np.random.choice(list('abcde'), size=n)
+        ggplot({'x': x, 'class': c}, aes(x='x')) + \\
+            geom_bar(aes(group='class', fill='class', color='class'), \\
+                     stat='bin', sampling=sampling_pick(n=500), alpha=.3, \\
+                     tooltips=layer_tooltips().line('@|@class')
+                                              .line('count|@..count..'))
 
     """
     return _geom('bar',
@@ -769,43 +781,46 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> data = {'x': np.random.normal(size=1000)}
-        >>> ggplot(data, aes(x='x')) + geom_histogram()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 7
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> data = {'x': np.random.gamma(2.0, size=1000)}
-        >>> ggplot(data, aes(x='x')) + \\
-        >>>     geom_histogram(aes(color='x', fill='x'), bins=50)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.gamma(2.0, size=1000)}
+        ggplot(data, aes(x='x')) + \\
+            geom_histogram(aes(color='x', fill='x'), bins=50)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8-10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(scale=3, size=1000)
-        >>> y = 2 * (np.round(x) % 2) - 1
-        >>> ggplot({'x': x, 'y': y}) + \\
-        >>>     geom_histogram(aes(x='x', weight='y'), \\
-        >>>                    center=0, binwidth=1, \\
-        >>>                    color='black', fill='gray', size=1)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.normal(scale=3, size=1000)
+        y = 2 * (np.round(x) % 2) - 1
+        ggplot({'x': x, 'y': y}) + \\
+            geom_histogram(aes(x='x', weight='y'), \\
+                           center=0, binwidth=1, \\
+                           color='black', fill='gray', size=1)
 
     """
     return _geom('histogram',
@@ -889,57 +904,60 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> mean = np.zeros(2)
-        >>> cov = np.eye(2)
-        >>> x, y = np.random.multivariate_normal(mean, cov, 1000).T
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_bin2d()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        mean = np.zeros(2)
+        cov = np.eye(2)
+        x, y = np.random.multivariate_normal(mean, cov, 1000).T
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_bin2d()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-14
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 5000
-        >>> x = np.random.uniform(-2, 2, size=n)
-        >>> y = np.random.normal(scale=.5, size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_bin2d(aes(fill='..density..'), binwidth=[.25, .24], \\
-        >>>                tooltips=layer_tooltips().format('@x', '.2f')
-        >>>                        .format('@y', '.2f').line('(@x, @y)')
-        >>>                        .line('count|@..count..')
-        >>>                        .format('@..density..', '.3f')
-        >>>                        .line('density|@..density..')) + \\
-        >>>     scale_fill_gradient(low='black', high='red')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 5000
+        x = np.random.uniform(-2, 2, size=n)
+        y = np.random.normal(scale=.5, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_bin2d(aes(fill='..density..'), binwidth=[.25, .24], \\
+                       tooltips=layer_tooltips().format('@x', '.2f')
+                               .format('@y', '.2f').line('(@x, @y)')
+                               .line('count|@..count..')
+                               .format('@..density..', '.3f')
+                               .line('density|@..density..')) + \\
+            scale_fill_gradient(low='black', high='red')
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10-11
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> mean = np.zeros(2)
-        >>> cov = [[1, .5],
-        >>>        [.5, 1]]
-        >>> x, y = np.random.multivariate_normal(mean, cov, 500).T
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_bin2d(aes(alpha='..count..'), bins=[20, 20], \\
-        >>>                color='white', fill='darkgreen') + \\
-        >>>     geom_point(size=1.5, shape=21, color='white', \\
-        >>>                fill='darkgreen') + \\
-        >>>     ggsize(600, 450)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        mean = np.zeros(2)
+        cov = [[1, .5],
+               [.5, 1]]
+        x, y = np.random.multivariate_normal(mean, cov, 500).T
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_bin2d(aes(alpha='..count..'), bins=[20, 20], \\
+                       color='white', fill='darkgreen') + \\
+            geom_point(size=1.5, shape=21, color='white', \\
+                       fill='darkgreen') + \\
+            ggsize(600, 450)
 
     """
     return _geom('bin2d',
@@ -1010,44 +1028,46 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 12
 
-        >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> a, b = -1, 0
-        >>> x = np.linspace(-3, 3, n)
-        >>> y = np.linspace(-3, 3, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data, aes(x='x', y='y', color='z', fill='z')) + geom_tile()
+        import numpy as np
+        from scipy.stats import multivariate_normal
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        a, b = -1, 0
+        x = np.linspace(-3, 3, n)
+        y = np.linspace(-3, 3, n)
+        X, Y = np.meshgrid(x, y)
+        Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data, aes(x='x', y='y', color='z', fill='z')) + geom_tile()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 17
 
-        >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 25
-        >>> x = np.linspace(-1, 1, n)
-        >>> y = np.linspace(-1, 1, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> mean = np.zeros(2)
-        >>> cov = [[1, -.5],
-        >>>        [-.5, 1]]
-        >>> rv = multivariate_normal(mean, cov)
-        >>> Z = rv.pdf(np.dstack((X, Y)))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data, aes(x='x', y='y')) + \\
-        >>>     geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
-        >>>     scale_fill_gradient(low='yellow', high='darkgreen')
+        import numpy as np
+        from scipy.stats import multivariate_normal
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 25
+        x = np.linspace(-1, 1, n)
+        y = np.linspace(-1, 1, n)
+        X, Y = np.meshgrid(x, y)
+        mean = np.zeros(2)
+        cov = [[1, -.5],
+               [-.5, 1]]
+        rv = multivariate_normal(mean, cov)
+        Z = rv.pdf(np.dstack((X, Y)))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data, aes(x='x', y='y')) + \\
+            geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
+            scale_fill_gradient(low='yellow', high='darkgreen')
 
     """
     return _geom('tile',
@@ -1109,26 +1129,27 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 17
 
-        >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 25
-        >>> x = np.linspace(-1, 1, n)
-        >>> y = np.linspace(-1, 1, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> mean = np.zeros(2)
-        >>> cov = [[1, -.5],
-        >>>        [-.5, 1]]
-        >>> rv = multivariate_normal(mean, cov)
-        >>> Z = rv.pdf(np.dstack((X, Y)))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data) + \\
-        >>>     geom_raster(aes(x='x', y='y', fill='z')) + \\
-        >>>     scale_fill_gradient(low='#54278f', high='#f2f0f7')
+        import numpy as np
+        from scipy.stats import multivariate_normal
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 25
+        x = np.linspace(-1, 1, n)
+        y = np.linspace(-1, 1, n)
+        X, Y = np.meshgrid(x, y)
+        mean = np.zeros(2)
+        cov = [[1, -.5],
+               [-.5, 1]]
+        rv = multivariate_normal(mean, cov)
+        Z = rv.pdf(np.dstack((X, Y)))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data) + \\
+            geom_raster(aes(x='x', y='y', fill='z')) + \\
+            scale_fill_gradient(low='#54278f', high='#f2f0f7')
 
     """
     return _geom('raster',
@@ -1201,39 +1222,41 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> data = {
-        >>>     'x': ['a', 'b', 'c', 'd'],
-        >>>     'ymin': [5, 7, 3, 5],
-        >>>     'ymax': [8, 11, 6, 9],
-        >>> }
-        >>> ggplot(data, aes(x='x')) + \\
-        >>>     geom_errorbar(aes(ymin='ymin', ymax='ymax'))
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': ['a', 'b', 'c', 'd'],
+            'ymin': [5, 7, 3, 5],
+            'ymax': [8, 11, 6, 9],
+        }
+        ggplot(data, aes(x='x')) + \\
+            geom_errorbar(aes(ymin='ymin', ymax='ymax'))
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 13-14
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 1000
-        >>> x = np.random.randint(10, size=n)
-        >>> y = np.sqrt(x) + np.random.normal(scale=.3, size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y})
-        >>> err_df = df.groupby('x').agg({'y': ['min', 'max']}).reset_index()
-        >>> err_df.columns = ['x', 'ymin', 'ymax']
-        >>> ggplot() + \\
-        >>>     geom_errorbar(aes(x='x', ymin='ymin', ymax='ymax'), \\
-        >>>                   data=err_df, width=.5, color='red') + \\
-        >>>     geom_point(aes(x='x', y='y'), data=df) + \\
-        >>>     scale_x_continuous(breaks=list(range(10)))
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 1000
+        x = np.random.randint(10, size=n)
+        y = np.sqrt(x) + np.random.normal(scale=.3, size=n)
+        df = pd.DataFrame({'x': x, 'y': y})
+        err_df = df.groupby('x').agg({'y': ['min', 'max']}).reset_index()
+        err_df.columns = ['x', 'ymin', 'ymax']
+        ggplot() + \\
+            geom_errorbar(aes(x='x', ymin='ymin', ymax='ymax'), \\
+                          data=err_df, width=.5, color='red') + \\
+            geom_point(aes(x='x', y='y'), data=df) + \\
+            scale_x_continuous(breaks=list(range(10)))
 
     """
     return _geom('errorbar',
@@ -1313,40 +1336,42 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> data = {
-        >>>     'x': ['a', 'b', 'c', 'd'],
-        >>>     'ymin': [5, 7, 3, 5],
-        >>>     'middle': [6.5, 9, 4.5, 7],
-        >>>     'ymax': [8, 11, 6, 9],
-        >>> }
-        >>> ggplot(data, aes(x='x')) + \\
-        >>>     geom_crossbar(aes(ymin='ymin', middle='middle', ymax='ymax'))
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': ['a', 'b', 'c', 'd'],
+            'ymin': [5, 7, 3, 5],
+            'middle': [6.5, 9, 4.5, 7],
+            'ymax': [8, 11, 6, 9],
+        }
+        ggplot(data, aes(x='x')) + \\
+            geom_crossbar(aes(ymin='ymin', middle='middle', ymax='ymax'))
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 14-15
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 800
-        >>> cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(list(cat_list.keys()), n)
-        >>> y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y})
-        >>> err_df = df.groupby('x').agg({'y': ['min', 'median', 'max']}).reset_index()
-        >>> err_df.columns = ['x', 'ymin', 'ymedian', 'ymax']
-        >>> ggplot() + \\
-        >>>     geom_crossbar(aes(x='x', ymin='ymin', middle='ymedian', ymax='ymax', fill='x'), \\
-        >>>                   data=err_df, width=.6, fatten=5) + \\
-        >>>     geom_jitter(aes(x='x', y='y'), data=df, width=.3, shape=1, color='black', alpha=.5)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 800
+        cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
+        np.random.seed(42)
+        x = np.random.choice(list(cat_list.keys()), n)
+        y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
+        df = pd.DataFrame({'x': x, 'y': y})
+        err_df = df.groupby('x').agg({'y': ['min', 'median', 'max']}).reset_index()
+        err_df.columns = ['x', 'ymin', 'ymedian', 'ymax']
+        ggplot() + \\
+            geom_crossbar(aes(x='x', ymin='ymin', middle='ymedian', ymax='ymax', fill='x'), \\
+                          data=err_df, width=.6, fatten=5) + \\
+            geom_jitter(aes(x='x', y='y'), data=df, width=.3, shape=1, color='black', alpha=.5)
 
     """
     return _geom('crossbar',
@@ -1428,40 +1453,42 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> data = {
-        >>>     'x': ['a', 'b', 'c', 'd'],
-        >>>     'ymin': [5, 7, 3, 5],
-        >>>     'y': [6.5, 9, 4.5, 7],
-        >>>     'ymax': [8, 11, 6, 9],
-        >>> }
-        >>> ggplot(data, aes(x='x', y='y')) + \\
-        >>>     geom_pointrange(aes(ymin='ymin', ymax='ymax'))
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': ['a', 'b', 'c', 'd'],
+            'ymin': [5, 7, 3, 5],
+            'y': [6.5, 9, 4.5, 7],
+            'ymax': [8, 11, 6, 9],
+        }
+        ggplot(data, aes(x='x', y='y')) + \\
+            geom_pointrange(aes(ymin='ymin', ymax='ymax'))
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 14-16
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 800
-        >>> cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(list(cat_list.keys()), n)
-        >>> y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y})
-        >>> err_df = df.groupby('x').agg({'y': ['min', 'mean', 'max']}).reset_index()
-        >>> err_df.columns = ['x', 'ymin', 'ymean', 'ymax']
-        >>> ggplot(err_df, aes(x='x', y='ymean')) + \\
-        >>>     geom_pointrange(aes(ymin='ymin', ymax='ymax', fill='x'), \\
-        >>>                     show_legend=False, fatten=10, shape=4, \\
-        >>>                     color='red', size=1)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 800
+        cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
+        np.random.seed(42)
+        x = np.random.choice(list(cat_list.keys()), n)
+        y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
+        df = pd.DataFrame({'x': x, 'y': y})
+        err_df = df.groupby('x').agg({'y': ['min', 'mean', 'max']}).reset_index()
+        err_df.columns = ['x', 'ymin', 'ymean', 'ymax']
+        ggplot(err_df, aes(x='x', y='ymean')) + \\
+            geom_pointrange(aes(ymin='ymin', ymax='ymax', fill='x'), \\
+                            show_legend=False, fatten=10, shape=4, \\
+                            color='red', size=1)
 
     """
     return _geom('pointrange',
@@ -1535,40 +1562,42 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> data = {
-        >>>     'x': ['a', 'b', 'c', 'd'],
-        >>>     'ymin': [5, 7, 3, 5],
-        >>>     'ymax': [8, 11, 6, 9],
-        >>> }
-        >>> ggplot(data, aes(x='x')) + \\
-        >>>     geom_linerange(aes(ymin='ymin', ymax='ymax'))
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': ['a', 'b', 'c', 'd'],
+            'ymin': [5, 7, 3, 5],
+            'ymax': [8, 11, 6, 9],
+        }
+        ggplot(data, aes(x='x')) + \\
+            geom_linerange(aes(ymin='ymin', ymax='ymax'))
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 14-15
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 800
-        >>> cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(list(cat_list.keys()), n)
-        >>> y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y})
-        >>> err_df = df.groupby('x').agg({'y': ['min', 'max']}).reset_index()
-        >>> err_df.columns = ['x', 'ymin', 'ymax']
-        >>> ggplot() + \\
-        >>>     geom_linerange(aes(x='x', ymin='ymin', ymax='ymax', fill='x'), \\
-        >>>                     data=err_df, show_legend=False, color='black', size=1) + \\
-        >>>     geom_point(aes(x='x', y='y'), data=df, size=4, alpha=.1, color='black', \\
-        >>>                tooltips=layer_tooltips().line('@y'))
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 800
+        cat_list = {c: np.random.uniform(3) for c in 'abcdefgh'}
+        np.random.seed(42)
+        x = np.random.choice(list(cat_list.keys()), n)
+        y = np.array([cat_list[c] for c in x]) + np.random.normal(size=n)
+        df = pd.DataFrame({'x': x, 'y': y})
+        err_df = df.groupby('x').agg({'y': ['min', 'max']}).reset_index()
+        err_df.columns = ['x', 'ymin', 'ymax']
+        ggplot() + \\
+            geom_linerange(aes(x='x', ymin='ymin', ymax='ymax', fill='x'), \\
+                            data=err_df, show_legend=False, color='black', size=1) + \\
+            geom_point(aes(x='x', y='y'), data=df, size=4, alpha=.1, color='black', \\
+                       tooltips=layer_tooltips().line('@y'))
 
     """
     return _geom('linerange',
@@ -1644,43 +1673,45 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 16
 
-        >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 25
-        >>> x = np.linspace(-1, 1, n)
-        >>> y = np.linspace(-1, 1, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> mean = np.zeros(2)
-        >>> cov = [[1, .5],
-        >>>        [.5, 1]]
-        >>> rv = multivariate_normal(mean, cov)
-        >>> Z = rv.pdf(np.dstack((X, Y)))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data, aes(x='x', y='y', z='z')) + geom_contour()
+        import numpy as np
+        from scipy.stats import multivariate_normal
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 25
+        x = np.linspace(-1, 1, n)
+        y = np.linspace(-1, 1, n)
+        X, Y = np.meshgrid(x, y)
+        mean = np.zeros(2)
+        cov = [[1, .5],
+               [.5, 1]]
+        rv = multivariate_normal(mean, cov)
+        Z = rv.pdf(np.dstack((X, Y)))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data, aes(x='x', y='y', z='z')) + geom_contour()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 13
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> a, b = -1, 0
-        >>> x = np.linspace(-3, 3, n)
-        >>> y = np.linspace(-3, 3, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data, aes(x='x', y='y', z='z')) + \\
-        >>>     geom_contour(aes(color='..level..'), bins=3, size=1) + \\
-        >>>     scale_color_gradient(low='#dadaeb', high='#3f007d')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        a, b = -1, 0
+        x = np.linspace(-3, 3, n)
+        y = np.linspace(-3, 3, n)
+        X, Y = np.meshgrid(x, y)
+        Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data, aes(x='x', y='y', z='z')) + \\
+            geom_contour(aes(color='..level..'), bins=3, size=1) + \\
+            scale_color_gradient(low='#dadaeb', high='#3f007d')
 
     """
     return _geom('contour',
@@ -1755,43 +1786,45 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 16
 
-        >>> import numpy as np
-        >>> from scipy.stats import multivariate_normal
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> n = 25
-        >>> x = np.linspace(-1, 1, n)
-        >>> y = np.linspace(-1, 1, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> mean = np.zeros(2)
-        >>> cov = [[1, .5],
-        >>>        [.5, 1]]
-        >>> rv = multivariate_normal(mean, cov)
-        >>> Z = rv.pdf(np.dstack((X, Y)))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data, aes(x='x', y='y', z='z')) + geom_contourf()
+        import numpy as np
+        from scipy.stats import multivariate_normal
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 25
+        x = np.linspace(-1, 1, n)
+        y = np.linspace(-1, 1, n)
+        X, Y = np.meshgrid(x, y)
+        mean = np.zeros(2)
+        cov = [[1, .5],
+               [.5, 1]]
+        rv = multivariate_normal(mean, cov)
+        Z = rv.pdf(np.dstack((X, Y)))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data, aes(x='x', y='y', z='z')) + geom_contourf()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 13
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> a, b = -1, 0
-        >>> x = np.linspace(-3, 3, n)
-        >>> y = np.linspace(-3, 3, n)
-        >>> X, Y = np.meshgrid(x, y)
-        >>> Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
-        >>> data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        >>> ggplot(data, aes(x='x', y='y', z='z')) + \\
-        >>>     geom_contourf(aes(fill='..level..'), bins=3, size=0) + \\
-        >>>     scale_fill_gradient(low='#dadaeb', high='#3f007d')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        a, b = -1, 0
+        x = np.linspace(-3, 3, n)
+        y = np.linspace(-3, 3, n)
+        X, Y = np.meshgrid(x, y)
+        Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
+        data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
+        ggplot(data, aes(x='x', y='y', z='z')) + \\
+            geom_contourf(aes(fill='..level..'), bins=3, size=0) + \\
+            scale_fill_gradient(low='#dadaeb', high='#3f007d')
 
     """
     return _geom('contourf',
@@ -1895,62 +1928,65 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 7
-        >>> t = np.linspace(0, 2 * np.pi, 2 * n + 1)
-        >>> r = np.concatenate((np.tile([1, .5], n), [1]))
-        >>> data = {'x': r * np.cos(t), 'y': r * np.sin(t)}
-        >>> ggplot(data, aes(x='x', y='y')) + \\
-        >>>     geom_polygon() + \\
-        >>>     coord_fixed()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 7
+        t = np.linspace(0, 2 * np.pi, 2 * n + 1)
+        r = np.concatenate((np.tile([1, .5], n), [1]))
+        data = {'x': r * np.cos(t), 'y': r * np.sin(t)}
+        ggplot(data, aes(x='x', y='y')) + \\
+            geom_polygon() + \\
+            coord_fixed()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 16-17
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from scipy.spatial import Voronoi
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 30
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y})
-        >>> v = Voronoi(list(zip(x, y)))
-        >>> v_df = pd.DataFrame([(i, *v.vertices[v_id]) for i, r in enumerate(v.regions) \\
-        >>>                                             for v_id in r if any(r) and not -1 in r],
-        >>>                     columns=['id', 'x', 'y'])
-        >>> ggplot() + \\
-        >>>     geom_polygon(aes(x='x', y='y', group='id', fill='id'), \\
-        >>>                  data=v_df, show_legend=False, color='white') + \\
-        >>>     geom_point(aes(x='x', y='y'), data=df, shape=21, color='black', fill='white') + \\
-        >>>     scale_fill_discrete() + \\
-        >>>     coord_fixed()
+        import numpy as np
+        import pandas as pd
+        from scipy.spatial import Voronoi
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 30
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        df = pd.DataFrame({'x': x, 'y': y})
+        v = Voronoi(list(zip(x, y)))
+        v_df = pd.DataFrame([(i, *v.vertices[v_id]) for i, r in enumerate(v.regions) \\
+                                                    for v_id in r if any(r) and not -1 in r],
+                            columns=['id', 'x', 'y'])
+        ggplot() + \\
+            geom_polygon(aes(x='x', y='y', group='id', fill='id'), \\
+                         data=v_df, show_legend=False, color='white') + \\
+            geom_point(aes(x='x', y='y'), data=df, shape=21, color='black', fill='white') + \\
+            scale_fill_discrete() + \\
+            coord_fixed()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-12
 
-        >>> from lets_plot import *
-        >>> from lets_plot.geo_data import *
-        >>> LetsPlot.setup_html()
-        >>> data = {'city': ['New York', 'Philadelphia'], \\
-        >>>         'est_pop_2019': [8_336_817, 1_584_064]}
-        >>> boundaries = geocode_cities(data['city']).get_boundaries(resolution=15)
-        >>> ggplot() + \\
-        >>> geom_livemap() + \\
-        >>>     geom_polygon(data=data, map=boundaries, map_join='city', \\
-        >>>                  color='black', fill='black', alpha=.1, \\
-        >>>                  tooltips=layer_tooltips().line('@city')\\
-        >>>                                           .line('population|@est_pop_2019'))
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        data = {'city': ['New York', 'Philadelphia'], \\
+                'est_pop_2019': [8_336_817, 1_584_064]}
+        boundaries = geocode_cities(data['city']).get_boundaries(resolution=15)
+        ggplot() + \\
+        geom_livemap() + \\
+            geom_polygon(data=data, map=boundaries, map_join='city', \\
+                         color='black', fill='black', alpha=.1, \\
+                         tooltips=layer_tooltips().line('@city')\\
+                                                  .line('population|@est_pop_2019'))
 
     """
 
@@ -2063,30 +2099,32 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 5
 
-        >>> from lets_plot import *
-        >>> from lets_plot.geo_data import *
-        >>> LetsPlot.setup_html()
-        >>> country = geocode_countries('Italy').get_boundaries(resolution=6)
-        >>> ggplot() + geom_map(data=country)
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        country = geocode_countries('Italy').get_boundaries(resolution=6)
+        ggplot() + geom_map(data=country)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8-11
 
-        >>> from lets_plot import *
-        >>> from lets_plot.geo_data import *
-        >>> LetsPlot.setup_html()
-        >>> data = {'city': ['New York', 'Philadelphia'], \\
-        >>>         'est_pop_2019': [8_336_817, 1_584_064]}
-        >>> boundaries = geocode_cities(data['city']).get_boundaries()
-        >>> ggplot() + \\
-        >>>     geom_map(data=data, map=boundaries, map_join='city', \\
-        >>>              color='#006d2c', fill='#edf8e9', size=.5, \\
-        >>>              tooltips=layer_tooltips().line('@city')\\
-        >>>                                       .line('population|@est_pop_2019'))
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        data = {'city': ['New York', 'Philadelphia'], \\
+                'est_pop_2019': [8_336_817, 1_584_064]}
+        boundaries = geocode_cities(data['city']).get_boundaries()
+        ggplot() + \\
+            geom_map(data=data, map=boundaries, map_join='city', \\
+                     color='#006d2c', fill='#edf8e9', size=.5, \\
+                     tooltips=layer_tooltips().line('@city')\\
+                                              .line('population|@est_pop_2019'))
 
     """
 
@@ -2160,37 +2198,39 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 3
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_abline(slope=0)
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_abline(slope=0)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 17-18
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n, m = 10, 3
-        >>> np.random.seed(42)
-        >>> ids = np.arange(m).astype(str)
-        >>> x = np.linspace(0, 1, n)
-        >>> y = x + np.random.uniform(size=(m, n))
-        >>> df = pd.DataFrame({'id': np.repeat(ids, n),
-        >>>                    'x': np.tile(x, m),
-        >>>                    'y': y.reshape(m * n)})
-        >>> slope = np.corrcoef(y, x)[0, :-1] * y.std(axis=1) / x.std()
-        >>> intercept = y.mean(axis=1) - slope * x.mean()
-        >>> reg_df = pd.DataFrame({'id': ids, 'slope': slope, 'intercept': intercept})
-        >>> ggplot() + \\
-        >>>     geom_abline(aes(slope='slope', intercept='intercept', color='id'), \\
-        >>>                 data=reg_df, size=1, linetype='dashed') + \\
-        >>>     geom_point(aes(x='x', y='y', color='id', fill='id'), \\
-        >>>                data=df, size=4, shape=21, alpha=.5)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 10, 3
+        np.random.seed(42)
+        ids = np.arange(m).astype(str)
+        x = np.linspace(0, 1, n)
+        y = x + np.random.uniform(size=(m, n))
+        df = pd.DataFrame({'id': np.repeat(ids, n),
+                           'x': np.tile(x, m),
+                           'y': y.reshape(m * n)})
+        slope = np.corrcoef(y, x)[0, :-1] * y.std(axis=1) / x.std()
+        intercept = y.mean(axis=1) - slope * x.mean()
+        reg_df = pd.DataFrame({'id': ids, 'slope': slope, 'intercept': intercept})
+        ggplot() + \\
+            geom_abline(aes(slope='slope', intercept='intercept', color='id'), \\
+                        data=reg_df, size=1, linetype='dashed') + \\
+            geom_point(aes(x='x', y='y', color='id', fill='id'), \\
+                       data=df, size=4, shape=21, alpha=.5)
 
     """
     return _geom('abline',
@@ -2258,34 +2298,36 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 3
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_hline(yintercept=0)
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_hline(yintercept=0)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 15-16
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> classes = ['a', 'b', 'c']
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> c = np.random.choice(classes, size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y, 'c': c})
-        >>> bounds_df = pd.DataFrame([(cl, df[df.c == cl].y.max()) for cl in classes], \\
-        >>>                          columns=['c', 'ymax'])
-        >>> ggplot() + \\
-        >>>     geom_hline(aes(yintercept='ymax', color='c'), \\
-        >>>                data=bounds_df, size=.2, linetype='longdash') + \\
-        >>>     geom_point(aes(x='x', y='y', color='c'), data=df)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        classes = ['a', 'b', 'c']
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        c = np.random.choice(classes, size=n)
+        df = pd.DataFrame({'x': x, 'y': y, 'c': c})
+        bounds_df = pd.DataFrame([(cl, df[df.c == cl].y.max()) for cl in classes], \\
+                                 columns=['c', 'ymax'])
+        ggplot() + \\
+            geom_hline(aes(yintercept='ymax', color='c'), \\
+                       data=bounds_df, size=.2, linetype='longdash') + \\
+            geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
     return _geom('hline',
@@ -2353,34 +2395,36 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 3
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_vline(xintercept=0)
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_vline(xintercept=0)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 15-16
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> classes = ['a', 'b', 'c']
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> c = np.random.choice(classes, size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y, 'c': c})
-        >>> bounds_df = pd.DataFrame([(cl, df[df.c == cl].x.max()) for cl in classes], \\
-        >>>                          columns=['c', 'xmax'])
-        >>> ggplot() + \\
-        >>>     geom_vline(aes(xintercept='xmax', color='c'), \\
-        >>>                data=bounds_df, size=.2, linetype='longdash') + \\
-        >>>     geom_point(aes(x='x', y='y', color='c'), data=df)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        classes = ['a', 'b', 'c']
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        c = np.random.choice(classes, size=n)
+        df = pd.DataFrame({'x': x, 'y': y, 'c': c})
+        bounds_df = pd.DataFrame([(cl, df[df.c == cl].x.max()) for cl in classes], \\
+                                 columns=['c', 'xmax'])
+        ggplot() + \\
+            geom_vline(aes(xintercept='xmax', color='c'), \\
+                       data=bounds_df, size=.2, linetype='longdash') + \\
+            geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
     return _geom('vline',
@@ -2470,75 +2514,79 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(['a', 'b', 'c'], size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_boxplot()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_boxplot()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_boxplot(fatten=5, varwidth=True, \\
-        >>>                  outlier_shape=8, outlier_size=5)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_boxplot(fatten=5, varwidth=True, \\
+                         outlier_shape=8, outlier_size=5)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 16-17
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(['a', 'b', 'c'], size=n)
-        >>> y = np.random.normal(size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y})
-        >>> agg_df = df.groupby('x').agg({'y': [
-        >>>     'min', lambda s: np.quantile(s, 1/3),
-        >>>     'median', lambda s: np.quantile(s, 2/3), 'max'
-        >>> ]}).reset_index()
-        >>> agg_df.columns = ['x', 'y0', 'y33', 'y50', 'y66', 'y100']
-        >>> ggplot(agg_df, aes(x='x')) + \\
-        >>>     geom_boxplot(aes(ymin='y0', lower='y33', middle='y50', \\
-        >>>                      upper='y66', ymax='y100'), stat='identity')
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        df = pd.DataFrame({'x': x, 'y': y})
+        agg_df = df.groupby('x').agg({'y': [
+            'min', lambda s: np.quantile(s, 1/3),
+            'median', lambda s: np.quantile(s, 2/3), 'max'
+        ]}).reset_index()
+        agg_df.columns = ['x', 'y0', 'y33', 'y50', 'y66', 'y100']
+        ggplot(agg_df, aes(x='x')) + \\
+            geom_boxplot(aes(ymin='y0', lower='y33', middle='y50', \\
+                             upper='y66', ymax='y100'), stat='identity')
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10-13
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n, m = 100, 5
-        >>> np.random.seed(42)
-        >>> df = pd.DataFrame({'x%s' % i: np.random.normal(size=n) \\
-        >>>                    for i in range(1, m + 1)})
-        >>> ggplot(df.melt()) + \\
-        >>>     geom_boxplot(aes(x='variable', y='value', color='variable', \\
-        >>>                      fill='variable', outlier_color='variable'), \\
-        >>>                  outlier_shape=21, outlier_size=4, size=2, \\
-        >>>                  alpha=.5, width=.5, show_legend=False)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 100, 5
+        np.random.seed(42)
+        df = pd.DataFrame({'x%s' % i: np.random.normal(size=n) \\
+                           for i in range(1, m + 1)})
+        ggplot(df.melt()) + \\
+            geom_boxplot(aes(x='variable', y='value', color='variable', \\
+                             fill='variable', outlier_color='variable'), \\
+                         outlier_shape=21, outlier_size=4, size=2, \\
+                         alpha=.5, width=.5, show_legend=False)
 
     """
     return _geom('boxplot',
@@ -2613,39 +2661,41 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 10
-        >>> np.random.seed(42)
-        >>> x = np.arange(n)
-        >>> ymin = np.random.randint(-5, 0, size=n)
-        >>> ymax = np.random.randint(1, 6, size=n)
-        >>> ggplot({'x': x, 'ymin': ymin, 'ymax': ymax}, aes(x='x')) + \\
-        >>>     geom_ribbon(aes(ymin='ymin', ymax='ymax'))
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = np.arange(n)
+        ymin = np.random.randint(-5, 0, size=n)
+        ymax = np.random.randint(1, 6, size=n)
+        ggplot({'x': x, 'ymin': ymin, 'ymax': ymax}, aes(x='x')) + \\
+            geom_ribbon(aes(ymin='ymin', ymax='ymax'))
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 11-15
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 30
-        >>> tmean = 20
-        >>> np.random.seed(42)
-        >>> day = np.arange(1, n + 1)
-        >>> tmin = tmean - (1 + np.abs(np.random.normal(size=n)))
-        >>> tmax = tmean + (1 + np.abs(np.random.normal(size=n)))
-        >>> ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
-        >>>     geom_ribbon(aes(x='day', ymin='tmin', ymax='tmax'), \\
-        >>>                 color='#bd0026', fill='#fd8d3c', size=2, \\
-        >>>                 tooltips=layer_tooltips().line('@|@day')\\
-        >>>                     .format('tmin', '.1f').line('min temp|@tmin')\\
-        >>>                     .format('tmax', '.1f').line('max temp|@tmax'))
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 30
+        tmean = 20
+        np.random.seed(42)
+        day = np.arange(1, n + 1)
+        tmin = tmean - (1 + np.abs(np.random.normal(size=n)))
+        tmax = tmean + (1 + np.abs(np.random.normal(size=n)))
+        ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
+            geom_ribbon(aes(x='day', ymin='tmin', ymax='tmax'), \\
+                        color='#bd0026', fill='#fd8d3c', size=2, \\
+                        tooltips=layer_tooltips().line('@|@day')\\
+                            .format('tmin', '.1f').line('min temp|@tmin')\\
+                            .format('tmax', '.1f').line('max temp|@tmax'))
 
     """
     return _geom('ribbon',
@@ -2719,41 +2769,43 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 20
-        >>> np.random.seed(42)
-        >>> x = np.arange(n)
-        >>> y = np.cumsum(np.abs(np.random.uniform(size=n)))
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_area()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 20
+        np.random.seed(42)
+        x = np.arange(n)
+        y = np.cumsum(np.abs(np.random.uniform(size=n)))
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_area()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 15-18
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 30
-        >>> np.random.seed(42)
-        >>> day = np.arange(1, n + 1)
-        >>> tmin = -1 - np.abs(np.random.normal(size=n))
-        >>> tmax = 1 + np.abs(np.random.normal(size=n))
-        >>> tooltips = layer_tooltips().line('@|@day')\\
-        >>>                            .format('tmin', '.1f')\\
-        >>>                            .line('min temp|@tmin')\\
-        >>>                            .format('tmax', '.1f')\\
-        >>>                            .line('max temp|@tmax')
-        >>> ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
-        >>>     geom_area(aes(x='day', y='tmin'), color='#0571b0', \\
-        >>>               fill='#92c5de', tooltips=tooltips) + \\
-        >>>     geom_area(aes(x='day', y='tmax'), color='#ca0020', \\
-        >>>               fill='#f4a582', tooltips=tooltips)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 30
+        np.random.seed(42)
+        day = np.arange(1, n + 1)
+        tmin = -1 - np.abs(np.random.normal(size=n))
+        tmax = 1 + np.abs(np.random.normal(size=n))
+        tooltips = layer_tooltips().line('@|@day')\\
+                                   .format('tmin', '.1f')\\
+                                   .line('min temp|@tmin')\\
+                                   .format('tmax', '.1f')\\
+                                   .line('max temp|@tmax')
+        ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
+            geom_area(aes(x='day', y='tmin'), color='#0571b0', \\
+                      fill='#92c5de', tooltips=tooltips) + \\
+            geom_area(aes(x='day', y='tmax'), color='#ca0020', \\
+                      fill='#f4a582', tooltips=tooltips)
 
     """
     return _geom('area',
@@ -2848,74 +2900,78 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=1000)
-        >>> ggplot({'x': x}, aes(x='x')) + geom_density()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.normal(size=1000)
+        ggplot({'x': x}, aes(x='x')) + geom_density()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-15
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 300
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> c = np.random.choice(['a', 'b', 'c'], size=n)
-        >>> ggplot({'x': x, 'c': c}, aes(x='x')) + \\
-        >>>     geom_density(aes(group='c', color='c', fill='c'), alpha=.2, \\
-        >>>                  tooltips=layer_tooltips().format('..density..', '.3f')\\
-        >>>                                           .line('density|@..density..')\\
-        >>>                                           .format('..count..', '.1f')\\
-        >>>                                           .line('count|@..count..')\\
-        >>>                                           .format('..scaled..', '.2f')\\
-        >>>                                           .line('scaled|@..scaled..'))
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 300
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        c = np.random.choice(['a', 'b', 'c'], size=n)
+        ggplot({'x': x, 'c': c}, aes(x='x')) + \\
+            geom_density(aes(group='c', color='c', fill='c'), alpha=.2, \\
+                         tooltips=layer_tooltips().format('..density..', '.3f')\\
+                                                  .line('density|@..density..')\\
+                                                  .format('..count..', '.1f')\\
+                                                  .line('count|@..count..')\\
+                                                  .format('..scaled..', '.2f')\\
+                                                  .line('scaled|@..scaled..'))
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=1000)
-        >>> p = ggplot({'x': x}, aes(x='x'))
-        >>> bunch = GGBunch()
-        >>> for i, bw in enumerate([.1, .2, .4]):
-        >>>     for j, n in enumerate([16, 64, 256]):
-        >>>         bunch.add_plot(p + geom_density(kernel='epanechikov', bw=bw, n=n) + \\
-        >>>                            ggtitle('bw={0}, n={1}'.format(bw, n)),
-        >>>                        j * 300, i * 200, 300, 200)
-        >>> bunch.show()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.normal(size=1000)
+        p = ggplot({'x': x}, aes(x='x'))
+        bunch = GGBunch()
+        for i, bw in enumerate([.1, .2, .4]):
+            for j, n in enumerate([16, 64, 256]):
+                bunch.add_plot(p + geom_density(kernel='epanechikov', bw=bw, n=n) + \\
+                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
+                               j * 300, i * 200, 300, 200)
+        bunch.show()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10-11
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=1000)
-        >>> y = np.sign(x)
-        >>> p = ggplot({'x': x, 'y': y}, aes(x='x'))
-        >>> bunch = GGBunch()
-        >>> for i, adjust in [(i, .5 * (1 + i)) for i in range(3)]:
-        >>>     bunch.add_plot(p + geom_density(aes(weight='y'), kernel='cosine', \\
-        >>>                                     adjust=adjust) + \\
-        >>>                        ggtitle('adjust={0}'.format(adjust)),
-        >>>                    i * 300, 0, 300, 200)
-        >>> bunch.show()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.normal(size=1000)
+        y = np.sign(x)
+        p = ggplot({'x': x, 'y': y}, aes(x='x'))
+        bunch = GGBunch()
+        for i, adjust in [(i, .5 * (1 + i)) for i in range(3)]:
+            bunch.add_plot(p + geom_density(aes(weight='y'), kernel='cosine', \\
+                                            adjust=adjust) + \\
+                               ggtitle('adjust={0}'.format(adjust)),
+                           i * 300, 0, 300, 200)
+        bunch.show()
 
     """
     return _geom('density',
@@ -3005,76 +3061,80 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_density2d()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_density2d()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_density2d(aes(color='..group..'), size=1, show_legend=False) + \\
-        >>>     scale_color_brewer(type='seq', palette='GnBu', direction=-1)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_density2d(aes(color='..group..'), size=1, show_legend=False) + \\
+            scale_color_brewer(type='seq', palette='GnBu', direction=-1)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 12
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        >>> bunch = GGBunch()
-        >>> for i, bw in enumerate([.2, .4]):
-        >>>     for j, n in enumerate([16, 256]):
-        >>>         bunch.add_plot(p + geom_density2d(kernel='epanechikov', bw=bw, n=n) + \\
-        >>>                            ggtitle('bw={0}, n={1}'.format(bw, n)),
-        >>>                        j * 400, i * 400, 400, 400)
-        >>> bunch.show()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        bunch = GGBunch()
+        for i, bw in enumerate([.2, .4]):
+            for j, n in enumerate([16, 256]):
+                bunch.add_plot(p + geom_density2d(kernel='epanechikov', bw=bw, n=n) + \\
+                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
+                               j * 400, i * 400, 400, 400)
+        bunch.show()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 12-13
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        >>> bunch = GGBunch()
-        >>> for i, adjust in enumerate([1.5, 2.5]):
-        >>>     for j, bins in enumerate([5, 15]):
-        >>>         bunch.add_plot(p + geom_density2d(kernel='cosine', \\
-        >>>                                           adjust=adjust, bins=bins) + \\
-        >>>                            ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
-        >>>                        j * 400, i * 400, 400, 400)
-        >>> bunch.show()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        bunch = GGBunch()
+        for i, adjust in enumerate([1.5, 2.5]):
+            for j, bins in enumerate([5, 15]):
+                bunch.add_plot(p + geom_density2d(kernel='cosine', \\
+                                                  adjust=adjust, bins=bins) + \\
+                                   ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
+                               j * 400, i * 400, 400, 400)
+        bunch.show()
 
     """
     return _geom('density2d',
@@ -3162,78 +3222,82 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_density2df()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_density2df()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_density2df(aes(fill='..group..'), show_legend=False) + \\
-        >>>     scale_fill_brewer(type='seq', palette='GnBu', direction=-1)
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_density2df(aes(fill='..group..'), show_legend=False) + \\
+            scale_fill_brewer(type='seq', palette='GnBu', direction=-1)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 12-13
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        >>> bunch = GGBunch()
-        >>> for i, bw in enumerate([.2, .4]):
-        >>>     for j, n in enumerate([16, 256]):
-        >>>         bunch.add_plot(p + geom_density2df(kernel='epanechikov', bw=bw, n=n, \\
-        >>>                                            size=.5, color='white') + \\
-        >>>                            ggtitle('bw={0}, n={1}'.format(bw, n)),
-        >>>                        j * 400, i * 400, 400, 400)
-        >>> bunch.show()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        bunch = GGBunch()
+        for i, bw in enumerate([.2, .4]):
+            for j, n in enumerate([16, 256]):
+                bunch.add_plot(p + geom_density2df(kernel='epanechikov', bw=bw, n=n, \\
+                                                   size=.5, color='white') + \\
+                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
+                               j * 400, i * 400, 400, 400)
+        bunch.show()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 12-14
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.normal(size=n)
-        >>> y = np.random.normal(size=n)
-        >>> p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        >>> bunch = GGBunch()
-        >>> for i, adjust in enumerate([1.5, 2.5]):
-        >>>     for j, bins in enumerate([5, 15]):
-        >>>         bunch.add_plot(p + geom_density2df(kernel='cosine', \\
-        >>>                                            size=.5, color='white', \\
-        >>>                                            adjust=adjust, bins=bins) + \\
-        >>>                            ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
-        >>>                        j * 400, i * 400, 400, 400)
-        >>> bunch.show()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        bunch = GGBunch()
+        for i, adjust in enumerate([1.5, 2.5]):
+            for j, bins in enumerate([5, 15]):
+                bunch.add_plot(p + geom_density2df(kernel='cosine', \\
+                                                   size=.5, color='white', \\
+                                                   adjust=adjust, bins=bins) + \\
+                                   ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
+                               j * 400, i * 400, 400, 400)
+        bunch.show()
 
     """
     return _geom('density2df',
@@ -3315,37 +3379,39 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.randint(-5, 6, size=n)
-        >>> y = np.random.randint(10, size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_point(color='red', shape=3, size=10) + \\
-        >>>     geom_jitter()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.randint(-5, 6, size=n)
+        y = np.random.randint(10, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_point(color='red', shape=3, size=10) + \\
+            geom_jitter()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9-11
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 6000
-        >>> np.random.seed(42)
-        >>> x = np.random.choice(list('abcde'), size=n)
-        >>> y = np.random.normal(size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_jitter(aes(color='x', size='y'), \\
-        >>>                 sampling=sampling_random(n=600, seed=60), \\
-        >>>                 show_legend=False, width=.25) + \\
-        >>>     scale_color_grey(start=.75, end=0) + \\
-        >>>     scale_size(range=[1, 3])
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 6000
+        np.random.seed(42)
+        x = np.random.choice(list('abcde'), size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_jitter(aes(color='x', size='y'), \\
+                        sampling=sampling_random(n=600, seed=60), \\
+                        show_legend=False, width=.25) + \\
+            scale_color_grey(start=.75, end=0) + \\
+            scale_size(range=[1, 3])
 
     """
     return _geom('jitter',
@@ -3417,32 +3483,34 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 6
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> np.random.seed(42)
-        >>> data = {'x': np.random.normal(size=1000)}
-        >>> ggplot(data, aes(x='x')) + geom_freqpoly()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_freqpoly()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> np.random.seed(42)
-        >>> x = np.random.gamma(2.0, size=n)
-        >>> c = np.random.choice(['a', 'b', 'c'], size=n)
-        >>> ggplot({'x': x, 'c': c}, aes(x='x')) + \\
-        >>>     geom_freqpoly(aes(color='c'), size=1) + \\
-        >>>     geom_point(aes(color='c'), stat='bin', \\
-        >>>                shape=21, fill='white', size=3) + \\
-        >>>     facet_grid(x='c')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.gamma(2.0, size=n)
+        c = np.random.choice(['a', 'b', 'c'], size=n)
+        ggplot({'x': x, 'c': c}, aes(x='x')) + \\
+            geom_freqpoly(aes(color='c'), size=1) + \\
+            geom_point(aes(color='c'), stat='bin', \\
+                       shape=21, fill='white', size=3) + \\
+            facet_grid(x='c')
 
     """
     return _geom('freqpoly',
@@ -3515,34 +3583,36 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 9
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 20
-        >>> np.random.seed(42)
-        >>> x = np.arange(n)
-        >>> y = np.random.randint(5, size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_step() + \\
-        >>>     coord_fixed()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 20
+        np.random.seed(42)
+        x = np.arange(n)
+        y = np.random.randint(5, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_step() + \\
+            coord_fixed()
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 100
-        >>> np.random.seed(42)
-        >>> t = np.arange(n)
-        >>> x = np.cumsum(np.random.normal(size=n).astype(int))
-        >>> ggplot({'t': t, 'x': x}, aes(x='t', y='x')) + \\
-        >>>     geom_step(direction='vh', color='#f03b20', size=1)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        t = np.arange(n)
+        x = np.cumsum(np.random.normal(size=n).astype(int))
+        ggplot({'t': t, 'x': x}, aes(x='t', y='x')) + \\
+            geom_step(direction='vh', color='#f03b20', size=1)
 
     """
     return _geom('step',
@@ -3646,36 +3716,38 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 3
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_rect(xmin=-1, xmax=1, ymin=-1, ymax=1)
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_rect(xmin=-1, xmax=1, ymin=-1, ymax=1)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 16-18
 
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 1000
-        >>> centers = {'a': (-2, -2), 'b': (3, 0), 'c': (0, 3)}
-        >>> np.random.seed(42)
-        >>> c = np.random.choice(list(centers.keys()), size=n)
-        >>> x = np.array([centers[k][0] for k in c]) + np.random.normal(size=n)
-        >>> y = np.array([centers[k][1] for k in c]) + np.random.normal(size=n)
-        >>> df = pd.DataFrame({'x': x, 'y': y, 'c': c}).sort_values(by='c')
-        >>> agg_df = df.groupby('c').agg({'x': ['min', 'max'], \\
-        >>>                               'y': ['min', 'max']}).reset_index()
-        >>> agg_df.columns = ['c', 'xmin', 'xmax', 'ymin', 'ymax']
-        >>> ggplot() + \\
-        >>>     geom_rect(aes(xmin='xmin', xmax='xmax', ymin='ymin', \\
-        >>>                   ymax='ymax', color='c', fill='c'), \\
-        >>>               data=agg_df, alpha=.2) + \\
-        >>>     geom_point(aes(x='x', y='y', color='c'), data=df)
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        centers = {'a': (-2, -2), 'b': (3, 0), 'c': (0, 3)}
+        np.random.seed(42)
+        c = np.random.choice(list(centers.keys()), size=n)
+        x = np.array([centers[k][0] for k in c]) + np.random.normal(size=n)
+        y = np.array([centers[k][1] for k in c]) + np.random.normal(size=n)
+        df = pd.DataFrame({'x': x, 'y': y, 'c': c}).sort_values(by='c')
+        agg_df = df.groupby('c').agg({'x': ['min', 'max'], \\
+                                      'y': ['min', 'max']}).reset_index()
+        agg_df.columns = ['c', 'xmin', 'xmax', 'ymin', 'ymax']
+        ggplot() + \\
+            geom_rect(aes(xmin='xmin', xmax='xmax', ymin='ymin', \\
+                          ymax='ymax', color='c', fill='c'), \\
+                      data=agg_df, alpha=.2) + \\
+            geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
 
@@ -3754,31 +3826,33 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 3
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_segment(x=0, y=0, xend=1, yend=1)
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_segment(x=0, y=0, xend=1, yend=1)
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 11-12
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> T = 25
-        >>> np.random.seed(42)
-        >>> t = [0, *np.random.normal(size=T)]
-        >>> x = np.cumsum(np.cos(t))
-        >>> y = np.cumsum(np.sin(t))
-        >>> data = {'x': x[:-1], 'y': y[:-1], 'xend': x[1:], 'yend': y[1:]}
-        >>> ggplot(data, aes(x='x', y='y')) + \\
-        >>>     geom_segment(aes(xend='xend', yend='yend', color='xend'), \\
-        >>>                  arrow=arrow(type='closed', angle=10)) + \\
-        >>>     scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
-        >>>     coord_fixed()
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        T = 25
+        np.random.seed(42)
+        t = [0, *np.random.normal(size=T)]
+        x = np.cumsum(np.cos(t))
+        y = np.cumsum(np.sin(t))
+        data = {'x': x[:-1], 'y': y[:-1], 'xend': x[1:], 'yend': y[1:]}
+        ggplot(data, aes(x='x', y='y')) + \\
+            geom_segment(aes(xend='xend', yend='yend', color='xend'), \\
+                         arrow=arrow(type='closed', angle=10)) + \\
+            scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
+            coord_fixed()
 
     """
     return _geom('segment',
@@ -3899,49 +3973,52 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     Examples
     --------
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 3
 
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> ggplot() + geom_text(x=0, y=0, label='Lorem ipsum')
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_text(x=0, y=0, label='Lorem ipsum')
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10-11
 
-        >>> import numpy as np
-        >>> from lets_plot import *
-        >>> LetsPlot.setup_html()
-        >>> n = 10
-        >>> np.random.seed(42)
-        >>> x = np.arange(n)
-        >>> y = np.random.normal(loc=10, scale=2, size=n)
-        >>> ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-        >>>     geom_bar(stat='identity', fill='#2b8cbe', tooltips='none') + \\
-        >>>     geom_text(aes(label='y'), position=position_nudge(y=1), \\
-        >>>               label_format='.1f', angle=45, color='#2b8cbe')
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = np.arange(n)
+        y = np.random.normal(loc=10, scale=2, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_bar(stat='identity', fill='#2b8cbe', tooltips='none') + \\
+            geom_text(aes(label='y'), position=position_nudge(y=1), \\
+                      label_format='.1f', angle=45, color='#2b8cbe')
 
     |
 
     .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 13-15
 
-        >>> from lets_plot import *
-        >>> from lets_plot.geo_data import *
-        >>> LetsPlot.setup_html()
-        >>> cities = ['New York', 'Los Angeles', 'Chicago']
-        >>> states = ['NY', 'CA', 'IL']
-        >>> titles = ['{0} ({1})'.format(city, state) \\
-        >>>           for city, state in zip(cities, states)]
-        >>> data = {'city': cities, 'state': states, 'title': titles}
-        >>> centroids = geocode_cities(data['city']).get_centroids()
-        >>> ggplot(data) + \\
-        >>>     geom_point(map=centroids, map_join='city', \\
-        >>>                shape=21, color='black', fill='#f03b20') + \\
-        >>>     geom_text(aes(label='title'), map=centroids, \\
-        >>>               map_join='city', size=8, vjust=1, \\
-        >>>               family='Optima', fontface='bold')
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        cities = ['New York', 'Los Angeles', 'Chicago']
+        states = ['NY', 'CA', 'IL']
+        titles = ['{0} ({1})'.format(city, state) \\
+                  for city, state in zip(cities, states)]
+        data = {'city': cities, 'state': states, 'title': titles}
+        centroids = geocode_cities(data['city']).get_centroids()
+        ggplot(data) + \\
+            geom_point(map=centroids, map_join='city', \\
+                       shape=21, color='black', fill='#f03b20') + \\
+            geom_text(aes(label='title'), map=centroids, \\
+                      map_join='city', size=8, vjust=1, \\
+                      family='Optima', fontface='bold')
 
     """
 
