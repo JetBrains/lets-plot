@@ -3554,7 +3554,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
-    direction : string, default='hv'
+    direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
     other_args
