@@ -8,8 +8,6 @@
 - New Java **Swing plot components** to enable embedding Lets-Plot charts into JVM applications.
   - See: `vis-swing-common, vis-swing-batik, vis-swing-jfx` modules. 
 
-### Changed
-                
 ### Fixed
                          
 - Fix auto-detection of PyCharm env to enable plotting in SciView while using remote interpreter [[348](https://github.com/JetBrains/lets-plot/issues/348)]
