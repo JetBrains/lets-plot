@@ -32,12 +32,10 @@ internal class TooltipLayer(
     ) {
         clearTooltips()
 
-        if (geomBounds != null) {
-            showCrosshair(tooltipSpecs, geomBounds)
-        }
-
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
+            .filter { spec -> spec.layoutHint.coord?.let { geomBounds?.contains(it) } ?: true }
+            .also { specs -> geomBounds?.let { showCrosshair(specs, it) } }
             .map { spec -> spec
                 .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }

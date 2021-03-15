@@ -19,21 +19,15 @@ class LinePathConstructor(
     private val myClosePath: Boolean
 ) {
 
-    fun construct(withHints: Boolean): List<LinePath> {
+    fun construct(): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
-        val multiPointDataList = createMultiPointDataByGroup()
-        for (multiPointData in multiPointDataList) {
-           linePaths.addAll(myLinesHelper.createPaths(multiPointData.aes, multiPointData.points, myClosePath))
-        }
-        if (withHints) {
-            buildHints(multiPointDataList)
-        }
-        return linePaths
-    }
 
-    fun buildHints() = buildHints(createMultiPointDataByGroup())
+        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
+            myDataPoints,
+            singlePointAppender { p -> myLinesHelper.toClient(GeomUtil.TO_LOCATION_X_Y(p)!!, p) },
+            reducer(DROP_POINT_DISTANCE, myClosePath)
+        )
 
-    private fun buildHints(multiPointDataList: List<MultiPointData>) {
         for (multiPointData in multiPointDataList) {
             if (myClosePath) {
                 myTargetCollector.addPolygon(
@@ -56,15 +50,11 @@ class LinePathConstructor(
                     )
                 )
             }
-        }
-    }
 
-    private fun createMultiPointDataByGroup(): List<MultiPointData> {
-        return MultiPointDataConstructor.createMultiPointDataByGroup(
-            myDataPoints,
-            singlePointAppender { p -> myLinesHelper.toClient(GeomUtil.TO_LOCATION_X_Y(p)!!, p) },
-            reducer(DROP_POINT_DISTANCE, myClosePath)
-        )
+            linePaths.addAll(myLinesHelper.createPaths(multiPointData.aes, multiPointData.points, myClosePath))
+        }
+
+        return linePaths
     }
 
     companion object {

@@ -9,11 +9,8 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.LinePathConstructor
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.base.geometry.DoubleVector
 
 open class PathGeom : GeomBase() {
 
@@ -45,30 +42,9 @@ open class PathGeom : GeomBase() {
             false
         )
         appendNodes(
-            geomConstructor.construct(withHints = false),
+            geomConstructor.construct(),
             root
         )
-        buildHints(aesthetics, coord, linesHelper, targetCollector)
-    }
-
-    private fun buildHints(
-        aesthetics: Aesthetics,
-        coord: CoordinateSystem,
-        linesHelper: LinesHelper,
-        targetCollector: GeomTargetCollector
-    ) {
-        val dataPoints = dataPoints(aesthetics).filter { p ->
-            val x = p.x()
-            val y = p.y()
-            SeriesUtil.allFinite(x, y) && coord.isPointInLimits(DoubleVector(x!!,y!!), isClient = false)
-        }
-
-        LinePathConstructor(
-            targetCollector,
-            dataPoints,
-            linesHelper,
-            false
-        ).buildHints()
     }
 
     companion object {
