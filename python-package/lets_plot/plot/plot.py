@@ -201,6 +201,9 @@ class GGBunch(FeatureSpec):
         self.items.append(dict(feature_spec=plot_spec, x=x, y=y, width=width, height=height))
 
     def as_dict(self):
+        """
+        Translate self to dictionary.
+        """
         d = super().as_dict()
         d['kind'] = self.kind
 
