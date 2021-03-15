@@ -95,6 +95,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
+            GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
             GeomKind.TEXT -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
