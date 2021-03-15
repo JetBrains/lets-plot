@@ -31,55 +31,54 @@ def ggplot(data=None, mapping=None):
 
     Note
     ----
-    ggplot() initializes a ggplot object. It can be used to declare the input data frame for a graphic and to
+    `ggplot()` initializes a ggplot object. It can be used to declare the input data frame for a graphic and to
     specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically
     overridden.
 
-    ggplot() is typically used to construct a plot incrementally, using the + operator to add layers to the
+    `ggplot()` is typically used to construct a plot incrementally, using the + operator to add layers to the
     existing ggplot object. This is advantageous in that the code is explicit about which layers are added
     and the order in which they are added. For complex graphics with multiple layers, initialization with
-    ggplot() is recommended.
+    `ggplot()` is recommended.
 
     There are three common ways to invoke ggplot (see examples below):
 
-    - ggplot(data, aes(x,y)):
+    - `ggplot(data, aes(x,y))`:
       This method is recommended if all layers use the same data and the same set of aesthetics, although
       this method can also be used to add a layer using data from another data frame.
 
-    - ggplot(data):
+    - `ggplot(data)`:
       This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
       This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
       from one layer to another.
 
-    - ggplot():
+    - `ggplot()`:
       This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
       useful when multiple data frames are used to produce different layers, as is often the case in complex
       graphics.
 
-    ggplot() with no layers defined will produce an error message: "No layers in plot".
+    `ggplot()` with no layers defined will produce an error message: "No layers in plot".
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12, 14, 16
+        :emphasize-lines: 10, 12, 14
 
         import numpy as np
-        import pandas as pd
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
         n = 100
         x = np.random.uniform(-1, 1, size=n)
         y = np.random.normal(size=n)
-        data = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
+        data = {'x': x, 'y': 25 * x ** 2 + y}
         # three ways to invoke ggplot, producing the same output:
         # (1)
-        ggplot(data, aes(x='x', y='y')) + layer('point')
+        ggplot(data, aes(x='x', y='y')) + geom_point()
         # (2)
-        ggplot(data) + layer('point', mapping=aes(x='x', y='y'))
+        ggplot(data) + geom_point(aes(x='x', y='y'))
         # (3)
-        ggplot() + layer('point', data=data, mapping=aes(x='x', y='y'))
+        ggplot() + geom_point(aes(x='x', y='y'), data=data)
 
     """
     if isinstance(data, FeatureSpec):
@@ -107,6 +106,7 @@ def ggsize(width, height):
 
     Returns
     -------
+    `FeatureSpec`
         Plot size specification.
 
     Examples
@@ -121,8 +121,8 @@ def ggsize(width, height):
         np.random.seed(42)
         x = np.arange(50)
         y = np.random.normal(size=50)
-        data = {'x':x, 'y':y}
-        ggplot(data) + geom_line(aes('x','y')) + ggsize(400, 150)
+        data = {'x': x, 'y': y}
+        ggplot(data) + geom_line(aes('x', 'y')) + ggsize(400, 150)
     """
     assert isinstance(width, numbers.Number), "'width' must be numeric"
     assert isinstance(height, numbers.Number), "'height' must be numeric"
@@ -146,7 +146,7 @@ class GGBunch(FeatureSpec):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11 - 15
+        :emphasize-lines: 11-15
 
         import numpy as np
         from lets_plot import *
@@ -155,13 +155,12 @@ class GGBunch(FeatureSpec):
         n = 100
         x = np.arange(n)
         y = np.random.normal(size=n)
-        data = {'x':x, 'y':y}
         w, h = 200, 150
-        g = ggplot(data, aes(x='x', y='y')) + ggsize(w, h)
+        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + ggsize(w, h)
         bunch = GGBunch()
-        bunch.add_plot(g + geom_point(), 0, 0)
-        bunch.add_plot(g + geom_histogram(bins=3), w, 0)
-        bunch.add_plot(g + geom_line(), 0, h, 2*w, h)
+        bunch.add_plot(p + geom_point(), 0, 0)
+        bunch.add_plot(p + geom_histogram(bins=3), w, 0)
+        bunch.add_plot(p + geom_line(), 0, h, 2*w, h)
         bunch.show()
     """
 
@@ -176,7 +175,7 @@ class GGBunch(FeatureSpec):
         Parameters
         ----------
         plot_spec :
-            Plot specification created by ggplot() function.
+            Plot specification created by `ggplot()` function.
         x : int
             x-coordinate of plot origin in px.
         y : int
@@ -201,6 +200,9 @@ class GGBunch(FeatureSpec):
         self.items.append(dict(feature_spec=plot_spec, x=x, y=y, width=width, height=height))
 
     def as_dict(self):
+        """
+        Translate self to dictionary.
+        """
         d = super().as_dict()
         d['kind'] = self.kind
 
