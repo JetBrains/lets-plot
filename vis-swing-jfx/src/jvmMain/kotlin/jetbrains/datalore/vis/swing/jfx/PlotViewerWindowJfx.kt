@@ -6,8 +6,8 @@
 package jetbrains.datalore.vis.swing.jfx
 
 import jetbrains.datalore.vis.swing.ApplicationContext
-import jetbrains.datalore.vis.swing.DefaultPlotContentPaneBase
-import jetbrains.datalore.vis.swing.PlotComponentProvider
+import jetbrains.datalore.vis.swing.DefaultPlotContentPane
+import jetbrains.datalore.vis.swing.PlotPanel
 import jetbrains.datalore.vis.swing.PlotViewerWindowBase
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -25,33 +25,27 @@ class PlotViewerWindowJfx(
 ) {
 
     override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
-        return object : DefaultPlotContentPaneBase(
+        return object : DefaultPlotContentPane(
             rawSpec = rawSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,
             repaintDelay = repaintDelay,
             applicationContext = applicationContext
         ) {
-            override fun createPlotComponentProvider(
+            override fun createPlotPanel(
                 processedSpec: MutableMap<String, Any>,
+                preferredSizeFromPlot: Boolean,
+                repaintDelay: Int,
+                applicationContext: ApplicationContext,
                 computationMessagesHandler: (List<String>) -> Unit
-            ): PlotComponentProvider {
-                return this@PlotViewerWindowJfx.createPlotComponentProvider(
-                    processedSpec,
-                    computationMessagesHandler
+            ): PlotPanel {
+                return DefaultPlotPanelJfx(
+                    processedSpec = processedSpec,
+                    preserveAspectRatio = preserveAspectRatio,
+                    preferredSizeFromPlot = preferredSizeFromPlot,
+                    repaintDelay = repaintDelay,
+                    computationMessagesHandler = computationMessagesHandler
                 )
             }
         }
-    }
-
-    private fun createPlotComponentProvider(
-        processedSpec: MutableMap<String, Any>,
-        computationMessagesHandler: (List<String>) -> Unit
-    ): PlotComponentProvider {
-        return DefaultPlotComponentProviderJfx(
-            processedSpec = processedSpec,
-            preserveAspectRatio = preserveAspectRatio,
-            executor = DefaultSwingContextJfx.JFX_EDT_EXECUTOR,
-            computationMessagesHandler = computationMessagesHandler
-        )
     }
 }

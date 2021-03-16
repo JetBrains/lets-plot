@@ -15,9 +15,11 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 /**
+ * Panel containing a plot component and a JLabel showing 'plot computation messages'.
+ *
  * In IDEA plugin: inherit and implement 'com.intellij.openapi.Disposable'.
  */
-abstract class DefaultPlotContentPaneBase(
+abstract class DefaultPlotContentPane(
     rawSpec: MutableMap<String, Any>,
     private val preferredSizeFromPlot: Boolean,
     private val repaintDelay: Int,  // ms
@@ -51,7 +53,12 @@ abstract class DefaultPlotContentPaneBase(
             isFocusable = true
         }
 
-        val componentProvider = createPlotComponentProvider(processedSpec) { messages ->
+        val plotPanel = createPlotPanel(
+            processedSpec = processedSpec,
+            preferredSizeFromPlot = preferredSizeFromPlot,
+            repaintDelay = repaintDelay,
+            applicationContext = applicationContext
+        ) { messages ->
             if (messages.isNotEmpty()) {
                 val text = messages.joinToString(
                     separator = "<br>",
@@ -69,13 +76,6 @@ abstract class DefaultPlotContentPaneBase(
             }
         }
 
-        val plotPanel = createPlotPanel(
-            plotComponentProvider = componentProvider,
-            preferredSizeFromPlot = preferredSizeFromPlot,
-            repaintDelay = repaintDelay,
-            applicationContext = applicationContext
-        )
-
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT
         messagesArea.alignmentX = Component.CENTER_ALIGNMENT
 
@@ -83,22 +83,11 @@ abstract class DefaultPlotContentPaneBase(
         this.add(messagesArea)
     }
 
-    protected abstract fun createPlotComponentProvider(
+    protected abstract fun createPlotPanel(
         processedSpec: MutableMap<String, Any>,
-        computationMessagesHandler: (List<String>) -> Unit
-    ): PlotComponentProvider
-
-    protected open fun createPlotPanel(
-        plotComponentProvider: PlotComponentProvider,
         preferredSizeFromPlot: Boolean,
         repaintDelay: Int,  // ms
-        applicationContext: ApplicationContext
-    ): PlotPanel {
-        return PlotPanel(
-            plotComponentProvider = plotComponentProvider,
-            preferredSizeFromPlot = preferredSizeFromPlot,
-            repaintDelay = repaintDelay,
-            applicationContext = applicationContext
-        )
-    }
+        applicationContext: ApplicationContext,
+        computationMessagesHandler: (List<String>) -> Unit
+    ): PlotPanel
 }
