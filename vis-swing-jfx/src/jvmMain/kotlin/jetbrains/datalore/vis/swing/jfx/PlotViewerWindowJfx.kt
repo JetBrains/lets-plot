@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.vis.swing.jfx
 
+import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.swing.ApplicationContext
 import jetbrains.datalore.vis.swing.DefaultPlotContentPane
 import jetbrains.datalore.vis.swing.PlotPanel
@@ -25,8 +26,9 @@ class PlotViewerWindowJfx(
 ) {
 
     override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
+        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
         return object : DefaultPlotContentPane(
-            rawSpec = rawSpec,
+            processedSpec = processedSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,
             repaintDelay = repaintDelay,
             applicationContext = applicationContext

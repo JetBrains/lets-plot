@@ -6,7 +6,6 @@
 package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.plot.MonolithicCommon
 import java.awt.Color
 import java.awt.Component
 import javax.swing.BorderFactory
@@ -20,7 +19,7 @@ import javax.swing.JPanel
  * In IDEA plugin: inherit and implement 'com.intellij.openapi.Disposable'.
  */
 abstract class DefaultPlotContentPane(
-    rawSpec: MutableMap<String, Any>,
+    processedSpec: MutableMap<String, Any>,
     private val preferredSizeFromPlot: Boolean,
     private val repaintDelay: Int,  // ms
     private val applicationContext: ApplicationContext
@@ -29,8 +28,6 @@ abstract class DefaultPlotContentPane(
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
-
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
         createContent(processedSpec)
     }
 
