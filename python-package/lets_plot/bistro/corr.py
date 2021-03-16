@@ -34,7 +34,54 @@ __all__ = ['corr_plot']
 
 class corr_plot:
     """
-    This class is intended to build correlation matrix plots.
+    This class is intended to build correlation matrix plot.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.bistro.corr import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.poisson(size=10) for var in 'abcdef'}
+        corr_plot(data).tiles().build()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-9
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.bistro.corr import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.uniform(size=10) for var in 'abcd'}
+        corr_plot(data).tiles(type='upper', diag=True)\\
+            .labels(type='upper', diag=True, map_size=True, color='black')\\
+            .palette_RdBu().build()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-9
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.bistro.corr import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.normal(size=10) for var in 'abcdef'}
+        corr_plot(data, flip=False, threshold=.4).points().labels()\\
+            .palette_gradient(low='#d73027', mid='#ffffbf', high='#1a9850')\\
+            .build()
+
     """
 
     _LEGEND_NAME = 'Corr'
@@ -49,15 +96,16 @@ class corr_plot:
         """
         Parameters
         ----------
-        data :  dictionary or pandas DataFrame
+        data : dict or `DataFrame`
             Correlation will be calculated for each variable pair.
-        show_legend : Boolean
-            If True legend is shown. Default - True.
-        flip : Boolean
-            If True the y axis is flipped. Default - True.
-        threshold: Double
-            Minimal correlation abs value to be included in result. Must be in interval [0.0, 1.0]
-            Default - 0.0.
+        show_legend : bool, default=True
+            If True legend is shown.
+        flip : bool, default=True
+            If True the y axis is flipped.
+        threshold : float, default=0.0
+            Minimal correlation abs value to be included in result.
+            Must be in interval [0.0, 1.0].
+
         """
 
         self._data = data
@@ -81,16 +129,16 @@ class corr_plot:
 
         Parameters
         ----------
-        type : string
-            Type of matrix. Possible values - "upper", "lower", "full".
-            Default - contextual.
-        diag : Boolean
+        type : {'upper', 'lower', 'full'}
+            Type of matrix. Default - contextual.
+        diag : bool
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         self._points_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
         return self
@@ -101,21 +149,21 @@ class corr_plot:
 
         Parameters
         ----------
-        type : string
-            Type of matrix. Possible values - "upper", "lower", "full".
-            Default - contextual.
-        diag : Boolean
+        type : {'upper', 'lower', 'full'}
+            Type of matrix. Default - contextual.
+        diag : bool
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
-        map_size : Boolean
-            If True, then absolute value of correlation is mapped to text size. If False - the text size is constant.
-            Default - contextual.
-        color: string
-            Set text color.
-            Default - contextual.
+        map_size : bool
+            If True, then absolute value of correlation is mapped to text size.
+            If False - the text size is constant. Default - contextual.
+        color : str
+            Set text color. Default - contextual.
+
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
 
         self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': self.threshold}
@@ -128,16 +176,16 @@ class corr_plot:
 
         Parameters
         ----------
-        type : string
-            Type of matrix. Possible values - "upper", "lower", "full".
-            Default - contextual.
-        diag : Boolean
+        type : {'upper', 'lower', 'full'}
+            Type of matrix. Default - contextual.
+        diag : bool
             Determines whether to fill the main diagonal with values or not.
             Default - contextual.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
 
         self._tiles_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
@@ -149,7 +197,8 @@ class corr_plot:
 
         Returns
         -------
-            PlotSpec object
+        `PlotSpec`
+            Plot specification.
         """
 
         tiles_params = self._tiles_params.copy() if self._tiles_params is not None else None
@@ -175,20 +224,21 @@ class corr_plot:
 
     def palette_gradient(self, low, mid, high):
         """
-        Set scale_color_gradient2 and scale_fill_gradient2 for corr plot.
+        Set `scale_color_gradient2()` and `scale_fill_gradient()` for corr plot.
 
         Parameters
         ----------
-        low : string
+        low : str
             Color for low end of gradient (correlation -1).
-        mid : string
+        mid : str
             Color for mid point (correlation 0).
-        high : string
+        high : str
             Color for high end of gradient (correlation 1).
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         self._color_scale = scale_color_gradient2(name=corr_plot._LEGEND_NAME,
                                                   low=low, mid=mid, high=high,
@@ -206,91 +256,100 @@ class corr_plot:
 
     def palette_BrBG(self):
         """
-        Set scale_color_brewer with BrBG palette for corr plot.
+        Set `scale_color_brewer()` with BrBG palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('BrBG')
 
     def palette_PiYG(self):
         """
-        Set scale_color_brewer with PiYG palette for corr plot.
+        Set `scale_color_brewer()` with PiYG palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('PiYG')
 
     def palette_PRGn(self):
         """
-        Set scale_color_brewer with PRGn palette for corr plot.
+        Set `scale_color_brewer()` with PRGn palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('PRGn')
 
     def palette_PuOr(self):
         """
-        Set scale_color_brewer with PuOr palette for corr plot.
+        Set `scale_color_brewer()` with PuOr palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('PuOr')
 
     def palette_RdBu(self):
         """
-        Set scale_color_brewer with RdBu palette for corr plot.
+        Set `scale_color_brewer()` with RdBu palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('RdBu')
 
     def palette_RdGy(self):
         """
-        Set scale_color_brewer with RdGy palette for corr plot.
+        Set `scale_color_brewer()` with RdGy palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('RdGy')
 
     def palette_RdYlBu(self):
         """
-        Set scale_color_brewer with RdYlBu palette for corr plot.
+        Set `scale_color_brewer()` with RdYlBu palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('RdYlBu')
 
     def palette_RdYlGn(self):
         """
-        Set scale_color_brewer with RdYlGn palette for corr plot.
+        Set `scale_color_brewer()` with RdYlGn palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('RdYlGn')
 
     def palette_Spectral(self):
         """
-        Set scale_color_brewer with Spectral palette for corr plot.
+        Set `scale_color_brewer()` with Spectral palette for corr plot.
 
         Returns
         -------
-            self
+        `corr_plot`
+            Correlation plot specification.
         """
         return self._set_brewer_palette('Spectral')
 
