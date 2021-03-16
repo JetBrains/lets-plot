@@ -122,10 +122,6 @@ class LayerTargetCollectorWithLocator(
                 myTargets
             )
         }
-        return if (coordinateSystem.isPointInLimits(coord)) {
-             myLocator!!.search(coord)
-        } else {
-            null
-        }
+        return myLocator!!.search(coord)
     }
 }
