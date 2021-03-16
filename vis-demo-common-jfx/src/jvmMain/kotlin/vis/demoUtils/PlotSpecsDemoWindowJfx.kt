@@ -8,9 +8,7 @@ package jetbrains.datalore.vis.demoUtils
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.swing.PlotSpecsDemoWindowBase
-import jetbrains.datalore.vis.swing.PlotPanel
-import jetbrains.datalore.vis.swing.jfx.DefaultPlotComponentProviderJfx
-import jetbrains.datalore.vis.swing.jfx.DefaultSwingContextJfx
+import jetbrains.datalore.vis.swing.jfx.DefaultPlotPanelJfx
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -30,22 +28,16 @@ class PlotSpecsDemoWindowJfx(
     override fun createPlotComponent(rawSpec: MutableMap<String, Any>, plotSize: Dimension?): JComponent {
         // Pre-process figure specifications
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-        val componentProvider = DefaultPlotComponentProviderJfx(
+        val plotPanel = DefaultPlotPanelJfx(
             processedSpec = processedSpec,
+            preferredSizeFromPlot = plotSize == null,
+            repaintDelay = 300,
             preserveAspectRatio = false,
-            executor = DefaultSwingContextJfx.JFX_EDT_EXECUTOR,
         ) { messages ->
             for (message in messages) {
                 println("[Demo Plot Viewer] $message")
             }
         }
-
-        val plotPanel = PlotPanel(
-            plotComponentProvider = componentProvider,
-            preferredSizeFromPlot = plotSize == null,
-            repaintDelay = 300,
-            applicationContext = DefaultSwingContextJfx()
-        )
 
         plotSize?.let {
             plotPanel.preferredSize = it

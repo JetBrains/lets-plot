@@ -7,9 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.demoUtils.swing.PlotSpecsDemoWindowBase
-import jetbrains.datalore.vis.swing.PlotPanel
-import jetbrains.datalore.vis.swing.batik.DefaultPlotComponentProviderBatik
-import jetbrains.datalore.vis.swing.batik.DefaultSwingContextBatik
+import jetbrains.datalore.vis.swing.batik.DefaultPlotPanelBatik
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -29,22 +27,16 @@ class PlotSpecsDemoWindowBatik(
     override fun createPlotComponent(rawSpec: MutableMap<String, Any>, plotSize: Dimension?): JComponent {
         // Pre-process figure specifications
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-        val componentProvider = DefaultPlotComponentProviderBatik(
+        val plotPanel = DefaultPlotPanelBatik(
             processedSpec = processedSpec,
+            preferredSizeFromPlot = plotSize == null,
+            repaintDelay = 300,
             preserveAspectRatio = false,
-            executor = DefaultSwingContextBatik.AWT_EDT_EXECUTOR,
         ) { messages ->
             for (message in messages) {
                 println("[Demo Plot Viewer] $message")
             }
         }
-
-        val plotPanel = PlotPanel(
-            plotComponentProvider = componentProvider,
-            preferredSizeFromPlot = plotSize == null,
-            repaintDelay = 300,
-            applicationContext = DefaultSwingContextBatik()
-        )
 
         plotSize?.let {
             plotPanel.preferredSize = it
