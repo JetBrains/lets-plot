@@ -43,7 +43,7 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
 
     Examples
     --------
-    .. jupyter-execute::
+    .. code-block::
         :linenos:
         :emphasize-lines: 4
 
