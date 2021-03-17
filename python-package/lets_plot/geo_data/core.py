@@ -280,27 +280,54 @@ def regions_city(request=None, within=None):
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
-    Create a Geocoder. Allows to refine ambiguous request with where method, scope that limits area of geocoding
-    or with parents.
+    Create a `Geocoder`. Allows to refine ambiguous request with where method,
+    scope that limits area of geocoding or with parents.
 
     Parameters
     ----------
-    level : ['country' | 'state' | 'county' | 'city' | None]
+    level : {'country', 'state', 'county', 'city'}
         The level of administrative division. Autodetection by default.
-    names : [array | string | None]
+    names : list or str
         Names of objects to be geocoded.
-        For 'state' level:
-        -'US-48' returns continental part of United States (48 states) in a compact form.
-    countries : [array | None]
-        Parent countries. Should have same size as names. Can contain strings or Geocoder objects.
-    states : [array | None]
-        Parent states. Should have same size as names. Can contain strings or Geocoder objects.
-    counties : [array | None]
-        Parent counties. Should have same size as names. Can contain strings or Geocoder objects.
-    scope : [string | Geocoder | None]
+        For 'state' level: 'US-48' returns continental part of United States (48 states)
+        in a compact form.
+    countries : list
+        Parent countries. Should have same size as names. Can contain strings or `Geocoder` objects.
+    states : list
+        Parent states. Should have same size as names. Can contain strings or `Geocoder` objects.
+    counties : list
+        Parent counties. Should have same size as names. Can contain strings or `Geocoder` objects.
+    scope : str or `Geocoder`
         Limits area of geocoding. If parent country is set then error will be generated.
         If type is a string - geoobject should have geocoded scope in parents.
-        If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
+        If type is a `Geocoder` - geoobject should have geocoded scope in parents.
+        Scope should contain only one entry.
+
+    Returns
+    -------
+    `NamesGeocoder`
+        Geocoder object specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 2
+
+        from lets_plot.geo_data import *
+        geocode('state').scope('Italia').get_boundaries()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 2, 4
+
+        from lets_plot.geo_data import *
+        states = geocode(level='state', scope='US').get_geocodes().state
+        names = ['York'] * len(states)
+        geocode(names=names, states=states).ignore_not_found().get_centroids()
+
     """
     return NamesGeocoder(level, names) \
         .scope(scope) \
