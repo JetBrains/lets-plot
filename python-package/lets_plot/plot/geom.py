@@ -166,6 +166,23 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                                                 .line('population|@est_pop_2019')) + \\
             ggsize(600, 450)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.normal(size=10) for var in 'abcdef'}
+        ggplot(data) + \\
+            geom_point(aes(size='..corr_abs..', fill='..corr..'), \\
+                       stat='corr', shape=21, color='black') + \\
+            scale_size(range=(.1, .6), guide='none') + \\
+            scale_fill_gradient2(low='#2166ac', mid='#f7f7f7', high='#b2182b')
+
     """
 
     if is_geocoder(map):
@@ -1069,6 +1086,22 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
             geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
             scale_fill_gradient(low='yellow', high='darkgreen')
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.uniform(size=10) for var in 'abcd'}
+        ggplot(data) + \\
+            geom_tile(aes(fill='..corr..'), stat='corr', tooltips='none', color='white') + \\
+            geom_text(aes(label='..corr..'), stat='corr', color='white') + \\
+            scale_fill_brewer(type='div', palette='RdBu', breaks=[-1, -.5, 0, .5, 1])
+
     """
     return _geom('tile',
                  mapping=mapping,
@@ -1150,6 +1183,22 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         ggplot(data) + \\
             geom_raster(aes(x='x', y='y', fill='z')) + \\
             scale_fill_gradient(low='#54278f', high='#f2f0f7')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.uniform(size=10) for var in 'abcd'}
+        ggplot(data) + \\
+            geom_raster(aes(fill='..corr..'), stat='corr', tooltips='none') + \\
+            geom_text(aes(label='..corr..'), stat='corr', color='white') + \\
+            scale_fill_brewer(type='div', palette='RdBu', breaks=[-1, -.5, 0, .5, 1])
 
     """
     return _geom('raster',
@@ -4019,6 +4068,22 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
             geom_text(aes(label='title'), map=centroids, \\
                       map_join='city', size=8, vjust=1, \\
                       family='Optima', fontface='bold')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.uniform(size=10) for var in 'abcd'}
+        ggplot(data) + \\
+            geom_text(aes(label='..corr..', color='..corr..', size='..corr_abs..'), stat='corr') + \\
+            scale_size(range=(.4, 1), guide='none') + \\
+            scale_color_brewer(type='div', palette='RdYlGn', breaks=[-1, -.5, 0, .5, 1])
 
     """
 
