@@ -36,15 +36,13 @@ def ggtitle(label):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 5
         
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {}
-        data['x'] = [x for x in range(10)]
-        data['y'] = [y for y in range(10)]
-        ggplot(data=data) + geom_point(aes(x='x', y='y', size='y')) + \\
-            ggtitle(label='New plot title')
+        data = {'x': list(range(10)), 'y': list(range(10))}
+        ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
+            ggtitle('New Plot Title')
     """
     return labs(title=label)
 
@@ -71,14 +69,12 @@ def xlab(label):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 5
         
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {}
-        data['x'] = [x for x in range(10)]
-        data['y'] = [y for y in range(10)]
-        ggplot(data=data) + geom_point(aes(x='x', y='y', size='y')) + \\
+        data = {'x': list(range(10)), 'y': list(range(10))}
+        ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             xlab('x axis label')
     """
     return labs(x=label)
@@ -106,14 +102,12 @@ def ylab(label):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 5
         
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {}
-        data['x'] = [x for x in range(10)]
-        data['y'] = [y for y in range(10)]
-        ggplot(data=data) + geom_point(aes(x='x', y='y', size='y')) + \\
+        data = {'x': list(range(10)), 'y': list(range(10))}
+        ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             ylab('y axis label')
     """
     return labs(y=label)
@@ -125,13 +119,13 @@ def labs(**kwargs):
 
     Parameters
     ----------
-    kwargs: string
+    kwargs: dict
         A list of new name-value pairs where name should be an aesthetic,
         e.g. title='Plot title' or aesthetic='Scale label'.
 
     Returns
     -------
-    `FeatureSpec`
+    `FeatureSpec` or `FeatureSpecArray`
         Axis label specification.
 
     Note
@@ -142,16 +136,14 @@ def labs(**kwargs):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7-8
+        :emphasize-lines: 5-6
         
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {}
-        data['x'] = [x for x in range(10)]
-        data['y'] = [y for y in range(10)]
-        ggplot(data=data) + geom_point(aes(x='x', y='y', size='y')) + \\
+        data = {'x': list(range(10)), 'y': list(range(10))}
+        ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             labs(title='New plot title', x='New x axis label', \\
-                 y='New y axis label', size = 'New legend title')
+                 y='New y axis label', size='New legend title')
     """
     specs = []
     for k, v in kwargs.items():

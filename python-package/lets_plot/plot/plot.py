@@ -139,8 +139,8 @@ def ggsize(width, height):
 class GGBunch(FeatureSpec):
     """
     Collection of plots created by ggplot function.
-    Use method add_plot() to add plot to 'bunch'. Each plot can have arbitrary location and size.
-    Use show() to draw all plots in bunch.
+    Use method `add_plot()` to add plot to 'bunch'. Each plot can have arbitrary location and size.
+    Use `show()` to draw all plots in bunch.
 
     Examples
     --------
@@ -165,6 +165,9 @@ class GGBunch(FeatureSpec):
     """
 
     def __init__(self):
+    """
+    Initialize self.
+    """
         super().__init__('ggbunch', None)
         self.items = []
 
