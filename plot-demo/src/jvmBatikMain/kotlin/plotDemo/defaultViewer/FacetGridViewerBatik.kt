@@ -8,10 +8,10 @@ package jetbrains.datalore.plotDemo.defaultViewer
 import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
 import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
 
-fun main(args: Array<String>) {
+fun main() {
     with(FacetGridDemo()) {
         @Suppress("UNCHECKED_CAST")
-        val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+        val plotSpecList = plotSpecList()
         PlotViewerWindowBatik(
             "Facet grid",
             null,

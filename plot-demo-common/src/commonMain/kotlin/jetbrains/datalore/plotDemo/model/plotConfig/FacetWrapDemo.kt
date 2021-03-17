@@ -46,7 +46,8 @@ class FacetWrapDemo {
             "name" to "wrap",
             "facets" to AutoMpg.cylinders.name,
             "nrow" to 4,
-            "format" to "{d} cyl"
+            "format" to "{d} cyl",
+            "dir" to "v"
         )
         return plotSpec
     }
