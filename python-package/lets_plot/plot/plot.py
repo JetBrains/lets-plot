@@ -14,61 +14,64 @@ __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
 def ggplot(data=None, mapping=None):
     """
-    Create a new ggplot plot
+    Create a new ggplot plot.
 
     Parameters
     ----------
-    data : dictionary or pandas DataFrame, optional
-        Default dataset to use for the plot. If not specified, must be supplied in each layer added to the plot.
-    mapping : dictionary, optional
-        Default list of aesthetic mappings to use for the plot. If not specified, must be supplied in each layer
-        added to the plot.
+    data : dict or `DataFrame`
+        Default dataset to use for the plot. If not specified,
+        must be supplied in each layer added to the plot.
+    mapping : `FeatureSpec`
+        Default list of aesthetic mappings to use for the plot.
+        If not specified, must be supplied in each layer added to the plot.
 
     Returns
     -------
-        plot specification
+    `PlotSpec`
+        Plot specification.
 
     Note
-    -----
-        ggplot() initializes a ggplot object. It can be used to declare the input data frame for a graphic and to
-        specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically
-        overridden.
-        ggplot() is typically used to construct a plot incrementally, using the + operator to add layers to the
-        existing ggplot object. This is advantageous in that the code is explicit about which layers are added
-        and the order in which they are added. For complex graphics with multiple layers, initialization with
-        ggplot() is recommended.
-        There are three common ways to invoke ggplot (see examples below):
+    ----
+    `ggplot()` initializes a ggplot object.
+    It can be used to declare the input data frame for a graphic and
+    to specify the set of plot aesthetics intended to be common
+    throughout all subsequent layers unless specifically overridden.
 
-            - ggplot(dat,aes(x,y)) :
-                This method is recommended if all layers use the same data and the same set of aesthetics, although
-                this method can also be used to add a layer using data from another data frame.
-            - ggplot(dat) :
-                This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
-                This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
-                from one layer to another.
-            - ggplot() :
-                This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
-                useful when multiple data frames are used to produce different layers, as is often the case in complex
-                graphics.
+    `ggplot()` is typically used to construct a plot incrementally,
+    using the + operator to add layers to the existing ggplot object.
+    This is advantageous in that the code is explicit about which layers
+    are added and the order in which they are added. For complex graphics
+    with multiple layers, initialization with `ggplot()` is recommended.
 
-        ggplot() with no layers defined will produce an error message: "No layers in plot"
+    There are three common ways to invoke ggplot (see examples below):
+        - `ggplot(data, aes(x, y))`: This method is recommended if all layers use the same data and the same set of aesthetics, although this method can also be used to add a layer using data from another data frame.
+        - `ggplot(data)`: This method specifies the default data frame to use for the plot, but no aesthetics are defined up front. This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary from one layer to another.
+        - `ggplot()`: This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
+
+    `ggplot()` with no layers defined will produce an error message:
+    "No layers in plot".
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = np.random.uniform(-1, 1, size=100)
-    >>> y = np.random.normal(size=100)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-    >>> # three ways to invoke ggplot, producing the same output:
-    >>> # (1)
-    >>> ggplot(dat, aes(x='x', y='y')) + layer()
-    >>> # (2)
-    >>> ggplot(dat) + layer()
-    >>> # (3)
-    >>> ggplot() + layer('point', 'identity', dat)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10, 12, 14
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.random.uniform(-1, 1, size=n)
+        y = np.random.normal(size=n)
+        data = {'x': x, 'y': 25 * x ** 2 + y}
+        # three ways to invoke ggplot, producing the same output:
+        # (1)
+        ggplot(data, aes(x='x', y='y')) + geom_point()
+        # (2)
+        ggplot(data) + geom_point(aes(x='x', y='y'))
+        # (3)
+        ggplot() + geom_point(aes(x='x', y='y'), data=data)
 
     """
     if isinstance(data, FeatureSpec):
@@ -85,28 +88,35 @@ def ggplot(data=None, mapping=None):
 # noinspection SpellCheckingInspection
 def ggsize(width, height):
     """
-    Specifies overall size of plot
+    Specify overall size of plot.
 
     Parameters
     ----------
-    width  : number
+    width : int
         Width of plot in px.
-    height : number
+    height : int
         Height of plot in px.
 
     Returns
     -------
-        plot size specification
+    `FeatureSpec`
+        Plot size specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = np.arange(100)
-    >>> y = np.random.normal(size=100)
-    >>> dat = pd.DataFrame({'x':x, 'y':y})
-    >>> ggplot(dat) + geom_line(aes('x','y')) + ggsize(600, 120)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.arange(50)
+        y = np.random.normal(size=50)
+        data = {'x': x, 'y': y}
+        ggplot(data) + geom_line(aes('x', 'y')) + ggsize(400, 150)
+
     """
     assert isinstance(width, numbers.Number), "'width' must be numeric"
     assert isinstance(height, numbers.Number), "'height' must be numeric"
@@ -123,44 +133,55 @@ def ggsize(width, height):
 class GGBunch(FeatureSpec):
     """
     Collection of plots created by ggplot function.
-    Use method add_plot() to add plot to 'bunch'. Each plot can have arbitrary location and size.
-    Use show() to draw all plots in bunch.
+    Use method `add_plot()` to add plot to 'bunch'.
+    Each plot can have arbitrary location and size.
+    Use `show()` to draw all plots in bunch.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = np.arange(100)
-    >>> y = np.random.normal(size=100)
-    >>> dat = pd.DataFrame({'x':x, 'y':y})
-    >>> g = ggplot(dat, mapping=aes('x', 'y')) + ggsize(150, 150)
-    >>> bunch = GGBunch()
-    >>> bunch.add_plot(g + geom_point(), 0, 0)
-    >>> bunch.add_plot(g + geom_histogram(bins=4), 150, 0)
-    >>> bunch.add_plot(g + geom_line(), 0, 150, 200, 100)
-    >>> bunch.show()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-14
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.arange(n)
+        y = np.random.normal(size=n)
+        w, h = 200, 150
+        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + ggsize(w, h)
+        bunch = GGBunch()
+        bunch.add_plot(p + geom_point(), 0, 0)
+        bunch.add_plot(p + geom_histogram(bins=3), w, 0)
+        bunch.add_plot(p + geom_line(), 0, h, 2*w, h)
+        bunch.show()
+
     """
 
     def __init__(self):
+        """
+        Initialize self.
+        """
         super().__init__('ggbunch', None)
         self.items = []
 
     def add_plot(self, plot_spec: PlotSpec, x, y, width=None, height=None):
         """
-        Adds plot to 'bunch'
+        Add plot to 'bunch'.
 
         Parameters
         ----------
-        plot_spec : value of ggplot()
-            Plot specification created by ggplot() function
-        x : number
+        plot_spec
+            Plot specification created by `ggplot()` function.
+        x : int
             x-coordinate of plot origin in px.
-        y : number
+        y : int
             y-coordinate of plot origin in px.
-        width : number
+        width : int
             Width of plot in px.
-        height :
+        height : int
             Height of plot in px.
         """
         if width and not height:
@@ -178,6 +199,9 @@ class GGBunch(FeatureSpec):
         self.items.append(dict(feature_spec=plot_spec, x=x, y=y, width=width, height=height))
 
     def as_dict(self):
+        """
+        Translate self to dictionary.
+        """
         d = super().as_dict()
         d['kind'] = self.kind
 
@@ -191,14 +215,15 @@ class GGBunch(FeatureSpec):
 
     def _repr_html_(self):
         """
-        Special method discovered and invoked by IPython.display.display
+        Special method discovered and invoked by IPython.display.display.
         """
         from ..frontend_context._configuration import _as_html
         return _as_html(self.as_dict())
 
     def show(self):
         """
-        Draw all plots currently in this 'bunch'
+        Draw all plots currently in this 'bunch'.
         """
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
+
