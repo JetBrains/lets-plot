@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotAssembler
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotAssembler.LoessRegressionPlotDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowJfx
 
-class LoessRegressionPlotDemoJfx : LoessRegressionPlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Loess regression plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            LoessRegressionPlotDemoJfx().show()
-        }
+fun main() {
+    with(LoessRegressionPlotDemo()) {
+        PlotObjectsDemoWindowJfx(
+            "Loess regression plot",
+            plotList = createPlots()
+        ).open()
     }
 }

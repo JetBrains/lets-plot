@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.HVLine
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
-object HVLineBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(HVLine() ) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "hline & vline plot",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                DoubleVector(600.0, 400.0)
-            )
-        }
+fun main() {
+    with(HVLine()) {
+        PlotSpecsDemoWindowBatik(
+            "hline & vline plot",
+            plotSpecList()
+        ).open()
     }
 }

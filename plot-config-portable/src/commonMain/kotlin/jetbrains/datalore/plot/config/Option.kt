@@ -74,6 +74,7 @@ object Option {
         const val FACET = "facet"
         const val THEME = "theme"
         const val SIZE = "ggsize"
+        const val GUIDES = "guides"
     }
 
     object Layer {

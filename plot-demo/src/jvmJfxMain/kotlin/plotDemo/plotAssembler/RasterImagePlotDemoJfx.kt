@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotAssembler
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotAssembler.RasterImagePlotDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowJfx
 
-class RasterImagePlotDemoJfx : RasterImagePlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Raster image plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            RasterImagePlotDemoJfx().show()
-        }
+fun main() {
+    with(RasterImagePlotDemo()) {
+        PlotObjectsDemoWindowJfx(
+            "Raster image plot",
+            plotList = createPlots()
+        ).open()
     }
 }

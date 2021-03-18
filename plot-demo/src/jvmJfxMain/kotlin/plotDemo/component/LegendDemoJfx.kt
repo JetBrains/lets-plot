@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.component
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.component.LegendDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowJfx
 
-class LegendDemoJfx : LegendDemo() {
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            LegendDemoJfx().show()
-        }
-    }
-
-    private fun show() {
-        val demoModels = createModels()
-        val svgRoots = createSvgRoots(demoModels)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Legend component")
+fun main() {
+    with(LegendDemo()) {
+        SvgViewerDemoWindowJfx(
+            "Legend component (JFX SVG mapper)",
+            createSvgRoots(createModels())
+        ).open()
     }
 }

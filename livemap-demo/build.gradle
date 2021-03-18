@@ -61,7 +61,7 @@ kotlin {
                 implementation project(':vis-svg-mapper')
                 implementation project(':vis-canvas')
                 implementation project(':vis-demo-common')
-                implementation project(':plot-demo-common')
+//                implementation project(':plot-demo-common')
                 implementation project(':gis')
                 implementation project(':livemap')
                 implementation project(':plot-livemap')
@@ -75,25 +75,24 @@ kotlin {
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
-        jvmMain {
-            dependsOn allJvm
-            dependencies {
-                implementation project(':livemap-jvm-package')
-            }
-        }
+//        jvmMain {
+//            dependsOn allJvm
+//            dependencies {
+//            }
+//        }
 
         jvmJfxMain {
             dependsOn allJvm
         }
         jvmJfxPlotMain {
-            dependsOn jvmMain
+            dependsOn allJvm
             dependencies {
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')
             }
         }
         jvmBatikPlotMain {
-            dependsOn jvmMain
+            dependsOn allJvm
             dependencies {
                 implementation project(':vis-demo-common-batik')
                 implementation project(':vis-svg-mapper-batik')

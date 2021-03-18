@@ -6,11 +6,10 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import kotlin.random.Random
 
-open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class ScaleBrewerWithContinuousData {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             tiles(),
             tiles(
@@ -28,15 +27,15 @@ open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
 
 
     companion object {
-        fun data(n: Int): Map<String, Any> {
+        fun data(n: Int): MutableMap<String, Any> {
             val rand = Random(37)
-            return mapOf(
+            return mutableMapOf(
                 "x" to (0..n).toList(),
                 "v" to (0..n).toList().map { rand.nextDouble(-1.0, 1.0) }
             )
         }
 
-        private fun getSpec(limits: String?, breaks: String?): Map<String, Any> {
+        private fun getSpec(limits: String?, breaks: String?): MutableMap<String, Any> {
             val spec = """
 {
     'mapping': {'x': 'x', 'fill': 'v'}, 
@@ -66,7 +65,7 @@ open class ScaleBrewerWithContinuousData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun tiles(limits: String? = null, breaks: String? = null): Map<String, Any> {
+        fun tiles(limits: String? = null, breaks: String? = null): MutableMap<String, Any> {
             val spec = getSpec(limits, breaks)
             val specWithData = HashMap<String, Any>(spec)
             specWithData["data"] = data(10)

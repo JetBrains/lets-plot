@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotAssembler
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotAssembler.LinearRegressionPlotDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowJfx
 
-class LinearRegressionPlotDemoJfx : LinearRegressionPlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Linear regression plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            LinearRegressionPlotDemoJfx().show()
-        }
+fun main() {
+    with(LinearRegressionPlotDemo()) {
+        PlotObjectsDemoWindowJfx(
+            "Linear regression plot",
+            plotList = createPlots()
+        ).open()
     }
 }

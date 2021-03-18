@@ -36,7 +36,7 @@ import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
 open class ScatterDemo : SimpleDemoBase() {
 
-    protected fun createModels(): List<GroupComponent> {
+    fun createModels(): List<GroupComponent> {
         return listOf(
                 gauss(),
                 gaussWithContinuousColor(),

@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.config.Option.Guide.COLOR_BAR_GB
 import jetbrains.datalore.plot.config.Option.Guide.ColorBar.BIN_COUNT
 import jetbrains.datalore.plot.config.Option.Guide.ColorBar.HEIGHT
 import jetbrains.datalore.plot.config.Option.Guide.ColorBar.WIDTH
+import jetbrains.datalore.plot.config.Option.Guide.LEGEND
 import jetbrains.datalore.plot.config.Option.Guide.Legend.BY_ROW
 import jetbrains.datalore.plot.config.Option.Guide.Legend.COL_COUNT
 import jetbrains.datalore.plot.config.Option.Guide.Legend.ROW_COUNT
@@ -109,12 +110,12 @@ abstract class GuideConfig private constructor(opts: Map<String, Any>) : Options
         }
 
         private fun createForName(name: String, guideOptions: Map<String, Any>): GuideConfig {
-            if (COLOR_BAR == name || COLOR_BAR_GB == name) {
-                return ColorBarConfig(guideOptions)
+            return when (name) {
+                COLOR_BAR, COLOR_BAR_GB -> ColorBarConfig(guideOptions)
+                NONE -> GuideNoneConfig()
+                LEGEND -> LegendConfig(guideOptions)
+                else -> error("Unknown guide name: $name")
             }
-            return if (NONE == name) {
-                GuideNoneConfig()
-            } else LegendConfig(guideOptions)
         }
     }
 }

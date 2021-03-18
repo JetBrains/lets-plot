@@ -6,19 +6,18 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.SharedPieces.sampleImageDataUrl3x3
 
 @Suppress("DuplicatedCode")
-class ImageGeom : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class ImageGeom {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             image_3x3()
         )
     }
 
     @Suppress("FunctionName")
-    private fun image_3x3(): Map<String, Any> {
+    private fun image_3x3(): MutableMap<String, Any> {
         val spec = """
             |{"kind": "plot",
             | "data": {

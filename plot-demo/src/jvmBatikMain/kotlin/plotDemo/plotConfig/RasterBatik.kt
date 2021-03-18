@@ -6,20 +6,13 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Raster
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
-object RasterBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Raster()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "raster_geom",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(Raster()) {
+        PlotSpecsDemoWindowBatik(
+            "geom_raster",
+            plotSpecList()
+        )
     }
 }

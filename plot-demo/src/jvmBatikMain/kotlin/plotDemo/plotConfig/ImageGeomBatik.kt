@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
 import jetbrains.datalore.plotDemo.model.plotConfig.ImageGeom
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
-object ImageGeomBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ImageGeom()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "image_geom",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(ImageGeom()) {
+        PlotSpecsDemoWindowBatik(
+            "image_geom",
+            plotSpecList()
+        ).open()
     }
 }

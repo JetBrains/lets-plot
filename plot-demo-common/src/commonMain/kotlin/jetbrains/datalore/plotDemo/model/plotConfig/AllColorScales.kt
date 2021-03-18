@@ -5,16 +5,14 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
 import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
+open class AllColorScales {
 
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             color_gradient(),
             color_gradient_blue_red(),
@@ -145,7 +143,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 //
 
         @Suppress("FunctionName")
-        private fun color_gradient(): Map<String, Any> {
+        private fun color_gradient(): MutableMap<String, Any> {
             val spec = specWithContinuousData(
                 0,
                 128,
@@ -155,7 +153,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_gradient_blue_red(): Map<String, Any> {
+        private fun color_gradient_blue_red(): MutableMap<String, Any> {
             val params = mapOf(
                 "low" to "blue",
                 "high" to "red"
@@ -170,7 +168,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_gradient2(): Map<String, Any> {
+        private fun color_gradient2(): MutableMap<String, Any> {
             val spec = specWithContinuousData(
                 -64,
                 64,
@@ -181,7 +179,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_gradient2_midpoint(): Map<String, Any> {
+        private fun color_gradient2_midpoint(): MutableMap<String, Any> {
             val params = mapOf(
                 "midpoint" to 10.0
             )
@@ -196,7 +194,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_gradient2_rainbow(): Map<String, Any> {
+        private fun color_gradient2_rainbow(): MutableMap<String, Any> {
             val params = mapOf(
                 "low" to "green",
                 "mid" to "yellow",
@@ -213,7 +211,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_hue(h0: Double, h1: Double, start: Double = 0.0, dir: Int = 1): Map<String, Any> {
+        private fun color_hue(h0: Double, h1: Double, start: Double = 0.0, dir: Int = 1): MutableMap<String, Any> {
             val params = mapOf(
                 HUE_RANGE to listOf(h0, h1),
                 START_HUE to start,
@@ -230,7 +228,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_hue_discrete(h0: Double, h1: Double, dir: Int = 1): Map<String, Any> {
+        private fun color_hue_discrete(h0: Double, h1: Double, dir: Int = 1): MutableMap<String, Any> {
             val params = mapOf(
                 HUE_RANGE to listOf(h0, h1),
                 DIRECTION to dir
@@ -245,7 +243,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_hue_chroma(): Map<String, Any> {
+        private fun color_hue_chroma(): MutableMap<String, Any> {
             val params = mapOf(
                 "c" to 20
             )
@@ -260,7 +258,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_hue_luminance(): Map<String, Any> {
+        private fun color_hue_luminance(): MutableMap<String, Any> {
             val params = mapOf(
                 "l" to 40
             )
@@ -275,7 +273,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_grey(): Map<String, Any> {
+        private fun color_grey(): MutableMap<String, Any> {
             val spec = specWithContinuousData(
                 -64,
                 64,
@@ -286,7 +284,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_grey_white2black(): Map<String, Any> {
+        private fun color_grey_white2black(): MutableMap<String, Any> {
             val params = mapOf(
                 "start" to 1.0,
                 "end" to 0
@@ -303,7 +301,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
 
         @Suppress("FunctionName")
-        private fun color_brewer(): Map<String, Any> {
+        private fun color_brewer(): MutableMap<String, Any> {
             val spec = specWithContinuousData(
                 -64,
                 64,
@@ -314,7 +312,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_brewer_direction(): Map<String, Any> {
+        private fun color_brewer_direction(): MutableMap<String, Any> {
             val params = mapOf(
                 "direction" to -1
             )
@@ -329,7 +327,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_brewer_diverging(): Map<String, Any> {
+        private fun color_brewer_diverging(): MutableMap<String, Any> {
             val params = mapOf(
                 "type" to "div"
             )
@@ -344,7 +342,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_brewer_qualitative(): Map<String, Any> {
+        private fun color_brewer_qualitative(): MutableMap<String, Any> {
             val params = mapOf(
                 "type" to "qual"
             )
@@ -359,7 +357,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_brewer_qualitative_paired(): Map<String, Any> {
+        private fun color_brewer_qualitative_paired(): MutableMap<String, Any> {
             val params = mapOf(
                 "type" to "qual",
                 "palette" to "Paired"
@@ -375,7 +373,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
         }
 
         @Suppress("FunctionName")
-        private fun color_brewer_discrete_def(count: Int): Map<String, Any> {
+        private fun color_brewer_discrete_def(count: Int): MutableMap<String, Any> {
             val params = emptyMap<String, Any>()
             val spec = specWithDiscreteData(
                 count,
@@ -388,7 +386,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
 
         @Suppress("FunctionName")
-        private fun color_manual(): Map<String, Any> {
+        private fun color_manual(): MutableMap<String, Any> {
             val params = mapOf(
                 "values" to listOf(
                     "#999999",

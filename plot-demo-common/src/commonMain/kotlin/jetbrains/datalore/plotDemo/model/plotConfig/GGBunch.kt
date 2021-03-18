@@ -6,16 +6,15 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class GGBunch : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class GGBunch {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             plotBunch()
         )
     }
 
-    private fun plotBunch(): Map<String, Any> {
+    private fun plotBunch(): MutableMap<String, Any> {
         val spec = """
         |{
         |   'kind': 'ggbunch',

@@ -18,8 +18,10 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-builder')
+                implementation project(':plot-config-portable')
                 implementation project(':vis-svg-portable')
-                api project(':vis-demo-common')
             }
         }
         jvmMain {
@@ -28,6 +30,9 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper-batik')
+                implementation project(':vis-swing-common')
+                implementation project(':vis-swing-batik')
+                implementation project(':vis-demo-common')
             }
         }
     }

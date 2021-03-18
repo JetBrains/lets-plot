@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
-import jetbrains.datalore.plot.builder.interact.TestUtil
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
@@ -64,8 +63,8 @@ class LayerTargetLocatorTwoPointsTest {
 
         assertObjects(locator, FIRST_POINT, FIRST_POINT_KEY)
         assertObjects(locator, SECOND_POINT, SECOND_POINT_KEY)
-        assertEmpty(locator, offsetXY(FIRST_POINT))
-        assertEmpty(locator, offsetXY(SECOND_POINT))
+        assertObjects(locator, offsetXY(FIRST_POINT), FIRST_POINT_KEY)
+        assertObjects(locator, offsetXY(SECOND_POINT), SECOND_POINT_KEY)
     }
 
     @Test
@@ -77,14 +76,46 @@ class LayerTargetLocatorTwoPointsTest {
             LookupStrategy.NEAREST,
             LookupSpace.X,
             pointTarget(firstTarget, point(10.0, 10.0)),
-            pointTarget(secondTarget, point(13.0, 10.0))
+            pointTarget(secondTarget, point(15.0, 10.0))
         )
 
         val closerToFirst = point(11.0, 10.0)
         assertObjects(locator, closerToFirst, firstTarget)
 
-        val closerToSecond = point(12.0, 10.0)
+        val closerToSecond = point(14.0, 10.0)
         assertObjects(locator, closerToSecond, secondTarget)
+    }
+
+    @Test
+    fun `nearestX - points are equidistant from cursor`() {
+        val firstTarget = 1
+        val secondTarget = 2
+
+        val locator = createLocator(
+            LookupStrategy.NEAREST,
+            LookupSpace.X,
+            pointTarget(firstTarget, point(10.0, 10.0)),
+            pointTarget(secondTarget, point(16.0, 10.0))
+        )
+
+        val closeToBoth = point(13.0, 10.0)
+        assertObjects(locator, closeToBoth, firstTarget, secondTarget)
+    }
+
+    @Test
+    fun `nearestX - points with the same X`() {
+        val firstTarget = 1
+        val secondTarget = 2
+
+        val locator = createLocator(
+            LookupStrategy.NEAREST,
+            LookupSpace.X,
+            pointTarget(firstTarget, point(10.0, 10.0)),
+            pointTarget(secondTarget, point(10.0, 16.0))
+        )
+
+        val closeToBoth = point(10.0, 10.0)
+        assertObjects(locator, closeToBoth, firstTarget, secondTarget)
     }
 
     private fun createLocator(strategy: LookupStrategy, space: LookupSpace): GeomTargetLocator {

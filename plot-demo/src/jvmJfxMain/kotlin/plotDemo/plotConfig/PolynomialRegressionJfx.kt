@@ -5,24 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.plotConfig.PolynomialRegression
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object PolynomialRegressionJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(PolynomialRegression()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            @Suppress("SpellCheckingInspection")
-            PlotConfigDemoUtil.show(
-                "Polynomial regression",
-                plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                DoubleVector(600.0, 300.0)
-            )
-        }
+fun main() {
+    with(PolynomialRegression()) {
+        PlotSpecsDemoWindowJfx(
+            "Polynomial regression",
+            plotSpecList()
+        ).open()
     }
 }

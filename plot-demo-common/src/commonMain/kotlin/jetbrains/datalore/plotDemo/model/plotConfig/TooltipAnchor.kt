@@ -7,11 +7,10 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
-open class TooltipAnchor : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class TooltipAnchor {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             top_right(),
             top_left(),
@@ -40,7 +39,7 @@ open class TooltipAnchor : PlotConfigDemoBase() {
             return map
         }
 
-        private fun withTooltipAnchor(anchor: String): Map<String, Any> {
+        private fun withTooltipAnchor(anchor: String): MutableMap<String, Any> {
             val allPositionals = "^Y"
             val aesYMin = "^ymin"
             val aesYMax = "^ymax"
@@ -79,25 +78,25 @@ open class TooltipAnchor : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        private fun middle_right(): Map<String, Any> = withTooltipAnchor("middle_right")
+        private fun middle_right(): MutableMap<String, Any> = withTooltipAnchor("middle_right")
 
-        private fun middle_center(): Map<String, Any> = withTooltipAnchor("middle_center")
+        private fun middle_center(): MutableMap<String, Any> = withTooltipAnchor("middle_center")
 
-        private fun middle_left(): Map<String, Any> = withTooltipAnchor("middle_left")
+        private fun middle_left(): MutableMap<String, Any> = withTooltipAnchor("middle_left")
 
-        private fun top_right(): Map<String, Any> = withTooltipAnchor("top_right")
+        private fun top_right(): MutableMap<String, Any> = withTooltipAnchor("top_right")
 
-        private fun top_left(): Map<String, Any> = withTooltipAnchor("top_left")
+        private fun top_left(): MutableMap<String, Any> = withTooltipAnchor("top_left")
 
-        private fun top_center(): Map<String, Any> = withTooltipAnchor("top_center")
+        private fun top_center(): MutableMap<String, Any> = withTooltipAnchor("top_center")
 
-        private fun bottom_right(): Map<String, Any> = withTooltipAnchor("bottom_right")
+        private fun bottom_right(): MutableMap<String, Any> = withTooltipAnchor("bottom_right")
 
-        private fun bottom_left(): Map<String, Any> = withTooltipAnchor("bottom_left")
+        private fun bottom_left(): MutableMap<String, Any> = withTooltipAnchor("bottom_left")
 
-        private fun bottom_center(): Map<String, Any> = withTooltipAnchor("bottom_center")
+        private fun bottom_center(): MutableMap<String, Any> = withTooltipAnchor("bottom_center")
 
-        private fun overCursor(): Map<String, Any> {
+        private fun overCursor(): MutableMap<String, Any> {
             val spec = """{
                        'kind': 'plot',
                        'mapping': {

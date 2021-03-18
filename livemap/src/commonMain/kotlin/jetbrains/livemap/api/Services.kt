@@ -52,7 +52,15 @@ object Services {
         url = "http://10.0.0.127:3020/map_data/geocoding"
     }
 
+    fun jetbrainsGeocodingService() = liveMapGeocoding {
+        url = "https://geo2.datalore.jetbrains.com"
+    }
+
     fun devTileProvider() = liveMapVectorTiles {
         url = "ws://10.0.0.127:3933"
+    }
+
+    fun jetbrainsTileProvider() = liveMapVectorTiles {
+        url = "wss://tiles.datalore.jetbrains.com"
     }
 }

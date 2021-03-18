@@ -13,7 +13,7 @@ object GGBunchSvg {
     fun main(args: Array<String>) {
         with(GGBunch()) {
             @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+            val plotSpecList = plotSpecList()
             PlotSvgDemoUtil.show(
                 "GGBunch",
                 plotSpecList,

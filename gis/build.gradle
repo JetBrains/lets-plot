@@ -19,7 +19,6 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.ktor:ktor-client-websockets:$ktor_version"
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
-                implementation "io.ktor:ktor-client-js:$ktor_version"
                 implementation project(':base-portable')
                 implementation project(':base')
             }
@@ -33,7 +32,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
         jvmTest {
@@ -43,7 +41,8 @@ kotlin {
                 implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
                 implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
                 implementation "org.mockito:mockito-core:$mockito_version"
-                implementation "org.assertj:assertj-core:$assertj_version"            }
+                implementation "org.assertj:assertj-core:$assertj_version"
+            }
         }
         jsMain {
             dependencies {

@@ -6,8 +6,8 @@
 package jetbrains.datalore.vis.swing
 
 import javafx.scene.Parent
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.vis.svg.SvgConstants
@@ -24,25 +24,25 @@ class SceneMapperJfxPanel(
     stylesheets: List<String>
 ) : AbstractJfxPanel(stylesheets), Disposable {
 
-    private var myIsDisposed: Boolean = false
+    private val nodeContainer = SvgNodeContainer(svg)  // attach root
+    private var registrations = CompositeRegistration()
 
     init {
         runOnFxThread {
             //            border = BorderFactory.createLineBorder(Color.BLUE, 3)  //- not working
             //            foreground = Color.BLUE
 
-            Preconditions.checkArgument(!svg.isAttached(), "SvgSvgElement must be unattached")
-            SvgNodeContainer(svg)  // attach root
-
-            svg.addListener(object : SvgElementListener {
-                override fun onAttrSet(event: SvgAttributeEvent<*>) {
-                    if (SvgConstants.HEIGHT.equals(event.attrSpec.name, ignoreCase = true) ||
-                        SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true)
-                    ) {
-                        runOnFxThread { revalidateScene() }
+            registrations.add(
+                svg.addListener(object : SvgElementListener {
+                    override fun onAttrSet(event: SvgAttributeEvent<*>) {
+                        if (SvgConstants.HEIGHT.equals(event.attrSpec.name, ignoreCase = true) ||
+                            SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true)
+                        ) {
+                            runOnFxThread { revalidateScene() }
+                        }
                     }
-                }
-            })
+                })
+            )
         }
     }
 
@@ -62,7 +62,9 @@ class SceneMapperJfxPanel(
     }
 
     override fun dispose() {
-        require(!myIsDisposed) { "Alreadey disposed." }
-        // Need to dispose something?
+        registrations.dispose()
+
+        // Detach svg root.
+        nodeContainer.root().set(SvgSvgElement())
     }
 }

@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.plotConfig.ABLine
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object ABLineJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ABLine()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "ABLine plot",
-                plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(ABLine()) {
+        PlotSpecsDemoWindowJfx(
+            "ABLine plot",
+            plotSpecList()
+        ).open()
     }
 }

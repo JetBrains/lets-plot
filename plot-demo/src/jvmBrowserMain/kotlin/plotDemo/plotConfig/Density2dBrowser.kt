@@ -14,8 +14,8 @@ object Density2dBrowser {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
                 "Density2d plot",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }

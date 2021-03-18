@@ -5,12 +5,10 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class AxisOptions {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultAxis(),
             noXTitle(),
@@ -57,7 +55,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
         }
 
 
-        fun defaultAxis(): Map<String, Any> {
+        fun defaultAxis(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -70,7 +68,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noXTitle(): Map<String, Any> {
+        fun noXTitle(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -88,7 +86,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noYTitle(): Map<String, Any> {
+        fun noYTitle(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -106,7 +104,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noXTooltip(): Map<String, Any> {
+        fun noXTooltip(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -123,7 +121,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noYTooltip(): Map<String, Any> {
+        fun noYTooltip(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -140,7 +138,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noXTickLabels(): Map<String, Any> {
+        fun noXTickLabels(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -158,7 +156,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noYTickLabels(): Map<String, Any> {
+        fun noYTickLabels(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -176,7 +174,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noTickMarks(): Map<String, Any> {
+        fun noTickMarks(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -194,7 +192,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noTickMarksOrLabels(): Map<String, Any> {
+        fun noTickMarksOrLabels(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -213,7 +211,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noTitlesOrLabels(): Map<String, Any> {
+        fun noTitlesOrLabels(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -232,7 +230,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun onlyLines(): Map<String, Any> {
+        fun onlyLines(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
@@ -252,7 +250,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             return plotSpec
         }
 
-        fun noLinesOrTitles(): Map<String, Any> {
+        fun noLinesOrTitles(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     layerMapping() +
