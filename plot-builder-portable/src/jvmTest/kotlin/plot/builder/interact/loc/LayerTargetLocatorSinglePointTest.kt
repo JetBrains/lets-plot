@@ -51,8 +51,7 @@ class LayerTargetLocatorSinglePointTest {
 
         assertObjects(locator, POINT, POINT_KEY)
         assertObjects(locator, offsetY(POINT), POINT_KEY)
-
-        assertEmpty(locator, offsetX(POINT))
+        assertObjects(locator, offsetX(POINT), POINT_KEY)
     }
 
     private fun createLocator(strategy: LookupStrategy, space: LookupSpace): GeomTargetLocator {

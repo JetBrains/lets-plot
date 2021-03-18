@@ -7,7 +7,6 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
@@ -21,8 +20,13 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
-        return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotFromRawSpecs(plotSpec, plotSize, plotMaxWidth, computationMessagesHandler)
+        return AwtPlotFactoryUtil.buildPlotFromRawSpecs(
+            plotSpec,
+            plotSize,
+            plotMaxWidth,
+            svgComponentFactory, executor,
+            computationMessagesHandler
+        )
     }
 
     fun buildPlotFromProcessedSpecs(
@@ -33,8 +37,13 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
-        return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotFromProcessedSpecs(plotSpec, plotSize, plotMaxWidth, computationMessagesHandler)
+        return AwtPlotFactoryUtil.buildPlotFromProcessedSpecs(
+            plotSpec,
+            plotSize,
+            plotMaxWidth,
+            svgComponentFactory, executor,
+            computationMessagesHandler
+        )
     }
 
     fun buildPlotComponent(
@@ -42,27 +51,10 @@ object MonolithicAwt {
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-        return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotComponent(plotContainer)
-    }
-
-    private fun createPlotFactory(
-        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): AwtPlotFactory {
-        return object : AwtPlotFactory(svgComponentFactory, executor) {
-            override fun buildPlotComponent(
-                plotBuildInfo: PlotBuildInfo
-            ): JComponent {
-                val assembler = plotBuildInfo.plotAssembler
-                val plot = assembler.createPlot()
-                val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-
-                require(!plotContainer.isLiveMap) { "geom_livemap is not enabled" }
-
-                return buildPlotComponent(plotContainer)
-            }
-        }
+        return AwtPlotFactoryUtil.buildPlotComponent(
+            plotContainer,
+            svgComponentFactory, executor
+        )
     }
 
     /**

@@ -5,15 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotContainer
 
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.plotContainer.BarPlotResizeDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotResizableDemoWindowJfx
 
-object BarPlotResizeContinuousXDemoJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.continuousX(),
-            SceneMapperDemoFactory(JFX_PLOT_STYLESHEET)
-        )
+fun main() {
+    with(BarPlotResizeDemo.continuousX()) {
+        PlotResizableDemoWindowJfx(
+            "Bar plot (X-continuous)",
+            plot = createPlot()
+        ).open()
     }
 }

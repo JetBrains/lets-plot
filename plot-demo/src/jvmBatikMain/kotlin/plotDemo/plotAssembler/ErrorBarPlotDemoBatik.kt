@@ -6,20 +6,13 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.ErrorBarPlotDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowBatik
 
-class ErrorBarPlotDemoBatik : ErrorBarPlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Error-bar plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            ErrorBarPlotDemoBatik().show()
-        }
+fun main() {
+    with(ErrorBarPlotDemo()) {
+        PlotObjectsDemoWindowBatik(
+            "Error-bar plot",
+            plotList = createPlots()
+        ).open()
     }
 }

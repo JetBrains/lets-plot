@@ -6,7 +6,6 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil.fill
 import jetbrains.datalore.plotDemo.model.util.DemoUtil.gauss
 import jetbrains.datalore.plotDemo.model.util.DemoUtil.zip
@@ -15,8 +14,8 @@ import jetbrains.datalore.plotDemo.model.util.DemoUtil.zip
  * See 'Plotting distributions'
  * www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
-open class BoxPlot : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class BoxPlot {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             withVarWidth(),
@@ -55,7 +54,7 @@ open class BoxPlot : PlotConfigDemoBase() {
         //===========================
 
 
-        fun basic(): Map<String, Any> {
+        fun basic(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -75,7 +74,7 @@ open class BoxPlot : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withVarWidth(): Map<String, Any> {
+        fun withVarWidth(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -96,7 +95,7 @@ open class BoxPlot : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withCondColored(): Map<String, Any> {
+        fun withCondColored(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -117,7 +116,7 @@ open class BoxPlot : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withOutlierOverride(): Map<String, Any> {
+        fun withOutlierOverride(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -140,7 +139,7 @@ open class BoxPlot : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withGrouping(): Map<String, Any> {
+        fun withGrouping(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -161,7 +160,7 @@ open class BoxPlot : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withGroupingAndVarWidth(): Map<String, Any> {
+        fun withGroupingAndVarWidth(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +
@@ -183,7 +182,7 @@ open class BoxPlot : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withMiddlePoint(): Map<String, Any> {
+        fun withMiddlePoint(): MutableMap<String, Any> {
             val spec = """
                 |   {
                 |      'kind': 'plot',

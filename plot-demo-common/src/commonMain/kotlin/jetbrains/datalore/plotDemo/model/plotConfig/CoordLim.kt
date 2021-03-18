@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class CoordLim : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class CoordLim {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             fixed(),
             fixedXLim(107, 117),
@@ -51,7 +50,7 @@ class CoordLim : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun fixedXLim(min: Number, max: Number): Map<String, Any> {
+    private fun fixedXLim(min: Number, max: Number): MutableMap<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {
@@ -65,7 +64,7 @@ class CoordLim : PlotConfigDemoBase() {
         return spec
     }
 
-    private fun fixedYLim(min: Number, max: Number): Map<String, Any> {
+    private fun fixedYLim(min: Number, max: Number): MutableMap<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {
@@ -79,7 +78,7 @@ class CoordLim : PlotConfigDemoBase() {
         return spec
     }
 
-    private fun fixedLims(xMin: Number, xMax: Number, yMin: Number, yMax: Number): Map<String, Any> {
+    private fun fixedLims(xMin: Number, xMax: Number, yMin: Number, yMax: Number): MutableMap<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {
@@ -93,7 +92,7 @@ class CoordLim : PlotConfigDemoBase() {
         return spec
     }
 
-    private fun fixed(): Map<String, Any> {
+    private fun fixed(): MutableMap<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {
@@ -107,7 +106,7 @@ class CoordLim : PlotConfigDemoBase() {
         return spec
     }
 
-    private fun cartesian(): Map<String, Any> {
+    private fun cartesian(): MutableMap<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {
@@ -121,7 +120,7 @@ class CoordLim : PlotConfigDemoBase() {
         return spec
     }
 
-    private fun cartesianXLim(min: Number, max: Number): Map<String, Any> {
+    private fun cartesianXLim(min: Number, max: Number): MutableMap<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {

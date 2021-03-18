@@ -5,24 +5,15 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.plotConfig.ScaleSize
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object ScaleSizeJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ScaleSize()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            @Suppress("SpellCheckingInspection")
-            PlotConfigDemoUtil.show(
-                "scale_size ans scale_size_area",
-                plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                DoubleVector(600.0, 300.0)
-            )
-        }
+fun main() {
+    with(ScaleSize()) {
+        PlotSpecsDemoWindowJfx(
+            "scale_size ans scale_size_area",
+            plotSpecList()
+        ).open()
     }
 }
+

@@ -16,6 +16,7 @@ import jetbrains.livemap.api.projection
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.core.projections.ProjectionType
+import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.RasterTileSystemProvider
 import jetbrains.livemap.ui.Clipboard
 
@@ -34,14 +35,12 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
 
     internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapBuilder {
         return liveMapConfig {
-            // raster tiles without geocoding
-            tileSystemProvider = RasterTileSystemProvider("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
-            geocodingService = Services.bogusGeocodingService()
-            attribution = "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
+            //tileSystemProvider = RasterTileSystemProvider("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
+            tileSystemProvider = TileSystemProvider.VectorTileSystemProvider(Services.jetbrainsTileProvider())
 
-            // vector tiles and geocoding
-            //tileSystemProvider = VectorTileSystemProvider(Services.devTileProvider())
-            //geocodingService = Services.devGeocodingService()
+            geocodingService = Services.bogusGeocodingService()
+            //geocodingService = Services.jetbrainsGeocodingService()
+            attribution = "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
 
 
             size = dimension

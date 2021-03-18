@@ -15,6 +15,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':vis-svg-portable')
+                implementation project(':plot-builder-portable')
             }
         }
         jvmMain {

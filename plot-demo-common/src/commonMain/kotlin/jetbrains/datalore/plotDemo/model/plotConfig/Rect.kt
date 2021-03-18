@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 
 class Rect {
-    fun plotSpecList(): List<Map<String, Any>> {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             poly()
@@ -17,9 +17,12 @@ class Rect {
 
     companion object {
         val p = """{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}"""
-        val poly1 = """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[0.0, 0.0], [20.0, 0.0], [20.0, 20.0], [0.0, 0.0]]]]}"""
-        val poly2 = """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[2.0, 2.0], [15.0, 2.0], [18.0, 25.0], [2.0, 2.0]]]]}"""
-        fun basic(): Map<String, Any> {
+        val poly1 =
+            """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[0.0, 0.0], [20.0, 0.0], [20.0, 20.0], [0.0, 0.0]]]]}"""
+        val poly2 =
+            """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[2.0, 2.0], [15.0, 2.0], [18.0, 25.0], [2.0, 2.0]]]]}"""
+
+        fun basic(): MutableMap<String, Any> {
             val spec = """
                 |{
                 |    "kind": "plot",

@@ -6,9 +6,10 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.registration.Disposable
+import java.awt.LayoutManager
 import javax.swing.JPanel
 
-open class DisposableJPanel : JPanel(null), Disposable {
+open class DisposableJPanel(layout: LayoutManager?) : JPanel(layout), Disposable {
     private var isDisposed: Boolean = false
     override fun dispose() {
         require(!isDisposed) { "Already disposed." }

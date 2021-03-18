@@ -7,16 +7,15 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class Area : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class Area {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             sepalLength()
         )
     }
 
-    private fun sepalLength(): Map<String, Any> {
+    private fun sepalLength(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +

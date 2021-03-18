@@ -115,7 +115,10 @@ object SharedPieces {
                 "           ]"
     }
 
-    fun samplePolyAndPointsPlotWith(addedLayerSpecJson: String, addedData: Map<String, List<*>>): Map<String, Any> {
+    fun samplePolyAndPointsPlotWith(
+        addedLayerSpecJson: String,
+        addedData: Map<String, List<*>>
+    ): MutableMap<String, Any> {
         @Suppress("NAME_SHADOWING")
         var addedLayerSpecJson = addedLayerSpecJson
         if (addedData.isNotEmpty()) {

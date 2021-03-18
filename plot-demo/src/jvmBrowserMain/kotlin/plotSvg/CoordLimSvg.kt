@@ -14,8 +14,8 @@ object CoordLimSvg {
             @Suppress("UNCHECKED_CAST")
             (PlotSvgDemoUtil.show(
                 "coord x/y limits",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }

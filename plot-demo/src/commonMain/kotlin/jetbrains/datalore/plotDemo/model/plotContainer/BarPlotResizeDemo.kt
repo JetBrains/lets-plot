@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
@@ -29,7 +30,11 @@ class BarPlotResizeDemo private constructor(
     private val xScale: Scale<*>
 ) {
 
-    fun createPlot(plotSizeProp: ReadableProperty<DoubleVector>): PlotContainer {
+    fun createPlotContainer(plotSizeProp: ReadableProperty<DoubleVector>): PlotContainer {
+        return PlotContainer(createPlot(), plotSizeProp)
+    }
+
+    fun createPlot(): Plot {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat
@@ -95,7 +100,7 @@ class BarPlotResizeDemo private constructor(
             listOf(layer), CoordProviders.cartesian(), DefaultTheme()
         )
 //        assembler.disableInteractions()
-        return PlotContainer(assembler.createPlot(), plotSizeProp)
+        return assembler.createPlot()
     }
 
     companion object {

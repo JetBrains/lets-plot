@@ -6,11 +6,10 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
-open class Bin2d : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class Bin2d {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
             setBinCount(),
@@ -46,7 +45,7 @@ open class Bin2d : PlotConfigDemoBase() {
         //===========================
 
 
-        fun basic(): Map<String, Any> {
+        fun basic(): MutableMap<String, Any> {
             val spec = """
                 |   { 
                 |      'kind': 'plot', 
@@ -67,7 +66,7 @@ open class Bin2d : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun setBinCount(): Map<String, Any> {
+        fun setBinCount(): MutableMap<String, Any> {
             val spec = """
                 |   { 
                 |      'kind': 'plot', 
@@ -89,7 +88,7 @@ open class Bin2d : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun setBinWidth(): Map<String, Any> {
+        fun setBinWidth(): MutableMap<String, Any> {
             val spec = """
                 |   { 
                 |      'kind': 'plot', 
@@ -112,7 +111,7 @@ open class Bin2d : PlotConfigDemoBase() {
         }
 
         @Suppress("FunctionName")
-        fun setBinWidth_Weight(): Map<String, Any> {
+        fun setBinWidth_Weight(): MutableMap<String, Any> {
             val spec = """
                 |   { 
                 |      'kind': 'plot', 
@@ -138,7 +137,7 @@ open class Bin2d : PlotConfigDemoBase() {
         }
 
         @Suppress("FunctionName")
-        fun setBinWidth_Weight_Density(): Map<String, Any> {
+        fun setBinWidth_Weight_Density(): MutableMap<String, Any> {
             val spec = """
                 |   { 
                 |      'kind': 'plot', 

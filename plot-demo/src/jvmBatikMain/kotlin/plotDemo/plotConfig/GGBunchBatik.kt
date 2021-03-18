@@ -6,20 +6,13 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
-object GGBunchBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(GGBunch()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "GGBunch",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                null
-            )
-        }
+fun main() {
+    with(GGBunch()) {
+        PlotSpecsDemoWindowBatik(
+            "GGBunch",
+            plotSpecList()
+        ).open()
     }
 }

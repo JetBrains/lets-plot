@@ -14,8 +14,8 @@ object TooltipConfigBrowser {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
                 "Tooltip config plot",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }

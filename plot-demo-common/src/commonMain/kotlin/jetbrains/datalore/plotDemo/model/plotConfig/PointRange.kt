@@ -6,11 +6,10 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 @Suppress("DuplicatedCode")
-class PointRange : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class PointRange {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             drink(),
             basic(),
@@ -19,7 +18,7 @@ class PointRange : PlotConfigDemoBase() {
         )
     }
 
-    private fun drink(): Map<String, Any> {
+    private fun drink(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             |'data' : {'drink': ['coffee','tea','water', 'milk'],
@@ -38,7 +37,8 @@ class PointRange : PlotConfigDemoBase() {
             """.trimMargin()
         return parsePlotSpec(spec)
     }
-    private fun basic(): Map<String, Any> {
+
+    private fun basic(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | $DATA,
@@ -58,7 +58,7 @@ class PointRange : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun adjustMidpointSize(): Map<String, Any> {
+    private fun adjustMidpointSize(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | $DATA,
@@ -80,7 +80,7 @@ class PointRange : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun adjustMidpointAndFill(): Map<String, Any> {
+    private fun adjustMidpointAndFill(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | $DATA,

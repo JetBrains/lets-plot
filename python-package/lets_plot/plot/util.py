@@ -28,10 +28,6 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
 
         data_meta.update({'pubsub': {'channel_id': raw_data.channel_id, 'col_names': raw_data.col_names}})
 
-    elif is_geo_data_frame(data):
-        data_meta.update(get_geo_data_frame_meta(data))
-
-
     # mapping
     mapping = {}
     mapping_meta = []

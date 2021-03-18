@@ -31,7 +31,6 @@ open class BarPlotDemo : SimpleDemoBase() {
             simple(),
             grouped(false),         // grouped, dodged
             grouped(true)          // grouped, stacked
-//            countStat()
         )
     }
 
@@ -152,66 +151,6 @@ open class BarPlotDemo : SimpleDemoBase() {
         assembler.disableInteractions()
         return assembler.createPlot()
     }
-
-    // No more deferred bindings
-//    private fun countStat(): jetbrains.datalore.plot.builder.Plot {
-//        val count = 100
-//        // gen normally distributed numbers in range 0..9 (approximately)
-//        val gauss0_9 = DemoUtil.gauss(count, 24, 4.0, 2.0)
-//        val a = ArrayList<Double>()
-//        for (d in gauss0_9) {
-//            a.add(round(d))
-//        }
-//
-//        val varA = DataFrame.Variable("A")
-//        val data = DataFrame.Builder()
-//            .putNumeric(varA, a)
-//            .build()
-//
-//        val fillScaleProvider = ScaleProviderHelper.create(
-//            "count (fill color)",
-//            Aes.COLOR,
-//            DefaultMapperProviderUtil.createWithDiscreteOutput(
-//                listOf(
-//                    Color.DARK_BLUE,
-//                    Color.DARK_GREEN,
-//                    Color.DARK_MAGENTA
-//                ), Color.GRAY
-//            )
-//        )
-//
-//        val scaleByAes = TypedScaleMap(
-//            mapOf(
-//                Aes.X to Scales.continuousDomainNumericRange("A"),
-//                Aes.Y to Scales.continuousDomainNumericRange(""),
-//                Aes.FILL to scaleTargetColor
-//            )
-//        )
-//
-//        val layer = GeomLayerBuilder.demoAndTest()
-//            .stat(Stats.count())
-//            .geom(GeomProvider.bar())
-//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
-//            .addBinding(
-//                VarBinding(
-//                    varA,
-//                    Aes.X,
-//                    Scales.continuousDomainNumericRange("A")
-//                )
-//            )
-//            .addBinding(VarBinding.deferred(Stats.COUNT, Aes.FILL, fillScaleProvider))
-//            .addConstantAes(Aes.WIDTH, .3)
-//            .build(data)
-//        val assembler = PlotAssembler.singleTile(
-//            listOf(layer),
-//            CoordProviders.cartesian(),
-//            DefaultTheme()
-//        )
-//
-//        assembler.disableInteractions()
-//        return assembler.createPlot()
-//    }
-
 
     companion object {
         private fun xValues(count: Int): List<Double> {

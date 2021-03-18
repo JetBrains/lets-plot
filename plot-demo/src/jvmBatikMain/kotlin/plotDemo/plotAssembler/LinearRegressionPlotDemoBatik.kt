@@ -6,20 +6,13 @@
 package jetbrains.datalore.plotDemo.plotAssembler
 
 import jetbrains.datalore.plotDemo.model.plotAssembler.LinearRegressionPlotDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowBatik
 
-class LinearRegressionPlotDemoBatik : LinearRegressionPlotDemo() {
-
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Linear regression plot")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            LinearRegressionPlotDemoBatik().show()
-        }
+fun main() {
+    with(LinearRegressionPlotDemo()) {
+        PlotObjectsDemoWindowBatik(
+            "Linear regression plot",
+            plotList = createPlots()
+        ).open()
     }
 }

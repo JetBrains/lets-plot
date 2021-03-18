@@ -6,12 +6,13 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.plotDemo.model.component.TextLabelDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 
 fun main() {
     with(TextLabelDemo()) {
-        val demoModels = listOf(createModel())
-        val svgRoots = createSvgRoots(demoModels)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Text label anchor and rotation")
+        SvgViewerDemoWindowBatik(
+            "Text label anchor and rotation",
+            createSvgRoots(listOf(createModel()))
+        ).open()
     }
 }

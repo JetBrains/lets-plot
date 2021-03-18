@@ -27,6 +27,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':vis-svg-portable')
+                implementation project(':vis-svg-mapper')
 
                 implementation project(':test-common')
             }
@@ -35,7 +36,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                implementation project(':vis-svg-mapper')
+//                implementation project(':vis-svg-mapper')
 
                 batikArtifacts.forEach {
                     api "$batikGroupId:$it:$batik_version"

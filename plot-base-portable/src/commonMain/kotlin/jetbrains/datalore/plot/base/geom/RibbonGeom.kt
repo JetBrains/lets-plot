@@ -10,10 +10,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromFill
+import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 class RibbonGeom : GeomBase() {
@@ -41,10 +42,8 @@ class RibbonGeom : GeomBase() {
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val targetCollector = ctx.targetCollector
         val helper = GeomHelper(pos, coord, ctx)
-
         for (p in aesthetics.dataPoints()) {
             addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMIN, helper)
         }
     }
 
@@ -56,7 +55,25 @@ class RibbonGeom : GeomBase() {
     ) {
         val coord = toLocation(p)
         if (coord != null) {
-            collector.addPoint(p.index(), helper.toClient(coord, p), 0.0, params().setColor(fromFill(p)))
+            val hint = HintsCollection.HintConfigFactory()
+                .defaultObjectRadius(0.0)
+                .defaultX(p.x()!!)
+                .defaultKind(TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+                .defaultColor(
+                    p.fill()!!,
+                    alpha = null
+                )
+
+            val hintsCollection = HintsCollection(p, helper)
+                .addHint(hint.create(Aes.YMAX))
+                .addHint(hint.create(Aes.YMIN))
+
+            collector.addPoint(
+                p.index(),
+                helper.toClient(coord, p),
+                0.0,
+                params().setTipLayoutHints(hintsCollection.hints)
+            )
         }
     }
 

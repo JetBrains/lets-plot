@@ -19,14 +19,20 @@ import jetbrains.datalore.plot.builder.interact.GeomInteraction
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
         val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
-
-        // ToDo: 'guide_xxx' can also be found in 'guides(<aes>=....)'
-
         for (scaleConfig in scaleConfigs) {
             if (scaleConfig.hasGuideOptions()) {
-                val guideOptions = scaleConfig.gerGuideOptions().createGuideOptions()
+                val guideOptions = scaleConfig.getGuideOptions().createGuideOptions()
                 guideOptionsByAes[scaleConfig.aes] = guideOptions
             }
+        }
+        return guideOptionsByAes
+    }
+
+    internal fun createGuideOptionsMap(guideOptionsList: Map<String,Any>): Map<Aes<*>, GuideOptions> {
+        val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
+        for ((key, value) in guideOptionsList) {
+            val aes = Option.Mapping.toAes(key)
+            guideOptionsByAes[aes] = GuideConfig.create(value).createGuideOptions()
         }
         return guideOptionsByAes
     }
