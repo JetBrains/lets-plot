@@ -165,9 +165,9 @@ class GGBunch(FeatureSpec):
     """
 
     def __init__(self):
-    """
-    Initialize self.
-    """
+        """
+        Initialize self.
+        """
         super().__init__('ggbunch', None)
         self.items = []
 
