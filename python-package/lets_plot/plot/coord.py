@@ -130,7 +130,7 @@ def coord_map(xlim=None, ylim=None):
         LetsPlot.setup_html()
         us = geocode_states('US-48').get_boundaries(4)
         ggplot() + geom_map(map=us, fill='gray', color='white') + \\
-            coord_map(xlim=(-120, -115))
+            coord_map(xlim=(-130, -100))
     """
 
     return _coord('map', xlim=xlim, ylim=ylim)

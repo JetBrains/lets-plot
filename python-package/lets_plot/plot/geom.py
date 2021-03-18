@@ -1746,7 +1746,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *
@@ -1859,7 +1859,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *

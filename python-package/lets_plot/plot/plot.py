@@ -55,7 +55,7 @@ def ggplot(data=None, mapping=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10, 12, 14
+        :emphasize-lines: 11, 13, 15
 
         import numpy as np
         from lets_plot import *
