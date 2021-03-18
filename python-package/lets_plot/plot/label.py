@@ -20,17 +20,13 @@ def ggtitle(label):
 
     Parameters
     ----------
-    label: string
+    label : str
         The text for the plot title.
 
     Returns
     --------
     `FeatureSpec`
         Plot title specification.
-
-    Note
-    ----
-    Changes plot title.
 
     Examples
     --------
@@ -43,6 +39,7 @@ def ggtitle(label):
         data = {'x': list(range(10)), 'y': list(range(10))}
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             ggtitle('New Plot Title')
+
     """
     return labs(title=label)
 
@@ -53,17 +50,13 @@ def xlab(label):
 
     Parameters
     ----------
-    label: string
+    label : str
         The text for the x axis label.
 
     Returns
     -------
     `FeatureSpec`
         Axis label specification.
-
-    Note
-    ----
-    Change x axis label.
 
     Examples
     --------
@@ -76,6 +69,7 @@ def xlab(label):
         data = {'x': list(range(10)), 'y': list(range(10))}
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             xlab('x axis label')
+
     """
     return labs(x=label)
 
@@ -86,17 +80,13 @@ def ylab(label):
 
     Parameters
     ----------
-    label: string
+    label : str
         The text for the y axis label.
 
     Returns
     -------
     `FeatureSpec`
         Axis label specification.
-
-    Note
-    ----
-    Change y axis label.
 
     Examples
     --------
@@ -109,6 +99,7 @@ def ylab(label):
         data = {'x': list(range(10)), 'y': list(range(10))}
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             ylab('y axis label')
+
     """
     return labs(y=label)
 
@@ -119,7 +110,7 @@ def labs(**kwargs):
 
     Parameters
     ----------
-    kwargs: dict
+    kwargs : dict
         A list of new name-value pairs where name should be an aesthetic,
         e.g. title='Plot title' or aesthetic='Scale label'.
 
@@ -127,10 +118,6 @@ def labs(**kwargs):
     -------
     `FeatureSpec` or `FeatureSpecArray`
         Axis label specification.
-
-    Note
-    ----
-    Change plot title, axis labels and legend titles.
 
     Examples
     --------
@@ -144,6 +131,7 @@ def labs(**kwargs):
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             labs(title='New plot title', x='New x axis label', \\
                  y='New y axis label', size='New legend title')
+
     """
     specs = []
     for k, v in kwargs.items():

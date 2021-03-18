@@ -19,10 +19,11 @@ def ggplot(data=None, mapping=None):
     Parameters
     ----------
     data : dict or `DataFrame`
-        Default dataset to use for the plot. If not specified, must be supplied in each layer added to the plot.
+        Default dataset to use for the plot. If not specified,
+        must be supplied in each layer added to the plot.
     mapping : `FeatureSpec`
-        Default list of aesthetic mappings to use for the plot. If not specified, must be supplied in each layer
-        added to the plot.
+        Default list of aesthetic mappings to use for the plot.
+        If not specified, must be supplied in each layer added to the plot.
 
     Returns
     -------
@@ -31,32 +32,24 @@ def ggplot(data=None, mapping=None):
 
     Note
     ----
-    `ggplot()` initializes a ggplot object. It can be used to declare the input data frame for a graphic and to
-    specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically
-    overridden.
+    `ggplot()` initializes a ggplot object.
+    It can be used to declare the input data frame for a graphic and
+    to specify the set of plot aesthetics intended to be common
+    throughout all subsequent layers unless specifically overridden.
 
-    `ggplot()` is typically used to construct a plot incrementally, using the + operator to add layers to the
-    existing ggplot object. This is advantageous in that the code is explicit about which layers are added
-    and the order in which they are added. For complex graphics with multiple layers, initialization with
-    `ggplot()` is recommended.
+    `ggplot()` is typically used to construct a plot incrementally,
+    using the + operator to add layers to the existing ggplot object.
+    This is advantageous in that the code is explicit about which layers
+    are added and the order in which they are added. For complex graphics
+    with multiple layers, initialization with `ggplot()` is recommended.
 
     There are three common ways to invoke ggplot (see examples below):
+        - `ggplot(data, aes(x, y))`: This method is recommended if all layers use the same data and the same set of aesthetics, although this method can also be used to add a layer using data from another data frame.
+        - `ggplot(data)`: This method specifies the default data frame to use for the plot, but no aesthetics are defined up front. This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary from one layer to another.
+        - `ggplot()`: This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
 
-    - `ggplot(data, aes(x,y))`:
-      This method is recommended if all layers use the same data and the same set of aesthetics, although
-      this method can also be used to add a layer using data from another data frame.
-
-    - `ggplot(data)`:
-      This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
-      This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
-      from one layer to another.
-
-    - `ggplot()`:
-      This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
-      useful when multiple data frames are used to produce different layers, as is often the case in complex
-      graphics.
-
-    `ggplot()` with no layers defined will produce an error message: "No layers in plot".
+    `ggplot()` with no layers defined will produce an error message:
+    "No layers in plot".
 
     Examples
     --------
@@ -123,6 +116,7 @@ def ggsize(width, height):
         y = np.random.normal(size=50)
         data = {'x': x, 'y': y}
         ggplot(data) + geom_line(aes('x', 'y')) + ggsize(400, 150)
+
     """
     assert isinstance(width, numbers.Number), "'width' must be numeric"
     assert isinstance(height, numbers.Number), "'height' must be numeric"
@@ -139,14 +133,15 @@ def ggsize(width, height):
 class GGBunch(FeatureSpec):
     """
     Collection of plots created by ggplot function.
-    Use method `add_plot()` to add plot to 'bunch'. Each plot can have arbitrary location and size.
+    Use method `add_plot()` to add plot to 'bunch'.
+    Each plot can have arbitrary location and size.
     Use `show()` to draw all plots in bunch.
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11-15
+        :emphasize-lines: 10-14
 
         import numpy as np
         from lets_plot import *
@@ -162,6 +157,7 @@ class GGBunch(FeatureSpec):
         bunch.add_plot(p + geom_histogram(bins=3), w, 0)
         bunch.add_plot(p + geom_line(), 0, h, 2*w, h)
         bunch.show()
+
     """
 
     def __init__(self):
@@ -177,7 +173,7 @@ class GGBunch(FeatureSpec):
 
         Parameters
         ----------
-        plot_spec :
+        plot_spec
             Plot specification created by `ggplot()` function.
         x : int
             x-coordinate of plot origin in px.
@@ -219,7 +215,7 @@ class GGBunch(FeatureSpec):
 
     def _repr_html_(self):
         """
-        Special method discovered and invoked by IPython.display.display
+        Special method discovered and invoked by IPython.display.display.
         """
         from ..frontend_context._configuration import _as_html
         return _as_html(self.as_dict())
