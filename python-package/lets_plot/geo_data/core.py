@@ -279,11 +279,7 @@ def regions_city(request=None, within=None):
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
-<<<<<<< HEAD
     Create a `Geocoder`. Allows to refine ambiguous request with `where()` method,
-=======
-    Create a `Geocoder`. Allows to refine ambiguous request with where method,
->>>>>>> Update docstring for the geocode() function.
     scope that limits area of geocoding or with parents.
 
     Parameters
@@ -315,7 +311,6 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
     --------
     .. jupyter-execute::
         :linenos:
-<<<<<<< HEAD
         :emphasize-lines: 5
 
         from IPython.display import display
@@ -325,18 +320,11 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
         states = geocode('state').scope('Italy').get_boundaries(6)
         display(states.head())
         ggplot() + geom_map(data=states)
-=======
-        :emphasize-lines: 2
-
-        from lets_plot.geo_data import *
-        geocode('state').scope('Italia').get_boundaries()
->>>>>>> Update docstring for the geocode() function.
 
     |
 
     .. jupyter-execute::
         :linenos:
-<<<<<<< HEAD
         :emphasize-lines: 5, 8
 
         from IPython.display import display
@@ -351,14 +339,6 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
         ggplot() + \\
             geom_livemap() + \\
             geom_point(data=cities, tooltips=layer_tooltips().line('@{found name}'))
-=======
-        :emphasize-lines: 2, 4
-
-        from lets_plot.geo_data import *
-        states = geocode(level='state', scope='US').get_geocodes().state
-        names = ['York'] * len(states)
-        geocode(names=names, states=states).ignore_not_found().get_centroids()
->>>>>>> Update docstring for the geocode() function.
 
     """
     return NamesGeocoder(level, names) \
