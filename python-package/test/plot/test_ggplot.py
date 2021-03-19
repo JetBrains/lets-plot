@@ -10,11 +10,11 @@ data = [1, 2]
 mapping_empty = gg.aes()
 mapping_x = gg.aes('X')
 
-result_empty = {'data': None, 'mapping': None, 'layers': [], 'scales': [], 'kind': 'plot'}
-result_data = {'data': data, 'mapping': None, 'layers': [], 'scales': [], 'kind': 'plot'}
-result_data_mapping_empty = {'data': data, 'mapping': mapping_empty.as_dict(), 'layers': [], 'scales': [], 'kind': 'plot'}
-result_data_mapping_x = {'data': data, 'mapping': mapping_x.as_dict(), 'layers': [], 'scales': [], 'kind': 'plot'}
-result_mapping_x = {'data': None, 'mapping': mapping_x.as_dict(), 'layers': [], 'scales': [], 'kind': 'plot'}
+result_empty = {'data': None, 'data_meta': {}, 'mapping': {'x': None, 'y': None}, 'layers': [], 'scales': [], 'kind': 'plot'}
+result_data = {'data': data, 'data_meta': {}, 'mapping': {'x': None, 'y': None}, 'layers': [], 'scales': [], 'kind': 'plot'}
+result_data_mapping_empty = {'data': data, 'data_meta': {}, 'mapping': mapping_empty.as_dict(), 'layers': [], 'scales': [], 'kind': 'plot'}
+result_data_mapping_x = {'data': data, 'data_meta': {}, 'mapping': mapping_x.as_dict(), 'layers': [], 'scales': [], 'kind': 'plot'}
+result_mapping_x = {'data': None, 'data_meta': {}, 'mapping': mapping_x.as_dict(), 'layers': [], 'scales': [], 'kind': 'plot'}
 
 
 @pytest.mark.parametrize('args,expected', [

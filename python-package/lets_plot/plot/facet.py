@@ -12,7 +12,7 @@ __all__ = ['facet_grid', 'facet_wrap']
 
 def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=None):
     """
-    Splits data by one or two faceting varibles.
+    Splits data by one or two faceting variables.
     For each data subset creates a plot panel and lays out panels as grid.
     The grid columns are defined by X faceting variable and rows are defined by Y faceting variable.
 
@@ -23,7 +23,7 @@ def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=Non
     y : string
         Variable name which defines rows of the facet grid.
     x_order : int
-        Specifies ordering direction of colums.
+        Specifies ordering direction of columns.
         1 - ascending, -1 - descending
     y_order : int
         Specifies ordering direction of rows.
@@ -73,7 +73,7 @@ def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=Non
 
 def facet_wrap(facets, ncol=None, nrow=None, order=None, format=None, dir="h"):
     """
-    Splits data by one or more faceting varibles.
+    Splits data by one or more faceting variables.
     For each data subset creates a plot panel and lays out panels according to the `ncol`, `nrow` and `dir` settings.
 
     Parameters

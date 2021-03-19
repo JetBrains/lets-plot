@@ -83,10 +83,6 @@ object PlotHtmlExport {
 
             return when {
                 PlotConfig.isPlotSpec(plotSpec) -> {
-//                    val assembler = MonolithicCommon.createPlotAssembler(plotSpec) {
-//                        // ignore messages
-//                    }
-//                    PlotSizeHelper.singlePlotSize(plotSpec, plotSize, null, assembler.facets, assembler.containsLiveMap)
                     val config = PlotConfigClientSide.create(plotSpec) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSize(
                         plotSpec, plotSize, null,

@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.geom
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.geom.PointDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowJfx
 
-class PointDemoJfx : PointDemo() {
-
-    private fun show() {
-        val demoModels = createModels()
-        val svgRoots = createSvgRoots(demoModels)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Point geom")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            PointDemoJfx().show()
-        }
+fun main() {
+    with(PointDemo()) {
+        SvgViewerDemoWindowJfx(
+            "Point geom",
+            createSvgRoots(createModels())
+        ).open()
     }
 }

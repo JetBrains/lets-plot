@@ -140,4 +140,4 @@ def _check(expected, actual):
         if key in expected:
             assert actual[key] == expected[key]
         else:
-            assert actual[key] is None
+            assert actual[key] is None or actual[key] is False

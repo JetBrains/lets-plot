@@ -6,19 +6,18 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 @Suppress("DuplicatedCode")
 
-class PolynomialRegression : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class PolynomialRegression {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             sinDemo(),
             mpgDemo()
         )
     }
 
-    private fun sinDemo(): Map<String, Any> {
+    private fun sinDemo(): MutableMap<String, Any> {
         val spec = """
                 {
                   "data": {
@@ -177,7 +176,7 @@ class PolynomialRegression : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun mpgDemo(): Map<String, Any> {
+    private fun mpgDemo(): MutableMap<String, Any> {
         val spec = """
                         {
                           "data": {

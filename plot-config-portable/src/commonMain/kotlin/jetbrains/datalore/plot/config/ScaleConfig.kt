@@ -213,7 +213,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
         return has(GUIDE)
     }
 
-    fun gerGuideOptions(): GuideConfig {
+    fun getGuideOptions(): GuideConfig {
         return GuideConfig.create(get(GUIDE)!!)
     }
 

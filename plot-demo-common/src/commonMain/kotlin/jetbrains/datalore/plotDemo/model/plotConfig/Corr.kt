@@ -7,16 +7,15 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class Corr : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class Corr {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             complexMpg()
         )
     }
 
-    private fun complexMpg(): Map<String, Any> {
+    private fun complexMpg(): MutableMap<String, Any> {
         val spec = """
             {
               "coord": { "name": "cartesian" },

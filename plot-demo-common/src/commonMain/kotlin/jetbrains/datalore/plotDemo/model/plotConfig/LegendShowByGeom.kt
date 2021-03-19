@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class LegendShowByGeom : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class LegendShowByGeom {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultLegend(),
             noLinesLegend(),
@@ -66,7 +65,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
         //===========================
 
 
-        fun defaultLegend(): Map<String, Any> {
+        fun defaultLegend(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "'layers': [" +
@@ -79,7 +78,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun noLinesLegend(): Map<String, Any> {
+        fun noLinesLegend(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "'layers': [" +
@@ -92,7 +91,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun noBothLegends(): Map<String, Any> {
+        fun noBothLegends(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "'layers': [" +

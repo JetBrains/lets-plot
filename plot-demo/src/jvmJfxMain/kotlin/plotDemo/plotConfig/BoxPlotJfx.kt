@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.plotConfig.BoxPlot
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object BoxPlotJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(BoxPlot()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "Box plot",
-                plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(BoxPlot()) {
+        PlotSpecsDemoWindowJfx(
+            "Box plot",
+            plotSpecList()
+        ).open()
     }
 }

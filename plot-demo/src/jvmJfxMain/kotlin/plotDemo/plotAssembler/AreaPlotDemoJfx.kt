@@ -5,22 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotAssembler
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotAssembler.AreaPlotDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.PlotObjectsDemoWindowJfx
 
-class AreaPlotDemoJfx : AreaPlotDemo() {
-    private fun show() {
-        val plots = createPlots()
-        val svgRoots = createSvgRootsFromPlots(plots)
-        SceneMapperDemoFrame.showSvg(svgRoots, listOf(Style.JFX_PLOT_STYLESHEET), demoComponentSize, "Area plot")
+fun main() {
+    with(AreaPlotDemo()) {
+        PlotObjectsDemoWindowJfx(
+            "Area plot",
+            plotList = createPlots()
+        ).open()
     }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            AreaPlotDemoJfx().show()
-        }
-    }
-
 }

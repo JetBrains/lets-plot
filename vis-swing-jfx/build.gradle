@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2021. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+}
+
+kotlin {
+    jvm()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation project(':base-portable')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-config-portable')
+                implementation project(':vis-svg-portable')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation project(':vis-svg-mapper-jfx')
+                implementation project(':vis-swing-common')
+            }
+        }
+    }
+}
+
+

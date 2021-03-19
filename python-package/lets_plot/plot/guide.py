@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec
 
-__all__ = ['guide_legend', 'guide_colorbar']
+__all__ = ['guide_legend', 'guide_colorbar', 'guides']
 
 
 def guide_legend(nrow=None, ncol=None, byrow=None):
@@ -88,3 +88,6 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None):
 
 def _guide(name, **kwargs):
     return FeatureSpec('guide', name=name, **kwargs)
+
+def guides(**kwargs):
+    return FeatureSpec('guides', name=None, **kwargs)

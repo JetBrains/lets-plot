@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
+import jetbrains.datalore.plot.config.Option.Plot.GUIDES
 import jetbrains.datalore.plot.config.Option.Plot.THEME
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOptionsMap
 import jetbrains.datalore.plot.config.theme.ThemeConfig
@@ -40,7 +41,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             }
         }
         this.coordProvider = coordProvider
-        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs)
+        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
     }
 
     override fun createLayerConfig(

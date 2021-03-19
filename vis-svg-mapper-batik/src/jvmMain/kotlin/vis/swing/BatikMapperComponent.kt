@@ -5,16 +5,11 @@
 
 package jetbrains.datalore.vis.swing
 
+import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import java.awt.event.MouseMotionListener
+import java.awt.*
 import javax.swing.JPanel
 
 class BatikMapperComponent(
@@ -25,65 +20,70 @@ class BatikMapperComponent(
     private val myHelper: BatikMapperComponentHelper
     private var myIsDisposed: Boolean = false
 
+    private val registrations = CompositeRegistration()
+
     init {
         isFocusable = true
-        background = Color(0,0,0,0)
+        background = Color(0, 0, 0, 0)
 
-        myHelper =
-            BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
+        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
-        myHelper.nodeContainer.addListener(object : SvgNodeContainerAdapter() {
-            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
-                if (element === svgRoot && (SvgConstants.HEIGHT.equals(
-                        event.attrSpec.name,
-                        ignoreCase = true
-                    ) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))
-                ) {
-                    this@BatikMapperComponent.invalidate()
-                }
-                this@BatikMapperComponent.repaint()
-            }
+        registrations.add(
+            myHelper.nodeContainer
+                .addListener(object : SvgNodeContainerAdapter() {
+                    override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
+                        if (element === svgRoot && (SvgConstants.HEIGHT.equals(
+                                event.attrSpec.name,
+                                ignoreCase = true
+                            ) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))
+                        ) {
+                            println("onAttributeSet: ${event.attrSpec.name}")
+                            this@BatikMapperComponent.invalidate()
+                        }
+                        this@BatikMapperComponent.parent.repaint()
+                    }
 
-            override fun onNodeAttached(node: SvgNode) {
-                this@BatikMapperComponent.repaint()
-            }
+                    override fun onNodeAttached(node: SvgNode) {
+                        this@BatikMapperComponent.parent.repaint()
+                    }
 
-            override fun onNodeDetached(node: SvgNode) {
-                this@BatikMapperComponent.repaint()
-            }
-        })
+                    override fun onNodeDetached(node: SvgNode) {
+                        this@BatikMapperComponent.parent.repaint()
+                    }
+                })
+        )
 
-        this.addMouseMotionListener(object : MouseMotionListener {
-            override fun mouseDragged(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
+//        this.addMouseMotionListener(object : MouseMotionListener {
+//            override fun mouseDragged(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//
+//            override fun mouseMoved(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//        })
 
-            override fun mouseMoved(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
-        })
-
-        this.addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
-
-            override fun mousePressed(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
-
-            override fun mouseReleased(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
-
-            override fun mouseEntered(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
-
-            override fun mouseExited(e: MouseEvent) {
-                myHelper.handleMouseEvent(e)
-            }
-        })
+//        this.addMouseListener(object : MouseAdapter() {
+//            override fun mouseClicked(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//
+//            override fun mousePressed(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//
+//            override fun mouseReleased(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//
+//            override fun mouseEntered(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//
+//            override fun mouseExited(e: MouseEvent) {
+//                myHelper.handleMouseEvent(e)
+//            }
+//        })
     }
 
     override fun paintComponent(g: Graphics) {
@@ -97,7 +97,8 @@ class BatikMapperComponent(
 
     override fun dispose() {
         require(!myIsDisposed) { "Alreadey disposed." }
-        myHelper.clear()
+        registrations.dispose()
+        myHelper.dispose()
     }
 
     companion object {

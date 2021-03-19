@@ -7,10 +7,9 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class MultiLineTooltip : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class MultiLineTooltip {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             oneLine(),
             oneLineDigit(),
@@ -22,7 +21,7 @@ open class MultiLineTooltip : PlotConfigDemoBase() {
     companion object {
         private const val OUR_DATA = "{'name': ['Aa','HH', 'Jj', 'hj', 'jp', 'aq', 'aa']}"
 
-        fun oneLine(): Map<String, Any> {
+        fun oneLine(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -40,7 +39,7 @@ open class MultiLineTooltip : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun oneLineDigit(): Map<String, Any> {
+        fun oneLineDigit(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -58,7 +57,7 @@ open class MultiLineTooltip : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun twoLines(): Map<String, Any> {
+        fun twoLines(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
@@ -77,7 +76,7 @@ open class MultiLineTooltip : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun threeLines(): Map<String, Any> {
+        fun threeLines(): MutableMap<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
                     "   'mapping': {" +

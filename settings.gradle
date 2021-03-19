@@ -17,7 +17,6 @@ include 'base-portable',
         'gis',
         'livemap',
         'livemap-demo',
-        'livemap-jvm-package',
         'plot-livemap',
         'plot-livemap-stub',
         'mapper-core',
@@ -52,7 +51,8 @@ include 'base-portable',
         'jvm-package:jvm-publish-batik',
         'test-common',
         'vis-swing-common',
-        'vis-swing-batik'
+        'vis-swing-batik',
+        'vis-swing-jfx'
 
 
 

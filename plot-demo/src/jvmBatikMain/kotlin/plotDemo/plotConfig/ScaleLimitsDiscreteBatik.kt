@@ -5,22 +5,17 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.ScaleLimitsDiscrete
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
+import java.awt.Dimension
 
-object ScaleLimitsDiscreteBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(ScaleLimitsDiscrete()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "Scale limits (discrete)",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                plotSize = DoubleVector(600.0, 200.0)
-            )
-        }
+fun main() {
+    with(ScaleLimitsDiscrete()) {
+        PlotSpecsDemoWindowBatik(
+            "Scale limits (discrete)",
+            plotSpecList(),
+            2,
+            Dimension(600, 200)
+        ).open()
     }
 }

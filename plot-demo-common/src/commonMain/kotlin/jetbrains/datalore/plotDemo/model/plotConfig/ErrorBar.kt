@@ -6,12 +6,11 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 // see: www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
 @Suppress("DuplicatedCode")
-class ErrorBar : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class ErrorBar {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             withLinesAndPoints(),
             errorbar(),
@@ -21,7 +20,7 @@ class ErrorBar : PlotConfigDemoBase() {
         )
     }
 
-    private fun withLinesAndPoints(): Map<String, Any> {
+    private fun withLinesAndPoints(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
@@ -52,7 +51,8 @@ class ErrorBar : PlotConfigDemoBase() {
             """.trimMargin()
         return parsePlotSpec(spec)
     }
-    private fun errorbar(): Map<String, Any> {
+
+    private fun errorbar(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'ggtitle'  : {'text' : 'errorbar'},
@@ -82,7 +82,8 @@ class ErrorBar : PlotConfigDemoBase() {
             """.trimMargin()
         return parsePlotSpec(spec)
     }
-    private fun pointrange(): Map<String, Any> {
+
+    private fun pointrange(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'ggtitle'  : {'text' : 'pointrange'},
@@ -110,7 +111,8 @@ class ErrorBar : PlotConfigDemoBase() {
             """.trimMargin()
         return parsePlotSpec(spec)
     }
-    private fun linerange(): Map<String, Any> {
+
+    private fun linerange(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'ggtitle'  : {'text' : 'linerange'},
@@ -140,7 +142,8 @@ class ErrorBar : PlotConfigDemoBase() {
             """.trimMargin()
         return parsePlotSpec(spec)
     }
-    private fun withBars(): Map<String, Any> {
+
+    private fun withBars(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
             | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],

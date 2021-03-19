@@ -10,7 +10,8 @@ import lets_plot as gg
 def test_ggsize():
     spec = gg.ggplot() + gg.ggsize(5, 10)
     assert spec.as_dict() == {'data': None,
-                              'mapping': None,
+                              'data_meta': {},
+                              'mapping': {'x': None, 'y': None},
                               'kind': 'plot',
                               'ggsize': {'height': 10, 'width': 5},
                               'layers': [],

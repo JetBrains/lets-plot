@@ -113,17 +113,6 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
                 val bbox = boundingBox(ring)
                 val area = calculateArea(ring)
 
-                if (area < AREA_LIMIT_TO_REMOVE_POLYGON) {
-                    @Suppress("ConstantConditionIf")
-                    if (isLogEnabled) {
-                        log("Rem.: size=" + ring.size +
-                                ", bbox=" + bbox +
-                                ", area=" + area
-                        )
-                    }
-                    continue
-                }
-
                 val simplifiedRing: List<DoubleVector>
 
                 if (ring.size > POINTS_COUNT_TO_SKIP_SIMPLIFICATION) {

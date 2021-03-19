@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geocoder, auto_join_geocoder, \
-    geo_data_frame_to_wgs84, as_map_join
+    geo_data_frame_to_wgs84, as_map_join, get_geo_data_frame_meta
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -1746,7 +1746,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *
@@ -1859,7 +1859,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *
@@ -4123,11 +4123,11 @@ def _geom(name, *,
     if is_geocoder(data):
         data = data.get_geocodes()
 
-    if is_geo_data_frame(data):
-        data = geo_data_frame_to_wgs84(data)
-
     if is_geo_data_frame(kwargs.get('map', None)):
         kwargs['map'] = geo_data_frame_to_wgs84(kwargs['map'])
+    elif is_geo_data_frame(data):
+        data = geo_data_frame_to_wgs84(data)
+        data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 

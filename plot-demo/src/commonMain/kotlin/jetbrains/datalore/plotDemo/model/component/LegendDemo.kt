@@ -23,7 +23,7 @@ import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class LegendDemo : SimpleDemoBase() {
 
-    protected fun createModels(): List<GroupComponent> {
+    fun createModels(): List<GroupComponent> {
         return listOf(
                 simple(),
                 colorBar()

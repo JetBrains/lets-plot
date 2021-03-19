@@ -5,23 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotConfig.TooltipAnchor
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object TooltipAnchorJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(TooltipAnchor()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "Anchor for tooltip",
-                plotSpecList,
-                SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
-                DoubleVector(600.0, 400.0)
-            )
-        }
+fun main() {
+    with(TooltipAnchor()) {
+        PlotSpecsDemoWindowJfx(
+            "Tooltip Anchor",
+            plotSpecList()
+        ).open()
     }
 }

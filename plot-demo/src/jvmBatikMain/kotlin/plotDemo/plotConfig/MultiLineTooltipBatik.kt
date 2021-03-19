@@ -6,20 +6,14 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.MultiLineTooltip
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
-object MultiLineTooltipBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(MultiLineTooltip() ) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "Multi-line tooltips plot",
-                plotSpecList,
-                BatikMapperDemoFactory(),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(MultiLineTooltip()) {
+        PlotSpecsDemoWindowBatik(
+            "Multi-line tooltips plot",
+            plotSpecList(),
+            2
+        ).open()
     }
 }

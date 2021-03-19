@@ -5,24 +5,15 @@
 
 package jetbrains.datalore.plotDemo.scale
 
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.scale.DateTimeScaleX
-import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
-object DateTimeScaleXJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(DateTimeScaleX()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
-                "datetime scale",
-                plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                demoComponentSize
-            )
-        }
+fun main() {
+    with(DateTimeScaleX()) {
+        PlotSpecsDemoWindowJfx(
+            "Datetime scale",
+            plotSpecList()
+        ).open()
     }
 }
 

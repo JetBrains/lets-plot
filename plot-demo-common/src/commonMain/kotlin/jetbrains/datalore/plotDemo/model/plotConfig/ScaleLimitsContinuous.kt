@@ -6,10 +6,9 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-open class ScaleLimitsContinuous : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+open class ScaleLimitsContinuous {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             colorbarNoLims(),
             colorbarLims(),
@@ -24,35 +23,35 @@ open class ScaleLimitsContinuous : PlotConfigDemoBase() {
 
     companion object {
 
-        fun colorbarNoLims(): Map<String, Any> {
-            return getSpec("{'c':[-0.3, 0, 0.3], 'x':[0, 1, 2]}", null,"No limits")
+        fun colorbarNoLims(): MutableMap<String, Any> {
+            return getSpec("{'c':[-0.3, 0, 0.3], 'x':[0, 1, 2]}", null, "No limits")
         }
 
-        fun colorbarLims(): Map<String, Any> {
+        fun colorbarLims(): MutableMap<String, Any> {
             return getSpec("{'c':[-0.3, 0, 0.3], 'x':[0, 1, 2]}", "[-1, 1]", "Limits (fill): [-1, 1]")
         }
 
-        fun colorbarLowerLim(): Map<String, Any> {
+        fun colorbarLowerLim(): MutableMap<String, Any> {
             return getSpec("{'c':[-0.3, 0, 0.3], 'x':[0, 1, 2]}", "[-1, null]", "Limits (fill): [-1, null]")
         }
 
-        fun colorbarUpperLim(): Map<String, Any> {
+        fun colorbarUpperLim(): MutableMap<String, Any> {
             return getSpec("{'c':[-0.3, 0, 0.3], 'x':[0, 1, 2]}", "[null, 1]", "Limits (fill): [null, 1]")
         }
 
-        fun colorbarZoomInLims(): Map<String, Any> {
+        fun colorbarZoomInLims(): MutableMap<String, Any> {
             return getSpec("{'c':[-3, 0, 3], 'x':[0, 1, 2]}", "[-1, 1]", "Zoom-in limits (fill): [-1, 1]")
         }
 
-        fun colorbarZoomInLowerLim(): Map<String, Any> {
+        fun colorbarZoomInLowerLim(): MutableMap<String, Any> {
             return getSpec("{'c':[-3, 0, 3], 'x':[0, 1, 2]}", "[-1, null]", "Zoom-in limits (fill): [-1, null]")
         }
 
-        fun colorbarZoomInUpperLim(): Map<String, Any> {
+        fun colorbarZoomInUpperLim(): MutableMap<String, Any> {
             return getSpec("{'c':[-3, 0, 3], 'x':[0, 1, 2]}", "[null, 1]", "Zoom-in limits (fill): [null, 1]")
         }
 
-        fun getSpec(data: String, limits: String?, title: String): Map<String, Any> {
+        fun getSpec(data: String, limits: String?, title: String): MutableMap<String, Any> {
             val spec = """
 {
     'mapping':{}, 

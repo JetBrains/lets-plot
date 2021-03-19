@@ -14,8 +14,8 @@ object CoordLimBrowser {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
                 "coord x/y limits",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }}

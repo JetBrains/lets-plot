@@ -14,8 +14,8 @@ object AreaSvg {
             @Suppress("UNCHECKED_CAST")
             (PlotSvgDemoUtil.show(
                 "Area plot",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }

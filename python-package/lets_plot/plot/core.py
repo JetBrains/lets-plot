@@ -209,6 +209,7 @@ class PlotSpec(FeatureSpec):
             plot + geom ->  plot[layers] += new layer(geom)
             plot + scale -> plot[scales] += scale
             plot + [feature]  -> plot + each feature in []
+            plot + theme + theme -> merged theme
         """
         if isinstance(other, PlotSpec):
             # pass and fail
@@ -226,6 +227,11 @@ class PlotSpec(FeatureSpec):
 
             if other.kind == 'scale':
                 plot.__scales.append(other)
+                return plot
+
+            if other.kind == 'theme':
+                new_theme_options = {k: v for k, v in other.props().items() if v is not None}
+                plot.props()['theme'] = {**plot.props().get('theme', {}), **new_theme_options}
                 return plot
 
             if isinstance(other, FeatureSpecArray):

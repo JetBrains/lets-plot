@@ -14,8 +14,8 @@ object Density2dfSvg {
             @Suppress("UNCHECKED_CAST")
             (PlotSvgDemoUtil.show(
                 "Density2df plot",
-                plotSpecList() as List<MutableMap<String, Any>>,
-                demoComponentSize
+                plotSpecList(),
+//                demoComponentSize
             ))
         }
     }

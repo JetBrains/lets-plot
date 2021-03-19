@@ -7,17 +7,16 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
-import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class HVLine : PlotConfigDemoBase() {
-    fun plotSpecList(): List<Map<String, Any>> {
+class HVLine {
+    fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             hline(),
             vline()
         )
     }
 
-    fun hline(): Map<String, Any> {
+    fun hline(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'ggtitle': {'text': 'HLine'}," +
@@ -46,7 +45,7 @@ class HVLine : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    fun vline(): Map<String, Any> {
+    fun vline(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'ggtitle': {'text': 'VLine'}," +

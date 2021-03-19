@@ -19,14 +19,6 @@ object GeomLayerListUtil {
             if (layer.hasBinding(Aes.X)) {
                 return scaleMap[Aes.X]
             }
-            for (aes in layer.renderedAes()) {
-                if (Aes.isPositionalX(aes)) {
-                    if (layer.hasBinding(aes)) {
-                        @Suppress("UNCHECKED_CAST")
-                        return scaleMap[aes as Aes<Double>]
-                    }
-                }
-            }
         }
         return null
     }
@@ -38,14 +30,6 @@ object GeomLayerListUtil {
         for (layer in layersByTile[0]) {
             if (layer.hasBinding(Aes.Y)) {
                 return scaleByAes[Aes.Y]
-            }
-            for (aes in layer.renderedAes()) {
-                if (Aes.isPositionalY(aes)) {
-                    if (layer.hasBinding(aes)) {
-                        @Suppress("UNCHECKED_CAST")
-                        return scaleByAes[aes as Aes<Double>]
-                    }
-                }
             }
         }
         return null

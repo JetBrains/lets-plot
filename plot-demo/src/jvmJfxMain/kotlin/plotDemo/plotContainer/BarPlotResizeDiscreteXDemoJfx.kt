@@ -5,15 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotContainer
 
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotContainer.BarPlotResizeDemo
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.PlotResizableDemoWindowJfx
 
-object BarPlotResizeDiscreteXDemoJfx {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(),
-            SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET)
-        )
+fun main() {
+    with(BarPlotResizeDemo.discreteX()) {
+        PlotResizableDemoWindowJfx(
+            "Bar plot (X-discrete)",
+            plot = createPlot()
+        ).open()
     }
 }

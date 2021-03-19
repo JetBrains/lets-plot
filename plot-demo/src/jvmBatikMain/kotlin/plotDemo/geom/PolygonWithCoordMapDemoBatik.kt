@@ -6,20 +6,13 @@
 package jetbrains.datalore.plotDemo.geom
 
 import jetbrains.datalore.plotDemo.model.geom.PolygonWithCoordMapDemo
-import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 
-class PolygonWithCoordMapDemoBatik : PolygonWithCoordMapDemo() {
-
-    private fun show() {
-        val demoModels = createModels()
-        val svgRoots = createSvgRoots(demoModels)
-        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Polygon with CoordMap")
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            PolygonWithCoordMapDemoBatik().show()
-        }
+fun main() {
+    with(PolygonWithCoordMapDemo()) {
+        SvgViewerDemoWindowBatik(
+            "Polygon with CoordMap SVG",
+            createSvgRoots(createModels())
+        ).open()
     }
 }

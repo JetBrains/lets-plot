@@ -1,59 +1,76 @@
 package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.registration.Disposable
-import java.awt.Color
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.GridBagLayout
+import java.awt.*
 import java.awt.event.*
 import java.util.function.Consumer
 import javax.swing.*
 
-/**
- * Note:
- *  - In IDEA plugin: inherit this calss and implement `com.intellij.openapi.Disposable`
- */
-abstract class PlotPanel(
+open class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
-    application: ApplicationContext,
+    repaintDelay: Int,  // ms
+    applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
     init {
-        layout = GridBagLayout() // to center a single child component
+        // Layout a single child component.
+        // GridBagLayout seem to work better than FlowLayout
+        // whan re-sizing component.
+        layout = GridBagLayout()
         background = Color.WHITE
 
         // Extra clean-up on 'dispose'.
         addContainerListener(object : ContainerAdapter() {
             override fun componentRemoved(e: ContainerEvent) {
-                handleChildRemovedIntern(this@PlotPanel, e.child)
+                handleChildRemovedIntern(e.child)
             }
         })
 
         val providedComponent = if (preferredSizeFromPlot) {
-            // Presumably, the outer frame will honor the 'preferred size' of plot component
+            // Build the plot component now with its default size.
+            // So that the container could take plot's preferred size in account.
             rebuildProvidedComponent(null)
+            // ToDo : updateThumbnailIcon()  here.
         } else {
             null
         }
 
         addComponentListener(
             ResizeHook(
-                skipFirstRun = preferredSizeFromPlot,
+                plotPanel = this,
                 lastProvidedComponent = providedComponent,
                 plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
                 plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
                 thumbnailIconConsumer = null,
-                application = application
+                applicationContext = applicationContext,
+                repaintDelay = repaintDelay
             )
         )
     }
 
+    final override fun dispose() {
+        removeAll()
+    }
+
     /**
-     * Note:
-     * - In IDEA plugin: check for an instance of `com.intellij.openapi.Disposable`
-     *      "is Disposable -> Disposer.dispose(child)"
+     * Dispose the "provided" plot component.
      */
-    protected abstract fun handleChildRemoved(child: Component)
+    private fun handleChildRemovedIntern(child: Component) {
+        this.handleChildRemoved(child)
+        when (child) {
+            is Disposable -> child.dispose()
+            is JScrollPane -> {
+                handleChildRemovedIntern(child.viewport.view)
+            }
+        }
+    }
+
+    /**
+     * Override for a custom disposal of child.
+     */
+    open fun handleChildRemoved(child: Component) {
+        // Nothing is needed.
+    }
 
     private fun rebuildProvidedComponent(containerSize: Dimension?): JComponent {
         removeAll()
@@ -62,92 +79,82 @@ abstract class PlotPanel(
         return providedComponent
     }
 
-    final override fun dispose() {
-        removeAll()
-    }
-
-    companion object {
-        /**
-         * Dispose provided plot component
-         */
-        private fun handleChildRemovedIntern(panel: PlotPanel, child: Component) {
-            panel.handleChildRemoved(child)
-            when (child) {
-                is Disposable -> child.dispose()
-                is JScrollPane -> {
-                    handleChildRemovedIntern(panel, child.viewport.view)
-                }
-            }
-        }
-    }
 
     private class ResizeHook(
-        private var skipFirstRun: Boolean,
+        private val plotPanel: PlotPanel,
         private var lastProvidedComponent: JComponent?,
         private val plotPreferredSize: (Dimension) -> Dimension,
         private val plotComponentFactory: (Dimension) -> JComponent,
         private var thumbnailIconConsumer: Consumer<in ImageIcon?>?,
-        private val application: ApplicationContext
+        private val applicationContext: ApplicationContext,
+        repaintDelay: Int // ms
 
     ) : ComponentAdapter() {
+        private var skipThisRun = lastProvidedComponent != null
+
         private var lastPreferredSize: Dimension? = null
 
-        private var runningTimer: Timer = Timer(0) {}
+        private val refreshTimer: Timer = Timer(repaintDelay) {
+            rebuildPlotComponent()
+        }.apply { isRepeats = false }
 
         override fun componentResized(e: ComponentEvent?) {
-            if(!runningTimer.isRunning && skipFirstRun) {
-                skipFirstRun = false
+            if (!refreshTimer.isRunning && skipThisRun) {
+                // When in IDEA pligin we can modify our state
+                // only in a command.
+                applicationContext.runWriteAction() {
+                    skipThisRun = false
+                }
                 return
             }
-            runningTimer.stop()
-            runningTimer = Timer(500, ActionListener {
-                val plotContainer = e!!.component!!
-                rebuildPlotComponent(plotContainer)
-            }).apply {
-                isRepeats = false
+
+            refreshTimer.stop()
+
+            if (lastProvidedComponent is JScrollPane) {
+                lastProvidedComponent?.preferredSize = e?.component?.size
+                lastProvidedComponent?.size = e?.component?.size
+                plotPanel.revalidate()
+                return
             }
-            runningTimer.start()
+
+            refreshTimer.restart()
         }
 
-        private fun rebuildPlotComponent(plotContainer: Component) {
+        private fun rebuildPlotComponent() {
             val action = Runnable {
 
-                val plotContainerSize = plotContainer.size
+                val plotContainerSize = plotPanel.size
                 if (plotContainerSize == null) return@Runnable
 
-                if (lastProvidedComponent is JScrollPane) {
-                    // GGBunch - do not rebuid: it is constant size.
-                    lastProvidedComponent!!.preferredSize = plotContainerSize
-                    lastProvidedComponent!!.size = plotContainerSize
-                } else {
+                check(!(lastProvidedComponent is JScrollPane)) { "Unexpected JScrollPane" }
 
-                    // Single plot
-                    val preferredSize: Dimension = plotPreferredSize(plotContainerSize)
-                    if (lastPreferredSize == preferredSize) {
-                        // No change in size => no need to rebuild plot component
-                        return@Runnable
-                    }
-                    lastPreferredSize = preferredSize
-                    val updateThumbnail = lastProvidedComponent == null
-                    lastProvidedComponent = plotComponentFactory(plotContainerSize)
-                    if (updateThumbnail && thumbnailIconConsumer != null) {
-                        // ToDo
+                // Either updating an existing "single" plot or
+                // creating a new plot (single or GGBunch) for a first time.
+                val preferredSize: Dimension = plotPreferredSize(plotContainerSize)
+                if (lastPreferredSize == preferredSize) {
+                    // No change in size => no need to rebuild plot component
+                    return@Runnable
+                }
+                lastPreferredSize = preferredSize
+                val updateThumbnail = lastProvidedComponent == null
+                lastProvidedComponent = plotComponentFactory(plotContainerSize)
+                if (updateThumbnail && thumbnailIconConsumer != null) {
+                    // ToDo
 //                        com.jetbrains.plugins.letsPlot.figure.ComponentFigure.updateThumbnailIcon(
 //                            com.jetbrains.plugins.letsPlot.figure.ComponentFigure.actualPlotComponent(
 //                                myLastProvidedComponent
 //                            ), myThumbnailIconConsumer
 //                        )
-                    }
-
-                    plotContainer.revalidate()
-
-                    // ToDo: In IDEA plugin ("SciVew"):
-                    // revalidate somethin to force tabbed pane to repaint after resizing
-                    // "thumbnailIconConsumer"?
                 }
+
+                plotPanel.revalidate()
             }
 
-            application.invokeLater(action) { false }
+            applicationContext.invokeLater(action) {
+                // "expired"
+                // Other timer is running? Weird but lets wait for the next action.
+                refreshTimer.isRunning
+            }
         }
     }
 }

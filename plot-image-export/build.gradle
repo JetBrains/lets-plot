@@ -27,6 +27,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
                 implementation project(':base-portable')
+                implementation project(':vis-svg-mapper')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
             }
@@ -43,7 +44,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-                implementation project(':vis-svg-mapper')
+//                implementation project(':vis-svg-mapper')
 
                 batikArtifacts.forEach {
                     api "$batikGroupId:$it:$batik_version"
@@ -143,6 +144,7 @@ publishing {
     }
     repositories {
         maven {
+//            url = uri("$rootDir/.maven-publish-dev-repo")
             url = uri("https://jetbrains.bintray.com/lets-plot-maven")
         }
     }
