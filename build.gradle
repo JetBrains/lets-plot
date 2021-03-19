@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath "org.yaml:snakeyaml:1.25"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
     }
 }
 
@@ -130,3 +131,9 @@ project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 def sonatypeSnapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
 def sonatypeReleaseUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 project.ext.sonatypeUrl = version.contains('SNAPSHOT') ? sonatypeSnapshotUrl : sonatypeReleaseUrl
+
+apply plugin: 'io.codearte.nexus-staging'
+
+nexusStaging {
+    packageGroup = project.group
+}
