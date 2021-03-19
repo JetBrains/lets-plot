@@ -168,115 +168,160 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
 
 
 class Geocoder:
+    """
+    Do not use this class explicitly.
+
+    Instead you should construct its objects with special functions:
+    `geocode()`, `geocode_cities()`, `geocode_counties()`, `geocode_states()`,
+    `geocode_countries()`, `reverse_geocode()`.
+    """
+
     def __init__(self):
+        """Initialize self."""
+
         self._inc_res = 0
 
     def get_limits(self) -> 'GeoDataFrame':
         """
-        Return bboxes (Polygon geometry) for given regions in form of GeoDataFrame. For regions intersecting
-        anti-meridian bbox will be divided into two parts and stored as two rows.
+        Return bboxes (Polygon geometry) for given regions in form of `GeoDataFrame`.
+        For regions intersecting anti-meridian bbox will be divided into two parts
+        and stored as two rows.
+
+        Returns
+        -------
+        `GeoDataFrame`
+            Table of data.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5
 
-            >>> from lets_plot.geo_data import *
-            >>> limits = geocode_countries(['germany', 'russia']).get_limits()
-            >>> limits
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            countries = geocode_countries(['Germany', 'Poland']).get_limits()
+            display(countries)
+            ggplot() + geom_rect(aes(fill='found name'), data=countries, color='white')
+
         """
         return self._geocode().limits()
 
     def get_centroids(self) -> 'GeoDataFrame':
         """
-        Return centroids (Point geometry) for given regions in form of GeoDataFrame.
+        Return centroids (Point geometry) for given regions in form of `GeoDataFrame`.
+
+        Returns
+        -------
+        `GeoDataFrame`
+            Table of data.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_countries(['germany', 'russia']).get_centroids()
-            >>> centroids
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            countries = geocode_countries(['Germany', 'Poland']).get_centroids()
+            display(countries)
+            ggplot() + geom_point(aes(color='found name'), data=countries, size=10)
+
         """
         return self._geocode().centroids()
 
     def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
         """
-        Return boundaries for given regions in form of GeoDataFrame.
+        Return boundaries for given regions in the form of `GeoDataFrame`.
 
         Parameters
         ----------
-        resolution: [int | str | None]
+        resolution : int or str
             Boundaries resolution.
 
-            int: [1-15]
-                15 - maximum quality, 1 - maximum performance:
-                 - 1-3 for world scale view
-                 - 4-6 for country scale view
-                 - 7-9 for state scale view
-                 - 10-12 for county scale view
-                 - 13-15 for city scale view
+        Returns
+        -------
+        `GeoDataFrame`
+            Table of data.
 
-            str: ['world', 'country', 'state', 'county', 'city']
-                'city' - maximum quality, 'world'  - maximum performance.
-                Corresponding numeric resolutions:
-                 - 'world' - 2
-                 - 'country' - 5
-                 - 'state' - 8
-                 - 'county' - 11
-                 - 'city' - 14
+        Note
+        ----
+        If `resolution` has int type, it may take one of the following values:
+            - 1-3 for world scale view,
+            - 4-6 for country scale view,
+            - 7-9 for state scale view,
+            - 10-12 for county scale view,
+            - 13-15 for city scale view.
+        Here value 1 corresponds to maximum performance and 15 - to maximum quality.
 
-            The resolution choice depends on kind of displayed area. The number of objects also makes sense:
-			one state looks good on a 'state' scale while 50 states is a 'country' view.
+        If `resolution` is of str type, it may take one of the following values:
+            - 'world' corresponds to int value 2,
+            - 'country' corresponds to int value 5,
+            - 'state' corresponds to int value 8,
+            - 'county' corresponds to int value 11,
+            - 'city' corresponds to int value 14.
+        Here value 'world' corresponds to maximum performance and 'city' - to maximum quality.
 
-            It is allowed to use any resolution for all regions. For example 'city' scale can be used for state
-			to get more detailed boundary when zoom in or 'world' for a small preview.
+        The resolution choice depends on the type of displayed area.
+        The number of objects also matters: one state looks good on a 'state' scale
+        while 50 states is a 'country' view.
 
-            None:
-                Auto-detection by level_kind used for geocoding and number of objects. In this case
-                performance is preferred over quality. The pixelated geometries can be obtained.
-                Use explicit resolution or inc_res() function for better quality.
+        It is allowed to use any resolution for all regions.
+        For example, 'city' scale can be used for a state to get a more detailed boundary
+        when zooming in, or 'world' for a small preview.
 
-                Resolution for countries:
-                    If n < 3 => 3
-                    else => 1
+        If `resolution` is not specified (or equal to None), it will be auto-detected.
+        Auto-detection by level_kind is used for geocoding and the number of objects.
+        In this case performance is preferred over quality.
+        The pixelated geometries can be obtained.
+        Use explicit resolution or `inc_res()` function for better quality.
 
-                Resolution for states:
-                    If n < 3 => 7
-                    If n < 10 => 4
-                    else => 2
-
-                Resolution for counties:
-                    If n < 5 => 10
-                    If n < 20 => 8
-                    else => 3
-
-                Resolution for cities:
-                    If n < 5 => 13
-                    If n < 50 => 4
-                    else => 3
+        If the number of objects is equal to n, then `resolution` will be the following:
+            - For countries: if n < 3 then `resolution=3`, else `resolution=1`.
+            - For states: if n < 3 then `resolution=7`, if n < 10 then `resolution=4`, else `resolution=2`.
+            - For counties: if n < 5 then `resolution=10`, if n < 20 then `resolution=8`, else `resolution=3`.
+            - For cities: if n < 5 then `resolution=13`, if n < 50 then `resolution=4`, else `resolution=3`.
 
         Examples
         --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5
 
-            >>> from lets_plot.geo_data import *
-            >>> boundaries = geocode_countries(['germany', 'russia']).get_boundaries()
-            >>> boundaries
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            countries = geocode_countries(['Germany', 'Poland']).inc_res().get_boundaries()
+            display(countries)
+            ggplot() + geom_map(aes(fill='found name'), data=countries, color='white')
+
         """
         return self._geocode().boundaries(resolution, self._inc_res)
 
     def get_geocodes(self) -> 'DataFrame':
         """
-        Return DataFrame with metadata.
+        Return metadata for given regions.
+
+        Returns
+        -------
+        `DataFrame`
+            Table of data.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2
 
-            >>> from lets_plot.geo_data import *
-            >>> geocodes = geocode_countries(['germany', 'russia']).get_geocodes()
-            >>> geocodes
+            from lets_plot.geo_data import *
+            geocode_countries(['Germany', 'Russia']).get_geocodes()
+
         """
         return self._geocode().to_data_frame()
 
@@ -286,16 +331,28 @@ class Geocoder:
 
         Parameters
         ----------
-        delta: int
-            Value that will be added to auto-detected resolution. Default value is 2.
+        delta : int, default=2
+            Value that will be added to auto-detected resolution.
+
+        Returns
+        -------
+        `Geocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5
 
-            >>> from lets_plot.geo_data import *
-            >>> boundaries = geocode_countries(['germany', 'russia']).inc_res().get_boundaries()
-            >>> boundaries
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            countries = geocode_countries(['Germany', 'Poland']).inc_res().get_boundaries()
+            display(countries)
+            ggplot() + geom_map(aes(fill='found name'), data=countries, color='white')
+
         """
         self._inc_res = delta
         return self
@@ -322,7 +379,17 @@ def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[U
 
 
 class ReverseGeocoder(Geocoder):
+    """
+    Do not use this class explicitly.
+
+    Instead you should construct its objects with special functions:
+    `geocode()`, `geocode_cities()`, `geocode_counties()`, `geocode_states()`,
+    `geocode_countries()`, `reverse_geocode()`.
+    """
+
     def __init__(self, lon, lat, level: Optional[Union[str, LevelKind]], scope=None):
+        """Initialize self."""
+
         Geocoder.__init__(self)
 
         self._geocodes: Optional[Geocodes] = None
@@ -349,11 +416,21 @@ class ReverseGeocoder(Geocoder):
 
 
 class NamesGeocoder(Geocoder):
+    """
+    Do not use this class explicitly.
+
+    Instead you should construct its objects with special functions:
+    `geocode()`, `geocode_cities()`, `geocode_counties()`, `geocode_states()`,
+    `geocode_countries()`, `reverse_geocode()`.
+    """
+
     def __init__(
             self,
             level: Optional[Union[str, LevelKind]] = None,
             request: request_types = None
     ):
+        """Initialize self."""
+
         Geocoder.__init__(self)
 
         self._geocodes: Optional[Geocodes] = None

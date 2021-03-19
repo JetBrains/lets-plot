@@ -312,21 +312,34 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 2
+        :emphasize-lines: 5
 
+        from IPython.display import display
+        from lets_plot import *
         from lets_plot.geo_data import *
-        geocode('state').scope('Italia').get_boundaries()
+        LetsPlot.setup_html()
+        states = geocode('state').scope('Italy').get_boundaries(6)
+        display(states.head())
+        ggplot() + geom_map(data=states)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 2, 4
+        :emphasize-lines: 5, 8
 
+        from IPython.display import display
+        from lets_plot import *
         from lets_plot.geo_data import *
-        states = geocode(level='state', scope='US').get_geocodes().state
-        names = ['York'] * len(states)
-        geocode(names=names, states=states).ignore_not_found().get_centroids()
+        LetsPlot.setup_html()
+        states = geocode(level='state', scope='US').get_geocodes()
+        display(states.head())
+        names = ['York'] * len(states.state)
+        cities = geocode(names=names, states=states.state).ignore_not_found().get_centroids()
+        display(cities.head())
+        ggplot() + \\
+            geom_livemap() + \\
+            geom_point(data=cities, tooltips=layer_tooltips().line('@{found name}'))
 
     """
     return NamesGeocoder(level, names) \
