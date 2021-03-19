@@ -89,18 +89,21 @@ run `./gradlew python-package-build:buildManylinuxWheels`
  
  `./gradlew python-package-build:publishProdPythonPackage`
  
-##### 3. JVM artifacts (Bintray/JCenter):
+##### 3. JVM artifacts (Sonatype Nexus Repository):
 
- - `./gradlew :jvm-package:jvm-publish-common:bintrayUpload`
+ - `./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository`
  
- - `./gradlew :jvm-package:jvm-publish-jfx:bintrayUpload`
+ - `./gradlew publishLetsPlotJvmJfxPublicationToMavenRepository`
  
- - `./gradlew :jvm-package:jvm-publish-batik:bintrayUpload`
+ - `./gradlew publishLetsPlotJvmBatikPublicationToMavenRepository`
  
- - `./gradlew :plot-image-export:bintrayUpload`
- 
-Note that release versions will be uploaded to the `lets-plot-jars` package.    
-'alpha' and 'RC' versions will be uploaded to the `lets-plot-jars-dev` package.
+ - `./gradlew publishLetsPlotImageExportPublicationToMavenRepository`
+
+Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories
+
+Close and release repository to the Maven Central:
+
+`./gradlew closeAndReleaseRepository`
  
 ### Add the GitHub release:
  
