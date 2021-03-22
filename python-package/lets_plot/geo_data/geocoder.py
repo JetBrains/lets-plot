@@ -456,27 +456,31 @@ class NamesGeocoder(Geocoder):
 
         Parameters
         ----------
-        scope: [str | Geocoder | shapely.geometry.Polygon]
+        scope : str or `Geocoder`
             Area of interest.
+            If it is of str type then it should be the geo-object name.
+            If it is of `Geocoder` type then it must contain only one object.
 
-            str:
-            Name of geo-object.
-
-            Geocoder:
-            It must contain only one object.
-
-            shapely.geometry.Polygon:
-            Rectangular area (bounding box of the polygon).
-            Coordinates are expected to be in WGS84 reference system.
-
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_states('florida').scope('uruguay').get_centroids()
-            >>> centroids
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            scope = geocode_states('Kentucky')
+            city = geocode_cities('Franklin').scope(scope).get_boundaries()
+            display(city)
+            ggplot() + geom_map(data=city) + ggtitle('Franklin, Kentucky')
+
         """
         self._reset_geocodes()
         self._scope = _prepare_new_scope(scope)
@@ -484,51 +488,66 @@ class NamesGeocoder(Geocoder):
 
     def highlights(self, v: bool):
         """
-        Add matched string to geocodes DataFrame. Doesn't affect GeoDataFrames.
+        Add matched string to geocodes `DataFrame`. Doesn't affect `GeoDataFrame`.
 
         Parameters
         ----------
-        v: bool
-            If True geocodes DataFrame will contain column 'highlights' with string that matched the name.
+        v : bool
+            If True geocodes `DataFrame` will contain column 'highlights'
+            with string that matched the name.
 
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2
 
-            >>> from lets_plot.geo_data import *
-            >>> codes = geocode(names=['OH']).allow_ambiguous().highlights(True).get_geocodes()
-            >>> codes
+            from lets_plot.geo_data import *
+            geocode(names='OH').allow_ambiguous().highlights(True).get_geocodes()
+
         """
         self._highlights = v
         return self
 
     def countries(self, countries):
         """
-        Set parents for COUNTRY level to resolve an ambiguity or to join geometry with data via multi-key.
+        Set parents for 'country' level to resolve an ambiguity
+        or to join geometry with data via multi-key.
 
         Parameters
         ----------
-        countries: [str | Geocoder | array]
-            Parents for COUNTRY level.
+        countries : str or `Geocoder` or list
+            Parents for 'country' level.
+            If it is of str type then it should be the country name.
+            If it is of `Geocoder` type then it must contain the same number
+            of values as the number of names of `Geocoder`.
+            If it is of list type then it must be the same size
+            as the number of names of `Geocoder`.
 
-            str:
-            Name of country.
-
-            Geocoder:
-            Geocoder with countries. It must contain the same number of values as the number of names of Geocoder.
-
-            array:
-            List of country names. It must be the same size as the number of names of Geocoder.
-
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities('boston').countries('usa').get_centroids()
-            >>> centroids
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            cities = geocode_cities(['Boston', 'Boston']).countries(['US', 'UK']).get_centroids()
+            display(cities)
+            ggplot() + geom_livemap() + geom_point(data=cities, color='red', size=5)
+
         """
         self._reset_geocodes()
         self._countries = _make_parents(countries)
@@ -536,30 +555,39 @@ class NamesGeocoder(Geocoder):
 
     def states(self, states) -> 'NamesGeocoder':
         """
-        Set parents for STATE level to resolve an ambiguity or to join geometry with data via multi-key.
+        Set parents for 'state' level to resolve an ambiguity
+        or to join geometry with data via multi-key.
 
         Parameters
         ----------
-        states: [str | Geocoder | array]
-            Parents for STATE level.
+        states : str or `Geocoder` or list
+            Parents for 'state' level.
+            If it is of str type then it should be the state name.
+            If it is of `Geocoder` type then it must contain the same number
+            of values as the number of names of `Geocoder`.
+            If it is of list type then it must be the same size
+            as the number of names of `Geocoder`.
 
-            str:
-            Name of state.
-
-            Geocoder:
-            Geocoder with states. It must contain the same number of values as the number of names of Geocoder.
-
-            array:
-            List of state names. It must be the same size as the number of names of Geocoder.
-
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities('boston').states('Massachusetts').get_centroids()
-            >>> centroids
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            states = geocode_states(['Massachusetts', 'New York'])
+            cities = geocode_cities(['Boston', 'Boston']).states(states).get_centroids()
+            display(cities)
+            ggplot() + geom_livemap() + geom_point(data=cities, color='red', size=5)
+
         """
         self._reset_geocodes()
         self._states = _make_parents(states)
@@ -567,30 +595,40 @@ class NamesGeocoder(Geocoder):
 
     def counties(self, counties: parent_types) -> 'NamesGeocoder':
         """
-        Set parents for COUNTY level to resolve an ambiguity or to join geometry with data via multi-key.
+        Set parents for 'county' level to resolve an ambiguity
+        or to join geometry with data via multi-key.
 
         Parameters
         ----------
-        counties: [str | Geocoder | array]
-            Parents for COUNTY level.
+        counties : str or `Geocoder` or list
+            Parents for 'county' level.
+            If it is of str type then it should be the county name.
+            If it is of `Geocoder` type then it must contain the same number
+            of values as the number of names of `Geocoder`.
+            If it is of list type then it must be the same size
+            as the number of names of `Geocoder`.
 
-            str:
-            Name of county.
-
-            Geocoder:
-            Geocoder with counties. It must contain the same number of values as the number of names of Geocoder.
-
-            array:
-            List of county names. It must be the same size as the number of names of Geocoder.
-
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 7
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities('boston').counties('Suffolk County').states('Massachusetts').get_centroids()
-            >>> centroids
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            counties = geocode_counties(['Suffolk County', 'Erie County'])\\
+                       .states(['Massachusetts', 'New York'])
+            cities = geocode_cities(['Boston', 'Boston']).counties(counties).get_centroids()
+            display(cities)
+            ggplot() + geom_livemap() + geom_point(data=cities, color='red', size=5)
+
         """
         self._reset_geocodes()
         self._counties = _make_parents(counties)
@@ -598,15 +636,28 @@ class NamesGeocoder(Geocoder):
 
     def ignore_not_found(self) -> 'NamesGeocoder':
         """
-		Remove not found objects from the result.
+        Remove not found objects from the result.
+
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
         Examples
-        ---------
+        --------
         .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_states(['foo', 'florida']).ignore_not_found().get_centroids()
-            >>> centroids
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            countries = geocode_countries(['Germany', 'Hungary', 'Czechoslovakia'])\\
+                        .ignore_not_found().get_boundaries(6)
+            display(countries)
+            ggplot() + geom_map(aes(fill='found name'), data=countries, color='white')
+
         """
         self._reset_geocodes()
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
@@ -616,13 +667,26 @@ class NamesGeocoder(Geocoder):
         """
         Remove objects that have multiple matches from the result.
 
-        Examples
-        ---------
-        .. jupyter-execute::
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities(['worcester']).ignore_all_errors().get_centroids()
-            >>> centroids
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
+
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            cities = geocode_cities(['Boston', 'Worcester', 'Barnstable'])\\
+                     .ignore_all_errors().get_centroids()
+            display(cities)
+            ggplot() + geom_livemap() + geom_point(data=cities, color='red', size=5)
+
         """
         self._reset_geocodes()
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_all)
@@ -632,13 +696,26 @@ class NamesGeocoder(Geocoder):
         """
         For objects that have multiple matches add all of them to the result.
 
-        Examples
-        ---------
-        .. jupyter-execute::
+        Returns
+        -------
+        `NamesGeocoder`
+            Geocoder object specification.
 
-            >>> from lets_plot.geo_data import *
-            >>> centroids = geocode_cities(['worcester']).allow_ambiguous().get_centroids()
-            >>> centroids
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
+
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            cities = geocode_cities('Worcester').scope('US')\\
+                     .allow_ambiguous().get_centroids()
+            display(cities)
+            ggplot() + geom_livemap() + geom_point(data=cities, color='red', size=5)
+
         """
         self._reset_geocodes()
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
@@ -653,31 +730,66 @@ class NamesGeocoder(Geocoder):
               closest_to: Optional[Union[Geocodes, ShapelyPointType]] = None
               ) -> 'NamesGeocoder':
         """
-        Allows to resolve ambiguity by setting up extra parameters. Combination of name, county, state, country
-        identifies a row with an ambiguity.
+        Allows to resolve ambiguity by setting up extra parameters.
+        Combination of name, county, state, country identifies a row with an ambiguity.
         If row with given names does not exist error will be generated.
 
         Parameters
         ----------
-        name : string
-            Name in Geocoder that needs better qualification.
-        county : [string | None]
-            If Geocoder has parent counties this field must be present to identify a row for the name
-        state : [string | None]
-            If Geocoder has parent states this field must be present to identify a row for the name
-        country : [string | None]
-            If Geocoder has parent countries this field must be present to identify a row for the name
-        scope : [string | Geocoder | shapely.Polygon | None]
+        name : str
+            Name in `Geocoder` that needs better qualification.
+        county : str
+            If `Geocoder` has parent counties this field must be present to identify a row for the name.
+        state : str
+            If `Geocoder` has parent states this field must be present to identify a row for the name.
+        country : str
+            If `Geocoder` has parent countries this field must be present to identify a row for the name.
+        scope : str or `Geocoder` or `shapely.geometry.Polygon`
             Limits area of geocoding. If parent country is set then error will be generated.
-            If type is a string - geoobject should have geocoded scope in parents.
-            If type is a Geocoder  - geoobject should have geocoded scope in parents. Scope should contain only one entry.
-            If type is a shapely.Polygon - geoobject centroid should fall into bbox of the polygon.
-        closest_to: [Geocoder | shapely.geometry.Point | None]
+            If type is a str - geoobject should have geocoded scope in parents.
+            If type is a `Geocoder`  - geoobject should have geocoded scope in parents.
+            Scope should contain only one entry.
+            If type is a `shapely.geometry.Polygon` -
+            geoobject centroid should fall into bbox of the polygon.
+        closest_to : `Geocoder` or `shapely.geometry.Point`
             Resolve ambiguity by taking closest geoobject.
 
         Returns
         -------
-            Geocoder object
+        `NamesGeocoder`
+            Geocoder object specification.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
+
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            city = geocode_cities('Warwick').countries('US')\
+                   .where(name='Warwick', country='US', scope='Massachusetts').get_centroids()
+            display(city)
+            ggplot() + geom_livemap() + geom_point(data=city, color='red', size=5)
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 7
+
+            from IPython.display import display
+            from lets_plot import *
+            from lets_plot.geo_data import *
+            LetsPlot.setup_html()
+            closest_city = geocode_cities('Birmingham').get_centroids().iloc[0].geometry
+            city = geocode_cities('Warwick')\\
+                   .where(name='Warwick', closest_to=closest_city).get_centroids()
+            display(city)
+            ggplot() + geom_livemap() + geom_point(data=city, color='red', size=5)
+
         """
         self._reset_geocodes()
         query_spec = QuerySpec(
