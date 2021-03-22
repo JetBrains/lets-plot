@@ -113,6 +113,7 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -177,6 +178,7 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -241,6 +243,7 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -296,6 +299,7 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -351,6 +355,7 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -405,6 +410,7 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -465,6 +471,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -531,6 +538,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -572,6 +580,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -639,6 +648,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -2023,6 +2033,7 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
@@ -2084,6 +2095,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
 
     Returns
     -------
