@@ -515,10 +515,10 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     `geom_smooth()` aids the eye in seeing patterns in the presence of overplotting.
 
     Computed variables:
-      - y : predicted (smoothed) value.
-      - ymin : lower pointwise confidence interval around the mean.
-      - ymax : upper pointwise confidence interval around the mean.
-      - se : standard error.
+        - ..y.. : predicted (smoothed) value.
+        - ..ymin.. : lower pointwise confidence interval around the mean.
+        - ..ymax.. : upper pointwise confidence interval around the mean.
+        - ..se.. : standard error.
 
     `geom_smooth()` understands the following aesthetics mappings:
         - x : x-axis value.
@@ -653,6 +653,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     If used for continuous data with stat='bin' produces histogram for binned data.
     `geom_bar()` handles no group aesthetics.
 
+    Computed variables:
+        - ..count.. : number of points with same x-axis coordinate.
+
     `geom_bar()` understands the following aesthetics mappings:
         - x : x-axis value (this values will produce cases or bins for bars).
         - y : y-axis value (this value will be used to multiply the case's or bin's counts).
@@ -786,6 +789,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     `geom_histogram()` displays a 1d distribution by dividing variable
     mapped to x axis into bins and counting the number of observations in each bin.
 
+    Computed variables:
+        - ..count.. : number of points with x-axis coordinate in the same bin.
+
     `geom_histogram()` understands the following aesthetics mappings:
         - x : x-axis value (this values will produce cases or bins for bars).
         - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
@@ -908,6 +914,9 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     ----
     `geom_bin2d()` applies rectangular grid to the plane then counts observation
     in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
+
+    Computed variables:
+        - ..count.. : number of points with coordinates in the same bin.
 
     `geom_bin2d()` understands the following aesthetics mappings:
         - x : x-axis value.
@@ -1709,7 +1718,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     `geom_contour()` displays contours of a 3d surface in 2d.
 
     Computed variables:
-        - level : height of a contour.
+        - ..level.. : height of a contour.
 
     `geom_contour()` understands the following aesthetics mappings:
         - x : x-axis coordinates of the center of rectangles, forming a tessellation.
@@ -1824,7 +1833,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     `geom_contourf()` fills contours of a 3d surface in 2d.
 
     Computed variables:
-        - level : height of a contour.
+        - ..level.. : height of a contour.
 
     `geom_contourf()` understands the following aesthetics mappings:
         - x : x-axis coordinates of the center of rectangles, forming a tessellation.
@@ -2547,12 +2556,19 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     ----
+    Computed variables:
+        - ..lower.. : lower hinge, 25% quantile.
+        - ..middle.. : median, 50% quantile.
+        - ..upper.. : upper hinge, 75% quantile.
+        - ..ymin.. : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR.
+        - ..ymax.. : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR.
+
     `geom_boxplot()` understands the following aesthetics mappings:
-        - lower : lower hinge, 25% quantile.
-        - middle : median, 50% quantile.
-        - upper : upper hinge, 75% quantile.
-        - ymin : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR.
-        - ymax : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR.
+        - lower : lower hinge.
+        - middle : median.
+        - upper : upper hinge.
+        - ymin : lower whisker.
+        - ymax : upper whisker.
         - alpha : transparency level of a layer. Understands numbers between 0 and 1.
         - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
         - fill : color of geometry filling.
@@ -2932,7 +2948,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Note
     ----
-    Density stat computes variables:
+    Computed variables:
         - ..density.. : density estimate (mapped by default).
         - ..count.. : density * number of points.
         - ..scaled.. : density estimate, scaled to maximum of 1.
@@ -3099,6 +3115,9 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     ----
     `geom_density2d()` draws density function.
 
+    Computed variables:
+        - ..group.. : number of density estimate contour line.
+
     `geom_density2d()` understands the following aesthetics mappings:
         - x : x-axis coordinates.
         - y : y-axis coordinates.
@@ -3262,6 +3281,9 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     Note
     ----
     `geom_density2df()` fills density contours.
+
+    Computed variables:
+        - ..group.. : number of density estimate contour line.
 
     `geom_density2df()` understands the following aesthetics mappings:
         - x : x-axis coordinates.
@@ -3520,6 +3542,9 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     Note
     ----
     `geom_freqpoly()` connects the top points in `geom_bar()`.
+
+    Computed variables:
+        - ..count.. : number of points with x-axis coordinate in the same bin.
 
     `geom_freqpoly()` understands the following aesthetics mappings:
         - x : x-axis value.
