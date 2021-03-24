@@ -252,19 +252,23 @@ class Geocoder:
         Note
         ----
         If `resolution` has int type, it may take one of the following values:
-            - 1-3 for world scale view,
-            - 4-6 for country scale view,
-            - 7-9 for state scale view,
-            - 10-12 for county scale view,
-            - 13-15 for city scale view.
+
+        - 1-3 for world scale view,
+        - 4-6 for country scale view,
+        - 7-9 for state scale view,
+        - 10-12 for county scale view,
+        - 13-15 for city scale view.
+
         Here value 1 corresponds to maximum performance and 15 - to maximum quality.
 
         If `resolution` is of str type, it may take one of the following values:
-            - 'world' corresponds to int value 2,
-            - 'country' corresponds to int value 5,
-            - 'state' corresponds to int value 8,
-            - 'county' corresponds to int value 11,
-            - 'city' corresponds to int value 14.
+
+        - 'world' corresponds to int value 2,
+        - 'country' corresponds to int value 5,
+        - 'state' corresponds to int value 8,
+        - 'county' corresponds to int value 11,
+        - 'city' corresponds to int value 14.
+
         Here value 'world' corresponds to maximum performance and 'city' - to maximum quality.
 
         The resolution choice depends on the type of displayed area.
@@ -282,10 +286,11 @@ class Geocoder:
         Use explicit resolution or `inc_res()` function for better quality.
 
         If the number of objects is equal to n, then `resolution` will be the following:
-            - For countries: if n < 3 then `resolution=3`, else `resolution=1`.
-            - For states: if n < 3 then `resolution=7`, if n < 10 then `resolution=4`, else `resolution=2`.
-            - For counties: if n < 5 then `resolution=10`, if n < 20 then `resolution=8`, else `resolution=3`.
-            - For cities: if n < 5 then `resolution=13`, if n < 50 then `resolution=4`, else `resolution=3`.
+
+        - For countries: if n < 3 then `resolution=3`, else `resolution=1`.
+        - For states: if n < 3 then `resolution=7`, if n < 10 then `resolution=4`, else `resolution=2`.
+        - For counties: if n < 5 then `resolution=10`, if n < 20 then `resolution=8`, else `resolution=3`.
+        - For cities: if n < 5 then `resolution=13`, if n < 50 then `resolution=4`, else `resolution=3`.
 
         Examples
         --------
