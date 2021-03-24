@@ -135,5 +135,7 @@ project.ext.sonatypeUrl = version.contains('SNAPSHOT') ? sonatypeSnapshotUrl : s
 apply plugin: 'io.codearte.nexus-staging'
 
 nexusStaging {
-    packageGroup = project.group
+    packageGroup = 'org.jetbrains'
+    username = project.buildSettings.sonatype.username
+    password = project.buildSettings.sonatype.password
 }
