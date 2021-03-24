@@ -4194,6 +4194,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
       - map_join=['County_name', 'State_Name']
 
+    Note
+    ----
+    To learn more about formatting, please visit the `documentation page <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
+
     Examples
     --------
     .. jupyter-execute::
