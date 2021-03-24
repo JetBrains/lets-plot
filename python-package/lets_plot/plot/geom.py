@@ -4044,6 +4044,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
         - map_join=['County_name', 'State_Name']
 
+    Note
+    ----
+    To learn more about formatting, please visit the `documentation page <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
+
     Examples
     --------
     .. jupyter-execute::

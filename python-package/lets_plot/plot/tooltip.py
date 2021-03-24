@@ -75,6 +75,10 @@ class layer_tooltips(FeatureSpec):
     -------
         layer tooltips specification
 
+    Note
+    ----
+    To learn more about formatting, please visit the `documentation page <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
+
     Examples
     ---------
     >>> import pandas as pd
