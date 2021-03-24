@@ -301,7 +301,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8
+        :emphasize-lines: 7
 
         import numpy as np
         from lets_plot import *
@@ -1333,7 +1333,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         ggplot() + \\
             geom_errorbar(aes(x='x', ymin='ymin', ymax='ymax'), \\
                           data=err_df, width=.5, color='red') + \\
-            geom_point(aes(x='x', y='y'), data=df) + \\
+            geom_jitter(aes(x='x', y='y'), data=df, width=.2, size=1) + \\
             scale_x_continuous(breaks=list(range(10)))
 
     """
