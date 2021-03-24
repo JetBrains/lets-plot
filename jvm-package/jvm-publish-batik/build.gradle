@@ -88,6 +88,13 @@ task jarLetsPlotJvmBatikSources(type: ShadowJar) {
     configurations = [rootProject.configurations.letsPlotJvmBatikSources]
 }
 
+task jarLetsPlotJvmJavaDoc(type: Jar) {
+    group task_group
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
+    classifier 'javadoc'
+    from("$rootDir/README.md")
+}
 
 publishing {
     publications {
@@ -98,6 +105,7 @@ publishing {
 
             artifact jarLetsPlotJvmBatikClasses
             artifact jarLetsPlotJvmBatikSources
+            artifact jarLetsPlotJvmJavaDoc
 
             pom {
                 name = "Lets-Plot for Swing/Batik"

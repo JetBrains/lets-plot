@@ -84,6 +84,13 @@ task jarLetsPlotJvmCommonSources(type: ShadowJar) {
     configurations = [rootProject.configurations.letsPlotJvmCommonSources]
 }
 
+task jarLetsPlotJvmJavaDoc(type: Jar) {
+    group task_group
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
+    classifier 'javadoc'
+    from("$rootDir/README.md")
+}
 
 publishing {
     publications {
@@ -94,6 +101,7 @@ publishing {
 
             artifact jarLetsPlotJvmCommonClasses
             artifact jarLetsPlotJvmCommonSources
+            artifact jarLetsPlotJvmJavaDoc
 
             pom {
                 name = "Lets-Plot common classes"

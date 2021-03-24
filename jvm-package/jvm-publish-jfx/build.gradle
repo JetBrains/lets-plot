@@ -79,6 +79,13 @@ task jarLetsPlotJvmJfxSources(type: ShadowJar) {
     configurations = [rootProject.configurations.letsPlotJvmJfxSources]
 }
 
+task jarLetsPlotJvmJavaDoc(type: Jar) {
+    group task_group
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
+    classifier 'javadoc'
+    from("$rootDir/README.md")
+}
 
 publishing {
     publications {
@@ -89,6 +96,7 @@ publishing {
 
             artifact jarLetsPlotJvmJfxClasses
             artifact jarLetsPlotJvmJfxSources
+            artifact jarLetsPlotJvmJavaDoc
 
             pom {
                 name = "Lets-Plot for JavaFX"
