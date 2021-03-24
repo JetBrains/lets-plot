@@ -4107,7 +4107,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Note
     ----
-    To learn more about formatting, please visit the `documentation page <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
+    For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
 
     Examples
     --------
