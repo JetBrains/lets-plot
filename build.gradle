@@ -11,6 +11,7 @@ plugins {
     id "org.jetbrains.gradle.plugin.idea-ext" apply false
     id "com.jfrog.bintray" apply false
     id "com.github.johnrengelman.shadow" apply false
+    id "io.codearte.nexus-staging"
 }
 
 def include_sources_letsPlotJvmCommon = [
@@ -123,7 +124,7 @@ project.ext["bintraySettings"] = [
         js_artifact_version: js_artifact_version,
 ]
 
-// Maven publication setting
+// Maven publication settings
 // define local Maven Repository path:
 project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 
@@ -132,8 +133,7 @@ def sonatypeSnapshotUrl = "https://oss.sonatype.org/content/repositories/snapsho
 def sonatypeReleaseUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 project.ext.sonatypeUrl = version.contains('SNAPSHOT') ? sonatypeSnapshotUrl : sonatypeReleaseUrl
 
-apply plugin: 'io.codearte.nexus-staging'
-
+// nexus-staging plugin settings:
 nexusStaging {
     packageGroup = 'org.jetbrains'
     username = project.buildSettings.sonatype.username
