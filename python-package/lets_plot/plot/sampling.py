@@ -27,7 +27,7 @@ def sampling_random(n, seed=None):
 
     Returns
     -------
-    Series or `DataFrame`
+    `FeatureSpec`
         A new object of same type as caller containing n items randomly sampled from the caller object.
 
     Examples
@@ -40,10 +40,10 @@ def sampling_random(n, seed=None):
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(27)
-        n = 15000
-        x, y = np.random.multivariate_normal(mean=[0,0],
-                                             cov=[[.9, -.6], [-.6, .9]],
-                                             size=n).T
+        mean = np.zeros(2)
+        cov = [[.9, -.6],
+               [-.6, .9]]
+        x, y = np.random.multivariate_normal(mean, cov, 10000).T
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_point(sampling=sampling_random(1000, 35))
 
@@ -61,12 +61,12 @@ def sampling_random_stratified(n, seed=None, min_subsample=None):
         Number of items to return.
     seed : int
         Number used to initialize a pseudo random number generator.
-    min_subsample: int
+    min_subsample : int
         Minimal number of items in sub sample.
 
     Returns
     -------
-    Series or `DataFrame`
+    `FeatureSpec`
         A new object of same type as caller containing n items sampled.
 
     Examples
@@ -79,11 +79,11 @@ def sampling_random_stratified(n, seed=None, min_subsample=None):
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(27)
-        data = dict(
-            x = np.random.normal(0, 1, 1100),
-            y = np.random.normal(0, 1, 1100),
-            cond = ['1' for i in range(100)] + ['2' for i in range(1000)])
-        ggplot(data, aes('x', 'y', color='cond')) + \\
+        n = 1000
+        x = np.random.normal(0, 1, n)
+        y = np.random.normal(0, 1, n)
+        cond = np.random.choice(['a', 'b'], n, p=[.9, .1])
+        ggplot({'x': x, 'y': y, 'cond': cond}, aes('x', 'y', color='cond')) + \\
             geom_point(sampling=sampling_random_stratified(50, min_subsample=10))
 
     """
@@ -91,6 +91,36 @@ def sampling_random_stratified(n, seed=None, min_subsample=None):
 
 
 def sampling_pick(n):
+    """
+    'Pick' sampling.
+
+    Parameters
+    ----------
+    n : int
+        Number of items to return.
+
+    Returns
+    -------
+    `FeatureSpec`
+        A new object of same type as caller containing n items sampled.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(27)
+        n = 1000
+        x = np.random.randint(-30, 30, size=n)
+        cond = np.random.choice(['a', 'b', 'c'], n, p=[.5, .3, .2])
+        ggplot({'x': x, 'cond': cond}, aes(x='x', fill='cond')) + \\
+            geom_bar(sampling=sampling_pick(40))
+
+    """
     return _sampling('pick', n=n)
 
 
@@ -105,7 +135,7 @@ def sampling_systematic(n):
 
     Returns
     -------
-    Series or `DataFrame`
+    `FeatureSpec`
         A new object of same type as caller containing n items sampled.
 
     Examples
@@ -130,10 +160,93 @@ def sampling_systematic(n):
 
 
 def sampling_group_systematic(n):
+    """
+    Return a subset where groups are selected at a regular interval.
+
+    Parameters
+    ----------
+    n : int
+        Number of groups to return.
+
+    Returns
+    -------
+    `FeatureSpec`
+        A new object of same type as caller containing n groups sampled.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 19
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x_step = 3 * np.pi / 39
+        little_delta = x_step / 100
+        x_stops =np.arange(-np.pi, np.pi + little_delta, x_step)
+        y_min, y_max = 1, 10
+        y_step = (y_max - y_min) / 899
+        little_delta = y_step / 100
+        y_multiplier = np.arange(y_min, y_max + little_delta, y_step)
+        x = []
+        y = []
+        c = []
+        for i in range(900):
+            x.extend(x_stops)
+            y.extend([np.sin(x) * y_multiplier[i] for x in x_stops])
+            c.extend([str(i) for _ in x_stops])
+        ggplot({'x': x, 'y': y, 'cond': c}, aes('x','y', color='cond')) + \\
+            geom_line(sampling=sampling_group_systematic(10))
+
+    """
+
     return _sampling('group_systematic', n=n)
 
 
 def sampling_group_random(n, seed=None):
+    """
+    Return a subset of randomly selected groups.
+
+    Parameters
+    ----------
+    n : int
+        Number of groups to return.
+    seed : int
+        Number used to initialize a pseudo random number generator.
+
+    Returns
+    -------
+    `FeatureSpec`
+        A new object of same type as caller containing n groups randomly sampled from the caller object.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 19
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x_step = 3 * np.pi / 39
+        little_delta = x_step / 100
+        x_stops =np.arange(-np.pi, np.pi + little_delta, x_step)
+        y_min, y_max = 1, 10
+        y_step = (y_max - y_min) / 899
+        little_delta = y_step / 100
+        y_multiplier = np.arange(y_min, y_max + little_delta, y_step)
+        x = []
+        y = []
+        c = []
+        for i in range(900):
+            x.extend(x_stops)
+            y.extend([np.sin(x) * y_multiplier[i] for x in x_stops])
+            c.extend([str(i) for _ in x_stops])
+        ggplot({'x': x, 'y': y, 'cond': c}, aes('x','y', color='cond')) + \\
+            geom_line(sampling=sampling_group_random(10))
+
+    """
     return _sampling('group_random', n=n, seed=seed)
 
 
@@ -148,7 +261,7 @@ def sampling_vertex_vw(n):
 
     Returns
     -------
-    Series or `DataFrame`
+    `FeatureSpec`
         A new object of same type as caller containing n items sampled.
 
     Note
@@ -193,7 +306,7 @@ def sampling_vertex_dp(n):
 
     Returns
     -------
-    Series or `DataFrame`
+    `FeatureSpec`
         A new object of same type as caller containing n items sampled.
 
     Note
@@ -222,7 +335,7 @@ def sampling_vertex_dp(n):
         Z = rv.pdf(np.dstack((X, Y)))
         data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
         ggplot(data, aes(x='x', y='y', z='z')) + \\
-            geom_contour(sampling=sampling_vertex_dp(150))
+            geom_contour(sampling=sampling_vertex_dp(100))
     """
     return _sampling('vertex_dp', n=n)
 
