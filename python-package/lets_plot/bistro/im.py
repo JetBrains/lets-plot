@@ -18,31 +18,58 @@ def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
     Display images in a grid.
     The grid dimensions are determined by shape of the input 2D ndarray.
 
-    Elements of the input 2D array are images specified by ndarrays with shape (n, m) or (n, m, 3) or (n, m, 4).
+    Elements of the input 2D array are images specified by ndarrays with shape
+    (n, m) or (n, m, 3) or (n, m, 4).
 
     Parameters
     ----------
-    image_data_array : 2D numpy.ndarray containing images
-        Specifies dimensions of output grid
-
-    norm : bool
-        False - disables default scaling of a luminance (grayscale) images to the (0, 255) range.
-
-    scale : scalar, default: 1
-        Specifies magnification factor
+    image_data_array : `ndarray`
+        2D `numpy.ndarray` containing images. Specifies dimensions of output grid.
+    norm : bool, default=True
+        False value disables default scaling of a luminance (grayscale) images to the (0, 255) range.
+    scale : float, default=1.0
+        Specifies magnification factor.
 
     Returns
     -------
-        Plot bunch object (GGBunch)
+    `GGBunch`
+        Plot bunch object.
 
     Examples
     --------
-    >>> import numpy as np
-    >>> from lets_plot.bistro import im
-    >>> image = np.random.choice([0.0, 1.0], [64, 64, 3])
-    >>> X = np.empty([4, 6], dtype=object)
-    >>> X.fill(image)
-    >>> im.image_matrix(X)
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.bistro.im import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        image = np.random.randint(256, size=(64, 64, 3))
+        matrix = np.empty((2, 3), dtype=object)
+        matrix.fill(image)
+        image_matrix(matrix)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.bistro.im import *
+        LetsPlot.setup_html()
+        rows, cols = 3, 3
+        matrix = np.empty((rows, cols), dtype=object)
+        for r in range(rows):
+            for c in range(cols):
+                w, h = 32 + 16 * c, 32 + 16 * r
+                matrix[r][c] = 256 * np.linspace(np.linspace(0, .5, w), \\
+                                                 np.linspace(.5, .5, w), h)
+        image_matrix(matrix, norm=False, scale=1.5)
+
     """
 
     if not is_ndarray(image_data_array):

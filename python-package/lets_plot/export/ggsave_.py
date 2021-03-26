@@ -24,22 +24,33 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
 
     Parameters
     ----------
-    plot: Plot or GGBunch.
-            Plot specification to export.
-    filename: str
-            The name of file. It mast end with a file extention corresponding
-            to one of the supported formats: svg, html (or htm)
-    path: str
-            Path to a directory to save image files in.
-            By default it is `${user.dir}/lets-plot-images`
-    iframe: bool
-            Whether to wrap HTML page into a iFrame. Default value is True.
-            Only applicable when exporting to HTML.
+    plot : `PlotSpec` or `GGBunch`
+        Plot specification to export.
+    filename : str
+        The name of file. It must end with a file extension corresponding
+        to one of the supported formats: svg, html (or htm).
+    path : str
+        Path to a directory to save image files in.
+        By default it is ${user.dir}/lets-plot-images.
+    iframe : bool, default=True
+        Whether to wrap HTML page into a iFrame.
+        Only applicable when exporting to HTML.
 
     Returns
     -------
     str
-        Absolute pathname of created HTML file.
+        Absolute pathname of created file.
+
+    Examples
+    --------
+    .. code-block::
+        :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        plot = ggplot() + geom_point(x=0, y=0)
+        ggsave(plot, 'plot.html', path='.', iframe=False)
 
     """
 

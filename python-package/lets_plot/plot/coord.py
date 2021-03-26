@@ -15,20 +15,39 @@ __all__ = ['coord_cartesian',
 
 def coord_cartesian(xlim=None, ylim=None):
     """
-    The Cartesian coordinate system is the most familiar, and common, type of coordinate system.
-    Setting limits on the coordinate system will zoom the plot (like you're looking at it with a magnifying glass),
-    and will not change the underlying data like setting limits on a scale will.
+    The Cartesian coordinate system is the most familiar and common type of coordinate system.
+    Setting limits on the coordinate system will zoom the plot like you're looking at it with a magnifying glass.
+    It does not change the underlying data as setting limits on a scale does.
 
     Parameters
     ----------
-    xlim : list of numbers (2 elements)
-           Limits for the x axes.
-           1st element defines lower limit, 2nd element defines upper limit.
-           `None` means no lower / upper bound - depending on the index in list.
-    ylim : list of numbers (2 elements)
-           Limits for the y axes.
-           1st element defines lower limit, 2nd element defines upper limit.
-           `None` means no lower / upper bound - depending on the index in list.
+    xlim : list
+        Limits (2 elements) for the x axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+    ylim : list
+        Limits (2 elements) for the y axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': [0, 8, 12, 17, 20, 26],
+                'y': [0, 8, 12, 17, 20, 26],
+                'g': ['a', 'a', 'b', 'b', 'c', 'c']}
+        ggplot(data) + geom_line(aes(x='x', y='y', group='g')) + \\
+            coord_cartesian(xlim=(4, 23), ylim=(3, 22))
     """
 
     return _coord('cartesian', xlim=xlim, ylim=ylim)
@@ -40,18 +59,39 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
 
     Parameters
     ----------
-    xlim : list of numbers (2 elements)
-           Limits for the x axes.
-           1st element defines lower limit, 2nd element defines upper limit.
-           `None` means no lower / upper bound - depending on the index in list.
-    ylim : list of numbers (2 elements)
-           Limits for the y axes.
-           1st element defines lower limit, 2nd element defines upper limit.
-           `None` means no lower / upper bound - depending on the index in list.
-    ratio : number
-            The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis.
-            ratio = 1, ensures that one unit on the x-axis is the same length as one unit on the y-axis.
-            Ratios higher than one make units on the y axis longer than units on the x-axis, and vice versa.
+    ratio : float
+        The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis.
+        ratio = 1, ensures that one unit on the x-axis is the same length as one unit on the y-axis.
+        Ratios higher than one make units on the y-axis longer than units on the x-axis, and vice versa.
+    xlim : list
+        Limits (2 numbers) for the x axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+    ylim : list
+        Limits (2 numbers) for the y axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 30
+        np.random.seed(42)
+        x = np.random.uniform(-1, 1, size=n)
+        y = 25 * x ** 2 + np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_point() + coord_fixed(ratio=.2, ylim=(7, 20))
     """
 
     return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim)
@@ -61,18 +101,36 @@ def coord_map(xlim=None, ylim=None):
     """
     Projects a portion of the earth, which is approximately spherical,
     onto a flat 2D plane.
-    Map projections do not, in general, preserve straight lines, so this requires considerable computation.
+    Map projections generally do not preserve straight lines, so this requires considerable computation.
 
     Parameters
     ----------
-    xlim : list of numbers (2 elements)
-           Limits for the x axes.
-           1st element defines lower limit, 2nd element defines upper limit.
-           `None` means no lower / upper bound - depending on the index in list.
-    ylim : list of numbers (2 elements)
-           Limits for the y axes.
-           1st element defines lower limit, 2nd element defines upper limit.
-           `None` means no lower / upper bound - depending on the index in list.
+    xlim : list
+        Limits (2 elements) for the x axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+    ylim : list
+        Limits (2 elements) for the y axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        us = geocode_states('US-48').get_boundaries(4)
+        ggplot() + geom_map(map=us, fill='gray', color='white') + \\
+            coord_map(xlim=(-130, -100))
     """
 
     return _coord('map', xlim=xlim, ylim=ylim)
