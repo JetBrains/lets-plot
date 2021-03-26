@@ -28,7 +28,7 @@ def sampling_random(n, seed=None):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n items randomly sampled from the caller object.
+        Random sample specification.
 
     Examples
     --------
@@ -67,7 +67,7 @@ def sampling_random_stratified(n, seed=None, min_subsample=None):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n items sampled.
+        Stratified random sample specification.
 
     Examples
     --------
@@ -84,7 +84,7 @@ def sampling_random_stratified(n, seed=None, min_subsample=None):
         y = np.random.normal(0, 1, n)
         cond = np.random.choice(['a', 'b'], n, p=[.9, .1])
         ggplot({'x': x, 'y': y, 'cond': cond}, aes('x', 'y', color='cond')) + \\
-            geom_point(sampling=sampling_random_stratified(50, min_subsample=10))
+            geom_point(sampling=sampling_random_stratified(50, 35, min_subsample=10))
 
     """
     return _sampling('random_stratified', n=n, seed=seed, min_subsample=min_subsample)
@@ -102,23 +102,21 @@ def sampling_pick(n):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n items sampled.
+        Sample specification.
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 7
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(27)
-        n = 1000
-        x = np.random.randint(-30, 30, size=n)
-        cond = np.random.choice(['a', 'b', 'c'], n, p=[.5, .3, .2])
-        ggplot({'x': x, 'cond': cond}, aes(x='x', fill='cond')) + \\
-            geom_bar(sampling=sampling_pick(40))
+        x = np.linspace(-2, 2, 30)
+        y = x ** 2
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_line(sampling=sampling_pick(20))
 
     """
     return _sampling('pick', n=n)
@@ -136,7 +134,7 @@ def sampling_systematic(n):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n items sampled.
+        Systematic sample specification.
 
     Examples
     --------
@@ -171,33 +169,25 @@ def sampling_group_systematic(n):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n groups sampled.
+        Group systematic sample specification.
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 19
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x_step = 3 * np.pi / 39
-        little_delta = x_step / 100
-        x_stops =np.arange(-np.pi, np.pi + little_delta, x_step)
-        y_min, y_max = 1, 10
-        y_step = (y_max - y_min) / 899
-        little_delta = y_step / 100
-        y_multiplier = np.arange(y_min, y_max + little_delta, y_step)
-        x = []
-        y = []
-        c = []
-        for i in range(900):
-            x.extend(x_stops)
-            y.extend([np.sin(x) * y_multiplier[i] for x in x_stops])
-            c.extend([str(i) for _ in x_stops])
-        ggplot({'x': x, 'y': y, 'cond': c}, aes('x','y', color='cond')) + \\
-            geom_line(sampling=sampling_group_systematic(10))
+        waves_count = 100
+        peak_amplitude = np.linspace(1, 2, waves_count)
+        wave_x = np.linspace(-np.pi, np.pi, 30)
+        x = np.tile(wave_x, waves_count)
+        y = np.array([a * np.sin(wave_x) for a in peak_amplitude]).flatten()
+        a = np.repeat(peak_amplitude, wave_x.size)
+        ggplot({'x': x, 'y': y, 'a': a}, aes('x', 'y')) + \\
+            geom_line(aes(group='a', color='a'), sampling=sampling_group_systematic(10))
 
     """
 
@@ -218,33 +208,25 @@ def sampling_group_random(n, seed=None):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n groups randomly sampled from the caller object.
+        Group sample specification.
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 19
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x_step = 3 * np.pi / 39
-        little_delta = x_step / 100
-        x_stops =np.arange(-np.pi, np.pi + little_delta, x_step)
-        y_min, y_max = 1, 10
-        y_step = (y_max - y_min) / 899
-        little_delta = y_step / 100
-        y_multiplier = np.arange(y_min, y_max + little_delta, y_step)
-        x = []
-        y = []
-        c = []
-        for i in range(900):
-            x.extend(x_stops)
-            y.extend([np.sin(x) * y_multiplier[i] for x in x_stops])
-            c.extend([str(i) for _ in x_stops])
-        ggplot({'x': x, 'y': y, 'cond': c}, aes('x','y', color='cond')) + \\
-            geom_line(sampling=sampling_group_random(10))
+        waves_count = 100
+        peak_amplitude = np.linspace(1, 2, waves_count)
+        wave_x = np.linspace(-np.pi, np.pi, 30)
+        x = np.tile(wave_x, waves_count)
+        y = np.array([a * np.sin(wave_x) for a in peak_amplitude]).flatten()
+        a = np.repeat(peak_amplitude, wave_x.size)
+        ggplot({'x': x, 'y': y, 'a': a}, aes('x', 'y')) + \\
+            geom_line(aes(group='a', color='a'), sampling=sampling_group_random(10, 35))
 
     """
     return _sampling('group_random', n=n, seed=seed)
@@ -262,7 +244,7 @@ def sampling_vertex_vw(n):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n items sampled.
+        Vertices sample specification.
 
     Note
     ----
@@ -291,6 +273,7 @@ def sampling_vertex_vw(n):
         data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
         ggplot(data, aes(x='x', y='y', z='z')) + \\
             geom_contour(sampling=sampling_vertex_vw(150))
+
     """
     return _sampling('vertex_vw', n=n)
 
@@ -307,7 +290,7 @@ def sampling_vertex_dp(n):
     Returns
     -------
     `FeatureSpec`
-        A new object of same type as caller containing n items sampled.
+        Vertices sample specification.
 
     Note
     ----
@@ -336,6 +319,7 @@ def sampling_vertex_dp(n):
         data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
         ggplot(data, aes(x='x', y='y', z='z')) + \\
             geom_contour(sampling=sampling_vertex_dp(100))
+
     """
     return _sampling('vertex_dp', n=n)
 
