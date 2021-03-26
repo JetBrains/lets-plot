@@ -44,9 +44,10 @@ def ggplot(data=None, mapping=None):
     with multiple layers, initialization with `ggplot()` is recommended.
 
     There are three common ways to invoke ggplot (see examples below):
-        - `ggplot(data, aes(x, y))`: This method is recommended if all layers use the same data and the same set of aesthetics, although this method can also be used to add a layer using data from another data frame.
-        - `ggplot(data)`: This method specifies the default data frame to use for the plot, but no aesthetics are defined up front. This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary from one layer to another.
-        - `ggplot()`: This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
+
+    - `ggplot(data, aes(x, y))`: This method is recommended if all layers use the same data and the same set of aesthetics, although this method can also be used to add a layer using data from another data frame.
+    - `ggplot(data)`: This method specifies the default data frame to use for the plot, but no aesthetics are defined up front. This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary from one layer to another.
+    - `ggplot()`: This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
 
     `ggplot()` with no layers defined will produce an error message:
     "No layers in plot".
@@ -199,9 +200,6 @@ class GGBunch(FeatureSpec):
         self.items.append(dict(feature_spec=plot_spec, x=x, y=y, width=width, height=height))
 
     def as_dict(self):
-        """
-        Translate self to dictionary.
-        """
         d = super().as_dict()
         d['kind'] = self.kind
 
