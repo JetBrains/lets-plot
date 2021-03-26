@@ -163,8 +163,8 @@ publishing {
         maven {
             url = project.sonatypeUrl
             credentials {
-                username = project.buildSettings.sonatype.username
-                password = project.buildSettings.sonatype.password
+                username = project.buildSettings?.sonatype?.username
+                password = project.buildSettings?.sonatype?.password
             }
         }
         mavenLocal {

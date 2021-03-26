@@ -136,6 +136,6 @@ project.ext.sonatypeUrl = version.contains('SNAPSHOT') ? sonatypeSnapshotUrl : s
 // nexus-staging plugin settings:
 nexusStaging {
     packageGroup = 'org.jetbrains'
-    username = project.buildSettings.sonatype.username
-    password = project.buildSettings.sonatype.password
+    username = project.buildSettings?.sonatype?.username
+    password = project.buildSettings?.sonatype?.password
 }
