@@ -35,7 +35,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
 //                implementation project(':vis-svg-mapper')
 
                 batikArtifacts.forEach {

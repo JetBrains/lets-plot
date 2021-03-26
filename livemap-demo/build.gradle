@@ -70,7 +70,7 @@ kotlin {
         allJvm {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
