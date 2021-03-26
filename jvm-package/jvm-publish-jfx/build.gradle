@@ -2,7 +2,7 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform"
     id "maven-publish"
     id "com.github.johnrengelman.shadow"
-    id "com.jfrog.bintray"
+    id "signing"
 }
 
 kotlin {
@@ -79,6 +79,13 @@ task jarLetsPlotJvmJfxSources(type: ShadowJar) {
     configurations = [rootProject.configurations.letsPlotJvmJfxSources]
 }
 
+task jarLetsPlotJvmJavaDoc(type: Jar) {
+    group task_group
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
+    classifier 'javadoc'
+    from("$rootDir/README.md")
+}
 
 publishing {
     publications {
@@ -89,6 +96,7 @@ publishing {
 
             artifact jarLetsPlotJvmJfxClasses
             artifact jarLetsPlotJvmJfxSources
+            artifact jarLetsPlotJvmJavaDoc
 
             pom {
                 name = "Lets-Plot for JavaFX"
@@ -134,34 +142,19 @@ publishing {
     }
     repositories {
         maven {
-//            url = uri("$rootDir/.maven-publish-dev-repo")
-            url = uri("https://jetbrains.bintray.com/lets-plot-maven")
-        }
-    }
-}
-
-// Provide Bintray-specific Information
-def bintray_user = project.buildSettings?.bintray?.user
-def bintray_key = project.buildSettings?.bintray?.key
-
-if (bintray_user != null && bintray_key != null) {
-    bintray {
-        publications = ['letsPlotJvmJfx']
-        override = true
-
-        user = bintray_user
-        key = bintray_key
-        publish = project.bintraySettings.publish
-
-        pkg {
-            repo = project.bintraySettings.mvn_repo
-            name = project.bintraySettings.mvn_pkg_name
-            userOrg = project.bintraySettings.userOrg
-            licenses = project.bintraySettings.licenses
-            vcsUrl = project.bintraySettings.vcsUrl
-            version {
-                name = artifactVersion
+            url = project.sonatypeUrl
+            credentials {
+                username = project.buildSettings.sonatype.username
+                password = project.buildSettings.sonatype.password
             }
         }
+        mavenLocal {
+            url = uri(project.localMavenRepository)
+        }
     }
 }
+
+signing {
+    sign publishing.publications.letsPlotJvmJfx
+}
+
