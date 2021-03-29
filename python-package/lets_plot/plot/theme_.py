@@ -115,4 +115,28 @@ def theme(*,
 
 
 def element_blank():
+    """
+    Specifies how non-data components of the plot are drawn.
+    This theme element draws nothing, and assigns no space.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme(axis_title_x=element_blank(), axis_ticks=element_blank())
+
+    """
     return FeatureSpec('theme_element', name='blank')

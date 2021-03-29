@@ -13,7 +13,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+//                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':vis-svg-portable')
@@ -35,7 +35,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }

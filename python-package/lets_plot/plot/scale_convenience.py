@@ -12,6 +12,43 @@ __all__ = ['lims', 'xlim', 'ylim']
 
 
 def lims(x, y):
+    """
+    This is a shortcut for supplying the `limits` parameter to the x and y scales.
+    Observations outside the range will be dropped.
+
+    Parameters
+    ----------
+    x : list or None
+        Limits (2 elements) for the x axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no bounds.
+    y : list or None
+        Limits (2 elements) for the y axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no bounds.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point() + lims([-2, 2], [-2, 2])
+
+    """
     if x is None:
         x = []
     if y is None:
@@ -20,10 +57,62 @@ def lims(x, y):
 
 
 def xlim(*args):
+    """
+    This is a shortcut for supplying the `limits` parameter to the x scale.
+    Observations outside the range will be dropped.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point() + xlim(-1, 1)
+
+    """
     return _limits("x", *args)
 
 
 def ylim(*args):
+    """
+    This is a shortcut for supplying the `limits` parameter to the y scale.
+    Observations outside the range will be dropped.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point() + ylim(-1, 1)
+
+    """
     return _limits("y", *args)
 
 
