@@ -83,6 +83,9 @@ _settings = {
 
     'dev_' + OFFLINE: _init_value('dev_' + OFFLINE, True),  # default: embed js into the notebook
     'dev_' + NO_JS: _init_value('dev_' + NO_JS, False),
+    # We don't publish "dev" version, it must be served on localhost:
+    # $ cd lets-plot/js-package/build/distributions
+    # $ python -m http.server 8080
     'dev_' + JS_BASE_URL: "http://127.0.0.1:8080",
     'dev_' + JS_NAME: '',  # default: lets-plot-<version>.js
     'dev_' + GEOCODING_PROVIDER_URL: _init_value('dev_' + GEOCODING_PROVIDER_URL, _DATALORE_GEOCODING_SERVICE),
@@ -109,6 +112,7 @@ def _get_global_val_intern(actual_name: str) -> Any:
 def is_production() -> bool:
     return 'dev' not in __version__
 
+
 def get_js_cdn_url() -> str:
     base_url = get_global_str(JS_BASE_URL)
     if has_global_value(JS_NAME):
@@ -119,7 +123,8 @@ def get_js_cdn_url() -> str:
 
     url = "{base_url}/{name}".format(base_url=base_url, name=name)
     return url
-    
+
+
 def has_global_value(name: str) -> bool:
     val = _get_global_val_intern(_to_actual_name(name))
 
