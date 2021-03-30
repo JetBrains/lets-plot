@@ -147,7 +147,17 @@ def _specs_to_dict(opts_raw):
 
 
 class FeatureSpec():
+    """
+    A base class of the plot objects.
+
+    Do not use this class explicitly.
+
+    Instead you should construct its objects with functions `ggplot()`, `geom_point()`,
+    `position_dodge()`, `scale_x_continuous()` and so on.
+    """
+
     def __init__(self, kind, name, **kwargs):
+        """Initialize self."""
         self.kind = kind
         self.__props = {}
         if name is not None:
@@ -155,9 +165,39 @@ class FeatureSpec():
         self.__props.update(**kwargs)
 
     def props(self):
+        """
+        Returns the dictionary of all properties of the object in their initial form.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            p = ggplot({'x': [0], 'y': [0]}) + geom_point(aes('x', 'y'))
+            p.props()
+
+        """
         return self.__props
 
     def as_dict(self):
+        """
+        Returns the dictionary of all properties of the object with `as_dict()`
+        applied recursively to all subproperties of `FeatureSpec` type.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            p = ggplot({'x': [0], 'y': [0]}) + geom_point(aes('x', 'y'))
+            p.as_dict()
+        """
         return _specs_to_dict(self.props())
 
     def __str__(self):
@@ -184,6 +224,15 @@ class FeatureSpec():
 
 
 class PlotSpec(FeatureSpec):
+    """
+    A class of the initial plot object.
+
+    Do not use this class explicitly.
+
+    Instead you should construct its objects with functions `ggplot()`,
+    `corr_plot(...).points().build()` and so on.
+    """
+
     @classmethod
     def duplicate(cls, other):
         dup = PlotSpec(data=None, mapping=None, scales=other.__scales, layers=other.__layers)
@@ -191,18 +240,70 @@ class PlotSpec(FeatureSpec):
         return dup
 
     def __init__(self, data, mapping, scales, layers, **kwargs):
+        """Initialize self."""
         super().__init__('plot', name=None, data=data, mapping=mapping, **kwargs)
         self.__scales = list(scales)
         self.__layers = list(layers)
 
     def get_plot_shared_data(self):
+        """
+        Extracts the data that shared by all layers.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y'))
+            p += geom_point(data={'x': [1], 'y': [1]})
+            p.get_plot_shared_data()
+
+        """
         # used to evaluate 'completion'
         return self.props()['data']
 
     def has_layers(self) -> bool:
+        """
+        Checks if the `PlotSpec` object has at least one layer.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4, 6
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            p = ggplot()
+            print(p.has_layers())
+            p += geom_point(x=0, y=0)
+            print(p.has_layers())
+
+        """
         return True if self.__layers else False
 
     def __add__(self, other):
+        """
+        Allows to add different specs to the `PlotSpec` object.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 7
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            p = ggplot({'x': [0, 1, 2], 'y': [0, 1, 2]}, aes('x', 'y'))
+            l = layer('point', mapping=aes(color='x'))
+            s = scale_color_discrete()
+            t = theme(axis_title='blank')
+            p + l + s + t
+
+        """
         """
             plot + other_plot -> fail
             plot + layer -> plot[layers] += layer
@@ -271,21 +372,40 @@ class PlotSpec(FeatureSpec):
         return '\n'.join(result)
 
     def _repr_html_(self):
-        """
-        Special method discovered and invoked by IPython.display.display
-        """
+        # Special method discovered and invoked by IPython.display.display.
         from ..frontend_context._configuration import _as_html
         return _as_html(self.as_dict())
 
     def show(self):
         """
-        Draw plot
+        Draw a plot.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
         """
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
 
 class LayerSpec(FeatureSpec):
+    """
+    A class of the plot layer object.
+
+    Do not use this class explicitly.
+
+    Instead you should construct its objects with functions `geom_point()`,
+    `geom_contour()`, `geom_boxplot()`, `geom_text()` and so on.
+    """
+
     __own_features = ['geom', 'stat', 'mapping', 'position']
 
     @classmethod
