@@ -18,11 +18,23 @@ object PlotHtmlHelper {
     private const val SCRIPT_KIND_LIB_LOADING = "library"
     private const val SCRIPT_KIND_PLOT = "plot"
 
+    /**
+     * This method is used in Lets-Plot Kotlin API.
+     */
     fun scriptUrl(
-        version: String,
-        suffix: String = "min.js",
-        baseUrl: String = "https://dl.bintray.com/jetbrains/lets-plot"
-    ) = "$baseUrl/lets-plot-$version.$suffix"
+        version: String
+    ): String {
+        val dev = version.contains("dev")
+        val baseUrl: String = if (dev) {
+            // We don't publish "dev" versions: must be served on localhost.
+            "http://127.0.0.1:8080"
+        } else {
+            "https://dl.bintray.com/jetbrains/lets-plot"
+        }
+
+        val suffix: String = if (dev) "js" else "min.js"
+        return "$baseUrl/lets-plot-$version.$suffix"
+    }
 
     fun getDynamicConfigureHtml(scriptUrl: String, verbose: Boolean): String {
         val outputId = randomString(6)
