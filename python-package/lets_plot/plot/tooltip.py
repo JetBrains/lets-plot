@@ -20,10 +20,6 @@ class layer_tooltips(FeatureSpec):
     ----
     Set tooltips='none' to hide tooltips from this layer.
 
-    Note
-    ----
-    For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
-
     Examples
     --------
     .. jupyter-execute::
@@ -124,7 +120,7 @@ class layer_tooltips(FeatureSpec):
         field : str
             Name of an aesthetic or variable that would be formatted.
             The field name starts with a '^' prefix for aesthetics,
-            variable names are specified without prefix.
+            the variable name starts with a '@' prefix or without any prefix.
         format : str
             Formatting specification. The format contains a number format ('1.f')
             or a string template ('{.1f}').
@@ -151,6 +147,10 @@ class layer_tooltips(FeatureSpec):
         Also the template will change the line for outliers.
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
+
+        Note
+        ----
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
 
         Examples
         --------
@@ -305,7 +305,7 @@ class layer_tooltips(FeatureSpec):
 
     def anchor(self, value):
         """
-        The corner of the plot to move the general tooltip.
+        Specifies a fixed position for a general tooltip.
 
         Parameters
         ----------
