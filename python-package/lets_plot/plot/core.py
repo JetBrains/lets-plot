@@ -168,6 +168,11 @@ class FeatureSpec():
         """
         Returns the dictionary of all properties of the object in their initial form.
 
+        Returns
+        -------
+        dict
+            Dictionary of properties.
+
         Examples
         --------
         .. jupyter-execute::
@@ -186,6 +191,11 @@ class FeatureSpec():
         """
         Returns the dictionary of all properties of the object with `as_dict()`
         applied recursively to all subproperties of `FeatureSpec` type.
+
+        Returns
+        -------
+        dict
+            Dictionary of properties.
 
         Examples
         --------
@@ -249,6 +259,11 @@ class PlotSpec(FeatureSpec):
         """
         Extracts the data that shared by all layers.
 
+        Returns
+        -------
+        dict or `DataFrame`
+            Object data.
+
         Examples
         --------
         .. jupyter-execute::
@@ -268,6 +283,11 @@ class PlotSpec(FeatureSpec):
     def has_layers(self) -> bool:
         """
         Checks if the `PlotSpec` object has at least one layer.
+
+        Returns
+        -------
+        bool
+            True if object has layers.
 
         Examples
         --------
