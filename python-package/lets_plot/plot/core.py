@@ -153,7 +153,7 @@ class FeatureSpec():
     Do not use this class explicitly.
 
     Instead you should construct its objects with functions `ggplot()`, `geom_point()`,
-    `position_dodge()`, `scale_x_continuous()` and so on.
+    `position_dodge()`, `scale_x_continuous()` etc.
     """
 
     def __init__(self, kind, name, **kwargs):
@@ -240,7 +240,7 @@ class PlotSpec(FeatureSpec):
     Do not use this class explicitly.
 
     Instead you should construct its objects with functions `ggplot()`,
-    `corr_plot(...).points().build()` and so on.
+    `corr_plot(...).points().build()` etc.
     """
 
     @classmethod
@@ -257,7 +257,7 @@ class PlotSpec(FeatureSpec):
 
     def get_plot_shared_data(self):
         """
-        Extracts the data that shared by all layers.
+        Extracts the data shared by all layers.
 
         Returns
         -------
@@ -398,7 +398,7 @@ class PlotSpec(FeatureSpec):
 
     def show(self):
         """
-        Draw a plot.
+        Draws a plot.
 
         Examples
         --------
@@ -423,7 +423,7 @@ class LayerSpec(FeatureSpec):
     Do not use this class explicitly.
 
     Instead you should construct its objects with functions `geom_point()`,
-    `geom_contour()`, `geom_boxplot()`, `geom_text()` and so on.
+    `geom_contour()`, `geom_boxplot()`, `geom_text()` etc.
     """
 
     __own_features = ['geom', 'stat', 'mapping', 'position']
