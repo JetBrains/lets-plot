@@ -31,11 +31,13 @@ object PlotHtmlHelper {
             // $ python -m http.server 8080
             "http://127.0.0.1:8080"
         } else {
-            "https://dl.bintray.com/jetbrains/lets-plot"
+//            "https://dl.bintray.com/jetbrains/lets-plot"
+            "https://cdnjs.cloudflare.com/ajax/libs/lets-plot"
         }
 
         val suffix: String = if (dev) "js" else "min.js"
-        return "$baseUrl/lets-plot-$version.$suffix"
+//        return "$baseUrl/lets-plot-$version.$suffix"
+        return "$baseUrl/$version/lets-plot.$suffix"
     }
 
     fun getDynamicConfigureHtml(scriptUrl: String, verbose: Boolean): String {

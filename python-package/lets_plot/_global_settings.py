@@ -73,7 +73,8 @@ def _get_env_val(actual_name: str) -> Any:
 _settings = {
     OFFLINE: _init_value(OFFLINE, False),  # default: download from CDN
     NO_JS: _init_value(NO_JS, False),
-    JS_BASE_URL: 'https://dl.bintray.com/jetbrains/lets-plot',
+    # JS_BASE_URL: 'https://dl.bintray.com/jetbrains/lets-plot',
+    JS_BASE_URL: "https://cdnjs.cloudflare.com/ajax/libs/lets-plot",
     JS_NAME: '',  # default: lets-plot-<version>.min.js
     GEOCODING_PROVIDER_URL: _init_value(GEOCODING_PROVIDER_URL, _DATALORE_GEOCODING_SERVICE),
     MAPTILES_KIND: _init_value(MAPTILES_KIND, TILES_VECTOR_LETS_PLOT),
@@ -118,10 +119,12 @@ def get_js_cdn_url() -> str:
     if has_global_value(JS_NAME):
         name = get_global_str(JS_NAME)
     else:
-        suffix = ".min.js" if is_production() else ".js"
-        name = "lets-plot-{version}{suffix}".format(version=__version__, suffix=suffix)
+        suffix = "min.js" if is_production() else "js"
+        # name = "lets-plot-{version}.{suffix}".format(version=__version__, suffix=suffix)
+        name = "lets-plot.{suffix}".format(suffix=suffix)
 
-    url = "{base_url}/{name}".format(base_url=base_url, name=name)
+    # url = "{base_url}/{name}".format(base_url=base_url, name=name)
+    url = "{base_url}/{version}/{name}".format(base_url=base_url, version=__version__, name=name)
     return url
 
 
