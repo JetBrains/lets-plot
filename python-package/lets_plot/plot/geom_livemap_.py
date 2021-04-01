@@ -38,95 +38,164 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    show_legend: bool
+    show_legend: bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    map : GeoDataFrame (supported shapes Point and MultiPoint) or Geocoder (implicitly invoke centroids())
+    map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
-    map_join : [str | pair]
+    map_join : str or list
         Keys used to join map coordinates with data.
-        first value in pair - column/columns in data
-        second value in pair - column/columns in map
-
-        When map is a GeoDataFrame:
-            map_join='state':
-                same as [['state'], ['state']]
-            map_join=[['city', 'state']]:
-                same as [['city', 'state'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-
-        If map is a Geocoder:
-            map_join='State_Name':
-                same as [['State_Name'], ['state']]
-            map_join=['City_Name', 'State_Name']:
-                same as [['City_Name', 'State_Name'], ['city', 'state']]
-            map_join=[['City_Name', 'State_Name'], ['city', 'state']]:
-                Explicitly set keys for both data and map.
-
-            Generated keys follow this order - `city`, `county`, `state`, `country`. Parents that were not provided
-            will be omitted. data columns should follow the same order or result of join operation will be incorrect.
-    symbol : string, optional
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    symbol : str
         The marker used for displaying the data. There are:
-        - 'point' for circles of different size and color.
-        - 'pie' for pie charts.
-        - 'bar' for bar charts.
-    location : array, optional
+        'point' for circles of different size and color; 'pie' for pie charts;
+        'bar' for bar charts.
+    location : list
         Initial position of the map. If not set, displays the United States.
-        There are [lon1, lat1, lon2, lat2,..., lonN, latN].
-        - lon1, lon2,..., lonN are longitudes in degrees (positive in the Eastern hemisphere).
-        - lat1, lat2,..., latN are latitudes in degrees (positive in the Northern hemisphere).
-    zoom : integer, optional
+        There are [lon1, lat1, lon2, lat2,..., lonN, latN]:
+        lon1, lon2,..., lonN are longitudes in degrees (positive in the Eastern hemisphere);
+        lat1, lat2,..., latN are latitudes in degrees (positive in the Northern hemisphere).
+    zoom : int
         Zoom of the map in the range 1 - 15.
-    projection : string, optional
-        The map projection. There are:
-        - 'epsg3857' for Mercator projection (default).
-        - 'epsg4326' for Equirectangular projection.
-        Note: 'projection' only works with vector map tiles (i.e. Lets-Plot map tiles)
-    geodesic : True (default) or False, optional
-        Enables geodesic type of all paths and segments
-    tiles: string, optional
-        Tiles provider, either as a string - URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
-        (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') or the result of a call to a maptiles_xxx functions
-    other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
-        value, like color = "red", fill = "blue", size = 3, stroke = 2 or shape = 21. They may also be parameters to
-        the paired geom/stat.
+    projection : str, default='epsg3857'
+        The map projection. There are: 'epsg3857' for Mercator projection;
+        'epsg4326' for Equirectangular projection. `projection` only works
+        with vector map tiles (i.e. Lets-Plot map tiles).
+    geodesic : bool, default=True
+        Enables geodesic type of all paths and segments.
+    tiles : str
+        Tiles provider, either as a string - URL for a standard raster ZXY tile provider
+        with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
+        or the result of a call to a `maptiles_xxx()` functions.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
 
     Note
-    -----
-    geom_livemap draws map, which can be moved and zoomed.
-    geom_livemap understands the following aesthetics mappings:
+    ----
+    `geom_livemap()` draws map, which can be moved and zoomed.
 
-    - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
-    - color (colour) : color of a geometry lines
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill  : color of a geometry internals
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    `geom_livemap()` understands the following aesthetics mappings:
+
+    - alpha : transparency level of the point. Understands numbers between 0 and 1.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : radius for point, pie chart.
     - sym_x : value order for pie chart and bar chart.
     - sym_y : value specifying the sector size for pie chart and the heigth for bar chart.
 
+    Note
+    ----
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    Note
+    ----
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
     Examples
     --------
-    >>> from lets_plot import *
-    >>> p = ggplot() + geom_livemap()
-    >>> p += ggtitle('Live Map')
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_livemap()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-13
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'city': ['New York City', 'Singapore'],
+            'lat': [-73.7997, 104.0012],
+            'lon': [40.6408, 1.3256],
+        }
+        ggplot(data, aes('lat', 'lon')) + \\
+            geom_livemap(geodesic=False, projection='epsg4326', \\
+                         symbol='point', color='white', \\
+                         tiles=maptiles_lets_plot(theme='dark'), \\
+                         tooltips=layer_tooltips().line('@city')\\
+                                                  .color('black')) + \\
+            geom_path(color='white') + \\
+            ggtitle('SQ23 - the longest scheduled airline flight '
+                    'by great circle distance since 2020')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 17-22
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        data = {
+            'state': np.repeat(['NY', 'MA', 'PA'], 4),
+            'spoken_lang': np.tile(['English', 'Spanish', 'Chinese', 'Other'], 3),
+            'lang_order': np.tile(np.arange(4), 3),
+            'percentage_2020': [69.6, 15.2, 3.1, 12.1, 77.7, 8.6, 2.1, 11.6, 90.2, 4.1, 0.5, 5.2],
+        }
+        centroids = geocode_states(data['state']).scope('US').get_centroids()
+        tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
+                             attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, '
+                                         'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. '
+                                         'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, '
+                                         'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>')
+        ggplot() + geom_livemap(aes(fill='spoken_lang', sym_x='lang_order', sym_y='percentage_2020'), \\
+                                data=data, map=centroids, map_join='state', symbol='pie', tiles=tiles, \\
+                                zoom=6, location=[-76.09990, 42.86217], show_legend=False, color='black', \\
+                                tooltips=layer_tooltips().line('Spoken language in @{found name}')\\
+                                                         .format('percentage_2020', '{}%')\\
+                                                         .line('@spoken_lang @percentage_2020'))
+
     """
     if location is not None:
         location = _prepare_location(location)
