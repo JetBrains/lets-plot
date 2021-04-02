@@ -69,7 +69,7 @@ task copyDevelopment() {
             copy {
                 from "${project.buildDir}/distributions/js-package.js"
                 rename "js-package.js", target
-                into "${project.buildDir}/distributions"
+                into dist_dir
             }
         }
     }
@@ -83,3 +83,12 @@ browserDevelopmentWebpack.finalizedBy copyDevelopment
 //build.dependsOn += copyProduction
 build.dependsOn += browserDevelopmentWebpack
 
+task copyForPublish(type: Copy) {
+    dependsOn browserDevelopmentWebpack, browserProductionWebpack
+
+    def js_publish_dir = "${rootDir}/js-package/distr"
+
+    from "${dist_dir}/lets-plot-${artifact_version}.js", "${dist_dir}/lets-plot-${artifact_version}.min.js"
+    rename("\\-${artifact_version}", "")
+    into js_publish_dir
+}
