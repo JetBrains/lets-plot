@@ -94,8 +94,9 @@ jvmSourcesJar {
 }
 
 task jvmJavaDocJar(type: Jar) {
-    archiveName "$artifactBaseName-$artifactVersion-javadoc.jar"
     classifier 'javadoc'
+    baseName artifactBaseName
+    version artifactVersion
     from("$rootDir/README.md")
 }
 

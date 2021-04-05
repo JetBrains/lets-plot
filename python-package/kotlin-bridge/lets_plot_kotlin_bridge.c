@@ -35,11 +35,11 @@ static PyObject* export_html(PyObject* self, PyObject* args) {
 
     // parse arguments
     PyObject *rawPlotSpecDict;
-    const char *version;
+    const char *scriptUrl;
     int iframe;          // 0 - false, 1 - true
-    PyArg_ParseTuple(args, "Osp", &rawPlotSpecDict, &version, &iframe);
+    PyArg_ParseTuple(args, "Osp", &rawPlotSpecDict, &scriptUrl, &iframe);
 
-    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateStaticHtmlPage(reprGen, rawPlotSpecDict, version, iframe);
+    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateStaticHtmlPage(reprGen, rawPlotSpecDict, scriptUrl, iframe);
     return html;
 }
 
