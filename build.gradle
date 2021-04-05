@@ -111,18 +111,6 @@ if (settings.enable_python_package) {
 
 project.ext.buildSettings = settings
 
-// Bintray settings
-
-project.ext["bintraySettings"] = [
-        userOrg            : 'jetbrains',
-        licenses           : ['MIT'],
-        vcsUrl             : 'https://github.com/JetBrains/lets-plot',
-        publish            : true,
-
-        js_repo            : "lets-plot",
-        js_pkg_name        : 'lets-plot-js',
-        js_artifact_version: js_artifact_version,
-]
 
 // Maven publication settings
 // define local Maven Repository path:

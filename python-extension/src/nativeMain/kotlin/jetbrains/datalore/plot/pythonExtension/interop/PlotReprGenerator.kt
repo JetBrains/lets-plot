@@ -39,16 +39,16 @@ object PlotReprGenerator {
 
     fun generateStaticHtmlPage(
         plotSpecDict: CPointer<PyObject>?,
-        versionCStr: CPointer<ByteVar>,
+        scriptUrlCStr: CPointer<ByteVar>,
         iFrame: Int
     ): CPointer<PyObject>? {
         try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
-            val version = versionCStr.toKString()
+            val scriptUrl = scriptUrlCStr.toKString()
 
             @Suppress("UNCHECKED_CAST")
             val html =
-                PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>, version, iFrame == 1)
+                PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>, scriptUrl, iFrame == 1)
             val result = Py_BuildValue("s", html);
             return result
         } catch (e: Throwable) {

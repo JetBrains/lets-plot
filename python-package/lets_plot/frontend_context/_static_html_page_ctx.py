@@ -6,7 +6,6 @@ from typing import Dict
 
 from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
-from .._global_settings import is_production
 from .._version import __version__
 
 
@@ -25,7 +24,4 @@ class StaticHtmlPageContext(FrontendContext):
             print("WARN: Embedding Lets-Plot JS library for offline usage is not supported.")
 
     def as_str(self, plot_spec: Dict) -> str:
-        # embedding js is not supported (yet) in this context,
-        # replace `dev` version with the `latest`.
-        version = __version__ if is_production() else "latest"
-        return kbr._generate_static_html_page(plot_spec, version, iframe=False)
+        return kbr._generate_static_html_page(plot_spec, iframe=False)

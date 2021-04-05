@@ -7,6 +7,7 @@ from typing import Dict
 import lets_plot_kotlin_bridge
 
 from ._type_utils import standardize_dict
+from ._global_settings import get_js_cdn_url
 
 
 def _generate_dynamic_display_html(plot_spec: Dict) -> str:
@@ -19,9 +20,10 @@ def _generate_svg(plot_spec: Dict) -> str:
     return lets_plot_kotlin_bridge.export_svg(plot_spec)
 
 
-def _generate_static_html_page(plot_spec: Dict, version: str, iframe: bool) -> str:
+def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)
-    return lets_plot_kotlin_bridge.export_html(plot_spec, version, iframe)
+    scriptUrl = get_js_cdn_url()
+    return lets_plot_kotlin_bridge.export_html(plot_spec, scriptUrl, iframe)
 
 
 def _standardize_plot_spec(plot_spec: Dict) -> Dict:

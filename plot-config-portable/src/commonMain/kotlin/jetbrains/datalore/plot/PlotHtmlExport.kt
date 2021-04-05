@@ -13,19 +13,19 @@ import kotlin.math.round
 object PlotHtmlExport {
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
-     * @param version Version of Lets-plot JS library.
+     * @param scriptUrl An URL to load the Lets-plot JS library from.
      * @param iFrame Whether to wrap HTML in IFrame
      * @param plotSize Desired plot size. Has no effect on GGBunch.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildHtmlFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        version: String = "latest",
+        scriptUrl: String,
         iFrame: Boolean = false,
         plotSize: DoubleVector? = null
     ): String {
 
-        val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(PlotHtmlHelper.scriptUrl(version))
+        val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
         val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(plotSpec, plotSize)
 
         val style = if (iFrame) {

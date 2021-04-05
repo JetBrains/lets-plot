@@ -73,7 +73,8 @@ def _get_env_val(actual_name: str) -> Any:
 _settings = {
     OFFLINE: _init_value(OFFLINE, False),  # default: download from CDN
     NO_JS: _init_value(NO_JS, False),
-    JS_BASE_URL: 'https://dl.bintray.com/jetbrains/lets-plot',
+    # JS_BASE_URL: 'https://dl.bintray.com/jetbrains/lets-plot',
+    JS_BASE_URL: "https://cdnjs.cloudflare.com/ajax/libs/lets-plot",
     JS_NAME: '',  # default: lets-plot-<version>.min.js
     GEOCODING_PROVIDER_URL: _init_value(GEOCODING_PROVIDER_URL, _DATALORE_GEOCODING_SERVICE),
     MAPTILES_KIND: _init_value(MAPTILES_KIND, TILES_VECTOR_LETS_PLOT),
@@ -83,7 +84,10 @@ _settings = {
 
     'dev_' + OFFLINE: _init_value('dev_' + OFFLINE, True),  # default: embed js into the notebook
     'dev_' + NO_JS: _init_value('dev_' + NO_JS, False),
-    'dev_' + JS_BASE_URL: "http://0.0.0.0:8080",
+    # We don't publish "dev" version, it must be served on localhost:
+    # $ cd lets-plot/js-package/build/distributions
+    # $ python -m http.server 8080
+    'dev_' + JS_BASE_URL: "http://127.0.0.1:8080",
     'dev_' + JS_NAME: '',  # default: lets-plot-<version>.js
     'dev_' + GEOCODING_PROVIDER_URL: _init_value('dev_' + GEOCODING_PROVIDER_URL, _DATALORE_GEOCODING_SERVICE),
     'dev_' + MAPTILES_KIND: _init_value('dev_' + MAPTILES_KIND, TILES_VECTOR_LETS_PLOT),
@@ -108,6 +112,20 @@ def _get_global_val_intern(actual_name: str) -> Any:
 
 def is_production() -> bool:
     return 'dev' not in __version__
+
+
+def get_js_cdn_url() -> str:
+    base_url = get_global_str(JS_BASE_URL)
+    if has_global_value(JS_NAME):
+        name = get_global_str(JS_NAME)
+    else:
+        suffix = "min.js" if is_production() else "js"
+        # name = "lets-plot-{version}.{suffix}".format(version=__version__, suffix=suffix)
+        name = "lets-plot.{suffix}".format(suffix=suffix)
+
+    # url = "{base_url}/{name}".format(base_url=base_url, name=name)
+    url = "{base_url}/{version}/{name}".format(base_url=base_url, version=__version__, name=name)
+    return url
 
 
 def has_global_value(name: str) -> bool:
