@@ -29,6 +29,10 @@ from .frontend_context import _configuration as cfg
 
 
 class LetsPlot:
+    """
+    Initalize the library and its options.
+    """
+
     @classmethod
     def setup_html(cls, *,
                    isolated_frame: bool = None,
@@ -38,26 +42,48 @@ class LetsPlot:
         """
         Configures Lets-Plot HTML output.
         Depending on the usage LetsPlot generates different HTML to show plots.
-        In most cases LetsPlot will detect type of the environment automatically. Auto-detection
-        can be overritten using this method parameters.
+        In most cases LetsPlot will detect type of the environment automatically.
+        Auto-detection can be overritten using this method parameters.
 
         Parameters
         ----------
         isolated_frame : bool
-            True - generate HTLM which can be used in `iframe` or in a standalone HTML document
-            False - pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
-            Default: None - auto-detect.
+            True - generate HTLM which can be used in iframe or in a standalone HTML document.
+            False - pre-load Lets-Plot JS library. Notebook cell output will only consist
+            of HTML for the plot rendering. Default: None - auto-detect.
         offline : bool
-            True - full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
-            to work with notebook without the Internet connection.
-            False - load Lets-Plot JS library from CDN.
-            Default (None): 'connected' mode in production environment and 'offline' mode in dev environment.
-        no_js : bool
+            True - full Lets-Plot JS bundle will be added to the notebook.
+            Use this option if you would like to work with notebook
+            without the Internet connection. False - load Lets-Plot JS library from CDN.
+            Default (None): 'connected' mode in production environment
+            and 'offline' mode in dev environment.
+        no_js : bool, default=False
             True - do not generate HTML+JS as an output - just static SVG image.
-            Default: False.
-        show_status : bool, optional, default False
+        show_status : bool, default=False
             Whether to show status of loading of the Lets-Plot JS library.
             Only applicable when the Lets-Plot JS library is preloaded.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2-3
+
+            from lets_plot import *
+            LetsPlot.setup_html(isolated_frame=False, offline=True, \\
+                                no_js=True, show_status=True)
+            ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+
         """
         if not (isinstance(isolated_frame, bool) or isolated_frame is None):
             raise ValueError("'isolated' argument is not boolean: {}".format(type(isolated_frame)))
@@ -78,6 +104,75 @@ class LetsPlot:
 
     @classmethod
     def set(cls, settings: Dict):
+        """
+        Set up options of the library.
+
+        Parameters
+        ----------
+        settings : dict
+            Dictionary of the admissible settings.
+
+        Note
+        ----
+        List of admissible settings:
+
+        - html_isolated_frame : preload Lets-Plot JS library or not (bool).
+        - offline : to work with notebook without the Internet connection (bool).
+        - no_js : do not generate HTML+JS as an output (bool).
+
+        Geocoding settings also could be specified:
+
+        - maptiles_kind : kind of the tiles, could be 'raster_zxy' or 'vector_lets_plot'. Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
+        - maptiles_url : address of the tile server (str). Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
+        - maptiles_theme : tiles theme, could be 'color', 'light' or 'dark'. Do not use this parameter explicitly. Instead you should construct it with function `maptiles_lets_plot()`.
+        - maptiles_attribution : an attribution or a copyright notice to display on the map as required by the tile license (str, supports HTML links). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy()`.
+        - maptiles_min_zoom : minimal zoom limit (int). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy()`.
+        - maptiles_max_zoom : maximal zoom limit (int). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy()`.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2-3
+
+            from lets_plot import *
+            LetsPlot.set({'html_isolated_frame': False, 'offline': True, \\
+                          'no_js': True, 'max_width': 200})
+            LetsPlot.setup_html(show_status=True)
+            ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 3
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            LetsPlot.set(maptiles_lets_plot(theme='light'))
+            ggplot() + geom_livemap()
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 12
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            attribution = '''
+            Map tiles by
+            <a href="http://stamen.com">Stamen Design</a>, under
+            <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+            Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under
+            <a href="http://www.openstreetmap.org/copyright">ODbL</a>
+            '''
+            tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
+                                 attribution=attribution)
+            LetsPlot.set(tiles)
+            ggplot() + geom_livemap()
+
+        """
         if is_production():
             _settings.update(settings)
         else:
