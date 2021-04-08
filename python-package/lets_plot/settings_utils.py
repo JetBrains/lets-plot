@@ -11,20 +11,33 @@ __all__ = ['maptiles_zxy', 'maptiles_lets_plot']
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
     """
-    Makes vector tiles config.
-    Can be used individually in geom_livemap() or in every livemap via LetsPlot.set(...)
+    Makes vector tiles config. Can be used individually in `geom_livemap()`
+    or in every livemap via `LetsPlot.set()`.
 
     Parameters
     ----------
-    url : [string, None]
+    url : str
         Address of the tile server. Can be ommited if URL is already set in global settings.
 
-    theme : ['color', 'light', 'dark', None]
+    theme : {'color', 'light', 'dark'}
         Tiles theme.
 
     Returns
     -------
-        Tile provider settings
+    dict
+        Tile provider settings.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        tiles = maptiles_lets_plot(url='wss://tiles.datalore.jetbrains.com', theme='light')
+        ggplot() + geom_livemap(tiles=tiles)
+
     """
     assert isinstance(url, (str, type(None))), "'url' argument is not str: {}".format(type(url))
     assert isinstance(theme, (str, type(None))), "'theme' argument is not str: {}".format(type(theme))
@@ -47,35 +60,49 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
 
 def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None, **other_args) -> dict:
     """
-    Makes raster tiles config.
-    Can be used individually in geom_livemap() or in every livemap via LetsPlot.set(...)
+    Makes raster tiles config. Can be used individually in `geom_livemap()`
+    or in every livemap via `LetsPlot.set()`.
 
     Parameters
     ----------
-    url : string
-        Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
-
-    attribution : string
+    url : str
+        Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards,
+        e.g. ``"http://my.tile.com/{z}/{x}/{y}.png"``.
+    attribution : str
         An attribution or a copyright notice to display on the map as required by the tile license.
-        Supports HTML links <a href="http://www.example.com">Example</a>
-
+        Supports HTML links: ``'<a href="http://www.example.com">Example</a>'``.
     min_zoom : int
-        Minimal zoom limit
-
+        Minimal zoom limit.
     max_zoom : int
-        Maximal zoom limit
-
-    other_args : **string
-        Any key-value pairs that can be substituted into the url template
-
-        maptiles_zxy(
-            url = 'http://maps.example.com/{z}/{x}/{y}.png?access_key={key}'
-            key = 'MY_ACCESS_KEY'
-        )
+        Maximal zoom limit.
+    other_args
+        Any key-value pairs that can be substituted into the url template, e.g.
+        ``maptiles_zxy(url='http://maps.example.com/{z}/{x}/{y}.png?access_key={key}', key='MY_ACCESS_KEY')``.
 
     Returns
     -------
-        Tile provider settings
+    dict
+        Tile provider settings.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        attribution = '''
+        Map tiles by
+        <a href="http://stamen.com">Stamen Design</a>, under
+        <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+        Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under
+        <a href="http://www.openstreetmap.org/copyright">ODbL</a>
+        '''
+        tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
+                             attribution=attribution)
+        ggplot() + geom_livemap(tiles=tiles)
+
     """
     assert isinstance(url, str), "'url' argument is not str: {}".format(type(url))
     assert isinstance(attribution, (str, type(None))), "'attribution' argument is not str: {}".format(type(url))
