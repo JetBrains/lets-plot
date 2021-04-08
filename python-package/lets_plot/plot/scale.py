@@ -27,7 +27,7 @@ __all__ = ['scale_shape',
            ]
 
 
-def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
     Scale for shapes.
 
@@ -49,6 +49,12 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -85,6 +91,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   solid=solid)
 
@@ -93,7 +100,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 # Continuous Scales
 #
 
-def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
+def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
+                       format=None):
     """
     Continuous position scale x.
 
@@ -157,7 +165,8 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
                   format=format)
 
 
-def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
+def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
+                       format=None):
     """
     Continuous position scale y.
 
@@ -429,7 +438,8 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
+                     format=None):
     """
     Discrete position scale x.
 
@@ -496,7 +506,8 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   discrete=True, reverse=reverse)
 
 
-def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
+def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
+                              format=None):
     """
     Reversed discrete position scale x.
 
@@ -550,7 +561,8 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
+                     format=None):
     """
     Discrete position scale y.
 
@@ -617,7 +629,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   discrete=True, reverse=reverse)
 
 
-def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
+def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
+                              format=None):
     """
     Reversed discrete position scale y.
 
@@ -675,7 +688,8 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
 # Manual Scales
 #
 
-def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+                       format=None):
     """
     Create your own discrete scale for color aesthetic.
 
@@ -704,6 +718,12 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -738,11 +758,12 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   values=values)
 
 
-def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for fill aesthetic.
 
@@ -771,6 +792,12 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -805,11 +832,12 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   values=values)
 
 
-def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for size aesthetic.
 
@@ -836,6 +864,12 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -871,11 +905,13 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   values=values)
 
 
-def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+                       format=None):
     """
     Create your own discrete scale for shape aesthetic.
 
@@ -902,6 +938,12 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -937,11 +979,13 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   values=values)
 
 
-def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+                          format=None):
     """
     Create your own discrete scale for line type aesthetic.
 
@@ -968,6 +1012,12 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -991,7 +1041,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         LetsPlot.setup_html()
         x = [-.3, -.1, .1, .3]
         ggplot() + geom_hline(aes(yintercept=x, linetype=x), size=1) + \\
-            scale_linetype_manual(values=[3, 4, 5, 6], 
+            scale_linetype_manual(values=[3, 4, 5, 6],
                                   labels=['dotted', 'dotdash', 'longdash', 'twodash'])
 
     """
@@ -1004,11 +1054,13 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   values=values)
 
 
-def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+                       format=None):
     """
     Create your own discrete scale for alpha (transparency) aesthetic.
 
@@ -1035,6 +1087,12 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1069,6 +1127,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   values=values)
 
@@ -1078,7 +1137,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 #
 
 def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
-                        limits=None, na_value=None, guide=None, trans=None):
+                        limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for fill aesthetic.
 
@@ -1108,6 +1167,12 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1131,11 +1196,11 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
             scale_fill_gradient(low='#1a9641', high='#d7191c')
 
     """
-    return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
+    return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans, format)
 
 
 def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
-                          limits=None, na_value=None, guide=None, trans=None):
+                          limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for fill aesthetic.
 
@@ -1163,6 +1228,12 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1195,13 +1266,14 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   low=low, high=high,
                   scale_mapper_kind='color_gradient')
 
 
 def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
-                         na_value=None, guide=None, trans=None):
+                         na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for color aesthetic.
 
@@ -1231,6 +1303,12 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1255,11 +1333,11 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
             scale_color_gradient(low='#1a9641', high='#d7191c', guide='legend')
 
     """
-    return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
+    return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans, format)
 
 
 def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
-                           na_value=None, guide=None, trans=None):
+                           na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for color aesthetic.
 
@@ -1287,6 +1365,12 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1316,13 +1400,14 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   low=low, high=high,
                   scale_mapper_kind='color_gradient')
 
 
 def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
-                         na_value=None, guide=None, trans=None):
+                         na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for fill aesthetic.
 
@@ -1354,6 +1439,12 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1386,13 +1477,14 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   low=low, mid=mid, high=high,
                   midpoint=midpoint, scale_mapper_kind='color_gradient2')
 
 
 def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
-                          na_value=None, guide=None, trans=None):
+                          na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for color aesthetic.
 
@@ -1424,6 +1516,12 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1457,13 +1555,14 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   low=low, mid=mid, high=high,
                   midpoint=midpoint, scale_mapper_kind='color_gradient2')
 
 
 def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
-                   limits=None, na_value=None, guide=None, trans=None):
+                   limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for fill aesthetic.
 
@@ -1497,6 +1596,12 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1529,13 +1634,14 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   h=h, c=c, l=l, h_start=h_start,
                   direction=direction, scale_mapper_kind='color_hue')
 
 
 def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
-                    limits=None, na_value=None, guide=None, trans=None):
+                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for color aesthetic.
 
@@ -1569,6 +1675,12 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1602,13 +1714,14 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   h=h, c=c, l=l, h_start=h_start,
                   direction=direction, scale_mapper_kind='color_hue')
 
 
 def scale_fill_discrete(direction=None,
-                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
@@ -1635,6 +1748,12 @@ def scale_fill_discrete(direction=None,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1671,12 +1790,13 @@ def scale_fill_discrete(direction=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
+                  format=format,
                   #
                   direction=direction, discrete=True)
 
 
 def scale_color_discrete(direction=None,
-                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
@@ -1703,6 +1823,12 @@ def scale_color_discrete(direction=None,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1739,12 +1865,13 @@ def scale_color_discrete(direction=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
+                  format=format,
                   #
                   direction=direction, discrete=True)
 
 
 def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
-                    na_value=None, guide=None, trans=None):
+                    na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for fill aesthetic.
     The palette is computed using HSV (hue, saturation, value) color model.
@@ -1775,6 +1902,12 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1809,6 +1942,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   start=start, end=end,
                   direction=direction,
@@ -1816,7 +1950,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
 
 
 def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
-                     na_value=None, guide=None, trans=None):
+                     na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for color aesthetic.
     The palette is computed using HSV (hue, saturation, value) color model.
@@ -1847,6 +1981,12 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1882,6 +2022,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   start=start, end=end,
                   direction=direction,
@@ -1909,7 +2050,7 @@ def _greyscale_check_parameters(start=None, end=None):
 
 
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
-                      na_value=None, guide=None, trans=None):
+                      na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for fill aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
@@ -1944,6 +2085,12 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -1954,8 +2101,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     ----
     Defines sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
-    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
-    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
+    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
+    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
     colors which do not look as good).
 
     However, the original color schemes (particularly the qualitative ones) were not intended for this and the
@@ -1989,6 +2136,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   type=type, palette=palette,
                   direction=direction,
@@ -1996,9 +2144,9 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
 
 def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
-                       na_value=None, guide=None, trans=None):
+                       na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic. 
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -2031,6 +2179,12 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -2041,8 +2195,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     ----
     Defines sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
-    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
-    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
+    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
+    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
     colors which do not look as good).
 
     However, the original color schemes (particularly the qualitative ones) were not intended for this and
@@ -2077,6 +2231,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   type=type,
                   palette=palette,
@@ -2231,7 +2386,8 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
 # Range Scale (alpha and size)
 #
 
-def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None):
+def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None,
+                format=None):
     """
     Scale for alpha.
 
@@ -2256,6 +2412,12 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -2288,11 +2450,13 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   range=range)
 
 
-def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None):
+def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None,
+               format=None):
     """
     Scale for size.
 
@@ -2317,6 +2481,12 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -2350,12 +2520,13 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   range=range)
 
 
 def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=None,
-                    na_value=None, guide=None, trans=None):
+                    na_value=None, guide=None, trans=None, format=None):
     """
     Continuous scale for size that maps 0 to 0.
 
@@ -2380,6 +2551,12 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -2417,6 +2594,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
+                  format=format,
                   #
                   max_size=max_size,
                   scale_mapper_kind='size_area')
