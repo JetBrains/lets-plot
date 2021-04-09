@@ -46,11 +46,11 @@ def theme(*,
     axis_line_y : str or `FeatureSpec`
         Line along y axis. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
     legend_position : {'none', 'left', 'right', 'bottom', 'top'} or list
-        The position of legends. To remove the plot legend use the 'none' value.
-        If parameter is list then it should be a two-element numeric vector,
+        The position of legends. To remove the plot legend, use the 'none' value.
+        If parameter is a list, then it should be a two-element numeric vector,
         each value of float type between 0 and 1.
     legend_justification : str or list
-        Anchor point for positioning legend. If parameter is list then
+        Anchor point for positioning legend. If parameter is a list, then
         it should be a two-element numeric vector. The pair [0, 0] corresponds to the
         bottom left corner, the pair [1, 1] corresponds to the top right.
         For string parameter the only possible value is 'center'.

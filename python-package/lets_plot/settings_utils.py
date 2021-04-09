@@ -76,7 +76,7 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     max_zoom : int
         Maximal zoom limit.
     other_args
-        Any key-value pairs that can be substituted into the url template, e.g.
+        Any key-value pairs that can be substituted into the URL template, e.g.
         ``maptiles_zxy(url='http://maps.example.com/{z}/{x}/{y}.png?access_key={key}', key='MY_ACCESS_KEY')``.
 
     Returns

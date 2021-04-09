@@ -41,9 +41,9 @@ class LetsPlot:
                    show_status: bool = False) -> None:
         """
         Configures Lets-Plot HTML output.
-        Depending on the usage LetsPlot generates different HTML to show plots.
+        Depending on the usage, LetsPlot generates different HTML to show plots.
         In most cases LetsPlot will detect type of the environment automatically.
-        Auto-detection can be overritten using this method parameters.
+        Auto-detection can be overwritten using this method parameters.
 
         Parameters
         ----------
@@ -105,22 +105,22 @@ class LetsPlot:
     @classmethod
     def set(cls, settings: Dict):
         """
-        Set up options of the library.
+        Set up library options.
 
         Parameters
         ----------
         settings : dict
-            Dictionary of the admissible settings.
+            Dictionary of settings.
 
         Note
         ----
-        List of admissible settings:
+        List of possible settings:
 
         - html_isolated_frame : preload Lets-Plot JS library or not (bool).
         - offline : to work with notebook without the Internet connection (bool).
         - no_js : do not generate HTML+JS as an output (bool).
 
-        Geocoding settings also could be specified:
+        Geocoding settings could also be specified:
 
         - maptiles_kind : kind of the tiles, could be 'raster_zxy' or 'vector_lets_plot'. Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
         - maptiles_url : address of the tile server (str). Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
