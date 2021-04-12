@@ -369,7 +369,7 @@ See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.
 ### License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
-Copyright © 2019-2020, JetBrains s.r.o.
+Copyright © 2019-2021, JetBrains s.r.o.
     
 
 
