@@ -41,6 +41,7 @@ OFFLINE = 'offline'
 NO_JS = 'no_js'
 JS_BASE_URL = 'js_base_url'
 JS_NAME = 'js_name'
+JS_URL_MANUAL = 'js_url_manual'
 MAX_WIDTH = 'max_width'
 MAX_HEIGHT = 'max_height'
 
@@ -115,6 +116,9 @@ def is_production() -> bool:
 
 
 def get_js_cdn_url() -> str:
+    if has_global_value(JS_URL_MANUAL):
+        return get_global_str(JS_URL_MANUAL)
+
     base_url = get_global_str(JS_BASE_URL)
     if has_global_value(JS_NAME):
         name = get_global_str(JS_NAME)
