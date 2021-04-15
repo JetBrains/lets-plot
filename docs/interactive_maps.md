@@ -59,6 +59,9 @@ Examples:
 * Mapping US Household Income:          <a href="https://www.kaggle.com/alshan/mapping-us-household-income" title="View at Kaggle">
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
   </a>
+* Beijing housing prices on a map:      <a href="https://www.kaggle.com/alshan/beijing-housing-prices-on-a-map-with-spatial-join" title="View at Kaggle">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+  </a>
 * [map_california_housing.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map-california-housing/map_california_housing.ipynb)
                                          
  
