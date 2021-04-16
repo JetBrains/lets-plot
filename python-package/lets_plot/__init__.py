@@ -59,6 +59,7 @@ class LetsPlot:
             and 'offline' mode in dev environment.
         no_js : bool, default=False
             True - do not generate HTML+JS as an output - just static SVG image.
+            Note that without JS interactive maps and tooltips doesn't work!
         show_status : bool, default=False
             Whether to show status of loading of the Lets-Plot JS library.
             Only applicable when the Lets-Plot JS library is preloaded.
@@ -118,7 +119,7 @@ class LetsPlot:
 
         - html_isolated_frame : preload Lets-Plot JS library or not (bool).
         - offline : to work with notebook without the Internet connection (bool).
-        - no_js : do not generate HTML+JS as an output (bool).
+        - no_js : do not generate HTML+JS as an output (bool). Note that without JS interactive maps and tooltips doesn't work!
 
         Geocoding settings could also be specified:
 
@@ -136,8 +137,7 @@ class LetsPlot:
             :emphasize-lines: 2-3
 
             from lets_plot import *
-            LetsPlot.set({'html_isolated_frame': False, 'offline': True, \\
-                          'no_js': True, 'max_width': 200})
+            LetsPlot.set({'html_isolated_frame': False, 'offline': True})
             LetsPlot.setup_html(show_status=True)
             ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
 
