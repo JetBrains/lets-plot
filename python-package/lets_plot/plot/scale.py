@@ -443,7 +443,8 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None,
+                     reverse=None, order=None):
     """
     Discrete position scales (x)
 
@@ -464,8 +465,10 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0, additive = 0.6.
     na_value :
         Missing values will be replaced with this value.
-    reverse: boolean
+    reverse : boolean
         When True the scale reversed.
+    order : Int
+        Specifies the ordering direction: 1 - ascending, -1 - descending.
     format : string
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
@@ -509,7 +512,9 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   trans=None,
                   format=format,
                   #
-                  discrete=True, reverse=reverse)
+                  discrete=True,
+                  reverse=reverse,
+                  order=order)
 
 
 def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
@@ -552,7 +557,8 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None,
+                     reverse=None, order=None):
     """
     Discrete position scales (y)
 
@@ -573,8 +579,10 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0, additive = 0.6.
     na_value :
         Missing values will be replaced with this value.
-    reverse: boolean
+    reverse : boolean
         When True the scale reversed.
+    order : Int
+        Specifies the ordering direction: 1 - ascending, -1 - descending.
     format : string
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
@@ -619,7 +627,9 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   trans=None,
                   format=format,
                   #
-                  discrete=True, reverse=reverse)
+                  discrete=True,
+                  reverse=reverse,
+                  order=order)
 
 
 def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
@@ -1588,7 +1598,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 
 def scale_fill_discrete(direction=None,
-                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+                        order=None):
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
@@ -1614,6 +1625,8 @@ def scale_fill_discrete(direction=None,
         It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
         specifying additional arguments.
         "none" will hide the guide.
+    order : Int
+        Specifies the ordering direction: 1 - ascending, -1 - descending.
 
     Returns
     -------
@@ -1638,11 +1651,13 @@ def scale_fill_discrete(direction=None,
                   na_value=na_value,
                   guide=guide,
                   #
-                  direction=direction, discrete=True)
+                  direction=direction, discrete=True,
+                  order=order)
 
 
 def scale_color_discrete(direction=None,
-                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
+                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+                         order=None):
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
@@ -1668,6 +1683,8 @@ def scale_color_discrete(direction=None,
         It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
         specifying additional arguments.
         "none" will hide the guide.
+    order : Int
+        Specifies the ordering direction: 1 - ascending, -1 - descending.
 
     Returns
     -------
@@ -1692,7 +1709,8 @@ def scale_color_discrete(direction=None,
                   na_value=na_value,
                   guide=guide,
                   #
-                  direction=direction, discrete=True)
+                  direction=direction, discrete=True,
+                  order=order)
 
 
 def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,

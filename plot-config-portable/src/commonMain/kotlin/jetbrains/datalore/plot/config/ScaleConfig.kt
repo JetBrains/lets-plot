@@ -92,6 +92,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
         // used in scale_x_discrete, scale_y_discrete
         val discreteDomain = getBoolean(Option.Scale.DISCRETE_DOMAIN)
         val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
+        val order = getInteger(Option.Scale.DISCRETE_ORDER_DIR)
 
         val scaleMapperKind =
             getString(SCALE_MAPPER_KIND) ?: if (!has(OUTPUT_VALUES) && discreteDomain && aes in setOf<Aes<*>>(
@@ -160,6 +161,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
 
         b.discreteDomain(discreteDomain)
         b.discreteDomainReverse(reverse)
+        b.discreteDomainOrder(order)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             // ToDo: add support for 'date_breaks', 'date_labels' (see: https://ggplot2.tidyverse.org/current/scale_date.html)

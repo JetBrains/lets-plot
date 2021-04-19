@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.json.getAsDouble
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -28,6 +29,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
+    private var myDiscreteDomainOrder: Int? = null
 
     var mapperProvider: MapperProvider<T>
         get() {
@@ -127,6 +129,11 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         return this
     }
 
+    fun discreteDomainOrder(v: Int?): ScaleProviderBuilder<T> {
+        myDiscreteDomainOrder = v
+        return this
+    }
+
     fun build(): ScaleProvider<T> {
         return MyScaleProvider(this)
     }
@@ -143,6 +150,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
+        private val discreteDomainOrder: Int? = b.myDiscreteDomainOrder
         private val myContinuousTransform: Transform? = b.myTransform
 
         private val myAes: Aes<T> = b.aes
@@ -165,6 +173,19 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 absentMapper(defaultName)
             } else {
                 mapperProvider.createDiscreteMapper(domainValues)::apply
+            }
+
+            if (discreteDomainOrder != null) {
+                val comparable = if (domainValues.all { value -> value is Number }) {
+                    ::getAsDouble
+                } else {
+                    Any::toString
+                }
+                domainValues = if (discreteDomainOrder > 0) {
+                    domainValues.sortedWith(compareBy(comparable))
+                } else {
+                    domainValues.sortedWith(compareByDescending(comparable))
+                }
             }
 
             if (discreteDomainReverse) {
