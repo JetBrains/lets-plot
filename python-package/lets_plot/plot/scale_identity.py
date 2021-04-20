@@ -25,38 +25,49 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    guide :
-        Guide to use for this scale. Defaults to "none".
+        Discrete scale: a vector specifying the data range for the scale.
+        And the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Input data expected: list of strings containing
-            a) names of colors (i.e. 'green')
-            b) hex codes of colors (i.e 'x00ff00')
-            c) css colors (i.e 'rgb(0,255,0)')
+    ----
+    Input data expected: list of strings containing:
+
+    - names of colors (e.g. 'green'),
+    - hex codes of colors (e.g. 'x00ff00'),
+    - css colors (e.g. 'rgb(0, 255, 0)').
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = [0, 1, 2]
-    >>> y = x
-    >>> c = ['red', 'green', 'blue']
-    >>> dat = pd.DataFrame({'x': x, 'y': y, 'c': c})
-    >>> ggplot(dat, aes('x', 'y', color='c')) + geom_point(size=15) + scale_color_identity()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        c = np.random.choice(['#e41a1c', '#377eb8', '#4daf4a'], size=n)
+        v = np.random.normal(size=n)
+        ggplot({'c': c, 'v': v}, aes(x='c', y='v')) + \\
+            geom_boxplot(aes(color='c'), size=2) + \\
+            scale_color_identity()
+
     """
     return _scale('color',
                   name=name,
@@ -79,38 +90,49 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    guide :
-        Guide to use for this scale. Defaults to "none".
+        Discrete scale: a vector specifying the data range for the scale.
+        And the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Input data expected: list of strings containing
-            a) names of colors (i.e. 'green')
-            b) hex codes of colors (i.e 'x00ff00')
-            c) css colors (i.e 'rgb(0,255,0)')
+    ----
+    Input data expected: list of strings containing:
+
+    - names of colors (e.g. 'green'),
+    - hex codes of colors (e.g. 'x00ff00'),
+    - css colors (e.g. 'rgb(0, 255, 0)').
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = [0, 1, 2]
-    >>> y = x
-    >>> c = ['red', 'green', 'blue']
-    >>> dat = pd.DataFrame({'x': x, 'y': y, 'c': c})
-    >>> ggplot(dat, aes('x', 'y', fill='c')) + geom_tile() + scale_fill_identity()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        colors = {'red': '#e41a1c', 'green': '#4daf4a', 'blue': '#377eb8'}
+        c = np.random.choice(list(colors.values()), size=20)
+        ggplot({'c': c}, aes(x='c')) + geom_bar(aes(fill='c')) + \\
+            scale_fill_identity(guide=guide_legend(), name='color', \\
+                                breaks=list(colors.values()), \\
+                                labels=list(colors.keys()))
+
     """
     return _scale('fill',
                   name=name,
@@ -133,35 +155,46 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    guide :
-        Guide to use for this scale. Defaults to "none".
+        Discrete scale: a vector specifying the data range for the scale.
+        And the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Input data expected: numetic codes of shapes.
+    ----
+    Input data expected: numetic codes of shapes.
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = range(7)
-    >>> y = x
-    >>> s = range(7)
-    >>> dat = pd.DataFrame({'x': x, 'y': y, 's': s})
-    >>> ggplot(dat, aes('x', 'y', shape='s')) + geom_point(size=5) + scale_shape_identity()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 26, 6
+        x = [i % m for i in range(n)]
+        y = [int(i / m) for i in range(n)]
+        s = list(range(n))
+        ggplot({'x': x, 'y': y, 's': s}, aes('x', 'y')) + \\
+            geom_point(aes(shape='s'), size=10, show_legend=False, \\
+                       color='#2166ac', fill='#fddbc7', \\
+                       tooltips=layer_tooltips().line('shape #@s')) + \\
+            scale_shape_identity()
+
     """
     return _scale('shape',
                   name=name,
@@ -185,38 +218,49 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    guide :
-        Guide to use for this scale. Defaults to "none".
+        Discrete scale: a vector specifying the data range for the scale.
+        And the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Input data expected: numetic codes or names of line types (i.e 'dotdash').
-        The codes are: 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
+    ----
+    Input data expected: numetic codes or names of line types (e.g. 'dotdash').
+    The codes are: 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = range(6)
-    >>> xend = [v + 2 for v in x]
-    >>> y = x
-    >>> l = range(1,7)
-    >>> dat = pd.DataFrame({'x': x, 'y': y, 'xend':xend, 'l': l})
-    >>> ggplot(dat, aes('x', 'y', xend='xend', yend='y', linetype='l')) +
-    ... geom_segment(size=2) + scale_linetype_identity()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 7
+        data = {
+            'x': [0] * n,
+            'xend': [1] * n,
+            'y': list(range(n)),
+            'yend': list(range(n)),
+        }
+        ggplot(data) + \\
+            geom_segment(aes(x='x', xend='xend', y='y', \\
+                             yend='yend', linetype='y')) + \\
+            scale_linetype_identity()
+
     """
     return _scale('linetype',
                   name=name,
@@ -239,35 +283,46 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    guide :
-        Guide to use for this scale. Defaults to "none".
+        Discrete scale: a vector specifying the data range for the scale.
+        And the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Input data expected: numetic values in range [0..1]
+    ----
+    Input data expected: numetic values in range [0, 1].
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = [0,1,2]
-    >>> y = x
-    >>> a = [.3, .5, 0.8]
-    >>> dat = pd.DataFrame({'x': x, 'y': y, 'a': a})
-    >>> ggplot(dat, aes('x', 'y', alpha='a')) + geom_point(size=15) + scale_alpha_identity()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        a = np.random.uniform(0, .5, size=n)
+        ggplot({'x': x, 'y': y, 'a': a}, aes('x', 'y')) + \\
+            geom_point(aes(alpha='a'), shape=21, size=10) + \\
+            scale_alpha_identity(limits=[.2, .5], breaks=[.2, .3, .4, .5])
+
     """
     return _scale('alpha',
                   name=name,
@@ -290,35 +345,46 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    guide :
-        Guide to use for this scale. Defaults to "none".
+        Discrete scale: a vector specifying the data range for the scale.
+        And the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Input data expected: positive numetic values
+    ----
+    Input data expected: positive numetic values.
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from lets_plot import *
-    >>> x = [0,1,2]
-    >>> y = x
-    >>> s = [3, 9, 18]
-    >>> dat = pd.DataFrame({'x': x, 'y': y, 's': s})
-    >>> ggplot(dat, aes('x', 'y', size='s')) + geom_point() + scale_size_identity()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        w = np.random.choice([8, 10, 12], size=n)
+        ggplot({'x': x, 'y': y, 'w': w}, aes('x', 'y')) + \\
+            geom_point(aes(size='w'), shape=21, alpha=.2) + \\
+            scale_size_identity()
+
     """
     return _scale('size',
                   name=name,
