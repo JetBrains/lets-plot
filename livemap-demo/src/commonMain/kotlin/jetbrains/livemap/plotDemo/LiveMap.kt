@@ -16,10 +16,10 @@ class LiveMap {
             //barWithNullValuesInData()
 //            multiLayerTooltips()
 //            mapJoinBar(),
-            antiMeridian(),
+//            antiMeridian(),
 //            tooltips(),
-            symbol_point(),
-            geom_point()
+//            symbol_point(),
+//            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
 //            bunch(),

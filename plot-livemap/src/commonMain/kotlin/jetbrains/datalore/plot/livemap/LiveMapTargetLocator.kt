@@ -26,7 +26,7 @@ class LiveMapTargetLocator(
 
     override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
        return myLiveMap
-           ?.search(coord)
+           ?.searchResult()
            ?.let {
                GeomTargetLocator.LookupResult(
                    targets = listOf(

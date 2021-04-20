@@ -13,4 +13,5 @@ data class Vec<TypeT> (
 }
 
 fun <T> explicitVec(x: Double, y: Double): Vec<T> = Vec(x, y)
+fun <T> explicitVec(x: Int, y: Int): Vec<T> = Vec(x.toDouble(), y.toDouble())
 fun <T> newVec(x: Scalar<T>, y: Scalar<T>): Vec<T> = Vec(x.value, y.value)
