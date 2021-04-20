@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.json.getAsDouble
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -177,7 +176,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
             if (discreteDomainOrder != null) {
                 val comparable = if (domainValues.all { value -> value is Number }) {
-                    ::getAsDouble
+                    { (it as Number).toDouble() }
                 } else {
                     Any::toString
                 }

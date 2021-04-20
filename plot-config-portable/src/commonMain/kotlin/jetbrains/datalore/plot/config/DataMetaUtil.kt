@@ -14,6 +14,8 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ANNOTATION
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AS_DISCRETE
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.LABEL
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
 import jetbrains.datalore.plot.config.Option.Scale
 
@@ -33,13 +35,15 @@ object DataMetaUtil {
     }
 
     private fun Map<*, *>.getMappingAnnotationsSpec(annotation: String): List<Map<*, *>> {
-        return this
-            .getMap(Option.Meta.DATA_META)
-            ?.getMaps(MappingAnnotation.TAG)
-            ?.filter { it.read(ANNOTATION) == annotation}
-            ?: emptyList()
+        return getDataMetaAnnotationsSpec(this.getMap(Option.Meta.DATA_META), annotation)
     }
 
+    private fun getDataMetaAnnotationsSpec(dataMeta: Map<*, *>?, annotation: String): List<Map<*, *>> {
+        return dataMeta
+            ?.getMaps(MappingAnnotation.TAG)
+            ?.filter { it.read(ANNOTATION) == annotation }
+            ?: emptyList()
+    }
 
     /**
     @returns Set<aes> of discrete aes
@@ -141,8 +145,69 @@ object DataMetaUtil {
         )
     }
 
-}
+    fun reorderDataFrame(dataFrame: DataFrame, byVariable: DataFrame.Variable, orderDir: Int): DataFrame {
+        val data = dataFrame.get(byVariable)
+        val dataWithIndices: List<Pair<Any?, Int>> = data.withIndex().map { it.value to it.index }
 
+        val comparable: (Pair<Any?, Int>) -> Comparable<*>? = if (dataFrame.isNumeric(byVariable)) {
+            { (it.first as Number).toDouble() }
+        } else {
+            { it.first.toString() }
+        }
+        val comparator: Comparator<Pair<Any?, Int>> = if (orderDir > 0) {
+            compareBy(comparable)
+        } else {
+            compareByDescending(comparable)
+        }
+
+        val orderIndices: List<Int> = dataWithIndices.sortedWith(comparator).map { it.second }
+        return dataFrame.selectIndices(orderIndices)
+    }
+
+
+    class OrderOption internal constructor(
+        val aesName: String,
+        val byVariable: String?,
+        val orderDir: Int
+    ) {
+        companion object {
+            fun create(
+                aesName: String,
+                orderBy: String?,
+                order: Any?
+            ): OrderOption? {
+                if (orderBy == null && order == null) {
+                    return null
+                }
+                val orderDir = when (order) {
+                    null -> 1
+                    is Number -> order.toInt()
+                    else -> throw IllegalArgumentException(
+                        "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
+                    )
+                }
+                return OrderOption(aesName, orderBy, orderDir)
+            }
+        }
+    }
+
+    fun createOrderOptions(plotOptions: Map<String, Any>): List<OrderOption> {
+        val plotDiscreteAnnotations = plotOptions.getMappingAnnotationsSpec(AS_DISCRETE)
+        val layersDiscreteAnnotations = plotOptions
+            .getMaps(Option.Plot.LAYERS)
+            ?.map { layerOptions -> layerOptions.getMappingAnnotationsSpec(AS_DISCRETE) }
+            ?.flatten()
+            ?: emptyList()
+
+        return (plotDiscreteAnnotations + layersDiscreteAnnotations).mapNotNull { opts ->
+            OrderOption.create(
+                opts.getString(AES)!!,
+                opts.getString(ORDER_BY),
+                opts.read(ORDER)
+            )
+        }
+    }
+}
 
 private fun Map<*, *>.variables(): Set<String> {
     return values.map { it as String }.toSet()

@@ -3,7 +3,7 @@
 
 
 class MappingMeta:
-    def __init__(self, variable, annotation, **parameters):
+    def __init__(self, variable, annotation, order_by, order, **parameters):
         if variable is None:
             raise ValueError("variable can't be none")
 
@@ -12,10 +12,12 @@ class MappingMeta:
 
         self.variable = variable
         self.annotation = annotation
+        self.order_by = order_by
+        self.order = order
         self.parameters = parameters
 
 
-def as_discrete(variable, label=None):
+def as_discrete(variable, label=None, order_by=None, order=None):
     """
     Marks a numeric variable as categorical.
 
@@ -26,6 +28,12 @@ def as_discrete(variable, label=None):
 
     label : string
         The name of the scale - used as the axis label or the legend title
+
+    order_by : string
+        The variable name to order by.
+
+    order : int
+        The ordering direction. 1 - ascending, -1 - descending.
 
     Returns
     -------
@@ -46,6 +54,6 @@ def as_discrete(variable, label=None):
     """
     if isinstance(variable, str):
         label = variable if label is None else label
-        return MappingMeta(variable, 'as_discrete', label=label)
+        return MappingMeta(variable, 'as_discrete', order_by, order, label=label)
     # aes(x=as_discrete([1, 2, 3])) - pass as is
     return variable

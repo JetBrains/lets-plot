@@ -45,6 +45,8 @@ object Option {
             const val AS_DISCRETE = "as_discrete"
             const val PARAMETERS = "parameters"
             const val LABEL = "label"
+            const val ORDER_BY = "order_by"
+            const val ORDER = "order"
         }
     }
 

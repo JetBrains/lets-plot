@@ -11,6 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
@@ -93,7 +94,8 @@ object PlotConfigUtil {
     internal fun createScales(
         layerConfigs: List<LayerConfig>,
         scaleProvidersMap: TypedScaleProviderMap,
-        isClientSide: Boolean
+        isClientSide: Boolean,
+        orderOptions: List<DataMetaUtil.OrderOption>
     ): TypedScaleMap {
         val dataByVarBinding = layerConfigs
             .flatMap { layer ->
@@ -130,8 +132,19 @@ object PlotConfigUtil {
             val variable = varBinding.variable
             if (discreteMappedAes.contains(aes)) {
                 // update discrete domain
-                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any>() } +
-                        data.distinctValues(variable)
+                val ordering = if (isClientSide) {
+                    orderOptions.find { it.aesName == aes.name }
+                } else {
+                    null
+                }
+                val distinctValues = if (ordering != null) {
+                    val byVariable = ordering.byVariable?.let { DataFrameUtil.findVariableOrFail(data, it) } ?: variable
+                    val sortedDataFrame = DataMetaUtil.reorderDataFrame(data, byVariable, ordering.orderDir)
+                    sortedDataFrame.distinctValues(variable)
+                } else {
+                    data.distinctValues(variable)
+                }
+                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet() } + distinctValues
             } else {
                 // update continuous domain
                 continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
