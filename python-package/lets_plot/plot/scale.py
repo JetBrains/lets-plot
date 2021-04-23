@@ -68,7 +68,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         from lets_plot import *
         LetsPlot.setup_html()
         x = np.arange(10)
-        c = np.where(x < 5, '0', '1')
+        c = np.where(x < 5, 'a', 'b')
         ggplot({'x': x, 'y': x, 'c': c}, aes(x='x', y='y', shape='c')) + \\
             geom_point(size=5) + scale_shape(solid=False, name='shapes')
 
@@ -112,14 +112,14 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
     format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -130,14 +130,13 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8-9
+        :emphasize-lines: 7-8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
-        n = 100
-        x = np.random.randint(-10, 10, size=n)
+        x = np.random.randint(-10, 10, size=100)
         ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=8) + \\
             scale_x_continuous(name='observations', breaks=[-9, -3, 3, 9], \\
                                limits=[-8, 11], expand=[.2], format=".1f")
@@ -176,14 +175,14 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
     format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -194,14 +193,13 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8-9
+        :emphasize-lines: 7-8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
-        n = 1000
-        x = np.random.randint(-10, 10, size=n)
+        x = np.random.randint(-10, 10, size=1000)
         ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=4) + \\
             scale_y_continuous(name='hundreds', breaks=[100, 200, 300, 400], \\
                                labels=['one', 'two', 'three', 'four'])
@@ -245,7 +243,7 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -256,13 +254,15 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
+        n = 1000
         np.random.seed(42)
-        x = np.random.poisson(size=1000)
+        x = np.round(np.power(10, np.random.randint(9, size=n)) * \\
+                     np.random.uniform(.9, 2, size=n))
         ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_x_log10()
 
     """
@@ -295,7 +295,7 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -345,7 +345,7 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -396,7 +396,7 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -453,7 +453,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -469,7 +469,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         from lets_plot import *
         LetsPlot.setup_html()
         scores = {'rating': [3, 4, 5, 4, 3, 4, 3, 4, 5]}
-        ggplot(scores, aes(x='rating')) + geom_bar(aes(y='..count..')) + \\
+        ggplot(scores, aes(x='rating')) + geom_bar() + \\
             scale_x_discrete(name='rating', format=".1f")
 
     """
@@ -515,7 +515,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -568,7 +568,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -630,9 +630,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
-
-    Returns
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -696,7 +694,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Note
     ----
-    Create your own discrete scale for color aesthetic. Values are strings, encoding colors.
+    Create your own color scale. Values are strings, encoding colors.
 
     Examples
     --------
@@ -762,7 +760,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
     Note
     ----
-    Create your own discrete scale for fill aesthetic. Values are strings, encoding filling colors.
+    Create your own color scale for fill aesthetic. Values are strings, encoding filling colors.
 
     Examples
     --------
@@ -775,7 +773,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         LetsPlot.setup_html()
         x = np.arange(9)
         ggplot({'x': x, 'y': x}, aes(x='x', y='y', fill='x')) + \\
-            geom_point(shape=21, size=5, color='white') + \\
+            geom_point(shape=21, size=5, color='black') + \\
             scale_fill_manual(values=['green', 'yellow', 'red'], 
                               name='color', labels=['green', 'yellow', 'red'])
 
@@ -837,10 +835,10 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         from lets_plot import *
         LetsPlot.setup_html()
         x = np.arange(10)
-        c = np.where(x < 5, '0', '1')
+        c = np.where(x < 5, 'a', 'b')
         ggplot({'x': x, 'y': x, 'c': c}, aes(x='x', y='y', size='c')) + \\
             geom_point(shape=1) + \\
-            scale_size_manual(name='size', values=[5, 8], labels=['5', '8'])
+            scale_size_manual(name='size', values=[5, 8])
 
     """
     return _scale('size',
@@ -894,17 +892,16 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8-9
+        :emphasize-lines: 8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         x = np.arange(10)
-        c = np.where(x < 5, '0', '1')
+        c = np.where(x < 5, 'a', 'b')
         ggplot({'x': x, 'y': x, 'c': c}, aes(x='x', y='y', shape='c')) + \\
             geom_point(size=5) + \\
-            scale_shape_manual(values=[12, 13], name='shapes', 
-                               labels=['11', '12'])
+            scale_shape_manual(values=[12, 13], name='shapes', labels=['12', '13'])
 
     """
     return _scale('shape',
@@ -954,18 +951,17 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     ----
     Create your own discrete scale for line type aesthetic. Values are strings or numbers, encoding linetypes.
     Available codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-    5 = "longdash", 6 = "twodash"
+    5 = "longdash", 6 = "twodash".
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6-7
+        :emphasize-lines: 5-6
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(4)*0.1 - 0.2
+        x = [-.3, -.1, .1, .3]
         ggplot() + geom_hline(aes(yintercept=x, linetype=x), size=1) + \\
             scale_linetype_manual(values=[3, 4, 5, 6], 
                                   labels=['dotted', 'dotdash', 'longdash', 'twodash'])
@@ -1022,14 +1018,13 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 6
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         x = np.arange(10)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y', alpha='x')) + \\
-            geom_point(shape=21, size=5) + \\
+        ggplot({'x': x, 'y': x}) + geom_point(aes(x='x', y='y', alpha='x'), shape=21, size=5) + \\
             scale_alpha_manual(values=[0.2, 0.5, 0.9])
 
     """
@@ -1078,8 +1073,8 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1098,9 +1093,9 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', fill='x')) + \\
-            scale_fill_gradient(low='green', high='red')
+            scale_fill_gradient(low='#1a9641', high='#d7191c')
 
     """
     return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
@@ -1133,8 +1128,8 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1153,7 +1148,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', fill='x')) + \\
             scale_fill_continuous(low='green', high='red')
 
@@ -1200,8 +1195,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1220,8 +1215,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
-        ggplot(data) + geom_tile(aes('x', color='x'), size=2, fill='white') + \\
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes('x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
             scale_color_gradient(low='green', high='red', guide='legend')
     """
     return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
@@ -1254,8 +1249,8 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1320,8 +1315,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1340,8 +1335,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
-        ggplot(data) + geom_tile(aes('x', fill='x'), width=1.05) + \\
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes('x', fill='x')) + \\
             scale_fill_gradient2(low='green', mid='orange', high='red')
 
     """
@@ -1389,8 +1384,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1409,7 +1404,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', color='x'), size=2, fill='white') + \\
             scale_color_gradient2(low='green', high='red')
 
@@ -1441,8 +1436,8 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         Chroma (intensity of color), maximum value varies depending on.
     l : int
         Luminance (lightness), in [0,100].
-    direction : {1, -1}
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
+    direction : {1, -1}, default=1
+        Direction to travel around the color wheel, 1 = clockwise, -1=counter-clockwise
     name : str
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1460,8 +1455,8 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1480,7 +1475,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', fill='x')) + \\
             scale_fill_hue(c=50, l=80, h=[0, 50])
 
@@ -1512,8 +1507,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         Chroma (intensity of color), maximum value varies depending on.
     l : int
         Luminance (lightness), in [0,100].
-    direction : {1, -1}
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise.
+    direction : {1, -1}, default=1
+        Direction to travel around the color wheel, 1 = clockwise, -1=counter-clockwise.
     name : str
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1531,8 +1526,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1551,7 +1546,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', color='x'), size=2, fill='white') + \\
             scale_color_hue(c=20, l=90)
 
@@ -1611,18 +1606,17 @@ def scale_fill_discrete(direction=None,
     --------
       .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 10
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(100)
-        N = 50
-        x = np.random.rand(N)
-        y = np.random.rand(N)
-        colors = np.random.rand(N)
-        area = (30 * np.random.rand(N))**2
-        ggplot() + geom_point(aes(x, y, fill=colors, size=area), shape=21, color='white') + \\
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        z = np.random.rand(n)
+        ggplot() + geom_point(aes(x, y, fill=z), shape=21, size=4, color='gray') + \\
             scale_fill_discrete(guide='none')
 
     """
@@ -1646,8 +1640,8 @@ def scale_color_discrete(direction=None,
 
     Parameters
     ----------
-    direction : {1, -1}
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer.pal.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
@@ -1679,18 +1673,17 @@ def scale_color_discrete(direction=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 10
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(100)
-        N = 50
-        x = np.random.rand(N)
-        y = np.random.rand(N)
-        colors = np.random.rand(N)
-        area = (30 * np.random.rand(N))**2
-        ggplot() + geom_point(aes(x, y, color=colors, size=area)) + \\
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        z = np.random.rand(n)
+        ggplot() + geom_point(aes(x, y, color=z), size=4) + \\
             scale_color_discrete(guide='none')
 
     """
@@ -1735,8 +1728,8 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1755,7 +1748,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', fill='x'), width=1.05) + \\
             scale_fill_grey(start=0.9, end=0.1)
     """
@@ -1805,8 +1798,8 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1872,7 +1865,7 @@ def _greyscale_check_parameters(start=None, end=None):
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                       na_value=None, guide=None, trans=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer.org for fill aesthetic. 
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for fill aesthetic. 
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -1881,8 +1874,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
     palette : str or int
         If a string, will use that named palette. If a number, will index into the list of palettes of appropriate type.
-    direction : {1, -1}
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer.pal.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
@@ -1901,8 +1894,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1911,7 +1904,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
     Note
     ----
-    Defines sequential, diverging and qualitative color scales from colorbrewer.org for filling color aesthetic.
+    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
@@ -1921,10 +1914,10 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
     Palettes:
 
-    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
+    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
+    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
     - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
+        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
 
     Examples
     --------
@@ -1934,7 +1927,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': [v for v in range(-16, 16)]}
+        data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', fill='x'), color='white') + \\
             scale_fill_brewer(type='seq', palette='YlGnBu')
 
@@ -1957,7 +1950,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                        na_value=None, guide=None, trans=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer.org for color aesthetic. 
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic. 
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -1966,8 +1959,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
     palette : str or int
         If a string, will use that named palette. If a number, will index into the list of palettes of appropriate type.
-    direction : {1, -1}
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer.pal.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
@@ -1986,8 +1979,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments.
         "none" will hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -1996,7 +1989,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     Note
     ----
-    Defines sequential, diverging and qualitative color scales from colorbrewer.org for color aesthetic.
+    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
@@ -2006,10 +1999,10 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     Palettes:
 
-    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
+    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
+    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
     - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
+        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
 
     Examples
     --------
@@ -2072,7 +2065,7 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -2086,9 +2079,9 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         :emphasize-lines: 11
 
         import pandas as pd
+        from datetime import datetime
         from lets_plot import *
         LetsPlot.setup_html()
-        from datetime import datetime
         economics_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/economics.csv'
         economics = pd.read_csv(economics_url)
         economics['date'] = pd.to_datetime(economics['date'])
@@ -2138,7 +2131,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -2185,8 +2178,8 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or "none" to hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -2203,12 +2196,11 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(100)
-        data = {}
-        data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-        data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-        ggplot(data, aes('x', 'y')) + geom_point(aes(alpha='..density..'),\\
-                                                 stat='density2d', contour=False, n=30) + \\
-            scale_alpha(range=[0.05, 0.9])
+        x = np.random.normal(0, 1, 1000)
+        y = np.random.normal(0, 1, 1000)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) + \\
+            scale_alpha(range=[.01, .99])
 
     """
     return _scale('alpha',
@@ -2245,8 +2237,8 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or "none" to hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -2263,10 +2255,10 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(100)
-        N = 50
-        x = np.random.rand(N)
-        y = np.random.rand(N)
-        area = (30 * np.random.rand(N))**2
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        area = (30 * np.random.rand(n))**2
         ggplot() + geom_point(aes(x, y, size=area), alpha=0.7) + \\
             scale_size(range=[3, 13])
 
@@ -2306,8 +2298,8 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or "none" to hide the guide.
-    trans : str
-        Name of built-in transformation ('identity', 'log10', 'sqrt', 'reverse').
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
@@ -2328,10 +2320,10 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(100)
-        N = 50
-        x = np.random.rand(N)
-        y = np.random.rand(N)
-        area = (30 * np.random.rand(N))**2
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        area = (30 * np.random.rand(n))**2
         ggplot() + geom_point(aes(x, y, size=area), alpha=0.7) + \\
             scale_size_area(max_size=15)
 
@@ -2372,7 +2364,7 @@ def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=N
     :param guide
         Type of legend. Use 'colorbar' for continuous color bar, or 'legend' for discrete values.
     :param trans
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+        Name of built-in transformation.
     :param format
         A string of the format for labels on the scale. Supported types are number and date/time.
     :return:
