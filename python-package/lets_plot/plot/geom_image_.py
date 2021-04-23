@@ -42,45 +42,85 @@ def _scaler_0_255_byte(v):
 def geom_image(image_data, norm=None, vmin=None, vmax=None):
     """
     Displays image specified by ndarray with shape (n, m) or (n, m, 3) or (n, m, 4).
-    This geom is not as flexible as geom_raster or geom_tile but vastly superior in the terms of
-    rendering efficiency.
-
-    This geom doesn't understand any aesthetics.
-    It doesn't support color scales either.
-
-    The following images will be rendered depending on the input array:
-     - N x M       - gray-scale
-     - N x M x 3   - RGB
-     - N x M x 4   - RGBA
-
-    The type of values in array can be int, uint or float of any size.
-    The value for each component of integer arrays should be in the range [0,255].
-    The value for each component of float arrays should be in the range [0,1] for RGB or RGBA images.
-
-    If gray-scale is encoded as float array then the values will be normalized. If arguments vmin/vmax are specified,
-    they will be used in normalization. Otherwise, min/max value will be computed from the image data.     
+    This geom is not as flexible as `geom_raster()` or `geom_tile()`
+    but vastly superior in the terms of rendering efficiency.   
 
     Parameters
     ----------
-    image_data : numpy.ndarray with shape (n, m) or (n, m, 3) or (n, m, 4)
-        Specifies image type, size and pixel values.
-
-    norm : bool
+    image_data : `ndarray`
+        Specifies image type, size and pixel values in `numpy.ndarray`.
+    norm : bool, default=True
         False - disables default scaling of a 2-D float (luminance) input to the (0, 1) range.
-
-    vmin, vmax : scalar, optional, default: None
+    vmin : float, default=None
+        Uses normalized luminance data. Only applied to gray-scale images encoded as float array.
+    vmax : float, default=None
         Uses normalized luminance data. Only applied to gray-scale images encoded as float array.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
+
+    Note
+    ----
+    This geom doesn't understand any aesthetics.
+    It doesn't support color scales either.
+
+    The following images will be rendered depending on the input array:
+
+    - n x m       - gray-scale,
+    - n x m x 3   - RGB,
+    - n x m x 4   - RGBA.
+
+    The type of values in array can be int, uint or float of any size.
+    The value for each component of integer arrays should be in the range [0, 255].
+    The value for each component of float arrays should be in the range [0, 1]
+    for RGB or RGBA images.
+
+    If gray-scale is encoded as float array then the values will be normalized.
+    If arguments `vmin`/`vmax` are specified, they will be used in normalization.
+    Otherwise, min/max value will be computed from the image data.
 
     Examples
     --------
-    >>> import numpy as np
-    >>> from lets_plot import *
-    >>> image = np.random.choice([0.0, 1.0], [10, 100, 3])
-    >>> ggplot() + geom_image(image)
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        image = np.random.randint(256, size=(64, 64, 4))
+        ggplot() + geom_image(image)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 64
+        image = 256 * np.linspace(np.linspace(0, .5, n), \\
+                                  np.linspace(.5, .5, n), n)
+        ggplot() + geom_image(image, norm=False)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        image = np.random.normal(size=(64, 64))
+        ggplot() + geom_image(image, vmin=-1, vmax=1)
+
     """
 
     if png == None:

@@ -150,7 +150,7 @@ class layer_tooltips(FeatureSpec):
 
         Note
         ----
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
         Examples
         --------
