@@ -117,9 +117,9 @@ class LetsPlot:
         ----
         List of possible settings:
 
-        - html_isolated_frame : preload Lets-Plot JS library or not (bool).
-        - offline : to work with notebook without the Internet connection (bool).
-        - no_js : do not generate HTML+JS as an output (bool). Note that without JS interactive maps and tooltips doesn't work!
+        - html_isolated_frame : preload Lets-Plot JS library or not (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`.
+        - offline : to work with notebook without the Internet connection (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`.
+        - no_js : do not generate HTML+JS as an output (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`. Also note that without JS interactive maps and tooltips doesn't work!
 
         Geocoding settings could also be specified:
 
@@ -132,17 +132,6 @@ class LetsPlot:
 
         Examples
         --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 2-3
-
-            from lets_plot import *
-            LetsPlot.set({'html_isolated_frame': False, 'offline': True})
-            LetsPlot.setup_html(show_status=True)
-            ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-
-        |
-
         .. jupyter-execute::
             :linenos:
             :emphasize-lines: 3
