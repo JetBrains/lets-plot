@@ -63,15 +63,16 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         x = np.arange(10)
         c = np.where(x < 5, 'a', 'b')
-        ggplot({'x': x, 'y': x, 'c': c}, aes(x='x', y='y', shape='c')) + \\
-            geom_point(size=5) + scale_shape(solid=False, name='shapes')
+        ggplot({'x': x, 'y': x, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(shape='c'), size=5) + \\
+            scale_shape(solid=False, name='shapes')
 
     """
     solid = as_boolean(solid, default=True)
@@ -141,7 +142,7 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         x = np.random.randint(-10, 10, size=100)
         ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=8) + \\
             scale_x_continuous(name='observations', breaks=[-9, -3, 3, 9], \\
-                               limits=[-8, 11], expand=[.2], format=".1f")
+                               limits=[-8, 11], expand=[.2], format='.1f')
 
     """
     return _scale('x',
@@ -258,16 +259,14 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8
+        :emphasize-lines: 6
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        n = 1000
         np.random.seed(42)
-        x = np.round(np.power(10, np.random.randint(9, size=n)) * \\
-                     np.random.uniform(.9, 2, size=n))
-        ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_x_log10()
+        x = np.power(10, np.random.randint(9, size=100))
+        ggplot({'x': x}, aes(x='x')) + geom_bar() + scale_x_log10()
 
     """
     return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
@@ -317,7 +316,7 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
-        x = np.random.poisson(size=1000)
+        x = np.random.poisson(size=100)
         ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log10()
 
     """
@@ -362,13 +361,12 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 5
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(10)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y')) + \\
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
             geom_point() + scale_x_reverse()
 
     """
@@ -414,14 +412,13 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 5
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(10)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y')) + \\
-            geom_point() + scale_y_reverse(limits=[2, 4])
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point() + scale_y_reverse(limits=[2, 6])
 
     """
 
@@ -472,13 +469,15 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 7
 
+        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        scores = {'rating': [3, 4, 5, 4, 3, 4, 3, 4, 5]}
+        np.random.seed(43)
+        scores = {'rating': np.random.randint(3, 6, size=10)}
         ggplot(scores, aes(x='rating')) + geom_bar() + \\
-            scale_x_discrete(name='rating', format=".1f")
+            scale_x_discrete(name='rating', format='.1f')
 
     """
 
@@ -535,13 +534,15 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 8
 
         from lets_plot import *
         LetsPlot.setup_html()
-        bar = {'time': ['Lunch', 'Dinner', 'Night'],
-               'bill': [15.5, 18.13, 30]}
-        ggplot(bar, aes('time', 'bill')) + geom_bar(stat='identity') + \\
+        data = {
+            'time': ['Lunch', 'Dinner', 'Night'],
+            'bill': [15.5, 18.13, 30],
+        }
+        ggplot(data, aes('time', 'bill')) + geom_bar(stat='identity') + \\
             scale_x_discrete_reversed()
 
     """
@@ -589,13 +590,15 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 8
 
         from lets_plot import *
         LetsPlot.setup_html()
-        bar = {'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
-               'bill': [3.25, 15.5, 18.3, 30]}
-        ggplot(bar, aes('bill', 'time')) + geom_point(size=5) + \\
+        data = {
+            'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
+            'bill': [3.25, 15.5, 18.3, 30],
+        }
+        ggplot(data, aes('bill', 'time')) + geom_point(size=5) + \\
             scale_y_discrete(limits=['Lunch', 'Dinner', 'Night'])
 
     """
@@ -652,13 +655,15 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 8
 
         from lets_plot import *
         LetsPlot.setup_html()
-        bar = {'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
-               'bill': [3.25, 15.5, 18.3, 30]}
-        ggplot(bar, aes('bill', 'time')) + geom_line() + \\
+        data = {
+            'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
+            'bill': [3.25, 15.5, 18.3, 30],
+        }
+        ggplot(data, aes('bill', 'time')) + geom_line() + \\
             scale_y_discrete_reversed()
 
     """
@@ -713,15 +718,14 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7-8
+        :emphasize-lines: 6-7
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(9)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y', color='x')) + \\
-            geom_point(shape=1, size=5) + \\
-            scale_color_manual(values=['red', 'green', 'blue'],
+        x = list(range(9))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=1, size=5) + \\
+            scale_color_manual(values=['red', 'green', 'blue'], \\
                                name='color', labels=['red', 'green', 'blue'])
 
     """
@@ -781,15 +785,14 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7-8
+        :emphasize-lines: 6-7
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(9)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y', fill='x')) + \\
-            geom_point(shape=21, size=5, color='black') + \\
-            scale_fill_manual(values=['green', 'yellow', 'red'], 
+        x = list(range(9))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(fill='x'), shape=21, size=5, color='black') + \\
+            scale_fill_manual(values=['green', 'yellow', 'red'], \\
                               name='color', labels=['green', 'yellow', 'red'])
 
     """
@@ -854,8 +857,8 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         LetsPlot.setup_html()
         x = np.arange(10)
         c = np.where(x < 5, 'a', 'b')
-        ggplot({'x': x, 'y': x, 'c': c}, aes(x='x', y='y', size='c')) + \\
-            geom_point(shape=1) + \\
+        ggplot({'x': x, 'y': x, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(size='c'), shape=1) + \\
             scale_size_manual(name='size', values=[5, 8])
 
     """
@@ -920,8 +923,8 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         LetsPlot.setup_html()
         x = np.arange(10)
         c = np.where(x < 5, 'a', 'b')
-        ggplot({'x': x, 'y': x, 'c': c}, aes(x='x', y='y', shape='c')) + \\
-            geom_point(size=5) + \\
+        ggplot({'x': x, 'y': x, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(shape='c'), size=5) + \\
             scale_shape_manual(values=[12, 13], name='shapes', labels=['12', '13'])
 
     """
@@ -1049,12 +1052,12 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         :linenos:
         :emphasize-lines: 6
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(10)
-        ggplot({'x': x, 'y': x}) + geom_point(aes(x='x', y='y', alpha='x'), shape=21, size=5) + \\
-            scale_alpha_manual(values=[0.2, 0.5, 0.9])
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(alpha='x'), shape=21, size=5) + \\
+            scale_alpha_manual(values=[.2, .5, .9])
 
     """
     return _scale('alpha',
@@ -1124,7 +1127,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', fill='x')) + \\
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
             scale_fill_gradient(low='#1a9641', high='#d7191c')
 
     """
@@ -1179,8 +1182,8 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', fill='x')) + \\
-            scale_fill_continuous(low='green', high='red')
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_continuous(low='#1a9641', high='#d7191c')
 
     """
     return _scale('fill',
@@ -1242,13 +1245,14 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
-            scale_color_gradient(low='green', high='red', guide='legend')
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
+            scale_color_gradient(low='#1a9641', high='#d7191c', guide='legend')
 
     """
     return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
@@ -1295,12 +1299,12 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         :linenos:
         :emphasize-lines: 6
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(10)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y', color='x')) + \\
-            geom_point(shape=1, size=5) + scale_color_continuous(low='green', high='red')
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=1, size=5) + \\
+            scale_color_continuous(low='#1a9641', high='#d7191c')
 
     """
     return _scale('color',
@@ -1369,8 +1373,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', fill='x')) + \\
-            scale_fill_gradient2(low='green', mid='orange', high='red')
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c')
 
     """
     return _scale('fill',
@@ -1434,13 +1438,14 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', color='x'), size=2, fill='white') + \\
-            scale_color_gradient2(low='green', high='red')
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
+            scale_color_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c')
 
     """
     return _scale('color',
@@ -1511,7 +1516,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', fill='x')) + \\
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
             scale_fill_hue(c=50, l=80, h=[0, 50])
 
     """
@@ -1578,12 +1583,13 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     --------
       .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', color='x'), size=2, fill='white') + \\
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
             scale_color_hue(c=20, l=90)
 
     """
@@ -1788,8 +1794,8 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', fill='x'), width=1.05) + \\
-            scale_fill_grey(start=0.9, end=0.1)
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_grey(start=.9, end=.1)
 
     """
     start, end = _greyscale_check_parameters(start, end)
@@ -1855,15 +1861,14 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 6
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(10)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y', color='x')) + \\
-            geom_point(shape=15, size=5) + \\
-            scale_color_grey(start=0.7, end=0.2)
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=15, size=5) + \\
+            scale_color_grey(start=.7, end=.2)
 
     """
     start, end = _greyscale_check_parameters(start, end)
@@ -1971,7 +1976,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes('x', fill='x'), color='white') + \\
+        ggplot(data) + geom_tile(aes(x='x', fill='x'), color='white') + \\
             scale_fill_brewer(type='seq', palette='YlGnBu')
 
     """
@@ -2053,14 +2058,13 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 6
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        x = np.arange(10)
-        ggplot({'x': x, 'y': x}, aes(x='x', y='y', color='x')) + \\
-            geom_point(shape=13, size=5) + \\
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=13, size=5) + \\
             scale_color_brewer(type='qual', palette='Dark2', direction=-1)
 
     """
@@ -2122,19 +2126,21 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 12
 
-        import pandas as pd
-        from datetime import datetime
+        import datetime as dt
+        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        economics_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/economics.csv'
-        economics = pd.read_csv(economics_url)
-        economics['date'] = pd.to_datetime(economics['date'])
-        start = datetime(2000, 1, 1)
-        economics = economics.loc[economics['date'] >= start]
-        ggplot(economics, aes('date', 'unemploy')) + \\
-            geom_step() + scale_x_datetime(format='%B %Y')
+        n = 31
+        np.random.seed(42)
+        d = [dt.datetime(2021, 1, 1) + dt.timedelta(days=d)
+             for d in range(n)]
+        t = np.random.normal(loc=-5, scale=6, size=n)
+        ggplot({'d': d, 't': t}, aes('d', 't')) + \\
+            geom_histogram(aes(fill='t'), stat='identity', color='black') + \\
+            scale_x_datetime() + \\
+            scale_fill_gradient2(low='#2c7bb6', high='#d7191c')
 
     """
     return _scale('x',
@@ -2184,6 +2190,27 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
     -------
     `FeatureSpec`
         Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13
+
+        import datetime as dt
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 12
+        rcount = lambda m: 1 if m < 2 else rcount(m - 1) + rcount(m - 2)
+        data = {
+            'date': [dt.datetime(2020, m, 1) for m in range(1, n + 1)],
+            'rabbits count': [rcount(m) for m in range(1, n + 1)],
+        }
+        ggplot(data) + \\
+            geom_segment(aes(x=[0] * n, y='date', xend='rabbits count', yend='date'), size=3, \\
+                         tooltips=layer_tooltips().line('@|@{rabbits count}')) + \\
+            scale_y_datetime(format='%b') + \\
+            xlab('rabbits count')
 
     """
     return _scale('y',
@@ -2309,7 +2336,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         n = 50
         x = np.random.rand(n)
         y = np.random.rand(n)
-        area = (30 * np.random.rand(n))**2
+        area = np.power(np.random.randint(30, size=n), 2)
         ggplot() + geom_point(aes(x, y, size=area), alpha=0.7) + \\
             scale_size(range=[3, 13])
 
@@ -2376,7 +2403,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         n = 50
         x = np.random.rand(n)
         y = np.random.rand(n)
-        area = (30 * np.random.rand(n))**2
+        area = np.power(np.random.uniform(30, size=n), 2)
         ggplot() + geom_point(aes(x, y, size=area), alpha=0.7) + \\
             scale_size_area(max_size=15)
 
