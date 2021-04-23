@@ -29,43 +29,51 @@ __all__ = ['scale_shape',
 
 def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Scale for shapes
+    Scale for shapes.
 
     Parameters
     ----------
-    solid : boolean
-        Are the shapes solid (default) True, or hollow (False)?
-    name : string
-        The name of the scale - used as the axis label or the legend title
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    solid : bool, default=True
+        Are the shapes solid (default) True, or hollow (False).
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list
+        A numeric vector of positions of ticks.
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Scale for shapes. A continuous variable cannot be mapped to shape.
+    ----
+    Scale for shapes. A continuous variable cannot be mapped to shape.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> x = np.random.uniform(-1, 1, size=100)
-    >>> y = np.random.normal(size=100)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-    >>> ggplot(dat, aes(x='x', y='y', shape='class')) + geom_point(size=5) + scale_shape(solid=False)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = np.arange(10)
+        c = np.where(x < 5, 'a', 'b')
+        ggplot({'x': x, 'y': x, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(shape='c'), size=5) + \\
+            scale_shape(solid=False, name='shapes')
+
     """
     solid = as_boolean(solid, default=True)
     return _scale('shape',
@@ -87,56 +95,55 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 
 def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
     """
-    Continuous position scales (x)
+    Continuous position scale x.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
-    format : string
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> N = 10000
-    >>> x = np.random.uniform(-4, 4, size=N)
-    >>> x = x.astype(int)
-    >>> y = np.random.normal(size=N)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(N)]
-    >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
-    >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
-    >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') +
-    ... scale_x_continuous(name='discretised x', breaks=breaks, labels=labels)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.randint(-10, 10, size=100)
+        ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=8) + \\
+            scale_x_continuous(name='observations', breaks=[-9, -3, 3, 9], \\
+                               limits=[-8, 11], expand=[.2], format='.1f')
+
     """
     return _scale('x',
                   name=name,
@@ -152,58 +159,55 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
 
 def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
     """
-    Continuous position scales (y)
+    Continuous position scale y.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
-    format : string
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> N = 10000
-    >>> x = np.random.uniform(-4, 4, size=N)
-    >>> x = x.astype(int)
-    >>> y = np.random.normal(size=N)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(N)]
-    >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
-    >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
-    >>> y_breaks = [1500, 3000]
-    >>> y_labels = ['one', 'two']
-    >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') +
-    ... scale_y_continuous(breaks=y_breaks, labels=y_labels)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.randint(-10, 10, size=1000)
+        ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=4) + \\
+            scale_y_continuous(name='hundreds', breaks=[100, 200, 300, 400], \\
+                               labels=['one', 'two', 'three', 'four'])
+
     """
     return _scale('y',
                   name=name,
@@ -219,166 +223,152 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
 
 def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Continuous position scales (x) where trans='log10'
+    Continuous position scale x where trans='log10'.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions of ticks.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> N = 21
-    >>> x = [v for v in range(N)]
-    >>> y0 = [pow(10, v / 10.) for v in range(N)]
-    >>> y1 = [v * 5 for v in range(N)]
-    >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
-    >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
-    >>> ### Linear scales (default)
-    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
-    ... scale_size_manual(values=[7, 3])
-    >>> ### Log10 scale on Y axis
-    >>> p + scale_y_log10()
-    >>> ### Log10 scale on both axis
-    >>> p + scale_y_log10() + scale_x_log10()
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.power(10, np.random.randint(9, size=100))
+        ggplot({'x': x}, aes(x='x')) + geom_bar() + scale_x_log10()
+
     """
     return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
 
 
 def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Continuous position scales (y) where trans='log10'
+    Continuous position scales y where trans='log10'.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> N = 21
-    >>> x = [v for v in range(N)]
-    >>> y0 = [pow(10, v / 10.) for v in range(N)]
-    >>> y1 = [v * 5 for v in range(N)]
-    >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
-    >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
-    >>> ### Linear scales (default)
-    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
-    ... scale_size_manual(values=[7, 3])
-    >>> ### Log10 scale on Y axis
-    >>> p + scale_y_log10()
-    >>> ### Log10 scale on both axis
-    >>> p + scale_y_log10() + scale_x_log10()
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.poisson(size=100)
+        ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log10()
+
     """
     return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
 
 
 def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Continuous position scales (x) where trans='reverse'
+    Continuous position scale x where trans='reverse'.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> N = 21
-    >>> x = [v for v in range(N)]
-    >>> y0 = [pow(10, v / 10.) for v in range(N)]
-    >>> y1 = [v * 5 for v in range(N)]
-    >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
-    >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
-    >>> ### Linear scales (default)
-    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
-    ... scale_size_manual(values=[7, 3])
-    >>> ### reverse scale on X axis
-    >>> p + scale_x_reverse()
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point() + scale_x_reverse()
+
     """
 
     return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'reverse', format)
@@ -386,54 +376,50 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 
 def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Continuous position scales (y) where trans='reverse'
+    Continuous position scale y where trans='reverse'.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand :
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> N = 21
-    >>> x = [v for v in range(N)]
-    >>> y0 = [pow(10, v / 10.) for v in range(N)]
-    >>> y1 = [v * 5 for v in range(N)]
-    >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
-    >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
-    >>> ### Linear scales (default)
-    >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) +
-    ... scale_size_manual(values=[7, 3])
-    >>> ### reverse scale on Y axis
-    >>> p + scale_y_reverse()
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point() + scale_y_reverse(limits=[2, 6])
+
     """
 
     return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'reverse', format)
@@ -445,56 +431,54 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 
 def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
     """
-    Discrete position scales (x)
+    Discrete position scale x.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand : list of two numbers
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    reverse: boolean
-        When True the scale reversed.
-    format : string
+    reverse : bool
+        When True the scale is reversed.
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Discrete position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> N = 10000
-    >>> x = np.random.uniform(-4, 4, size=N)
-    >>> x = x.astype(int)
-    >>> y = np.random.normal(size=N)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(N)]
-    >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
-    >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
-    >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') +
-    ... scale_x_discrete(name='discretised x', breaks=breaks, labels=labels)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(43)
+        scores = {'rating': np.random.randint(3, 6, size=10)}
+        ggplot(scores, aes(x='rating')) + geom_bar() + \\
+            scale_x_discrete(name='rating', format='.1f')
+
     """
 
     reverse = as_boolean(reverse, default=False)
@@ -514,39 +498,53 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
 
 def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Reversed discrete position scales (x)
+    Reversed discrete position scale x.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand : list of two numbers
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
-    Note
-    -----
-        Reversed discrete position scales.
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'time': ['Lunch', 'Dinner', 'Night'],
+            'bill': [15.5, 18.13, 30],
+        }
+        ggplot(data, aes('time', 'bill')) + geom_bar(stat='identity') + \\
+            scale_x_discrete_reversed()
+
     """
 
     return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
@@ -554,58 +552,55 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
 
 def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
     """
-    Discrete position scales (y)
+    Discrete position scale y.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
-    expand : list of two numbers
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    reverse: boolean
-        When True the scale reversed.
-    format : string
+    reverse : bool
+        When True the scale is reversed.
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Discrete position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> N = 10000
-    >>> x = np.random.uniform(-4, 4, size=N)
-    >>> x = x.astype(int)
-    >>> y = np.random.normal(size=N)
-    >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
-    >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(N)]
-    >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
-    >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
-    >>> y_breaks = [1500, 3000]
-    >>> y_labels = ['one', 'two']
-    >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') +
-    ... scale_y_discrete(breaks=y_breaks, labels=y_labels)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
+            'bill': [3.25, 15.5, 18.3, 30],
+        }
+        ggplot(data, aes('bill', 'time')) + geom_point(size=5) + \\
+            scale_y_discrete(limits=['Lunch', 'Dinner', 'Night'])
+
     """
     reverse = as_boolean(reverse, default=False)
     return _scale('y',
@@ -624,39 +619,53 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
 
 def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Reversed discrete position scales (y)
+    Reversed discrete position scale y.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0, additive = 0.6.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
-    Note
-    -----
-        Reversed discrete position scales.
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
+            'bill': [3.25, 15.5, 18.3, 30],
+        }
+        ggplot(data, aes('bill', 'time')) + geom_line() + \\
+            scale_y_discrete_reversed()
+
     """
 
     return scale_y_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
@@ -668,67 +677,57 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
 
 def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Create your own discrete scale for color aesthetic
+    Create your own discrete scale for color aesthetic.
 
     Parameters
     ----------
-    values : list of strings
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Create your own discrete scale for color aesthetic. Values are strings, encoding colors.
+    ----
+    Create your own color scale. Values are strings, encoding colors.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> # (1) Split data
-    >>> from sklearn.cross_validation import train_test_split
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    >>> # (2) Scale data
-    >>> from sklearn.preprocessing import StandardScaler
-    >>> sc = StandardScaler()
-    >>> sc.fit(X_train)
-    >>> X_train = sc.transform(X_train)
-    >>> X_test = sc.transform(X_test)
-    >>> # (3) Fit model
-    >>> n_components = 2
-    >>> from sklearn.decomposition import KernelPCA
-    >>> kpca = KernelPCA(n_components=n_components, kernel="rbf", fit_inverse_transform=True, gamma=1.0)
-    >>> kpca.fit(X_train)
-    >>> X_reduced = kpca.fit_transform(X_train)
-    >>> # (4) Kernel PCA reduction: plot
-    >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target'), size=3) +
-    ... scale_color_manual(values=['red', 'blue', 'green'])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6-7
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(9))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=1, size=5) + \\
+            scale_color_manual(values=['red', 'green', 'blue'], \\
+                               name='color', labels=['red', 'green', 'blue'])
+
     """
     return _scale('color',
                   name=name,
@@ -745,68 +744,57 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
 
 def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Create your own discrete scale for fill aesthetic
+    Create your own discrete scale for fill aesthetic.
 
     Parameters
     ----------
-    values : list of strings
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Create your own discrete scale for fill aesthetic. Values are strings, encoding filling colors.
+    ----
+    Create your own color scale for fill aesthetic. Values are strings, encoding filling colors.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> # (1) Split data
-    >>> from sklearn.cross_validation import train_test_split
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    >>> # (2) Scale data
-    >>> from sklearn.preprocessing import StandardScaler
-    >>> sc = StandardScaler()
-    >>> sc.fit(X_train)
-    >>> X_train = sc.transform(X_train)
-    >>> X_test = sc.transform(X_test)
-    >>> # (3) Fit model
-    >>> n_components = 2
-    >>> from sklearn.decomposition import KernelPCA
-    >>> kpca = KernelPCA(n_components=n_components, kernel="rbf", fit_inverse_transform=True, gamma=1.0)
-    >>> kpca.fit(X_train)
-    >>> X_reduced = kpca.fit_transform(X_train)
-    >>> # (4) Kernel PCA reduction: plot
-    >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', fill='target'), size=3, shape=21) +
-    ... scale_color_manual(values=['black', 'black', 'black']) +
-    ... scale_fill_manual(values=['red', 'blue', 'green'])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6-7
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(9))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(fill='x'), shape=21, size=5, color='black') + \\
+            scale_fill_manual(values=['green', 'yellow', 'red'], \\
+                              name='color', labels=['green', 'yellow', 'red'])
+
     """
     return _scale('fill',
                   name=name,
@@ -823,65 +811,56 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
 def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Create your own discrete scale for size aesthetic
+    Create your own discrete scale for size aesthetic.
 
     Parameters
     ----------
-    values : list of strings
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Create your own discrete scale for size aesthetic. Values are numbers, defining sizes.
+    ----
+    Create your own discrete scale for size aesthetic. Values are numbers, defining sizes.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> # (1) Split data
-    >>> from sklearn.cross_validation import train_test_split
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    >>> # (2) Scale data
-    >>> from sklearn.preprocessing import StandardScaler
-    >>> sc = StandardScaler()
-    >>> sc.fit(X_train)
-    >>> X_train = sc.transform(X_train)
-    >>> X_test = sc.transform(X_test)
-    >>> # (3) Fit model
-    >>> n_components = 2
-    >>> from sklearn.decomposition import KernelPCA
-    >>> kpca = KernelPCA(n_components=n_components, kernel="rbf", fit_inverse_transform=True, gamma=1.0)
-    >>> kpca.fit(X_train)
-    >>> X_reduced = kpca.fit_transform(X_train)
-    >>> # (4) Kernel PCA reduction: plot
-    >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', size='target')) +
-    ... scale_color_manual(values=['red', 'blue', 'green']) +
-    ... scale_size_manual(values=[2, 4, 6])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = np.arange(10)
+        c = np.where(x < 5, 'a', 'b')
+        ggplot({'x': x, 'y': x, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(size='c'), shape=1) + \\
+            scale_size_manual(name='size', values=[5, 8])
+
     """
     return _scale('size',
                   name=name,
@@ -898,65 +877,56 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
 def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Create your own discrete scale for shape aesthetic
+    Create your own discrete scale for shape aesthetic.
 
     Parameters
     ----------
-    values : list of strings
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Create your own discrete scale for size aesthetic. Values are numbers, encoding shapes.
+    ----
+    Create your own discrete scale for size aesthetic. Values are numbers, encoding shapes.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> # (1) Split data
-    >>> from sklearn.cross_validation import train_test_split
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    >>> # (2) Scale data
-    >>> from sklearn.preprocessing import StandardScaler
-    >>> sc = StandardScaler()
-    >>> sc.fit(X_train)
-    >>> X_train = sc.transform(X_train)
-    >>> X_test = sc.transform(X_test)
-    >>> # (3) Fit model
-    >>> n_components = 2
-    >>> from sklearn.decomposition import KernelPCA
-    >>> kpca = KernelPCA(n_components=n_components, kernel="rbf", fit_inverse_transform=True, gamma=1.0)
-    >>> kpca.fit(X_train)
-    >>> X_reduced = kpca.fit_transform(X_train)
-    >>> # (4) Kernel PCA reduction: plot
-    >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train, 'tgt': y_train.astype(str)})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', shape='tgt'), size=3) +
-    ... scale_color_manual(values=['red', 'blue', 'green']) +
-    ... scale_shape_manual(values=[0, 1, 2])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = np.arange(10)
+        c = np.where(x < 5, 'a', 'b')
+        ggplot({'x': x, 'y': x, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(shape='c'), size=5) + \\
+            scale_shape_manual(values=[12, 13], name='shapes', labels=['12', '13'])
+
     """
     return _scale('shape',
                   name=name,
@@ -973,67 +943,57 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
 
 def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Create your own discrete scale for line type aesthetic
+    Create your own discrete scale for line type aesthetic.
 
     Parameters
     ----------
-    values : list of strings
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Create your own discrete scale for line type aesthetic. Values are strings or numbers, encoding linetypes.
-        Available codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+    ----
+    Create your own discrete scale for line type aesthetic.
+    Values are strings or numbers, encoding linetypes.
+    Available codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash',
+    5 = 'longdash', 6 = 'twodash'.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> # (1) Split data
-    >>> from sklearn.cross_validation import train_test_split
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    >>> # (2) Scale data
-    >>> from sklearn.preprocessing import StandardScaler
-    >>> sc = StandardScaler()
-    >>> sc.fit(X_train)
-    >>> X_train = sc.transform(X_train)
-    >>> X_test = sc.transform(X_test)
-    >>> # (3) Fit model
-    >>> n_components = 2
-    >>> from sklearn.decomposition import KernelPCA
-    >>> kpca = KernelPCA(n_components=n_components, kernel="rbf", fit_inverse_transform=True, gamma=1.0)
-    >>> kpca.fit(X_train)
-    >>> X_reduced = kpca.fit_transform(X_train)
-    >>> # (4) Kernel PCA reduction: plot
-    >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train, 'tgt': y_train.astype(str)})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_line(aes(color='target', linetype='tgt'), size=1) +
-    ... scale_color_manual(values=['red', 'blue', 'green']) +
-    ... scale_linetype_manual(values=['dotted', 'solid', 'dashed'])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5-6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = [-.3, -.1, .1, .3]
+        ggplot() + geom_hline(aes(yintercept=x, linetype=x), size=1) + \\
+            scale_linetype_manual(values=[3, 4, 5, 6], 
+                                  labels=['dotted', 'dotdash', 'longdash', 'twodash'])
+
     """
     return _scale('linetype',
                   name=name,
@@ -1050,65 +1010,55 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
 
 def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
-    Create your own discrete scale for alpha (transparency) aesthetic
+    Create your own discrete scale for alpha (transparency) aesthetic.
 
     Parameters
     ----------
-    values : list of strings
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Create your own discrete scale for alpha (transparency) aesthetic. Values should be taken from [0,1] interval.
+    ----
+    Create your own discrete scale for alpha (transparency) aesthetic.
+    Values should be taken from [0, 1] interval.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> # (1) Split data
-    >>> from sklearn.cross_validation import train_test_split
-    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    >>> # (2) Scale data
-    >>> from sklearn.preprocessing import StandardScaler
-    >>> sc = StandardScaler()
-    >>> sc.fit(X_train)
-    >>> X_train = sc.transform(X_train)
-    >>> X_test = sc.transform(X_test)
-    >>> # (3) Fit model
-    >>> n_components = 2
-    >>> from sklearn.decomposition import KernelPCA
-    >>> kpca = KernelPCA(n_components=n_components, kernel="rbf", fit_inverse_transform=True, gamma=1.0)
-    >>> kpca.fit(X_train)
-    >>> X_reduced = kpca.fit_transform(X_train)
-    >>> # (4) Kernel PCA reduction: plot
-    >>> dat = dict({'PC1': X_reduced[:, 0], 'PC2': X_reduced[:, 1], 'target': y_train, 'tgt': y_train.astype(str)})
-    >>> ggplot(dat, aes('PC1', 'PC2')) + geom_point(aes(color='target', alpha='target'), size=3) +
-    ... scale_color_manual(values=['red', 'blue', 'green']) +
-    ... scale_alpha_manual(values=[0.2, 0.5, 0.9])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(alpha='x'), shape=21, size=5) + \\
+            scale_alpha_manual(values=[.2, .5, .9])
+
     """
     return _scale('alpha',
                   name=name,
@@ -1130,47 +1080,56 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
                         limits=None, na_value=None, guide=None, trans=None):
     """
-    Defines smooth color gradient between two colors for fill aesthetic
+    Define smooth color gradient between two colors for fill aesthetic.
 
     Parameters
     ----------
-    low : string
-        Color for low end of gradient
-    high : string
-        Color for high end of gradient
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines smooth gradient between two colors (defined by low and high) for filling color.
+    ----
+    Define smooth gradient between two colors (defined by low and high) for filling color.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_gradient(low='green', high='red')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_gradient(low='#1a9641', high='#d7191c')
+
     """
     return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
@@ -1178,46 +1137,54 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
                           limits=None, na_value=None, guide=None, trans=None):
     """
-    Defines smooth color gradient between two colors for fill aesthetic
+    Define smooth color gradient between two colors for fill aesthetic.
 
     Parameters
     ----------
-    low : string
-        Color for low end of gradient
-    high : string
-        Color for high end of gradient
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines smooth gradient between two colors (defined by low and high) for filling color.
+    ----
+    Define smooth gradient between two colors (defined by low and high) for filling color.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_continuous(low='green', high='red')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_continuous(low='#1a9641', high='#d7191c')
+
     """
     return _scale('fill',
                   name=name,
@@ -1236,47 +1203,57 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
 def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
                          na_value=None, guide=None, trans=None):
     """
-    Defines smooth color gradient between two colors for color aesthetic
+    Define smooth color gradient between two colors for color aesthetic.
 
     Parameters
     ----------
-    low : string
-        Color for low end of gradient
-    high : string
-        Color for high end of gradient
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
     -----
-        Defines smooth gradient between two colors (defined by low and high) for color aesthetic.
+    Define smooth gradient between two colors (defined by low and high) for color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_gradient(low='green', high='red')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
+            scale_color_gradient(low='#1a9641', high='#d7191c', guide='legend')
+
     """
     return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
@@ -1284,46 +1261,51 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
 def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
                            na_value=None, guide=None, trans=None):
     """
-    Defines smooth color gradient between two colors for color aesthetic
+    Define smooth color gradient between two colors for color aesthetic.
 
     Parameters
     ----------
-    low : string
-        Color for low end of gradient
-    high : string
-        Color for high end of gradient
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Defines smooth gradient between two colors (defined by low and high) for color aesthetic.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_continuous(low='green', high='red')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=1, size=5) + \\
+            scale_color_continuous(low='#1a9641', high='#d7191c')
+
     """
     return _scale('color',
                   name=name,
@@ -1342,49 +1324,58 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
 def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
                          na_value=None, guide=None, trans=None):
     """
-    Defines diverging color gradient for fill aesthetic
+    Define diverging color gradient for fill aesthetic.
 
     Parameters
     ----------
-    low : string
-        Color for low end of gradient
-    mid : string
-        Color for mid point
-    high : string
-        Color for high end of gradient
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    low : str
+        Color for low end of gradient.
+    mid : str
+        Color for mid point.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines diverging color gradient for filling color. Default mid point is set to white color.
+    ----
+    Define diverging color gradient for filling color. Default mid point is set to white color.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_gradient2(low='green', high='red')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c')
+
     """
     return _scale('fill',
                   name=name,
@@ -1403,49 +1394,59 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
                           na_value=None, guide=None, trans=None):
     """
-    Defines diverging color gradient for color aesthetic
+    Define diverging color gradient for color aesthetic.
 
     Parameters
     ----------
-    low : string
-        Color for low end of gradient
-    mid : string
-        Color for mid point
-    high : string
-        Color for high end of gradient
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    low : str
+        Color for low end of gradient.
+    mid : str
+        Color for mid point.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
     labels : list of strings
-        A vector of labels (on ticks)
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines diverging color gradient for color aesthetic. Default mid point is set to white color.
+    ----
+    Define diverging color gradient for color aesthetic. Default mid point is set to white color.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_color_gradient2(low='green', high='red')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
+            scale_color_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c')
+
     """
     return _scale('color',
                   name=name,
@@ -1464,51 +1465,60 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
                    limits=None, na_value=None, guide=None, trans=None):
     """
-    Qualitative color scale with evenly spaced hues for fill aesthetic
+    Qualitative color scale with evenly spaced hues for fill aesthetic.
 
     Parameters
     ----------
-    h : list of two numerics
-        Range of hues, in [0,360]
-    c : numeric
+    h : list
+        Range of hues (two numerics), in [0, 360].
+    c : int
         Chroma (intensity of color), maximum value varies depending on.
-    l : numeric
-        Luminance (lightness), in [0,100]
-    direction : numeric
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    l : int
+        Luminance (lightness), in [0, 100].
+    direction : {1, -1}, default=1
+        Direction to travel around the color wheel, 1=clockwise, -1=counter-clockwise.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines qualitative color scale with evenly spaced hues for filling color aesthetic
+    ----
+    Define qualitative color scale with evenly spaced hues for filling color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_hue(c=50, l=80, h=[0, 50])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_hue(c=50, l=80, h=[0, 50])
+
     """
     return _scale('fill',
                   name=name,
@@ -1527,51 +1537,61 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
                     limits=None, na_value=None, guide=None, trans=None):
     """
-    Qualitative color scale with evenly spaced hues for color aesthetic
+    Qualitative color scale with evenly spaced hues for color aesthetic.
 
     Parameters
     ----------
-    h : list of two numerics
-        Range of hues, in [0,360]
-    c : numeric
+    h : list
+        Range of hues (two numerics), in [0, 360].
+    c : int
         Chroma (intensity of color), maximum value varies depending on.
-    l : numeric
-        Luminance (lightness), in [0,100]
-    direction : numeric
-        Direction to travel around the color wheel, 1 = clockwise (default), -1=counter-clockwise
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    l : int
+        Luminance (lightness), in [0, 100].
+    direction : {1, -1}, default=1
+        Direction to travel around the color wheel, 1=clockwise, -1=counter-clockwise.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines qualitative color scale with evenly spaced hues for color aesthetic
+    ----
+    Define qualitative color scale with evenly spaced hues for color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_hue(c=20, l=90)
+    --------
+      .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
+            scale_color_hue(c=20, l=90)
+
     """
     return _scale('color',
                   name=name,
@@ -1591,43 +1611,57 @@ def scale_fill_discrete(direction=None,
                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Qualitative colors.
-    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
     Parameters
     ----------
-    direction : numeric
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    direction : {-1, 1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines qualitative color scale with evenly spaced hues for filling color aesthetic
+    ----
+    Define qualitative color scale with evenly spaced hues for filling color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_discrete()
+    --------
+      .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(100)
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        z = np.random.rand(n)
+        ggplot() + geom_point(aes(x, y, fill=z), shape=21, size=4, color='gray') + \\
+            scale_fill_discrete(guide='none')
+
     """
     return _scale('fill',
                   name=name,
@@ -1645,43 +1679,57 @@ def scale_color_discrete(direction=None,
                          name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Qualitative colors.
-    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
     Parameters
     ----------
-    direction : numeric
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
     labels : list of strings
-        A vector of labels (on ticks)
+        A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines qualitative color scale with evenly spaced hues for color aesthetic
+    ----
+    Define qualitative color scale with evenly spaced hues for color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_discrete()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(100)
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        z = np.random.rand(n)
+        ggplot() + geom_point(aes(x, y, color=z), size=4) + \\
+            scale_color_discrete(guide='none')
+
     """
     return _scale('color',
                   name=name,
@@ -1703,43 +1751,52 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
 
     Parameters
     ----------
-    start : numeric
-        Gray value at low end of palette in range [0,1]
-    end : numeric
-        Gray value at high end of palette in range [0,1]
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    start : float
+        Gray value at low end of palette in range [0, 1].
+    end : float
+        Gray value at high end of palette in range [0, 1].
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
     -----
-        Defines sequential grey color scale for filling color aesthetic
+    Defines sequential grey color scale for filling color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_grey(start=0.5, end=0.1)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_grey(start=.9, end=.1)
+
     """
     start, end = _greyscale_check_parameters(start, end)
 
@@ -1766,43 +1823,52 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
 
     Parameters
     ----------
-    start : numeric
-        Gray value at low end of palette in range [0,1]
-    end : numeric
-        Gray value at high end of palette in range [0,1]
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    start : float
+        Gray value at low end of palette in range [0, 1].
+    end : float
+        Gray value at high end of palette in range [0, 1].
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines sequential grey color scale for color aesthetic
+    ----
+    Defines sequential grey color scale for color aesthetic.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_grey(start=0.5, end=0.1)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=15, size=5) + \\
+            scale_color_grey(start=.7, end=.2)
 
     """
     start, end = _greyscale_check_parameters(start, end)
@@ -1845,67 +1911,74 @@ def _greyscale_check_parameters(start=None, end=None):
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                       na_value=None, guide=None, trans=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer.org for fill aesthetic. Color schemes provided
-    are particularly suited to display discrete values (levels of factors) on a map.
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for fill aesthetic.
+    Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
     ----------
-    type : string
+    type : {'seq', 'div', 'qual'}
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
-    palette : string or number
-        If a string, will use that named palette. If a number, will index into the list of palettes of appropriate type.
-    direction : numeric
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    palette : str or int
+        If a string, will use that named palette. If a number, will index
+        into the list of palettes of appropriate type.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
     labels : list of strings
-        A vector of labels (on ticks)
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines sequential, diverging and qualitative color scales from colorbrewer.org for filling color aesthetic.
-        ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
-        tested to display discrete values (levels of a factor) on a map. ggplot2 can use those colors in discrete
-        scales. It also allows to smoothly interpolate 6 colors from any palette to a continuous scale
-        (6 colors per palette gives nice gradients; more results in more saturated colors which do not look as good).
-        However, the original color schemes (particularly the qualitative ones) were not intended for this and the
-        perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
+    ----
+    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
+    ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
+    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
+    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
+    colors which do not look as good).
 
+    However, the original color schemes (particularly the qualitative ones) were not intended for this and the
+    perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
     Palettes:
-     - Diverging :
-         BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-     - Qualitative :
-         Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
-     - Sequential :
-         Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-         PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
+
+    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
+    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
+    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu, PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) +
-    ... scale_fill_brewer(type='seq', palette='Oranges')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x'), color='white') + \\
+            scale_fill_brewer(type='seq', palette='YlGnBu')
+
     """
     return _scale('fill',
                   name=name,
@@ -1925,67 +1998,75 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                        na_value=None, guide=None, trans=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer.org for color aesthetic. Color schemes provided
-    are particularly suited to display discrete values (levels of factors) on a map.
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic. 
+    Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
     ----------
-    type : string
+    type : {'seq', 'div', 'qual'}
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
-    palette : string or number
-        If a string, will use that named palette. If a number, will index into the list of palettes of appropriate type.
-    direction : numeric
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    palette : str or int
+        If a string, will use that named palette. If a number, will index
+        into the list of palettes of appropriate type.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (guide_colorbar(), guide_legend())
-        specifying additional arguments.
-        "none" will hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        Defines sequential, diverging and qualitative color scales from colorbrewer.org for color aesthetic.
-        ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
-        tested to display discrete values (levels of a factor) on a map. ggplot2 can use those colors in discrete
-        scales. It also allows to smoothly interpolate 6 colors from any palette to a continuous scale
-        (6 colors per palette gives nice gradients; more results in more saturated colors which do not look as good).
-        However, the original color schemes (particularly the qualitative ones) were not intended for this and the
-        perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
+    ----
+    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
+    ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
+    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
+    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
+    colors which do not look as good).
 
+    However, the original color schemes (particularly the qualitative ones) were not intended for this and
+    the perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
     Palettes:
-     - Diverging :
-         BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral
-     - Qualitative :
-         Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3
-     - Sequential :
-         Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-         PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd
+
+    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
+    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
+    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu, PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
 
     Examples
-    ---------
-    >>> dat = {'x': [v for v in range(-16, 16)]}
-    >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) +
-    ... scale_color_brewer(type='seq', palette='Oranges')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=13, size=5) + \\
+            scale_color_brewer(type='qual', palette='Dark2', direction=-1)
+
     """
     return _scale('color',
                   name=name,
@@ -2009,51 +2090,58 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
 def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Continuous position scale (x)
+    Position scale x for date/time data.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    expand : list of two numbers
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
-    format : date/time format string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
-
-    Note
-    -----
-        Continuous position scales.
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from datetime import datetime
-    >>> economics_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/economics.csv'
-    >>> economics = pd.read_csv(economics_url)
-    >>> economics['date'] = pd.to_datetime(economics['date'])
-    >>> start = datetime(2000, 1, 1)
-    >>> economics = economics.loc[economics['date'] >= start]
-    >>> ggplot(economics, aes('date', 'unemploy')) +
-    ... geom_step() + scale_x_datetime()
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import datetime as dt
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 31
+        np.random.seed(42)
+        d = [dt.datetime(2021, 1, 1) + dt.timedelta(days=d)
+             for d in range(n)]
+        t = np.random.normal(loc=-5, scale=6, size=n)
+        ggplot({'d': d, 't': t}, aes('d', 't')) + \\
+            geom_histogram(aes(fill='t'), stat='identity', color='black') + \\
+            scale_x_datetime() + \\
+            scale_fill_gradient2(low='#2c7bb6', high='#d7191c')
+
     """
     return _scale('x',
                   name=name,
@@ -2071,18 +2159,19 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
 
 def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
-    Continuous position scale (y)
+    Position scale y for date/time data.
 
     Parameters
     ----------
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
-    limits : list of numerics
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
@@ -2090,20 +2179,39 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
-    format : date/time format string
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see: https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
-    Note
-    -----
-        Continuous position scales.
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13
+
+        import datetime as dt
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 12
+        rcount = lambda m: 1 if m < 2 else rcount(m - 1) + rcount(m - 2)
+        data = {
+            'date': [dt.datetime(2020, m, 1) for m in range(1, n + 1)],
+            'rabbits count': [rcount(m) for m in range(1, n + 1)],
+        }
+        ggplot(data) + \\
+            geom_segment(aes(x=[0] * n, y='date', xend='rabbits count', yend='date'), size=3, \\
+                         tooltips=layer_tooltips().line('@|@{rabbits count}')) + \\
+            scale_y_datetime(format='%b') + \\
+            xlab('rabbits count')
+
     """
     return _scale('y',
                   name=name,
@@ -2125,42 +2233,51 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
 
 def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None):
     """
-    Scales for alpha
+    Scale for alpha.
 
     Parameters
     ----------
-    range : list of numerics of length 2
+    range : list
         The range of the mapped aesthetics result.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> data = {}
-    >>> np.random.seed(43)
-    >>> data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-    >>> data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-    >>> q = ggplot(data, aes('x', 'y'))
-    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) +
-    ... scale_alpha(range=[0.5, 1])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(100)
+        x = np.random.normal(0, 1, 1000)
+        y = np.random.normal(0, 1, 1000)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) + \\
+            scale_alpha(range=[.01, .99])
+
     """
     return _scale('alpha',
                   name=name,
@@ -2177,42 +2294,52 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
 
 def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None):
     """
-    Scales for size
+    Scale for size.
 
     Parameters
     ----------
-    range : list of numerics of length 2
+    range : list
         The range of the mapped aesthetics result.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> data = {}
-    >>> np.random.seed(43)
-    >>> data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-    >>> data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-    >>> q = ggplot(data, aes('x', 'y'))
-    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) +
-    ... scale_size(range=[1, 6])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(100)
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        area = np.power(np.random.randint(30, size=n), 2)
+        ggplot() + geom_point(aes(x, y, size=area), alpha=0.7) + \\
+            scale_size(range=[3, 13])
+
     """
     return _scale('size',
                   name=name,
@@ -2230,46 +2357,56 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
 def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=None,
                     na_value=None, guide=None, trans=None):
     """
-    Continuous scales for size that maps 0 to 0
+    Continuous scale for size that maps 0 to 0.
 
     Parameters
     ----------
-    max_size : numeric
+    max_size : float
         The max size that is mapped to.
-    name : string
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list of numerics
-        A numeric vector of positions (of ticks)
-    labels : list of strings
-        A vector of labels (on ticks)
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list
+        A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
-    na_value :
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
         Missing values will be replaced with this value.
-    guide :
-        A result returned by guide_legend() function or "none" to hide the guide.
-    trans : string
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
 
     Returns
     -------
-        scale specification
+    `FeatureSpec`
+        Scale specification.
 
     Note
-    -----
-        This method maps 0 data to 0 size. Useful in some stats such as count.
+    ----
+    This method maps 0 data to 0 size. Useful in some stats such as count.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> data = {}
-    >>> np.random.seed(43)
-    >>> data['x'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-    >>> data['y'] = np.append(np.random.normal(0, 1, 1000), np.random.normal(3, 1, 500))
-    >>> q = ggplot(data, aes('x', 'y'))
-    >>> q + geom_point(aes(alpha='..density..'), stat='density2d', contour=False, n=30) +
-    ... scale_size_area(max_size=10)
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(100)
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        area = np.power(np.random.uniform(30, size=n), 2)
+        ggplot() + geom_point(aes(x, y, size=area), alpha=0.7) + \\
+            scale_size_area(max_size=15)
+
     """
     return _scale('size',
                   name=name,
@@ -2307,7 +2444,7 @@ def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=N
     :param guide
         Type of legend. Use 'colorbar' for continuous color bar, or 'legend' for discrete values.
     :param trans
-        Name of built-in transformation. ('identity', 'log10', 'sqrt', 'reverse')
+        Name of built-in transformation.
     :param format
         A string of the format for labels on the scale. Supported types are number and date/time.
     :return:

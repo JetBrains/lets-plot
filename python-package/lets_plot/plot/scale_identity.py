@@ -33,8 +33,8 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale.
-        And the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
 
@@ -98,8 +98,8 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale.
-        And the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
 
@@ -163,8 +163,8 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale.
-        And the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
 
@@ -226,8 +226,8 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale.
-        And the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
 
@@ -239,7 +239,8 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     Note
     ----
     Input data expected: numetic codes or names of line types (e.g. 'dotdash').
-    The codes are: 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
+    The codes are: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash',
+    5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -291,8 +292,8 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale.
-        And the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
 
@@ -353,8 +354,8 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale.
-        And the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
 
