@@ -43,11 +43,12 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
@@ -98,7 +99,8 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -106,7 +108,7 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         A vector of labels (on ticks).
     limits : list
         A numeric vector of length two providing limits of the scale.
-    expand: list
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
@@ -161,7 +163,8 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -224,7 +227,8 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions of ticks.
@@ -276,7 +280,8 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -326,7 +331,8 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -377,7 +383,8 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -432,7 +439,8 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -446,7 +454,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0, additive = 0.6.
     na_value
         Missing values will be replaced with this value.
-    reverse: bool
+    reverse : bool
         When True the scale is reversed.
     format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
@@ -496,7 +504,8 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -547,7 +556,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -561,7 +571,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0, additive = 0.6.
     na_value
         Missing values will be replaced with this value.
-    reverse: bool
+    reverse : bool
         When True the scale is reversed.
     format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
@@ -611,7 +621,8 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -666,11 +677,13 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     Parameters
     ----------
     values : list of str
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -678,14 +691,14 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
@@ -732,11 +745,13 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     Parameters
     ----------
     values : list of str
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -744,14 +759,14 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
@@ -798,11 +813,13 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     Parameters
     ----------
     values : list of str
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -810,11 +827,12 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
@@ -861,11 +879,13 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     Parameters
     ----------
     values : list of str
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -873,11 +893,12 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
@@ -924,11 +945,13 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     Parameters
     ----------
     values : list of str
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -936,11 +959,12 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
@@ -949,9 +973,10 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
 
     Note
     ----
-    Create your own discrete scale for line type aesthetic. Values are strings or numbers, encoding linetypes.
-    Available codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-    5 = "longdash", 6 = "twodash".
+    Create your own discrete scale for line type aesthetic.
+    Values are strings or numbers, encoding linetypes.
+    Available codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash',
+    5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------
@@ -987,11 +1012,13 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     Parameters
     ----------
     values : list of str
-        A set of aesthetic values to map data values to. If this is a named vector, then the values will be matched
-        based on the names. If unnamed, values will be matched in order (usually alphabetical) with the limits of
-        the scale.
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -999,11 +1026,12 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
 
     Returns
     -------
@@ -1012,7 +1040,8 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Note
     ----
-    Create your own discrete scale for alpha (transparency) aesthetic. Values should be taken from [0,1] interval.
+    Create your own discrete scale for alpha (transparency) aesthetic.
+    Values should be taken from [0, 1] interval.
 
     Examples
     --------
@@ -1057,7 +1086,8 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     high : str
         Color for high end of gradient.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1065,14 +1095,14 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1113,7 +1143,8 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     high : str
         Color for high end of gradient.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1124,10 +1155,9 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1179,7 +1209,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     high : str
         Color for high end of gradient.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1187,14 +1218,14 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1218,6 +1249,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
             scale_color_gradient(low='green', high='red', guide='legend')
+
     """
     return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
@@ -1234,7 +1266,8 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
     high : str
         Color for high end of gradient.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1245,10 +1278,9 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1299,7 +1331,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     high : str
         Color for high end of gradient.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1307,14 +1340,14 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1368,7 +1401,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     high : str
         Color for high end of gradient.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1376,14 +1410,14 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1431,15 +1465,16 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     Parameters
     ----------
     h : list
-        Range of hues (two numerics), in [0,360].
-    c :int
+        Range of hues (two numerics), in [0, 360].
+    c : int
         Chroma (intensity of color), maximum value varies depending on.
     l : int
-        Luminance (lightness), in [0,100].
+        Luminance (lightness), in [0, 100].
     direction : {1, -1}, default=1
-        Direction to travel around the color wheel, 1 = clockwise, -1=counter-clockwise
+        Direction to travel around the color wheel, 1=clockwise, -1=counter-clockwise.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1447,14 +1482,14 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1502,15 +1537,16 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     Parameters
     ----------
     h : list
-        Range of hues (two numerics), in [0,360].
+        Range of hues (two numerics), in [0, 360].
     c : int
         Chroma (intensity of color), maximum value varies depending on.
     l : int
-        Luminance (lightness), in [0,100].
+        Luminance (lightness), in [0, 100].
     direction : {1, -1}, default=1
-        Direction to travel around the color wheel, 1 = clockwise, -1=counter-clockwise.
+        Direction to travel around the color wheel, 1=clockwise, -1=counter-clockwise.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1518,14 +1554,14 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1573,25 +1609,26 @@ def scale_fill_discrete(direction=None,
 
     Parameters
     ----------
-    direction : {-1, 1}
-        Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
+    direction : {-1, 1}, default=1
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
@@ -1641,24 +1678,25 @@ def scale_color_discrete(direction=None,
     Parameters
     ----------
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer.pal.
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
     labels : list of strings
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
 
     Returns
     -------
@@ -1708,11 +1746,12 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     Parameters
     ----------
     start : float
-        Gray value at low end of palette in range [0,1]
+        Gray value at low end of palette in range [0, 1].
     end : float
-        Gray value at high end of palette in range [0,1]
+        Gray value at high end of palette in range [0, 1].
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1720,14 +1759,14 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1751,6 +1790,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         data = {'x': list(range(-16, 16))}
         ggplot(data) + geom_tile(aes('x', fill='x'), width=1.05) + \\
             scale_fill_grey(start=0.9, end=0.1)
+
     """
     start, end = _greyscale_check_parameters(start, end)
 
@@ -1778,11 +1818,12 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     Parameters
     ----------
     start : float
-        Gray value at low end of palette in range [0,1].
+        Gray value at low end of palette in range [0, 1].
     end : float
-        Gray value at high end of palette in range [0,1].
+        Gray value at high end of palette in range [0, 1].
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1790,14 +1831,14 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1865,7 +1906,7 @@ def _greyscale_check_parameters(start=None, end=None):
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                       na_value=None, guide=None, trans=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer2.org for fill aesthetic. 
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for fill aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -1873,12 +1914,14 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     type : {'seq', 'div', 'qual'}
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
     palette : str or int
-        If a string, will use that named palette. If a number, will index into the list of palettes of appropriate type.
+        If a string, will use that named palette. If a number, will index
+        into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer.pal.
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1886,14 +1929,14 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1909,6 +1952,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
     colors which do not look as good).
+
     However, the original color schemes (particularly the qualitative ones) were not intended for this and the
     perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
@@ -1916,8 +1960,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
     - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
     - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
-    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
+    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu, PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
 
     Examples
     --------
@@ -1958,12 +2001,14 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     type : {'seq', 'div', 'qual'}
         One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
     palette : str or int
-        If a string, will use that named palette. If a number, will index into the list of palettes of appropriate type.
+        If a string, will use that named palette. If a number, will index
+        into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer.pal.
+        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -1971,14 +2016,14 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
-        Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        Guide to use for this scale.
-        It can either be a string ("colorbar", "legend") or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments.
-        "none" will hide the guide.
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -1994,6 +2039,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors 
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated 
     colors which do not look as good).
+
     However, the original color schemes (particularly the qualitative ones) were not intended for this and
     the perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
@@ -2001,8 +2047,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
     - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
-    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu,
-        PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
+    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu, PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
 
     Examples
     --------
@@ -2046,7 +2091,8 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -2060,7 +2106,7 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
-    format : date/time format str
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
@@ -2112,7 +2158,8 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
     Parameters
     ----------
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
@@ -2126,7 +2173,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         Defaults: multiplicative = 0.05, additive = 0.
     na_value :
         Missing values will be replaced with this value.
-    format : date/time format str
+    format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
@@ -2166,18 +2213,20 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
     range : list
         The range of the mapped aesthetics result.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -2225,18 +2274,20 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
     range : list
         The range of the mapped aesthetics result.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
@@ -2286,18 +2337,20 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
     max_size : float
         The max size that is mapped to.
     name : str
-        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
     labels : list
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or "none" to hide the guide.
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
 
