@@ -84,9 +84,27 @@ class BoxplotStatTest {
         )
         val statDf = stat.apply(df, statContext(df))
 
-        // no 'width'
+        // has 'width'
         assertTrue(statDf.has(Stats.WIDTH))
         assertEquals(1, statDf[Stats.WIDTH].size)
         assertEquals(1.0, statDf[Stats.WIDTH][0])
     }
+
+    @Test
+    fun noXSeries() {
+        // see this issue: https://github.com/JetBrains/lets-plot/issues/325
+        val df = df(
+            mapOf(
+                TransformVar.Y to List<Double>(10) { 2.0 }
+            )
+        )
+
+        val stat = Stats.boxplot()
+        val statDf = stat.apply(df, statContext(df))
+
+        assertEquals(1, statDf[Stats.X].size)
+        assertEquals(0.0, statDf[Stats.X][0])   // X defaults to 0.0
+        assertEquals(2.0, statDf[Stats.MIDDLE][0])
+    }
+
 }

@@ -8,9 +8,7 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.GeomLayerListUtil
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotBuilder
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -34,9 +32,6 @@ class PlotAssembler private constructor(
     private var myLegendsEnabled = true
     private var myInteractionsEnabled = true
 
-//    private val isFacetLayout: Boolean
-//        get() = hasFacets()
-
     init {
         containsLiveMap = layersByTile.flatten().any(GeomLayer::isLiveMap)
         myAxisEnabled = !containsLiveMap  // no axis on livemap
@@ -45,10 +40,6 @@ class PlotAssembler private constructor(
     fun setTitle(title: String?) {
         myTitle = title
     }
-
-//    private fun hasFacets(): Boolean {
-//        return facets.isDefined
-//    }
 
     private fun hasLayers(): Boolean {
         for (tileLayers in layersByTile) {
@@ -72,16 +63,8 @@ class PlotAssembler private constructor(
             emptyList()
 
         // share first X/Y scale among all layers
-        @Suppress("UNCHECKED_CAST")
-        var xScaleProto = GeomLayerListUtil.anyBoundXScale(scaleByAes, layersByTile)
-        if (xScaleProto == null) {
-            xScaleProto = Scales.continuousDomain("x", Aes.X)
-        }
-        @Suppress("UNCHECKED_CAST")
-        var yScaleProto = GeomLayerListUtil.anyBoundYScale(scaleByAes, layersByTile)
-        if (yScaleProto == null) {
-            yScaleProto = Scales.continuousDomain("y", Aes.Y)
-        }
+        var xScaleProto = scaleByAes[Aes.X]
+        var yScaleProto = scaleByAes[Aes.Y]
 
         if (containsLiveMap) {
             // build 'live map' plot:
@@ -96,15 +79,12 @@ class PlotAssembler private constructor(
         }
 
         // train scales
-        val rangeByAes = PlotAssemblerUtil.rangeByNumericAes(layersByTile)
-
-        val xDomain = rangeByAes.get(Aes.X)
-        val yDomain = rangeByAes[Aes.Y]
-        checkState(xDomain != null, "X domain not defined")
-        checkState(yDomain != null, "Y domain not defined")
-        checkState(SeriesUtil.isFinite(xDomain!!.lowerEnd), "X domain lower end: " + xDomain.lowerEnd)
+        val xyRange = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+        val xDomain = xyRange.first
+        val yDomain = xyRange.second
+        checkState(SeriesUtil.isFinite(xDomain.lowerEnd), "X domain lower end: " + xDomain.lowerEnd)
         checkState(SeriesUtil.isFinite(xDomain.upperEnd), "X domain upper end: " + xDomain.upperEnd)
-        checkState(SeriesUtil.isFinite(yDomain!!.lowerEnd), "Y domain lower end: " + yDomain.lowerEnd)
+        checkState(SeriesUtil.isFinite(yDomain.lowerEnd), "Y domain lower end: " + yDomain.lowerEnd)
         checkState(SeriesUtil.isFinite(yDomain.upperEnd), "Y domain upper end: " + yDomain.upperEnd)
 
         val xAxisLayout: AxisLayout

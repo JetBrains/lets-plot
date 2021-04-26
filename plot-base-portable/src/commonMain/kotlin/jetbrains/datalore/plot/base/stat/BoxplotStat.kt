@@ -15,16 +15,22 @@ import kotlin.math.sqrt
 /**
  * Calculate components of box and whisker plot.
  *
+ * Creates a "stat" dataframe contaning:
+ *  a) "box" data-points
+ *      x
+ *      y = NaN
+ *      width    - width of box
+ *      ymin     - lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR
+ *      lower    - lower hinge, 25% quantile
+ *      middle   - median, 50% quantile
+ *      upper    - upper hinge, 75% quantile
+ *      ymax     - upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR
  *
- * Adds columns:
- * width    - width of boxplot
- * ymin     - lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR
- * lower    - lower hinge, 25% quantile
- * middle   - median, 50% quantile
- * upper    - upper hinge, 75% quantile
- * ymax     - upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR
+ *  b) "outlier" data-points
+ *      x, y, width
+ *      ymin, lower... = NaN
  *
- *
+ * Not implemented:
  * notchlower   - lower edge of notch = median - 1.58 * IQR / sqrt(n)
  * notchupper   - upper edge of notch = median + 1.58 * IQR / sqrt(n)
  */
@@ -34,7 +40,8 @@ class BoxplotStat(
 ) : BaseStat(DEF_MAPPING) {
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
-        return super.hasDefaultMapping(aes) || aes == WIDTH && computeWidth
+        return super.hasDefaultMapping(aes) ||
+                aes == WIDTH && computeWidth
     }
 
     override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
@@ -48,12 +55,16 @@ class BoxplotStat(
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 
-        val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
+        val xs = if (data.has(TransformVar.X)) {
+            data.getNumeric(TransformVar.X)
+        } else {
+            List<Double>(ys.size) { 0.0 }
+        }
         val collector = HashMap<DataFrame.Variable, MutableList<Double>>()
 
         val maxCountPerBinOverall =
