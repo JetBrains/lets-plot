@@ -60,12 +60,8 @@ allprojects {
     // see also: python-package/lets_plot/_version.py
 
     repositories {
-//        maven {
-//            url = uri("$rootDir/.maven-publish-dev-repo")
-//        }
-
         mavenCentral()
-        jcenter()
+        maven { url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven" }
     }
 
     // jar jvm sources of this project

@@ -4044,6 +4044,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         '.2f' -> '12.45',
         'Num {}' -> 'Num 12.456789',
         'TTL: {.2f}$' -> 'TTL: 12.45$'.
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
     na_text : str, default='n/a'
         Text to show for missing values.
     other_args
@@ -4104,10 +4105,6 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    Note
-    ----
-    For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/formats.html>`_.
 
     Examples
     --------

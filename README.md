@@ -33,7 +33,7 @@ Read the Lets-Plot for Python [documentation](README_PYTHON.md) to learn more ab
 
 ## JVM artifacts and Kotlin API
 
-[ ![Download](https://api.bintray.com/packages/jetbrains/lets-plot-maven/lets-plot-jars/images/download.svg)](https://bintray.com/jetbrains/lets-plot-maven/lets-plot-jars/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.lets-plot/lets-plot-common?color=blue&label=Maven%20Central)](https://search.maven.org/search?q=lets-plot)
 
 [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
@@ -66,4 +66,4 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 ## License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
-Copyright © 2019-2020, JetBrains s.r.o.
+Copyright © 2019-2021, JetBrains s.r.o.

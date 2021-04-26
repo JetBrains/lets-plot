@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2021-04-13
+
+### Changed
+
+- Due to shutting down of [Bintray, JCenter](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/):
+  - The Lets-Plot JS library is now delivered via [CDNJS](https://cdnjs.com/libraries/lets-plot).
+  - JVM Maven artifacts are now published at [Maven Central](https://search.maven.org/search?q=lets-plot).
+
 ## [2.0.1] - 2021-03-17
 
 ### Added
@@ -47,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
        geom_xxx(tooltips=layer_tooltips().color('red'))
        ```
 
-  See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md). 
+  See: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html). 
 
 
 - Crosshair cursor when tooltip is in fixed position specified by the `anchor` option.
@@ -61,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
    Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
        
-   See also: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md)
+   See also: [Formatting](https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html)
 
 ### Changed
                 
@@ -115,7 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - options: `center` and `middle` (anchor).
    - option 'minWidth'.
    
-   See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+   See: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
    
 - 'na_text' parameter in 'geom_text'
 
@@ -128,7 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         where `anchor_value`: 
         `['top_right'|'top_center'|'top_left'|'bottom_right'|'bottom_center'|'bottom_left'|'middle_right'|'middle_center'|'middle_left']`.
 
-   See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+   See: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
  
 ### Fixed
 - Tooltip should appear when the mapped data is continuous [[#241](https://github.com/JetBrains/lets-plot/issues/241)]
@@ -140,7 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [**breaking change**] In functions `format(field, format)` and `line(template)` in 
 tooltip builder, the '$' symbol is no longer used in aesthetic reference. It was replaced by the '^' (hat) symbol 
-(see the udated doc: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
+(see the udated doc: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html)).
 - The project upgraded to Kotlin v1.4.10 (was v1.3.72).
  
 ### Fixed
@@ -148,7 +156,7 @@ tooltip builder, the '$' symbol is no longer used in aesthetic reference. It was
 
 ## [1.5.3] - 2020-11-05
 ### Added
-- Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md)).
+- Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html)).
 - `attribution` and other new parameters in the `maptiles_zxy()` function. 
 - `label_format` parameter in the `geom_text()` function.
 - `scale_x_discrete_reversed()` / `scale_y_discrete_reversed()`

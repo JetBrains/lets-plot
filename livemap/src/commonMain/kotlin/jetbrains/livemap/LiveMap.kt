@@ -7,7 +7,6 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.SimpleEventSource
@@ -17,7 +16,6 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
-import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
@@ -72,10 +70,7 @@ import jetbrains.livemap.regions.*
 import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.SEARCH_COMPONENTS
-import jetbrains.livemap.searching.SearchResult
+import jetbrains.livemap.searching.*
 import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
@@ -161,18 +156,12 @@ class LiveMap(
         )
     }
 
-    fun search(coord: DoubleVector): SearchResult? {
-        return myComponentManager.getEntities(SEARCH_COMPONENTS)
-            .filter { it.get<LocatorComponent>().locatorHelper.isCoordinateInTarget(explicitVec(coord.x, coord.y), it) }
-            .sortedByDescending { it.get<IndexComponent>().layerIndex }
-            .firstOrNull()
-            ?.let {
-                SearchResult(
-                    layerIndex = it.get<IndexComponent>().layerIndex,
-                    index = it.get<IndexComponent>().index,
-                    color = it.get<LocatorComponent>().locatorHelper.getColor(it)
-                )
-            }
+    fun searchResult(): SearchResult? {
+        if (!myInitialized) {
+            return null
+        }
+
+        return myComponentManager.getSingleton<HoverObjectComponent>().searchResult
     }
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
@@ -274,6 +263,7 @@ class LiveMap(
                 WorldOrigin2ScreenUpdateSystem(componentManager),
                 WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 ScreenLoopsUpdateSystem(componentManager),
+                HoverObjectDetectionSystem(componentManager),
 
                 // Geoms
                 EntitiesRenderingTaskSystem(componentManager),
