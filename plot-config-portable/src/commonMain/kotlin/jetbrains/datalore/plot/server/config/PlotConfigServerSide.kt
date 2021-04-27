@@ -299,6 +299,9 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     groupingContextAfterStat = tileLayerDataAndGroupingContextAfterStat.groupingContext
                 }
 
+                // Apply reordering to data
+                tileLayerDataAfterStat = DataReorderingUtil.reorderDataFrame(tileLayerDataAfterStat, varBindings, orderOptions)
+
                 // Apply sampling to layer tile data if necessary
                 tileLayerDataAfterStat =
                     PlotSampling.apply(tileLayerDataAfterStat, // layerConfig,

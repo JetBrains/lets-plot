@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
+import jetbrains.datalore.plot.config.DataReorderingUtil.OrderOption
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ANNOTATION
@@ -143,52 +144,6 @@ object DataMetaUtil {
                 .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values) }
                 .build()
         )
-    }
-
-    fun reorderDataFrame(dataFrame: DataFrame, byVariable: DataFrame.Variable, orderDir: Int): DataFrame {
-        val data = dataFrame.get(byVariable)
-        val dataWithIndices: List<Pair<Any?, Int>> = data.withIndex().map { it.value to it.index }
-
-        val comparable: (Pair<Any?, Int>) -> Comparable<*>? = if (dataFrame.isNumeric(byVariable)) {
-            { (it.first as Number).toDouble() }
-        } else {
-            { it.first.toString() }
-        }
-        val comparator: Comparator<Pair<Any?, Int>> = if (orderDir > 0) {
-            compareBy(comparable)
-        } else {
-            compareByDescending(comparable)
-        }
-
-        val orderIndices: List<Int> = dataWithIndices.sortedWith(comparator).map { it.second }
-        return dataFrame.selectIndices(orderIndices)
-    }
-
-
-    class OrderOption internal constructor(
-        val aesName: String,
-        val byVariable: String?,
-        val orderDir: Int
-    ) {
-        companion object {
-            fun create(
-                aesName: String,
-                orderBy: String?,
-                order: Any?
-            ): OrderOption? {
-                if (orderBy == null && order == null) {
-                    return null
-                }
-                val orderDir = when (order) {
-                    null -> 1
-                    is Number -> order.toInt()
-                    else -> throw IllegalArgumentException(
-                        "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
-                    )
-                }
-                return OrderOption(aesName, orderBy, orderDir)
-            }
-        }
     }
 
     fun createOrderOptions(plotOptions: Map<String, Any>): List<OrderOption> {

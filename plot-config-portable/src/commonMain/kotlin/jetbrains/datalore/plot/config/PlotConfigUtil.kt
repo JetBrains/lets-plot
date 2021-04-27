@@ -95,7 +95,7 @@ object PlotConfigUtil {
         layerConfigs: List<LayerConfig>,
         scaleProvidersMap: TypedScaleProviderMap,
         isClientSide: Boolean,
-        orderOptions: List<DataMetaUtil.OrderOption>
+        orderOptions: List<DataReorderingUtil.OrderOption>
     ): TypedScaleMap {
         val dataByVarBinding = layerConfigs
             .flatMap { layer ->
@@ -139,9 +139,8 @@ object PlotConfigUtil {
                 }
                 val distinctValues = if (ordering != null) {
                     val byVariable = ordering.byVariable?.let { DataFrameUtil.findVariableOrFail(data, it) } ?: variable
-                    val sortedDataFrame = DataMetaUtil.reorderDataFrame(data, byVariable, ordering.orderDir)
-                    sortedDataFrame.distinctValues(variable)
-                } else {
+                    DataReorderingUtil.distinctOrderedValues(data, variable, byVariable, ordering.orderDir)
+                } else{
                     data.distinctValues(variable)
                 }
                 discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet() } + distinctValues

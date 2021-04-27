@@ -32,7 +32,7 @@ abstract class PlotConfig(
 
     val scaleMap: TypedScaleMap
     protected val scaleConfigs: List<ScaleConfig<*>>
-    protected val orderOptions: List<DataMetaUtil.OrderOption>
+    protected val orderOptions: List<DataReorderingUtil.OrderOption>
 
     protected var sharedData: DataFrame
         private set
