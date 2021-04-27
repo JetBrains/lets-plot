@@ -12,11 +12,14 @@ class HVLine {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             hline(),
-            vline()
+            vline(),
+            hlineAlone(),
+            vlineAlone(),
+            vhLinesByConst()
         )
     }
 
-    fun hline(): MutableMap<String, Any> {
+    private fun hline(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'ggtitle': {'text': 'HLine'}," +
@@ -45,7 +48,7 @@ class HVLine {
         return plotSpec
     }
 
-    fun vline(): MutableMap<String, Any> {
+    private fun vline(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'ggtitle': {'text': 'VLine'}," +
@@ -72,5 +75,66 @@ class HVLine {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
+    }
+
+    private fun hlineAlone(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'ggtitle': {'text': 'HLine alone'}," +
+                "   'layers': [" +
+                "               { " +
+                "                   'geom': { " +
+                "                              'name' : 'hline'," +
+                "                              'data': { 'hl': [5.0, 7.0] }" +
+                "                           }," +
+                "                   'mapping': {'yintercept': 'hl'}, " +
+                "                   'color': 'red'" +
+                "               }" +
+                "           ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun vlineAlone(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'ggtitle': {'text': 'VLine alone'}," +
+                "   'layers': [" +
+                "               { " +
+                "                   'geom': { " +
+                "                              'name' : 'vline'," +
+                "                              'data': { 'vl': [5.0, 7.0] }" +
+                "                           }," +
+                "                   'mapping': {'xintercept': 'vl'}, " +
+                "                   'color': 'red'" +
+                "               }" +
+                "           ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun vhLinesByConst(): MutableMap<String, Any> {
+        val spec = """
+            {
+                'kind': 'plot',            
+                'ggtitle': {'text': 'VLine, HLine by const'},
+                'layers': [
+                            {
+                                'geom': 'vline',
+                                'xintercept': 5,
+                                'color': 'red'
+                            },
+                            {
+                                'geom': 'hline',
+                                'yintercept': 5,
+                                'color': 'red'
+                            }
+                          ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
     }
 }

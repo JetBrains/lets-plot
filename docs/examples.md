@@ -171,7 +171,7 @@ See examples in [Sampling in Lets-Plot](https://github.com/JetBrains/lets-plot/b
                                         <br>
                                         
                                         
-See also [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+See also [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
 
 
 <a id="bistro"></a>

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.Scale
@@ -224,9 +225,7 @@ internal object PlotAssemblerUtil {
     }
 
 
-    fun rangeByNumericAes(layersByTile: List<List<GeomLayer>>): Map<Aes<*>, ClosedRange<Double>> {
-        val rangeByAes = HashMap<Aes<*>, ClosedRange<Double>>()
-
+    fun computePlotDryRunXYRanges(layersByTile: List<List<GeomLayer>>): Pair<ClosedRange<Double>, ClosedRange<Double>> {
         // 'dry run' aesthetics use 'identity' mappers for positional aes (because the plot size is not yet determined)
         val dryRunAestheticsByTileLayer = HashMap<GeomLayer, Aesthetics>()
         for (tileLayers in layersByTile) {
@@ -236,103 +235,69 @@ internal object PlotAssemblerUtil {
             }
         }
 
+        fun initialRange(scale: Scale<Double>): ClosedRange<Double>? {
+            var initialRange: ClosedRange<Double>? = null
+
+            // Take in account:
+            // - scales domain if defined
+            // - scales breaks if defined
+            if (scale.isContinuousDomain) {
+                initialRange = updateRange(
+                    ScaleUtil.transformedDefinedLimits(scale),
+                    initialRange
+                )
+            }
+
+            if (scale.hasBreaks()) {
+                initialRange = updateRange(
+                    ScaleUtil.breaksTransformed(scale),
+                    initialRange
+                )
+            }
+            return initialRange
+        }
+
+        var xRangeOverall: ClosedRange<Double>? = null
+        var yRangeOverall: ClosedRange<Double>? = null
+
+        // the "scale map" is shared by all layers.
+        val scaleMap = layersByTile[0][0].scaleMap
+        if (scaleMap.containsKey(Aes.X)) {
+            xRangeOverall = initialRange(scaleMap[Aes.X])
+        }
+        if (scaleMap.containsKey(Aes.Y)) {
+            yRangeOverall = initialRange(scaleMap[Aes.Y])
+        }
+
         for (layers in layersByTile) {
             for (layer in layers) {
-                val numericAes = Aes.numeric(layer.renderedAes())
-
                 // use dry-run aesthetics to estimate ranges
-                val aesthetics = dryRunAestheticsByTileLayer[layer]!!
+                val aesthetics = dryRunAestheticsByTileLayer.getValue(layer)
                 // adjust X/Y range with 'pos adjustment' and 'expands'
                 val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
 
-                // flags
-                var isXCalculated = false
-                var isYCalculated = false
+                xRangeOverall = updateRange(xyRanges.first, xRangeOverall)
+                xRangeOverall = PlotUtil.rangeWithExpand(layer, Aes.X, xRangeOverall)
+                // include zero if necessary
+                if (layer.rangeIncludesZero(Aes.X)) {
+                    xRangeOverall = updateRange(ClosedRange.singleton(0.0), xRangeOverall)
+                }
 
-                for (aes in numericAes) {
-                    var layerAesRange: ClosedRange<Double>? = null
-                    // take in account:
-                    // - scales domain if defined
-                    // - scales breaks if defined
-                    if (layer.hasBinding(aes)) {
-                        val scale = layer.scaleMap[aes]
-                        if (scale.isContinuousDomain) {
-                            layerAesRange =
-                                updateRange(
-                                    ScaleUtil.transformedDefinedLimits(scale), layerAesRange
-                                )
-                        }
-
-                        if (scale.hasBreaks()) {
-                            layerAesRange =
-                                updateRange(
-                                    ScaleUtil.breaksTransformed(scale), layerAesRange
-                                )
-                        }
-                    }
-
-                    // numerical range for data
-                    val realAes: Aes<Double>
-                    if (Aes.isAffectingScaleX(aes)) {
-                        if (isXCalculated) {
-                            continue
-                        }
-                        isXCalculated = true
-                        realAes = Aes.X
-                        val xRange = xyRanges.first
-                        layerAesRange =
-                            updateRange(
-                                xRange,
-                                layerAesRange
-                            )
-                        layerAesRange =
-                            PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
-                    } else if (Aes.isAffectingScaleY(aes)) {
-                        if (isYCalculated) {
-                            continue
-                        }
-                        isYCalculated = true
-                        realAes = Aes.Y
-                        val yRange = xyRanges.second
-                        layerAesRange =
-                            updateRange(
-                                yRange,
-                                layerAesRange
-                            )
-                        layerAesRange =
-                            PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
-                    } else {
-                        realAes = aes
-                        layerAesRange =
-                            updateRange(
-                                aesthetics.range(aes),
-                                layerAesRange
-                            )
-                    }
-
-                    // include zero if necessary
-                    if (layer.rangeIncludesZero(aes)) {
-                        layerAesRange =
-                            updateRange(
-                                ClosedRange.singleton(0.0), layerAesRange
-                            )
-                    }
-
-                    // update range map
-                    updateAesRangeMap(
-                        realAes,
-                        layerAesRange,
-                        rangeByAes
-                    )
+                yRangeOverall = updateRange(xyRanges.second, yRangeOverall)
+                yRangeOverall = PlotUtil.rangeWithExpand(layer, Aes.Y, yRangeOverall)
+                // include zero if necessary
+                if (layer.rangeIncludesZero(Aes.Y)) {
+                    yRangeOverall = updateRange(ClosedRange.singleton(0.0), yRangeOverall)
                 }
             }
         }
 
         // validate XY ranges
-        for (aes in listOf(Aes.X, Aes.Y)) {
-            rangeByAes[aes] = SeriesUtil.ensureApplicableRange(rangeByAes[aes])
-        }
-
-        return rangeByAes
+        xRangeOverall = SeriesUtil.ensureApplicableRange(xRangeOverall)
+        yRangeOverall = SeriesUtil.ensureApplicableRange(yRangeOverall)
+        return Pair(
+            xRangeOverall,
+            yRangeOverall
+        )
     }
 }

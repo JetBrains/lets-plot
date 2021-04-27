@@ -16,81 +16,98 @@ def theme(*,
           axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
           **kwargs):
     """
-    Use theme() to modify individual components of a theme,
+    Use `theme()` to modify individual components of a theme,
     allowing you to control the appearance of all non-data components of the plot.
 
     Parameters
     ----------
-    axis_title : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        label of axes
-
-    axis_title_x : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        x axis label
-
-    axis_title_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        y axis label
-
-    axis_text : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        tick labels along axes
-
-    axis_text_x : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        x axis tick labels
-
-    axis_text_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        y axis tick labels
-
-    axis_ticks : result of element_line() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        tick marks along axes
-
-    axis_ticks_x : result of element_line() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        x axis tick marks
-
-    axis_ticks_y : result of element_line() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        y axis tick marks
-
-    axis_line : result of element_line() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        lines along axes
-
-    axis_line_x : result of element_line() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        line along x axis
-
-    axis_line_y : result of element_line() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        line along y axis
-
-    legend_position : ['none' | 'left' | 'right' | 'bottom' | 'top'] or two-element numeric vector.
-        The position of legends. "none" - remove the plot legend.
-
-    legend_justification :  "center" or two-element numeric vector.
-        Anchor point for positioning legend.
-
-    legend_direction : ["horizontal" | "vertical"]
+    axis_title : str or `FeatureSpec`
+        Label of axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_title_x : str or `FeatureSpec`
+        x axis label. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_title_y : str or `FeatureSpec`
+        y axis label. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_text : str or `FeatureSpec`
+        Tick labels along axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_text_x : str or `FeatureSpec`
+        x axis tick labels. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_text_y : str or `FeatureSpec`
+        y axis tick labels. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_ticks : str or `FeatureSpec`
+        Tick marks along axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_ticks_x : str or `FeatureSpec`
+        x axis tick marks. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_ticks_y : str or `FeatureSpec`
+        y axis tick marks. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_line : str or `FeatureSpec`
+        Lines along axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_line_x : str or `FeatureSpec`
+        Line along x axis. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_line_y : str or `FeatureSpec`
+        Line along y axis. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    legend_position : {'none', 'left', 'right', 'bottom', 'top'} or list
+        The position of legends. To remove the plot legend, use the 'none' value.
+        If parameter is a list, then it should be a two-element numeric vector,
+        each value of float type between 0 and 1.
+    legend_justification : str or list
+        Anchor point for positioning legend. If parameter is a list, then
+        it should be a two-element numeric vector. The pair [0, 0] corresponds to the
+        bottom left corner, the pair [1, 1] corresponds to the top right.
+        For string parameter the only possible value is 'center'.
+    legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
-
-    axis_tooltip : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        axes tooltips
-
-    axis_tooltip_x : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        x axis tooltips
-
-    axis_tooltip_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
-        y axis tooltips
+    axis_tooltip : str or `FeatureSpec`
+        Axes tooltips. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_tooltip_x : str or `FeatureSpec`
+        x axis tooltips. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    axis_tooltip_y : str or `FeatureSpec`
+        y axis tooltips. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
 
     Returns
     -------
-        theme specification
+    `FeatureSpec`
+        Theme specification.
 
     Examples
-    ---------
-    >>> import pandas as pd
-    >>> from sklearn.datasets import make_blobs
-    >>> X,y = make_blobs(n_samples=1000)
-    >>> dat = {'x': X.T[0], 'y': X.T[1], 'variable': y}
-    >>> dat = pd.DataFrame(dat)
-    >>> colors = {0:'red', 1: 'blue', 2: 'green'}
-    >>> dat['color'] = [colors[variable] for variable in dat['variable']]
-    >>> ggplot(dat, aes(x='x', y='y')) + geom_point(aes(color='y')) +
-    ... scale_color_gradient(guide=guide_colorbar(nbin=10,barheight= 8, barwidth=300)) +
-    ... theme(legend_position='top')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11-13
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        cats = ['a', 'b', 'c', 'd', 'e']
+        np.random.seed(42)
+        p = np.random.uniform(size=len(cats))
+        x = np.random.choice(cats, p=p/p.sum(), size=1000)
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_bar(aes(fill='x')) + \\
+            scale_fill_discrete(name='cat') + \\
+            theme(axis_title_x='blank', axis_text_x='blank', \\
+                  axis_ticks_x='blank', axis_line='blank', \\
+                  legend_position='bottom')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12-13
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        v = np.random.uniform(size=n)
+        ggplot({'x': x, 'y': y, 'v': v}, aes('x', 'y')) + \\
+            geom_point(aes(color='v')) + \\
+            scale_color_gradient(name='value') + \\
+            theme(axis_tooltip=element_blank(), legend_direction='horizontal', \\
+                  legend_position=[1, 1], legend_justification=[1, 1])
+
     """
     return FeatureSpec('theme', name=None,
                        axis_title=axis_title,

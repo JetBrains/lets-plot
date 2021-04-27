@@ -27,39 +27,39 @@
 
 
 - [Overview](#overview)
-- [Installation](#inst)
-- [Quick start with Jupyter](#start)
-- [Example Notebooks](#examples)
+- [Installation](#installation)
+- [Quick start with Jupyter](#quick-start-with-jupyter)
+- [Example Notebooks](#example-notebooks)
 - [GGBunch](#ggbunch)
-- [Data Sampling](#sampling)
-- [Export to File](#export)
+- [Data Sampling](#data-sampling)
+- [Export to File](#export-to-file)
 - [Formatting](#formatting)
-- [The 'bistro' Package](#bistro)
-    - [Correlation Plot](#corr_plot)
-    - [Image Matrix](#image_matrix)
+- [The 'bistro' Package](#the-bistro-package)
+    - [Correlation Plot](#correlation-plot)
+    - [Image Matrix](#image-matrix)
 - [Geospatial](#geospatial)
-    - [GeoPandas Support](#geopandas)
-    - [Interactive Maps](#livemap)
+    - [GeoPandas Support](#geopandas-support)
+    - [Interactive Maps](#interactive-maps)
     - [Geocoding](#geocoding)
-- ['No Javascript' Mode](#no_js)
-- [Offline Mode](#offline)
-- [Interesting Demos](#interesting)
-- [Scientific Mode in IntelliJ IDEA / PyCharm](#pycharm)
-- [What is new in 2.0.0](#new)
-- [Change Log](#change_log)
+- ['No Javascript' Mode](#no-javascript-mode)
+- [Offline Mode](#offline-mode)
+- [Interesting Demos](#interesting-demos)
+- [Scientific Mode in IntelliJ IDEA / PyCharm](#scientific-mode-in-intellij-idea-pycharm)
+- [What is new in 2.0.0](#what-is-new-in-2-0-0)
+- [Change Log](#change-log)
 - [License](#license)
 
 <a id="overview"></a>
 ### Overview
 
-The `Lets-Plot for Python` library includes a native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
+The `Lets-Plot for Python` library includes a native backend and a Python API, which was mostly based on the [ggplot2](https://ggplot2.tidyverse.org) package well-known to data scientists who use R.
 
-R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
+R ggplot2 has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
 
-Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new features](#nonstandard) to our Python API.
+Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few new features to our Python API.
 
 You can try the Lets-Plot library in [Datalore](https://datalore.jetbrains.com). 
-Lets-Plot is available in Datalore out-of-the-box (i.e. you can ignore the [Installation](#inst) chapter below). 
+Lets-Plot is available in Datalore out-of-the-box (i.e. you can ignore the [Installation](#installation) chapter below). 
 
 The advantage of [Datalore](https://datalore.jetbrains.com) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
@@ -68,7 +68,7 @@ Begin with the [quickstart in Datalore](https://view.datalore.io/notebook/Zzg9EV
 Watch the [Datalore Getting Started Tutorial](https://youtu.be/MjvFQxqNSe0) video for a quick introduction to Datalore.   
 
 
-<a id="inst"></a>
+<a id="installation"></a>
 ### Installation
 
 #### 1. For Linux and Mac users:
@@ -86,7 +86,7 @@ Install the Lets-Plot library:
 pip install lets-plot
 ```
 
-<a id="start"></a>
+<a id="quick-start-with-jupyter"></a>
 ### Quick start with Jupyter
 
 You can use Lets-Plot in Jupyter notebook or other notebook of your choice, like Datalore, Kaggle or Colab.
@@ -132,7 +132,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <br>
 <br>
 
-<a id="examples"></a>
+<a id="example-notebooks"></a>
 ### Example Notebooks
 
 See [Example Notebooks](https://github.com/JetBrains/lets-plot/blob/master/docs/examples.md).
@@ -147,15 +147,15 @@ GGBunch allows to show a collection of plots on one figure. Each plot in the col
 * [scatter_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_matrix.ipynb) 
 
   
-<a id="sampling"></a>
-### Data Sampling 
+<a id="data-sampling"></a>
+### Data Sampling
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
 
-Learn more: [Data Sampling](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md). 
+Learn more: [Data Sampling](https://jetbrains.github.io/lets-plot-docs/pages/features/sampling.html). 
   
 
-<a id="export"></a>
+<a id="export-to-file"></a>
 ### Export to File
 
 The `ggsave()` function is an easy way to export plot to a file in SVG or HTML formats.
@@ -181,23 +181,23 @@ the formatting result: "Mean income: £67k"
 ```
 An empty placeholder {} is also allowed. In this case a default string representation will be shown. This is also applicable to categorical values.   
 
-To learn more about format strings see: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md).
+To learn more about format strings see: [Formatting](https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html).
 
 In Lets-Plot you can use formatting for:
-- tooltip text, see: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+- tooltip text, see: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
 - labels on X/Y axis. See: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb).
 - the `geom_text()` labels. See: [Label format demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb).
 - facetting values in `facet_grid()`, `facet_wrap()` functions. See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb).
 
 
-<a id="bistro"></a>
+<a id="the-bistro-package"></a>
 ### The 'bistro' Package
 
 The 'bistro' package is a collection of higher level API functions, each allows 
 to create a certain kind of plot with a single function call instead of combining a plethora of plot features manually.
 
-<a id="corr_plot"></a>
-#### Correlation Plot 
+<a id="correlation-plot"></a>
+#### Correlation Plot
 
 `from lets_plot.bistro.corr`
 
@@ -207,8 +207,8 @@ will create a resulting plot object.
 
 Example: [correlation_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/correlation_plot.ipynb)
   
-<a id="image_matrix"></a>
-#### Image Matrix 
+<a id="image-matrix"></a>
+#### Image Matrix
 
 `from lets_plot.bistro.im`
 
@@ -221,23 +221,24 @@ The `image_matrix()` function uses `geom_image` under the hood, so you might wan
 * [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
  
 <a id="geospatial"></a>
-### Geospatial  
+### Geospatial
   
-<a id="geopandas"></a>
-#### GeoPandas Support 
+<a id="geopandas-support"></a>
+#### GeoPandas Support
   
 GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
 
-Learn more: [GeoPandas Support](https://github.com/JetBrains/lets-plot/blob/master/docs/geopandas.md).
- 
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327"><br><br>
+Learn more: [GeoPandas Support](https://jetbrains.github.io/lets-plot-docs/pages/features/geopandas_support.html).
 
-<a id="livemap"></a>
-#### Interactive Maps 
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327">
+<br><br>
+
+<a id="interactive-maps"></a>
+#### Interactive Maps
 Interactive maps allow zooming and panning around geospatial data that can be added to the base-map layer 
 using regular ggplot geoms.
 
-Learn more: [Interactive Maps](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md). 
+Learn more: [Interactive Maps](https://jetbrains.github.io/lets-plot-docs/pages/features/interactive_maps.html). 
 
 <a id="geocoding"></a>
 #### Geocoding
@@ -249,9 +250,9 @@ The Lets-Plot has built-in geocoding capabilities covering the folloing administ
 - counties (and equivalents)
 - cities (and towns)
 
-Learn more: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md). 
+Learn more: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding_api.html). 
 
-<a id="no_js"></a>
+<a id="no-javascript-mode"></a>
 ### 'No Javascript' Mode
 
 In the 'no javascript' mode Lets-Plot genetares plots as bare-bones SVG images.
@@ -273,7 +274,7 @@ LETS_PLOT_NO_JS = true   (other accepted values are: 1, t, y, yes)
 
 Note: interactive maps do not support the 'no javascript' mode.
 
-<a id="offline"></a>
+<a id="offline-mode"></a>
 ### Offline Mode
 
 In classic Jupyter notebook the `LetsPlot.setup_html()` statement by default pre-loads `Lets-Plot` JS library from CDN. 
@@ -287,14 +288,15 @@ LetsPlot.setup_html(offline=True)
  
 Note: internet connection is still required for interactive maps and geocoding API.
   
-<a id="interesting"></a>
+<a id="interesting-demos"></a>
 ### Interesting Demos
 
-A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
+A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.
+
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/klein_bottle.png" alt="Couldn't load klein_bottle.png" width="498" height="386">
 <br>
  
-<a id="pycharm"></a>
+<a id="scientific-mode-in-intellij-idea-pycharm"></a>
 ### Scientific mode in IntelliJ IDEA / PyCharm
 
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
@@ -312,7 +314,7 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
 </div>
 
-<a id="new"></a>
+<a id="what-is-new-in-2-0-0"></a>
 ### What is new in 2.0.0
      
 - Python 3.9 support
@@ -333,15 +335,17 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
     ```
   Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
 
-  See also: [Formatting](https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md)
+  See also: [Formatting](https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html)
 
 
 - Tooltips:
   - new `color` option: overrides the default tooltip color:
+
     ```python
     geom_xxx(tooltips=layer_tooltips().color('red'))
     ```
-    Learn more: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+
+    Learn more: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
   - *crosshair* cursor when tooltip is in a fixed position specified by the `anchor` option.
 
 
@@ -354,12 +358,12 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
   The old version of geocoding backend remains on-line for a couple of release cycles
   to continue support of prior Lets-Plot versions.
 
-  To learn more about new Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+  To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding_api.html).
 
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
 
-<a id="change_log"></a>
+<a id="change-log"></a>
 ### Change Log
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md)

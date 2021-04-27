@@ -84,10 +84,18 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isPositional(aes: Aes<*>): Boolean {
-            return isPositionalX(aes) ||
-                    isPositionalY(aes) ||
+            return isPositionalXY(aes) ||
+                    // SLOPE must be positional or
+                    // `geom_abline(slope=number)` will not work.
+                    // it should draw the same line as:
+                    // `geom_abline(slope=number, intersept=0)`
+                    // See: PlotUtil.createLayerAesthetics()
                     aes == SLOPE
+        }
 
+        fun isPositionalXY(aes: Aes<*>): Boolean {
+            return isPositionalX(aes) ||
+                    isPositionalY(aes)
         }
 
         fun isPositionalX(aes: Aes<*>): Boolean {
@@ -115,13 +123,15 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isAffectingScaleX(aes: Aes<*>): Boolean {
-            return isPositionalX(aes) && aes != XINTERCEPT
+            return isPositionalX(aes) // && aes != XINTERCEPT
         }
 
         fun isAffectingScaleY(aes: Aes<*>): Boolean {
             return isPositionalY(aes) &&
-                    aes != INTERCEPT &&
-                    aes != YINTERCEPT
+                    // "INTERCEPT" is "positional Y" because it must use the same 'mapper' as other "positional Y"-s,
+                    // but its range of values is not taken in account when computing the Y-mapper.
+                    aes != INTERCEPT // &&
+//                    aes != YINTERCEPT
         }
 
         fun affectingScaleX(unfiltered: Iterable<Aes<*>>): Iterable<Aes<Double>> {
@@ -158,11 +168,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         fun allPositional(): List<Aes<Double>> {
             @Suppress("UNCHECKED_CAST")
-            return values.filter {
-                isPositional(
-                    it
-                )
-            } as List<Aes<Double>>
+            return values.filter { isPositional(it) } as List<Aes<Double>>
         }
     }
 }

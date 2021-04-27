@@ -13,35 +13,40 @@ def guide_legend(nrow=None, ncol=None, byrow=None):
 
     Parameters
     ----------
-    nrow : int, optional
-        Number of rows in legend's guide
-    ncol : int, optional
-        Number of columns in legend's guide
-    byrow : boolean, optional
-        Type of output: by row (default), or by column
+    nrow : int
+        Number of rows in legend's guide.
+    ncol : int
+        Number of columns in legend's guide.
+    byrow : bool, default=True
+        Type of output: by row, or by column.
 
     Returns
     -------
-        legend guide specification
+    `FeatureSpec`
+        Color guide specification.
 
     Note
-    -----
+    ----
     Legend type guide shows key (i.e., geoms) mapped onto values.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn.datasets import make_blobs
-    >>> X,y = make_blobs(n_samples=1000)
-    >>> dat = {'x': X.T[0], 'y': X.T[1], 'variable': y}
-    >>> dat = pd.DataFrame(dat)
-    >>> colors = {0:'red', 1: 'blue', 2: 'green'}
-    >>> dat['color'] = [colors[variable] for variable in dat['variable']]
-    >>> ggplot(dat, aes(x='x', y='y')) \
-    >>>         + geom_point(aes(color='color'))\
-    >>>         + scale_color_manual(list(colors.values()),guide=guide_legend(ncol=3))\
-    >>>         + theme(legend_position=[ 0.5,0.5])
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.uniform(size=n)
+        y = np.random.uniform(size=n)
+        c = np.random.choice(list('abcdefgh'), size=n)
+        ggplot({'x': x, 'y': y, 'c': c}, aes('x', 'y')) + \\
+            geom_point(aes(shape='c'), size=4, alpha=.7) + \\
+            scale_shape(guide=guide_legend(nrow=3))
+
     """
     return _guide('legend', **locals())
 
@@ -52,36 +57,42 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None):
 
     Parameters
     ----------
-    barwidth : value, optional
-        Color bar width
-    barheight : value, optional
-        Color bar height
-    nbin : int, optional
-        Number of bins in color bar
+    barwidth : float
+        Color bar width.
+    barheight : float
+        Color bar height.
+    nbin : int
+        Number of bins in color bar.
 
     Returns
     -------
-        color guide specification
+    `FeatureSpec`
+        Color guide specification.
 
     Note
-    -----
+    ----
     Color bar guide shows continuous color scales mapped onto values.
     Color bar is available with scale_fill and scale_color.
 
     Examples
-    ---------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> from sklearn.datasets import make_blobs
-    >>> X,y = make_blobs(n_samples=1000)
-    >>> dat = {'x': X.T[0], 'y': X.T[1], 'variable': y}
-    >>> dat = pd.DataFrame(dat)
-    >>> colors = {0:'red', 1: 'blue', 2: 'green'}
-    >>> dat['color'] = [colors[variable] for variable in dat['variable']]
-    >>> ggplot(dat, aes(x='x', y='y')) \
-    >>>     + geom_point(aes(color='y'))\
-    >>>     + scale_color_gradient(guide=guide_colorbar(nbin=10,barheight= 8, barwidth=300))\
-    >>>     + theme(legend_position='top')
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        x = np.random.uniform(size=n)
+        y = np.random.uniform(size=n)
+        v = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y, 'v': v}, aes('x', 'y')) + \\
+            geom_point(aes(fill='v'), size=4, shape=21, color='black') + \\
+            scale_fill_gradient2(low='red', mid='yellow', high='blue', \\
+                                 guide=guide_colorbar(nbin=8, barwidth=10))
+
     """
     return _guide('colorbar', **locals())
 
@@ -90,4 +101,34 @@ def _guide(name, **kwargs):
     return FeatureSpec('guide', name=name, **kwargs)
 
 def guides(**kwargs):
+    """
+    Set guides for each scale.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Color guide specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13-14
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 25
+        np.random.seed(42)
+        x = np.random.uniform(size=n)
+        y = np.random.uniform(size=n)
+        c = np.random.choice(list('abcdefgh'), size=n)
+        v = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y, 'c': c, 'v': v}, aes('x', 'y')) + \\
+            geom_point(aes(shape='c', color='v'), size=4) + \\
+            scale_color_gradient2(low='red', mid='yellow', high='blue') + \\
+            guides(shape=guide_legend(ncol=2), \\
+                   color=guide_colorbar(nbin=8, barwidth=20))
+
+    """
     return FeatureSpec('guides', name=None, **kwargs)

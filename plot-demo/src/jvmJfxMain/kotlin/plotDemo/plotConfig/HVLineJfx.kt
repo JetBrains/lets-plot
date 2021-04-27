@@ -12,7 +12,8 @@ fun main() {
     with(HVLine()) {
         PlotSpecsDemoWindowJfx(
             "hline & vline plot",
-            plotSpecList()
+            plotSpecList(),
+            maxCol = 2
         ).open()
     }
 }

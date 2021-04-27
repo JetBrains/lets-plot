@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
@@ -127,13 +128,17 @@ class DataFrame private constructor(builder: Builder) {
 
     private fun assertDefined(variable: Variable) {
         if (!has(variable)) {
-            throw IllegalArgumentException("Undefined variable: '$variable'")
+            val e = IllegalArgumentException("Undefined variable: '$variable'")
+            LOG.error(e) { e.message!! }
+            throw e
         }
     }
 
     private fun assertNumeric(variable: Variable) {
         if (!isNumeric(variable)) {
-            throw IllegalArgumentException("Not a numeric variable: '$variable'")
+            val e = IllegalArgumentException("Not a numeric variable: '$variable'")
+            LOG.error(e) { e.message!! }
+            throw e
         }
     }
 
@@ -195,6 +200,10 @@ class DataFrame private constructor(builder: Builder) {
                 )
             }
         }
+    }
+
+    companion object {
+        private val LOG = PortableLogging.logger(DataFrame::class)
     }
 
     class Builder {
