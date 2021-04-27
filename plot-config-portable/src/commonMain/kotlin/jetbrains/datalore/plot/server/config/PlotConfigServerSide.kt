@@ -281,6 +281,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     tileLayerDataAfterStat = tileLayerInputData
                     groupingContextAfterStat = groupingContext
                 } else {
+                    val orderingVarNames = orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
                         stat,
