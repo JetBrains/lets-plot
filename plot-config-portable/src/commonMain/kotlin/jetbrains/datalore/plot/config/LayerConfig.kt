@@ -97,7 +97,10 @@ class LayerConfig(
         val combinedMappings = plotMappings + layerMappings
 
         var combinedData =
-            if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
+            if (combinedMappings.isEmpty()) {
+                // If layer has no mapping then no data needed.
+                DataFrame.Builder.emptyFrame()
+            } else if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
                 DataFrameUtil.appendReplace(sharedData, layerData)
             } else if (!layerData.isEmpty) {
                 layerData
