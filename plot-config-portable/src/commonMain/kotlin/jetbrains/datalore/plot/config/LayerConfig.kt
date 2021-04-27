@@ -99,6 +99,7 @@ class LayerConfig(
         var combinedData =
             if (combinedMappings.isEmpty()) {
                 // If layer has no mapping then no data needed.
+                // ToDo: same if there are 'mappings' but geom / stat doesn't support these aesthetics.
                 DataFrame.Builder.emptyFrame()
             } else if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
                 DataFrameUtil.appendReplace(sharedData, layerData)
