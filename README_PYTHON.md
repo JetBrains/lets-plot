@@ -135,7 +135,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <a id="example-notebooks"></a>
 ### Example Notebooks
 
-See [Example Notebooks](https://github.com/JetBrains/lets-plot/blob/master/docs/examples.md).
+See [Example Notebooks](https://jetbrains.github.io/lets-plot-docs/pages/features/examples.html).
 
   
 <a id="ggbunch"></a>
