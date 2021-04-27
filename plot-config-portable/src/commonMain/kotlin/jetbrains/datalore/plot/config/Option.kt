@@ -251,7 +251,6 @@ object Option {
         const val LIMITS = "limits"
         const val DISCRETE_DOMAIN = "discrete"
         const val DISCRETE_DOMAIN_REVERSE = "reverse"
-        const val DISCRETE_ORDER_DIR = "order"
         const val DATE_TIME = "datetime"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"

@@ -36,13 +36,10 @@ object DataMetaUtil {
     }
 
     private fun Map<*, *>.getMappingAnnotationsSpec(annotation: String): List<Map<*, *>> {
-        return getDataMetaAnnotationsSpec(this.getMap(Option.Meta.DATA_META), annotation)
-    }
-
-    private fun getDataMetaAnnotationsSpec(dataMeta: Map<*, *>?, annotation: String): List<Map<*, *>> {
-        return dataMeta
+        return this
+            .getMap(Option.Meta.DATA_META)
             ?.getMaps(MappingAnnotation.TAG)
-            ?.filter { it.read(ANNOTATION) == annotation }
+            ?.filter { it.read(ANNOTATION) == annotation}
             ?: emptyList()
     }
 

@@ -1589,7 +1589,6 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 def scale_fill_discrete(direction=None,
                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
-
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8)
