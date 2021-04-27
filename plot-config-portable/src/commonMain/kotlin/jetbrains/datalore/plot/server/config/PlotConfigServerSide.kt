@@ -223,16 +223,17 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 plotVarsToKeep.add(plotVar)
             }
         }
+        val orderingVarNames = orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
 
         if (plotVarsToKeep.size < plotVars.size) {
-            val plotDataCleaned = DataFrameUtil.removeAllExcept(plotData, plotVarsToKeep)
+            val plotDataCleaned = DataFrameUtil.removeAllExcept(plotData, plotVarsToKeep + orderingVarNames)
             replaceSharedData(plotDataCleaned)
         }
 
         // Clean-up data in layers.
         for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
             val layerData = layerConfig.ownData!!
-            val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep)
+            val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep + orderingVarNames)
             layerConfig.replaceOwnData(layerDataCleaned)
         }
     }
@@ -287,7 +288,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         scaleMap,
                         groupingContext,
                         facets,
-                        statCtx
+                        statCtx,
+                        variablesToKeep = orderingVarNames
                     ) { message ->
                         layerIndexAndSamplingMessage(
                             layerIndex,
