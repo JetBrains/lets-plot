@@ -32,7 +32,6 @@ abstract class PlotConfig(
 
     val scaleMap: TypedScaleMap
     protected val scaleConfigs: List<ScaleConfig<*>>
-    protected val orderOptions: List<DataReorderingUtil.OrderOption>
 
     protected var sharedData: DataFrame
         private set
@@ -68,8 +67,7 @@ abstract class PlotConfig(
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
         val scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
 
-        orderOptions = DataMetaUtil.createOrderOptions(opts)
-        scaleMap = PlotConfigUtil.createScales(layerConfigs, scaleProvidersMap, isClientSide, orderOptions)
+        scaleMap = PlotConfigUtil.createScales(layerConfigs, scaleProvidersMap, isClientSide)
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)

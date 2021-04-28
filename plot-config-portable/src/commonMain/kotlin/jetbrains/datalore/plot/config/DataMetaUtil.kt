@@ -39,9 +39,10 @@ object DataMetaUtil {
         return this
             .getMap(Option.Meta.DATA_META)
             ?.getMaps(MappingAnnotation.TAG)
-            ?.filter { it.read(ANNOTATION) == annotation}
+            ?.filter { it.read(ANNOTATION) == annotation }
             ?: emptyList()
     }
+
 
     /**
     @returns Set<aes> of discrete aes
@@ -143,21 +144,17 @@ object DataMetaUtil {
         )
     }
 
-    fun createOrderOptions(plotOptions: Map<String, Any>): List<OrderOption> {
-        val plotDiscreteAnnotations = plotOptions.getMappingAnnotationsSpec(AS_DISCRETE)
-        val layersDiscreteAnnotations = plotOptions
-            .getMaps(Option.Plot.LAYERS)
-            ?.map { layerOptions -> layerOptions.getMappingAnnotationsSpec(AS_DISCRETE) }
-            ?.flatten()
-            ?: emptyList()
-
-        return (plotDiscreteAnnotations + layersDiscreteAnnotations).mapNotNull { opts ->
-            OrderOption.create(
-                opts.getString(AES)!!,
-                opts.getString(ORDER_BY),
-                opts.read(ORDER)
-            )
-        }
+    fun getOrderOptions(options: Map<*, *>?): List<OrderOption> {
+        return options
+            ?.getMappingAnnotationsSpec(AS_DISCRETE)
+            ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
+            ?.mapNotNull { (aes, parameters) ->
+                OrderOption.create(
+                    aes,
+                    parameters?.getString(ORDER_BY),
+                    parameters?.read(ORDER)
+                )
+            } ?: emptyList()
     }
 }
 

@@ -42,8 +42,6 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
                 mapping_meta.append({
                     'aes': aesthetic,
                     'annotation': variable.annotation,
-                    'order_by': variable.order_by,
-                    'order': variable.order,
                     'parameters': variable.parameters
                 })
             else:

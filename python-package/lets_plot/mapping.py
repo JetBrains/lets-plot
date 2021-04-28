@@ -3,7 +3,7 @@
 
 
 class MappingMeta:
-    def __init__(self, variable, annotation, order_by, order, **parameters):
+    def __init__(self, variable, annotation, **parameters):
         if variable is None:
             raise ValueError("variable can't be none")
 
@@ -12,8 +12,6 @@ class MappingMeta:
 
         self.variable = variable
         self.annotation = annotation
-        self.order_by = order_by
-        self.order = order
         self.parameters = parameters
 
 
@@ -54,6 +52,6 @@ def as_discrete(variable, label=None, order_by=None, order=None):
     """
     if isinstance(variable, str):
         label = variable if label is None else label
-        return MappingMeta(variable, 'as_discrete', order_by, order, label=label)
+        return MappingMeta(variable, 'as_discrete', label=label, order_by=order_by, order=order)
     # aes(x=as_discrete([1, 2, 3])) - pass as is
     return variable

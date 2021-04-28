@@ -95,8 +95,7 @@ object PlotConfigUtil {
     internal fun createScales(
         layerConfigs: List<LayerConfig>,
         scaleProvidersMap: TypedScaleProviderMap,
-        isClientSide: Boolean,
-        orderOptions: List<DataReorderingUtil.OrderOption>
+        isClientSide: Boolean
     ): TypedScaleMap {
         val dataByVarBinding = layerConfigs
             .flatMap { layer ->
@@ -104,6 +103,7 @@ object PlotConfigUtil {
                     .filter { isClientSide || !it.variable.isStat }
                     .map { it to layer.combinedData }
             }.toMap()
+        val orderOptions = layerConfigs.flatMap(LayerConfig::orderOptions)
 
         // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {

@@ -209,7 +209,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 val layerData = layerConfig.ownData!!
                 if (DataFrameUtil.variables(layerData).containsKey(plotVar)) {
                     // This variable not needed for this layer
-                    // because there is same variable in the layer's data.
+                    // because there is same variable in the plot's data.
                     continue
                 }
                 if (layerVarsToKeep.contains(plotVar)) {
@@ -223,17 +223,16 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 plotVarsToKeep.add(plotVar)
             }
         }
-        val orderingVarNames = orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
 
         if (plotVarsToKeep.size < plotVars.size) {
-            val plotDataCleaned = DataFrameUtil.removeAllExcept(plotData, plotVarsToKeep + orderingVarNames)
+            val plotDataCleaned = DataFrameUtil.removeAllExcept(plotData, plotVarsToKeep)
             replaceSharedData(plotDataCleaned)
         }
 
         // Clean-up data in layers.
         for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
             val layerData = layerConfig.ownData!!
-            val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep + orderingVarNames)
+            val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep)
             layerConfig.replaceOwnData(layerDataCleaned)
         }
     }
@@ -281,7 +280,11 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     tileLayerDataAfterStat = tileLayerInputData
                     groupingContextAfterStat = groupingContext
                 } else {
-                    val orderingVarNames = orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
+                    val variablesToKeep = layerConfig.run {
+                        tooltips.valueSources.filterIsInstance<DataFrameValue>()
+                            .map(DataFrameValue::getVariableName) +
+                        orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
+                    }
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
                         stat,
@@ -290,7 +293,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets,
                         statCtx,
-                        variablesToKeep = orderingVarNames
+                        variablesToKeep = variablesToKeep
                     ) { message ->
                         layerIndexAndSamplingMessage(
                             layerIndex,
@@ -303,7 +306,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 }
 
                 // Apply reordering to data
-                tileLayerDataAfterStat = DataReorderingUtil.reorderDataFrame(tileLayerDataAfterStat, varBindings, orderOptions)
+                tileLayerDataAfterStat = DataReorderingUtil.reorderDataFrame(tileLayerDataAfterStat, varBindings, layerConfig.orderOptions)
 
                 // Apply sampling to layer tile data if necessary
                 tileLayerDataAfterStat =
@@ -318,7 +321,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         })
                 result[tileIndex].add(tileLayerDataAfterStat)
             }
-
         }
 
         return result
@@ -388,7 +390,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     listOfNotNull(layerConfig.explicitGroupingVarName) +
                     layerConfig.tooltips.valueSources
                         .filterIsInstance<DataFrameValue>()
-                        .map(DataFrameValue::getVariableName)
+                        .map(DataFrameValue::getVariableName) +
+                    layerConfig.orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
         }
 
         fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {

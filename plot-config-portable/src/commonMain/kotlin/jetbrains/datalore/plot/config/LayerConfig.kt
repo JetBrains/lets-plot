@@ -53,6 +53,8 @@ class LayerConfig(
     val constantsMap: Map<Aes<*>, Any>
 
     private val mySamplings: List<Sampling>?
+    private val myOrderOptions: List<DataReorderingUtil.OrderOption>
+
     val tooltips: TooltipSpecification
 
     var ownData: DataFrame? = null
@@ -79,6 +81,8 @@ class LayerConfig(
     val isLiveMap: Boolean
         get() = geomProto.geomKind == GeomKind.LIVE_MAP
 
+    val orderOptions: List<DataReorderingUtil.OrderOption>
+        get() = myOrderOptions
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -182,6 +186,8 @@ class LayerConfig(
         } else {
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
         }
+
+        myOrderOptions = DataMetaUtil.getOrderOptions(layerOptions)
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
