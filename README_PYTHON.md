@@ -228,7 +228,7 @@ The `image_matrix()` function uses `geom_image` under the hood, so you might wan
   
 GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
 
-Learn more: [GeoPandas Support](https://jetbrains.github.io/lets-plot-docs/pages/features/geopandas_support.html).
+Learn more: [GeoPandas Support](https://jetbrains.github.io/lets-plot-docs/pages/features/geopandas.html).
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327">
 <br><br>
