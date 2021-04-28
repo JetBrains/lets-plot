@@ -35,6 +35,7 @@ class LayerConfig(
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
     plotDiscreteAes: Set<*>,
+    plotOrderOptions: List<DataReorderingUtil.OrderOption>,
     val geomProto: GeomProto,
     private val clientSide: Boolean
 ) : OptionsAccessor(
@@ -187,7 +188,8 @@ class LayerConfig(
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
         }
 
-        myOrderOptions = DataMetaUtil.getOrderOptions(layerOptions)
+        val orderOptionsFromPlot = plotOrderOptions.filter { orderOption -> orderOption.aesName in varBindings.map { it.aes.name } }
+        myOrderOptions = orderOptionsFromPlot + DataMetaUtil.getOrderOptions(layerOptions)
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {

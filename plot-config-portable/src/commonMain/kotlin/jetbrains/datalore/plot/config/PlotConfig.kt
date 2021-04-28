@@ -119,7 +119,8 @@ abstract class PlotConfig(
                 layerOptions as Map<String, Any>,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
+                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
+                DataMetaUtil.getOrderOptions(this.mergedOptions)
             )
             layerConfigs.add(layerConfig)
         }
@@ -130,7 +131,8 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>
+        plotDiscreteAes: Set<*>,
+        plotOrderOptions: List<DataReorderingUtil.OrderOption>
     ): LayerConfig
 
 

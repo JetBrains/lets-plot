@@ -48,7 +48,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>
+        plotDiscreteAes: Set<*>,
+        plotOrderOptions: List<DataReorderingUtil.OrderOption>
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -58,6 +59,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             sharedData,
             plotMappings,
             plotDiscreteAes,
+            plotOrderOptions,
             GeomProtoClientSide(geomKind),
             true
         )
