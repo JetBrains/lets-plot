@@ -93,13 +93,37 @@ class LayerConfig(
             update(MAPPING, layerMappings)
         }
 
+        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
+        val consumedAesSet = HashSet(geomProto.renders())
+        if (!clientSide) {
+            consumedAesSet.addAll(stat.consumes())
+        }
+
         // mapping (inherit from plot) + 'layer' mapping
-        val combinedMappings = plotMappings + layerMappings
+        val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
+            // Only keep those mapping options which can be consumed by this layer.
+            // ToDo: report to user that some mappings are not applicable to this layer.
+            if (it == Option.Mapping.GROUP) {
+                true
+            } else if (it is String) {
+                val aes = Option.Mapping.toAes(it)
+                consumedAesSet.contains(aes)
+            } else {
+                false
+            }
+        }
+
+        // If layer has no mapping then no data is needed.
+        val dropData: Boolean = (combinedMappingOptions.isEmpty() &&
+                // Exception: CorrelationStat doesn't "consume" aesthetics and this logic is not applicable.
+                // ToDo: Remove CorrelationStat
+                statKind != StatKind.CORR &&
+                // Do not touch GeoDataframe - empty mapping is OK in this case.
+                !GeoConfig.isGeoDataframe(layerOptions, DATA)
+                )
 
         var combinedData =
-            if (combinedMappings.isEmpty()) {
-                // If layer has no mapping then no data needed.
-                // ToDo: same if there are 'mappings' but geom / stat doesn't support these aesthetics.
+            if (dropData) {
                 DataFrame.Builder.emptyFrame()
             } else if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
                 DataFrameUtil.appendReplace(sharedData, layerData)
@@ -110,21 +134,20 @@ class LayerConfig(
             }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappings)) {
+        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions)) {
             val geoConfig = GeoConfig(
                 geomProto.geomKind,
                 combinedData,
                 layerOptions,
-                combinedMappings
+                combinedMappingOptions
             )
             combinedData = geoConfig.dataAndCoordinates
             aesMappings = geoConfig.mappings
 
         } else {
-            aesMappings = createAesMapping(combinedData, combinedMappings)
+            aesMappings = createAesMapping(combinedData, combinedMappingOptions)
         }
 
-        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
         if (clientSide) {
             // add stat default mappings
             val statDefMapping = Stats.defaultMapping(stat)
@@ -142,17 +165,12 @@ class LayerConfig(
         constantsMap = LayerConfigUtil.initConstants(this, aesMappings.keys)
 
         // grouping
-        explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappings)
+        explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappingOptions)
 
         posProvider = LayerConfigUtil.initPositionAdjustments(
             this,
             geomProto.preferredPositionAdjustments(this)
         )
-
-        val consumedAesSet = HashSet(geomProto.renders())
-        if (!clientSide) {
-            consumedAesSet.addAll(stat.consumes())
-        }
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
