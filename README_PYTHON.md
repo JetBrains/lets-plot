@@ -250,7 +250,7 @@ The Lets-Plot has built-in geocoding capabilities covering the folloing administ
 - counties (and equivalents)
 - cities (and towns)
 
-Learn more: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding_api.html). 
+Learn more: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html). 
 
 <a id="no-javascript-mode"></a>
 ### 'No Javascript' Mode
@@ -358,7 +358,7 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
   The old version of geocoding backend remains on-line for a couple of release cycles
   to continue support of prior Lets-Plot versions.
 
-  To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding_api.html).
+  To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html).
 
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
