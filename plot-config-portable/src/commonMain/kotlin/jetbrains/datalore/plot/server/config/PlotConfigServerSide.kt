@@ -292,7 +292,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets,
                         statCtx,
-                        varsWithoutBinding = varsWithoutBinding
+                        varsWithoutBinding
                     ) { message ->
                         layerIndexAndSamplingMessage(
                             layerIndex,
