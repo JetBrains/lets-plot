@@ -361,12 +361,10 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
   To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html).
 
 
-See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
-
 <a id="change-log"></a>
 ### Change Log
 
-See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md)
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
 
 
 <a id="license"></a>
@@ -374,7 +372,3 @@ See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
 Copyright © 2019-2021, JetBrains s.r.o.
-    
-
-
-

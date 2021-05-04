@@ -21,17 +21,25 @@
          
  - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
  - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
+ 
+##### 5. Add the GitHub release:
+ 
+ - Open the link: https://github.com/JetBrains/lets-plot/releases/new
+ - Fill `Tag version` and `Release title` with the released version "vX.X.X".
+ - Fill the description field - copy from the CHANGELOG.md.
+ - Add JS artifacts from the `js-package/distr` directory to the binaries box.
+ - Select `This is a pre-release` checkbox.
+ - Click `Publish release`.
 
-##### 5. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
+##### 6. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
 
  - `version` in `build.gradle` (`X.X.X-alphaN`)
  - `js_artifact_version` in `build.gradle` (`X.X.X.devN`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X.devN`)
 
-##### 6. Push new dev version to GitHub.
+##### 7. Push new dev version to GitHub.
 
 
- 
 ### Build the project for publishing
 
 **The next steps need to be reproduced on all supported platforms (`Mac`, `Linux` and `Windows`).**   
@@ -78,7 +86,8 @@ run `./gradlew python-package-build:buildManylinuxWheels`
 
 ### Publish artifacts
 
-**Check the project page on cdnjs.com before publishing. It must contain a new version of JS artifacts.**
+**Check the project page on cdnjs.com before publishing: https://cdnjs.com/libraries/lets-plot   
+It must contain a new version of JS artifacts.**
 
 ##### 1. Python wheels (PyPi):
 
@@ -105,12 +114,15 @@ Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories
 Close and release repository to the Maven Central:
 
 `./gradlew closeAndReleaseRepository`
+
+This operation can take up to 5 minutes.
  
-### Add the GitHub release:
- 
- * Open the link: https://github.com/JetBrains/lets-plot/releases/new
- * Fill `Tag version` and `Release title` with the released version "vX.X.X"
- * Fill the description field - copy from the CHANGELOG.md
+### Edit the GitHub release:
+
+ - Go to the https://github.com/JetBrains/lets-plot/releases page and find the release you have published.
+ - Click `Edit release`.
+ - Unset `This is a pre-release` checkbox.
+ - Click `Update release`.
  
 ### After release
 
