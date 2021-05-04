@@ -66,12 +66,16 @@ open class ABLine {
         }
 
         private fun variableInterceptAndSlope(): MutableMap<String, Any> {
-            val intercept = ArrayList<Double>()
-            val slope = ArrayList<Double>()
+            val intercept = ArrayList<Any>()
+            val slope = ArrayList<Any>()
             for (i in 0..9) {
                 intercept.add(i * 0.1)
                 slope.add(i * 0.2)
             }
+//            intercept.add(0)
+//            intercept.add(1)
+//            slope.add(0.5)
+//            slope.add(0.5)
 
             val abLine = "               {" +
                     "             'geom': 'abline'," +

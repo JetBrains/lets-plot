@@ -135,7 +135,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <a id="example-notebooks"></a>
 ### Example Notebooks
 
-See [Example Notebooks](https://github.com/JetBrains/lets-plot/blob/master/docs/examples.md).
+See [Example Notebooks](https://jetbrains.github.io/lets-plot-docs/pages/features/examples.html).
 
   
 <a id="ggbunch"></a>
@@ -228,7 +228,7 @@ The `image_matrix()` function uses `geom_image` under the hood, so you might wan
   
 GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
 
-Learn more: [GeoPandas Support](https://jetbrains.github.io/lets-plot-docs/pages/features/geopandas_support.html).
+Learn more: [GeoPandas Support](https://jetbrains.github.io/lets-plot-docs/pages/features/geopandas.html).
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327">
 <br><br>
@@ -250,7 +250,7 @@ The Lets-Plot has built-in geocoding capabilities covering the folloing administ
 - counties (and equivalents)
 - cities (and towns)
 
-Learn more: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding_api.html). 
+Learn more: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html). 
 
 <a id="no-javascript-mode"></a>
 ### 'No Javascript' Mode
@@ -358,7 +358,7 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
   The old version of geocoding backend remains on-line for a couple of release cycles
   to continue support of prior Lets-Plot versions.
 
-  To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding_api.html).
+  To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html).
 
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.

@@ -23,7 +23,9 @@ open class BoxPlot {
             withOutlierOverride(),
             withGrouping(),
             withGroupingAndVarWidth(),
-            withMiddlePoint()
+            withMiddlePoint(),
+            oneBox(),
+            oneBox(5.0)
         )
     }
 
@@ -183,6 +185,7 @@ open class BoxPlot {
         }
 
         fun withMiddlePoint(): MutableMap<String, Any> {
+            // This one is not working.
             val spec = """
                 |   {
                 |      'kind': 'plot',
@@ -205,6 +208,30 @@ open class BoxPlot {
 //                |                  {
 //                |                     'geom': 'boxplot'
 //                |                  },
+
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = DATA
+            return plotSpec
+        }
+
+        fun oneBox(x: Double? = null): MutableMap<String, Any> {
+            // Undefined x-aesthetics.
+            // see this issue: https://github.com/JetBrains/lets-plot/issues/325
+
+            val layerSpec = if (x == null) {
+                "{'geom': 'boxplot'}"
+            } else {
+                "{'geom': 'boxplot', 'x':'$x'}"
+            }
+
+
+            val spec = """
+            {
+               'kind': 'plot',
+               'mapping': {'y': 'rating'},
+               'layers': [$layerSpec]
+            }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA

@@ -11,6 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
@@ -102,12 +103,7 @@ object PlotConfigUtil {
                     .map { it to layer.combinedData }
             }.toMap()
 
-        val scaleProvidersByMappedAes = dataByVarBinding.keys.map {
-            val scaleProvider = ScaleProviderHelper.getOrCreateDefault(it.aes, scaleProvidersMap)
-            it.aes to scaleProvider
-        }.toMap()
-
-        val discreteMappedAes = HashSet<Aes<*>>()
+        // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
             require(data.has(variable)) {
@@ -115,25 +111,84 @@ object PlotConfigUtil {
                     data.variables().map { "'${it.name}'" }
                 }"
             }
+        }
 
+        val variablesByMappedAes: MutableMap<Aes<*>, MutableList<DataFrame.Variable>> = HashMap()
+        for (varBinding in dataByVarBinding.keys) {
             val aes = varBinding.aes
-            val scaleProvider = scaleProvidersByMappedAes[aes]!!
-            if (scaleProvider.discreteDomain || !data.isNumeric(variable)) {
-                discreteMappedAes.add(aes)
+            val variable = varBinding.variable
+            variablesByMappedAes.getOrPut(aes) { ArrayList() }.add(variable)
+        }
+
+        // All (used) aes set.
+        val aesSetAll: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet() +
+                setOf(Aes.X, Aes.Y)  // allways create scales for X,Y aes.
+
+        // Scale providers.
+        val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>> = aesSetAll.map {
+            val scaleProvider = ScaleProviderHelper.getOrCreateDefault(it, scaleProvidersMap)
+            it to scaleProvider
+        }.toMap()
+
+        // Compute domains for some scales:
+        //
+        // - All "discrete" domains.
+        //       "discrete" domains are needed for `DataProcessing.transformOriginals()`
+        // - All "continuous" domains excluding "continuous positional" aes.
+        //      Ranges for "continuous positional" aes (i.e. X,Y domains) are computed later.
+        //      See: PlotAssemblerUtil.computePlotDryRunXYRanges()
+
+        // Extract "discrete" aes set.
+        val discreteAesSet: MutableSet<Aes<*>> = HashSet()
+        for (aes in aesSetAll) {
+            if (scaleProviderByAes.getValue(aes).discreteDomain) {
+                discreteAesSet.add(aes)
+            } else if (variablesByMappedAes.containsKey(aes)) {
+                val variables = variablesByMappedAes.getValue(aes)
+                val anyNotNumericData = variables.any {
+                    val data = dataByVarBinding.getValue(VarBinding(it, aes))
+                    !data.isNumeric(it)
+                }
+                if (anyNotNumericData) {
+                    discreteAesSet.add(aes)
+                }
             }
         }
 
-        val discreteDomainByAes = HashMap<Aes<*>, Collection<Any>>()
+        val discreteX: Boolean = discreteAesSet.any { Aes.isPositionalX(it) }
+        val discreteY: Boolean = discreteAesSet.any { Aes.isPositionalY(it) }
+
+        // Compute domains for all scales.
+        // Combine all X,Y positional domains.
+        val discreteDomainByReprAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
         val continuousDomainByAesRaw = HashMap<Aes<*>, ClosedRange<Double>?>()
+
+        fun isDiscrete(aes: Aes<*>): Boolean {
+            return discreteAesSet.contains(aes) ||
+                    (Aes.isPositionalX(aes) && discreteX) ||
+                    (Aes.isPositionalY(aes) && discreteY)
+        }
+
+        fun reprAes(aes: Aes<*>): Aes<*> {
+            return when {
+                Aes.isPositionalX(aes) -> Aes.X
+                Aes.isPositionalY(aes) -> Aes.Y
+                else -> aes
+            }
+        }
+
+        // domains from 'data'
         for ((varBinding, data) in dataByVarBinding) {
             val aes = varBinding.aes
+
             val variable = varBinding.variable
-            if (discreteMappedAes.contains(aes)) {
+            if (isDiscrete(aes)) {
+                val reprAes = reprAes(aes)
                 // update discrete domain
-                discreteDomainByAes[aes] = discreteDomainByAes.getOrPut(aes) { emptySet<Any>() } +
-                        data.distinctValues(variable)
-            } else {
-                // update continuous domain
+                val factors = data.distinctValues(variable)
+                discreteDomainByReprAes.getOrPut(reprAes) { LinkedHashSet() }.addAll(factors)
+            } else if (!Aes.isPositionalXY(aes)) {
+                // add domain for any "with contonuous domain but not positional" aes.
                 continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
             }
         }
@@ -143,25 +198,33 @@ object PlotConfigUtil {
             SeriesUtil.ensureApplicableRange(it.value)
         }
 
-        val variablesByMappedAes = HashMap<Aes<*>, MutableList<DataFrame.Variable>>()
-        for (varBinding in dataByVarBinding.keys) {
-            val aes = varBinding.aes
-            val variable = varBinding.variable
-            variablesByMappedAes.getOrPut(aes) { ArrayList<DataFrame.Variable>() }.add(variable)
+        // Create scales for all aes.
+        fun defaultScaleName(aes: Aes<*>): String {
+            return variablesByMappedAes[aes]
+                ?.let { it.map { it.label }.distinct().joinToString() }
+                ?: aes.name
         }
 
-        val scaleByMappedAes = HashMap<Aes<*>, Scale<*>>()
-        for ((aes, discreteDomain) in discreteDomainByAes) {
-            val defaultName = variablesByMappedAes[aes]!!.map { it.label }.distinct().joinToString()
-            val scaleProvider = scaleProvidersByMappedAes[aes]!!
-            scaleByMappedAes[aes] = scaleProvider.createScale(defaultName, discreteDomain)
-        }
-        for ((aes, continuousDomain) in continuousDomainByAes) {
-            val defaultName = variablesByMappedAes[aes]!!.map { it.label }.distinct().joinToString()
-            val scaleProvider = scaleProvidersByMappedAes[aes]!!
-            scaleByMappedAes[aes] = scaleProvider.createScale(defaultName, continuousDomain)
+        val scaleByAes = HashMap<Aes<*>, Scale<*>>()
+        for (aes in aesSetAll) {
+            val defaultName = defaultScaleName(aes)
+            val scaleProvider = scaleProviderByAes.getValue(aes)
+            val reprAes = reprAes(aes)
+            val scale = if (discreteDomainByReprAes.containsKey(reprAes)) {
+                val discreteDomain = discreteDomainByReprAes.getValue(reprAes)
+                scaleProvider.createScale(defaultName, discreteDomain)
+            } else if (continuousDomainByAes.containsKey(aes)) {
+                val continuousDomain = continuousDomainByAes.getValue(aes)
+                scaleProvider.createScale(defaultName, continuousDomain)
+            } else {
+                // Must be positional-X,Y aes & continuous domain --> continuous scale.
+                // The domain doesn't matter - it will be computed later (see: PlotAssemblerUtil.computePlotDryRunXYRanges())
+                scaleProvider.createScale(defaultName, ClosedRange.singleton(0.0))
+            }
+
+            scaleByAes[aes] = scale
         }
 
-        return TypedScaleMap(scaleByMappedAes)
+        return TypedScaleMap(scaleByAes)
     }
 }
