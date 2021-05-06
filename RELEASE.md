@@ -22,7 +22,7 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
  - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
  
-##### 5. Add the GitHub release:
+##### 5. Add the GitHub pre-release:
  
  - Open the link: https://github.com/JetBrains/lets-plot/releases/new
  - Fill `Tag version` and `Release title` with the released version "vX.X.X".
@@ -30,6 +30,9 @@
  - Add JS artifacts from the `js-package/distr` directory to the binaries box.
  - Select `This is a pre-release` checkbox.
  - Click `Publish release`.
+ 
+**CDNJS will automatically update the JS artifacts after the pre-release is published. 
+This operation can take up to 2 hours. Do not publish another project artifacts before JS artifacts will be updated.**
 
 ##### 6. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
 
