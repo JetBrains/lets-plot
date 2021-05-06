@@ -785,4 +785,42 @@ class DropUnusedDataTest {
             )
         )
     }
+
+    @Test
+    fun `should not drop variables used to order by`() {
+        val spec = """{
+            "kind": "plot",
+            "data": { "x": [0, 0],  "g": ['a', 'b'] },
+            "mapping": { "x": "x" },
+            "layers": [
+              {
+                "geom": "bar",
+                "data_meta": { 
+                    "mapping_annotations": [
+                       {
+                            "aes": "x",
+                            "annotation": "as_discrete",
+                            "parameters": {
+                                "order_by": "g"
+                            }
+                       }
+                   ]
+                }
+              }
+            ]
+        }""".trimIndent()
+        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        TestUtil.checkOptionsClientSide(opts, 1)
+
+        assertEmptyPlotData(opts)
+
+        val statSize = 1
+        checkSingleLayerData(opts, 3,
+            mapOf(
+                "x" to statSize,
+                "..count.." to statSize,
+                "g" to statSize
+            )
+        )
+    }
 }

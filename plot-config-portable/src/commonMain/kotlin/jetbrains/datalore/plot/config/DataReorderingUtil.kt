@@ -79,24 +79,20 @@ object DataReorderingUtil {
         fun prepareDataToOrder(
             variable: DataFrame.Variable,
             byVariable: DataFrame.Variable,
-            orderDir: Int,
-            prevOrderedVars: List<DataFrame.Variable>? = null
+            orderDir: Int
         ): DataToOrder {
             val values = dataFrame[variable]
             val byValues = dataFrame[byVariable].toMutableList()
             if (byVariable == Stats.COUNT) {
-                val prevOrderedData = prevOrderedVars?.map { dataFrame[it] }
-                val sumByValues = mutableMapOf<Pair<Any?, Any?>, ArrayList<Double>>()
+                val sumByValues = mutableMapOf<Any?, ArrayList<Double>>()
                 values.mapIndexed { index, value ->
                     val byValue = byValues[index] as Double
-                    val valueWithPrevOrdered = Pair(value, prevOrderedData?.map { it[index] })
-                    sumByValues.getOrPut(valueWithPrevOrdered, ::ArrayList).add(byValue)
+                    sumByValues.getOrPut(value, ::ArrayList).add(byValue)
                 }
-                val sumByValue: Map<Any, Double> =
+                val sumByValue: Map<Any?, Double> =
                     sumByValues.map { (key, values) -> key to SeriesUtil.sum(values) }.toMap()
                 values.mapIndexed { index, value ->
-                    val valueWithPrevOrdered = Pair(value, prevOrderedData?.map { it[index] })
-                    byValues[index] = sumByValue[valueWithPrevOrdered]
+                    byValues[index] = sumByValue[value]
                 }
             }
             return DataToOrder(byValues, orderDir, dataFrame.isNumeric(byVariable))
@@ -108,8 +104,7 @@ object DataReorderingUtil {
             orderDataList += prepareDataToOrder(
                 orderingSpec.variable,
                 orderingSpec.byVariable,
-                orderingSpec.orderDir,
-                prevOrderedVars
+                orderingSpec.orderDir
             )
             prevOrderedVars.add(orderingSpec.variable)
         }

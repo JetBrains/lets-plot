@@ -282,10 +282,13 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     tileLayerDataAfterStat = tileLayerInputData
                     groupingContextAfterStat = groupingContext
                 } else {
-                    // Need to keep variables without bindings (used in tooltips)
-                    val varsWithoutBinding = layerConfig.tooltips.valueSources
-                        .filterIsInstance<DataFrameValue>()
-                        .map(DataFrameValue::getVariableName)
+                    // Need to keep variables without bindings (used in tooltips and for ordering)
+                    val varsWithoutBinding = layerConfig.run {
+                        tooltips.valueSources
+                            .filterIsInstance<DataFrameValue>()
+                            .map(DataFrameValue::getVariableName) +
+                                orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
+                    }
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
                         stat,
