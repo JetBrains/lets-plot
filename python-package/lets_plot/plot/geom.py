@@ -3172,6 +3172,11 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - size : lines width. Defines line width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    Note
+    ----
+    'density2d' statistical transformation combined with parameter value `contour=False`
+    could be used to draw heatmaps (see the example below).
+
     Examples
     --------
     .. jupyter-execute::
@@ -3185,7 +3190,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         np.random.seed(42)
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
-        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
             geom_density2d()
 
     |
@@ -3201,7 +3206,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         np.random.seed(42)
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
-        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
             geom_density2d(aes(color='..group..'), size=1, show_legend=False) + \\
             scale_color_brewer(type='seq', palette='GnBu', direction=-1)
 
@@ -3218,7 +3223,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         np.random.seed(42)
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
-        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
         bunch = GGBunch()
         for i, bw in enumerate([.2, .4]):
             for j, n in enumerate([16, 256]):
@@ -3240,7 +3245,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         np.random.seed(42)
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
-        p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
+        p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
         bunch = GGBunch()
         for i, adjust in enumerate([1.5, 2.5]):
             for j, bins in enumerate([5, 15]):
@@ -3249,6 +3254,22 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                                    ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
                                j * 400, i * 400, 400, 400)
         bunch.show()
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_raster(aes(fill='..density..'), \\
+                       stat='density2d', contour=False, n=50) + \\
+            scale_fill_gradient(low='#49006a', high='#fff7f3')
 
     """
     return _geom('density2d',
@@ -3338,6 +3359,11 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     - alpha : transparency level of a layer. Understands numbers between 0 and 1.
     - fill : color of geometry filling.
 
+    Note
+    ----
+    'density2df' statistical transformation combined with parameter value `contour=False`
+    could be used to draw heatmaps (see the example below).
+
     Examples
     --------
     .. jupyter-execute::
@@ -3417,6 +3443,24 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                                    ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
                                j * 400, i * 400, 400, 400)
         bunch.show()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_tile(aes(fill='..density..'), color='black', \\
+                       stat='density2df', contour=False, n=50) + \\
+            scale_fill_gradient(low='#49006a', high='#fff7f3')
 
     """
     return _geom('density2df',

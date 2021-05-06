@@ -57,7 +57,7 @@ object DataProcessing {
         groupingContext: GroupingContext,
         facets: PlotFacets,
         statCtx: StatContext,
-        variablesToKeep: List<String>,
+        varsWithoutBinding: List<String>,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
@@ -71,7 +71,7 @@ object DataProcessing {
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
-            val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, variablesToKeep, messageConsumer)
+            val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
                 @Suppress("UNCHECKED_CAST")
@@ -81,7 +81,7 @@ object DataProcessing {
         } else { // add offset to each group
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
-                var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, variablesToKeep, messageConsumer)
+                var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
@@ -169,7 +169,7 @@ object DataProcessing {
         scaleMap: TypedScaleMap,
         facets: PlotFacets,
         statCtx: StatContext,
-        variablesToKeep: List<String>,
+        varsWithoutBinding: List<String>,
         compMessageConsumer: Consumer<String>
     ): DataFrame {
 
@@ -216,6 +216,7 @@ object DataProcessing {
         }
 
         val newInputSeries = HashMap<Variable, List<*>>()
+
         fun addSeriesForVariable(variable: Variable) {
             val value = when (data.isNumeric(variable)) {
                 true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
@@ -249,7 +250,8 @@ object DataProcessing {
                 }
             }
         }
-        for (varName in variablesToKeep.filterNot(Stats::isStatVar)) {
+        // series for variables without bindings
+        for (varName in varsWithoutBinding.filterNot(Stats::isStatVar)) {
             val variable = DataFrameUtil.findVariableOrFail(data, varName)
             if (!newInputSeries.containsKey(variable)) {
                 addSeriesForVariable(variable)

@@ -27,7 +27,7 @@ as well as in other notebooks like [Datalore](https://view.datalore.io/notebook/
   
 You can even create plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
   
-Read the Lets-Plot for Python [documentation](README_PYTHON.md) to learn more about the package installation and usage.
+Read the Lets-Plot for Python [documentation](https://jetbrains.github.io/lets-plot-docs/) to learn more about the package installation and usage.
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 

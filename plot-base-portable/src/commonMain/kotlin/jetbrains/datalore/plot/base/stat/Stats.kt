@@ -77,8 +77,8 @@ object Stats {
         val map = HashMap<Aes<*>, DataFrame.Variable>()
         for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
-                val `var` = stat.getDefaultMapping(aes)
-                map[aes] = `var`
+                val variable = stat.getDefaultMapping(aes)
+                map[aes] = variable
             }
         }
         return map

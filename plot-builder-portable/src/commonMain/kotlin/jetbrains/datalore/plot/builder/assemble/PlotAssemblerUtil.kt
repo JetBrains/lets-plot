@@ -257,16 +257,24 @@ internal object PlotAssemblerUtil {
             return initialRange
         }
 
-        var xRangeOverall: ClosedRange<Double>? = null
-        var yRangeOverall: ClosedRange<Double>? = null
-
-        // the "scale map" is shared by all layers.
+//        // the "scale map" is shared by all layers.
         val scaleMap = layersByTile[0][0].scaleMap
-        if (scaleMap.containsKey(Aes.X)) {
-            xRangeOverall = initialRange(scaleMap[Aes.X])
-        }
-        if (scaleMap.containsKey(Aes.Y)) {
-            yRangeOverall = initialRange(scaleMap[Aes.Y])
+        var xRangeOverall: ClosedRange<Double>? = initialRange(scaleMap[Aes.X])
+        var yRangeOverall: ClosedRange<Double>? = initialRange(scaleMap[Aes.Y])
+
+        fun completeOverallRange(
+            layer: GeomLayer,
+            aes: Aes<Double>,
+            initialRange: ClosedRange<Double>?,
+            aestheticsRange: ClosedRange<Double>?,
+        ): ClosedRange<Double>? {
+            var range: ClosedRange<Double>? = updateRange(aestheticsRange, initialRange)
+            range = PlotUtil.rangeWithExpand(layer, aes, range)
+            // include zero if necessary
+            if (layer.rangeIncludesZero(aes)) {
+                range = updateRange(ClosedRange.singleton(0.0), range)
+            }
+            return range
         }
 
         for (layers in layersByTile) {
@@ -276,19 +284,8 @@ internal object PlotAssemblerUtil {
                 // adjust X/Y range with 'pos adjustment' and 'expands'
                 val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
 
-                xRangeOverall = updateRange(xyRanges.first, xRangeOverall)
-                xRangeOverall = PlotUtil.rangeWithExpand(layer, Aes.X, xRangeOverall)
-                // include zero if necessary
-                if (layer.rangeIncludesZero(Aes.X)) {
-                    xRangeOverall = updateRange(ClosedRange.singleton(0.0), xRangeOverall)
-                }
-
-                yRangeOverall = updateRange(xyRanges.second, yRangeOverall)
-                yRangeOverall = PlotUtil.rangeWithExpand(layer, Aes.Y, yRangeOverall)
-                // include zero if necessary
-                if (layer.rangeIncludesZero(Aes.Y)) {
-                    yRangeOverall = updateRange(ClosedRange.singleton(0.0), yRangeOverall)
-                }
+                xRangeOverall = completeOverallRange(layer, Aes.X, xRangeOverall, xyRanges.first)
+                yRangeOverall = completeOverallRange(layer, Aes.Y, yRangeOverall, xyRanges.second)
             }
         }
 

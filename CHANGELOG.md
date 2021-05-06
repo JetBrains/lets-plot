@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The old version of the Geocoding backend remains on-line for a couple of release cycles
   to continue support of prior versions of Lets-Plot.
   
-  To learn more about Geocoding API see: [Geocoding](https://github.com/JetBrains/lets-plot/blob/master/docs/geocoding.md).
+  To learn more about Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html).
                                     
 
 - The project upgraded to Kotlin v1.4.21 (was v1.4.10).

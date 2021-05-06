@@ -282,11 +282,10 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     tileLayerDataAfterStat = tileLayerInputData
                     groupingContextAfterStat = groupingContext
                 } else {
-                    val variablesToKeep = layerConfig.run {
-                        tooltips.valueSources.filterIsInstance<DataFrameValue>()
-                            .map(DataFrameValue::getVariableName) +
-                        orderOptions.mapNotNull(DataReorderingUtil.OrderOption::byVariable)
-                    }
+                    // Need to keep variables without bindings (used in tooltips)
+                    val varsWithoutBinding = layerConfig.tooltips.valueSources
+                        .filterIsInstance<DataFrameValue>()
+                        .map(DataFrameValue::getVariableName)
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
                         stat,
@@ -295,7 +294,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets,
                         statCtx,
-                        variablesToKeep = variablesToKeep
+                        varsWithoutBinding
                     ) { message ->
                         layerIndexAndSamplingMessage(
                             layerIndex,
@@ -323,6 +322,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         })
                 result[tileIndex].add(tileLayerDataAfterStat)
             }
+
         }
 
         return result

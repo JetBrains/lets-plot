@@ -756,4 +756,33 @@ class DropUnusedDataTest {
             opts, 2, mapOf("x" to 2, "name" to 2)
         )
     }
+
+    @Test
+    fun `should not drop variables used in tooltips after stat applying`() {
+        val spec = """{
+            "kind": "plot",
+            "layers": [
+              {
+                "geom": "bar",
+                "data": { "x": [0, 0],  "g": ['a', 'b'] },
+                "mapping": { "x": "x" },
+                "tooltips": { "tooltip_lines": [ "@g" ] }
+              }
+            ]
+        }""".trimIndent()
+
+        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        TestUtil.checkOptionsClientSide(opts, 1)
+
+        assertEmptyPlotData(opts)
+
+        val statSize = 1
+        checkSingleLayerData(opts, 3,
+            mapOf(
+                "x" to statSize,
+                "..count.." to statSize,
+                "g" to statSize
+            )
+        )
+    }
 }

@@ -28,33 +28,13 @@ internal object SamplingUtil {
         return (0 until size).map { groupMapper(it) }.distinct().toMutableList()
     }
 
-    //static DataFrame randomSample(int sampleSize, DataFrame population, Random rand) {
-    //  int popSize = population.rowCount();
-    //  boolean pickIndices = sampleSize <= popSize / 2;
-    //  int indexCount = pickIndices ? sampleSize : (popSize - sampleSize);
-    //
-    //  Set<Integer> s = randomIndices(popSize, indexCount, rand);
-    //  if (pickIndices) {
-    //    return population.selectIndices(s);
-    //  }
-    //  return population.dropIndices(s);
-    //}
-
-    //private static Set<Integer> randomIndices(int indexedCollectionSize, int count, Random rand) {
-    //  Set<Integer> indices = new HashSet<>();
-    //  while (indices.size() < count) {
-    //    indices.add(rand.nextInt(indexedCollectionSize));
-    //  }
-    //  return indices;
-    //}
-
     fun xVar(data: DataFrame): Variable {
         if (data.has(Stats.X)) {
             return Stats.X
         } else if (data.has(TransformVar.X)) {
             return TransformVar.X
         }
-        throw IllegalStateException("Can't apply sampling: couldn't deduce the (X) variable")
+        throw IllegalStateException("Can't apply sampling: couldn't deduce the (X) variable.")
     }
 
     fun yVar(data: DataFrame): Variable {
@@ -63,7 +43,7 @@ internal object SamplingUtil {
         } else if (data.has(TransformVar.Y)) {
             return TransformVar.Y
         }
-        throw IllegalStateException("Can't apply sampling: couldn't deduce the (Y) variable")
+        throw IllegalStateException("Can't apply sampling: couldn't deduce the (Y) variable.")
     }
 
     fun splitRings(population: DataFrame): List<List<DoubleVector>> {
@@ -73,6 +53,7 @@ internal object SamplingUtil {
 
         @Suppress("UNCHECKED_CAST")
         val xValues = population[xVar(population)] as List<Any>
+
         @Suppress("UNCHECKED_CAST")
         val yValues = population[yVar(population)] as List<Any>
         val points = DoubleVectorComponentsList(xValues, yValues)
@@ -109,7 +90,8 @@ internal object SamplingUtil {
                 )
             }.reversed())
             .map { p ->
-                var limit = min((p.second / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
+                var limit = min(
+                    (p.second / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
                     rings[getRingIndex(p)].size
                 )
 
