@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.*
+import jetbrains.datalore.plot.builder.tooltip.TooltipLine.Companion.DEFAULT_LABEL_SPECIFIER
 import jetbrains.datalore.plot.config.Option.Mapping.GROUP
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
@@ -24,12 +25,18 @@ class TooltipConfig(
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
+        val linesWithDefaultFormatting: List<String> = getStringList(Option.Layer.TOOLTIP_VARIABLES).map { variableName ->
+            "$DEFAULT_LABEL_SPECIFIER$LABEL_SEPARATOR$VARIABLE_NAME_PREFIX{$variableName}"
+        }
+        val tooltipLines = when {
+            has(Option.Layer.TOOLTIP_LINES) -> {
+                linesWithDefaultFormatting + getStringList(Option.Layer.TOOLTIP_LINES)
+            }
+            linesWithDefaultFormatting.isNotEmpty() -> linesWithDefaultFormatting
+            else -> null
+        }
         return TooltipConfigParseHelper(
-            tooltipLines = if (has(Option.Layer.TOOLTIP_LINES)) {
-                getStringList(Option.Layer.TOOLTIP_LINES)
-            } else {
-                null
-            },
+            tooltipLines = tooltipLines,
             tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS)
         ).parse()
     }

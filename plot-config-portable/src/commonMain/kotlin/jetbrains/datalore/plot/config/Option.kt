@@ -85,6 +85,7 @@ object Option {
         const val SHOW_LEGEND = "show_legend"
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_LINES = "tooltip_lines"
+        const val TOOLTIP_VARIABLES = "tooltip_variables"
         const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
