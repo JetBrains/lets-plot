@@ -42,7 +42,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -114,7 +114,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -186,7 +186,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -256,7 +256,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -329,7 +329,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -398,7 +398,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see: https://github.com/JetBrains/lets-plot/blob/master/docs/formats.md
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------

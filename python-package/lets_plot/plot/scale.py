@@ -100,8 +100,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 # Continuous Scales
 #
 
-def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
-                       format=None):
+def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
     """
     Continuous position scale x.
 
@@ -165,8 +164,7 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
                   format=format)
 
 
-def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
-                       format=None):
+def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
     """
     Continuous position scale y.
 
@@ -438,8 +436,7 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
-                     format=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
     """
     Discrete position scale x.
 
@@ -506,8 +503,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   discrete=True, reverse=reverse)
 
 
-def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                              format=None):
+def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Reversed discrete position scale x.
 
@@ -561,8 +557,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
-                     format=None):
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
     """
     Discrete position scale y.
 
@@ -629,8 +624,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   discrete=True, reverse=reverse)
 
 
-def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                              format=None):
+def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
     Reversed discrete position scale y.
 
