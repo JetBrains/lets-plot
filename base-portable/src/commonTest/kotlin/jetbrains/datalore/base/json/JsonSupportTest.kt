@@ -177,6 +177,18 @@ class JsonSupportTest {
                 )
             ),
             TestData(
+                """{"\"like\" \\this\\":"\"like\" \\this\\"}""",
+                mapOf(
+                    """"like" \this\""" to """"like" \this\"""
+                )
+            ),
+            TestData(
+                """{"str\twith special\ncharacters \"like\" \\this\\":"str\twith special\ncharacters \"like\" \\this\\"}""",
+                mapOf(
+                    "str\twith special\ncharacters \"like\" \\this\\" to "str\twith special\ncharacters \"like\" \\this\\"
+                )
+            ),
+            TestData(
                 "{}",
                 emptyMap()
             ),

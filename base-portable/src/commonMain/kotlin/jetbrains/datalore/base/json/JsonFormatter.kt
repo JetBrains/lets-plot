@@ -16,20 +16,20 @@ class JsonFormatter {
 
     private fun formatList(list: List<*>) {
         append("[")
-        list.headTail(::formatValue) { tail -> tail.forEach { append(","); formatValue(it) } }
+        list.headTail(::appendValue) { tail -> tail.forEach { append(","); appendValue(it) } }
         append("]")
     }
 
     private fun formatMap(map: Map<*, *>) {
         append("{")
-        map.entries.headTail(::formatPair) { tail -> tail.forEach { append(",\n"); formatPair(it) } }
+        map.entries.headTail(::appendPair) { tail -> tail.forEach { append(",\n"); appendPair(it) } }
         append("}")
     }
 
-    private fun formatValue(v: Any?) {
+    private fun appendValue(v: Any?) {
         when (v) {
             null -> append("null")
-            is String -> append("\"${v.escape()}\"")
+            is String -> appendString(v)
             is Number, Boolean -> append(v.toString())
             is Array<*> -> formatList(v.asList())
             is List<*> -> formatList(v)
@@ -38,8 +38,16 @@ class JsonFormatter {
         }
     }
 
-    private fun formatPair(pair: Map.Entry<Any?, Any?>) {
-        append("\"${pair.key}\":"); formatValue(pair.value)
+    private fun appendPair(pair: Map.Entry<Any?, Any?>) {
+        appendString(pair.key); append(":"); appendValue(pair.value)
+    }
+
+    private fun appendString(v: Any?) {
+        when (v) {
+            null -> {}
+            is String -> append("\"${v.escape()}\"")
+            else -> throw IllegalArgumentException("Expected a string, but got '${v::class.simpleName}'")
+        }
     }
 
     private fun append(s: String) = buffer.append(s)
@@ -50,4 +58,5 @@ class JsonFormatter {
             tail(asSequence().drop(1))
         }
     }
+
 }
