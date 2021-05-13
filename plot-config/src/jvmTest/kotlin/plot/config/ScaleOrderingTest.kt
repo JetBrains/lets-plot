@@ -14,19 +14,23 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ScaleOrderingTest {
-    private val data = """{
-        'x'    :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C" ],
+    private val myData = """{
+        'x'   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C" ],
         'fill':  [ '4', '2', '3', '3', '2', '3', '1', '1', '3', '4', '2' ]
     }"""
 
-    private fun makePlotSpec(annotations: String, sampling: String? = null): String {
-        val mapping = "\"x\": \"x\", \"fill\": \"fill\""
+    private fun makePlotSpec(
+        annotations: String,
+        data: String = myData,
+        mapping: String =  """{ "x": "x", "fill": "fill" }""",
+        sampling: String? = null,
+    ): String {
         return """{
               "kind": "plot",
               "layers": [
                 {
                   "data" : $data,
-                  "mapping": { $mapping },
+                  "mapping": $mapping,
                   "geom": "bar",
                   "data_meta": { "mapping_annotations": [ $annotations ] },
                   "sampling" : $sampling 
@@ -232,7 +236,6 @@ class ScaleOrderingTest {
                     listOf(COLOR0, COLOR1),          // C : 2,4
                     listOf(COLOR2, COLOR0, COLOR3),  // A : 1,2,3
                     listOf(COLOR2, COLOR3, COLOR1)   // B : 1,3,4
-
                 )
             )
         }
@@ -255,22 +258,142 @@ class ScaleOrderingTest {
     }
 
     @Test
-    fun `with sampling_pick`() {
-        val sampling = """ { "name": "pick", "n": 1 } """
-        val orderingSettings =
-            makeOrderingSettings("x", null, -1) + "," + makeOrderingSettings("fill", null, 1)
-        val geomLayer = buildGeomLayer(makePlotSpec(orderingSettings, sampling))
+    fun `with pick sampling`() {
+        run {
+            val sampling = """{ "name": "pick", "n": 1 }"""
+            val orderingSettings =
+                makeOrderingSettings("x", null, -1) + "," + makeOrderingSettings("fill", null, 1)
+            val geomLayer = buildGeomLayer(makePlotSpec(orderingSettings, sampling = sampling))
 
-        assertScaleBreaks(geomLayer, Aes.X, listOf("C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("2", "4"))
+            assertScaleBreaks(geomLayer, Aes.X, listOf("C"))
+            assertScaleBreaks(geomLayer, Aes.FILL, listOf("2", "4"))
 
-        assertOrderInBar(
-            geomLayer,
-            expected = listOf(
-                listOf(COLOR0, COLOR1),          // C : 2,4
+            assertOrderInBar(
+                geomLayer,
+                expected = listOf(
+                    listOf(COLOR0, COLOR1),          // C : 2,4
+                )
             )
-        )
+        }
+        run {
+            val sampling = """{ "name": "pick", "n": 1 }"""
+            val orderingSettings = makeOrderingSettings("x", "..count..", 1)
+            val geomLayer = buildGeomLayer(makePlotSpec(orderingSettings, sampling = sampling))
 
+            assertScaleBreaks(geomLayer, Aes.X, listOf("C"))
+            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2"))
+            assertOrderInBar(
+                geomLayer,
+                expected = listOf(
+                    listOf(COLOR0, COLOR1)          // C : 4,2
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `with group sampling`() {
+        val data = """{
+            'x'   :  [4, 5, 3, 5, 5, 2, 3, 3, 3, 5],
+            'class':  ['d', 'd', 'd', 'c', 'b', 'a', 'b', 'd', 'd', 'b']
+        }"""
+        val mapping = """{ "x": "x", "fill": "class" }"""
+
+        run {
+            val geomLayer = buildGeomLayer(
+                makePlotSpec(
+                    annotations = "",
+                    data = data,
+                    mapping = mapping,
+                    sampling = null
+                )
+            )
+            assertScaleBreaks(geomLayer, Aes.FILL, listOf("d", "c", "b", "a"))
+
+            assertOrderInBar(
+                geomLayer,
+                expected = listOf(
+                    listOf(COLOR0),                  // 4 : d
+                    listOf(COLOR0, COLOR1, COLOR2),  // 5 : d,c,b
+                    listOf(COLOR0, COLOR2),          // 3 : d,b
+                    listOf(COLOR3),                  // 2 : a
+                )
+            )
+        }
+
+        run {
+            val groupSampling =  """{
+                "name": "group_systematic",
+                "n": 2
+            }"""
+            val geomLayer = buildGeomLayer(
+                makePlotSpec(
+                    annotations = "",
+                    data = data,
+                    mapping = mapping,
+                    sampling = groupSampling
+                )
+            )
+            assertScaleBreaks(geomLayer, Aes.FILL, listOf("d", "a"))
+
+            assertOrderInBar(
+                geomLayer,
+                expected = listOf(
+                    listOf(COLOR0),  // d
+                    listOf(COLOR0),  // d
+                    listOf(COLOR0),  // d
+                    listOf(COLOR1),  // a
+                )
+            )
+        }
+
+        run {
+            val orderingSettings = makeOrderingSettings("fill", null, 1)
+            val geomLayer = buildGeomLayer(
+                makePlotSpec(
+                    annotations = orderingSettings,
+                    data = data,
+                    mapping = mapping,
+                    sampling = null
+                )
+            )
+            assertScaleBreaks(geomLayer, Aes.FILL, listOf("a", "b", "c", "d"))
+            assertOrderInBar(
+                geomLayer,
+                expected = listOf(
+                    listOf(COLOR0),                  //  a
+                    listOf(COLOR1, COLOR2, COLOR3),  //  b,c,d
+                    listOf(COLOR1, COLOR3),          //  b,d
+                    listOf(COLOR3)                   //  d
+                )
+            )
+        }
+
+        run {
+            val orderingSettings = makeOrderingSettings("fill", null, 1)
+            val groupSampling =  """{
+                "name": "group_systematic",
+                "n": 2
+            }"""
+            val geomLayer = buildGeomLayer(
+                makePlotSpec(
+                    annotations = orderingSettings,
+                    data = data,
+                    mapping = mapping,
+                    sampling = groupSampling
+                )
+            )
+            assertScaleBreaks(geomLayer, Aes.FILL, listOf("a", "d"))
+            assertOrderInBar(
+                geomLayer,
+                expected = listOf(
+                    listOf(COLOR0),  // a
+                    listOf(COLOR1),  // d
+                    listOf(COLOR1),  // d
+                    listOf(COLOR1),  // d
+                )
+            )
+        }
     }
 
     companion object {
