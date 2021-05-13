@@ -13,3 +13,4 @@
 - map: calif.housing [[#140](https://github.com/JetBrains/lets-plot/issues/140)]
 - Can't build plot: "Uncaught SyntaxError: Unexpected string" in a console [[#371](https://github.com/JetBrains/lets-plot/issues/371)]
 - All scales should have the 'format' parameter [[#347](https://github.com/JetBrains/lets-plot/issues/347)].
+- Poor font rendering in Swing/Batik. Related to:  [[#364](https://github.com/JetBrains/lets-plot/issues/364)]
