@@ -187,12 +187,9 @@ object PlotConfigUtil {
             if (isDiscrete(aes)) {
                 val reprAes = reprAes(aes)
                 // update discrete domain
-                val ordering = if (isClientSide) {
-                    orderOptions.find { it.aesName == aes.name }
-                } else {
-                    null
-                }
-                val factors = if (ordering != null) {
+                val factors = if (isClientSide && !Aes.isPositional(aes) && orderOptions.find { it.aesName == aes.name } != null) {
+                    // Ensure the correct order in the legend
+                    val ordering = orderOptions.first { it.aesName == aes.name }
                     val byVariable = ordering.byVariable?.let { DataFrameUtil.findVariableOrFail(data, it) } ?: variable
                     DataReorderingUtil.distinctOrderedValues(data, variable, byVariable, ordering.orderDir)
                 } else{

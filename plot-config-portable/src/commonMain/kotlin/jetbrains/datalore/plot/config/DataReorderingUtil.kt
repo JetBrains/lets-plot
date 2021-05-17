@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.min
 
 object DataReorderingUtil {
     class OrderOption internal constructor(
@@ -45,33 +46,41 @@ object DataReorderingUtil {
     ): DataFrame {
         return reorderDataFrame(
             dataFrame,
-            orderOptions.mapNotNull { orderOption -> VariableOrderingSpec.create(dataFrame, varBindings, orderOption) }
+            orderOptions.mapNotNull { orderOption -> OrderingSpec.create(dataFrame, varBindings, orderOption) }
         )
     }
 
-    private class VariableOrderingSpec(
+    private class OrderingSpec(
         val variable: DataFrame.Variable,
-        val byVariable: DataFrame.Variable,
-        val orderDir: Int
+        val orderBy: DataFrame.Variable,
+        val direction: Int
     ) {
         companion object {
             fun create(
                 dataFrame: DataFrame,
                 varBindings: List<VarBinding>,
                 orderOption: OrderOption
-            ): VariableOrderingSpec? {
+            ): OrderingSpec? {
                 val varBinding = varBindings.find { it.aes.name == orderOption.aesName } ?: return null
                 val variable = varBinding.variable
                 val byVariable =
                     orderOption.byVariable?.let { DataFrameUtil.findVariableOrFail(dataFrame, it) } ?: variable
-                return VariableOrderingSpec(variable, byVariable, orderOption.orderDir)
+                return OrderingSpec(variable, byVariable, orderOption.orderDir)
             }
+        }
+    }
+
+    private fun <T> getComparator(comparable: (T) -> Comparable<*>?, orderDir: Int): Comparator<T> {
+        return if (orderDir > 0) {
+            compareBy(comparable)
+        } else {
+            compareByDescending(comparable)
         }
     }
 
     private fun reorderDataFrame(
         dataFrame: DataFrame,
-        orderingSpecs: List<VariableOrderingSpec>
+        orderingSpecs: List<OrderingSpec>
     ): DataFrame {
 
         class DataToOrder(val values: List<*>, val orderDir: Int, val isNumeric: Boolean)
@@ -103,8 +112,8 @@ object DataReorderingUtil {
         orderingSpecs.forEach { orderingSpec ->
             orderDataList += prepareDataToOrder(
                 orderingSpec.variable,
-                orderingSpec.byVariable,
-                orderingSpec.orderDir
+                orderingSpec.orderBy,
+                orderingSpec.direction
             )
             prevOrderedVars.add(orderingSpec.variable)
         }
@@ -121,12 +130,8 @@ object DataReorderingUtil {
             } else {
                 { it.first[column].toString() }
             }
-            val curComparator = if (orderData.orderDir > 0) {
-                compareBy(comparable)
-            } else {
-                compareByDescending(comparable)
-            }
 
+            val curComparator = getComparator(comparable, orderData.orderDir)
             comparator = if (comparator == null) {
                 curComparator
             } else {
@@ -148,9 +153,34 @@ object DataReorderingUtil {
         byVariable: DataFrame.Variable,
         orderDir: Int
     ): Collection<Any> {
-        return reorderDataFrame(
-            dataFrame,
-            listOf(VariableOrderingSpec(variable, byVariable, orderDir))
-        ).distinctValues(variable)
+        if (variable == byVariable) {
+            val comparable: (Any?) -> Comparable<*>? = {
+                if (dataFrame.isNumeric(variable)) { (it as Number).toDouble() } else { it.toString() }
+            }
+            return dataFrame.distinctValues(variable).sortedWith(getComparator(comparable, orderDir))
+        }
+
+        val valueToByValues = LinkedHashMap<Any?, Any?>()
+        dataFrame.get(variable).forEachIndexed { index, value ->
+            val prevByValue = valueToByValues[value]
+            val byValue = dataFrame.get(byVariable)[index]
+            val newValue = when {
+                prevByValue == null -> byValue
+                byVariable == Stats.COUNT -> min(prevByValue as Double, byValue as Double)
+                else -> prevByValue
+            }
+            valueToByValues.put(value, newValue)
+        }
+
+        val pairComparable: (Pair<Any?, Any?>) -> Comparable<*>? = {
+            if (dataFrame.isNumeric(byVariable)) {
+                (it.second as Number).toDouble()
+            } else {
+                it.second.toString()
+            }
+        }
+        return valueToByValues.toList()
+            .sortedWith(getComparator(pairComparable, orderDir))
+            .mapNotNull(Pair<Any?, Any?>::first)
     }
 }

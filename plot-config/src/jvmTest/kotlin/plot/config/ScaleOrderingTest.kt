@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.builder.PlotUtil
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class ScaleOrderingTest {
@@ -345,6 +346,7 @@ class ScaleOrderingTest {
         }
     }
 
+    @Ignore
     @Test
     fun `group sampling`() {
         val sampling = """{ "name": "group_systematic", "n": 3 }"""
