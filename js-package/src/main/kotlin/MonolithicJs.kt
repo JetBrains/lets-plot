@@ -242,19 +242,20 @@ private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
 }
 
 private fun showError(message: String, parentElement: HTMLElement) {
-    showText(message, "color:darkred;", parentElement)
+    showText(message, "lets_plot_message-error", "color:darkred;", parentElement)
 }
 
 private fun showInfo(message: String, parentElement: HTMLElement) {
-    showText(message, "color:darkblue;", parentElement)
+    showText(message, "lets_plot_message-info", "color:darkblue;", parentElement)
 }
 
-private fun showText(message: String, style: String, parentElement: HTMLElement) {
+private fun showText(message: String, className: String, style: String, parentElement: HTMLElement) {
     val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
     if (style.isNotBlank()) {
         paragraphElement.setAttribute("style", style)
     }
     paragraphElement.textContent = message
+    paragraphElement.className = className
     parentElement.appendChild(paragraphElement)
 }
 
