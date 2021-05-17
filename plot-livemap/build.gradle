@@ -30,9 +30,10 @@ kotlin {
                 implementation project(':base')
                 implementation project(':plot-common-portable')
                 implementation project(':plot-base-portable')
-                implementation project(':plot-builder-portable')
                 implementation project(':plot-base')
+                implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
+                implementation project(':plot-config-portable')
                 implementation project(':vis-canvas')
                 implementation project(':gis')
                 implementation project(':livemap')
@@ -44,7 +45,7 @@ kotlin {
                 implementation kotlin('test-annotations-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':plot-config')
-                implementation project(':plot-config-portable')
+//                implementation project(':plot-config-portable')
             }
         }
         jvmMain {

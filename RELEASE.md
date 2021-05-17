@@ -112,6 +112,10 @@ It must contain a new version of JS artifacts.**
  
  - `./gradlew publishLetsPlotImageExportPublicationToMavenRepository`
 
+ - `./gradlew publishLetsPlotGISPublicationToMavenRepository`
+
+ - `./gradlew publishKotlinApiDependenciesToMavenRepository`
+
 Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories
 
 Close and release repository to the Maven Central:
