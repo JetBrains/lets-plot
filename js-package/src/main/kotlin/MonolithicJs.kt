@@ -242,11 +242,11 @@ private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
 }
 
 private fun showError(message: String, parentElement: HTMLElement) {
-    showText(message, "lets_plot_message-error", "color:darkred;", parentElement)
+    showText(message, "lets-plot-message-error", "color:darkred;", parentElement)
 }
 
 private fun showInfo(message: String, parentElement: HTMLElement) {
-    showText(message, "lets_plot_message-info", "color:darkblue;", parentElement)
+    showText(message, "lets-plot-message-info", "color:darkblue;", parentElement)
 }
 
 private fun showText(message: String, className: String, style: String, parentElement: HTMLElement) {
