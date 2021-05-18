@@ -9,7 +9,6 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.xVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 /**
  * Picks first N data points with unique X-values. In addition scoops all data-points with X-values
@@ -24,23 +23,20 @@ internal class PickSampling(sampleSize: Int) : SamplingBase(sampleSize),
 
     override fun apply(population: DataFrame): DataFrame {
         checkArgument(isApplicable(population))
-        val pickedXValues = HashSet<Any>()
+
+        val xVar = xVar(population)
+        val xFactors = population.distinctValues(xVar)
+        if (xFactors.size <= sampleSize) {
+            return population
+        }
+
+        val pickX = xFactors.take(sampleSize).toSet()
+
+        val xValues = population[xVar]
         val pickedIndices = ArrayList<Int>()
-
-        val xValues = population[xVar(population)]
-        for (i in xValues.indices) {
-            val v = xValues[i]
-            if (v is String || SeriesUtil.isFinite(v as Double)) {
-                if (!pickedXValues.contains(v)) {
-                    if (pickedXValues.size >= sampleSize) {
-                        // do not add new X-values
-                        continue
-                    }
-                    // pick this data-point and all subsequent data-points with equal X
-                    pickedXValues.add(v)
-                }
-
-                pickedIndices.add(i)
+        for ((index, v) in xValues.withIndex()) {
+            if (v in pickX) {
+                pickedIndices.add(index)
             }
         }
 
