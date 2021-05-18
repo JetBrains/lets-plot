@@ -65,6 +65,6 @@ class TooltipLine(
             fields = listOf(valueSource)
         )
 
-        const val DEFAULT_LABEL_SPECIFIER = "@"
+        private const val DEFAULT_LABEL_SPECIFIER = "@"
     }
 }

@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.tooltip.*
-import jetbrains.datalore.plot.builder.tooltip.TooltipLine.Companion.DEFAULT_LABEL_SPECIFIER
 import jetbrains.datalore.plot.config.Option.Mapping.GROUP
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
@@ -25,25 +24,21 @@ class TooltipConfig(
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
-        val linesWithDefaultFormatting: List<String> = getStringList(Option.Layer.TOOLTIP_VARIABLES).map { variableName ->
-            "$DEFAULT_LABEL_SPECIFIER$LABEL_SEPARATOR$VARIABLE_NAME_PREFIX{$variableName}"
-        }
-        val tooltipLines = when {
-            has(Option.Layer.TOOLTIP_LINES) -> {
-                linesWithDefaultFormatting + getStringList(Option.Layer.TOOLTIP_LINES)
-            }
-            linesWithDefaultFormatting.isNotEmpty() -> linesWithDefaultFormatting
-            else -> null
-        }
         return TooltipConfigParseHelper(
-            tooltipLines = tooltipLines,
-            tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS)
+            tooltipLines = if (has(Option.Layer.TOOLTIP_LINES)) {
+                getStringList(Option.Layer.TOOLTIP_LINES)
+            } else {
+                null
+            },
+            tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS),
+            tooltipVariables = getStringList(Option.Layer.TOOLTIP_VARIABLES)
         ).parse()
     }
 
     private inner class TooltipConfigParseHelper(
         private val tooltipLines: List<String>?,
-        tooltipFormats: List<*>
+        tooltipFormats: List<*>,
+        tooltipVariables: List<String>
     ) {
         // Key is Pair: <field name> + <isAes flag>
         private val myValueSources: MutableMap<Pair<String, Boolean>, ValueSource> = prepareFormats(tooltipFormats)
@@ -51,11 +46,22 @@ class TooltipConfig(
                 createValueSource(fieldName = field.first, isAes = field.second, format = format)
             }.toMutableMap()
 
+        // Create tooltip lines from the given variable list
+        private val myLinesForVariableList = tooltipVariables.map { variableName ->
+            val valueSource = getValueSource(VARIABLE_NAME_PREFIX + variableName)
+            TooltipLine.defaultLineForValueSource(valueSource)
+        }
+
         internal fun parse(): TooltipSpecification {
             val lines = tooltipLines?.map(::parseLine)
+            val allTooltipLines = when {
+                lines != null -> myLinesForVariableList + lines
+                myLinesForVariableList.isNotEmpty() -> myLinesForVariableList
+                else -> null
+            }
             return TooltipSpecification(
                 myValueSources.map { it.value },
-                lines,
+                allTooltipLines,
                 TooltipSpecification.TooltipProperties(
                     anchor = readAnchor(),
                     minWidth = readMinWidth(),

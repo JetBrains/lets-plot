@@ -525,7 +525,7 @@ class TooltipConfigTest {
                 "class",
                 "displ",
                 "hwy",
-                "origin",
+                "origin"
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
@@ -539,9 +539,58 @@ class TooltipConfigTest {
         )
         val lines = getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(expectedLines, lines)
+    }
 
-        val axisTooltips = getAxisTooltips(geomLayer)
-        assertEquals(2, axisTooltips.size, "Wrong number of axis tooltips")
+    @Test
+    fun `variables list should use the defined formatting`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_VARIABLES to listOf(
+                "model name",
+                "class",
+                "displ",
+                "hwy",
+                "origin"
+            ),
+            TOOLTIP_FORMATS to listOf(
+                mapOf(
+                    FIELD to "hwy",
+                    FORMAT to "{.2f} mpg"
+                )
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "model name: dodge",
+            "class: suv",
+            "displ: 1.6",
+            "hwy: 160.00 mpg",
+            "origin: US"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
+    }
+
+    @Test
+    fun `tooltip lines should be formed by variables list and line functions`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_VARIABLES to listOf(
+                "model name",
+                "class",
+                "displ"
+            ),
+            TOOLTIP_LINES to listOf(
+                "@|@hwy mpg"
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "model name: dodge",
+            "class: suv",
+            "displ: 1.6",
+            "hwy: 160.0 mpg"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
     }
 
     companion object {
