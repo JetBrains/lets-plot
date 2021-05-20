@@ -5,6 +5,11 @@ plugins {
     id "signing"
 }
 
+/*
+ * Copyright (c) 2021. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 kotlin {
     jvm()
 
@@ -21,34 +26,26 @@ kotlin {
                 compileOnly "org.slf4j:slf4j-simple:$slf4j_version"
 
                 compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':vis-svg-mapper-jfx')
-                api project(':vis-swing-common')
-                api project(':vis-swing-jfx')
-                api project(':vis-demo-common')
-                api project(':vis-demo-common-jfx')
+                api project(':vis-canvas')
+                api project(':gis')
+                api project(':livemap')
+                api project(':plot-livemap')
             }
         }
     }
 }
 
 
-def artifactBaseName = 'lets-plot-jfx'
+def artifactBaseName = 'lets-plot-gis'
 def artifactGroupId = project.group
 def artifactVersion = project.version
-
-//def task_group = 'lets plot'
-
-/*
- * Copyright (c) 2019. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 // https://discuss.kotlinlang.org/t/how-to-publish-fat-jar-from-kotlin-multi-project-mpp/14520
 // https://youtrack.jetbrains.com/issue/KT-25709
 // https://discuss.kotlinlang.org/t/kotlin-1-3-m2-new-multiplatform-projects-model/9264/107
-task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
+task jarLetsPlotGISClasses(type: ShadowJar) {
     group project.letsPlotTaskGroup
     archiveBaseName = artifactBaseName
     archiveVersion = artifactVersion
@@ -58,41 +55,42 @@ task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
     exclude '**/*.kotlin_module'
     exclude '**/*.kotlin_builtins'
 
-    // exclude classes that duplicates `lets-plot-common.jar`
-    exclude 'com/google/**/*'
     exclude 'kotlin/**/*'
     exclude 'kotlinx/**/*'
-    exclude 'mu/**/*'
+    exclude 'mu/**/*'      // kotlin logging
+    exclude 'org/slf4j/**/*'
     exclude 'org/intellij/lang/annotations/**/*'
     exclude 'org/jetbrains/annotations/**/*'
-    exclude 'org/slf4j/**/*'
-    exclude 'junit/**/*'
-    exclude 'org/junit/**/*'
-    exclude 'org/hamcrest/**/*'
+
+    // lets-plot JavaFX renderer resource.
+    exclude 'svgMapper/**/*'
+
+    // Ktor
+    exclude 'io/ktor/**/*'
 }
 
-task jarLetsPlotJvmJfxSources(type: ShadowJar) {
+task jarLetsPlotGISSources(type: ShadowJar) {
     group project.letsPlotTaskGroup
     archiveBaseName = artifactBaseName
     archiveVersion = artifactVersion
     classifier 'sources'
-    configurations = [rootProject.configurations.letsPlotJvmJfxSources]
+    configurations = [rootProject.configurations.letsPlotJvmBatikSources]
 }
 
 publishing {
     publications {
-        letsPlotJvmJfx(MavenPublication) {
+        letsPlotGIS(MavenPublication) {
             groupId artifactGroupId
             artifactId artifactBaseName
             version artifactVersion
 
-            artifact jarLetsPlotJvmJfxClasses
-            artifact jarLetsPlotJvmJfxSources
+            artifact jarLetsPlotGISClasses
+            artifact jarLetsPlotGISSources
             artifact rootProject.jarJavaDocs
 
             pom {
-                name = "Lets-Plot for JavaFX"
-                description = "Lets-Plot JVM package with JavaFX rendering"
+                name = "Lets-Plot GIS"
+                description = "Interactive map and Geocoding related modules."
                 url = "https://github.com/JetBrains/lets-plot"
                 licenses {
                     license {
@@ -110,24 +108,26 @@ publishing {
                 scm {
                     url = "https://github.com/JetBrains/lets-plot"
                 }
-                // Dependencies
                 withXml {
                     def deps = asNode().appendNode('dependencies')
-                    // Lets-Plot common
+                    // Note: requires "lets-plot-common" or "lets-plot-batik" or "lets-plot-jfx" artifacts at run-time.
+
+                    // Ktor
                     def dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', artifactGroupId)
-                    dep.appendNode('artifactId', 'lets-plot-common')
-                    dep.appendNode('version', artifactVersion)
+                    dep.appendNode('groupId', 'io.ktor')
+                    dep.appendNode('artifactId', 'ktor-client-websockets')
+                    dep.appendNode('version', ktor_version)
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'io.ktor')
+                    dep.appendNode('artifactId', 'ktor-client-cio')
+                    dep.appendNode('version', ktor_version)
+
                     // Kotlin HTML
                     dep = deps.appendNode('dependency')
                     dep.appendNode('groupId', 'org.jetbrains.kotlinx')
                     dep.appendNode('artifactId', 'kotlinx-html-jvm')
                     dep.appendNode('version', kotlinx_html_version)
-                    // Hamcrest tests
-//                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.hamcrest')
-//                    dep.appendNode('artifactId', 'hamcrest-core')
-//                    dep.appendNode('version', hamcrest_version)
+
                 }
             }
         }
@@ -147,6 +147,5 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.letsPlotJvmJfx
+    sign publishing.publications.letsPlotGIS
 }
-

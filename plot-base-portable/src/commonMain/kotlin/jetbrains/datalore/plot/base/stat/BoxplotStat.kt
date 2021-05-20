@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.sqrt
 
 /**
@@ -47,7 +48,9 @@ class BoxplotStat(
     override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
         return if (aes == WIDTH) {
             Stats.WIDTH
-        } else super.getDefaultMapping(aes)
+        } else {
+            super.getDefaultMapping(aes)
+        }
     }
 
     override fun consumes(): List<Aes<*>> {
@@ -65,29 +68,24 @@ class BoxplotStat(
         } else {
             List<Double>(ys.size) { 0.0 }
         }
-        val collector = HashMap<DataFrame.Variable, MutableList<Double>>()
 
-        val maxCountPerBinOverall =
-            BoxplotStatUtil.buildStat(xs, ys, whiskerIQRRatio, 0, collector)
+        val statData = buildStat(xs, ys, whiskerIQRRatio)
 
-        if (maxCountPerBinOverall == 0) {
+        val statCount = statData.remove(Stats.COUNT)
+        val maxCountPerBin = statCount?.maxOrNull()?.toInt() ?: 0
+        if (maxCountPerBin == 0) {
             return withEmptyStatValues()
         }
-
-        val statCount = collector.remove(Stats.WIDTH)
         if (computeWidth) {
             // 'width' is in range 0..1
-            val statWidth = ArrayList<Double>()
-            val norm = sqrt(maxCountPerBinOverall.toDouble())
-            for (count in statCount!!) {
-                statWidth.add(sqrt(count) / norm)
-            }
-            collector[Stats.WIDTH] = statWidth
+            val norm = sqrt(maxCountPerBin.toDouble())
+            val statWidth = statCount!!.map { count -> sqrt(count) / norm }
+            statData[Stats.WIDTH] = statWidth
         }
 
         val builder = DataFrame.Builder()
-        for (key in collector.keys) {
-            builder.putNumeric(key, collector[key]!!)
+        for ((variable, series) in statData) {
+            builder.putNumeric(variable, series)
         }
         return builder.build()
     }
@@ -105,5 +103,98 @@ class BoxplotStat(
             Aes.MIDDLE to Stats.MIDDLE,
             Aes.UPPER to Stats.UPPER
         )
+
+        fun buildStat(
+            xs: List<Double?>,
+            ys: List<Double?>,
+            whiskerIQRRatio: Double
+        ): MutableMap<DataFrame.Variable, List<Double>> {
+
+            val xyPairs = xs.zip(ys).filter { (x, y) ->
+                SeriesUtil.allFinite(x, y)
+            }
+            if (xyPairs.isEmpty()) {
+                return mutableMapOf()
+            }
+
+            val binnedData: MutableMap<Double, MutableList<Double>> = HashMap()
+            for ((x, y) in xyPairs) {
+                binnedData.getOrPut(x!!) { ArrayList() }.add(y!!)
+            }
+
+            val statX = ArrayList<Double>()
+            val statY = ArrayList<Double>()
+            val statMiddle = ArrayList<Double>()
+            val statLower = ArrayList<Double>()
+            val statUpper = ArrayList<Double>()
+            val statMin = ArrayList<Double>()
+            val statMax = ArrayList<Double>()
+
+            val statCount = ArrayList<Double>()
+
+            for ((x, bin) in binnedData) {
+                val count = bin.size.toDouble()
+
+                val summary = FiveNumberSummary(bin)
+                val middle = summary.median
+                val lowerHinge = summary.firstQuartile
+                val upperHinge = summary.thirdQuartile
+                val IQR = upperHinge - lowerHinge
+                val lowerFence = lowerHinge - IQR * whiskerIQRRatio
+                val upperFence = upperHinge + IQR * whiskerIQRRatio
+
+                var lowerWhisker = lowerFence
+                var upperWhisker = upperFence
+                if (SeriesUtil.allFinite(lowerFence, upperFence)) {
+                    val boxed = bin.filter { y -> y >= lowerFence && y <= upperFence }
+                    val range = SeriesUtil.range(boxed)
+                    if (range != null) {
+                        lowerWhisker = range.lowerEnd
+                        upperWhisker = range.upperEnd
+                    }
+                }
+
+                // add outliers first
+                val outliers = bin.filter { y -> y < lowerFence || y > upperFence }
+                for (y in outliers) {
+                    // 'outlier' data-point
+                    statX.add(x)
+                    statY.add(y)
+                    // no 'box' data
+                    statMiddle.add(Double.NaN)
+                    statLower.add(Double.NaN)
+                    statUpper.add(Double.NaN)
+                    statMin.add(Double.NaN)
+                    statMax.add(Double.NaN)
+
+                    statCount.add(count)
+
+                    // Note: outliers will also need 'width' value,
+                    // for the 'dodge' positioning to work correctly for all data-points.
+                }
+
+                // add 'box' data-point
+                statX.add(x)
+                statY.add(Double.NaN)  // no Y for 'box' data-point
+                statMiddle.add(middle)
+                statLower.add(lowerHinge)
+                statUpper.add(upperHinge)
+                statMin.add(lowerWhisker)
+                statMax.add(upperWhisker)
+
+                statCount.add(count)
+            }
+
+            return mutableMapOf(
+                Stats.X to statX,
+                Stats.Y to statY,
+                Stats.MIDDLE to statMiddle,
+                Stats.LOWER to statLower,
+                Stats.UPPER to statUpper,
+                Stats.Y_MIN to statMin,
+                Stats.Y_MAX to statMax,
+                Stats.COUNT to statCount,
+            )
+        }
     }
 }

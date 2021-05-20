@@ -17,7 +17,7 @@ __all__ = ['scale_color_identity',
            ]
 
 
-def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
+def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -37,6 +37,12 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
         and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -78,11 +84,12 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   scale_mapper_kind='identity')
 
 
-def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
+def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -102,6 +109,12 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
         and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -143,11 +156,12 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   scale_mapper_kind='identity')
 
 
-def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
+def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -167,6 +181,12 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
         and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -205,12 +225,13 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   solid=None,
                   scale_mapper_kind='identity', discrete=True)
 
 
-def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
+def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -230,6 +251,12 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
         and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -272,11 +299,12 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   scale_mapper_kind='identity', discrete=True)
 
 
-def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
+def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -296,6 +324,12 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
         and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -334,11 +368,12 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
                   na_value=na_value,
                   guide=None,
                   trans=None,
+                  format=format,
                   #
                   scale_mapper_kind='identity')
 
 
-def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
+def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -358,6 +393,12 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
         and the default order of their display in guides.
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
 
     Returns
     -------
@@ -396,5 +437,6 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
                   na_value=na_value,
                   guide=guide,
                   trans=None,
+                  format=format,
                   #
                   scale_mapper_kind='identity')

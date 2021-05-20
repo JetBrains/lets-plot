@@ -171,6 +171,22 @@ object Option {
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
+
+            object Tile {
+                const val KIND = "kind"
+                const val URL = "url"
+                const val THEME = "theme"
+                const val ATTRIBUTION = "attribution"
+                const val MIN_ZOOM = "min_zoom"
+                const val MAX_ZOOM = "max_zoom"
+
+                const val KIND_VECTOR_LETS_PLOT = "vector_lets_plot"
+                const val KIND_RASTER_ZXY = "raster_zxy"
+
+                const val THEME_COLOR = "color"
+                const val THEME_LIGHT = "light"
+                const val THEME_DARK = "dark"
+            }
         }
 
         object SizeUnit {

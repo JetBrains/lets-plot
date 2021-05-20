@@ -10,36 +10,44 @@ class JsonFormatter {
 
     fun formatJson(o: Any): String {
         buffer = StringBuilder()
-        formatMap(o as Map<*, *>)
+        handleValue(o)
         return buffer.toString()
     }
 
-    private fun formatList(list: List<*>) {
+    private fun handleList(list: List<*>) {
         append("[")
-        list.headTail(::formatValue) { tail -> tail.forEach { append(","); formatValue(it) } }
+        list.headTail(::handleValue) { tail -> tail.forEach { append(","); handleValue(it) } }
         append("]")
     }
 
-    private fun formatMap(map: Map<*, *>) {
+    private fun handleMap(map: Map<*, *>) {
         append("{")
-        map.entries.headTail(::formatPair) { tail -> tail.forEach { append(",\n"); formatPair(it) } }
+        map.entries.headTail(::handlePair) { tail -> tail.forEach { append(",\n"); handlePair(it) } }
         append("}")
     }
 
-    private fun formatValue(v: Any?) {
+    private fun handleValue(v: Any?) {
         when (v) {
             null -> append("null")
-            is String -> append("\"${v.escape()}\"")
+            is String -> handleString(v)
             is Number, Boolean -> append(v.toString())
-            is Array<*> -> formatList(v.asList())
-            is List<*> -> formatList(v)
-            is Map<*, *> -> formatMap(v)
+            is Array<*> -> handleList(v.asList())
+            is List<*> -> handleList(v)
+            is Map<*, *> -> handleMap(v)
             else -> throw IllegalArgumentException("Can't serialize object $v")
         }
     }
 
-    private fun formatPair(pair: Map.Entry<Any?, Any?>) {
-        append("\"${pair.key}\":"); formatValue(pair.value)
+    private fun handlePair(pair: Map.Entry<Any?, Any?>) {
+        handleString(pair.key); append(":"); handleValue(pair.value)
+    }
+
+    private fun handleString(v: Any?) {
+        when (v) {
+            null -> {}
+            is String -> append("\"${v.escape()}\"")
+            else -> throw IllegalArgumentException("Expected a string, but got '${v::class.simpleName}'")
+        }
     }
 
     private fun append(s: String) = buffer.append(s)
@@ -50,4 +58,5 @@ class JsonFormatter {
             tail(asSequence().drop(1))
         }
     }
+
 }

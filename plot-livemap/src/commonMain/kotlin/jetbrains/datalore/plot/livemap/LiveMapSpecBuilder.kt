@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
@@ -155,17 +156,17 @@ internal class LiveMapSpecBuilder {
         private const val RECT_YMIN = "latmin"
         private const val RECT_YMAX = "latmax"
 
-        object Tile {
-            const val KIND = "kind"
-            const val URL = "url"
-            const val THEME = "theme"
-            const val ATTRIBUTION = "attribution"
-            const val MIN_ZOOM = "min_zoom"
-            const val MAX_ZOOM = "max_zoom"
-
-            const val VECTOR_LETS_PLOT = "vector_lets_plot"
-            const val RASTER_ZXY = "raster_zxy"
-        }
+//        object Tile {
+//            const val KIND = "kind"
+//            const val URL = "url"
+//            const val THEME = "theme"
+//            const val ATTRIBUTION = "attribution"
+//            const val MIN_ZOOM = "min_zoom"
+//            const val MAX_ZOOM = "max_zoom"
+//
+//            const val VECTOR_LETS_PLOT = "vector_lets_plot"
+//            const val RASTER_ZXY = "raster_zxy"
+//        }
 
         object Geocoding {
             const val URL = "url"
@@ -178,7 +179,7 @@ internal class LiveMapSpecBuilder {
             ProjectionType.MERCATOR
         )
 
-        private fun <T> List<T>.toDoubleList() : List<Double> {
+        private fun <T> List<T>.toDoubleList(): List<Double> {
             if (isEmpty()) {
                 return emptyList()
             }
@@ -198,8 +199,10 @@ internal class LiveMapSpecBuilder {
         }
 
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
-            require(!(lonLatList.isNotEmpty() && lonLatList.size % 2 != 0)) { ("Expected: location"
-            + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]") }
+            require(!(lonLatList.isNotEmpty() && lonLatList.size % 2 != 0)) {
+                ("Expected: location"
+                        + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]")
+            }
             return convertToGeoRectangle(BboxUtil.calculateBoundingBox(lonLatList.toDoubleList()))
         }
 
@@ -264,8 +267,10 @@ internal class LiveMapSpecBuilder {
                     val handlerMap = HashMap<String, (Any) -> MapLocation>()
                     handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
                     handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(getWithIdList(data)) }
-                    handlerMap[REGION_TYPE_COORDINATES] = { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
-                    handlerMap[REGION_TYPE_DATAFRAME] = { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
+                    handlerMap[REGION_TYPE_COORDINATES] =
+                        { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
+                    handlerMap[REGION_TYPE_DATAFRAME] =
+                        { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                     handleRegionObject(location, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: location" + " = [String|Array|DataFrame]")
@@ -296,8 +301,10 @@ internal class LiveMapSpecBuilder {
 
             return when {
                 debug -> EmptyTileSystemProvider()
-                options[Tile.KIND] == Tile.RASTER_ZXY -> RasterTileSystemProvider(options[Tile.URL] as String)
-                options[Tile.KIND] == Tile.VECTOR_LETS_PLOT -> VectorTileSystemProvider(
+                options[Tile.KIND] == Tile.KIND_RASTER_ZXY -> RasterTileSystemProvider(
+                    options[Tile.URL] as String
+                )
+                options[Tile.KIND] == Tile.KIND_VECTOR_LETS_PLOT -> VectorTileSystemProvider(
                     myQuantumIterations = quant,
                     myTileService = liveMapVectorTiles {
                         options[Tile.URL]?.let { url = it as String }

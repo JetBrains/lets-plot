@@ -25,6 +25,8 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |text {
         |	font-size: 12px;
         |	fill: #3d3d3d;
+        |	
+        |	text-rendering: optimizeLegibility;
         |}
         |.plt-data-tooltip text {
         |	font-size: 12px;
@@ -316,6 +318,8 @@ val EXPECTED_BUNCH_SVG = """
         |text {
         |	font-size: 12px;
         |	fill: #3d3d3d;
+        |	
+        |	text-rendering: optimizeLegibility;
         |}
         |.plt-data-tooltip text {
         |	font-size: 12px;

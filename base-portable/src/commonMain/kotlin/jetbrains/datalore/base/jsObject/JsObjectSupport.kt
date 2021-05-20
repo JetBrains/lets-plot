@@ -31,7 +31,7 @@ object JsObjectSupport {
                 )
                 if (!first) buffer.append(',') else first = false
                 buffer.append('\n')
-                buffer.append('\'').append(k).append('\'').append(':')
+                buffer.append('"').append(k.escape()).append('"').append(':')
                 handleValue(v)
             }
 

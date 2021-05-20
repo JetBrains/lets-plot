@@ -93,13 +93,6 @@ jvmSourcesJar {
     archiveName "$artifactBaseName-$artifactVersion-sources.jar"
 }
 
-task jvmJavaDocJar(type: Jar) {
-    classifier 'javadoc'
-    baseName artifactBaseName
-    version artifactVersion
-    from("$rootDir/README.md")
-}
-
 publishing {
     publications {
         letsPlotImageExport(MavenPublication) {
@@ -109,7 +102,7 @@ publishing {
 
             artifact jvmJar
             artifact jvmSourcesJar
-            artifact jvmJavaDocJar
+            artifact rootProject.jarJavaDocs
 
             pom {
                 name = "Lets-Plot raster image export"

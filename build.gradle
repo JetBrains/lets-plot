@@ -9,10 +9,11 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform" apply false
     id "org.jetbrains.kotlin.js" apply false
     id "org.jetbrains.gradle.plugin.idea-ext" apply false
-    id "com.jfrog.bintray" apply false
     id "com.github.johnrengelman.shadow" apply false
     id "io.codearte.nexus-staging"
 }
+
+project.ext.letsPlotTaskGroup = 'lets-plot'
 
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
@@ -47,15 +48,23 @@ def include_sources_letsPlotJvmBatik = [
         'vis-demo-common-batik',
 ]
 
+def include_sources_letsPlotGIS = [
+        'vis-canvas',
+        'gis',
+        'livemap',
+        ':plot-livemap',
+]
+
 configurations {
     letsPlotJvmCommonSources
     letsPlotJvmJfxSources
     letsPlotJvmBatikSources
+    letsPlotGISSources
 }
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "2.0.3-alpha1"
+    version = "2.0.3-SNAPSHOT"
     project.ext.js_artifact_version = "2.0.3.dev1"
     // see also: python-package/lets_plot/_version.py
 
@@ -65,7 +74,10 @@ allprojects {
     }
 
     // jar jvm sources of this project
-    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx || name in include_sources_letsPlotJvmBatik) {
+    if (name in include_sources_letsPlotJvmCommon ||
+            name in include_sources_letsPlotJvmJfx ||
+            name in include_sources_letsPlotJvmBatik ||
+            name in include_sources_letsPlotGIS) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
@@ -86,6 +98,11 @@ allprojects {
     if (name in include_sources_letsPlotJvmBatik) {
         rootProject.dependencies {
             letsPlotJvmBatikSources files(sources_jar_path)
+        }
+    }
+    if (name in include_sources_letsPlotGIS) {
+        rootProject.dependencies {
+            letsPlotGISSources files(sources_jar_path)
         }
     }
 }
@@ -122,4 +139,105 @@ nexusStaging {
     packageGroup = 'org.jetbrains'
     username = project.buildSettings?.sonatype?.username
     password = project.buildSettings?.sonatype?.password
+}
+
+
+// "JavaDoc" artifact for all publications.
+task jarJavaDocs(type: Jar) {
+    group project.letsPlotTaskGroup
+    classifier 'javadoc'
+    from("$rootDir/README.md")
+}
+
+// Publish some sub-projects as Kotlin Multiproject libraries.
+task publishKotlinApiDependenciesToMavenLocalRepository {
+    group project.letsPlotTaskGroup
+}
+task publishKotlinApiDependenciesToMavenRepository {
+    group project.letsPlotTaskGroup
+}
+
+subprojects {
+    // Configure publishing for projects which "Lets-Plot Kotlin API" depends on.
+    if (name in [
+            'plot-base-portable',
+            'base-portable',
+            'vis-svg-portable',
+            'plot-common-portable',
+            'plot-config-portable',
+            'plot-builder-portable',
+    ]) {
+        apply plugin: "maven-publish"
+        apply plugin: "signing"
+
+        // Do not publish 'native' targets.
+        def publications_to_publish = ["jvm", "js", "kotlinMultiplatform", "metadata"]
+
+        publishing {
+            publications {
+                withType(MavenPublication) {
+                    if (name in publications_to_publish) {
+                        // Configure this publication.
+                        artifact rootProject.jarJavaDocs
+
+                        pom {
+                            name = "Lets-Plot (Kotlin) internal dependency artifact"
+                            description = "The Let-Plot Kotlin API depends on this artifact."
+
+                            url = "https://github.com/JetBrains/lets-plot"
+                            licenses {
+                                license {
+                                    name = "MIT"
+                                    url = "https://opensource.org/licenses/MIT"
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id = "jetbrains"
+                                    name = "JetBrains"
+                                    email = "lets-plot@jetbrains.com"
+                                }
+                            }
+                            scm {
+                                url = "https://github.com/JetBrains/lets-plot"
+                            }
+                        }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    url = project.sonatypeUrl
+                    credentials {
+                        username = project.buildSettings?.sonatype?.username
+                        password = project.buildSettings?.sonatype?.password
+                    }
+                }
+                mavenLocal {
+                    url = uri(project.localMavenRepository)
+                }
+            }
+        }
+
+        afterEvaluate {
+            def publications_to_sign = []
+            for (task in it.tasks.withType(PublishToMavenRepository)) {
+                if (task.getPublication().name in publications_to_publish) {
+                    def repoName = task.repository.name
+                    if (repoName == "MavenLocal") {
+                        publishKotlinApiDependenciesToMavenLocalRepository.dependsOn += task
+                    } else if (repoName == "maven") {
+                        publishKotlinApiDependenciesToMavenRepository.dependsOn += task
+                        publications_to_sign += task.getPublication()
+                    } else {
+                        throw new IllegalStateException("Repository expected: 'MavenLocal' or 'maven' but was: '$repoName'.")
+                    }
+                }
+            }
+
+            publications_to_sign.each {
+                signing.sign(it)
+            }
+        }
+    }
 }

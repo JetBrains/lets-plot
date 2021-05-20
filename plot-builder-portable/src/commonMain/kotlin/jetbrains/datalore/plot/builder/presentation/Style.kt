@@ -59,6 +59,8 @@ object Style {
         |text {
         |	font-size: ${FONT_MEDIUM}px;
         |	fill: $TEXT_COLOR;
+        |	
+        |	text-rendering: optimizeLegibility;
         |}
         |.$PLOT_DATA_TOOLTIP text {
         |	font-size: ${DATA_TOOLTIP_FONT_SIZE}px;

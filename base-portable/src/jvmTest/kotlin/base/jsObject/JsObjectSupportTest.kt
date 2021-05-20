@@ -31,12 +31,12 @@ class JsObjectSupportTest(private val input: Map<String, Any?>, private val expe
             arrayOf(
                 mapOf<String, Any?>(
                     "array" to emptyArray<Any?>()
-                ), "{'array':[]}"
+                ), "{\"array\":[]}"
             ),
             arrayOf(
                 mapOf<String, Any?>(
                     "list" to emptyList<Any?>()
-                ), "{'list':[]}"
+                ), "{\"list\":[]}"
             ),
             arrayOf(
                 mapOf(
@@ -47,18 +47,18 @@ class JsObjectSupportTest(private val input: Map<String, Any?>, private val expe
                     "obj" to emptyMap<String, Any?>()
                 ), """
                 {
-                    'int':1,    
-                    'double':2.2,    
-                    'str':"hello",    
-                    'null':null,    
-                    'obj':{}    
+                    "int":1,    
+                    "double":2.2,    
+                    "str":"hello",    
+                    "null":null,    
+                    "obj":{}    
                 }
             """
             ),
             arrayOf(
                 mapOf<String, Any?>(
                     "not identifier!!" to "hello"
-                ), """{'not identifier!!':"hello"}"""
+                ), """{"not identifier!!":"hello"}"""
             ),
             arrayOf(
                 mapOf<String, Any?>(
@@ -67,7 +67,13 @@ class JsObjectSupportTest(private val input: Map<String, Any?>, private val expe
                             "list" to listOf<Any?>(1, 1, null, 100.00)
                         )
                     )
-                ), """{'level 1':{'level 2':{'list':[1,1,null,100.0]}}}"""
+                ), """{"level 1":{"level 2":{"list":[1,1,null,100.0]}}}"""
+            ),
+            arrayOf(
+                mapOf(
+                    """"like" \this\""" to """"like" \this\"""
+                ),
+                """{"\"like\" \\this\\":"\"like\" \\this\\"}""",
             )
         )
     }

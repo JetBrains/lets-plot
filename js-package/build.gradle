@@ -44,7 +44,7 @@ def artifact_version = project.js_artifact_version
 def dist_dir = "${project.buildDir}/distributions"
 
 task copyProduction() {
-    group = "lets-plot"
+    group = project.letsPlotTaskGroup
 
     doLast {
         def prodTargets = ["lets-plot-latest.min.js", "lets-plot-${artifact_version}.min.js"]
@@ -60,7 +60,7 @@ task copyProduction() {
 }
 
 task copyDevelopment() {
-    group = "lets-plot"
+    group = project.letsPlotTaskGroup
 
     doLast {
         def devTargets = ["lets-plot-latest.js", "lets-plot-${artifact_version}.js"]
