@@ -30,8 +30,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                // Enable logging to console (make sure it is jared)
-                implementation "org.slf4j:slf4j-simple:$slf4j_version"
             }
         }
     }
@@ -70,10 +68,8 @@ task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
     exclude 'org/intellij/lang/annotations/**/*'
     exclude 'org/jetbrains/annotations/**/*'
 
-//    relocate 'com', 'shade.com'
-//    relocate 'org', 'shade.org'
-//    relocate 'kotlin', 'shade.kotlin'
-//    relocate 'mu', 'shade.mu'
+    // lets-plot JavaFX renderer resource.
+    exclude 'svgMapper/**/*'
 }
 
 task jarLetsPlotJvmCommonSources(type: ShadowJar) {
@@ -142,11 +138,11 @@ publishing {
                     dep.appendNode('groupId', 'io.github.microutils')
                     dep.appendNode('artifactId', 'kotlin-logging')
                     dep.appendNode('version', kotlinLogging_version)
-                    // Console logging
-                    dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'org.slf4j')
-                    dep.appendNode('artifactId', 'slf4j-simple')
-                    dep.appendNode('version', slf4j_version)
+//                    // Console logging
+//                    dep = deps.appendNode('dependency')
+//                    dep.appendNode('groupId', 'org.slf4j')
+//                    dep.appendNode('artifactId', 'slf4j-simple')
+//                    dep.appendNode('version', slf4j_version)
                 }
             }
         }

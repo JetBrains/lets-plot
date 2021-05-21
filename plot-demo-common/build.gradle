@@ -37,7 +37,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
+//                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
             }
         }
         jvmMain {

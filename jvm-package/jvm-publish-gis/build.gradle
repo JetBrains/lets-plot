@@ -23,7 +23,6 @@ kotlin {
         jvmMain {
             dependencies {
                 compileOnly kotlin('stdlib-jdk8')
-                compileOnly "org.slf4j:slf4j-simple:$slf4j_version"
 
                 compileOnly project(':jvm-package:jvm-publish-common')
                 api project(':vis-canvas')
@@ -61,6 +60,19 @@ task jarLetsPlotGISClasses(type: ShadowJar) {
     exclude 'org/slf4j/**/*'
     exclude 'org/intellij/lang/annotations/**/*'
     exclude 'org/jetbrains/annotations/**/*'
+
+    // Exclude everything `jetbrains/datalore` except 'livemap'.
+    // All 'jetbrains/datalore' is already in 'common'.
+    exclude 'jetbrains/datalore/base/**/*'
+    exclude 'jetbrains/datalore/plot/base/**/*'
+    exclude 'jetbrains/datalore/plot/builder/**/*'
+    exclude 'jetbrains/datalore/plot/common/**/*'
+    exclude 'jetbrains/datalore/plot/config/**/*'
+    exclude 'jetbrains/datalore/plot/server/**/*'
+    exclude 'jetbrains/datalore/plot/testing/**/*'
+    exclude 'jetbrains/datalore/plot/*.class'
+    exclude 'jetbrains/datalore/vis/**/*'
+    exclude 'jetbrains/datalore/vis/**/*'
 
     // lets-plot JavaFX renderer resource.
     exclude 'svgMapper/**/*'
