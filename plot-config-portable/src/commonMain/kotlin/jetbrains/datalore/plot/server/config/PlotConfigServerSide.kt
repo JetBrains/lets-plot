@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
@@ -28,7 +29,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>
+        plotDiscreteAes: Set<*>,
+        plotOrderOptions: List<OrderOption>
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -38,6 +40,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             sharedData,
             plotMappings,
             plotDiscreteAes,
+            plotOrderOptions,
             GeomProto(geomKind),
             false
         )
@@ -209,7 +212,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 val layerData = layerConfig.ownData!!
                 if (DataFrameUtil.variables(layerData).containsKey(plotVar)) {
                     // This variable not needed for this layer
-                    // because there is same variable in the layer's data.
+                    // because there is same variable in the plot's data.
                     continue
                 }
                 if (layerVarsToKeep.contains(plotVar)) {
@@ -280,10 +283,13 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     tileLayerDataAfterStat = tileLayerInputData
                     groupingContextAfterStat = groupingContext
                 } else {
-                    // Need to keep variables without bindings (used in tooltips)
-                    val varsWithoutBinding = layerConfig.tooltips.valueSources
-                        .filterIsInstance<DataFrameValue>()
-                        .map(DataFrameValue::getVariableName)
+                    // Need to keep variables without bindings (used in tooltips and for ordering)
+                    val varsWithoutBinding = layerConfig.run {
+                        tooltips.valueSources
+                            .filterIsInstance<DataFrameValue>()
+                            .map(DataFrameValue::getVariableName) +
+                                orderOptions.mapNotNull(OrderOption::byVariable)
+                    }
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
                         stat,
@@ -292,7 +298,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets,
                         statCtx,
-                        varsWithoutBinding
+                        varsWithoutBinding,
+                        layerConfig.orderOptions
                     ) { message ->
                         layerIndexAndSamplingMessage(
                             layerIndex,
@@ -387,7 +394,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     listOfNotNull(layerConfig.explicitGroupingVarName) +
                     layerConfig.tooltips.valueSources
                         .filterIsInstance<DataFrameValue>()
-                        .map(DataFrameValue::getVariableName)
+                        .map(DataFrameValue::getVariableName) +
+                    layerConfig.orderOptions.mapNotNull(OrderOption::byVariable)
         }
 
         fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {

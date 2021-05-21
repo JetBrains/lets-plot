@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.GUIDES
@@ -48,7 +49,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>
+        plotDiscreteAes: Set<*>,
+        plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -58,6 +60,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             sharedData,
             plotMappings,
             plotDiscreteAes,
+            plotOrderOptions,
             GeomProtoClientSide(geomKind),
             true
         )

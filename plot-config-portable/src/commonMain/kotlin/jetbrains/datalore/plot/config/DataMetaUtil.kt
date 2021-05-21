@@ -9,11 +9,14 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ANNOTATION
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AS_DISCRETE
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.LABEL
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
 import jetbrains.datalore.plot.config.Option.Scale
 
@@ -141,6 +144,18 @@ object DataMetaUtil {
         )
     }
 
+    fun getOrderOptions(options: Map<*, *>?): List<OrderOptionUtil.OrderOption> {
+        return options
+            ?.getMappingAnnotationsSpec(AS_DISCRETE)
+            ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
+            ?.mapNotNull { (aes, parameters) ->
+                OrderOptionUtil.OrderOption.create(
+                    aes,
+                    parameters?.getString(ORDER_BY),
+                    parameters?.read(ORDER)
+                )
+            } ?: emptyList()
+    }
 }
 
 
