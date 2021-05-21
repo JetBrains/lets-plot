@@ -220,14 +220,12 @@ class DataFrame private constructor(builder: Builder) {
         assertDefined(orderSpec.variable)
 
         if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
-            val isNumeric = isNumeric(orderSpec.variable)
-            val comparable: (Any?) -> Comparable<*>? = {
-                if (isNumeric) {
-                    (it as Number).toDouble()
+            val comparable: (Any?) -> Comparable<*>? =
+                if (isNumeric(orderSpec.variable)) {
+                    { value -> (value as Number).toDouble() }
                 } else {
-                    it.toString()
+                    { value -> value.toString() }
                 }
-            }
             val values = LinkedHashSet(get(orderSpec.variable)).toList().filterNotNull()
             return values.sortedWith(getComparator(comparable, orderSpec.direction))
         }
@@ -246,14 +244,12 @@ class DataFrame private constructor(builder: Builder) {
             valueByValueToSort[value] = valueToSortBy
         }
 
-        val isNumeric = isNumeric(orderSpec.orderBy)
-        val pairComparable: (Pair<Any?, Any?>) -> Comparable<*>? = {
-            if (isNumeric) {
-                (it.second as Number).toDouble()
+        val pairComparable: (Pair<Any?, Any?>) -> Comparable<*>? =
+            if (isNumeric(orderSpec.orderBy)) {
+                { pair -> (pair.second as Number).toDouble() }
             } else {
-                it.second.toString()
+                { pair -> pair.second.toString() }
             }
-        }
         return valueByValueToSort.toList()
             .sortedWith(getComparator(pairComparable, orderSpec.direction))
             .mapNotNull(Pair<Any?, Any?>::first)
