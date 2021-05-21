@@ -18,7 +18,6 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import java.awt.Dimension
-import java.awt.EventQueue.invokeLater
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.Rectangle
@@ -51,7 +50,7 @@ class AwtCanvasControl(
         ImageIcon((canvas as AwtCanvas).image)
             .run(::JLabel)
             .also {
-                it.bounds = Rectangle(0,0, canvas.size.x, canvas.size.y)
+                it.bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
                 myChildren[canvas] = it
             }
             .run { myRoot.add(this, myRoot.componentCount) }
@@ -62,7 +61,7 @@ class AwtCanvasControl(
             .run(::JLabel)
             .also {
                 myChildren[canvas] = it
-                it.bounds = Rectangle(0,0, canvas.size.x, canvas.size.y)
+                it.bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
             }
             .run { myRoot.add(this, myRoot.componentCount - index) }
     }
@@ -125,6 +124,7 @@ class AwtCanvasControl(
     }
 
     override fun <T> schedule(f: () -> T) {
-        invokeLater { f() }
+//        invokeLater { f() }
+        AwtCanvasControlGlobalSettings.executor.runInEdt { f() }
     }
 }
