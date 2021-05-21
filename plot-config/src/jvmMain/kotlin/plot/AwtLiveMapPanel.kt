@@ -43,7 +43,7 @@ class AwtLiveMapPanel(
 
             val layerPanel = object : JPanel(), Disposable {
                 override fun dispose() {
-                    // ToDo: dispose canvas stuff?
+                    timer.dispose()
                 }
             }.apply {
                 bounds = Rectangle(
