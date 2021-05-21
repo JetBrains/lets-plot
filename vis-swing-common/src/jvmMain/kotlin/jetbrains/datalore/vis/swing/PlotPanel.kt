@@ -1,8 +1,14 @@
 package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.registration.Disposable
-import java.awt.*
-import java.awt.event.*
+import java.awt.Color
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.GridBagLayout
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.awt.event.ContainerAdapter
+import java.awt.event.ContainerEvent
 import java.util.function.Consumer
 import javax.swing.*
 
@@ -68,13 +74,33 @@ open class PlotPanel(
     /**
      * Override for a custom disposal of child.
      */
-    open fun handleChildRemoved(child: Component) {
+    protected open fun handleChildRemoved(child: Component) {
         // Nothing is needed.
+    }
+
+    /**
+     * Invoked each time a new plot component is created.
+     * Every time the plot need to be rebuilt, old plot coponent (if any) is removed from
+     * this panel. Then a new plot component is created and
+     * added to this paned.
+     */
+    protected open fun plotComponentCreated(plotComponent: JComponent) {
+//        println("plotComponentRebuilt: ${plotComponent::class.simpleName}")
     }
 
     private fun rebuildProvidedComponent(containerSize: Dimension?): JComponent {
         removeAll()
         val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize)
+
+        // notify
+        val actualPlotComponent = if (providedComponent is JScrollPane) {
+            providedComponent.viewport.view as JComponent
+        } else {
+            providedComponent
+        }
+        plotComponentCreated(actualPlotComponent)
+
+        // add
         add(providedComponent)
         return providedComponent
     }
