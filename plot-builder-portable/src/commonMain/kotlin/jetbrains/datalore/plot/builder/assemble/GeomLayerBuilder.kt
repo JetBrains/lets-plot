@@ -281,7 +281,7 @@ class GeomLayerBuilder {
                             stat,
                             builder.myBindings,
                             scaleMap,
-                            groupingContext, PlotFacets.undefined(), statCtx, varsWithoutBinding = emptyList(), ::println
+                            groupingContext, PlotFacets.undefined(), statCtx, varsWithoutBinding = emptyList(), orderOptions = emptyList(), ::println
                         )
 
                         dataAndGroupingContext.data

@@ -4,6 +4,11 @@
  */
 
 package jetbrains.datalore.plot.builder.data
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.VarBinding
 
 object OrderOptionUtil {
     class OrderOption internal constructor(
@@ -30,5 +35,47 @@ object OrderOptionUtil {
                 return OrderOption(aesName, orderBy, orderDir)
             }
         }
+    }
+
+    fun createOrderingSpec(
+        variables: Set<DataFrame.Variable>,
+        varBindings: List<VarBinding>,
+        orderOption: OrderOption
+    ): DataFrame.Builder.OrderingSpec {
+        val varBinding = varBindings.find { it.aes.name == orderOption.aesName }
+            ?: error("No variable binding for aes ${orderOption.aesName}")
+        val variable = varBinding.variable
+        val byVariable = orderOption.byVariable?.let {
+            variables.find { it.name == orderOption.byVariable }
+                ?: error("No variable with name ${orderOption.byVariable}")
+        }
+        return DataFrame.Builder.OrderingSpec(variable, byVariable, orderOption.orderDir)
+    }
+
+    fun getAdditionalForOrderSpec(
+        variables: Set<DataFrame.Variable>,
+        varBindings: List<VarBinding>,
+        orderSpec: DataFrame.Builder.OrderingSpec
+    ): List<DataFrame.Builder.OrderingSpec> {
+        val aes = varBindings.find { it.variable == orderSpec.variable }?.aes ?: return emptyList()
+
+        val additionalSpecs = ArrayList<DataFrame.Builder.OrderingSpec>()
+        if (aes == Aes.X) {
+            if (variables.contains(Stats.X)) {
+                additionalSpecs += DataFrame.Builder.OrderingSpec(
+                    Stats.X,
+                    orderSpec.orderBy ?: orderSpec.variable,
+                    orderSpec.direction
+                )
+            }
+            if (variables.contains(TransformVar.X)) {
+                additionalSpecs += DataFrame.Builder.OrderingSpec(
+                    TransformVar.X,
+                    orderSpec.orderBy ?: orderSpec.variable,
+                    orderSpec.direction
+                )
+            }
+        }
+        return additionalSpecs
     }
 }
