@@ -11,10 +11,10 @@ import java.awt.event.ActionListener
 import javax.swing.Timer
 import kotlin.collections.ArrayList
 
-class AwtRepaintTimer(private val repaint: () -> Unit) : Disposable {
+class AwtRepaintTimer(repaint: () -> Unit) : Disposable {
     private val myHandlers = ArrayList<(Long) -> Unit>()
 
-    private val actionListener = ActionListener {
+    private var actionListener = ActionListener {
         myHandlers.forEach {
             it(System.currentTimeMillis())
         }
@@ -46,5 +46,7 @@ class AwtRepaintTimer(private val repaint: () -> Unit) : Disposable {
 
     override fun dispose() {
         myTimer.stop()
+        myHandlers.clear()
+        actionListener = ActionListener {};
     }
 }
