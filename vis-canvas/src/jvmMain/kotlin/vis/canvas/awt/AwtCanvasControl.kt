@@ -17,6 +17,7 @@ import jetbrains.datalore.vis.canvas.AnimationProvider
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
+import java.awt.Dimension
 import java.awt.EventQueue.invokeLater
 import java.awt.Graphics2D
 import java.awt.Image
@@ -27,18 +28,24 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.imageio.ImageIO
-import javax.swing.ImageIcon
-import javax.swing.JLabel
-import javax.swing.JPanel
+import javax.swing.*
+
 
 class AwtCanvasControl(
-    private val myRoot: JPanel,
+    root: JPanel,
     override val size: Vector,
     private val myPixelRatio: Double,
     private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>,
     private val myTimer: AwtRepaintTimer
 ) : CanvasControl {
-    private val myChildren = HashMap<Canvas, JLabel>()
+
+    private val myRoot: JLayeredPane = JLayeredPane()
+    private val myChildren = HashMap<Canvas, JComponent>()
+
+    init {
+        root.add(myRoot)
+        myRoot.setPreferredSize(Dimension(root.width, root.height))
+    }
 
     override fun addChild(canvas: Canvas) {
         ImageIcon((canvas as AwtCanvas).image)
