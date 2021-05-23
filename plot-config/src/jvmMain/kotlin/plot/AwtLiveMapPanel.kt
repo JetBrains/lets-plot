@@ -70,7 +70,7 @@ class AwtLiveMapPanel(
             .forEach { canvasFigure ->
                 val canvasBounds = canvasFigure.bounds().get()
 
-                val layerPanel = object : JPanel(), Disposable {
+                val layerPanel = object : JPanel(null), Disposable {
                     override fun dispose() {
                         timer.dispose()
                     }

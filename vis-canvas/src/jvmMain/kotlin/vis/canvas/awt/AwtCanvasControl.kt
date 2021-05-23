@@ -17,7 +17,6 @@ import jetbrains.datalore.vis.canvas.AnimationProvider
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
-import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.Rectangle
@@ -38,12 +37,12 @@ class AwtCanvasControl(
     private val myTimer: AwtRepaintTimer
 ) : CanvasControl {
 
-    private val myRoot: JLayeredPane = JLayeredPane()
+    private val myRoot: JComponent = JLayeredPane()
     private val myChildren = HashMap<Canvas, JComponent>()
 
     init {
+        myRoot.bounds = Rectangle(0, 0, size.x, size.y)
         root.add(myRoot)
-        myRoot.setPreferredSize(Dimension(root.width, root.height))
     }
 
     override fun addChild(canvas: Canvas) {
