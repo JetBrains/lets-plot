@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Cursor
 import java.awt.event.MouseAdapter
@@ -28,7 +27,7 @@ internal object AwtLiveMapFactoryUtil {
         preferredSize: ReadableProperty<DoubleVector>,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
-    ): JComponent {
+    ): DisposableJPanel {
         val cursorServiceConfig = CursorServiceConfig()
         injectLiveMapProvider(assembler, processedSpec, cursorServiceConfig)
 
@@ -40,23 +39,12 @@ internal object AwtLiveMapFactoryUtil {
             executor
         )
 
-        // Move tooltip when map moved
-        plotComponent.addMouseMotionListener(object : MouseAdapter() {
-            override fun mouseDragged(e: MouseEvent) {
-                super.mouseDragged(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        cursorServiceConfig.defaultSetter { plotComponent.cursor = Cursor.getDefaultCursor() }
-        cursorServiceConfig.pointerSetter { plotComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
-
         @Suppress("UNCHECKED_CAST")
         return AwtLiveMapPanel(
-            plotContainer.liveMapFigures as List<CanvasFigure>,
-            plotComponent
+            plotContainer,
+            plotComponent,
+            executor,
+            cursorServiceConfig
         )
     }
 
