@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
@@ -21,6 +22,7 @@ class AwtLiveMapPanel(
     plotComponent: JComponent
 ) : DisposableJPanel(null) {
     private val mappers: MutableList<() -> Unit> = ArrayList()
+    private val livemaps: MutableList<Registration> = ArrayList()
 
     init {
         background = Color.WHITE
@@ -44,6 +46,7 @@ class AwtLiveMapPanel(
             val layerPanel = object : JPanel(), Disposable {
                 override fun dispose() {
                     timer.dispose()
+                    livemaps.forEach(Disposable::dispose)
                 }
             }.apply {
                 bounds = Rectangle(
@@ -63,7 +66,7 @@ class AwtLiveMapPanel(
                 timer
             ).let {
                 mappers.add {
-                    canvasFigure.mapToCanvas(it)
+                    livemaps.add(canvasFigure.mapToCanvas(it))
                 }
             }
         }
