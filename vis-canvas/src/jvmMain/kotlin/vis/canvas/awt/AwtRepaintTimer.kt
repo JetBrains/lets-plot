@@ -13,12 +13,14 @@ import kotlin.collections.ArrayList
 
 class AwtRepaintTimer(repaint: () -> Unit) : Disposable {
     private val myHandlers = ArrayList<(Long) -> Unit>()
+    init {
+        myHandlers.add { repaint() }
+    }
 
     private var actionListener = ActionListener {
         myHandlers.forEach {
             it(System.currentTimeMillis())
         }
-        repaint()
     }
 
     private val myTimer: Timer = Timer(1000 / 60, actionListener)
