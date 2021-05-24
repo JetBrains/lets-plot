@@ -124,6 +124,6 @@ class AwtCanvasControl(
 
     override fun <T> schedule(f: () -> T) {
 //        invokeLater { f() }
-        AwtCanvasControlGlobalSettings.executor.runInEdt { f() }
+        myTimer.executor { f() }
     }
 }

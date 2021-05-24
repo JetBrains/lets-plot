@@ -17,7 +17,6 @@ import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import java.awt.Color
 import java.awt.Cursor
-import java.awt.EventQueue
 import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -62,8 +61,10 @@ class AwtLiveMapPanel(
 
         this.add(plotComponent)
 
-        // ToDo: use timer only then neeeded (zooming, dragging)
-        val timer = AwtRepaintTimer(this::repaint)
+        val timer = AwtRepaintTimer(
+            this::repaint,
+            executor
+        )
 
         plotContainer.liveMapFigures
             .map { it as CanvasFigure }
@@ -101,7 +102,7 @@ class AwtLiveMapPanel(
             override fun componentResized(e: ComponentEvent?) {
                 // Used just once.
                 this@AwtLiveMapPanel.removeComponentListener(this)
-                EventQueue.invokeLater {
+                executor {
                     mappers.forEach { it() }
                     mappers.clear()
                 }
