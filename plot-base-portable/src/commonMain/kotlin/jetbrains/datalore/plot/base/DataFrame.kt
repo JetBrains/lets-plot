@@ -18,7 +18,13 @@ class DataFrame private constructor(builder: Builder) {
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
-    private val myOrderSpecs: List<Builder.OrderingSpec>
+
+    class OrderingSpec(
+        val variable: Variable,
+        val orderBy: Variable?,
+        val direction: Int
+    )
+    private val myOrderSpecs: List<OrderingSpec>
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -208,25 +214,28 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    private fun getOrderedDistinctValues(orderSpec: Builder.OrderingSpec): Collection<Any> {
-        val distinctValues = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
-            get(orderSpec.variable).distinct().filterNotNull().sortedWith(compareBy { value -> value as Comparable<*> })
-        } else {
-            val valueByValueToSort = LinkedHashMap<Any?, Any?>()
+    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Collection<Any> {
+        val distinctValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
+            get(orderSpec.variable)
+                .distinct()
+                .filterNotNull()
+                .sortedWith(compareBy { value -> value as Comparable<*> })
+        } else if (orderSpec.orderBy == Stats.COUNT) {
+            val valueToSumCount = mutableMapOf<Any?, Double>()
             val byValues = get(orderSpec.orderBy)
             get(orderSpec.variable).forEachIndexed { index, value ->
-                val prevByValue = valueByValueToSort[value]
-                val byValue = byValues[index]
-                val valueToSortBy = when {
-                    prevByValue == null -> byValue
-                    orderSpec.orderBy == Stats.COUNT -> (byValue as Double) + (prevByValue as Double)
-                    else -> prevByValue
-                }
-                valueByValueToSort[value] = valueToSortBy
+                val curCount = valueToSumCount[value] ?: 0.0
+                valueToSumCount[value] = curCount + byValues[index] as Double
             }
-            valueByValueToSort.toList()
-                .sortedWith(compareBy { pair -> pair.second as Comparable<*> })
+            valueToSumCount.toList()
+                .sortedWith(compareBy { pair -> pair.second })
                 .mapNotNull(Pair<Any?, Any?>::first)
+        } else {
+            val dataWithIndices = get(orderSpec.orderBy).withIndex().map { it.index to it.value }
+            val newIndices = dataWithIndices
+                .sortedWith(compareBy(nullsLast<Comparable<*>>()) { pair -> pair.second as? Comparable<*> })
+                .map(Pair<Int, Any?>::first)
+            SeriesUtil.pickAtIndices(get(orderSpec.variable), newIndices).filterNotNull()
         }
         return if (orderSpec.direction < 0) {
             distinctValues.reversed()
@@ -240,12 +249,6 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     class Builder {
-        class OrderingSpec(
-            val variable: Variable,
-            val orderBy: Variable?,
-            val direction: Int
-        )
-
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderingSpec>()
@@ -292,11 +295,11 @@ class DataFrame private constructor(builder: Builder) {
         }
 
         private fun addOrderSpec(orderSpec: OrderingSpec): Builder {
-            val prevSpecForVariable = myOrderSpecs.find { it.variable == orderSpec.variable }
+            val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
             // If multiple specifications for the variable - choose a more specific one:
             // prefer with specified 'orderBy'
-            if (prevSpecForVariable?.orderBy == null) {
-                myOrderSpecs.remove(prevSpecForVariable)
+            if (currentOrderSpec?.orderBy == null) {
+                myOrderSpecs.remove(currentOrderSpec)
                 myOrderSpecs.add(orderSpec)
             }
             return this

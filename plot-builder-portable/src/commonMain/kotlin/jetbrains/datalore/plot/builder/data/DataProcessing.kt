@@ -131,11 +131,8 @@ object DataProcessing {
             }
 
             // set ordering specifications
-            val orderSpecs = ArrayList<Builder.OrderingSpec>()
-            orderOptions.forEach { orderOption ->
-                val orderSpec = OrderOptionUtil.createOrderingSpec(resultSeries.keys, bindings, orderOption)
-                orderSpecs += orderSpec
-                orderSpecs += OrderOptionUtil.getAdditionalForOrderSpec(resultSeries.keys, bindings, orderSpec)
+            val orderSpecs = orderOptions.map { orderOption ->
+                OrderOptionUtil.createOrderingSpec(resultSeries.keys, bindings, orderOption)
             }
             addOrderSpecs(orderSpecs)
 
