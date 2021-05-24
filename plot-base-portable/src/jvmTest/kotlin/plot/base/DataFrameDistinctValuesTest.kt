@@ -56,18 +56,17 @@ class DataFrameDistinctValuesTest {
 
     @Test
     fun `data variable has a null value (which should be skipped)`() {
-        val values = listOf("B", null, "A")
+        val builder = DataFrame.Builder()
+            .put(variable, listOf("B", null, "A"))
+
         run {
             // Default distinct function will be used
-            val df = DataFrame.Builder()
-                .put(variable, values)
-                .build()
+            val df = builder.build()
             assertDistinctValues(df, mapOf(variable to listOf("B", "A")))
         }
         run {
             // Add ordering specs
-            val df = DataFrame.Builder()
-                .put(variable, values)
+            val df = builder
                 .addOrderSpecs(listOf(OrderingSpec(variable, orderBy = null, direction = 1)))
                 .build()
             assertDistinctValues(df, mapOf(variable to listOf("A", "B")))
@@ -76,17 +75,17 @@ class DataFrameDistinctValuesTest {
 
     @Test
     fun `all data values are null`() {
+        val builder = DataFrame.Builder()
+            .put(variable, listOf(null, null))
+
         run {
             // Default
-            val df = DataFrame.Builder()
-                .put(variable, listOf(null, null))
-                .build()
+            val df = builder.build()
             assertDistinctValues(df, mapOf(variable to emptyList()))
         }
         run {
             // Add ordering specs
-            val df = DataFrame.Builder()
-                .put(variable, listOf(null, null))
+            val df = builder
                 .addOrderSpecs(listOf(OrderingSpec(variable, orderBy = null, direction = 1)))
                 .build()
             assertDistinctValues(df, mapOf(variable to emptyList()))
@@ -104,13 +103,13 @@ class DataFrameDistinctValuesTest {
     }
 
     @Test
-    fun `variable 'orderBy' has all null values - default order will be used`() {
+    fun `variable 'orderBy' has all null values`() {
         val df = DataFrame.Builder()
             .put(variable, listOf("B", "A", "C"))
             .put(orderByVariable, listOf(null, null, null))
-            .addOrderSpecs(listOf(OrderingSpec(variable, orderByVariable, direction = 1)))
+            .addOrderSpecs(listOf(OrderingSpec(variable, orderByVariable, direction = -1)))
             .build()
-        assertDistinctValues(df, mapOf(variable to listOf("B", "A", "C")))
+        assertDistinctValues(df, mapOf(variable to listOf("C", "A", "B")))
     }
 
     @Test
@@ -141,6 +140,29 @@ class DataFrameDistinctValuesTest {
             .addOrderSpecs(listOf(OrderingSpec(variable, Stats.COUNT, direction = 1)))
             .build()
         assertDistinctValues(df, mapOf(variable to listOf("C", "B", "A")))
+    }
+
+    @Test
+    fun `few ordering specifications for the variable - choose a more specific`() {
+        val builder = DataFrame.Builder()
+            .put(variable, listOf("B", "A", "C"))
+            .put(orderByVariable, listOf(1.0, 2.0, 0.0))
+        val spec1 = OrderingSpec(variable, orderBy = null, direction = 1)
+        val spec2 = OrderingSpec(variable, orderByVariable, direction = 1)  // orderBy is specified => more specific
+        val expectedDistinctValues = mapOf(variable to listOf("C", "B", "A"))
+
+        run {
+            val df = builder
+                .addOrderSpecs(listOf(spec1, spec2))
+                .build()
+            assertDistinctValues(df, expectedDistinctValues)
+        }
+        run {
+            val df = builder
+                .addOrderSpecs(listOf(spec2, spec1))
+                .build()
+            assertDistinctValues(df, expectedDistinctValues)
+        }
     }
 
     private fun assertDistinctValues(df: DataFrame, expectedDistinctValues: Map<DataFrame.Variable, List<Any>>) {
