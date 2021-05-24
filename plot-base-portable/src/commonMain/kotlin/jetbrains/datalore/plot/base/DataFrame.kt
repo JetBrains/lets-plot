@@ -209,50 +209,30 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     private fun getOrderedDistinctValues(orderSpec: Builder.OrderingSpec): Collection<Any> {
-        fun <T> getComparator(comparable: (T) -> Comparable<*>?, orderDir: Int): Comparator<T> {
-            return if (orderDir > 0) {
-                compareBy(comparable)
-            } else {
-                compareByDescending(comparable)
-            }
-        }
-
-        assertDefined(orderSpec.variable)
-
-        if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
-            val comparable: (Any?) -> Comparable<*>? =
-                if (isNumeric(orderSpec.variable)) {
-                    { value -> (value as Number).toDouble() }
-                } else {
-                    { value -> value.toString() }
+        val distinctValues = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
+            get(orderSpec.variable).distinct().filterNotNull().sortedWith(compareBy { value -> value as Comparable<*> })
+        } else {
+            val valueByValueToSort = LinkedHashMap<Any?, Any?>()
+            val byValues = get(orderSpec.orderBy)
+            get(orderSpec.variable).forEachIndexed { index, value ->
+                val prevByValue = valueByValueToSort[value]
+                val byValue = byValues[index]
+                val valueToSortBy = when {
+                    prevByValue == null -> byValue
+                    orderSpec.orderBy == Stats.COUNT -> (byValue as Double) + (prevByValue as Double)
+                    else -> prevByValue
                 }
-            val values = LinkedHashSet(get(orderSpec.variable)).toList().filterNotNull()
-            return values.sortedWith(getComparator(comparable, orderSpec.direction))
-        }
-
-        val valueByValueToSort = LinkedHashMap<Any?, Any?>()
-        val values = get(orderSpec.variable)
-        val byValues = get(orderSpec.orderBy)
-        values.forEachIndexed { index, value ->
-            val prevByValue = valueByValueToSort[value]
-            val byValue = byValues[index]
-            val valueToSortBy = when {
-                prevByValue == null -> byValue
-                orderSpec.orderBy == Stats.COUNT -> (byValue as Double) + (prevByValue as Double)
-                else -> prevByValue
+                valueByValueToSort[value] = valueToSortBy
             }
-            valueByValueToSort[value] = valueToSortBy
+            valueByValueToSort.toList()
+                .sortedWith(compareBy { pair -> pair.second as Comparable<*> })
+                .mapNotNull(Pair<Any?, Any?>::first)
         }
-
-        val pairComparable: (Pair<Any?, Any?>) -> Comparable<*>? =
-            if (isNumeric(orderSpec.orderBy)) {
-                { pair -> (pair.second as Number).toDouble() }
-            } else {
-                { pair -> pair.second.toString() }
-            }
-        return valueByValueToSort.toList()
-            .sortedWith(getComparator(pairComparable, orderSpec.direction))
-            .mapNotNull(Pair<Any?, Any?>::first)
+        return if (orderSpec.direction < 0) {
+            distinctValues.reversed()
+        } else {
+            distinctValues
+        }
     }
 
     companion object {
