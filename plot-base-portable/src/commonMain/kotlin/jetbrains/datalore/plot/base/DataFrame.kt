@@ -35,7 +35,7 @@ class DataFrame private constructor(builder: Builder) {
         myIsNumeric = HashMap(builder.myIsNumeric)
         myOrderSpecs = builder.myOrderSpecs
         myOrderSpecs.forEach { orderSpec ->
-            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec).toSet()
+            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
         }
     }
 
@@ -214,8 +214,8 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Collection<Any> {
-        val distinctValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
+    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
+        val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
             get(orderSpec.variable)
                 .distinct()
                 .filterNotNull()
@@ -232,15 +232,20 @@ class DataFrame private constructor(builder: Builder) {
             val newIndices = get(orderSpec.orderBy)
                 .withIndex()
                 .map { it.index to it.value }
-                .sortedWith(compareBy(nullsLast<Comparable<*>>()) { pair -> pair.second as? Comparable<*> })
+                .sortedWith(
+                    compareBy(
+                        // Put the values corresponding to nulls at the end of the result
+                        if (orderSpec.direction < 0) nullsFirst<Comparable<*>>() else nullsLast<Comparable<*>>()
+                    ) { pair -> pair.second as? Comparable<*> }
+                )
                 .map(Pair<Int, Any?>::first)
             SeriesUtil.pickAtIndices(get(orderSpec.variable), newIndices).filterNotNull()
         }
         return if (orderSpec.direction < 0) {
-            distinctValues.reversed()
+            orderedValues.reversed()
         } else {
-            distinctValues
-        }
+            orderedValues
+        }.toSet()
     }
 
     companion object {
@@ -293,7 +298,7 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-        private fun addOrderSpec(orderSpec: OrderingSpec): Builder {
+        fun addOrderSpec(orderSpec: OrderingSpec): Builder {
             val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
             // If multiple specifications for the variable - choose a more specific one:
             // prefer with specified 'orderBy'
