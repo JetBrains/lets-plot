@@ -215,6 +215,8 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
+        var valuesOrderedByNulls: List<Any> = emptyList() // will be placed at the end of the result
+
         val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
             get(orderSpec.variable)
                 .distinct()
@@ -229,23 +231,27 @@ class DataFrame private constructor(builder: Builder) {
                 .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
                 .mapNotNull { (value) -> value }
         } else {
-            val newIndices = get(orderSpec.orderBy)
+            val byValuesWithIndices = get(orderSpec.orderBy)
                 .withIndex()
                 .map { it.index to it.value }
-                .sortedWith(
-                    compareBy(
-                        // Put the values corresponding to nulls at the end of the result
-                        if (orderSpec.direction < 0) nullsFirst<Comparable<*>>() else nullsLast<Comparable<*>>()
-                    ) { pair -> pair.second as? Comparable<*> }
-                )
+
+            valuesOrderedByNulls = SeriesUtil.pickAtIndices(
+                get(orderSpec.variable),
+                indices = byValuesWithIndices.filter { it.second == null }.map(Pair<Int, Any?>::first)
+            ).filterNotNull()
+
+            val newIndices = byValuesWithIndices
+                .filter { it.second != null }
+                .sortedWith(compareBy { pair -> pair.second as Comparable<*> })
                 .map(Pair<Int, Any?>::first)
             SeriesUtil.pickAtIndices(get(orderSpec.variable), newIndices).filterNotNull()
         }
-        return if (orderSpec.direction < 0) {
+        // Put the values corresponding to nulls at the end of the result
+        return (if (orderSpec.direction < 0) {
             orderedValues.reversed()
         } else {
             orderedValues
-        }.toSet()
+        } + valuesOrderedByNulls).toSet()
     }
 
     companion object {

@@ -155,8 +155,7 @@ class DataFrameDistinctValuesTest {
         fun builder() = DataFrame.Builder()
             .put(variable,        listOf("B",  "A", "B",  "D", "A", "A",  "C"))
             .put(orderByVariable, listOf(1.0, null, 2.0, null, 2.0, null, null))
-
-        run {
+       run {
             // Ascending
             val df = builder()
                 .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = 1))
@@ -168,7 +167,15 @@ class DataFrameDistinctValuesTest {
             val df = builder()
                 .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = -1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "C", "D")))
+            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "D", "C")))
+        }
+        run {
+            val df = DataFrame.Builder()
+                .put(variable,        listOf("B",  "A", null,  "D", "A", null,  "C"))
+                .put(orderByVariable, listOf(1.0, null, 2.0, null, 2.0, null, null))
+                .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = -1))
+                .build()
+            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "D", "C")))
         }
     }
 
@@ -180,20 +187,21 @@ class DataFrameDistinctValuesTest {
                 .put(variable, data)
                 .put(orderByVariable, List(data.size) { null })
         }
+        val expectedDistinctValues = mapOf(variable to listOf("B", "A", "C"))
 
         run {
             // Ascending
             val df = builder()
                 .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = 1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("B", "A", "C")))
+            assertDistinctValues(df, expectedDistinctValues)
         }
         run {
             // Descending
             val df = builder()
                 .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = -1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("A", "C", "B")))
+            assertDistinctValues(df, expectedDistinctValues)
         }
     }
 
