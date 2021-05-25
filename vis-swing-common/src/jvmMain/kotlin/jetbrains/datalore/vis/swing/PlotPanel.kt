@@ -9,8 +9,10 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.ContainerAdapter
 import java.awt.event.ContainerEvent
-import java.util.function.Consumer
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.Timer
 
 open class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
@@ -47,7 +49,6 @@ open class PlotPanel(
                 lastProvidedComponent = providedComponent,
                 plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
                 plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
-                thumbnailIconConsumer = null,
                 applicationContext = applicationContext,
                 repaintDelay = repaintDelay
             )
@@ -111,7 +112,6 @@ open class PlotPanel(
         private var lastProvidedComponent: JComponent?,
         private val plotPreferredSize: (Dimension) -> Dimension,
         private val plotComponentFactory: (Dimension) -> JComponent,
-        private var thumbnailIconConsumer: Consumer<in ImageIcon?>?,
         private val applicationContext: ApplicationContext,
         repaintDelay: Int // ms
 
@@ -162,16 +162,7 @@ open class PlotPanel(
                     return@Runnable
                 }
                 lastPreferredSize = preferredSize
-                val updateThumbnail = lastProvidedComponent == null
                 lastProvidedComponent = plotComponentFactory(plotContainerSize)
-                if (updateThumbnail && thumbnailIconConsumer != null) {
-                    // ToDo
-//                        com.jetbrains.plugins.letsPlot.figure.ComponentFigure.updateThumbnailIcon(
-//                            com.jetbrains.plugins.letsPlot.figure.ComponentFigure.actualPlotComponent(
-//                                myLastProvidedComponent
-//                            ), myThumbnailIconConsumer
-//                        )
-                }
 
                 plotPanel.revalidate()
             }
