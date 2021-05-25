@@ -221,9 +221,10 @@ class DataFrame private constructor(builder: Builder) {
                 .filterNotNull()
                 .sortedWith(compareBy { value -> value as Comparable<*> })
         } else if (orderSpec.orderBy == Stats.COUNT) {
-            get(orderSpec.variable).zip(getNumeric(orderSpec.orderBy))
+            get(orderSpec.variable)
+                .zip(getNumeric(orderSpec.orderBy).requireNoNulls()) // stat count is always zero or value
                 .groupBy ({ (value) -> value }) { (_, statCount) -> statCount }
-                .mapValues { (_, statCounts) -> statCounts.sumByDouble { it!! } }
+                .mapValues { (_, statCounts) -> statCounts.sum() }
                 .toList()
                 .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
                 .mapNotNull { (value) -> value }
