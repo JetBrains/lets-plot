@@ -221,18 +221,16 @@ class DataFrame private constructor(builder: Builder) {
                 .filterNotNull()
                 .sortedWith(compareBy { value -> value as Comparable<*> })
         } else if (orderSpec.orderBy == Stats.COUNT) {
-            val valueToSumCount = mutableMapOf<Any?, Double>()
-            val byValues = get(orderSpec.orderBy)
-            get(orderSpec.variable).forEachIndexed { index, value ->
-                val curCount = valueToSumCount[value] ?: 0.0
-                valueToSumCount[value] = curCount + byValues[index] as Double
-            }
-            valueToSumCount.toList()
-                .sortedWith(compareBy { pair -> pair.second })
-                .mapNotNull(Pair<Any?, Any?>::first)
+            get(orderSpec.variable).zip(getNumeric(orderSpec.orderBy))
+                .groupBy ({ (value) -> value }) { (_, statCount) -> statCount }
+                .mapValues { (_, statCounts) -> statCounts.sumByDouble { it!! } }
+                .toList()
+                .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
+                .mapNotNull { (value) -> value }
         } else {
-            val dataWithIndices = get(orderSpec.orderBy).withIndex().map { it.index to it.value }
-            val newIndices = dataWithIndices
+            val newIndices = get(orderSpec.orderBy)
+                .withIndex()
+                .map { it.index to it.value }
                 .sortedWith(compareBy(nullsLast<Comparable<*>>()) { pair -> pair.second as? Comparable<*> })
                 .map(Pair<Int, Any?>::first)
             SeriesUtil.pickAtIndices(get(orderSpec.variable), newIndices).filterNotNull()
