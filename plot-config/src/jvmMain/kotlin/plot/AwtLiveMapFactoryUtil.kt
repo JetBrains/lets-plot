@@ -27,7 +27,7 @@ internal object AwtLiveMapFactoryUtil {
         preferredSize: ReadableProperty<DoubleVector>,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
-    ): DisposableJPanel {
+    ): JComponent {
         val cursorServiceConfig = CursorServiceConfig()
         injectLiveMapProvider(assembler, processedSpec, cursorServiceConfig)
 

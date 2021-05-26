@@ -10,13 +10,9 @@ import java.awt.LayoutManager
 import javax.swing.JPanel
 
 open class DisposableJPanel(layout: LayoutManager?) : JPanel(layout), Disposable {
-    private var isDisposed: Boolean = false
+    private val disposer = AwtContainerDisposer(this)
+
     override fun dispose() {
-        require(!isDisposed) { "Already disposed." }
-        isDisposed = true
-        components.forEach {
-            // We a expect all children are disposable
-            (it as Disposable).dispose()
-        }
+        disposer.dispose()
     }
 }

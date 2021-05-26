@@ -17,16 +17,13 @@ class AwtRepaintTimer(
 ) : Disposable {
     private val myHandlers = ArrayList<(Long) -> Unit>()
 
-    init {
-        myHandlers.add { repaint() }
-    }
-
     private var actionListener = ActionListener {
         myHandlers.forEach {
             executor {
                 it(System.currentTimeMillis())
             }
         }
+        repaint()
     }
 
     private val myTimer: Timer = Timer(1000 / 60, actionListener)
@@ -54,6 +51,7 @@ class AwtRepaintTimer(
 
     override fun dispose() {
         myTimer.stop()
+        myTimer.removeActionListener(actionListener)
         actionListener = ActionListener {}
         myHandlers.clear()
     }

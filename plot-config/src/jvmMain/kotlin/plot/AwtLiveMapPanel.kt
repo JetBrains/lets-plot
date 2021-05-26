@@ -23,16 +23,19 @@ import java.awt.event.ComponentEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
+import javax.swing.JLayeredPane
 import javax.swing.JPanel
+
 
 class AwtLiveMapPanel(
     private val plotContainer: PlotContainer,
     private val plotComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val cursorServiceConfig: CursorServiceConfig
-) : DisposableJPanel(null) {
+) : JLayeredPane(), Disposable {
+    private val awtContainerDisposer = AwtContainerDisposer(this)
     private val mappers: MutableList<() -> Unit> = ArrayList()
-    private val livemaps: MutableList<Registration> = ArrayList()
+    private val registrations: MutableList<Registration> = ArrayList()
     private val mouseMoutionListener = object : MouseAdapter() {
         override fun mouseDragged(e: MouseEvent) {
             super.mouseDragged(e)
@@ -93,7 +96,7 @@ class AwtLiveMapPanel(
                     timer
                 ).let {
                     mappers.add {
-                        livemaps.add(canvasFigure.mapToCanvas(it))
+                        registrations.add(canvasFigure.mapToCanvas(it))
                     }
                 }
             }
@@ -111,8 +114,8 @@ class AwtLiveMapPanel(
     }
 
     override fun dispose() {
-        super.dispose()
-        livemaps.forEach(Disposable::dispose)
+        awtContainerDisposer.dispose()
+        registrations.forEach(Disposable::dispose)
         plotComponent.removeMouseMotionListener(mouseMoutionListener)
         plotContainer.clearContent()
         cursorServiceConfig.defaultSetter { }
