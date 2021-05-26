@@ -15,8 +15,8 @@ object PlotLayoutUtil {
     const val AXIS_TITLE_OUTER_MARGIN = 4.0
     const val AXIS_TITLE_INNER_MARGIN = 4.0
     private const val TITLE_V_MARGIN = 4.0
-    private val LIVE_MAP_PLOT_PADDING = DoubleVector(0.0, 0.0)
-    private val LIVE_MAP_PLOT_MARGIN = DoubleVector(0.0, 0.0)
+    private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
+    private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
     fun titleDimensions(text: String): DoubleVector {
         if (isNullOrEmpty(text)) {

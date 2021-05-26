@@ -123,7 +123,9 @@ internal class PlotTile(
         // render geoms
 
         if (liveMapGeomLayer != null) {
-            val liveMapData = liveMapGeomLayer.createCanvasFigure(geomBounds)
+            val realBounds = myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin)
+
+            val liveMapData = liveMapGeomLayer.createCanvasFigure(realBounds)
 
             liveMapFigure = liveMapData.canvasFigure
             myTargetLocators.add(liveMapData.targetLocator)
