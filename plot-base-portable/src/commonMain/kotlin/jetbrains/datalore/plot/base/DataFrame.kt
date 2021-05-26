@@ -215,7 +215,7 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
-        var valuesOrderedByNulls: List<Any> = emptyList() // will be placed at the end of the result
+        var nullValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
 
         val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
             get(orderSpec.variable)
@@ -231,27 +231,30 @@ class DataFrame private constructor(builder: Builder) {
                 .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
                 .mapNotNull { (value) -> value }
         } else {
-            val byValuesWithIndices = get(orderSpec.orderBy)
-                .withIndex()
-                .map { it.index to it.value }
-
-            valuesOrderedByNulls = SeriesUtil.pickAtIndices(
-                get(orderSpec.variable),
-                indices = byValuesWithIndices.filter { it.second == null }.map(Pair<Int, Any?>::first)
+            nullValuesAppendix = SeriesUtil.pickAtIndices(
+                list = get(orderSpec.variable),
+                indices = get(orderSpec.orderBy)
+                    .withIndex()
+                    .filter { it.value == null }
+                    .map { it.index}
             ).filterNotNull()
 
-            val newIndices = byValuesWithIndices
-                .filter { it.second != null }
-                .sortedWith(compareBy { pair -> pair.second as Comparable<*> })
-                .map(Pair<Int, Any?>::first)
-            SeriesUtil.pickAtIndices(get(orderSpec.variable), newIndices).filterNotNull()
+            SeriesUtil.pickAtIndices(
+                list = get(orderSpec.variable),
+                indices = get(orderSpec.orderBy)
+                    .withIndex()
+                    .filter { it.value != null }
+                    .sortedWith(compareBy { it.value as Comparable<*> })
+                    .map { it.index })
+                .filterNotNull()
         }
+
         // Put the values corresponding to nulls at the end of the result
         return (if (orderSpec.direction < 0) {
             orderedValues.reversed()
         } else {
             orderedValues
-        } + valuesOrderedByNulls).toSet()
+        } + nullValuesAppendix).toSet()
     }
 
     companion object {
