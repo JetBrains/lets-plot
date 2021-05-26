@@ -3,7 +3,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from .core import FeatureSpec
-from typing import List, Dict
+from typing import List
 
 #
 # Tooltips
@@ -68,13 +68,20 @@ class layer_tooltips(FeatureSpec):
 
     """
 
-    def __init__(self):
-        """Initialize self."""
+    def __init__(self, variables: List[str] = None):
+        """
+        Initialize self.
+
+        :param variables: List of strings
+            Variable names to place in the general tooltip with default formatting.
+        """
+
         self._tooltip_formats: List = []
         self._tooltip_lines: List = None
         self._tooltip_anchor = None
         self._tooltip_min_width = None
         self._tooltip_color = None
+        self._tooltip_variables = variables
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -107,6 +114,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_anchor'] = self._tooltip_anchor
         d['tooltip_min_width'] = self._tooltip_min_width
         d['tooltip_color'] = self._tooltip_color
+        d['tooltip_variables'] = self._tooltip_variables
         return d
 
     def format(self, field=None, format=None):

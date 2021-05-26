@@ -30,13 +30,15 @@ class TooltipConfig(
             } else {
                 null
             },
-            tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS)
+            tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS),
+            tooltipVariables = getStringList(Option.Layer.TOOLTIP_VARIABLES)
         ).parse()
     }
 
     private inner class TooltipConfigParseHelper(
         private val tooltipLines: List<String>?,
-        tooltipFormats: List<*>
+        tooltipFormats: List<*>,
+        tooltipVariables: List<String>
     ) {
         // Key is Pair: <field name> + <isAes flag>
         private val myValueSources: MutableMap<Pair<String, Boolean>, ValueSource> = prepareFormats(tooltipFormats)
@@ -44,11 +46,22 @@ class TooltipConfig(
                 createValueSource(fieldName = field.first, isAes = field.second, format = format)
             }.toMutableMap()
 
+        // Create tooltip lines from the given variable list
+        private val myLinesForVariableList = tooltipVariables.map { variableName ->
+            val valueSource = getValueSource(VARIABLE_NAME_PREFIX + variableName)
+            TooltipLine.defaultLineForValueSource(valueSource)
+        }
+
         internal fun parse(): TooltipSpecification {
             val lines = tooltipLines?.map(::parseLine)
+            val allTooltipLines = when {
+                lines != null -> myLinesForVariableList + lines
+                myLinesForVariableList.isNotEmpty() -> myLinesForVariableList
+                else -> null
+            }
             return TooltipSpecification(
                 myValueSources.map { it.value },
-                lines,
+                allTooltipLines,
                 TooltipSpecification.TooltipProperties(
                     anchor = readAnchor(),
                     minWidth = readMinWidth(),
