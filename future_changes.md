@@ -2,6 +2,10 @@
 
 ### Added
 
+- In tooltip customization API:
+    - `layer_tooltips(variables)` - the new parameter `variables` defines a list of variable names, which values will be placed line by line in the general tooltip.
+   See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+
 ### Changed
 
 ### Fixed

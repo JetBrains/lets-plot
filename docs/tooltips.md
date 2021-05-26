@@ -5,6 +5,8 @@
     
 ------
 
+
+The following functions set lines, define formatting of the tooltip, its location and width:
 ```
 tooltips=layer_tooltips(variables)
     .format(field, format)
