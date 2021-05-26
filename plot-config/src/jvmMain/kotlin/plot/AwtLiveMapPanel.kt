@@ -79,6 +79,7 @@ class AwtLiveMapPanel(
                         timer.dispose()
                     }
                 }.apply {
+                    background = Color.WHITE
                     bounds = Rectangle(
                         canvasBounds.origin.x,
                         canvasBounds.origin.y,
