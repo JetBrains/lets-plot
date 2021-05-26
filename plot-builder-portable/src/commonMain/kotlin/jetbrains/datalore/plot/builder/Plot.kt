@@ -315,6 +315,10 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         // Layout plot inners
         val plotLayout = plotLayout()
+        if (hasLiveMap()) {
+            plotLayout.setPadding(0.0, 0.0, 0.0, 0.0)
+        }
+
         val plotInfo = plotLayout.doLayout(geomAndAxis.dimension)
         this.myLaidOutSize.set(preferredSize)
 
