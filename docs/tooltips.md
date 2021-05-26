@@ -1,6 +1,14 @@
 # Tooltip Customization
 
-- [Tooltip variable list](#variables)
+> **NOTE**
+>
+> This document only contains description of the new features in Lets-Plot v2.0.3:
+> - *Tooltip `variables` parameter*
+> 
+> The full doc you can find here: [Tooltip Customization](https://lets-plot.org/pages/features/tooltips.html?highlight=tooltip)
+>
+
+- [Tooltip `variables` parameter](#variables)
   - [Examples](#example-variables)    
     
 ------
@@ -16,7 +24,7 @@ tooltips=layer_tooltips(variables)
 ```
 
 <a id="variables"></a>
-### Tooltip variable list: `layer_tooltips(variables = ['varName1', ... , 'varNameN'] )`
+### Tooltip `variables` parameter: `layer_tooltips(variables = ['varName1', ... , 'varNameN'] )`
 The `variables` parameter defines a list of variable names, which values will be placed line by line in the general tooltip.
 If formatting is specified for a variable from this list (with the `format` function), it will be applied.
 Otherwise, the default formatting is used. 
