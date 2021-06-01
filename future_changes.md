@@ -8,6 +8,9 @@
 
 ### Changed
 
+- CDN: Lets-Plot JavaScript library is now served via [JSDELIVR](https://www.jsdelivr.com/?docs=gh) (was CDNJS):
+> https://cdn.jsdelivr.net/gh/JetBrains/lets-plot@v2.0.3/js-package/distr/lets-plot.min.js
+
 ### Fixed
         
 - Removed the last dependency on bintray JCenter ([commit](https://github.com/JetBrains/lets-plot/commit/7bcd38e000a4952b83269ef4ebac0b7d826dea6a)). 
