@@ -27,9 +27,9 @@ object PlotHtmlHelper {
         val dev = version.contains("dev")
         return if (dev) {
             // We don't publish "dev" version, it must be served on localhost:
-            // $ cd lets-plot/js-package/build/distributions
+            // $ cd lets-plot
             // $ python -m http.server 8080
-            "http://127.0.0.1:8080/lets-plot-$version.js"
+            "http://127.0.0.1:8080/js-package/build/distributions/lets-plot-$version.js"
         } else {
             // bintray: until v2.0.2
 //            "https://dl.bintray.com/jetbrains/lets-plot/lets-plot-$version.min.js"
