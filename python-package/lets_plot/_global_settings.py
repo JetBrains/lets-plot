@@ -77,7 +77,7 @@ _settings = {
     NO_JS: _init_value(NO_JS, False),
     # JS_BASE_URL: 'https://dl.bintray.com/jetbrains/lets-plot',
     # JS_BASE_URL: "https://cdnjs.cloudflare.com/ajax/libs/lets-plot",
-    JS_BASE_URL: "https://cdn.jsdelivr.net/gh/JetBrains/lets-plot",
+    JS_BASE_URL: "https://cdn.jsdelivr.net/gh/JetBrains/lets-plot@v{version}".format(version=__version__),
     JS_PATH_TO_FILE: "js-package/distr",
     JS_NAME: '',  # default: lets-plot-<version>.min.js
     GEOCODING_PROVIDER_URL: _init_value(GEOCODING_PROVIDER_URL, _DATALORE_GEOCODING_SERVICE),
@@ -124,9 +124,6 @@ def get_js_cdn_url() -> str:
         return get_global_str(JS_URL_MANUAL)
 
     base_url = get_global_str(JS_BASE_URL)
-
-    if is_production():
-        base_url = "{base_url}@v{version}".format(base_url=base_url, version=__version__)
 
     js_path_to_file = get_global_str(JS_PATH_TO_FILE)
 
