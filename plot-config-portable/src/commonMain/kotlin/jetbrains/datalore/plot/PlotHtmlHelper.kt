@@ -25,19 +25,19 @@ object PlotHtmlHelper {
         version: String
     ): String {
         val dev = version.contains("dev")
-        val baseUrl: String = if (dev) {
+        return if (dev) {
             // We don't publish "dev" version, it must be served on localhost:
             // $ cd lets-plot/js-package/build/distributions
             // $ python -m http.server 8080
-            "http://127.0.0.1:8080"
+            "http://127.0.0.1:8080/lets-plot-$version.js"
         } else {
-//            "https://dl.bintray.com/jetbrains/lets-plot"
-            "https://cdnjs.cloudflare.com/ajax/libs/lets-plot"
+            // bintray: until v2.0.2
+//            "https://dl.bintray.com/jetbrains/lets-plot/lets-plot-$version.min.js"
+            // cdnjs: v2.0.2
+//            "https://cdnjs.cloudflare.com/ajax/libs/lets-plot/$version/lets-plot.min.js"
+            // jsdelivr: since v2.0.3 (all prev versions shoul work as well)
+            "https://cdn.jsdelivr.net/gh/JetBrains/lets-plot@v$version/js-package/distr/lets-plot.min.js"
         }
-
-        val suffix: String = if (dev) "js" else "min.js"
-//        return "$baseUrl/lets-plot-$version.$suffix"
-        return "$baseUrl/$version/lets-plot.$suffix"
     }
 
     fun getDynamicConfigureHtml(scriptUrl: String, verbose: Boolean): String {
