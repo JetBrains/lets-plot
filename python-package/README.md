@@ -44,7 +44,7 @@ The "dev" version of js library can be served from `dist` folder of **js-package
 
 ```shell script
 # Start local web-server to serve dev js script:
-$ cd lets-plot/js-package/build/distributions
+$ cd lets-plot
 $ python -m http.server 8080
 ```
  
