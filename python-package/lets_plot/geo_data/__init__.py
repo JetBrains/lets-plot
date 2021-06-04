@@ -1,7 +1,7 @@
 try:
     import geopandas
 except ImportError:
-    raise ValueError("geopandas is required for using module geo_data") from None
+    raise ValueError("geopandas is required for using the geo_data module") from None
 
 from .core import *
 from .map_geometry import *
