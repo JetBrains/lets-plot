@@ -73,6 +73,7 @@ kotlin {
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
+                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
             }
         }
 //        jvmMain {

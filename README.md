@@ -26,20 +26,23 @@ as well as in other notebooks like [Datalore](https://view.datalore.io/notebook/
 [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart) or [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-).
   
 You can even create plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
-  
-Read the Lets-Plot for Python [documentation](https://jetbrains.github.io/lets-plot-docs/) to learn more about the package installation and usage.
+   
+Read [README_PYTHON.md](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md) to learn more about the package installation and usage.
+
+Check out documentation on-line at https://lets-plot.org.
+                                 
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 
-## JVM artifacts and Kotlin API
+## JVM/Kotlin-JS artifacts and Kotlin API
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.lets-plot/lets-plot-common?color=blue&label=Maven%20Central)](https://search.maven.org/search?q=lets-plot)
 
 [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
-Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into a JVM-based application.
+Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into JVM and Kotlin-JS applications.
 
-To learn more about creating plots in a JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) 
+To learn more about embedding plots into JVM/Kotlin-JS apps see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) 
 in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
 
 <a id="pycharm_plugin"></a>
@@ -62,6 +65,10 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
 </div>
+<div>
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
+</div>
+
 
 ## License
 

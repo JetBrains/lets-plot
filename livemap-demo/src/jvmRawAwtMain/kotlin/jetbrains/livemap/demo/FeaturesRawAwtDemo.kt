@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
@@ -16,22 +17,28 @@ import javax.swing.JPanel
 
 class FeaturesRawAwtDemo {
     fun start() {
-        val dim = Vector(800, 600)
-        val panel = JPanel(null)
-        val timer = AwtRepaintTimer(panel::repaint)
-        val canvasControl = AwtCanvasControl(panel, dim, 1.0, AwtEventPeer(panel, Rectangle(Vector.ZERO, dim)), timer)
+        val canvasSize = Dimension(800, 600)
+        val canvasContainer = JPanel(null).apply {
+            size = canvasSize
+        }
 
-        val canvas = canvasControl.createCanvas(dim)
+        JFrame().apply {
+            size = canvasSize
+            isVisible = true
+            add(canvasContainer)
+        }
 
-        FeaturesDemoModel(dim.toDoubleVector()).show(canvasControl)
+        val canvasControl = AwtCanvasControl(
+            root = canvasContainer,
+            size = canvasSize.toVector(),
+            myPixelRatio = 1.0,
+            myEventPeer = AwtEventPeer(canvasContainer, Rectangle(Vector.ZERO, canvasSize.toVector())),
+            myTimer = AwtRepaintTimer(canvasContainer::repaint)
+        )
 
+        val canvas = canvasControl.createCanvas(canvasSize.toVector())
         canvasControl.addChild(canvas)
-
-        val frame = JFrame()
-        frame.add(panel)
-        frame.size = Dimension(dim.x, dim.y)
-
-        frame.isVisible = true
+        FeaturesDemoModel(canvasSize.toDoubleVector()).show(canvasControl)
     }
 
     companion object {
@@ -41,3 +48,6 @@ class FeaturesRawAwtDemo {
         }
     }
 }
+
+fun Dimension.toVector() = Vector(width, height)
+fun Dimension.toDoubleVector() = DoubleVector(width.toDouble(), height.toDouble())

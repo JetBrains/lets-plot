@@ -6,16 +6,22 @@
 package jetbrains.datalore.vis.canvas.awt
 
 
+import jetbrains.datalore.base.registration.Disposable
+import java.awt.EventQueue
 import java.awt.event.ActionListener
 import javax.swing.Timer
-import kotlin.collections.ArrayList
 
-class AwtRepaintTimer(private val repaint: () -> Unit) {
+class AwtRepaintTimer(
+    repaint: () -> Unit,
+    val executor: (() -> Unit) -> Unit = { f -> EventQueue.invokeLater { f() } },
+) : Disposable {
     private val myHandlers = ArrayList<(Long) -> Unit>()
 
-    private val actionListener = ActionListener {
+    private var actionListener = ActionListener {
         myHandlers.forEach {
-            it(System.currentTimeMillis())
+            executor {
+                it(System.currentTimeMillis())
+            }
         }
         repaint()
     }
@@ -41,5 +47,12 @@ class AwtRepaintTimer(private val repaint: () -> Unit) {
                 myTimer.stop()
             }
         }
+    }
+
+    override fun dispose() {
+        myTimer.stop()
+        myTimer.removeActionListener(actionListener)
+        actionListener = ActionListener {}
+        myHandlers.clear()
     }
 }

@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_VARIABLES
 import jetbrains.datalore.plot.config.Option.Meta.KIND
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
@@ -43,7 +44,6 @@ class TooltipConfigTest {
         Aes.COLOR.name to "cty",
         Aes.SHAPE.name to "class"
     )
-
 
     @Test
     fun defaultTooltips() {
@@ -515,6 +515,82 @@ class TooltipConfigTest {
             expected = listOf("a"),
             actual = getGeneralTooltipStrings(geomLayer)
         )
+    }
+
+    @Test
+    fun `variables list to place in a tooltip with default formatting`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_VARIABLES to listOf(
+                "model name",
+                "class",
+                "displ",
+                "hwy",
+                "origin"
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "model name: dodge",
+            "class: suv",
+            "displ: 1.6",
+            "hwy: 160.0",
+            "origin: US"
+
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
+    }
+
+    @Test
+    fun `variables list should use the defined formatting`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_VARIABLES to listOf(
+                "model name",
+                "class",
+                "displ",
+                "hwy",
+                "origin"
+            ),
+            TOOLTIP_FORMATS to listOf(
+                mapOf(
+                    FIELD to "hwy",
+                    FORMAT to "{.2f} mpg"
+                )
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "model name: dodge",
+            "class: suv",
+            "displ: 1.6",
+            "hwy: 160.00 mpg",
+            "origin: US"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
+    }
+
+    @Test
+    fun `tooltip lines should be formed by variables list and line functions`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_VARIABLES to listOf(
+                "model name",
+                "class",
+                "displ"
+            ),
+            TOOLTIP_LINES to listOf(
+                "@|@hwy mpg"
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "model name: dodge",
+            "class: suv",
+            "displ: 1.6",
+            "hwy: 160.0 mpg"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
     }
 
     companion object {

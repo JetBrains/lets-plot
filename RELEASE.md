@@ -3,7 +3,6 @@
 
 ### Make version
 
-
 ##### 1. Update CHANGELOG.md file.
 
 ##### 2. Set release or pre-release version in the properties (remove _"-alpha"_ and _"dev"_): 
@@ -22,25 +21,13 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
  - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
  
-##### 5. Add the GitHub pre-release:
- 
- - Open the link: https://github.com/JetBrains/lets-plot/releases/new
- - Fill `Tag version` and `Release title` with the released version "vX.X.X".
- - Fill the description field - copy from the CHANGELOG.md.
- - Add JS artifacts from the `js-package/distr` directory to the binaries box.
- - Select `This is a pre-release` checkbox.
- - Click `Publish release`.
- 
-**CDNJS will automatically update the JS artifacts after the pre-release is published. 
-This operation can take up to 2 hours. Do not publish another project artifacts before JS artifacts will be updated.**
-
-##### 6. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
-
+##### 5. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
+         
  - `version` in `build.gradle` (`X.X.X-alphaN`)
  - `js_artifact_version` in `build.gradle` (`X.X.X.devN`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X.devN`)
 
-##### 7. Push new dev version to GitHub.
+##### 6. Push new dev version to GitHub.
 
 
 ### Build the project for publishing
@@ -81,16 +68,12 @@ Reproduce this steps for Python 3.8 and 3.9
  
 _Then you'll get python wheel files built with Python 3.7, 3.8 and 3.9._
 
-
 ##### 6. _(for Linux only)_ Build python wheels for Manylinux platform:
 
 run `./gradlew python-package-build:buildManylinuxWheels`
 
 
 ### Publish artifacts
-
-**Check the project page on cdnjs.com before publishing: https://cdnjs.com/libraries/lets-plot   
-It must contain a new version of JS artifacts.**
 
 ##### 1. Python wheels (PyPi):
 
@@ -123,14 +106,18 @@ Close and release repository to the Maven Central:
 `./gradlew closeAndReleaseRepository`
 
 This operation can take up to 5 minutes.
- 
-### Edit the GitHub release:
 
- - Go to the https://github.com/JetBrains/lets-plot/releases page and find the release you have published.
- - Click `Edit release`.
- - Unset `This is a pre-release` checkbox.
- - Click `Update release`.
  
+### Add the GitHub release:
+     
+ - Open the link: https://github.com/JetBrains/lets-plot/releases/new
+ - Fill `Tag version` and `Release title` with the released version "vX.X.X".
+ - Fill the description field - copy from the CHANGELOG.md.
+ - Add JS artifacts from the `js-package/distr` directory to the binaries box.
+ - Select `This is a pre-release` checkbox if you are releasing a pre-release version.
+ - Click `Publish release`.
+ 
+
 ### After release
 
  - remove build directory `lets-plot-release`

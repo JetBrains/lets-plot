@@ -17,7 +17,6 @@ import jetbrains.datalore.vis.canvas.AnimationProvider
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
-import java.awt.EventQueue.invokeLater
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.Rectangle
@@ -27,24 +26,30 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.imageio.ImageIO
-import javax.swing.ImageIcon
-import javax.swing.JLabel
-import javax.swing.JPanel
+import javax.swing.*
+
 
 class AwtCanvasControl(
-    private val myRoot: JPanel,
+    root: JPanel,
     override val size: Vector,
     private val myPixelRatio: Double,
     private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>,
     private val myTimer: AwtRepaintTimer
 ) : CanvasControl {
-    private val myChildren = HashMap<Canvas, JLabel>()
+
+    private val myRoot: JComponent = JLayeredPane()
+    private val myChildren = HashMap<Canvas, JComponent>()
+
+    init {
+        myRoot.bounds = Rectangle(0, 0, size.x, size.y)
+        root.add(myRoot)
+    }
 
     override fun addChild(canvas: Canvas) {
         ImageIcon((canvas as AwtCanvas).image)
             .run(::JLabel)
             .also {
-                it.bounds = Rectangle(0,0, canvas.size.x, canvas.size.y)
+                it.bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
                 myChildren[canvas] = it
             }
             .run { myRoot.add(this, myRoot.componentCount) }
@@ -55,7 +60,7 @@ class AwtCanvasControl(
             .run(::JLabel)
             .also {
                 myChildren[canvas] = it
-                it.bounds = Rectangle(0,0, canvas.size.x, canvas.size.y)
+                it.bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
             }
             .run { myRoot.add(this, myRoot.componentCount - index) }
     }
@@ -118,6 +123,7 @@ class AwtCanvasControl(
     }
 
     override fun <T> schedule(f: () -> T) {
-        invokeLater { f() }
+//        invokeLater { f() }
+        myTimer.executor { f() }
     }
 }
