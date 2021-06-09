@@ -322,6 +322,9 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
 </div>
+<div>
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
+</div>
 
 <a id="what-is-new-in-2-0-0"></a>
 ### What is new in 2.0.0
