@@ -257,12 +257,12 @@ internal object PlotAssemblerUtil {
             return initialRange
         }
 
-//        // the "scale map" is shared by all layers.
+        // the "scale map" is shared by all layers.
         val scaleMap = layersByTile[0][0].scaleMap
-        var xRangeOverall: ClosedRange<Double>? = initialRange(scaleMap[Aes.X])
-        var yRangeOverall: ClosedRange<Double>? = initialRange(scaleMap[Aes.Y])
+        var xInitialRange: ClosedRange<Double>? = initialRange(scaleMap[Aes.X])
+        var yInitialRange: ClosedRange<Double>? = initialRange(scaleMap[Aes.Y])
 
-        fun completeOverallRange(
+        fun layerRange(
             layer: GeomLayer,
             aes: Aes<Double>,
             initialRange: ClosedRange<Double>?,
@@ -277,6 +277,8 @@ internal object PlotAssemblerUtil {
             return range
         }
 
+        var xRangeOverall: ClosedRange<Double>? = null
+        var yRangeOverall: ClosedRange<Double>? = null
         for (layers in layersByTile) {
             for (layer in layers) {
                 // use dry-run aesthetics to estimate ranges
@@ -284,8 +286,11 @@ internal object PlotAssemblerUtil {
                 // adjust X/Y range with 'pos adjustment' and 'expands'
                 val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
 
-                xRangeOverall = completeOverallRange(layer, Aes.X, xRangeOverall, xyRanges.first)
-                yRangeOverall = completeOverallRange(layer, Aes.Y, yRangeOverall, xyRanges.second)
+                val xRangeLayer = layerRange(layer, Aes.X, xInitialRange, xyRanges.first)
+                val yRangeLayer = layerRange(layer, Aes.Y, yInitialRange, xyRanges.second)
+
+                xRangeOverall = updateRange(xRangeLayer, xRangeOverall)
+                yRangeOverall = updateRange(yRangeLayer, yRangeOverall)
             }
         }
 

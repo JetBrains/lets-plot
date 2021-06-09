@@ -40,8 +40,7 @@ object PlotUtil {
     }
 
     fun computeLayerDryRunXYRanges(
-        layer: GeomLayer,
-        aes: Aesthetics
+        layer: GeomLayer, aes: Aesthetics
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
@@ -349,13 +348,15 @@ object PlotUtil {
         } else dataValue
     }
 
-    fun rangeWithExpand(layer: GeomLayer, aes: Aes<Double>, range: ClosedRange<Double>?): ClosedRange<Double>? {
+    /**
+     * Expand X/Y-range to ensure that the data is placed some distance away from the axes.
+     */
+    fun rangeWithExpand(
+        layer: GeomLayer,
+        aes: Aes<Double>,
+        range: ClosedRange<Double>?
+    ): ClosedRange<Double>? {
         if (range == null) return null
-
-        // expand X-range to ensure that the data is placed some distance away from the axes.
-        // see: https://ggplot2.tidyverse.org/current/scale_continuous.html - expand
-//        val mulExp = getMultiplicativeExpand(layer, aes)
-//        val addExp = getAdditiveExpand(layer, aes)
 
         val scale = layer.scaleMap[aes]
         val mulExp = scale.multiplicativeExpand
@@ -382,31 +383,4 @@ object PlotUtil {
 
         return ClosedRange(lowerEndpoint - lowerExpand, upperEndpoint + upperExpand)
     }
-
-//    private fun getMultiplicativeExpand(layer: GeomLayer, aes: Aes<Double>): Double {
-//        val scale = findBoundScale(layer, aes)
-//        return scale?.multiplicativeExpand ?: 0.0
-//    }
-//
-//    private fun getAdditiveExpand(layer: GeomLayer, aes: Aes<Double>): Double {
-//        val scale = findBoundScale(layer, aes)
-//        return scale?.additiveExpand ?: 0.0
-//    }
-//
-//    private fun findBoundScale(layer: GeomLayer, aes: Aes<*>): Scale<*>? {
-//        if (layer.hasBinding(aes)) {
-//            return layer.scaleMap[aes]
-//        }
-//        if (Aes.isPositional(aes)) {
-//            val horizontal = Aes.isPositionalX(aes)
-//            for (rendered in layer.renderedAes()) {
-//                if (layer.hasBinding(rendered)) {
-//                    if (horizontal && Aes.isPositionalX(rendered) || !horizontal && Aes.isPositionalY(rendered)) {
-//                        return layer.scaleMap[aes]
-//                    }
-//                }
-//            }
-//        }
-//        return null
-//    }
 }
