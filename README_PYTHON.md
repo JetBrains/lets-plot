@@ -34,6 +34,7 @@
 - [Data Sampling](#data-sampling)
 - [Export to File](#export-to-file)
 - [Formatting](#formatting)
+- [Tooltip Customization](#tooltip-customization)
 - [The 'bistro' Package](#the-bistro-package)
     - [Correlation Plot](#correlation-plot)
     - [Image Matrix](#image-matrix)
@@ -188,6 +189,14 @@ In Lets-Plot you can use formatting for:
 - labels on X/Y axis. See: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb).
 - the `geom_text()` labels. See: [Label format demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/label_format.ipynb).
 - facetting values in `facet_grid()`, `facet_wrap()` functions. See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb).
+
+
+<a id="tooltip-customization"></a>
+### Tooltip Customization
+
+You can customize the content of tooltips for the layer by using the parameter `tooltips` of `geom` functions.
+
+Learn more: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
 
 
 <a id="the-bistro-package"></a>
