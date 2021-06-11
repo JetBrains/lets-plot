@@ -34,6 +34,7 @@
 - [Data Sampling](#data-sampling)
 - [Export to File](#export-to-file)
 - [Formatting](#formatting)
+- [Tooltip Customization](#tooltip-customization)
 - [The 'bistro' Package](#the-bistro-package)
     - [Correlation Plot](#correlation-plot)
     - [Image Matrix](#image-matrix)
@@ -190,6 +191,14 @@ In Lets-Plot you can use formatting for:
 - facetting values in `facet_grid()`, `facet_wrap()` functions. See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb).
 
 
+<a id="tooltip-customization"></a>
+### Tooltip Customization
+
+You can customize the content of tooltips for the layer by using the parameter `tooltips` of `geom` functions.
+
+Learn more: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
+
+
 <a id="the-bistro-package"></a>
 ### The 'bistro' Package
 
@@ -312,6 +321,9 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <div>
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
+</div>
+<div>
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
 </div>
 
 <a id="what-is-new-in-2-0-0"></a>
