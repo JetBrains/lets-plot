@@ -54,24 +54,20 @@ def test_geodataframe_should_be_mapped():
 
 
 def test_plot_should_has_meta_data_for_geodataframe():
-    plotSpec = ggplot() + geom_polygon(data=make_geodataframe())
+    plot_spec = ggplot() + geom_polygon(data=make_geodataframe())
 
-    expected_data_meta = {
-        'geodataframe': {'geometry': 'coord'}
-    }
-
-    assert EXPECTED_GDF_META == get_data_meta(plotSpec, 0)
+    assert EXPECTED_GDF_META == get_data_meta(plot_spec, 0)
 
 
 def test_plot_should_has_meta_map_for_geodataframe():
-    plotSpec = ggplot() + geom_polygon(map=make_geodataframe())
+    plot_spec = ggplot() + geom_polygon(map=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_map_data_meta(plotSpec, 0)
+    assert EXPECTED_GDF_META == get_map_data_meta(plot_spec, 0)
 
 
 def test_when_both_data_and_map_are_gdf_should_has_geodataframe_meta_only_for_map():
-    plotSpec = ggplot() + geom_polygon(data=make_geodataframe(), map=make_geodataframe())
+    plot_spec = ggplot() + geom_polygon(data=make_geodataframe(), map=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_map_data_meta(plotSpec, 0)
-    assert {} == get_data_meta(plotSpec, 0)
+    assert EXPECTED_GDF_META == get_map_data_meta(plot_spec, 0)
+    assert {} == get_data_meta(plot_spec, 0)
 

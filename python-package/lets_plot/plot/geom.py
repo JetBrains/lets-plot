@@ -3,8 +3,9 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geocoder, auto_join_geocoder, \
-    geo_data_frame_to_wgs84, as_map_join, get_geo_data_frame_meta
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, auto_join_geo_names, \
+    geo_data_frame_to_wgs84, normalize_map_join, get_geo_data_frame_meta
+from lets_plot.geo_data_internals.utils import is_geocoder
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -188,11 +189,6 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
             scale_fill_gradient2(low='#2166ac', mid='#f7f7f7', high='#b2182b')
 
     """
-
-    if is_geocoder(map):
-        map_join = auto_join_geocoder(map_join, map)
-        map = map.get_centroids()
-
     return _geom('point',
                  mapping=mapping,
                  data=data,
@@ -331,8 +327,6 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
             scale_color_discrete()
 
     """
-    if is_geocoder(map):
-        raise ValueError("Geocoding doesn't provide geometries supported by geom_path")
     return _geom('path',
                  mapping=mapping,
                  data=data,
@@ -2078,11 +2072,6 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                                                   .line('population|@est_pop_2019'))
 
     """
-
-    if is_geocoder(map):
-        map_join = auto_join_geocoder(map_join, map)
-        map = map.get_boundaries()
-
     return _geom('polygon',
                  mapping=mapping,
                  data=data,
@@ -2220,11 +2209,6 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                                               .line('population|@est_pop_2019'))
 
     """
-
-    if is_geocoder(map):
-        map_join = auto_join_geocoder(map_join, map)
-        map = map.get_boundaries()
-
     return _geom('map',
                  mapping=mapping,
                  data=data,
@@ -3924,11 +3908,6 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
             geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
-
-    if is_geocoder(map):
-        map_join = auto_join_geocoder(map_join, map)
-        map = map.get_limits()
-
     return _geom('rect',
                  mapping=mapping,
                  data=data,
@@ -4217,11 +4196,6 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
             scale_color_brewer(type='div', palette='RdYlGn', breaks=[-1, -.5, 0, .5, 1])
 
     """
-
-    if is_geocoder(map):
-        map_join = auto_join_geocoder(map_join, map)
-        map = map.get_centroids()
-
     return _geom('text',
                  mapping=mapping,
                  data=data,
@@ -4254,17 +4228,43 @@ def _geom(name, *,
     if is_geocoder(data):
         data = data.get_geocodes()
 
-    if is_geo_data_frame(kwargs.get('map', None)):
-        kwargs['map'] = geo_data_frame_to_wgs84(kwargs['map'])
-    elif is_geo_data_frame(data):
-        data = geo_data_frame_to_wgs84(data)
-        data_meta['data_meta'].update(get_geo_data_frame_meta(data))
+    def process_map_parameters():
+        map_join = kwargs.get('map_join', None)
+        map = kwargs.get('map', None)
+
+        if map_join is None and map is None:
+            return
+
+        map_join = normalize_map_join(map_join)
+
+        if is_geocoder(map):
+            if name in ['point', 'text', 'livemap']:
+                map = map.get_centroids()
+            elif name in ['map', 'polygon']:
+                map = map.get_boundaries()
+            elif name in ['rect']:
+                map = map.get_limits()
+            else:
+                raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
+
+        if is_geo_data_frame(map):
+            map_join = auto_join_geo_names(map_join, map)
+            map = geo_data_frame_to_wgs84(map)
+
+        if map_join is not None:
+            kwargs['map_join'] = map_join
+
+        if map is not None:
+            kwargs['map'] = map
+
+    process_map_parameters()
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 
-    kwargs['map_join'] = as_map_join(
-        kwargs.get('map_join', None)
-    )
+    # TODO: check why map shouldn't be a GeoDataFrame
+    if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map', None)):
+        data = geo_data_frame_to_wgs84(data)
+        data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
     return LayerSpec(geom=name,
                      stat=stat,

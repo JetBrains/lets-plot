@@ -5,6 +5,8 @@ from typing import List, Optional, Union, Dict
 
 from pandas import DataFrame, Series
 
+from lets_plot.geo_data_internals.constants import DF_COLUMN_HIGHLIGHTS, DF_COLUMN_COUNTRY, DF_COLUMN_STATE, \
+    DF_COLUMN_COUNTY, DF_COLUMN_CITY, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
 from .gis.geocoding_service import GeocodingService
 from .gis.request import PayloadKind, RequestBuilder, RequestKind, MapRegion, RegionQuery
 from .gis.response import Answer, GeocodedFeature, Namesake, AmbiguousFeature, LevelKind
@@ -13,14 +15,6 @@ from .type_assertion import assert_type, assert_list_type
 
 NO_OBJECTS_FOUND_EXCEPTION_TEXT = 'No objects were found.'
 MULTIPLE_OBJECTS_FOUND_EXCEPTION_TEXT = "Multiple objects were found. Use all_result=True to see them."
-
-DF_COLUMN_ID = 'id'
-DF_COLUMN_FOUND_NAME = 'found name'
-DF_COLUMN_HIGHLIGHTS = 'highlights'
-DF_COLUMN_CITY = 'city'
-DF_COLUMN_COUNTRY = 'country'
-DF_COLUMN_STATE = 'state'
-DF_COLUMN_COUNTY = 'county'
 
 
 class Resolution(enum.Enum):
@@ -130,7 +124,7 @@ class Geocodes:
         assert_list_type(queries, RegionQuery)
 
         if len(answers) == 0:
-            assert len(queries) == 1 and queries[0].request is None # select all
+            assert len(queries) == 1 and queries[0].request is None  # select all
         else:
             assert len(queries) == len(answers)  # regular request - should have same size
 
@@ -160,7 +154,8 @@ class Geocodes:
         regions: List[MapRegion] = []
         for answer, query in _zip_answers(self._answers, self._queries):
             for feature in answer.features:
-                regions.append(MapRegion.place(feature.id, _select_request_string(query.request, feature.name), self._level_kind))
+                regions.append(
+                    MapRegion.place(feature.id, _select_request_string(query.request, feature.name), self._level_kind))
         return regions
 
     def as_list(self) -> List['Geocodes']:
@@ -366,21 +361,6 @@ class Geocodes:
 
     def _get_features(self, feature_id: str) -> List[GeocodedFeature]:
         return [feature for feature in self._geocoded_features if feature.id == feature_id]
-
-
-    @classmethod
-    def find_name_columns(cls, geocodes_df) -> List[str]:
-        names = []
-        if DF_COLUMN_CITY in geocodes_df:
-            names.append(DF_COLUMN_CITY)
-        if DF_COLUMN_COUNTY in geocodes_df:
-            names.append(DF_COLUMN_COUNTY)
-        if DF_COLUMN_STATE in geocodes_df:
-            names.append(DF_COLUMN_STATE)
-        if DF_COLUMN_COUNTRY in geocodes_df:
-            names.append(DF_COLUMN_COUNTRY)
-
-        return names
 
 
 request_types = Optional[Union[str, List[str], Series]]

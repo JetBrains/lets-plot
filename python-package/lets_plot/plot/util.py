@@ -6,6 +6,7 @@ from typing import Any, Tuple, Sequence
 
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
+from lets_plot.geo_data_internals.utils import is_geocoder, find_geo_names
 
 
 def as_boolean(val, *, default):
@@ -34,7 +35,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
-            if aesthetic == 'name': # ignore FeatureSpec.name property
+            if aesthetic == 'name':  # ignore FeatureSpec.name property
                 continue
 
             if isinstance(variable, MappingMeta):
@@ -48,9 +49,9 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
                 mapping[aesthetic] = variable
 
             if len(mapping_meta) > 0:
-                data_meta.update({ 'mapping_annotations': mapping_meta })
+                data_meta.update({'mapping_annotations': mapping_meta})
 
-    return data, aes(**mapping), {'data_meta': data_meta }
+    return data, aes(**mapping), {'data_meta': data_meta}
 
 
 def is_data_pub_stream(data: Any) -> bool:
@@ -75,38 +76,62 @@ def as_annotated_map_data(raw_map: Any) -> dict:
     raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)) + '. Should be a GeoDataFrame.')
 
 
-def is_geocoder(data: Any) -> bool:
-    # do not import Geocoder directly to suppress OSM attribution from geo_data package
-    if data is None:
-        return False
-
-    return any(base.__name__ == 'Geocoder' for base in type(data).mro())
-
-
-def auto_join_geocoder(map_join: Any, geocoder):
+def normalize_map_join(map_join):
     if map_join is None:
         return None
 
-    # import geo_data prints OSM attribution - minimize scope
-    from lets_plot.geo_data import Geocodes
+    def invalid_map_join_format():
+        return ValueError("map_join must be a str, list[str] or pair of list[str]")
 
     if isinstance(map_join, str):
         data_names = [map_join]
-        map_names = Geocodes.find_name_columns(geocoder.get_geocodes())
+        map_names = None
     elif isinstance(map_join, Sequence):
-        if len(map_join) == 2 and all(isinstance(v, Sequence) and not isinstance(v, str) for v in map_join):
-            data_names = map_join[0]
-            map_names = map_join[1]
-        else:
+        if all(isinstance(v, str) for v in map_join):  # all items are strings
             data_names = map_join
-            map_names = Geocodes.find_name_columns(geocoder.get_geocodes())
-            if any(not isinstance(v, str) for v in data_names):
-                raise ValueError("'map_join' with `Geocoder` must be a str, list[str] or pair of list[str]")
-    else:
-        raise ValueError("'map_join' with `Geocoder` must be a str, list[str] or pair of list[str], but was{}".format(repr(type(map_join))))
+            map_names = None
+        elif all(isinstance(v, Sequence) and not isinstance(v, str) for v in map_join):  # all items are lists
+            if len(map_join) == 1:
+                data_names = map_join[0]
+                map_names = None
+            elif len(map_join) == 2:
+                data_names = map_join[0]
+                map_names = map_join[1]
+            else:
+                raise invalid_map_join_format()
+        else:
+            raise invalid_map_join_format()
 
-    if len(data_names) != len(map_names):
-        raise ValueError("`map_join` expected to have ({}) items, but was({})".format(len(map_names), len(data_names)))
+    else:
+        raise invalid_map_join_format()
+
+    return [data_names, map_names]
+
+
+def auto_join_geo_names(map_join: Any, gdf):
+    if map_join is None:
+        return None
+
+    data_names = map_join[0]
+    map_names = map_join[1]
+
+    if map_names is None:
+        map_names = find_geo_names(gdf)
+        if len(map_names) == 0:
+            print(map_join)
+            print(gdf)
+            raise ValueError(
+                "Can't deduce joining keys.\n"
+                "Define both data and map key columns in map_join "
+                "explicitly: map_join=[['data_column'], ['map_column']]."
+            )
+
+        if len(data_names) > len(map_names):
+            raise ValueError(
+                "Data key columns count exceeds map key columns count: {} > {}".format(len(data_names), len(map_names))
+            )
+
+        map_names = map_names[:len(data_names)]  # use same number of key columns
 
     return [data_names, map_names]
 
@@ -126,34 +151,6 @@ def get_geo_data_frame_meta(geo_data_frame) -> dict:
         }
     }
 
-def as_map_join(map_join):
-    if map_join is None:
-        return None
-
-    if isinstance(map_join, str):
-        data_join_on, map_join_on = map_join, map_join
-    elif isinstance(map_join, Sequence):
-        if len(map_join) == 0:
-            data_join_on, map_join_on = None, None
-        if len(map_join) == 1:
-            data_join_on, map_join_on = map_join[0], map_join[0]
-        elif len(map_join) == 2:
-            data_join_on, map_join_on = map_join[0], map_join[1]
-
-    if data_join_on is None and map_join_on is None:
-        return None
-
-    if data_join_on is None or map_join_on is None:
-        raise ValueError('map_join should not contain None')
-
-    if isinstance(data_join_on, str):
-        data_join_on = [data_join_on]
-
-    if isinstance(map_join_on, str):
-        map_join_on = [map_join_on]
-
-    return [data_join_on, map_join_on]
-
 
 def geo_data_frame_to_wgs84(data):
     if data.crs is not None:
@@ -168,4 +165,3 @@ def is_ndarray(data) -> bool:
         return isinstance(data, ndarray)
     except ImportError:
         return False
-
