@@ -8,18 +8,21 @@ package jetbrains.livemap.canvasDemo
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.vis.canvas.AnimationProvider
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.CanvasControlUtil
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
+import jetbrains.datalore.vis.canvas.awt.AwtTimerPeer
 import java.awt.Dimension
 import javax.swing.JFrame
+import javax.swing.JLayeredPane
 import javax.swing.JPanel
 
 fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {
     val dim = Vector(800, 600)
-    val panel = JPanel()
-    val timer = AwtRepaintTimer(panel::repaint)
+    val panel = JLayeredPane()
+    val timer = AwtTimerPeer()
     val canvasControl = AwtCanvasControl(panel, dim, 1.0, AwtEventPeer(panel, Rectangle(Vector.ZERO, dim)), timer)
 
     val canvas = canvasControl.createCanvas(dim)

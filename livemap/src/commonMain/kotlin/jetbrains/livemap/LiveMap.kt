@@ -174,7 +174,7 @@ class LiveMap(
 
         myDiagnostics.update(dt)
 
-        return true
+        return myLayerRenderingSystem.dirtyLayers.isNotEmpty()
     }
 
     private fun init(componentManager: EcsComponentManager) {

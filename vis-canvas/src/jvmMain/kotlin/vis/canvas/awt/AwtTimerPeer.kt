@@ -11,8 +11,7 @@ import java.awt.EventQueue
 import java.awt.event.ActionListener
 import javax.swing.Timer
 
-class AwtRepaintTimer(
-    repaint: () -> Unit,
+class AwtTimerPeer(
     val executor: (() -> Unit) -> Unit = { f -> EventQueue.invokeLater { f() } },
 ) : Disposable {
     private val myHandlers = ArrayList<(Long) -> Unit>()
@@ -23,7 +22,6 @@ class AwtRepaintTimer(
                 it(System.currentTimeMillis())
             }
         }
-        repaint()
     }
 
     private val myTimer: Timer = Timer(1000 / 60, actionListener)
@@ -34,6 +32,7 @@ class AwtRepaintTimer(
 
             if (!myTimer.isRunning) {
                 myTimer.start()
+                println("AwtTimer started")
             }
         }
 
@@ -45,6 +44,7 @@ class AwtRepaintTimer(
 
             if (myHandlers.isEmpty() && myTimer.isRunning) {
                 myTimer.stop()
+                println("AwtTimer stopped")
             }
         }
     }
@@ -54,5 +54,6 @@ class AwtRepaintTimer(
         myTimer.removeActionListener(actionListener)
         actionListener = ActionListener {}
         myHandlers.clear()
+        println("AwtTimer disposed")
     }
 }

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
+import jetbrains.datalore.vis.canvas.awt.AwtTimerPeer
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import java.awt.Color
 import java.awt.Cursor
@@ -64,17 +64,14 @@ class AwtLiveMapPanel(
 
         this.add(plotComponent)
 
-        val timer = AwtRepaintTimer(
-            this::repaint,
-            executor
-        )
+        val timer = AwtTimerPeer(executor)
 
         plotContainer.liveMapFigures
             .map { it as CanvasFigure }
             .forEach { canvasFigure ->
                 val canvasBounds = canvasFigure.bounds().get()
 
-                val layerPanel = object : JPanel(null), Disposable {
+                val layerPanel = object : JLayeredPane(), Disposable {
                     override fun dispose() {
                         timer.dispose()
                     }

@@ -44,11 +44,12 @@ object LayerManagers {
                     object : RenderingStrategy {
                         override fun render(
                             renderingOrder: List<CanvasLayer>,
-                            layerEntities: Iterable<EcsEntity>,
-                            dirtyLayerEntities: Iterable<EcsEntity>
+                            layerEntities: Collection<EcsEntity>,
+                            dirtyLayerEntities: Collection<EcsEntity>
                         ) {
                             singleCanvasControl.context.clearRect(rect)
                             renderingOrder.forEach(CanvasLayer::render)
+
                             // Force render tasks to be added
                             layerEntities.forEach { it.tag(::DirtyCanvasLayerComponent) }
                         }
@@ -86,9 +87,13 @@ object LayerManagers {
                     object : RenderingStrategy {
                         override fun render(
                             renderingOrder: List<CanvasLayer>,
-                            layerEntities: Iterable<EcsEntity>,
-                            dirtyLayerEntities: Iterable<EcsEntity>
+                            layerEntities: Collection<EcsEntity>,
+                            dirtyLayerEntities: Collection<EcsEntity>
                         ) {
+                            if (dirtyLayerEntities.isEmpty()) {
+                                return
+                            }
+
                             dirtyLayerEntities.forEach {
                                 it.get<CanvasLayerComponent>().canvasLayer.apply { clear(); render(); }
                                 it.untag<DirtyCanvasLayerComponent>()
@@ -131,8 +136,8 @@ object LayerManagers {
                     object : RenderingStrategy {
                         override fun render(
                             renderingOrder: List<CanvasLayer>,
-                            layerEntities: Iterable<EcsEntity>,
-                            dirtyLayerEntities: Iterable<EcsEntity>
+                            layerEntities: Collection<EcsEntity>,
+                            dirtyLayerEntities: Collection<EcsEntity>
                         ) {
                             dirtyLayerEntities.forEach {
                                 it.get<CanvasLayerComponent>().canvasLayer.apply { clear(); render(); }

@@ -14,9 +14,12 @@ import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider
+import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
+import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
+import java.awt.Container
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.Rectangle
@@ -26,15 +29,18 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.imageio.ImageIO
-import javax.swing.*
+import javax.swing.ImageIcon
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JLayeredPane
 
 
 class AwtCanvasControl(
-    root: JPanel,
+    root: Container,
     override val size: Vector,
     private val myPixelRatio: Double,
     private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>,
-    private val myTimer: AwtRepaintTimer
+    private val myTimerPeer: AwtTimerPeer
 ) : CanvasControl {
 
     private val myRoot: JComponent = JLayeredPane()
@@ -70,10 +76,19 @@ class AwtCanvasControl(
         myChildren.remove(canvas)
     }
 
-    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
-        return object : AwtAnimationTimer(myTimer) {
-            override fun handle(millisTime: Long) {
-                eventHandler.onEvent(millisTime)
+    override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
+        return object : AnimationTimer {
+            override fun start() {
+                myTimerPeer.addHandler(::handle)
+            }
+
+            override fun stop() {
+                myTimerPeer.removeHandler(::handle)
+            }
+            fun handle(millisTime: Long) {
+                if (eventHandler.onEvent(millisTime)) {
+                    myRoot.repaint()
+                }
             }
         }
     }
@@ -124,6 +139,6 @@ class AwtCanvasControl(
 
     override fun <T> schedule(f: () -> T) {
 //        invokeLater { f() }
-        myTimer.executor { f() }
+        myTimerPeer.executor { f() }
     }
 }

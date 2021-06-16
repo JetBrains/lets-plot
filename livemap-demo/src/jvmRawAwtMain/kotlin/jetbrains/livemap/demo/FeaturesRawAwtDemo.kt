@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
+import jetbrains.datalore.vis.canvas.awt.AwtTimerPeer
 import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JPanel
@@ -33,7 +33,7 @@ class FeaturesRawAwtDemo {
             size = canvasSize.toVector(),
             myPixelRatio = 1.0,
             myEventPeer = AwtEventPeer(canvasContainer, Rectangle(Vector.ZERO, canvasSize.toVector())),
-            myTimer = AwtRepaintTimer(canvasContainer::repaint)
+            myTimerPeer = AwtTimerPeer()
         )
 
         val canvas = canvasControl.createCanvas(canvasSize.toVector())
