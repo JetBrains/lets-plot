@@ -7,7 +7,6 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.parseRGB
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.placement.ScreenDimensionComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
@@ -21,6 +20,10 @@ class PointLocatorHelper : LocatorHelper {
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
+        if (!target.contains(LOCATABLE_COMPONENTS)) {
+            return false;
+        }
+
         val origins = target.get<ScreenLoopComponent>().origins
         val radius = target.get<ScreenDimensionComponent>().dimension.x / 2
 
@@ -31,5 +34,9 @@ class PointLocatorHelper : LocatorHelper {
         }
 
         return false
+    }
+
+    companion object {
+        val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenDimensionComponent::class)
     }
 }

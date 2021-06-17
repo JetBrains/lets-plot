@@ -7,7 +7,6 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.parseRGB
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.projection.Client
@@ -17,6 +16,10 @@ import kotlin.math.PI
 
 class PieLocatorHelper : LocatorHelper {
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
+        if (!target.contains(LOCATABLE_COMPONENTS)) {
+            return false
+        }
+
         val pieSector = target.get<PieSectorComponent>()
 
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
@@ -43,5 +46,9 @@ class PieLocatorHelper : LocatorHelper {
         }
 
         return pieSector.startAngle <= angle && angle < pieSector.endAngle
+    }
+
+    companion object {
+        val LOCATABLE_COMPONENTS = listOf(PieSectorComponent::class, ScreenLoopComponent::class)
     }
 }
