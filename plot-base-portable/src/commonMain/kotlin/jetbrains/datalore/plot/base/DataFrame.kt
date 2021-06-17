@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.logging.PortableLogging
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
@@ -18,6 +19,13 @@ class DataFrame private constructor(builder: Builder) {
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
+    class OrderingSpec(
+        val variable: Variable,
+        val orderBy: Variable?,
+        val direction: Int
+    )
+    private val myOrderSpecs: List<OrderingSpec>
+
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
 
@@ -25,6 +33,10 @@ class DataFrame private constructor(builder: Builder) {
         assertAllSeriesAreSameSize(builder.myVectorByVar)
         myVectorByVar = HashMap(builder.myVectorByVar)
         myIsNumeric = HashMap(builder.myIsNumeric)
+        myOrderSpecs = builder.myOrderSpecs
+        myOrderSpecs.forEach { orderSpec ->
+            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
+        }
     }
 
     private fun assertAllSeriesAreSameSize(vectorByVar: Map<Variable, List<*>>) {
@@ -202,21 +214,64 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
+    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
+        var nullValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
+
+        val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
+            get(orderSpec.variable)
+                .distinct()
+                .filterNotNull()
+                .sortedWith(compareBy { value -> value as Comparable<*> })
+        } else if (orderSpec.orderBy == Stats.COUNT) {
+            get(orderSpec.variable)
+                .zip(getNumeric(orderSpec.orderBy).requireNoNulls()) // stat count is always zero or value
+                .groupBy ({ (value) -> value }) { (_, statCount) -> statCount }
+                .mapValues { (_, statCounts) -> statCounts.sum() }
+                .toList()
+                .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
+                .mapNotNull { (value) -> value }
+        } else {
+            nullValuesAppendix = SeriesUtil.pickAtIndices(
+                list = get(orderSpec.variable),
+                indices = get(orderSpec.orderBy)
+                    .withIndex()
+                    .filter { it.value == null }
+                    .map { it.index}
+            ).filterNotNull()
+
+            SeriesUtil.pickAtIndices(
+                list = get(orderSpec.variable),
+                indices = get(orderSpec.orderBy)
+                    .withIndex()
+                    .filter { it.value != null }
+                    .sortedWith(compareBy { it.value as Comparable<*> })
+                    .map { it.index })
+                .filterNotNull()
+        }
+
+        // Put the values corresponding to nulls at the end of the result
+        return (if (orderSpec.direction < 0) {
+            orderedValues.reversed()
+        } else {
+            orderedValues
+        } + nullValuesAppendix).toSet()
+    }
+
     companion object {
         private val LOG = PortableLogging.logger(DataFrame::class)
     }
 
     class Builder {
-
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
+        internal val myOrderSpecs = ArrayList<OrderingSpec>()
 
         constructor()
 
         constructor(data: DataFrame) {
             myVectorByVar.putAll(data.myVectorByVar)
             myIsNumeric.putAll(data.myIsNumeric)
-
+            myOrderSpecs.addAll(data.myOrderSpecs)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {
@@ -237,13 +292,29 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-        fun putIntern(variable: Variable, v: List<*>) {
+        internal fun putIntern(variable: Variable, v: List<*>) {
             myVectorByVar[variable] = ArrayList(v)
         }
 
         fun remove(variable: Variable): Builder {
             myVectorByVar.remove(variable)
             myIsNumeric.remove(variable)
+            return this
+        }
+
+        fun addOrderSpecs(orderSpecs: List<OrderingSpec>): Builder {
+            orderSpecs.forEach(::addOrderSpec)
+            return this
+        }
+
+        fun addOrderSpec(orderSpec: OrderingSpec): Builder {
+            val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
+            // If multiple specifications for the variable - choose a more specific one:
+            // prefer with specified 'orderBy'
+            if (currentOrderSpec?.orderBy == null) {
+                myOrderSpecs.remove(currentOrderSpec)
+                myOrderSpecs.add(orderSpec)
+            }
             return this
         }
 

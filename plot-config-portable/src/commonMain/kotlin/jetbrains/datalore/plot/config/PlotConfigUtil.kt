@@ -188,7 +188,7 @@ object PlotConfigUtil {
                 val factors = data.distinctValues(variable)
                 discreteDomainByReprAes.getOrPut(reprAes) { LinkedHashSet() }.addAll(factors)
             } else if (!Aes.isPositionalXY(aes)) {
-                // add domain for any "with contonuous domain but not positional" aes.
+                // add domain for any "with continuous domain but not positional" aes.
                 continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
             }
         }

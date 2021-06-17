@@ -28,13 +28,16 @@ internal object SamplingUtil {
         return (0 until size).map { groupMapper(it) }.distinct().toMutableList()
     }
 
-    fun xVar(data: DataFrame): Variable {
-        if (data.has(Stats.X)) {
-            return Stats.X
-        } else if (data.has(TransformVar.X)) {
-            return TransformVar.X
+    fun xVar(variables: Set<Variable>): Variable? {
+        return when {
+            Stats.X in variables -> Stats.X
+            TransformVar.X in variables -> TransformVar.X
+            else -> null
         }
-        throw IllegalStateException("Can't apply sampling: couldn't deduce the (X) variable.")
+    }
+    fun xVar(data: DataFrame): Variable {
+        return xVar(data.variables())
+            ?: throw IllegalStateException("Can't apply sampling: couldn't deduce the (X) variable.")
     }
 
     fun yVar(data: DataFrame): Variable {

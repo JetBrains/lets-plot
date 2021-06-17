@@ -16,6 +16,8 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderingSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
@@ -35,6 +37,7 @@ class LayerConfig(
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
     plotDiscreteAes: Set<*>,
+    plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
     private val clientSide: Boolean
 ) : OptionsAccessor(
@@ -53,6 +56,7 @@ class LayerConfig(
     val constantsMap: Map<Aes<*>, Any>
 
     private val mySamplings: List<Sampling>?
+    private val myOrderOptions: List<OrderOption>
     val tooltips: TooltipSpecification
 
     var ownData: DataFrame? = null
@@ -79,6 +83,8 @@ class LayerConfig(
     val isLiveMap: Boolean
         get() = geomProto.geomKind == GeomKind.LIVE_MAP
 
+    val orderOptions: List<OrderOption>
+        get() = myOrderOptions
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -197,12 +203,21 @@ class LayerConfig(
             clientSide
         )
         ownData = layerData
-        myCombinedData = combinedData
 
         mySamplings = if (clientSide) {
             null
         } else {
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        }
+
+        val orderOptionsFromPlot = plotOrderOptions.filter { orderOption -> orderOption.aesName in varBindings.map { it.aes.name } }
+        myOrderOptions = orderOptionsFromPlot + DataMetaUtil.getOrderOptions(layerOptions)
+
+        myCombinedData = if (clientSide) {
+            val orderSpecs = myOrderOptions.map { createOrderingSpec(combinedData.variables(), varBindings, it) }
+            DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
+        } else {
+            combinedData
         }
     }
 

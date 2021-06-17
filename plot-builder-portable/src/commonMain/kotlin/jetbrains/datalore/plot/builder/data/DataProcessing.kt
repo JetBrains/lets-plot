@@ -58,6 +58,7 @@ object DataProcessing {
         facets: PlotFacets,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
+        orderOptions: List<OrderOptionUtil.OrderOption>,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
@@ -123,12 +124,22 @@ object DataProcessing {
             }
         }
 
-        val b = Builder()
-        for (variable in resultSeries.keys) {
-            b.put(variable, resultSeries[variable]!!)
+        val dataAfterStat = Builder().run {
+            // put results
+            for (variable in resultSeries.keys) {
+                put(variable, resultSeries[variable]!!)
+            }
+
+            // set ordering specifications
+            val orderSpecs = orderOptions.map { orderOption ->
+                OrderOptionUtil.createOrderingSpec(resultSeries.keys, bindings, orderOption)
+            }
+            addOrderSpecs(orderSpecs)
+
+            // build DataFrame
+            build()
         }
 
-        val dataAfterStat = b.build()
         val groupingContextAfterStat = GroupingContext.withOrderedGroups(
             dataAfterStat,
             groupSizeListAfterStat

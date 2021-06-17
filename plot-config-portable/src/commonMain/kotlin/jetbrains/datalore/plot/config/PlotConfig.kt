@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
@@ -119,7 +120,8 @@ abstract class PlotConfig(
                 layerOptions as Map<String, Any>,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
+                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
+                DataMetaUtil.getOrderOptions(this.mergedOptions)
             )
             layerConfigs.add(layerConfig)
         }
@@ -130,7 +132,8 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>
+        plotDiscreteAes: Set<*>,
+        plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig
 
 
