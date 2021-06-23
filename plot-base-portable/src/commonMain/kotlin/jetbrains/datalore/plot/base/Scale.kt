@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
  *
  *
  * name - (axis/legend title)
- * brakes (domain values) - ticks on axis, items/segments on legends
+ * breaks (domain values) - ticks on axis, items/segments on legends
  * labels - tick labels
  *
  * @param <T> - type of target aesthetic

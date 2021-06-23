@@ -5,10 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.datetime.Date
-import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.base.datetime.Month
-import jetbrains.datalore.base.datetime.Time
+import jetbrains.datalore.base.datetime.*
 import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
@@ -207,6 +204,37 @@ class ScaleConfigLabelsTest {
             closeRange = ClosedRange(instant, instant)
         )
         assertEquals(listOf("January 2021"), yLabels)
+    }
+
+    @Test
+    fun `DateTime format should be applied to the breaks`() {
+        val instants = List(3) {
+            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()))
+        }.map { TimeZone.UTC.toInstant(it).timeSinceEpoch.toDouble() }
+
+        val scaleMap = getScaleMap(
+            data = mapOf(
+                "value" to listOf(instants.first())
+            ),
+            mapping = mappingXY,
+            scales = listOf(
+                mapOf(
+                    Option.Scale.AES to Aes.X.name,
+                    DATE_TIME to true,
+                    FORMAT to "%d-%m-%Y",
+                    BREAKS to instants
+                )
+            )
+        )
+
+        val xLabels = getScaleLabels(
+            scaleMap[Aes.X],
+            targetCount = 1,
+            closeRange = ClosedRange(instants.first(), instants.last())
+        )
+        assertEquals(
+            expected = listOf("01-01-2021","02-01-2021","03-01-2021"),
+            xLabels)
     }
 
     @Test
