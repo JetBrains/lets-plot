@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.config.Option.Mapping.GROUP
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
@@ -20,7 +21,8 @@ import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 class TooltipConfig(
     opts: Map<String, Any>,
     private val constantsMap: Map<Aes<*>, Any>,
-    private val groupingVarName: String?
+    private val groupingVarName: String?,
+    private val varBindings: List<VarBinding>
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
@@ -47,8 +49,14 @@ class TooltipConfig(
             }.toMutableMap()
 
         // Create tooltip lines from the given variable list
-        private val myLinesForVariableList = tooltipVariables.map { variableName ->
-            val valueSource = getValueSource(VARIABLE_NAME_PREFIX + variableName)
+        private val myLinesForVariableList: List<TooltipLine> = tooltipVariables.map { variableName ->
+            // If format() is not specified for the variable, use the aes formatting
+            val aes = varBindings.find { it.variable.name == variableName }?.aes
+            val valueSource = if (aes != null && varField(variableName) !in myValueSources) {
+                getValueSource(aesField(aes.name))
+            } else {
+                getValueSource(varField(variableName))
+            }
             TooltipLine.defaultLineForValueSource(valueSource)
         }
 
@@ -147,6 +155,13 @@ class TooltipConfig(
             return allFormats
         }
 
+        private fun getValueSource(field: Pair<String, Boolean>): ValueSource {
+            if (field !in myValueSources) {
+                myValueSources[field] = createValueSource(fieldName = field.first, isAes = field.second)
+            }
+            return myValueSources[field]!!
+        }
+
         private fun getValueSource(fieldString: String): ValueSource {
             val field = when {
                 fieldString.startsWith(AES_NAME_PREFIX) -> {
@@ -158,10 +173,7 @@ class TooltipConfig(
                 else -> error("Unknown type of the field with name = \"$fieldString\"")
             }
 
-            if (field !in myValueSources) {
-                myValueSources[field] = createValueSource(fieldName = field.first, isAes = field.second)
-            }
-            return myValueSources[field]!!
+            return getValueSource(field)
         }
 
         private fun detachVariableName(field: String) =
@@ -177,7 +189,7 @@ class TooltipConfig(
 
         private fun aesField(aesName: String) = Pair(aesName, true)
 
-        private fun varField(aesName: String) = Pair(aesName, false)
+        private fun varField(varName: String) = Pair(varName, false)
 
         private fun readAnchor(): TooltipAnchor? {
             if (!has(Option.Layer.TOOLTIP_ANCHOR)) {
