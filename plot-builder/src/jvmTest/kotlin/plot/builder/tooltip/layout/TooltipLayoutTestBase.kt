@@ -211,7 +211,7 @@ internal open class TooltipLayoutTestBase {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
                     LayoutManager(myViewport, myHorizontalAlignment)
-                        .arrange(myTooltipData, myCursor, geomBounds = null)
+                        .arrange(myTooltipData, myCursor, geomBounds = null, visibilityBounds = null)
             }
         }
 

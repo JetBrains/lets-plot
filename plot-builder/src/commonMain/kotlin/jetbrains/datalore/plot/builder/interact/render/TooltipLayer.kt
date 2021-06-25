@@ -28,22 +28,20 @@ internal class TooltipLayer(
     fun showTooltips(
         cursor: DoubleVector,
         tooltipSpecs: List<TooltipSpec>,
-        geomBounds: DoubleRectangle?
+        geomBounds: DoubleRectangle?,
+        geomClipBounds: DoubleRectangle?
     ) {
         clearTooltips()
 
-        if (geomBounds != null) {
-            showCrosshair(tooltipSpecs, geomBounds)
-        }
-
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
+            .also { specs -> geomBounds?.let { showCrosshair(specs, it) } }
             .map { spec -> spec
                 .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds = geomBounds) }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds, geomClipBounds) }
             .map { arranged ->
                 arranged.tooltipBox.apply {
                     setPosition(

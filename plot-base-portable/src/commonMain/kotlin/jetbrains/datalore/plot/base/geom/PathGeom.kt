@@ -45,30 +45,9 @@ open class PathGeom : GeomBase() {
             false
         )
         appendNodes(
-            geomConstructor.construct(withHints = false),
+            geomConstructor.construct(),
             root
         )
-        buildHints(aesthetics, coord, linesHelper, targetCollector)
-    }
-
-    private fun buildHints(
-        aesthetics: Aesthetics,
-        coord: CoordinateSystem,
-        linesHelper: LinesHelper,
-        targetCollector: GeomTargetCollector
-    ) {
-        val dataPoints = dataPoints(aesthetics).filter { p ->
-            val x = p.x()
-            val y = p.y()
-            SeriesUtil.allFinite(x, y) && coord.isPointInLimits(DoubleVector(x!!,y!!), isClient = false)
-        }
-
-        LinePathConstructor(
-            targetCollector,
-            dataPoints,
-            linesHelper,
-            false
-        ).buildHints()
     }
 
     companion object {

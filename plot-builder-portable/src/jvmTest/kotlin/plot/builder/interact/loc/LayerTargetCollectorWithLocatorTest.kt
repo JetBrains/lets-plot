@@ -119,8 +119,7 @@ class LayerTargetCollectorWithLocatorTest {
             return LayerTargetCollectorWithLocator(
                 geomKind = geomKind,
                 lookupSpec = builder.createLookupSpec(),
-                contextualMapping = contextualMapping,
-                coordinateSystem = Coords.create(origin = DoubleVector.ZERO)
+                contextualMapping = contextualMapping
             )
         }
     }

@@ -356,7 +356,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             tile.liveMapFigure?.let(myLiveMapFigures::add)
 
             val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
-            myTooltipHelper.addTileInfo(geomBoundsAbsolute, tile.targetLocators)
+            val geomClipBounds = tile.clipRect?.add(geomBoundsAbsolute.origin)
+            myTooltipHelper.addTileInfo(geomBoundsAbsolute, tile.targetLocators, geomClipBounds)
         }
 
         @Suppress("ConstantConditionIf")
@@ -426,6 +427,10 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     fun getGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
         return myTooltipHelper.getGeomBounds(plotCoord)
+    }
+
+    fun getGeomClipBounds(plotCoord: DoubleVector): DoubleRectangle? {
+        return myTooltipHelper.getGeomClipBounds(plotCoord)
     }
 
     companion object {

@@ -33,7 +33,7 @@ open class PolygonGeom : GeomBase() {
                 true
             )
         appendNodes(
-            geomConstructor.construct(withHints = true),
+            geomConstructor.construct(),
             root
         )
     }

@@ -7,15 +7,13 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 
 class LayerTargetCollectorWithLocator(
     private val geomKind: GeomKind,
     private val lookupSpec: GeomTargetLocator.LookupSpec,
-    private val contextualMapping: ContextualMapping,
-    private val coordinateSystem: CoordinateSystem
+    private val contextualMapping: ContextualMapping
 ) : GeomTargetCollector, GeomTargetLocator {
 
     private val myTargets = ArrayList<TargetPrototype>()
@@ -32,9 +30,6 @@ class LayerTargetCollectorWithLocator(
             if (radius == 0.0 || tooltipParams.getColor().alpha == 0) {
                 return;
             }
-        }
-        if (!coordinateSystem.isPointInLimits(point)) {
-            return
         }
         addTarget(
             TargetPrototype(
@@ -57,9 +52,6 @@ class LayerTargetCollectorWithLocator(
                 return
             }
         }
-        if (!coordinateSystem.isRectInLimits(rectangle)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.rect(rectangle),
@@ -76,9 +68,6 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        if (!coordinateSystem.isPathInLimits(points)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.path(points),
@@ -95,9 +84,6 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        if (!coordinateSystem.isPolygonInLimits(points)) {
-            return
-        }
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),

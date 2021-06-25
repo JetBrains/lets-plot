@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePo
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 open class AreaGeom : GeomBase() {
 
@@ -45,13 +44,8 @@ open class AreaGeom : GeomBase() {
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val dataPoints = dataPoints(aesthetics).filter { p ->
-            val x = p.x()
-            val y = p.y()
-            SeriesUtil.allFinite(x, y) && coord.isPointInLimits(DoubleVector(x!!,y!!), isClient = false)
-        }
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-            dataPoints,
+            aesthetics.dataPoints(),
             singlePointAppender { p -> toClient(geomHelper, p) },
             reducer(0.999, false)
         )

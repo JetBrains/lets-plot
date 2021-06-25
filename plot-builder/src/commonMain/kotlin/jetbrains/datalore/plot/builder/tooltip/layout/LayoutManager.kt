@@ -29,7 +29,12 @@ class LayoutManager(
     private var myVerticalGeomSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
     private lateinit var myVerticalAlignmentResolver: VerticalAlignmentResolver
 
-    fun arrange(tooltips: List<MeasuredTooltip>, cursorCoord: DoubleVector, geomBounds: DoubleRectangle?): List<PositionedTooltip> {
+    fun arrange(
+        tooltips: List<MeasuredTooltip>,
+        cursorCoord: DoubleVector,
+        geomBounds: DoubleRectangle?,
+        visibilityBounds: DoubleRectangle?
+    ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
         myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
@@ -73,7 +78,11 @@ class LayoutManager(
             desiredPosition.select(Y_AXIS_TOOLTIP).map { it.rect() }
         )
 
-        return rearrangeWithoutOverlapping(desiredPosition)
+        // Select tooltips within the visibility bounds
+        val visiblePositionedTooltips = desiredPosition.filter { positionedTooltip ->
+            visibilityBounds?.contains(positionedTooltip.stemCoord) ?: true
+        }
+        return rearrangeWithoutOverlapping(visiblePositionedTooltips)
     }
 
     private fun calculateDataTooltipsPosition(
