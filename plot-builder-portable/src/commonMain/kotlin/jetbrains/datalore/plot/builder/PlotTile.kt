@@ -63,6 +63,9 @@ internal class PlotTile(
     private val isDebugDrawing: Boolean
         get() = myDebugDrawing.get()
 
+    var clipRect: DoubleRectangle? = null
+        private set
+
     init {
         myLayers = ArrayList(layers)
 
@@ -154,9 +157,9 @@ internal class PlotTile(
 
                 val xRange = myCoord.xClientLimit ?: ClosedRange(0.0, geomBounds.width)
                 val yRange = myCoord.yClientLimit ?: ClosedRange(0.0, geomBounds.height)
-                val clipRect = GeometryUtil.doubleRange(xRange, yRange)
+                clipRect = GeometryUtil.doubleRange(xRange, yRange)
 
-                layerComponent.clipBounds(clipRect)
+                layerComponent.clipBounds(clipRect!!)
                 add(layerComponent)
             }
         }
@@ -287,8 +290,7 @@ internal class PlotTile(
             val targetCollector = LayerTargetCollectorWithLocator(
                 layer.geomKind,
                 layer.locatorLookupSpec,
-                layer.contextualMapping,
-                coord
+                layer.contextualMapping
             )
             myTargetLocators.add(targetCollector)
 
