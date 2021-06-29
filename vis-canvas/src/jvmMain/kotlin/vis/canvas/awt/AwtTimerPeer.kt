@@ -32,7 +32,6 @@ class AwtTimerPeer(
 
             if (!myTimer.isRunning) {
                 myTimer.start()
-                println("AwtTimer started")
             }
         }
 
@@ -44,7 +43,6 @@ class AwtTimerPeer(
 
             if (myHandlers.isEmpty() && myTimer.isRunning) {
                 myTimer.stop()
-                println("AwtTimer stopped")
             }
         }
     }
@@ -54,6 +52,5 @@ class AwtTimerPeer(
         myTimer.removeActionListener(actionListener)
         actionListener = ActionListener {}
         myHandlers.clear()
-        println("AwtTimer disposed")
     }
 }
