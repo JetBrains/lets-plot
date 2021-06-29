@@ -88,8 +88,16 @@ def normalize_map_join(map_join):
         map_names = None
     elif isinstance(map_join, Sequence):
         if all(isinstance(v, str) for v in map_join):  # all items are strings
-            data_names = map_join
-            map_names = None
+            if len(map_join) == 1:
+                data_names = map_join
+                map_names = None
+            elif len(map_join) == 2:
+                data_names = [map_join[0]]
+                map_names = [map_join[1]]
+            elif len(map_join) > 2:
+                raise ValueError("map_join of type list[str] expected to have 1 or 2 items, but was {}".format(len(map_join)))
+            else:
+                raise invalid_map_join_format()
         elif all(isinstance(v, Sequence) and not isinstance(v, str) for v in map_join):  # all items are lists
             if len(map_join) == 1:
                 data_names = map_join[0]
