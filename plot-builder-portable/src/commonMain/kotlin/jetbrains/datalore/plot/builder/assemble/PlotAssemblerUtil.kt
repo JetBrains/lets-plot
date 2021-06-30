@@ -164,10 +164,11 @@ internal object PlotAssemblerUtil {
                 }
 
                 if (!colorBar) {
-                    if (!layerBindingsByScaleName.containsKey(scaleName)) {
-                        layerBindingsByScaleName[scaleName] = ArrayList()
-                    }
-                    layerBindingsByScaleName[scaleName]!!.add(binding)
+//                    if (!layerBindingsByScaleName.containsKey(scaleName)) {
+//                        layerBindingsByScaleName[scaleName] = ArrayList()
+//                    }
+//                    layerBindingsByScaleName[scaleName]!!.add(binding)
+                    layerBindingsByScaleName.getOrPut(scaleName) { ArrayList() }.add(binding)
                 }
             }
 

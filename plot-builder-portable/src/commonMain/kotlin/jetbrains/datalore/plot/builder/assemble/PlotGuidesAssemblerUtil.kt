@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
@@ -46,11 +45,11 @@ internal object PlotGuidesAssemblerUtil {
                 }
             }
 
-            val scale = layerTiles.getScale(aes)
-            val scaleName = scale.name
-            if (isNullOrEmpty(scaleName)) {
-                continue
-            }
+//            val scale = layerTiles.getScale(aes)
+//            val scaleName = scale.name
+//            if (isNullOrEmpty(scaleName)) {
+//                continue
+//            }
 
             result.add(aes)
         }

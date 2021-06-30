@@ -42,6 +42,6 @@ abstract class LegendBoxSpec(val title: String, val theme: LegendTheme) {
     }
 
     fun hasTitle(): Boolean {
-        return !Strings.isNullOrEmpty(title)
+        return !title.isBlank()
     }
 }
