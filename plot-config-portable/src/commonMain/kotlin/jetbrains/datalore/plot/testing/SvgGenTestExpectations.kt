@@ -32,7 +32,7 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |	font-size: 12px;
         |}
         |.plt-axis-tooltip text {
-        |	font-size: 10px;
+        |	font-size: 12px;
         |}
         |.plt-axis line {
         |	shape-rendering: crispedges;
@@ -325,7 +325,7 @@ val EXPECTED_BUNCH_SVG = """
         |	font-size: 12px;
         |}
         |.plt-axis-tooltip text {
-        |	font-size: 10px;
+        |	font-size: 12px;
         |}
         |.plt-axis line {
         |	shape-rendering: crispedges;
