@@ -66,22 +66,21 @@ object DataProcessing {
         }
 
         val groups = groupingContext.groupMapper
-        var resultSeries = HashMap<Variable, List<Any>>()
 
-        val groupSizeListAfterStat = ArrayList<Int>()
+        val resultSeries: Map<Variable, List<Any>>
+        val groupSizeListAfterStat: List<Int>
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
             val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
-            groupSizeListAfterStat.add(sd.rowCount())
-            for (variable in sd.variables()) {
+            groupSizeListAfterStat = listOf(sd.rowCount())
+            resultSeries = sd.variables().associateWith { variable ->
                 @Suppress("UNCHECKED_CAST")
-                val list = sd[variable] as List<Any>
-                resultSeries[variable] = list
+                sd[variable] as List<Any>
             }
         } else { // add offset to each group
-            var lastStatGroupEnd = -1
             val groupMerger = GroupsMerger()
+            var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
                 var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
                 if (sd.isEmpty) {
@@ -120,7 +119,7 @@ object DataProcessing {
             }
             // Get merged series
             resultSeries = groupMerger.getResultSeries()
-            groupSizeListAfterStat.addAll(groupMerger.getGroupSizes())
+            groupSizeListAfterStat = groupMerger.getGroupSizes()
         }
 
         val dataAfterStat = Builder().run {
