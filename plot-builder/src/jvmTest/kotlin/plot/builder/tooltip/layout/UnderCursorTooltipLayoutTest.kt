@@ -33,6 +33,21 @@ internal class UnderCursorTooltipLayoutTest : TooltipLayoutTestBase() {
         )
     }
 
+    @Test
+    fun `tooltip is out of visibility`() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(DEFAULT_TOOLTIP_SIZE)
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .cursor(coord(250.0, 350.0))
+            .addTooltip(tooltipBuilder.cursor(CURSOR_TIP_KEY).buildTooltip())
+            .build(visibilityBounds = LIMIT_RECT)
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
+    }
+
     companion object {
 
         private const val VERTICAL_TIP_KEY = "vertical"

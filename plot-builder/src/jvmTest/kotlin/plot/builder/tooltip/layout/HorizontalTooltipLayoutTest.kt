@@ -243,6 +243,22 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
         )
     }
 
+    @Test
+    fun `tooltips are out of visibility`() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(DEFAULT_TOOLTIP_SIZE)
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(tooltipBuilder.horizontal(FIRST_TOOLTIP_KEY,  coord(10.0,  10.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(SECOND_TOOLTIP_KEY, coord(250.0, 350.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(THIRD_TOOLTIP_KEY,  coord(350.0, 250.0)).buildTooltip())
+            .build(visibilityBounds = LIMIT_RECT)
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
+    }
+
     companion object {
         private const val IGNORED_KEY = "ignored"
         private const val TOOLTIP_KEY = "tooltip"

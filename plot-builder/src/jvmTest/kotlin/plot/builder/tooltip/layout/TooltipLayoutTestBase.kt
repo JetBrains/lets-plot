@@ -119,6 +119,10 @@ internal open class TooltipLayoutTestBase {
         return v != null
     }
 
+    fun assertNoTooltips() {
+        assertTrue(myArrangedTooltips.isEmpty())
+    }
+
     fun assertAllTooltips(vararg expectations: ExpectedTooltip) {
         assertEquals(expectations.size, myArrangedTooltips.size)
 
@@ -212,11 +216,11 @@ internal open class TooltipLayoutTestBase {
             return this
         }
 
-        fun build(): TipLayoutManagerController {
+        fun build(visibilityBounds: DoubleRectangle? = null): TipLayoutManagerController {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
                     LayoutManager(myViewport, myHorizontalAlignment)
-                        .arrange(myTooltipData, myCursor, geomBounds = null, visibilityBounds = null)
+                        .arrange(myTooltipData, myCursor, geomBounds = null, visibilityBounds = visibilityBounds)
             }
         }
 
@@ -302,6 +306,7 @@ internal open class TooltipLayoutTestBase {
     companion object {
         val VIEWPORT = DoubleRectangle(0.0, 0.0, 500.0, 500.0)
         val DEFAULT_TOOLTIP_SIZE = DoubleVector(80.0, 40.0)
+        val LIMIT_RECT = DoubleRectangle(100.0, 100.0, 200.0, 200.0)
 
         const val DEFAULT_OBJECT_RADIUS = 40.0
         private const val DOUBLE_COMPARE_EPSILON = 0.01
