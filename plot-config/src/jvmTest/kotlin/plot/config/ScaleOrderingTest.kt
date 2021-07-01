@@ -490,6 +490,36 @@ class ScaleOrderingTest {
         }
     }
 
+    @Test
+    fun `order in the bar and in the legend should be the same`() {
+        val data = """
+            'x'   :  [ "A", "A", "A"],
+            'fill':  [ '2', '1', '3']
+        """
+        val orderingSettings = makeOrderingSettings("fill", "..count..", -1)
+        val spec = """{
+              "kind": "plot",
+              "layers": [
+                {
+                  "data" : { $data },
+                  "mapping": $myMapping,
+                  "geom": "bar",
+                  "data_meta": { "mapping_annotations": [ $orderingSettings ] }
+                }
+              ]
+            }""".trimIndent()
+
+        val geomLayer = buildGeomLayer(spec)
+        val expectedOrder = listOf("3", "2", "1")
+        assertScaleOrdering(
+            geomLayer,
+            expectedScaleBreaks = mapOf(Aes.FILL to expectedOrder),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to listOf(expectedOrder)
+            )
+        )
+    }
+
     companion object {
         private fun buildGeomLayer(spec: String): GeomLayer {
             val plotOpts = parsePlotSpec(spec)

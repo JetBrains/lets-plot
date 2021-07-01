@@ -66,7 +66,7 @@ object DataProcessing {
         }
 
         val groups = groupingContext.groupMapper
-        val resultSeries = HashMap<Variable, List<Any>>()
+        var resultSeries = HashMap<Variable, List<Any>>()
 
         val groupSizeListAfterStat = ArrayList<Int>()
 
@@ -81,13 +81,15 @@ object DataProcessing {
             }
         } else { // add offset to each group
             var lastStatGroupEnd = -1
+            val groupMerger = GroupsMerger()
             for (d in splitByGroup(data, groups)) {
                 var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
+                groupMerger.initOrderSpecs(orderOptions, sd.variables(), bindings)
 
-                groupSizeListAfterStat.add(sd.rowCount())
+                val curGroupSizeAfterStat = sd.rowCount()
 
                 // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                 if (sd.has(Stats.GROUP)) {
@@ -113,15 +115,12 @@ object DataProcessing {
                     }
                 }
 
-                // merge results
-                for (variable in sd.variables()) {
-                    if (!resultSeries.containsKey(variable)) {
-                        resultSeries[variable] = ArrayList()
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    (resultSeries[variable] as MutableList).addAll(sd[variable] as List<Any>)
-                }
+                // Add group's data
+                groupMerger.addGroup(sd, curGroupSizeAfterStat)
             }
+            // Get merged series
+            resultSeries = groupMerger.getResultSeries()
+            groupSizeListAfterStat.addAll(groupMerger.getGroupSizes())
         }
 
         val dataAfterStat = Builder().run {
@@ -149,6 +148,102 @@ object DataProcessing {
             dataAfterStat,
             groupingContextAfterStat
         )
+    }
+
+    class GroupsMerger {
+        private var myOrderSpecs: List<DataFrame.OrderingSpec>? = null
+        private val myOrderedGroups = ArrayList<Group>()
+
+        fun initOrderSpecs(
+            orderOptions: List<OrderOptionUtil.OrderOption>,
+            variables: Set<Variable>,
+            bindings: List<VarBinding>
+        ) {
+            if (myOrderSpecs != null) return
+            myOrderSpecs = orderOptions.filter { orderOption ->
+                // Skip positionals aes
+                val aes = Aes.values().find { it.name == orderOption.aesName }
+                !Aes.isPositional(aes!!)
+            }.sortedBy { orderOption ->
+                // Process in the order of the aes name
+                orderOption.aesName
+            }.map { orderOption ->
+                OrderOptionUtil.createOrderingSpec(variables, bindings, orderOption)
+            }
+        }
+
+        fun getResultSeries(): HashMap<Variable, List<Any>> {
+            val resultSeries = HashMap<Variable, List<Any>>()
+            myOrderedGroups.forEach { group ->
+                for (variable in group.df.variables()) {
+                    if (!resultSeries.containsKey(variable)) {
+                        resultSeries[variable] = ArrayList()
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    (resultSeries[variable] as MutableList).addAll(group.df[variable] as List<Any>)
+                }
+            }
+            return resultSeries
+        }
+
+        fun getGroupSizes(): List<Int> {
+            return myOrderedGroups.map(Group::groupSize)
+        }
+
+        inner class Group(
+            val df: DataFrame,
+            val groupSize: Int
+        ) : Comparable<Group> {
+            override fun compareTo(other: Group): Int {
+                fun compareValues(values1: List<Any?>, values2: List<Any?>, dir: Int): Int {
+                    values1.zip(values2).forEach { (v1, v2) ->
+                        val cmp = compareValues(v1 as Comparable<*>, v2 as Comparable<*>)
+                        if (cmp != 0) {
+                            return if (dir < 0) -1 * cmp else cmp
+                        }
+                    }
+                    return 0
+                }
+
+                fun getValues(variable: Variable, df: DataFrame): List<*> {
+                    return if (variable == Stats.COUNT) {
+                        listOf(df.getNumeric(variable).filterNotNull().sum())
+                    } else {
+                        df[variable]
+                    }
+                }
+
+                for (spec in myOrderSpecs!!) {
+                    val byVariable = spec.orderBy ?: spec.variable
+                    var cmp = compareValues(getValues(byVariable, df), getValues(byVariable, other.df), spec.direction)
+                    if (cmp == 0 && byVariable == Stats.COUNT)
+                        cmp = compareValues(
+                            getValues(spec.variable, df),
+                            getValues(spec.variable, other.df),
+                            spec.direction
+                        )
+                    if (cmp != 0) {
+                        return cmp
+                    }
+                }
+                return 0
+            }
+        }
+
+        fun addGroup(d: DataFrame, groupSize: Int) {
+            val group = Group(d, groupSize)
+            val indexToInsert = findIndexToInsert(group)
+            myOrderedGroups.add(indexToInsert, group)
+        }
+
+        private fun findIndexToInsert(group: Group): Int {
+            if (myOrderSpecs.isNullOrEmpty()) {
+                return myOrderedGroups.size
+            }
+            var index = myOrderedGroups.binarySearch(group)
+            if (index < 0) index = index.inv()
+            return index
+        }
     }
 
     internal fun findOptionalVariable(data: DataFrame, name: String?): Variable? {

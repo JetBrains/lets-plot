@@ -228,7 +228,7 @@ class DataFrame private constructor(builder: Builder) {
                 .groupBy ({ (value) -> value }) { (_, statCount) -> statCount }
                 .mapValues { (_, statCounts) -> statCounts.sum() }
                 .toList()
-                .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
+                .sortedWith(compareBy({ (_, totalStatCount) -> totalStatCount }, { (value, _) -> value as Comparable<*> }))
                 .mapNotNull { (value) -> value }
         } else {
             nullValuesAppendix = SeriesUtil.pickAtIndices(
