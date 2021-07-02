@@ -17,11 +17,11 @@ class StringFormat private constructor(
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
-        STRING_FORMAT,
-        DATETIME_FORMAT
+        DATETIME_FORMAT,
+        STRING_FORMAT
     }
 
-    private val myFormatters: List<((Any) -> String)?>
+    private val myFormatters: List<((Any) -> String)>
 
     init {
         myFormatters = when (formatType) {
@@ -67,9 +67,9 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(formatPattern: String, formatType: FormatType): ((Any) -> String)? {
+    private fun initFormatter(formatPattern: String, formatType: FormatType): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
-            return null
+            return Any::toString
         }
         when (formatType) {
             NUMBER_FORMAT -> {
