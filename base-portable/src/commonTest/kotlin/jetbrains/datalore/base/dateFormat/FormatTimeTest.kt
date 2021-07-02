@@ -14,7 +14,7 @@ class FormatTimeTest {
 
     @Test
     fun onlyTime() {
-        val f = Format("%Y-%m-%dT%H:%M:%S")
+        val f = DateTimeFormat("%Y-%m-%dT%H:%M:%S")
         assertEquals("--T04:46:35", f.apply(time))
     }
 }

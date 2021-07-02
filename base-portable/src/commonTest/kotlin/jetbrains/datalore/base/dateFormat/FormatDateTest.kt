@@ -15,7 +15,7 @@ class FormatDateTest {
 
     @Test
     fun onlyDate() {
-        val f = Format("%Y-%m-%dT%H:%M:%S")
+        val f = DateTimeFormat("%Y-%m-%dT%H:%M:%S")
         assertEquals("2019-08-06T::", f.apply(date))
     }
 }

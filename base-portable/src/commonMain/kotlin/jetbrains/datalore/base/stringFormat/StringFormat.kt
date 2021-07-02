@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.stringFormat
 
-import jetbrains.datalore.base.dateFormat.Format
+import jetbrains.datalore.base.dateFormat.DateTimeFormat
 import jetbrains.datalore.base.datetime.Instant
 import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.numberFormat.NumberFormat
@@ -88,7 +88,7 @@ class StringFormat private constructor(
                 }
             }
             DATETIME_FORMAT -> {
-                val dateTimeFormatter = Format(formatPattern)
+                val dateTimeFormatter = DateTimeFormat(formatPattern)
                 return { value: Any ->
                     require(value is Number) {
                         error("Value '$value' to be formatted as DateTime expected to be a Number, but was ${value::class.simpleName}")
@@ -144,7 +144,7 @@ class StringFormat private constructor(
 
         private fun detectFormatType(pattern: String): FormatType {
             fun isDateTimeFormatPattern(pattern: String): Boolean {
-                return Format.parse(pattern).find { it is Format.PatternSpecPart } != null
+                return DateTimeFormat.parse(pattern).find { it is DateTimeFormat.PatternSpecPart } != null
             }
 
             return when {

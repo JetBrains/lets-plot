@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plot.common.text
 
-import jetbrains.datalore.base.dateFormat.Format
+import jetbrains.datalore.base.dateFormat.DateTimeFormat
 import jetbrains.datalore.base.datetime.Instant
 import jetbrains.datalore.base.datetime.tz.TimeZone
 
 object DateTimeFormatUtil {
     fun formatDateUTC(instant: Number, pattern: String): String {
-        val format = Format(pattern)
+        val format = DateTimeFormat(pattern)
         return instant.toLong()
             .let(::Instant)
             .let(TimeZone.UTC::toDateTime)
