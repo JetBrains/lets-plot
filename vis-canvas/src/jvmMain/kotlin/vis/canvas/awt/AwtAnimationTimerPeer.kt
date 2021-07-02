@@ -11,8 +11,9 @@ import java.awt.EventQueue
 import java.awt.event.ActionListener
 import javax.swing.Timer
 
-class AwtTimerPeer(
+class AwtAnimationTimerPeer(
     val executor: (() -> Unit) -> Unit = { f -> EventQueue.invokeLater { f() } },
+    private val updateRate: Int = 60
 ) : Disposable {
     private val myHandlers = ArrayList<(Long) -> Unit>()
 
@@ -24,7 +25,7 @@ class AwtTimerPeer(
         }
     }
 
-    private val myTimer: Timer = Timer(1000 / 60, actionListener)
+    private val myTimer: Timer = Timer(1000 / updateRate, actionListener)
 
     fun addHandler(handler: (Long) -> Unit) {
         synchronized(myHandlers) {
@@ -34,7 +35,6 @@ class AwtTimerPeer(
                 myTimer.start()
             }
         }
-
     }
 
     fun removeHandler(handler: (Long) -> Unit) {

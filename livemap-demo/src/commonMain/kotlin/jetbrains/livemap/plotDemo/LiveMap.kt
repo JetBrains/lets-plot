@@ -681,8 +681,7 @@ class LiveMap {
                 },
                 "facet":{
                     "name":"grid",
-                    "x":"lon",
-                    "y":"lon"
+                    "x":"lat"
                 },
                 "ggtitle":{
                     "text":"Two points"
@@ -691,16 +690,12 @@ class LiveMap {
                 "layers":[
                     {
                         "geom":"livemap",
-                        "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                    },
-                    {
-                        "geom":"point",
                         "mapping":{
                             "x":"lon",
                             "y":"lat",
                             "color":"lon"
                         },
-                        "size":20
+                        "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                     }
                 ]
             }"""
