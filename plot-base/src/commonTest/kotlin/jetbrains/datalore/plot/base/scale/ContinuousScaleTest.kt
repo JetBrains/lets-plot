@@ -6,11 +6,13 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.assertion.assertEquals
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -43,7 +45,7 @@ class ContinuousScaleTest {
     }
 
     @Test
-    fun buildWithTransform() {
+    fun withTransform() {
         val scale = createScale()
 
         val t = object : Transform {
@@ -59,9 +61,39 @@ class ContinuousScaleTest {
         val scale1 = scale.with().continuousTransform(t).build()
         assertSame(t, scale1.transform, "Scale must be created with 'transform' object")
 
-        // scale
+        // change something else...
         val scale2 = scale1.with().additiveExpand(10.0).build()
         assertSame(t, scale2.transform, "Scale must retain its 'transform' object")
+    }
+
+    @Test
+    fun withBreaksGenerator() {
+        val scale = createScale()
+
+        val bg = object : BreaksGenerator {
+            override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+                return ScaleBreaks(emptyList(), emptyList(), emptyList())
+            }
+
+            override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+                return { "hi" }
+            }
+        }
+
+        fun actual(scale: Scale<*>): BreaksGenerator {
+            assertTrue(
+                scale.breaksGenerator is Transforms.BreaksGeneratorForTransformedDomain,
+                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.breaksGenerator::class.simpleName}"
+            )
+            return (scale.breaksGenerator as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+        }
+
+        val scale1 = scale.with().breaksGenerator(bg).build()
+        assertSame(bg, actual(scale1), "Scale must be created with 'breaksGenerator' object")
+
+        // change something else...
+        val scale2 = scale1.with().additiveExpand(10.0).build()
+        assertSame(bg, actual(scale2), "Scale must retain its 'breaksGenerator' object")
     }
 
     @Test

@@ -272,7 +272,6 @@ object Option {
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
         const val FORMAT = "format"
-        // ToDo: TRANS
 
         // continuous scale
         const val CONTINUOUS_TRANSFORM = "trans"
@@ -515,5 +514,12 @@ object Option {
         const val EQUAL = "equal"    // todo
         const val POLAR = "polar"    // todo
         const val TRANS = "trans"    // todo
+    }
+
+    object TransformName {
+        const val IDENTITY = "identity"
+        const val LOG10 = "log10"
+        const val REVERSE = "reverse"
+        const val SQRT = "sqrt"
     }
 }

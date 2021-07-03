@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 
@@ -19,7 +18,8 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     final override var additiveExpand = 0.0
         protected set
 
-    private val myTransform: Transform?
+    abstract override var transform: Transform
+
     private var myBreaks: List<DomainT>? = null
     private var myLabels: List<String>? = null
     private var myLabelFormatter: ((Any) -> String)? = null
@@ -32,7 +32,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
     override var breaks: List<Any>
         get() {
-            Preconditions.checkState(hasBreaks(), "No breaks defined for scale $name")
+            check(hasBreaks()) { "No breaks defined for scale $name" }
             @Suppress("UNCHECKED_CAST")
             return myBreaks!! as List<Any>
         }
@@ -45,22 +45,16 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
     override val labels: List<String>
         get() {
-            Preconditions.checkState(labelsDefined(), "No labels defined for scale $name")
+            check(labelsDefined()) { "No labels defined for scale $name" }
             return myLabels!!
         }
 
     override val labelFormatter: ((Any) -> String)?
         get() = myLabelFormatter
 
-    override val transform: Transform
-        get() = myTransform ?: defaultTransform
-
-    protected abstract val defaultTransform: Transform
-
     protected constructor(name: String, mapper: ((Double?) -> T?)) {
         this.name = name
         this.mapper = mapper
-        myTransform = null
     }
 
     protected constructor(b: AbstractBuilder<DomainT, T>) {
@@ -68,7 +62,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         myBreaks = b.myBreaks
         myLabels = b.myLabels
         myLabelFormatter = b.myLabelFormatter
-        myTransform = b.myTransform
         mapper = b.myMapper
 
         multiplicativeExpand = b.myMultiplicativeExpand
@@ -89,7 +82,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
     protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {
         internal val myName: String = scale.name
-        internal var myTransform: Transform? = scale.myTransform
+        internal var myTransform: Transform = scale.transform
 
         internal var myBreaks: List<DomainT>? = scale.myBreaks
         internal var myLabels: List<String>? = scale.myLabels
@@ -112,7 +105,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             return this
         }
 
-        override fun labelFormatter(v: (Any) -> String): Scale.Builder<T>{
+        override fun labelFormatter(v: (Any) -> String): Scale.Builder<T> {
             myLabelFormatter = v
             return this
         }

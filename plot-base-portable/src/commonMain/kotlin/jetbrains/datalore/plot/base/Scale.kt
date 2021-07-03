@@ -48,13 +48,6 @@ interface Scale<T> {
     val mapper: (Double?) -> T?
 
     val breaksGenerator: BreaksGenerator
-        get() {
-            val transform = transform
-            if (transform is BreaksGenerator) {
-                return transform
-            }
-            throw IllegalStateException("No breaks generator for '$name'")
-        }
 
     fun hasBreaks(): Boolean
 
@@ -66,9 +59,7 @@ interface Scale<T> {
 
     fun asNumber(input: Any?): Double?
 
-    fun hasBreaksGenerator(): Boolean {
-        return transform is BreaksGenerator
-    }
+    fun hasBreaksGenerator(): Boolean
 
     fun with(): Builder<T>
 
@@ -102,6 +93,8 @@ interface Scale<T> {
         fun additiveExpand(v: Double): Builder<T>
 
         fun continuousTransform(v: Transform): Builder<T>
+
+        fun breaksGenerator(v: BreaksGenerator): Builder<T>
 
         fun build(): Scale<T>
     }

@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
@@ -25,6 +26,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<*>? = null
     private var myTransform: Transform? = null
+    private var myBreaksGenerator: BreaksGenerator? = null
 
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
@@ -109,6 +111,11 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         return this
     }
 
+    fun breaksGenerator(v: BreaksGenerator): ScaleProviderBuilder<T> {
+        myBreaksGenerator = v
+        return this
+    }
+
     @Suppress("FunctionName")
     fun guide_NI(
         @Suppress("UNUSED_PARAMETER") v: Any
@@ -144,6 +151,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         private val myContinuousTransform: Transform? = b.myTransform
+        private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
 
         private val myAes: Aes<T> = b.aes
         private val mapperProvider: MapperProvider<T> = b.mapperProvider
@@ -241,6 +249,12 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             if (myContinuousTransform != null) {
                 scale = scale.with()
                     .continuousTransform(myContinuousTransform)
+                    .build()
+            }
+
+            if (myBreaksGenerator != null) {
+                scale = scale.with()
+                    .breaksGenerator(myBreaksGenerator)
                     .build()
             }
 

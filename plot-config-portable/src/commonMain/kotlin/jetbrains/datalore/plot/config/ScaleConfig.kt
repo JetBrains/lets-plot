@@ -18,10 +18,10 @@ import jetbrains.datalore.plot.common.text.Formatter
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
-import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
 import jetbrains.datalore.plot.config.Option.Scale.END
 import jetbrains.datalore.plot.config.Option.Scale.EXPAND
+import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.GUIDE
 import jetbrains.datalore.plot.config.Option.Scale.HIGH
 import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
@@ -42,6 +42,7 @@ import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
 import jetbrains.datalore.plot.config.Option.Scale.SHAPE_SOLID
 import jetbrains.datalore.plot.config.Option.Scale.START
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
+import jetbrains.datalore.plot.config.Option.TransformName
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
 
@@ -162,17 +163,27 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
         b.discreteDomainReverse(reverse)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
-            // ToDo: add support for 'date_breaks', 'date_labels' (see: https://ggplot2.tidyverse.org/current/scale_date.html)
             val dateTimeFormatter = getString(FORMAT)?.let { Formatter.time(it) }
-            b.transform(
-                Transforms.identityWithBreaksGen(
-                    DateTimeBreaksGen(dateTimeFormatter)
-                )
-            )
+            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
-            val transformConfig =
-                ScaleTransformConfig.create(get(Option.Scale.CONTINUOUS_TRANSFORM)!!, getString(FORMAT))
-            b.transform(transformConfig.transform)
+            val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
+            val transform = when (transformName.toLowerCase()) {
+                TransformName.IDENTITY -> Transforms.IDENTITY
+                TransformName.LOG10 -> Transforms.LOG10
+                TransformName.REVERSE -> Transforms.REVERSE
+                TransformName.SQRT -> Transforms.SQRT
+                else -> throw IllegalArgumentException(
+                    "Unknown transform name: '$transformName'. Supported: ${
+                        listOf(
+                            TransformName.IDENTITY,
+                            TransformName.LOG10,
+                            TransformName.REVERSE,
+                            TransformName.SQRT
+                        ).joinToString(transform = { "'$it'" })
+                    }."
+                )
+            }
+            b.transform(transform)
         }
 
         return applyCommons(b)

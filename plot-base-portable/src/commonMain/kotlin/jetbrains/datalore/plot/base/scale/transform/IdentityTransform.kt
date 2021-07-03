@@ -6,23 +6,10 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.jvm.JvmOverloads
 
-internal class IdentityTransform @JvmOverloads constructor(
-    private val myBreaksGenerator: BreaksGenerator
-) : Transform, BreaksGenerator {
-
-    constructor(labelFormatter: ((Any) -> String)? = null) : this(LinearBreaksGen(labelFormatter))
-
-    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return myBreaksGenerator.labelFormatter(domainAfterTransform, targetCount)
-    }
-
+internal class IdentityTransform : Transform {
     override fun apply(rawData: List<*>): List<Double?> {
         val checkedDoubles = SeriesUtil.checkedDoubles(rawData)
         checkArgument(checkedDoubles.canBeCast(), "Not a collections of numbers")
@@ -31,9 +18,5 @@ internal class IdentityTransform @JvmOverloads constructor(
 
     override fun applyInverse(v: Double?): Any? {
         return v
-    }
-
-    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        return myBreaksGenerator.generateBreaks(domainAfterTransform, targetCount)
     }
 }

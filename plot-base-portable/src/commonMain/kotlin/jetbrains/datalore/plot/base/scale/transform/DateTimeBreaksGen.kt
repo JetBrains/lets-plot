@@ -11,12 +11,12 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.DateTimeBreaksHelper
 
 class DateTimeBreaksGen(
-    private val myLabelFormatter: ((Any) -> String)? = null
+    private val labelFormatter: ((Any) -> String)? = null
 ) : BreaksGenerator {
-    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val helper = breaksHelper(domainAfterTransform, targetCount)
+    override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+        val helper = breaksHelper(domain, targetCount)
         val ticks = helper.breaks
-        val labelFormatter = myLabelFormatter ?: helper.labelFormatter
+        val labelFormatter = labelFormatter ?: helper.labelFormatter
         val labels = ArrayList<String>()
         for (tick in ticks) {
             labels.add(labelFormatter(tick))
@@ -35,7 +35,7 @@ class DateTimeBreaksGen(
         )
     }
 
-    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return myLabelFormatter ?: breaksHelper(domainAfterTransform, targetCount).labelFormatter
+    override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return labelFormatter ?: breaksHelper(domain, targetCount).labelFormatter
     }
 }

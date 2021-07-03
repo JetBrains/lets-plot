@@ -7,11 +7,7 @@ package jetbrains.datalore.plot.base.scale.transform
 
 import kotlin.math.sqrt
 
-class SqrtTransform(labelFormatter: ((Any) -> String)? = null) : FunTransform(
-    F,
-    F_INVERSE,
-    labelFormatter
-) {
+class SqrtTransform : FunTransform(F, F_INVERSE) {
     companion object {
         private val F: (Double?) -> Double? = { v ->
             if (v != null)

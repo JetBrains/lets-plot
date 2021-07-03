@@ -53,25 +53,31 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
                 .map { labelByValue[it]!! }
         }
 
-    override val defaultTransform: Transform
-        get() = object : Transform {
-            override fun apply(rawData: List<*>): List<Double?> {
-                val l = ArrayList<Double?>()
-                for (o in rawData) {
-                    l.add(asNumber(o))
-                }
-                return l
+    override var transform: Transform = object : Transform {
+        override fun apply(rawData: List<*>): List<Double?> {
+            val l = ArrayList<Double?>()
+            for (o in rawData) {
+                l.add(asNumber(o))
             }
-
-            override fun applyInverse(v: Double?): Any? {
-                return fromNumber(v)
-            }
+            return l
         }
 
-    override val domainLimits: ClosedRange<Double>?
+        override fun applyInverse(v: Double?): Any? {
+            return fromNumber(v)
+        }
+    }
+
+    override val breaksGenerator: BreaksGenerator
+        get() = throw IllegalStateException("No breaks generator for discrete scale '$name'")
+
+    override val domainLimits: ClosedRange<Double>
         get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
-    constructor(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)) : super(name, mapper) {
+    constructor(
+        name: String,
+        domainValues: Collection<Any?>,
+        mapper: ((Double?) -> T?)
+    ) : super(name, mapper) {
         updateDomain(domainValues, emptyList())
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
@@ -83,6 +89,8 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private constructor(b: MyBuilder<T>) : super(b) {
         updateDomain(b.myDomainValues, b.myDomainLimits)
     }
+
+    override fun hasBreaksGenerator() = false
 
     private fun updateDomain(domainValues: Collection<Any?>, domainLimits: List<Any>) {
         val effectiveDomain = ArrayList<Any?>()
@@ -172,6 +180,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         init {
             myDomainValues = scale.myNumberByDomainValue.keys  // ordered (from LinkedHashMap)
             myDomainLimits = scale.myDomainLimits
+        }
+
+        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder<T> {
+            throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 
         override fun lowerLimit(v: Double): Scale.Builder<T> {

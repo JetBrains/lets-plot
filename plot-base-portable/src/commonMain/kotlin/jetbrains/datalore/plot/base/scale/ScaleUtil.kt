@@ -151,9 +151,10 @@ object ScaleUtil {
     }
 
     fun getBreaksGenerator(scale: Scale<*>): BreaksGenerator {
-        return when {
-            scale.hasBreaksGenerator() -> scale.breaksGenerator
-            else -> LinearBreaksGen(scale.labelFormatter)
-        }
+//        return when {
+//            scale.hasBreaksGenerator() -> scale.breaksGenerator
+//            else -> LinearBreaksGen(scale.labelFormatter)
+//        }
+        return scale.breaksGenerator
     }
 }

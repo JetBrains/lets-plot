@@ -5,25 +5,52 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.MapperUtil
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 object Transforms {
-    val IDENTITY: Transform = createTransform(TransformKind.IDENTITY)
-    val LOG10: Transform = createTransform(TransformKind.LOG10)
-    val REVERSE: Transform = createTransform(TransformKind.REVERSE)
-    val SQRT: Transform = createTransform(TransformKind.SQRT)
+    val IDENTITY: Transform = IdentityTransform()
+    val LOG10: Transform = Log10Transform()
+    val REVERSE: Transform = ReverseTransform()
+    val SQRT: Transform = Log10Transform()
 
-    fun identityWithBreaksGen(breaksGenerator: BreaksGenerator): Transform {
-        return IdentityTransform(breaksGenerator)
+    fun createBreaksGenerator(transform: Transform, labelFormatter: ((Any) -> String)? = null): BreaksGenerator {
+        val breaksGenerator: BreaksGenerator = when (transform) {
+            is IdentityTransform -> LinearBreaksGen(labelFormatter)
+            is ReverseTransform -> LinearBreaksGen(labelFormatter)
+            is SqrtTransform -> LinearBreaksGen(labelFormatter)
+            is Log10Transform -> Log10BreaksGen(labelFormatter)
+            else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
+        }
+
+        return BreaksGeneratorForTransformedDomain(transform, breaksGenerator)
     }
 
-    fun createTransform(transKind: TransformKind, labelFormatter: ((Any) -> String)? = null): Transform {
-        return when (transKind) {
-            TransformKind.IDENTITY -> IdentityTransform(labelFormatter)
-            TransformKind.LOG10 -> Log10Transform(labelFormatter)
-            TransformKind.REVERSE -> ReverseTransform(labelFormatter)
-            TransformKind.SQRT -> SqrtTransform(labelFormatter)
+    class BreaksGeneratorForTransformedDomain(
+        private val transform: Transform,
+        val breaksGenerator: BreaksGenerator
+    ) : BreaksGenerator {
+        override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+            val domainBeforeTransform = MapperUtil.map(domain) {
+                transform.applyInverse(it) as Double // Should not contain NULLs
+            }
+            return breaksGenerator.labelFormatter(domainBeforeTransform, targetCount)
+        }
+
+        override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+            val domainBeforeTransform = MapperUtil.map(domain) {
+                transform.applyInverse(it) as Double // Should not contain NULLs
+            }
+            val originalBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
+            val domainValues = originalBreaks.domainValues
+            val transformValues = transform.apply(domainValues).map {
+                it as Double // Should not contain NULLs
+            }
+
+            return ScaleBreaks(domainValues, transformValues, originalBreaks.labels)
         }
     }
 }
