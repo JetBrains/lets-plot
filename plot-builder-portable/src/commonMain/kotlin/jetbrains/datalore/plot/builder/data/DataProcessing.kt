@@ -196,6 +196,9 @@ object DataProcessing {
             override fun compareTo(other: Group): Int {
                 fun compareValues(values1: List<Any?>, values2: List<Any?>, dir: Int): Int {
                     values1.zip(values2).forEach { (v1, v2) ->
+                        if (v1 == null || v2 == null)
+                           return -1
+
                         val cmp = compareValues(v1 as Comparable<*>, v2 as Comparable<*>)
                         if (cmp != 0) {
                             return if (dir < 0) -1 * cmp else cmp
@@ -204,9 +207,9 @@ object DataProcessing {
                     return 0
                 }
 
-                fun getValues(variable: Variable, df: DataFrame): List<*> {
+                fun getValues(variable: Variable, df: DataFrame): List<Any?> {
                     return if (variable == Stats.COUNT) {
-                        listOf(df.getNumeric(variable).filterNotNull().sum())
+                        listOf(df.getNumeric(variable).requireNoNulls().sum())
                     } else {
                         df[variable]
                     }
