@@ -300,10 +300,8 @@ internal class LiveMapSpecBuilder {
             }
 
             return when {
-                debug -> EmptyTileSystemProvider()
-                options[Tile.KIND] == Tile.KIND_RASTER_ZXY -> RasterTileSystemProvider(
-                    options[Tile.URL] as String
-                )
+                debug -> ChessboardTileSystemProvider()
+                options[Tile.KIND] == Tile.KIND_RASTER_ZXY -> RasterTileSystemProvider(options[Tile.URL] as String)
                 options[Tile.KIND] == Tile.KIND_VECTOR_LETS_PLOT -> VectorTileSystemProvider(
                     myQuantumIterations = quant,
                     myTileService = liveMapVectorTiles {

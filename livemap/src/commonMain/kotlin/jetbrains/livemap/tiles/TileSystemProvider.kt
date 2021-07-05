@@ -5,22 +5,30 @@
 
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import jetbrains.datalore.base.values.Color
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem
+import jetbrains.livemap.tiles.solid.SolidColorTileSystem
+import jetbrains.livemap.tiles.solid.chessBoard
+import jetbrains.livemap.tiles.solid.fixed
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
 
 interface TileSystemProvider {
 
     fun create(componentManager: EcsComponentManager): AbstractSystem<LiveMapContext>
 
-    class EmptyTileSystemProvider : TileSystemProvider {
+    class ChessboardTileSystemProvider() : TileSystemProvider {
+        override fun create(componentManager: EcsComponentManager): AbstractSystem<LiveMapContext> {
+            return SolidColorTileSystem(chessBoard(Color.GRAY, Color.LIGHT_GRAY), componentManager)
+        }
+    }
 
-        override fun create(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext> {
-            UNSUPPORTED("Tile system provider is not set")
+    class SolidTileSystemProvider() : TileSystemProvider {
+        override fun create(componentManager: EcsComponentManager): AbstractSystem<LiveMapContext> {
+            return SolidColorTileSystem(fixed(Color.WHITE), componentManager)
         }
     }
 
