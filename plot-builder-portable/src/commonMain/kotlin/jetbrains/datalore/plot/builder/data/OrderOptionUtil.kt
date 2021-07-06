@@ -11,13 +11,13 @@ import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil
 
 object OrderOptionUtil {
     class OrderOption internal constructor(
-        val aesName: String,
+        val aes: Aes<*>,
         val byVariable: String?,
         val orderDir: Int
     ) {
         companion object {
             fun create(
-                aesName: String,
+                aes: Aes<*>,
                 orderBy: String?,
                 order: Any?
             ): OrderOption? {
@@ -31,18 +31,18 @@ object OrderOptionUtil {
                         "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                     )
                 }
-                return OrderOption(aesName, orderBy, orderDir)
+                return OrderOption(aes, orderBy, orderDir)
             }
         }
     }
 
-    fun createOrderingSpec(
+    fun createOrderSpec(
         variables: Set<DataFrame.Variable>,
         varBindings: List<VarBinding>,
         orderOption: OrderOption
-    ): DataFrame.OrderingSpec {
-        val varBinding = varBindings.find { it.aes.name == orderOption.aesName }
-            ?: error("No variable binding for aes ${orderOption.aesName}")
+    ): DataFrame.OrderSpec {
+        val varBinding = varBindings.find { it.aes == orderOption.aes }
+            ?: error("No variable binding for aes ${orderOption.aes.name}")
         var variable = varBinding.variable
         var byVariable = orderOption.byVariable?.let {
             variables.find { it.name == orderOption.byVariable }
@@ -55,6 +55,6 @@ object OrderOptionUtil {
                 byVariable = byVariable ?: varBinding.variable
             }
         }
-        return DataFrame.OrderingSpec(variable, byVariable, orderOption.orderDir)
+        return DataFrame.OrderSpec(variable, byVariable, orderOption.orderDir)
     }
 }

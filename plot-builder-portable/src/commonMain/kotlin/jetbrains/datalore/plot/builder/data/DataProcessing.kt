@@ -128,9 +128,9 @@ object DataProcessing {
                 put(variable, resultSeries[variable]!!)
             }
 
-            // set ordering specifications
+            // set order specifications
             val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderingSpec(resultSeries.keys, bindings, orderOption)
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption)
             }
             addOrderSpecs(orderSpecs)
 
@@ -150,7 +150,7 @@ object DataProcessing {
     }
 
     class GroupsMerger {
-        private var myOrderSpecs: List<DataFrame.OrderingSpec>? = null
+        private var myOrderSpecs: List<DataFrame.OrderSpec>? = null
         private val myOrderedGroups = ArrayList<Group>()
 
         fun initOrderSpecs(
@@ -159,17 +159,11 @@ object DataProcessing {
             bindings: List<VarBinding>
         ) {
             if (myOrderSpecs != null) return
-            myOrderSpecs = orderOptions.filter { orderOption ->
-                // Skip positionals aes
-                val aes = Aes.values().find { it.name == orderOption.aesName }
-                !Aes.isPositional(aes!!)
-            }.sortedBy { orderOption ->
-                // Process in the order of the aes name
-                orderOption.aesName
-            }.map { orderOption ->
-                OrderOptionUtil.createOrderingSpec(variables, bindings, orderOption)
-            }
-        }
+            myOrderSpecs = orderOptions
+                .filterNot { Aes.isPositional(it.aes) } // Skip positionals
+                .sortedBy { it.aes.name } // Process in the order of the aes name
+                .map { OrderOptionUtil.createOrderSpec(variables, bindings, it) }
+       }
 
         fun getResultSeries(): HashMap<Variable, List<Any>> {
             val resultSeries = HashMap<Variable, List<Any>>()
@@ -196,9 +190,9 @@ object DataProcessing {
             override fun compareTo(other: Group): Int {
                 fun compareValues(values1: List<Any?>, values2: List<Any?>, dir: Int): Int {
                     values1.zip(values2).forEach { (v1, v2) ->
-                        if (v1 == null || v2 == null)
-                           return -1
-
+                        if (v1 == null || v2 == null) {
+                            return -1
+                        }
                         val cmp = compareValues(v1 as Comparable<*>, v2 as Comparable<*>)
                         if (cmp != 0) {
                             return if (dir < 0) -1 * cmp else cmp
@@ -218,12 +212,14 @@ object DataProcessing {
                 for (spec in myOrderSpecs!!) {
                     val byVariable = spec.orderBy ?: spec.variable
                     var cmp = compareValues(getValues(byVariable, df), getValues(byVariable, other.df), spec.direction)
-                    if (cmp == 0 && byVariable == Stats.COUNT)
+                    if (cmp == 0 && byVariable == Stats.COUNT) {
+                        // ensure the order as in the legend
                         cmp = compareValues(
                             getValues(spec.variable, df),
                             getValues(spec.variable, other.df),
                             spec.direction
                         )
+                    }
                     if (cmp != 0) {
                         return cmp
                     }
