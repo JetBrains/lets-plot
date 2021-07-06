@@ -41,9 +41,7 @@ class SolidColorTileSystem(
                                     tile = Tile.SnapshotTile(snapshot)
                                     nonCacheable = false
                                 }
-                                runLaterBySystem(it) { theEntity ->
-                                    ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                                }
+                                ParentLayerComponent.tagDirtyParentLayer(it)
                             }
                         }
                 }
