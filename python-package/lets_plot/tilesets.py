@@ -2,8 +2,8 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 
-from lets_plot import maptiles_lets_plot as _maptiles_lets_plot
-from lets_plot import maptiles_zxy as _maptiles_zxy
+from lets_plot import maptiles_lets_plot as _maptiles_lets_plot  # to not polute scope with maptiles_lets_plot
+from lets_plot import maptiles_zxy as _maptiles_zxy  # to not polute scope with maptiles_zxy
 
 LETS_PLOT_COLOR = _maptiles_lets_plot(theme='color')
 LETS_PLOT_LIGHT = _maptiles_lets_plot(theme='light')
@@ -28,15 +28,16 @@ def _stamen_tiles(tileset, data_license, lowres_only=False):
     else:
         raise ValueError("Unknown data license: {}. Expected 'osm' or 'cc'".format(data_license))
 
-    def build_url(hi_res=""):
-        return "https://stamen-tiles.{subdomains}.ssl.fastly.net/{tileset}/{coord_pattern}{hi_res}.png" \
+    def build_stamen_tiles_config(hi_res=""):
+        url = "https://stamen-tiles.{subdomains}.ssl.fastly.net/{tileset}/{coord_pattern}{hi_res}.png" \
             .format(subdomains='a', tileset=tileset, coord_pattern='{z}/{x}/{y}', hi_res=hi_res)
 
-    if lowres_only:
-        return _maptiles_zxy(build_url(), attribution)
+        return _maptiles_zxy(url, attribution, min_zoom=1, max_zoom=15)
 
-    return _maptiles_zxy(build_url(), attribution), \
-           _maptiles_zxy(build_url(hi_res="@2x"), attribution)
+    if lowres_only:
+        return build_stamen_tiles_config()
+
+    return build_stamen_tiles_config(), build_stamen_tiles_config(hi_res="@2x")
 
 
 STAMEN_DESIGN_TONER, STAMEN_DESIGN_TONER_HIRES = _stamen_tiles('toner', data_license='osm')
@@ -53,12 +54,12 @@ def _carto_tiles(tileset, cdn):
     else:
         raise ValueError("Unknown carto cdn: {}. Expected 'carto' or 'fastly'.".format(cdn))
 
-    def build_url(hi_res=""):
-        return base_url.format(subdomains='a', tileset=tileset, coord_pattern='{z}/{x}/{y}', hi_res=hi_res)
+    def build_carto_tiles_config(hi_res=''):
+        attribution = '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'
+        url = base_url.format(subdomains='a', tileset=tileset, coord_pattern='{z}/{x}/{y}', hi_res=hi_res)
+        return _maptiles_zxy(url, attribution, min_zoom=1, max_zoom=15)
 
-    attribution = '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'
-    return _maptiles_zxy(build_url(), attribution), \
-           _maptiles_zxy(build_url(hi_res="@2x"), attribution)
+    return build_carto_tiles_config(), build_carto_tiles_config(hi_res="@2x")
 
 
 CARTO_POSITRON, CARTO_POSITRON_HIRES = _carto_tiles('light_all', cdn='carto')
@@ -76,7 +77,7 @@ def _nasa_tiles(tileset, max_zoom, time=''):
     url = "https://gibs.earthdata.nasa.gov/wmts/{projection}/best/{tileset}/default/{time}/GoogleMapsCompatible_Level{max_zoom}/{coord_pattern}.jpg" \
         .format(projection='epsg3857', tileset=tileset, time=time, max_zoom=max_zoom, coord_pattern='{z}/{y}/{x}')
 
-    return _maptiles_zxy(url, attribution)
+    return _maptiles_zxy(url, attribution, min_zoom=1, max_zoom=max_zoom)
 
 
 NASA_CITYLIGHTS_2012 = _nasa_tiles('VIIRS_CityLights_2012', max_zoom=8)

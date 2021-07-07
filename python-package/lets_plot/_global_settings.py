@@ -59,6 +59,8 @@ GEOCODING_PROVIDER_URL = 'geocoding_url'
 _DATALORE_TILES_SERVICE = 'wss://tiles.datalore.jetbrains.com'
 _DATALORE_TILES_ATTRIBUTION = 'Map: <a href="https://github.com/JetBrains/lets-plot">\u00a9 Lets-Plot</a>, map data: <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap contributors</a>.'
 _DATALORE_TILES_THEME = 'color'
+_DATALORE_TILES_MIN_ZOOM = 1
+_DATALORE_TILES_MAX_ZOOM = 15
 _DATALORE_GEOCODING_SERVICE = 'https://geo2.datalore.jetbrains.com'
 
 
@@ -85,6 +87,8 @@ _settings = {
     MAPTILES_URL: _init_value(MAPTILES_URL, _DATALORE_TILES_SERVICE),
     MAPTILES_ATTRIBUTION: _init_value(MAPTILES_ATTRIBUTION, _DATALORE_TILES_ATTRIBUTION),
     MAPTILES_THEME: _init_value(MAPTILES_THEME, _DATALORE_TILES_THEME),
+    MAPTILES_MIN_ZOOM: _init_value(MAPTILES_MIN_ZOOM, _DATALORE_TILES_MIN_ZOOM),
+    MAPTILES_MAX_ZOOM: _init_value(MAPTILES_MAX_ZOOM, _DATALORE_TILES_MAX_ZOOM),
 
     'dev_' + OFFLINE: _init_value('dev_' + OFFLINE, True),  # default: embed js into the notebook
     'dev_' + NO_JS: _init_value('dev_' + NO_JS, False),
@@ -99,6 +103,8 @@ _settings = {
     'dev_' + MAPTILES_URL: _init_value('dev_' + MAPTILES_URL, _DATALORE_TILES_SERVICE),
     'dev_' + MAPTILES_ATTRIBUTION: _init_value('dev_' + MAPTILES_ATTRIBUTION, _DATALORE_TILES_ATTRIBUTION),
     'dev_' + MAPTILES_THEME: _init_value('dev_' + MAPTILES_THEME, _DATALORE_TILES_THEME),
+    'dev_' + MAPTILES_MIN_ZOOM: _init_value('dev_' + MAPTILES_MIN_ZOOM, _DATALORE_TILES_MIN_ZOOM),
+    'dev_' + MAPTILES_MAX_ZOOM: _init_value('dev_' + MAPTILES_MAX_ZOOM, _DATALORE_TILES_MAX_ZOOM),
 }
 
 
