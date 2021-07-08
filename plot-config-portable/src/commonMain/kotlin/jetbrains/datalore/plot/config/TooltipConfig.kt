@@ -92,17 +92,13 @@ class TooltipConfig(
         }
 
         private fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
-            fun getAesByName(aesName: String): Aes<*> {
-                return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
-            }
-
             return when {
                 isAes && fieldName == GROUP -> {
                     requireNotNull(groupingVarName) { "Variable name for 'group' is not specified"}
                     DataFrameValue(groupingVarName, format)
                 }
                 isAes -> {
-                    val aes = getAesByName(fieldName)
+                    val aes = Option.Mapping.toAes(fieldName)
                     when (val constant = constantsMap[aes]) {
                         null -> MappingValue(aes, format = format)
                         else -> ConstantValue(constant, format)

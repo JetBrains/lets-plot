@@ -148,9 +148,9 @@ object DataMetaUtil {
         return options
             ?.getMappingAnnotationsSpec(AS_DISCRETE)
             ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
-            ?.mapNotNull { (aes, parameters) ->
+            ?.mapNotNull { (aesName, parameters) ->
                 OrderOptionUtil.OrderOption.create(
-                    aes,
+                    Option.Mapping.toAes(aesName),
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )
