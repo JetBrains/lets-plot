@@ -19,12 +19,12 @@ class DataFrame private constructor(builder: Builder) {
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
-    class OrderSpec(
+    class OrderingSpec(
         val variable: Variable,
         val orderBy: Variable?,
         val direction: Int
     )
-    private val myOrderSpecs: List<OrderSpec>
+    private val myOrderSpecs: List<OrderingSpec>
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -214,7 +214,7 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any> {
+    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
         var nullValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
 
         val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
@@ -264,7 +264,7 @@ class DataFrame private constructor(builder: Builder) {
     class Builder {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
-        internal val myOrderSpecs = ArrayList<OrderSpec>()
+        internal val myOrderSpecs = ArrayList<OrderingSpec>()
 
         constructor()
 
@@ -302,12 +302,12 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-        fun addOrderSpecs(orderSpecs: List<OrderSpec>): Builder {
+        fun addOrderSpecs(orderSpecs: List<OrderingSpec>): Builder {
             orderSpecs.forEach(::addOrderSpec)
             return this
         }
 
-        fun addOrderSpec(orderSpec: OrderSpec): Builder {
+        fun addOrderSpec(orderSpec: OrderingSpec): Builder {
             val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
             // If multiple specifications for the variable - choose a more specific one:
             // prefer with specified 'orderBy'

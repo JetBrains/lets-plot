@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderingSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
@@ -218,7 +218,7 @@ class LayerConfig(
         }
 
         myCombinedData = if (clientSide) {
-            val orderSpecs = myOrderOptions.map { createOrderSpec(combinedData.variables(), varBindings, it) }
+            val orderSpecs = myOrderOptions.map { createOrderingSpec(combinedData.variables(), varBindings, it) }
             DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
         } else {
             combinedData
