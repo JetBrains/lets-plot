@@ -4,9 +4,9 @@
 #
 from typing import Any, Tuple, Sequence
 
+from lets_plot.geo_data_internals.utils import is_geocoder, find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
-from lets_plot.geo_data_internals.utils import is_geocoder, find_geo_names
 
 
 def as_boolean(val, *, default):
@@ -126,8 +126,6 @@ def auto_join_geo_names(map_join: Any, gdf):
     if map_names is None:
         map_names = find_geo_names(gdf)
         if len(map_names) == 0:
-            print(map_join)
-            print(gdf)
             raise ValueError(
                 "Can't deduce joining keys.\n"
                 "Define both data and map key columns in map_join "

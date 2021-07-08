@@ -2,7 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from typing import List, Any
 
-from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_COUNTY, DF_COLUMN_STATE, DF_COLUMN_COUNTRY
+from lets_plot.geo_data_internals.constants import DF_COLUMN_CITY, DF_COLUMN_COUNTY, DF_COLUMN_STATE, DF_COLUMN_COUNTRY
 
 
 def find_geo_names(obj) -> List[str]:
