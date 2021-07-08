@@ -219,7 +219,7 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
-        var nullValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
+        var emptyValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
 
         val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
             get(orderSpec.variable)
@@ -235,11 +235,14 @@ class DataFrame private constructor(builder: Builder) {
                 .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
                 .mapNotNull { (value) -> value }
         } else {
-            nullValuesAppendix = SeriesUtil.pickAtIndices(
+            fun isEmptyValue(value: Any?) =
+                value == null || (if (value is Double) (value.isNaN() || value.isInfinite()) else false)
+
+            emptyValuesAppendix = SeriesUtil.pickAtIndices(
                 list = get(orderSpec.variable),
                 indices = get(orderSpec.orderBy)
                     .withIndex()
-                    .filter { it.value == null }
+                    .filter { isEmptyValue(it.value) }
                     .map { it.index }
             ).filterNotNull()
 
@@ -247,18 +250,18 @@ class DataFrame private constructor(builder: Builder) {
                 list = get(orderSpec.variable),
                 indices = get(orderSpec.orderBy)
                     .withIndex()
-                    .filter { it.value != null }
+                    .filterNot { isEmptyValue(it.value) }
                     .sortedWith(compareBy { it.value as Comparable<*> })
-                    .map { it.index })
-                .filterNotNull()
+                    .map { it.index }
+            ).filterNotNull()
         }
 
-        // Put the values corresponding to nulls at the end of the result
+        // Put the values corresponding to empty values at the end of the result
         return (if (orderSpec.direction < 0) {
             orderedValues.reversed()
         } else {
             orderedValues
-        } + nullValuesAppendix).toSet()
+        } + emptyValuesAppendix).toSet()
     }
 
     companion object {
