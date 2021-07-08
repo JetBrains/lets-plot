@@ -10,12 +10,15 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_CHESSBOARD
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_RASTER_ZXY
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_SOLID
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT
 import jetbrains.datalore.plot.config.getString
 import jetbrains.gis.geoprotocol.GeocodingService
@@ -35,6 +38,7 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.*
+import jetbrains.livemap.tiles.Tilesets
 import jetbrains.livemap.ui.CursorService
 
 
@@ -278,14 +282,16 @@ internal class LiveMapSpecBuilder {
 
         fun createTileSystemProvider(options: Map<*, *>, debugTiles: Boolean, quant: Int): TileSystemProvider {
             if (debugTiles) {
-                return ChessboardTileSystemProvider()
+                return Tilesets.chessboard()
             }
 
             return when(options[Tile.KIND]) {
-                KIND_RASTER_ZXY -> options.getString(Tile.URL)!!.let(::splitSubdomains).let(::RasterTileSystemProvider)
-                KIND_VECTOR_LETS_PLOT -> VectorTileSystemProvider(
-                    myQuantumIterations = quant,
-                    myTileService = liveMapVectorTiles {
+                KIND_CHESSBOARD -> Tilesets.chessboard()
+                KIND_SOLID -> Tilesets.solid(Color.parseHex(options.getString(Tile.FILL_COLOR)!!))
+                KIND_RASTER_ZXY -> options.getString(Tile.URL)!!.let(::splitSubdomains).let(Tilesets::raster)
+                KIND_VECTOR_LETS_PLOT -> Tilesets.letsPlot(
+                    quantumIterations = quant,
+                    tileService = liveMapVectorTiles {
                         options.getString(Tile.URL)?.let { url = it }
                         options.getString(Tile.THEME)?.let { theme = TileService.Theme.valueOf(it.toUpperCase()) }
                     }

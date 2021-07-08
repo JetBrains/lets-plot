@@ -4,10 +4,15 @@
 
 from lets_plot import maptiles_lets_plot as _maptiles_lets_plot  # to not polute scope with maptiles_lets_plot
 from lets_plot import maptiles_zxy as _maptiles_zxy  # to not polute scope with maptiles_zxy
+from lets_plot import maptiles_solid as _maptiles_solid  # to not polute scope with maptiles_zxy
+from lets_plot import maptiles_chessboard as _maptiles_chessboard  # to not polute scope with maptiles_zxy
 
 LETS_PLOT_COLOR = _maptiles_lets_plot(theme='color')
 LETS_PLOT_LIGHT = _maptiles_lets_plot(theme='light')
 LETS_PLOT_DARK = _maptiles_lets_plot(theme='dark')
+
+CHESSBOARD = _maptiles_chessboard()
+SOLID = _maptiles_solid('#FFFFFF')
 
 OSM = _maptiles_zxy(
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",

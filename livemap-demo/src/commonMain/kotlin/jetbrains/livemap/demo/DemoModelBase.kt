@@ -17,7 +17,7 @@ import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.tiles.TileSystemProvider.RasterTileSystemProvider
+import jetbrains.livemap.tiles.Tilesets
 import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
@@ -36,7 +36,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
     internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapBuilder {
         return liveMapConfig {
             //tileSystemProvider = RasterTileSystemProvider("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
-            tileSystemProvider = TileSystemProvider.VectorTileSystemProvider(Services.jetbrainsTileProvider())
+            tileSystemProvider = Tilesets.letsPlot(Services.jetbrainsTileProvider())
 
             geocodingService = Services.bogusGeocodingService()
             //geocodingService = Services.jetbrainsGeocodingService()

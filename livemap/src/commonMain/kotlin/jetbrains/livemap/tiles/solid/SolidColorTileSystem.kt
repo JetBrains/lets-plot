@@ -69,18 +69,29 @@ fun fixed(color: Color): (CellKey, CanvasProvider) -> Async<Canvas.Snapshot> {
 }
 
 fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Async<Canvas.Snapshot> {
-    var blackTile: Async<Canvas.Snapshot>? = null
-    var whiteTile: Async<Canvas.Snapshot>? = null
+    var tile: Async<Canvas.Snapshot>? = null
 
-    return { cellKey: CellKey, canvasProvider: CanvasProvider ->
-        blackTile = blackTile ?: drawSolidColorTile(black, canvasProvider)
-        whiteTile = whiteTile ?: drawSolidColorTile(white, canvasProvider)
+    fun drawChessQuad(canvasProvider: CanvasProvider): Async<Canvas.Snapshot> {
 
-        when (cellKey.key.last()) {
-            '0', '3' -> blackTile!!
-            '1', '2' -> whiteTile!!
-            else -> error("Invalid QuadKey component. Expected to be 0, 1, 2 or 3 but was ${cellKey.key.last()}. QuadKey: ${cellKey.key}")
+        var tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
+        val centerX = TILE_PIXEL_SIZE / 2
+        val centerY = TILE_PIXEL_SIZE / 2
+        tileCanvas.context2d.apply {
+            setFillStyle(black)
+            fillRect(0.0, 0.0, centerX, centerY)
+            fillRect(centerX, centerY, centerX, centerY)
+
+            setFillStyle(white)
+            fillRect(centerX, 0.0, centerX, centerY)
+            fillRect(0.0, centerY, centerX, centerY)
         }
+
+        return tileCanvas.takeSnapshot()
+    }
+
+    return { _: CellKey, canvasProvider: CanvasProvider ->
+        tile = tile ?: drawChessQuad(canvasProvider)
+        tile!!
     }
 }
 

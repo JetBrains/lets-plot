@@ -1,12 +1,12 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from ._global_settings import GEOCODING_PROVIDER_URL
+from ._global_settings import GEOCODING_PROVIDER_URL, MAPTILES_SOLID_FILL_COLOR, TILES_CHESSBOARD
 from ._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, MAPTILES_MIN_ZOOM, \
-    MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, _DATALORE_TILES_ATTRIBUTION
+    MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, TILES_SOLID, _DATALORE_TILES_ATTRIBUTION
 from ._global_settings import has_global_value, get_global_val, _DATALORE_TILES_MIN_ZOOM, _DATALORE_TILES_MAX_ZOOM
 
-__all__ = ['maptiles_zxy', 'maptiles_lets_plot']
+__all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid', 'maptiles_chessboard']
 
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
@@ -132,6 +132,19 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         MAPTILES_ATTRIBUTION: attribution,
         MAPTILES_MIN_ZOOM: min_zoom,
         MAPTILES_MAX_ZOOM: max_zoom
+    }
+
+
+def maptiles_solid(fill_color):
+    return {
+        MAPTILES_KIND: TILES_SOLID,
+        MAPTILES_SOLID_FILL_COLOR: fill_color
+    }
+
+
+def maptiles_chessboard():
+    return {
+        MAPTILES_KIND: TILES_CHESSBOARD
     }
 
 
