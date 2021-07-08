@@ -121,7 +121,7 @@ abstract class PlotConfig(
                 sharedData,
                 getMap(MAPPING),
                 DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
-                DataMetaUtil.getOrderOptions(this.mergedOptions)
+                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING))
             )
             layerConfigs.add(layerConfig)
         }

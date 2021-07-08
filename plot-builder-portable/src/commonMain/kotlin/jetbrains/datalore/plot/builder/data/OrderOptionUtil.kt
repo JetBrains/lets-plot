@@ -11,13 +11,13 @@ import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil
 
 object OrderOptionUtil {
     class OrderOption internal constructor(
-        val aesName: String,
+        val variableName: String,
         val byVariable: String?,
         val orderDir: Int
     ) {
         companion object {
             fun create(
-                aesName: String,
+                variableName: String,
                 orderBy: String?,
                 order: Any?
             ): OrderOption? {
@@ -31,30 +31,34 @@ object OrderOptionUtil {
                         "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                     )
                 }
-                return OrderOption(aesName, orderBy, orderDir)
+                return OrderOption(variableName, orderBy, orderDir)
             }
         }
     }
 
-    fun createOrderingSpec(
+    fun createOrderSpec(
         variables: Set<DataFrame.Variable>,
         varBindings: List<VarBinding>,
         orderOption: OrderOption
-    ): DataFrame.OrderingSpec {
-        val varBinding = varBindings.find { it.aes.name == orderOption.aesName }
-            ?: error("No variable binding for aes ${orderOption.aesName}")
-        var variable = varBinding.variable
-        var byVariable = orderOption.byVariable?.let {
-            variables.find { it.name == orderOption.byVariable }
-                ?: error("No variable with name ${orderOption.byVariable}")
+    ): DataFrame.OrderSpec {
+        fun getVariableByName(varName: String): DataFrame.Variable {
+            return  variables.find { it.name == varName }
+                ?: error("Undefined variable '$varName' in order options. Full variable list: ${ variables.map { "'${it.name}'" } }")
         }
-        if (varBinding.aes == Aes.X) {
+
+        var variable = getVariableByName(orderOption.variableName)
+        var byVariable = orderOption.byVariable?.let { getVariableByName(it) }
+
+        val bindingsForVariable = varBindings.filter { it.variable == variable }
+        require(bindingsForVariable.size <= 1) { "Multiple bindings to one variable which used in ordering options: ${orderOption.variableName}" }
+        val varBinding = bindingsForVariable.firstOrNull()
+        if (varBinding?.aes == Aes.X) {
             val xVar = SamplingUtil.xVar(variables)
             if (xVar != null) {
                 variable = xVar
                 byVariable = byVariable ?: varBinding.variable
             }
         }
-        return DataFrame.OrderingSpec(variable, byVariable, orderOption.orderDir)
+        return DataFrame.OrderSpec(variable, byVariable, orderOption.orderDir)
     }
 }
