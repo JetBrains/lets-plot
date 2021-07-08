@@ -33,11 +33,11 @@ interface TileSystemProvider {
     }
 
     class RasterTileSystemProvider(
-        private val myRequestFormat: String
+        private val myDomains: List<String>
     ) : TileSystemProvider {
 
         override fun create(componentManager: EcsComponentManager): AbstractSystem<LiveMapContext> {
-            return RasterTileLoadingSystem(myRequestFormat, componentManager)
+            return RasterTileLoadingSystem(myDomains, componentManager)
         }
     }
 
