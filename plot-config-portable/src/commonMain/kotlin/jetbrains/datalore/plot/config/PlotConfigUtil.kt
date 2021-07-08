@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.VarBinding
@@ -189,13 +190,23 @@ object PlotConfigUtil {
                 discreteDomainByReprAes.getOrPut(reprAes) { LinkedHashSet() }.addAll(factors)
             } else if (!Aes.isPositionalXY(aes)) {
                 // add domain for any "with continuous domain but not positional" aes.
-                continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
+
+                val scaleProvider = scaleProviderByAes.getValue(aes)
+
+//                continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
+                continuousDomainByAesRaw[aes] = SeriesUtil.span(
+                    continuousDomainByAesRaw[aes],
+                    scaleProvider.computeContinuousDomain(data, variable)
+                )
             }
         }
 
         // make sure all continuous domains are 'applicable range' (not emprty and not null)
         val continuousDomainByAes = continuousDomainByAesRaw.mapValues {
-            SeriesUtil.ensureApplicableRange(it.value)
+//            SeriesUtil.ensureApplicableRange(it.value)
+            val aes = it.key
+            val transform: ContinuousTransform = scaleProviderByAes.getValue(aes).continuousTransform
+            ensureApplicableDomain(it.value, transform)
         }
 
         // Create scales for all aes.
@@ -226,5 +237,43 @@ object PlotConfigUtil {
         }
 
         return TypedScaleMap(scaleByAes)
+    }
+
+    /**
+     * ToDo: move to SeriesUtil (or better place)
+     */
+    fun ensureApplicableDomain(range: ClosedRange<Double>?, transform: ContinuousTransform): ClosedRange<Double> {
+        val applicableDomain: ClosedRange<Double> = if (!(range == null || SeriesUtil.isSubTiny(range))) {
+            range
+        } else {
+            val (lowerEndTransformed, upperEndTransformed) = if (range == null) {
+                -0.5 to 0.5
+            } else {
+                val median = range.lowerEnd
+                check(transform.isInDomain(median)) {
+                    "Can't compute applicable domain: " +
+                            "value $median isn't in the domain of ${transform::class.simpleName}"
+                }
+                val medianTransformed = transform.apply(median)!!
+                medianTransformed - 0.5 to medianTransformed + 0.5
+            }
+
+            // Transform ends back to data space.
+            // Prerequisite: 'reverse transform' function is defined on the entire set of FP numbers.
+            val lowerEnd = transform.applyInverse(lowerEndTransformed)!!
+            val upperEnd = transform.applyInverse(upperEndTransformed)!!
+            ClosedRange(lowerEnd, upperEnd)
+        }
+
+        check(transform.isInDomain(applicableDomain.lowerEnd)) {
+            "Lower end of $applicableDomain " +
+                    "isn't in the domain of ${transform::class.simpleName}"
+        }
+        check(transform.isInDomain(applicableDomain.upperEnd)) {
+            "Upper end of $applicableDomain " +
+                    "isn't in the domain of ${transform::class.simpleName}"
+        }
+
+        return applicableDomain
     }
 }

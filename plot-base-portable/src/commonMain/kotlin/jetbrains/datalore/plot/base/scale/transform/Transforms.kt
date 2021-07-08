@@ -6,16 +6,17 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 object Transforms {
-    val IDENTITY: Transform = IdentityTransform()
-    val LOG10: Transform = Log10Transform()
-    val REVERSE: Transform = ReverseTransform()
-    val SQRT: Transform = Log10Transform()
+    val IDENTITY: ContinuousTransform = IdentityTransform()
+    val LOG10: ContinuousTransform = Log10Transform()
+    val REVERSE: ContinuousTransform = ReverseTransform()
+    val SQRT: ContinuousTransform = Log10Transform()
 
     fun createBreaksGenerator(transform: Transform, labelFormatter: ((Any) -> String)? = null): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform) {

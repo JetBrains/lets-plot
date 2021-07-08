@@ -54,12 +54,8 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         }
 
     override var transform: Transform = object : Transform {
-        override fun apply(rawData: List<*>): List<Double?> {
-            val l = ArrayList<Double?>()
-            for (o in rawData) {
-                l.add(asNumber(o))
-            }
-            return l
+        override fun apply(l: List<*>): List<Double?> {
+            return l.map { asNumber(it) }
         }
 
         override fun applyInverse(v: Double?): Any? {

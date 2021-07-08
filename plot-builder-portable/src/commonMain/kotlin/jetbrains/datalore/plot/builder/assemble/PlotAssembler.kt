@@ -78,10 +78,11 @@ class PlotAssembler private constructor(
             return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos, hasLiveMap = true)
         }
 
-        // train scales
-        val xyRange = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
-        val xDomain = xyRange.first
-        val yDomain = xyRange.second
+        // train X/Y scales
+//        val xyRange = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+//        val xDomain = xyRange.first
+//        val yDomain = xyRange.second
+        val (xDomain, yDomain) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
         checkState(SeriesUtil.isFinite(xDomain.lowerEnd), "X domain lower end: " + xDomain.lowerEnd)
         checkState(SeriesUtil.isFinite(xDomain.upperEnd), "X domain upper end: " + xDomain.upperEnd)
         checkState(SeriesUtil.isFinite(yDomain.lowerEnd), "Y domain lower end: " + yDomain.lowerEnd)

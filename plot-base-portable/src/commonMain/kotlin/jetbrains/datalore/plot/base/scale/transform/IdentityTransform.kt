@@ -5,18 +5,18 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class IdentityTransform : Transform {
-    override fun apply(rawData: List<*>): List<Double?> {
-        val checkedDoubles = SeriesUtil.checkedDoubles(rawData)
-        checkArgument(checkedDoubles.canBeCast(), "Not a collections of numbers")
-        return checkedDoubles.cast()
+internal class IdentityTransform : FunTransform({ v -> v }, { v -> v }) {
+    override fun hasDomainLimits(): Boolean = false
+
+    override fun isInDomain(v: Double?) = SeriesUtil.isFinite(v)
+
+    override fun apply(l: List<*>): List<Double?> {
+        return safeCastToDoubles(l)
     }
 
-    override fun applyInverse(v: Double?): Any? {
-        return v
+    override fun applyInverse(l: List<Double?>): List<Double?> {
+        return l
     }
 }

@@ -22,28 +22,28 @@
 package jetbrains.datalore.base.gcommon.base
 
 object Preconditions {
-    // ToDo: use `check()` from kotlin std-lib
+    @Deprecated("Replace with Kotlin 'check()'")
     fun checkState(expression: Boolean) {
         if (!expression) {
             throw IllegalStateException()
         }
     }
 
-    // ToDo: use `check()` from kotlin std-lib
+    @Deprecated("Replace with Kotlin 'check()'")
     fun checkState(expression: Boolean, errorMessage: Any) {
         if (!expression) {
             throw IllegalStateException(errorMessage.toString())
         }
     }
 
-    // ToDo: use `require()` from kotlin std-lib
+    @Deprecated("Replace with Kotlin 'require()'")
     fun checkArgument(expression: Boolean) {
         if (!expression) {
             throw IllegalArgumentException()
         }
     }
 
-    // ToDo: use `require()` from kotlin std-lib
+    @Deprecated("Replace with Kotlin 'require()'")
     fun checkArgument(expression: Boolean, errorMessage: Any) {
         if (!expression) {
             throw IllegalArgumentException(errorMessage.toString())

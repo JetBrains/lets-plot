@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
+import kotlin.math.log10
+import kotlin.math.pow
 
 class Log10BreaksGen(
     private val labelFormatter: ((Any) -> String)? = null
@@ -23,12 +25,13 @@ class Log10BreaksGen(
     }
 
     override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val domainLog10 = MapperUtil.map(domain, Log10Transform.F)
+        val domainLog10 = MapperUtil.map(domain) { log10(it as Double) }
         val linearBreaks = myLinearBreaksGen.generateBreaks(domainLog10, targetCount)
         val domainLog10Values = linearBreaks.domainValues
 
+        // Transform back to data space.
         val domainValues = domainLog10Values.map {
-            Log10Transform.F_INVERSE(it) as Double
+            10.0.pow(it)
         }
 
         // format each tick with its own formatter

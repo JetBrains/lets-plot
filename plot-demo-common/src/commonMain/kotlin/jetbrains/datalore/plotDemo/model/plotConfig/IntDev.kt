@@ -71,7 +71,7 @@ class IntDev {
            'trans': 'log10'
            },
           {'aesthetic': 'color',
-           'limits': [0.01],
+           'limits': [],
            'trans': 'log10',
            'low': 'red',
            'high': 'green',

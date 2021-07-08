@@ -5,19 +5,11 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-internal class ReverseTransform : FunTransform(F, F_INVERSE) {
-    companion object {
-        private val F: (Double?) -> Double? = { v ->
-            if (v != null)
-                -v
-            else
-                null
-        }
-        private val F_INVERSE: (Double?) -> Double? = { v ->
-            if (v != null)
-                -v
-            else
-                null
-        }
+import jetbrains.datalore.plot.common.data.SeriesUtil
+
+internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
+    override fun hasDomainLimits() = false
+    override fun isInDomain(v: Double?): Boolean {
+        return SeriesUtil.isFinite(v)
     }
 }

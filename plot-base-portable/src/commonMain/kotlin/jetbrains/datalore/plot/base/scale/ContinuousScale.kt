@@ -63,10 +63,12 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override fun hasBreaksGenerator() = true
 
     override fun isInDomainLimits(v: Any): Boolean {
-        return (v as? Number)?.run {
-            // undefined domain limits - contains all
-            return domainLimits?.contains(v.toDouble()) ?: true
-        } ?: false
+        return if (v is Number) {
+            val d = v.toDouble()
+            domainLimits?.contains(d) ?: d.isFinite()
+        } else {
+            false
+        }
     }
 
     override fun hasDomainLimits(): Boolean {

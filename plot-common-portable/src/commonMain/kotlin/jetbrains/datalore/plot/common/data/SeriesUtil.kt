@@ -14,6 +14,7 @@ import jetbrains.datalore.base.gcommon.collect.Ordering
 import kotlin.math.max
 import kotlin.math.min
 
+
 object SeriesUtil {
     const val TINY = 1e-50
 
@@ -174,6 +175,10 @@ object SeriesUtil {
         return resolution
     }
 
+    /**
+     * ToDo: Use with caution.
+     * ToDo: The correct method of domain validation is temporarily in 'PlotConfigUtil.ensureApplicableDomain'.
+     */
     fun ensureApplicableRange(range: ClosedRange<Double>?): ClosedRange<Double> {
         if (range == null) {
             return ClosedRange(-0.5, 0.5)

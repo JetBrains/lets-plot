@@ -8,11 +8,13 @@ package jetbrains.datalore.plot.builder.scale
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
@@ -25,7 +27,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<*>? = null
-    private var myTransform: Transform? = null
+    private var myContinuousTransform: ContinuousTransform = Transforms.IDENTITY
     private var myBreaksGenerator: BreaksGenerator? = null
 
     private var myDiscreteDomain = false
@@ -106,8 +108,8 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         throw IllegalStateException("Not implemented")
     }
 
-    fun transform(v: Transform): ScaleProviderBuilder<T> {
-        myTransform = v
+    fun continuousTransform(v: ContinuousTransform): ScaleProviderBuilder<T> {
+        myContinuousTransform = v
         return this
     }
 
@@ -150,13 +152,15 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
-        private val myContinuousTransform: Transform? = b.myTransform
+
+        //        private val myContinuousTransform: ContinuousTransform = b.myContinuousTransform
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
 
         private val myAes: Aes<T> = b.aes
         private val mapperProvider: MapperProvider<T> = b.mapperProvider
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
+        override val continuousTransform: ContinuousTransform = b.myContinuousTransform
 
         private fun scaleName(variable: DataFrame.Variable): String {
             return myName ?: variable.label
@@ -231,7 +235,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 dataRange,
                 lowerLimit,
                 upperLimit,
-                myContinuousTransform
+                continuousTransform
             )
             val continuousRange = mapper.isContinuous || myAes.isNumeric
 
@@ -246,11 +250,11 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                     .build()
             }
 
-            if (myContinuousTransform != null) {
-                scale = scale.with()
-                    .continuousTransform(myContinuousTransform)
-                    .build()
-            }
+//            if (myContinuousTransform != null) {
+            scale = scale.with()
+                .continuousTransform(continuousTransform)
+                .build()
+//            }
 
             if (myBreaksGenerator != null) {
                 scale = scale.with()
@@ -301,6 +305,17 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private fun absentMapper(label: String): (Double?) -> T {
             // mapper for empty data is a special case - should never be used
             return { v -> throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v) }
+        }
+
+        override fun computeContinuousDomain(data: DataFrame, variable: DataFrame.Variable): ClosedRange<Double>? {
+            return if (!continuousTransform.hasDomainLimits()) {
+                data.range(variable)
+            } else {
+                val filtered = data.getNumeric(variable).filter {
+                    continuousTransform.isInDomain(it)
+                }
+                SeriesUtil.range(filtered)
+            }
         }
     }
 }

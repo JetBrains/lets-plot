@@ -183,7 +183,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
                     }."
                 )
             }
-            b.transform(transform)
+            b.continuousTransform(transform)
         }
 
         return applyCommons(b)

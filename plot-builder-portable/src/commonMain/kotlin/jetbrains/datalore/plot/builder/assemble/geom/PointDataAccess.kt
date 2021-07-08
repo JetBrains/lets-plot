@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.scale.ScaleUtil.getBreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleUtil.labelByBreak
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
@@ -73,7 +72,7 @@ internal class PointDataAccess(
                 .run(data::range)
                 .run(::ensureApplicableRange)
 
-            val formatter = getBreaksGenerator(scale).labelFormatter(domain, 100)
+            val formatter = scale.breaksGenerator.labelFormatter(domain, 100)
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)

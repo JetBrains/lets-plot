@@ -5,21 +5,16 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.sqrt
 
-class SqrtTransform : FunTransform(F, F_INVERSE) {
-    companion object {
-        private val F: (Double?) -> Double? = { v ->
-            if (v != null)
-                sqrt(v)
-            else
-                null
-        }
-        private val F_INVERSE: (Double?) -> Double? = { v ->
-            if (v != null)
-                v * v
-            else
-                null
-        }
+class SqrtTransform : FunTransform(
+    transformFun = { v -> sqrt(v) },
+    inverseFun = { v -> v * v }
+) {
+    override fun hasDomainLimits() = true
+
+    override fun isInDomain(v: Double?): Boolean {
+        return SeriesUtil.isFinite(v) && v!! >= 0.0
     }
 }

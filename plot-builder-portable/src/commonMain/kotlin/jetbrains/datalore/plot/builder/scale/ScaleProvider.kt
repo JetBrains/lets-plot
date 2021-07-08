@@ -6,10 +6,14 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 
 interface ScaleProvider<T> {
     val discreteDomain: Boolean
+
+    val continuousTransform: ContinuousTransform
 
     /**
      * Create scale for discrete input (domain)
@@ -20,4 +24,6 @@ interface ScaleProvider<T> {
      * Create scale for continuous (numeric) input (domain)
      */
     fun createScale(defaultName: String, continuousDomain: ClosedRange<Double>): Scale<T>
+
+    fun computeContinuousDomain(data: DataFrame, variable: DataFrame.Variable): ClosedRange<Double>?
 }
