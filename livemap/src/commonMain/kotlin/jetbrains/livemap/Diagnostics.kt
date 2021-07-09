@@ -21,8 +21,8 @@ import jetbrains.livemap.regions.CachedFragmentsComponent
 import jetbrains.livemap.regions.DownloadingFragmentsComponent
 import jetbrains.livemap.regions.FragmentKey
 import jetbrains.livemap.regions.StreamingFragmentsComponent
-import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.HttpTileResponseComponent
-import jetbrains.livemap.tiles.vector.TileLoadingSystem.TileResponseComponent
+import jetbrains.livemap.basemap.raster.RasterTileLoadingSystem.HttpTileResponseComponent
+import jetbrains.livemap.basemap.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {

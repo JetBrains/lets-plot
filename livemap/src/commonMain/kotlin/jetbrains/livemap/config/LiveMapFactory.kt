@@ -10,8 +10,8 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMap
 import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
-import jetbrains.livemap.camera.Viewport
-import jetbrains.livemap.camera.ViewportHelper
+import jetbrains.livemap.viewport.Viewport
+import jetbrains.livemap.viewport.ViewportHelper
 import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.projection.*
 import jetbrains.livemap.services.MapLocationGeocoder

@@ -9,11 +9,11 @@ import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.viewport.CellKey
 import jetbrains.livemap.projection.Client
-import jetbrains.livemap.tiles.DonorTileCalculator
-import jetbrains.livemap.tiles.Tile
-import jetbrains.livemap.tiles.TileRenderer
+import jetbrains.livemap.basemap.DonorTileCalculator
+import jetbrains.livemap.basemap.Tile
+import jetbrains.livemap.basemap.BasemapCellRenderer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -110,7 +110,7 @@ class DonorTileCalculatorTest {
 
     private fun render(calculator: DonorTileCalculator, tileKey: String) {
         val tile = calculator.createDonorTile(CellKey(tileKey))
-        val renderer = TileRenderer()
+        val renderer = BasemapCellRenderer()
         renderer.render(tile, myCellRect, myContext2d)
     }
 

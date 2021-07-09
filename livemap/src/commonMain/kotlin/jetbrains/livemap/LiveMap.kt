@@ -24,12 +24,11 @@ import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
+import jetbrains.livemap.basemap.BasemapLayerComponent
+import jetbrains.livemap.basemap.BasemapLayerKind
+import jetbrains.livemap.basemap.DebugCellLayerComponent
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.cells.CellLayerComponent
-import jetbrains.livemap.cells.CellLayerKind
-import jetbrains.livemap.cells.CellStateUpdateSystem
-import jetbrains.livemap.cells.DebugCellLayerComponent
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
@@ -72,16 +71,17 @@ import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
 import jetbrains.livemap.searching.*
 import jetbrains.livemap.services.FragmentProvider
-import jetbrains.livemap.tiles.TileRemovingSystem
-import jetbrains.livemap.tiles.TileRequestSystem
-import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
-import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
+import jetbrains.livemap.basemap.BasemapCellsRemovingSystem
+import jetbrains.livemap.basemap.BasemapCellLoadingSystem
+import jetbrains.livemap.basemap.TileSystemProvider
+import jetbrains.livemap.basemap.raster.RasterTileLayerComponent
+import jetbrains.livemap.basemap.vector.debug.DebugDataSystem
 import jetbrains.livemap.ui.CursorService
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
 import jetbrains.livemap.ui.UiService
+import jetbrains.livemap.viewport.*
 
 class LiveMap(
     private val myMapRuler: MapRuler<World>,
@@ -230,7 +230,8 @@ class LiveMap(
                 // Service systems
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
-                ViewportUpdateSystem(componentManager),
+                ViewportPositionUpdateSystem(componentManager),
+                ViewportGridUpdateSystem(componentManager),
                 LiveMapUiSystem(
                     myUiService,
                     componentManager,
@@ -239,11 +240,10 @@ class LiveMap(
                     myAttribution
                 ),
 
-                CellStateUpdateSystem(componentManager),
-                TileRequestSystem(componentManager),
+                BasemapCellLoadingSystem(componentManager),
                 myTileSystemProvider.create(componentManager),
 
-                TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
+                BasemapCellsRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 DebugDataSystem(componentManager),
 
                 //Regions
@@ -321,7 +321,7 @@ class LiveMap(
             componentManager
                 .createEntity("vector_layer_ground")
                 .addComponents {
-                    + CellLayerComponent(CellLayerKind.WORLD)
+                    + BasemapLayerComponent(BasemapLayerKind.WORLD)
                     + LayerEntitiesComponent()
                     + myLayerManager.addLayer("ground", LayerGroup.BACKGROUND)
                 }
@@ -329,7 +329,7 @@ class LiveMap(
             componentManager
                 .createEntity("raster_layer_ground")
                 .addComponents {
-                    + CellLayerComponent(CellLayerKind.RASTER)
+                    + BasemapLayerComponent(BasemapLayerKind.RASTER)
                     + RasterTileLayerComponent()
                     + LayerEntitiesComponent()
                     + myLayerManager.addLayer("http_ground", LayerGroup.BACKGROUND)
@@ -353,7 +353,7 @@ class LiveMap(
             componentManager
                 .createEntity("vector_layer_labels")
                 .addComponents {
-                    + CellLayerComponent(CellLayerKind.LABEL)
+                    + BasemapLayerComponent(BasemapLayerKind.LABEL)
                     + LayerEntitiesComponent()
                     + myLayerManager.addLayer("labels", LayerGroup.FOREGROUND)
                 }
@@ -363,7 +363,7 @@ class LiveMap(
             componentManager
                 .createEntity("cell_layer_debug")
                 .addComponents {
-                    + CellLayerComponent(CellLayerKind.DEBUG)
+                    + BasemapLayerComponent(BasemapLayerKind.DEBUG)
                     + DebugCellLayerComponent()
                     + LayerEntitiesComponent()
                     + myLayerManager.addLayer("debug", LayerGroup.FOREGROUND)

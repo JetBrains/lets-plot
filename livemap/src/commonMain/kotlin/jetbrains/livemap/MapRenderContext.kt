@@ -8,7 +8,7 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.CanvasProvider
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.core.rendering.primitives.RenderObject
 import jetbrains.livemap.projection.ClientPoint
 

@@ -34,7 +34,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.tiles.TileSystemProvider
+import jetbrains.livemap.basemap.TileSystemProvider
 import jetbrains.livemap.ui.CursorService
 import kotlin.math.abs
 

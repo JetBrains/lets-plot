@@ -11,7 +11,7 @@ import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.datalore.base.typedGeometry.intersects
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.cells.CellStateComponent
+import jetbrains.livemap.viewport.ViewportGridStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
@@ -32,12 +32,12 @@ class FragmentUpdateSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val cellStateComponent = getSingleton<CellStateComponent>()
+        val viewportGridState = getSingleton<ViewportGridStateComponent>()
         val changedFragmentsComponent = getSingleton<ChangedFragmentsComponent>()
         val emptyFragments = getSingleton<EmptyFragmentsComponent>()
         val existingRegions = getSingleton<ExistingRegionsComponent>().existingRegions
 
-        val quadsToRemove = cellStateComponent.quadsToRemove
+        val quadsToRemove = viewportGridState.quadsToRemove
 
         val fragmentsToAdd = ArrayList<FragmentKey>()
         val fragmentsToRemove = ArrayList<FragmentKey>()
@@ -46,10 +46,10 @@ class FragmentUpdateSystem(
             val bbox = regionEntity.get<RegionBBoxComponent>().bbox
             val regionId = regionEntity.get<RegionIdComponent>().regionId
 
-            var quadsToAdd = cellStateComponent.quadsToAdd
+            var quadsToAdd = viewportGridState.quadsToLoad
 
             if (!existingRegions.contains(regionId)) {
-                quadsToAdd = cellStateComponent.visibleQuads
+                quadsToAdd = viewportGridState.visibleQuads
                 existingRegions.add(regionId)
             }
 

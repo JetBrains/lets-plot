@@ -35,8 +35,8 @@ import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.tiles.Tilesets
+import jetbrains.livemap.basemap.TileSystemProvider
+import jetbrains.livemap.basemap.Tilesets
 import jetbrains.livemap.ui.CursorService
 
 

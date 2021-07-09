@@ -5,6 +5,14 @@
 
 package jetbrains.livemap.core.ecs
 
+inline fun <reified T1: EcsComponent, reified T2: EcsComponent> AbstractSystem<*>.getEntities2(): Sequence<EcsEntity> {
+    return componentManager.getEntities(T1::class).filter { it.contains<T2>() }
+}
+
+inline fun <reified T1: EcsComponent, reified T2: EcsComponent, reified T3: EcsComponent> AbstractSystem<*>.getEntities3(): Sequence<EcsEntity> {
+    return componentManager.getEntities(T1::class).filter { it.contains<T2>() && it.contains<T3>()}
+}
+
 inline fun <reified T: EcsComponent> AbstractSystem<*>.onEachEntity(proc: (EcsEntity, T) -> Unit) {
     for (entity in getEntities(T::class)) {
         proc(entity, entity.get())
