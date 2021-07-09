@@ -153,7 +153,6 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
 
-        //        private val myContinuousTransform: ContinuousTransform = b.myContinuousTransform
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
 
         private val myAes: Aes<T> = b.aes
@@ -241,6 +240,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
             scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
 
+            // ToDo: need to 'inverse transform' breaks.
             if (mapper is WithGuideBreaks<*>) {
                 @Suppress("UNCHECKED_CAST")
                 mapper as WithGuideBreaks<Any>
@@ -250,11 +250,9 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                     .build()
             }
 
-//            if (myContinuousTransform != null) {
             scale = scale.with()
                 .continuousTransform(continuousTransform)
                 .build()
-//            }
 
             if (myBreaksGenerator != null) {
                 scale = scale.with()

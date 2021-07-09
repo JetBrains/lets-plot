@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.TreeMap
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
@@ -66,7 +65,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     override val breaksGenerator: BreaksGenerator
         get() = throw IllegalStateException("No breaks generator for discrete scale '$name'")
 
-    override val domainLimits: ClosedRange<Double>
+    override val domainLimits: Pair<Double, Double>
         get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
     constructor(

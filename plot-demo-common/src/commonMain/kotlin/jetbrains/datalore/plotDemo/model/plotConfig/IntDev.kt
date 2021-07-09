@@ -13,7 +13,9 @@ class IntDev {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             issue292(),
-            issue301()
+            issue301(),
+            issue284(),
+            issue284_1(),
         )
     }
 
@@ -101,5 +103,59 @@ class IntDev {
             "z" to z
         )
         return plotSpec
+    }
+
+    private fun issue284(): MutableMap<String, Any> {
+        // Legend is broken when using scale_fill_brewer with 'trans' parameter #284
+
+//        data = dict (
+//            x = [v for v in range(10)],
+//        y = [v for v in range(10)],
+//        z = [2**v for v in range(10)],
+//        )
+//
+//        (ggplot(data, aes('x', 'y')) + geom_point(aes(color="z"), size=10)
+//                + scale_color_brewer(palette="YlOrBr", trans="log10")
+//                )
+        val spec = """
+{'data': {'x': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  'y': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  'z': [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]},
+ 'mapping': {'x': 'x', 'y': 'y'},
+ 'kind': 'plot',
+        'scales': [{'aesthetic': 'color',
+            'trans': 'log10',
+            'palette': 'YlOrBr',
+            'scale_mapper_kind': 'color_brewer'}],
+ 'layers': [{'geom': 'point',
+   'mapping': {'color': 'z'},
+   'size': 10}]
+   }
+         """.trimIndent()
+
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun issue284_1(): MutableMap<String, Any> {
+        // Same as befoe but the scale is:
+        // scale_color_continuous(trans="log10", guide='legend')
+        val spec = """
+{'data': {'x': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  'y': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  'z': [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]},
+ 'mapping': {'x': 'x', 'y': 'y'},
+ 'kind': 'plot',
+ 'scales': [{'aesthetic': 'color',
+   'trans': 'log10',
+   'guide': 'legend'
+   }],
+ 'layers': [{'geom': 'point',
+   'mapping': {'color': 'z'},
+   'size': 10}]
+   }
+         """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 }

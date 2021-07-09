@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 
 /**
@@ -37,7 +36,7 @@ interface Scale<T> {
 
     val isContinuousDomain: Boolean
 
-    val domainLimits: ClosedRange<Double>?
+    val domainLimits: Pair<Double, Double>
 
     val multiplicativeExpand: Double
 

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
@@ -29,7 +28,7 @@ internal class BogusScale : Scale<Double> {
     override val isContinuousDomain: Boolean
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val domainLimits: ClosedRange<Double>?
+    override val domainLimits: Pair<Double, Double>
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val multiplicativeExpand: Double

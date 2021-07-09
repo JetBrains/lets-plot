@@ -24,6 +24,7 @@ class DataFrame private constructor(builder: Builder) {
         val orderBy: Variable?,
         val direction: Int
     )
+
     private val myOrderSpecs: List<OrderingSpec>
 
     val isEmpty: Boolean
@@ -188,6 +189,9 @@ class DataFrame private constructor(builder: Builder) {
         val isStat: Boolean
             get() = source == Source.STAT
 
+        val isTransform: Boolean
+            get() = source == Source.TRANSFORM
+
         override fun toString(): String {
             // important
             return name
@@ -225,7 +229,7 @@ class DataFrame private constructor(builder: Builder) {
         } else if (orderSpec.orderBy == Stats.COUNT) {
             get(orderSpec.variable)
                 .zip(getNumeric(orderSpec.orderBy).requireNoNulls()) // stat count is always zero or value
-                .groupBy ({ (value) -> value }) { (_, statCount) -> statCount }
+                .groupBy({ (value) -> value }) { (_, statCount) -> statCount }
                 .mapValues { (_, statCounts) -> statCounts.sum() }
                 .toList()
                 .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
@@ -236,7 +240,7 @@ class DataFrame private constructor(builder: Builder) {
                 indices = get(orderSpec.orderBy)
                     .withIndex()
                     .filter { it.value == null }
-                    .map { it.index}
+                    .map { it.index }
             ).filterNotNull()
 
             SeriesUtil.pickAtIndices(
