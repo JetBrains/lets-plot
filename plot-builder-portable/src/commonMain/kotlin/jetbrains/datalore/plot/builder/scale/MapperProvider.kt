@@ -5,9 +5,8 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.ContinuousTransform
 
 interface MapperProvider<T> {
     /**
@@ -22,6 +21,6 @@ interface MapperProvider<T> {
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): GuideMapper<T>
 }
