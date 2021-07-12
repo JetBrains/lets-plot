@@ -34,26 +34,20 @@ object OrderOptionUtil {
             }
 
             fun OrderOption.mergeWith(other: OrderOption): OrderOption {
-                if (variableName != other.variableName) {
-                    error("Can't merge order options for different variables: '$variableName' and '${other.variableName}' ")
+                require(variableName != other.variableName) {
+                    "Can't merge order options for different variables: '$variableName' and '${other.variableName}'"
                 }
-                val newByVariable = if (byVariable != null) {
-                    require(other.byVariable == null || other.byVariable == byVariable) {
-                        "Multiple ordering options for the variable '$variableName' with different non-empty 'order_by' fields: '$byVariable' and '${other.byVariable}'"
-                    }
-                    byVariable
-                } else {
-                    other.byVariable
+                require(other.byVariable == null || other.byVariable == byVariable) {
+                    "Multiple ordering options for the variable '$variableName' with different non-empty 'order_by' fields: '$byVariable' and '${other.byVariable}'"
                 }
-                val newOrderDir = if (orderDir != null) {
-                    require(other.orderDir == null || other.orderDir == orderDir) {
-                        "Multiple ordering options for the variable '$variableName' with different order direction: '$orderDir' and '${other.orderDir}'"
-                    }
-                    orderDir
-                } else {
-                    other.orderDir
+                require(other.orderDir == null || other.orderDir == orderDir) {
+                    "Multiple ordering options for the variable '$variableName' with different order direction: '$orderDir' and '${other.orderDir}'"
                 }
-                return OrderOption(variableName, newByVariable, newOrderDir)
+                return OrderOption(
+                    variableName,
+                    byVariable ?: other.byVariable,
+                    orderDir ?: other.orderDir
+                )
             }
         }
     }
