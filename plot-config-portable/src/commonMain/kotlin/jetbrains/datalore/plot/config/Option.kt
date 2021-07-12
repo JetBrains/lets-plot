@@ -182,9 +182,12 @@ object Option {
                 const val ATTRIBUTION = "attribution"
                 const val MIN_ZOOM = "min_zoom"
                 const val MAX_ZOOM = "max_zoom"
+                const val FILL_COLOR = "fill_color"
 
                 const val KIND_VECTOR_LETS_PLOT = "vector_lets_plot"
                 const val KIND_RASTER_ZXY = "raster_zxy"
+                const val KIND_SOLID = "solid"
+                const val KIND_CHESSBOARD = "chessboard"
 
                 const val THEME_COLOR = "color"
                 const val THEME_LIGHT = "light"

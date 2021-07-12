@@ -193,7 +193,6 @@ object PlotConfigUtil {
 
                 val scaleProvider = scaleProviderByAes.getValue(aes)
 
-//                continuousDomainByAesRaw[aes] = SeriesUtil.span(continuousDomainByAesRaw[aes], data.range(variable))
                 continuousDomainByAesRaw[aes] = SeriesUtil.span(
                     continuousDomainByAesRaw[aes],
                     scaleProvider.computeContinuousDomain(data, variable)
@@ -203,7 +202,6 @@ object PlotConfigUtil {
 
         // make sure all continuous domains are 'applicable range' (not emprty and not null)
         val continuousDomainByAes = continuousDomainByAesRaw.mapValues {
-//            SeriesUtil.ensureApplicableRange(it.value)
             val aes = it.key
             val transform: ContinuousTransform = scaleProviderByAes.getValue(aes).continuousTransform
             ensureApplicableDomain(it.value, transform)
@@ -242,38 +240,13 @@ object PlotConfigUtil {
     /**
      * ToDo: move to SeriesUtil (or better place)
      */
-    fun ensureApplicableDomain(range: ClosedRange<Double>?, transform: ContinuousTransform): ClosedRange<Double> {
-        val applicableDomain: ClosedRange<Double> = if (!(range == null || SeriesUtil.isSubTiny(range))) {
-            range
+    fun ensureApplicableDomain(dataRange: ClosedRange<Double>?, transform: ContinuousTransform): ClosedRange<Double> {
+        return if (dataRange == null) {
+            transform.createApplicableDomain(0.0)
+        } else if (SeriesUtil.isSubTiny(dataRange)) {
+            transform.createApplicableDomain(dataRange.lowerEnd)
         } else {
-            val (lowerEndTransformed, upperEndTransformed) = if (range == null) {
-                -0.5 to 0.5
-            } else {
-                val median = range.lowerEnd
-                check(transform.isInDomain(median)) {
-                    "Can't compute applicable domain: " +
-                            "value $median isn't in the domain of ${transform::class.simpleName}"
-                }
-                val medianTransformed = transform.apply(median)!!
-                medianTransformed - 0.5 to medianTransformed + 0.5
-            }
-
-            // Transform ends back to data space.
-            // Prerequisite: 'reverse transform' function is defined on the entire set of FP numbers.
-            val lowerEnd = transform.applyInverse(lowerEndTransformed)!!
-            val upperEnd = transform.applyInverse(upperEndTransformed)!!
-            ClosedRange(lowerEnd, upperEnd)
+            dataRange
         }
-
-        check(transform.isInDomain(applicableDomain.lowerEnd)) {
-            "Lower end of $applicableDomain " +
-                    "isn't in the domain of ${transform::class.simpleName}"
-        }
-        check(transform.isInDomain(applicableDomain.upperEnd)) {
-            "Upper end of $applicableDomain " +
-                    "isn't in the domain of ${transform::class.simpleName}"
-        }
-
-        return applicableDomain
     }
 }

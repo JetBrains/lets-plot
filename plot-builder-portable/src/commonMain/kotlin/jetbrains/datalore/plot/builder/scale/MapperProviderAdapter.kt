@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 
 open class MapperProviderAdapter<T> : MapperProvider<T> {
     override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
@@ -18,7 +18,7 @@ open class MapperProviderAdapter<T> : MapperProvider<T> {
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): GuideMapper<T> {
         throw IllegalStateException("Can't create mapper for continuous domain $domain")
     }

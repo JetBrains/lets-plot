@@ -5,10 +5,13 @@
 
 package jetbrains.datalore.plot.base
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
+
 interface ContinuousTransform : Transform {
     fun hasDomainLimits(): Boolean
     fun isInDomain(v: Double?): Boolean
     fun apply(v: Double?): Double?
     override fun applyInverse(v: Double?): Double?
     fun applyInverse(l: List<Double?>): List<Double?>
+    fun createApplicableDomain(middle:Double): ClosedRange<Double>
 }

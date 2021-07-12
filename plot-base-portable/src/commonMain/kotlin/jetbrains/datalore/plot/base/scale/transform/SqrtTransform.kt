@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.max
 import kotlin.math.sqrt
 
 class SqrtTransform : FunTransform(
@@ -16,5 +18,12 @@ class SqrtTransform : FunTransform(
 
     override fun isInDomain(v: Double?): Boolean {
         return SeriesUtil.isFinite(v) && v!! >= 0.0
+    }
+
+    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+        @Suppress("NAME_SHADOWING")
+        val middle = if (isInDomain(middle)) middle else 1.0
+        val lower = max(middle - 0.5, 0.0)
+        return ClosedRange(lower, lower + 1.0)
     }
 }

@@ -10,11 +10,17 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_CHESSBOARD
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_RASTER_ZXY
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_SOLID
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT
+import jetbrains.datalore.plot.config.getString
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
@@ -32,13 +38,11 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.*
+import jetbrains.livemap.tiles.Tilesets
 import jetbrains.livemap.ui.CursorService
-import kotlin.math.max
-import kotlin.math.min
 
 
 internal class LiveMapSpecBuilder {
-
     private lateinit var myAesthetics: Aesthetics
     private lateinit var myLayers: List<LiveMapLayerData>
     private lateinit var myLiveMapOptions: LiveMapOptions
@@ -47,8 +51,8 @@ internal class LiveMapSpecBuilder {
     private lateinit var myDevParams: DevParams
     private lateinit var myMapLocationConsumer: ((DoubleRectangle) -> Unit)
     private lateinit var myCursorService: CursorService
-    var minZoom: Int = MIN_ZOOM
-    var maxZoom: Int = MAX_ZOOM
+    private var minZoom: Int = MIN_ZOOM
+    private var maxZoom: Int = MAX_ZOOM
 
     fun aesthetics(aesthetics: Aesthetics): LiveMapSpecBuilder {
         myAesthetics = aesthetics
@@ -62,8 +66,8 @@ internal class LiveMapSpecBuilder {
 
     fun liveMapOptions(liveMapOptions: LiveMapOptions): LiveMapSpecBuilder {
         myLiveMapOptions = liveMapOptions
-        minZoom = (myLiveMapOptions.tileProvider[Tile.MIN_ZOOM] as Int?)?.let { max(it, minZoom) } ?: minZoom
-        maxZoom = (myLiveMapOptions.tileProvider[Tile.MAX_ZOOM] as Int?)?.let { min(it, maxZoom) } ?: maxZoom
+        (myLiveMapOptions.tileProvider[Tile.MIN_ZOOM] as Int?)?.let { minZoom = it }
+        (myLiveMapOptions.tileProvider[Tile.MAX_ZOOM] as Int?)?.let { maxZoom = it }
 
         return this
     }
@@ -155,18 +159,6 @@ internal class LiveMapSpecBuilder {
         private const val RECT_XMAX = "lonmax"
         private const val RECT_YMIN = "latmin"
         private const val RECT_YMAX = "latmax"
-
-//        object Tile {
-//            const val KIND = "kind"
-//            const val URL = "url"
-//            const val THEME = "theme"
-//            const val ATTRIBUTION = "attribution"
-//            const val MIN_ZOOM = "min_zoom"
-//            const val MAX_ZOOM = "max_zoom"
-//
-//            const val VECTOR_LETS_PLOT = "vector_lets_plot"
-//            const val RASTER_ZXY = "raster_zxy"
-//        }
 
         object Geocoding {
             const val URL = "url"
@@ -267,10 +259,8 @@ internal class LiveMapSpecBuilder {
                     val handlerMap = HashMap<String, (Any) -> MapLocation>()
                     handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
                     handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(getWithIdList(data)) }
-                    handlerMap[REGION_TYPE_COORDINATES] =
-                        { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
-                    handlerMap[REGION_TYPE_DATAFRAME] =
-                        { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
+                    handlerMap[REGION_TYPE_COORDINATES] = { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
+                    handlerMap[REGION_TYPE_DATAFRAME] = { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                     handleRegionObject(location, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: location" + " = [String|Array|DataFrame]")
@@ -290,27 +280,50 @@ internal class LiveMapSpecBuilder {
             throw IllegalArgumentException("Invalid map region type: $regionType")
         }
 
-        fun createTileSystemProvider(options: Map<*, *>, debug: Boolean, quant: Int): TileSystemProvider {
-            fun parseTheme(theme: String): TileService.Theme {
-                try {
-                    return TileService.Theme.valueOf(theme.toUpperCase())
-                } catch (ignored: Exception) {
-                    throw IllegalArgumentException("Unknown theme type: $theme")
-                }
+        fun createTileSystemProvider(options: Map<*, *>, debugTiles: Boolean, quant: Int): TileSystemProvider {
+            if (debugTiles) {
+                return Tilesets.chessboard()
             }
 
-            return when {
-                debug -> ChessboardTileSystemProvider()
-                options[Tile.KIND] == Tile.KIND_RASTER_ZXY -> RasterTileSystemProvider(options[Tile.URL] as String)
-                options[Tile.KIND] == Tile.KIND_VECTOR_LETS_PLOT -> VectorTileSystemProvider(
-                    myQuantumIterations = quant,
-                    myTileService = liveMapVectorTiles {
-                        options[Tile.URL]?.let { url = it as String }
-                        options[Tile.THEME]?.let { theme = parseTheme(it as String) }
+            return when(options[Tile.KIND]) {
+                KIND_CHESSBOARD -> Tilesets.chessboard()
+                KIND_SOLID -> Tilesets.solid(Color.parseHex(options.getString(Tile.FILL_COLOR)!!))
+                KIND_RASTER_ZXY -> options.getString(Tile.URL)!!.let(::splitSubdomains).let(Tilesets::raster)
+                KIND_VECTOR_LETS_PLOT -> Tilesets.letsPlot(
+                    quantumIterations = quant,
+                    tileService = liveMapVectorTiles {
+                        options.getString(Tile.URL)?.let { url = it }
+                        options.getString(Tile.THEME)?.let { theme = TileService.Theme.valueOf(it.toUpperCase()) }
                     }
                 )
                 else -> throw IllegalArgumentException("Tile provider is not set.")
             }
+        }
+
+        private fun splitSubdomains(url: String): List<String> {
+            val openBracketIndex = url.indexOfFirst { it == '[' }
+            val closeBracketIndex = url.indexOfLast { it == ']' }
+
+            if (openBracketIndex < 0 || closeBracketIndex < 0) {
+                // single domain
+                return listOf(url)
+            }
+
+            if (openBracketIndex > closeBracketIndex) {
+                throw IllegalArgumentException("Error parsing subdomains: wrong brackets order")
+            }
+
+            val subdomains = url.substring(openBracketIndex + 1, closeBracketIndex)
+            if (subdomains.isEmpty()) {
+                throw IllegalArgumentException("Empty subdomains list")
+            }
+            if (subdomains.any { it.toLowerCase() !in 'a'..'z' }) {
+                throw IllegalArgumentException("subdomain list contains non-letter symbols")
+            }
+
+            val urlStart = url.substring(0, openBracketIndex)
+            val urlEnd = url.substring(closeBracketIndex + 1, url.length)
+            return subdomains.map { urlStart + it + urlEnd }
         }
 
         private fun createGeocodingService(options: Map<*, *>): GeocodingService {
@@ -368,5 +381,4 @@ internal class LiveMapSpecBuilder {
             )
         }
     }
-
 }

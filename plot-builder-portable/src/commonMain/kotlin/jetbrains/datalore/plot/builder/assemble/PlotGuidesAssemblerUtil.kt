@@ -5,14 +5,13 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
-import kotlin.math.max
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
@@ -45,52 +44,47 @@ internal object PlotGuidesAssemblerUtil {
                 }
             }
 
-//            val scale = layerTiles.getScale(aes)
-//            val scaleName = scale.name
-//            if (isNullOrEmpty(scaleName)) {
-//                continue
-//            }
-
             result.add(aes)
         }
 
         return result
     }
 
-    fun guideDataRangeByAes(
+    fun guideTransformedDomainByAes(
         stitchedLayers: StitchedPlotLayers,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
     ): Map<Aes<*>, ClosedRange<Double>> {
-        val guideDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
-        val aesSet =
-            mappedRenderedAesToCreateGuides(
-                stitchedLayers,
-                guideOptionsMap
-            )
+        val transformedDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+        val aesSet = mappedRenderedAesToCreateGuides(
+            stitchedLayers,
+            guideOptionsMap
+        )
+
         for (aes in aesSet) {
-            val binding = stitchedLayers.getBinding(aes)
-            if (stitchedLayers.isNumericData(binding.variable)) {
-                val dataRange = stitchedLayers.getDataRange(binding.variable)
-                if (dataRange != null) {
-                    val scale = stitchedLayers.getScale(aes)
+            // Should be only 'tarnsform' variables in bindings at this point.
+            val transformVariable = stitchedLayers.getBinding(aes).variable
+            check(transformVariable.isTransform)
 
-                    val guideDomain =
-                        if (scale.isContinuousDomain && scale.hasDomainLimits()) {
-                            val limits = scale.domainLimits!!
-                            val lowerEnd = if (limits.lowerEnd.isFinite()) limits.lowerEnd else dataRange.lowerEnd
-                            val upperEnd = if (limits.upperEnd.isFinite()) limits.upperEnd else dataRange.upperEnd
-                            ClosedRange<Double>(lowerEnd, max(lowerEnd, upperEnd))
-                        } else {
-                            dataRange
-                        }
+            val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
+            if (transformedDataRange != null) {
+                val scale = stitchedLayers.getScale(aes)
+
+                val transformedDomain =
+                    if (scale.isContinuousDomain && scale.hasDomainLimits()) {
+                        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(scale)
+                        val lowerEnd = if (scaleLower.isFinite()) scaleLower else transformedDataRange.lowerEnd
+                        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else transformedDataRange.upperEnd
+                        ClosedRange<Double>(lowerEnd, upperEnd)
+                    } else {
+                        transformedDataRange
+                    }
 
 
-                    guideDomainByAes[aes] = guideDomain
-                }
+                transformedDomainByAes[aes] = transformedDomain
             }
         }
 
-        return guideDomainByAes
+        return transformedDomainByAes
     }
 
     fun createColorBarAssembler(
@@ -117,10 +111,7 @@ internal object PlotGuidesAssemblerUtil {
     }
 
     fun checkFitsColorBar(aes: Aes<*>, scale: Scale<*>) {
-        checkState(aes.isColor, "Color-bar is not applicable to $aes aesthetic")
-        checkState(
-            scale.isContinuous,
-            "Color-bar is only applicable when both domain and color palette are continuous"
-        )
+        check(aes.isColor) { "Color-bar is not applicable to $aes aesthetic" }
+        check(scale.isContinuous) { "Color-bar is only applicable when both domain and color palette are continuous" }
     }
 }

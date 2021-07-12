@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
@@ -31,7 +31,7 @@ class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: Color) : M
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)

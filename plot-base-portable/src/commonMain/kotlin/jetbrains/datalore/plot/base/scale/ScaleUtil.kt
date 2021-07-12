@@ -10,6 +10,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.max
+import kotlin.math.min
 
 object ScaleUtil {
 
@@ -130,16 +133,21 @@ object ScaleUtil {
         }
     }
 
-    fun transformedDefinedLimits(scale: Scale<*>): List<Double> {
-        return if (scale.hasDomainLimits()) {
-            val transform = scale.transform as ContinuousTransform
-            val domainLimits = scale.domainLimits!!
-            val l = listOf(domainLimits.lowerEnd, domainLimits.upperEnd)
-            val transformable = l.filter { transform.isInDomain(it) }
+    fun transformedDefinedLimits(scale: Scale<*>): Pair<Double, Double> {
+        val (lower, upper) = scale.domainLimits
+        val transform = scale.transform as ContinuousTransform
+        val (transformedLower, transformedUpper) = Pair(
+            if (transform.isInDomain(lower)) transform.apply(lower)!! else Double.NaN,
+            if (transform.isInDomain(upper)) transform.apply(upper)!! else Double.NaN
+        )
 
-            transform.apply(transformable).map { it as Double }
+        return if (SeriesUtil.allFinite(transformedLower, transformedUpper)) {
+            Pair(
+                min(transformedLower, transformedUpper),
+                max(transformedLower, transformedUpper)
+            )
         } else {
-            emptyList()
+            Pair(transformedLower, transformedUpper)
         }
     }
 }

@@ -20,7 +20,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
-import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.guideDataRangeByAes
+import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.guideTransformedDomainByAes
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -95,22 +95,21 @@ internal object PlotAssemblerUtil {
             )
         }
 
-        val dataRangeByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+        val transformedDataRangeByAes = HashMap<Aes<*>, ClosedRange<Double>>()
         for (stitchedPlotLayers in stitchedLayersList) {
-            val layerDataRangeByAes = guideDataRangeByAes(stitchedPlotLayers, guideOptionsMap)
-            for (aes in layerDataRangeByAes.keys) {
-                val range = layerDataRangeByAes[aes]
+            val layerTransformedDomainByAes = guideTransformedDomainByAes(stitchedPlotLayers, guideOptionsMap)
+            for ((aes, transformedDomain) in layerTransformedDomainByAes) {
                 updateAesRangeMap(
                     aes,
-                    range,
-                    dataRangeByAes
+                    transformedDomain,
+                    transformedDataRangeByAes
                 )
             }
         }
 
         return createLegends(
             stitchedLayersList,
-            dataRangeByAes,
+            transformedDataRangeByAes,
             guideOptionsMap,
             theme
         )
@@ -118,7 +117,7 @@ internal object PlotAssemblerUtil {
 
     private fun createLegends(
         stitchedLayersList: List<StitchedPlotLayers>,
-        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
+        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -150,7 +149,7 @@ internal object PlotAssemblerUtil {
                         val colorScale = scale as Scale<Color>
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                             scaleName, binding.aes,
-                            dataRangeByAes, colorScale, guideOptions, theme
+                            transformedDataRangeByAes, colorScale, guideOptions, theme
                         )
                     }
                 } else if (fitsColorBar(binding.aes, scale)) {
@@ -159,40 +158,34 @@ internal object PlotAssemblerUtil {
                     val colorScale = scale as Scale<Color>
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                         scaleName, binding.aes,
-                        dataRangeByAes, colorScale, null, theme
+                        transformedDataRangeByAes, colorScale, null, theme
                     )
                 }
 
                 if (!colorBar) {
-//                    if (!layerBindingsByScaleName.containsKey(scaleName)) {
-//                        layerBindingsByScaleName[scaleName] = ArrayList()
-//                    }
-//                    layerBindingsByScaleName[scaleName]!!.add(binding)
                     layerBindingsByScaleName.getOrPut(scaleName) { ArrayList() }.add(binding)
                 }
             }
 
             for (scaleName in layerBindingsByScaleName.keys) {
-                if (!legendAssemblerByTitle.containsKey(scaleName)) {
-                    legendAssemblerByTitle[scaleName] =
-                        LegendAssembler(
-                            scaleName,
-                            guideOptionsMap,
-                            theme
-                        )
+                val legendAssembler = legendAssemblerByTitle.getOrPut(scaleName) {
+                    LegendAssembler(
+                        scaleName,
+                        guideOptionsMap,
+                        theme
+                    )
                 }
 
                 val varBindings = layerBindingsByScaleName[scaleName]!!
                 val legendKeyFactory = stitchedLayers.legendKeyElementFactory
                 val aestheticsDefaults = stitchedLayers.aestheticsDefaults
-                val legendAssembler = legendAssemblerByTitle[scaleName]!!
                 legendAssembler.addLayer(
                     legendKeyFactory,
                     varBindings,
                     layerConstantByAes,
                     aestheticsDefaults,
                     stitchedLayers.getScaleMap(),
-                    dataRangeByAes
+                    transformedDataRangeByAes
                 )
             }
         }
@@ -244,7 +237,7 @@ internal object PlotAssemblerUtil {
             // - scales breaks if defined
             if (scale.isContinuousDomain) {
                 initialRange = updateRange(
-                    ScaleUtil.transformedDefinedLimits(scale),
+                    ScaleUtil.transformedDefinedLimits(scale).toList().filter { it.isFinite() },
                     initialRange
                 )
             }

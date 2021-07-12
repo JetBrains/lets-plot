@@ -15,7 +15,7 @@ class LiveMap {
             //pieWithNullValuesInData(),
             //barWithNullValuesInData()
 //            multiLayerTooltips()
-//            mapJoinBar(),
+            mapJoinBar(),
 //            antiMeridian(),
 //            tooltips(),
 //            symbol_point(),
@@ -314,8 +314,8 @@ class LiveMap {
       "display_mode": "pie",
       "tiles": {
         "kind": "raster_zxy",
-        "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "attribution": "<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>"
+        "url": "https://[abc].tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "attribution": "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
       },
       "geocoding": {
         "url": "https://geo2.datalore.jetbrains.com"
@@ -330,7 +330,7 @@ class LiveMap {
           "{\"type\": \"Point\", \"coordinates\": [-111.431221, 33.729759]}"
         ]
       },
-      "map_join": ["State", "State"]
+      "map_join": [["State"], ["State"]]
     }
   ]
 }""".trimIndent()

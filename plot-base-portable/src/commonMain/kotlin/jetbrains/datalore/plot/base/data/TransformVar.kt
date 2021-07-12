@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.data
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable.Source.TRANSFORM
@@ -67,7 +66,7 @@ object TransformVar {
     }
 
     operator fun get(varName: String): DataFrame.Variable {
-        checkArgument(VARS.containsKey(varName), "Unknown transform variable $varName")
+        check(VARS.containsKey(varName)) { "Unknown transform variable $varName" }
         return VARS[varName]!!
     }
 
