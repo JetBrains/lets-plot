@@ -211,8 +211,10 @@ class LayerConfig(
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
         }
 
-        val orderOptionsFromPlot =plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
-        myOrderOptions = (orderOptionsFromPlot + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions))
+        myOrderOptions = (
+                plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
+                        + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+                )
             // Try to combine order options:
             .groupingBy(OrderOption::variableName)
             .reduce { _, combined, element -> combined.mergeWith(element) }
