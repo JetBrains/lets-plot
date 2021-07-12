@@ -62,17 +62,18 @@ object OrderOptionUtil {
                 ?: error("Undefined variable '$varName' in order options. Full variable list: ${variables.map { "'${it.name}'" }}")
         }
 
-        var variable = getVariableByName(orderOption.variableName)
-        var byVariable = orderOption.byVariable?.let { getVariableByName(it) }
-
-        val xBinding = varBindings.find { it.variable == variable && it.aes == Aes.X }
-        if (xBinding != null) {
-            val xVar = SamplingUtil.xVar(variables)
-            if (xVar != null) {
-                variable = xVar
-                byVariable = byVariable ?: xBinding.variable
-            }
+        val xBinding = varBindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X }
+        if (xBinding != null && SamplingUtil.xVar(variables) != null) {
+            return DataFrame.OrderingSpec(
+                SamplingUtil.xVar(variables)!!,
+                orderOption.byVariable?.let(::getVariableByName) ?: xBinding.variable,
+                orderOption.getOrderDir()
+            )
         }
-        return DataFrame.OrderingSpec(variable, byVariable, orderOption.getOrderDir())
+        return DataFrame.OrderingSpec(
+            getVariableByName(orderOption.variableName),
+            orderOption.byVariable?.let(::getVariableByName),
+            orderOption.getOrderDir()
+        )
     }
 }
