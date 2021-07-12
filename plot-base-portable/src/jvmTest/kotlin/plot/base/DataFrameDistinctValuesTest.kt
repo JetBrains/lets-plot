@@ -231,6 +231,7 @@ class DataFrameDistinctValuesTest {
             .put(variable,    listOf("B", "A", "B", "C", "A", "A"))
             .put(Stats.COUNT, listOf(0.0, 1.0, 2.0, 1.0, 2.0, 0.0))
             .addOrderSpec(OrderingSpec(variable, Stats.COUNT, direction = 1))
+            .setAggregateOperation(List<Double>::sum as ((List<Any>) -> Any?))
             .build()
         assertDistinctValues(df, mapOf(variable to listOf("C", "B", "A")))
     }

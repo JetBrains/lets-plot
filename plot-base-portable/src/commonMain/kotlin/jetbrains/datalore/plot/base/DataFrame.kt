@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
@@ -36,7 +35,7 @@ class DataFrame private constructor(builder: Builder) {
         myIsNumeric = HashMap(builder.myIsNumeric)
         myOrderSpecs = builder.myOrderSpecs
         myOrderSpecs.forEach { orderSpec ->
-            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
+            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec, builder.myAggregateOperation)
         }
     }
 
@@ -218,43 +217,44 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
-        var emptyValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
+    private fun getOrderedDistinctValues(
+        orderSpec: OrderingSpec,
+        aggregateOperation: ((List<Any>) -> Any?)?
+    ): Set<Any> {
+        fun isEmptyValue(value: Any?) =
+            value == null || (if (value is Double) (value.isNaN() || value.isInfinite()) else false)
 
-        val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
-            get(orderSpec.variable)
-                .distinct()
-                .filterNotNull()
-                .sortedWith(compareBy { value -> value as Comparable<*> })
-        } else if (orderSpec.orderBy == Stats.COUNT) {
-            get(orderSpec.variable)
-                .zip(getNumeric(orderSpec.orderBy).requireNoNulls()) // stat count is always zero or value
-                .groupBy({ (value) -> value }) { (_, statCount) -> statCount }
-                .mapValues { (_, statCounts) -> statCounts.sum() }
-                .toList()
-                .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
-                .mapNotNull { (value) -> value }
-        } else {
-            fun isEmptyValue(value: Any?) =
-                value == null || (if (value is Double) (value.isNaN() || value.isInfinite()) else false)
-
-            emptyValuesAppendix = SeriesUtil.pickAtIndices(
+        // will be placed at the end of the result
+        val emptyValuesAppendix: List<Any> = if (orderSpec.orderBy != null) {
+            SeriesUtil.pickAtIndices(
                 list = get(orderSpec.variable),
                 indices = get(orderSpec.orderBy)
                     .withIndex()
                     .filter { isEmptyValue(it.value) }
                     .map { it.index }
             ).filterNotNull()
-
-            SeriesUtil.pickAtIndices(
-                list = get(orderSpec.variable),
-                indices = get(orderSpec.orderBy)
-                    .withIndex()
-                    .filterNot { isEmptyValue(it.value) }
-                    .sortedWith(compareBy { it.value as Comparable<*> })
-                    .map { it.index }
-            ).filterNotNull()
+        } else {
+            emptyList()
         }
+
+        @Suppress("UNCHECKED_CAST")
+        val myAggregateOperation: (List<Any>) -> Any? = aggregateOperation ?: if (orderSpec.direction < 0) {
+            { v -> (v as List<Comparable<Any>>).maxOrNull() }
+        } else {
+            { v -> (v as List<Comparable<Any>>).minOrNull() }
+        }
+
+        val orderedValues = get(orderSpec.variable)
+            .zip(get(orderSpec.orderBy ?: orderSpec.variable))
+            .groupBy({ (value) -> value }) { (_, byValues) -> byValues }
+            .mapValues { (_, byValues) ->
+                val withoutEmptyValues = byValues.filterNot(::isEmptyValue).requireNoNulls()
+                myAggregateOperation(withoutEmptyValues)
+            }
+            .filterValues { it != null }
+            .toList()
+            .sortedWith(compareBy { it.second as Comparable<*> })
+            .mapNotNull { (value) -> value }
 
         // Put the values corresponding to empty values at the end of the result
         return (if (orderSpec.direction < 0) {
@@ -272,6 +272,7 @@ class DataFrame private constructor(builder: Builder) {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderingSpec>()
+        internal var myAggregateOperation: ((List<Any>) -> Any?)? = null
 
         constructor()
 
@@ -322,6 +323,11 @@ class DataFrame private constructor(builder: Builder) {
                 myOrderSpecs.remove(currentOrderSpec)
                 myOrderSpecs.add(orderSpec)
             }
+            return this
+        }
+
+        fun setAggregateOperation(operation: ((List<Any>) -> Any?)): Builder {
+            myAggregateOperation = operation
             return this
         }
 
