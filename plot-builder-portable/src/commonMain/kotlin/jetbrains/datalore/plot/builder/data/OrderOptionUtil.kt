@@ -37,10 +37,10 @@ object OrderOptionUtil {
                 require(variableName == other.variableName) {
                     "Can't merge order options for different variables: '$variableName' and '${other.variableName}'"
                 }
-                require(other.byVariable == null || other.byVariable == byVariable) {
+                require(byVariable == null || other.byVariable == null || other.byVariable == byVariable) {
                     "Multiple ordering options for the variable '$variableName' with different non-empty 'order_by' fields: '$byVariable' and '${other.byVariable}'"
                 }
-                require(other.orderDir == null || other.orderDir == orderDir) {
+                require(orderDir == null || other.orderDir == null || other.orderDir == orderDir) {
                     "Multiple ordering options for the variable '$variableName' with different order direction: '$orderDir' and '${other.orderDir}'"
                 }
                 return OrderOption(
