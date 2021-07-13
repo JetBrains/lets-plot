@@ -27,7 +27,10 @@ class DataFrame private constructor(builder: Builder) {
         companion object {
             @Suppress("UNCHECKED_CAST")
             private fun <E> List<E>.defaultAggregation(): Any? {
-                // todo
+                // todo Need to define the default aggregate function
+                //   mean - for numerics
+                //   ?? - for non-numerics (now it's min)
+
                 if (isEmpty()) {
                     return null
                 }
