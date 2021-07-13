@@ -86,7 +86,12 @@ class DataFrameDistinctValuesTest {
         run {
             // order by descending orderByVariable
             val df = builder()
-                .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = -1))
+                .addOrderSpec(
+                    OrderingSpec(
+                        variable, orderByVariable, direction = -1,
+                        aggregateOperation = { v: List<Any?> -> (v as List<Comparable<Any>>).maxOrNull() }
+                    )
+                )
                 .build()
 
             assertDistinctValues(df, mapOf(
@@ -161,7 +166,7 @@ class DataFrameDistinctValuesTest {
         fun builder() = DataFrame.Builder()
             .put(variable,        listOf("B",  "A", "B",  "D", "A", "A",  "C"))
             .put(orderByVariable, listOf(1.0, null, 2.0, null, 2.0, null, null))
-       run {
+        run {
             // Ascending
             val df = builder()
                 .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = 1))

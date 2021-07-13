@@ -22,15 +22,22 @@ class DataFrame private constructor(builder: Builder) {
         val variable: Variable,
         val orderBy: Variable?,
         val direction: Int,
-        var aggregateOperation: (List<Any?>) -> Any? = { v: List<Any?> ->
-            if (v.all { it is Double }) {
-                @Suppress("UNCHECKED_CAST")
-                SeriesUtil.mean(v as List<Double>, null)
-            } else {
-                SeriesUtil.firstNotNull(v, null)
+        val aggregateOperation: (List<Any?>) -> Any? = { v -> v.defaultAggregation() }
+    ) {
+        companion object {
+            @Suppress("UNCHECKED_CAST")
+            private fun <E> List<E>.defaultAggregation(): Any? {
+                // todo
+                if (isEmpty()) {
+                    return null
+                }
+                if (first() is Double) {
+                    return SeriesUtil.mean(this as List<Double?>, defaultValue = null)
+                }
+                return (this as List<Comparable<Any?>>).minOrNull()
             }
         }
-    )
+    }
 
     private val myOrderSpecs: List<OrderingSpec>
 
@@ -244,7 +251,9 @@ class DataFrame private constructor(builder: Builder) {
         val orderedValues = get(orderSpec.variable)
             .zip(get(orderSpec.orderBy ?: orderSpec.variable))
             .groupBy({ (value) -> value }) { (_, byValues) -> byValues }
-            .mapValues { (_, byValues) -> orderSpec.aggregateOperation(byValues) }
+            .mapValues { (_, byValues) ->
+                orderSpec.aggregateOperation(byValues.filterNot(::isEmptyValue))
+            }
             .filterValues { !isEmptyValue(it) }
             .toList()
             .sortedWith(compareBy { it.second as Comparable<*> })
