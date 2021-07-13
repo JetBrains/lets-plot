@@ -26,6 +26,6 @@ class IdentityMapperProvider<T>(
         upperLimit: Double?,
         trans: ContinuousTransform
     ): GuideMapper<T> {
-        return GuideMappers.adaptContinuous(continuousMapper)
+        return GuideMappers.asContinuous(continuousMapper)
     }
 }

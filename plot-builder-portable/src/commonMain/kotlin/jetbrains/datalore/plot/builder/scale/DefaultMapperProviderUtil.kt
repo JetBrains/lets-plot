@@ -65,7 +65,7 @@ object DefaultMapperProviderUtil {
                 upperLimit: Double?,
                 trans: ContinuousTransform
             ): GuideMapper<Any?> {
-                return GuideMappers.adaptContinuous { it }
+                return GuideMappers.asContinuous { it }
             }
         }
     }
@@ -98,7 +98,7 @@ object DefaultMapperProviderUtil {
                 trans: ContinuousTransform
             ): GuideMapper<T> {
                 if (continuousMapper != null) {
-                    return GuideMappers.adaptContinuous(continuousMapper)
+                    return GuideMappers.asContinuous(continuousMapper)
                 }
                 throw IllegalStateException("Can't create $aes mapper for continuous domain $domain")
             }

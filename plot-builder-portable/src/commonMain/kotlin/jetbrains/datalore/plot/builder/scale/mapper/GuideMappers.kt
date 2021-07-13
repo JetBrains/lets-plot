@@ -8,15 +8,13 @@ package jetbrains.datalore.plot.builder.scale.mapper
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.plot.builder.scale.GuideMapper
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object GuideMappers {
     val IDENTITY: GuideMapper<Double> =
-        GuideMapperAdapter(Mappers.IDENTITY)
+        GuideMapperAdapter(Mappers.IDENTITY, isContinuous = false) // ToDo: why isContinuous = false?
     val UNDEFINED: GuideMapper<Double> =
-        GuideMapperAdapter(Mappers.undefined())
+        GuideMapperAdapter(Mappers.undefined(), false)
 
     fun <TargetT> discreteToDiscrete(
         data: DataFrame,
@@ -53,23 +51,8 @@ object GuideMappers {
         naValue: TargetT
     ): GuideMapper<TargetT> {
         // quantized
-        val f = Mappers.quantized(domain, outputValues, naValue)
-        var formatter: (Double) -> String = { v: Double -> v.toString() }
-
-        val breakCount = outputValues.size
-        val breaks = ArrayList<Double>()
-        if (domain != null && breakCount != 0) {
-            val span = SeriesUtil.span(domain)
-            val step = span / breakCount
-            formatter = QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, step)
-
-            for (i in 0 until breakCount) {
-                val value = domain.lowerEnd + step / 2 + i * step
-                breaks.add(value)
-            }
-        }
-
-        return GuideMapperWithGuideBreaks(f, breaks, formatter)
+        val mapper = Mappers.quantized(domain, outputValues, naValue)
+        return asNotContinuous(mapper)
     }
 
     fun discreteToContinuous(
@@ -91,7 +74,7 @@ object GuideMappers {
         range: ClosedRange<Double>,
         naValue: Double?
     ): GuideMapper<Double> {
-        return adaptContinuous(
+        return asContinuous(
             Mappers.linear(
                 domain,
                 range,
@@ -100,11 +83,11 @@ object GuideMappers {
         )
     }
 
-    fun <T> adapt(mapperFun: (Double?) -> T): GuideMapper<T> {
-        return GuideMapperAdapter(mapperFun)
+    fun <T> asNotContinuous(mapper: (Double?) -> T): GuideMapper<T> {
+        return GuideMapperAdapter(mapper, false)
     }
 
-    fun <T> adaptContinuous(mapper: (Double?) -> T?): GuideMapper<T> {
+    fun <T> asContinuous(mapper: (Double?) -> T?): GuideMapper<T> {
         return GuideMapperAdapter(mapper, true)
     }
 }

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.log10
 import kotlin.math.pow
 
-class Log10BreaksGen(
+internal class Log10BreaksGen(
     private val labelFormatter: ((Any) -> String)? = null
 ) : BreaksGenerator {
 

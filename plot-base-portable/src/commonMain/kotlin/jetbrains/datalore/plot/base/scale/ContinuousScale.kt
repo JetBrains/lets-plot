@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.base.scale.transform.Transforms.createBreaksGenerator
+import jetbrains.datalore.plot.base.scale.transform.Transforms.createBreaksGeneratorForTransformedDomain
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.min
@@ -30,7 +30,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
             return if (customBreaksGenerator != null) {
                 Transforms.BreaksGeneratorForTransformedDomain(transform, customBreaksGenerator!!)
             } else {
-                createBreaksGenerator(transform, labelFormatter)
+                createBreaksGeneratorForTransformedDomain(transform, labelFormatter)
             }
         }
 

@@ -78,7 +78,7 @@ class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpo
             mapper?.invoke(input) ?: naValue
         }
 
-        return GuideMappers.adaptContinuous(mapperFun)
+        return GuideMappers.asContinuous(mapperFun)
     }
 
     companion object {

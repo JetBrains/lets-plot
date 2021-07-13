@@ -18,7 +18,7 @@ object Transforms {
     val REVERSE: ContinuousTransform = ReverseTransform()
     val SQRT: ContinuousTransform = Log10Transform()
 
-    fun createBreaksGenerator(transform: Transform, labelFormatter: ((Any) -> String)? = null): BreaksGenerator {
+    fun createBreaksGeneratorForTransformedDomain(transform: Transform, labelFormatter: ((Any) -> String)? = null): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform) {
             is IdentityTransform -> LinearBreaksGen(labelFormatter)
             is ReverseTransform -> LinearBreaksGen(labelFormatter)
@@ -45,13 +45,13 @@ object Transforms {
             val domainBeforeTransform = MapperUtil.map(domain) {
                 transform.applyInverse(it) as Double // Should not contain NULLs
             }
-            val originalBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
-            val domainValues = originalBreaks.domainValues
-            val transformValues = transform.apply(domainValues).map {
+            val scaleBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
+            val originalBreaks = scaleBreaks.domainValues
+            val transformedBreaks = transform.apply(originalBreaks).map {
                 it as Double // Should not contain NULLs
             }
 
-            return ScaleBreaks(domainValues, transformValues, originalBreaks.labels)
+            return ScaleBreaks(originalBreaks, transformedBreaks, scaleBreaks.labels)
         }
     }
 }

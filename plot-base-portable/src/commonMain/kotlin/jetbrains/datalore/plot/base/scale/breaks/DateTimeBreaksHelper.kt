@@ -12,22 +12,20 @@ import jetbrains.datalore.plot.common.time.interval.YearInterval
 import kotlin.math.round
 
 class DateTimeBreaksHelper(
-        rangeStart: Double,
-        rangeEnd: Double,
-        count: Int,
-        minInterval: TimeInterval?
+    rangeStart: Double,
+    rangeEnd: Double,
+    count: Int,
+    minInterval: TimeInterval? = null
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
-    override val labelFormatter: (Any) -> String
-
-    constructor(rangeStart: Double, rangeEnd: Double, count: Int) : this(rangeStart, rangeEnd, count, null)
+    override val formatter: (Any) -> String
 
     init {
 
         val step = targetStep
         if (step < 1000) {        // milliseconds
-            labelFormatter = QuantitativeTickFormatterFactory.forTimeScale(
+            formatter = QuantitativeTickFormatterFactory.forTimeScale(
                 minInterval
             ).getFormatter(step)
             // compute step so that it is multiple of automatic time steps
@@ -45,10 +43,10 @@ class DateTimeBreaksHelper(
 
             if (ticks != null && ticks.size <= count) {
                 // same or smaller interval requested -> stay with min interval
-                labelFormatter = minInterval!!.tickFormatter
+                formatter = minInterval!!.tickFormatter
                 // otherwise - larger step requested -> compute ticks
             } else if (step > YearInterval.MS) {        // years
-                labelFormatter = YearInterval.TICK_FORMATTER
+                formatter = YearInterval.TICK_FORMATTER
                 ticks = ArrayList()
                 val startDateTime = TimeUtil.asDateTimeUTC(start)
                 var startYear = startDateTime.year
@@ -67,7 +65,7 @@ class DateTimeBreaksHelper(
                 }
             } else {
                 val interval = NiceTimeInterval.forMillis(step)
-                labelFormatter = interval.tickFormatter
+                formatter = interval.tickFormatter
                 ticks = interval.range(start, end).toMutableList()
             }
 

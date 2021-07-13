@@ -6,15 +6,13 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.plot.builder.scale.GuideMapper
-import kotlin.jvm.JvmOverloads
 
-class GuideMapperAdapter<T> @JvmOverloads constructor(
-    private val myF: (Double?) -> T?,
-    override val isContinuous: Boolean = false
-) :
-    GuideMapper<T> {
+internal class GuideMapperAdapter<T> constructor(
+    private val mapper: (Double?) -> T?,
+    override val isContinuous: Boolean
+) : GuideMapper<T> {
 
     override fun apply(value: Double?): T? {
-        return myF(value)
+        return mapper(value)
     }
 }

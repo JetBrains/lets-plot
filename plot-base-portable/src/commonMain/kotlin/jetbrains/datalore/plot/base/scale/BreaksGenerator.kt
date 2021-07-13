@@ -9,5 +9,9 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 interface BreaksGenerator {
     fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks
+
+    /**
+     * Do not use this formatter on axis/legends
+     */
     fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String
 }

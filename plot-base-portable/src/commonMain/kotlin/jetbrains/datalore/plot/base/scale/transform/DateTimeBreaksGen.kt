@@ -16,7 +16,7 @@ class DateTimeBreaksGen(
     override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val helper = breaksHelper(domain, targetCount)
         val ticks = helper.breaks
-        val labelFormatter = labelFormatter ?: helper.labelFormatter
+        val labelFormatter = labelFormatter ?: helper.formatter
         val labels = ArrayList<String>()
         for (tick in ticks) {
             labels.add(labelFormatter(tick))
@@ -36,6 +36,6 @@ class DateTimeBreaksGen(
     }
 
     override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return labelFormatter ?: breaksHelper(domain, targetCount).labelFormatter
+        return labelFormatter ?: breaksHelper(domain, targetCount).formatter
     }
 }

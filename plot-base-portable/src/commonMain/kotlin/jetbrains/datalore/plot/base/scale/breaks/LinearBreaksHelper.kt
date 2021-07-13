@@ -11,34 +11,73 @@ import kotlin.math.*
 class LinearBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
-    count: Int
+    count: Int,
+    precise: Boolean = false
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
     override val breaks: List<Double>
-    override val labelFormatter: (Any) -> String
+    override val formatter: (Any) -> String
 
     init {
+        check(count > 0) { "Can't compute breaks for count: $count" }
 
-        // compute step so that it is multiple of 10, 5 or 2.
-        var step = targetStep
-        val start = normalStart
-        val end = normalEnd
-        val ticks: MutableList<Double>
-        if (step > 0) {
-            val step10Power = floor(log10(step))
-            step = 10.0.pow(step10Power)
+        val step = if (precise) {
+            this.targetStep
+        } else {
+            computeNiceStep(this.span, count)
+        }
+
+        val breaks = if (precise) {
+            (0 until count).map { normalStart + step / 2 + it * step }
+        } else {
+            computeNiceBreaks(normalStart, normalEnd, step)
+        }
+
+        this.breaks = if (breaks.isEmpty()) {
+            listOf(normalStart)
+        } else if (isReversed) {
+            breaks.asReversed()
+        } else {
+            breaks
+        }
+
+
+        // auto format
+        val range = ClosedRange(normalStart, normalEnd)
+        formatter = QuantitativeTickFormatterFactory.forLinearScale()
+            .getFormatter(range, step)
+    }
+
+    companion object {
+        private fun computeNiceStep(
+            span: Double,
+            count: Int
+        ): Double {
+            // compute step so that it is multiple of 10, 5 or 2.
+            val stepRaw = span / count
+            val step10Power = floor(log10(stepRaw))
+            val step = 10.0.pow(step10Power)
             val error = step * count / span
-            when {
-                error <= 0.15 -> step *= 10.0
-                error <= 0.35 -> step *= 5.0
-                error <= 0.75 -> step *= 2.0
+            return when {
+                error <= 0.15 -> step * 10.0
+                error <= 0.35 -> step * 5.0
+                error <= 0.75 -> step * 2.0
+                else -> step
             }
+        }
+
+        private fun computeNiceBreaks(
+            start: Double,
+            end: Double,
+            step: Double
+        ): List<Double> {
+            if (step == 0.0) return emptyList()
 
             // extend range to allow for FP errors
             val delta = step / 10000
             val startE = start - delta
             val endE = end + delta
 
-            ticks = ArrayList()
+            val breaks = ArrayList<Double>()
             var tick = ceil(startE / step) * step
             if (start >= 0 && startE < 0) {
                 // avoid negative zero
@@ -48,21 +87,11 @@ class LinearBreaksHelper(
                 // don't allow ticks to go beyond the range
                 tick = min(tick, end)
 
-                ticks.add(tick)
+                breaks.add(tick)
                 tick += step
             }
-        } else {
-            ticks = mutableListOf(start)
-        }
 
-        // auto format
-        val range = ClosedRange(start, end)
-        labelFormatter = QuantitativeTickFormatterFactory.forLinearScale()
-            .getFormatter(range, step)
-
-        if (isReversed) {
-            ticks.reverse()
+            return breaks
         }
-        breaks = ticks
     }
 }
