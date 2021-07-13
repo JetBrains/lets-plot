@@ -34,7 +34,7 @@ object OrderOptionUtil {
             }
 
             fun OrderOption.mergeWith(other: OrderOption): OrderOption {
-                require(variableName != other.variableName) {
+                require(variableName == other.variableName) {
                     "Can't merge order options for different variables: '$variableName' and '${other.variableName}'"
                 }
                 require(other.byVariable == null || other.byVariable == byVariable) {
