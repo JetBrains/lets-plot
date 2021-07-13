@@ -57,15 +57,6 @@ object ScaleUtil {
         return result
     }
 
-    fun breaksAsNumbers(scale: Scale<*>): List<Double> {
-        val breaks = scale.breaks
-        val numbers = ArrayList<Double>()
-        for (o in breaks) {
-            numbers.add(scale.asNumber(o)!!)
-        }
-        return numbers
-    }
-
     fun breaksTransformed(scale: Scale<*>): List<Double> {
         return scale.transform.apply(scale.breaks).map { it as Double }
     }

@@ -90,7 +90,7 @@ class DiscreteScaleTest {
 
         assertTrue(scale.hasBreaks())
         assertEquals(listOf("b", "c"), scale.breaks)
-        assertEquals(listOf(0.0, 1.0), ScaleUtil.breaksAsNumbers(scale))
+        assertEquals(listOf(0.0, 1.0), scale.transform.apply(scale.breaks))
     }
 
     @Test

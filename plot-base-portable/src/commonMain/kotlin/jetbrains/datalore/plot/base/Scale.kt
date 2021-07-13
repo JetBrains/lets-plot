@@ -56,8 +56,6 @@ interface Scale<T> {
 
     fun isInDomainLimits(v: Any): Boolean
 
-    fun asNumber(input: Any?): Double?
-
     fun hasBreaksGenerator(): Boolean
 
     fun with(): Builder<T>

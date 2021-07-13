@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -104,20 +102,17 @@ abstract class PlotConfig(
         return result
     }
 
-    private fun createLayerConfigs(
-        sharedData: DataFrame
-    ): List<LayerConfig> {
+    private fun createLayerConfigs(sharedData: DataFrame): List<LayerConfig> {
 
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
         for (layerOptions in layerOptionsList) {
-            checkArgument(
-                layerOptions is Map<*, *>,
-                "Layer options: expected Map but was " + layerOptions!!::class.simpleName
-            )
+            require(layerOptions is Map<*, *>) { "Layer options: expected Map but was ${layerOptions!!::class.simpleName}" }
             @Suppress("UNCHECKED_CAST")
+            layerOptions as Map<String, Any>
+
             val layerConfig = createLayerConfig(
-                layerOptions as Map<String, Any>,
+                layerOptions,
                 sharedData,
                 getMap(MAPPING),
                 DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
@@ -138,7 +133,7 @@ abstract class PlotConfig(
 
 
     protected fun replaceSharedData(plotData: DataFrame) {
-        checkState(!isClientSide)   // This class is immutable on client-side
+        check(!isClientSide)   // This class is immutable on client-side
         sharedData = plotData
         update(DATA, DataFrameUtil.toMap(plotData))
     }

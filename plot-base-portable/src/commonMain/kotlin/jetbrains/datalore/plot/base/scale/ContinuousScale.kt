@@ -75,13 +75,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         return domainLimits.first.isFinite() || domainLimits.second.isFinite()
     }
 
-    override fun asNumber(input: Any?): Double? {
-        if (input == null || input is Double) {
-            return input as Double?
-        }
-        throw IllegalArgumentException("Double is expected but was " + input::class.simpleName + " : " + input.toString())
-    }
-
     override fun with(): Scale.Builder<T> {
         return MyBuilder(this)
     }

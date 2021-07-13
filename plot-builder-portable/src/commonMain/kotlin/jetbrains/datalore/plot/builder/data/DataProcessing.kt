@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.data
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
@@ -16,6 +15,7 @@ import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
@@ -36,7 +36,7 @@ object DataProcessing {
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isOrigin) {
-                checkState(data.has(variable), "Undefined variable $variable")
+                check(data.has(variable)) { "Undefined variable $variable" }
                 data = DataFrameUtil.applyTransform(
                     data,
                     variable,
@@ -192,8 +192,6 @@ object DataProcessing {
         }
 
         // generate new 'input' series to match stat series
-        // see: https://ggplot2.tidyverse.org/current/aes_group_order.html
-        // "... the group is set to the interaction of all discrete variables in the plot."
 
         val inverseTransformedStatSeries =
             inverseTransformContinuousStatData(
@@ -271,7 +269,7 @@ object DataProcessing {
 
         val b = statData.builder()
         for (variable in newInputSeries.keys) {
-            b.put(variable, newInputSeries[variable]!!)
+            b.put(variable, newInputSeries.getValue(variable))
         }
         // also update stat series
         for (variable in inverseTransformedStatSeries.keys) {
@@ -305,10 +303,6 @@ object DataProcessing {
                 // ignore 'stat' var becaue ..?
                 continue
             }
-//            else if (stat.hasDefaultMapping(aes)) {
-//                val defaultStatVar = stat.getDefaultMapping(aes)
-//                aesByMappedStatVar[defaultStatVar] = aes
-//            }
 
             val scale = scaleMap[aes]
             if (scale.isContinuousDomain) {
@@ -357,25 +351,27 @@ object DataProcessing {
             currentGroups = computeGroups(data[groupingVar])
         }
 
-        for (`var` in groupingVariables) {
-            val values = data[`var`]
+        for (groupingVariable in groupingVariables) {
+            val values = data[groupingVariable]
             val groups = computeGroups(values)
             if (currentGroups == null) {
                 currentGroups = groups
                 continue
             }
 
-            checkState(
-                currentGroups.size == groups.size,
-                "Data series used to compute groups must be equal in size (encountered sizes: " + currentGroups.size + ", " + groups.size + ")"
-            )
+            check(currentGroups.size == groups.size) {
+                "Data series used to compute groups must be equal in size (encountered sizes: " +
+                        "${currentGroups?.size}, ${groups.size} )"
+            }
             val dummies = computeDummyValues(currentGroups, groups)
             currentGroups = computeGroups(dummies)
         }
 
         return if (currentGroups != null) {
             GroupUtil.wrap(currentGroups)
-        } else GroupUtil.SINGLE_GROUP
+        } else {
+            GroupUtil.SINGLE_GROUP
+        }
     }
 
     private fun computeGroups(values: List<*>): List<Int> {
@@ -397,7 +393,7 @@ object DataProcessing {
         val limit = 1000
 
         val max = natural<Int>().max(Iterables.concat(list1, list2))
-        checkState(max < limit, "Too many groups: " + max)
+        check(max < limit) { "Too many groups: $max" }
         val dummies = ArrayList<Int>()
         val it1 = list1.iterator()
         val it2 = list2.iterator()

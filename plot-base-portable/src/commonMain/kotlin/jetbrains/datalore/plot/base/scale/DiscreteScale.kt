@@ -124,7 +124,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         } else myNumberByDomainValue.containsKey(v)
     }
 
-    override fun asNumber(input: Any?): Double? {
+    private fun asNumber(input: Any?): Double? {
         if (input == null) {
             return null
         }

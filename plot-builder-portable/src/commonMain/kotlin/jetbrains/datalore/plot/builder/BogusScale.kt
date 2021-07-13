@@ -66,10 +66,6 @@ internal class BogusScale : Scale<Double> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
-    override fun asNumber(input: Any?): Double {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
     override fun with(): Scale.Builder<Double> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }

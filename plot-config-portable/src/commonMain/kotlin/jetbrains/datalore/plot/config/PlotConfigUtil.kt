@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.Aes
@@ -50,13 +49,13 @@ object PlotConfigUtil {
 
     // backend
     fun addComputationMessage(accessor: OptionsAccessor, message: String?) {
-        checkArgument(message != null)
+        require(message != null)
         val computationMessages = ArrayList(
             getComputationMessages(
                 accessor
             )
         )
-        computationMessages.add(message!!)
+        computationMessages.add(message)
         accessor.update(PLOT_COMPUTATION_MESSAGES, computationMessages)
     }
 
@@ -121,7 +120,7 @@ object PlotConfigUtil {
             variablesByMappedAes.getOrPut(aes) { ArrayList() }.add(variable)
         }
 
-        // All (used) aes set.
+        // Set of all AES: used in bindings + X, Y.
         val aesSetAll: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet() +
                 setOf(Aes.X, Aes.Y)  // allways create scales for X,Y aes.
 

@@ -127,9 +127,6 @@ object MonolithicCommon {
         val config = PlotConfigClientSide.create(plotSpec) {
             computationMessages.addAll(it)
         }
-//        val assembler = createPlotAssembler(plotSpec) {
-//            computationMessages.addAll(it)
-//        }
 
         val preferredSize = ValueProperty(
             PlotSizeHelper.singlePlotSize(
@@ -152,16 +149,8 @@ object MonolithicCommon {
     }
 
     internal fun createPlotAssembler(
-//        plotSpec: MutableMap<String, Any>,
-//        computationMessagesHandler: ((List<String>) -> Unit)
         config: PlotConfigClientSide
     ): PlotAssembler {
-
-//        val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
-//        if (computationMessages.isNotEmpty()) {
-//            computationMessagesHandler(computationMessages)
-//        }
-
         return PlotConfigClientSideUtil.createPlotAssembler(config)
     }
 
