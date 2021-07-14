@@ -18,7 +18,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuousDomain: Boolean = true
     override val domainLimits: Pair<Double, Double>
 
-    override var transform: Transform = Transforms.IDENTITY
+    override val transform: Transform
 
     private var customBreaksGenerator: BreaksGenerator? = null
 
@@ -41,6 +41,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = Pair(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        transform = Transforms.IDENTITY
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.

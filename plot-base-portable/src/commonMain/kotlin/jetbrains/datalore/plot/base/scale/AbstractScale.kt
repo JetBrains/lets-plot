@@ -18,7 +18,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     final override var additiveExpand = 0.0
         protected set
 
-    abstract override var transform: Transform
+    abstract override val transform: Transform
 
     private var myBreaks: List<DomainT>? = null
     private var myLabels: List<String>? = null
@@ -34,7 +34,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         get() {
             check(hasBreaks()) { "No breaks defined for scale $name" }
             @Suppress("UNCHECKED_CAST")
-            return myBreaks!! as List<Any>
+            return myBreaks as List<Any>
         }
         protected set(breaks) {
             myBreaks = breaks.map {
