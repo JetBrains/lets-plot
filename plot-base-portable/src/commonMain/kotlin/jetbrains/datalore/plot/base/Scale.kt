@@ -89,7 +89,7 @@ interface Scale<T> {
 
         fun additiveExpand(v: Double): Builder<T>
 
-        fun continuousTransform(v: Transform): Builder<T>
+        fun continuousTransform(v: ContinuousTransform): Builder<T>
 
         fun breaksGenerator(v: BreaksGenerator): Builder<T>
 

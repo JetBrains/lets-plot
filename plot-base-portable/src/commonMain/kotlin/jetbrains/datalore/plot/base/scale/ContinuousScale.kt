@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -14,21 +15,21 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
+
+    private val continuousTransform: ContinuousTransform
+    private val customBreaksGenerator: BreaksGenerator?
+
     override val isContinuous: Boolean
     override val isContinuousDomain: Boolean = true
     override val domainLimits: Pair<Double, Double>
 
     override val transform: Transform
+        get() = continuousTransform
 
-    private var customBreaksGenerator: BreaksGenerator? = null
-
-    override var breaksGenerator: BreaksGenerator
-        private set(v) {
-            customBreaksGenerator = v
-        }
+    override val breaksGenerator: BreaksGenerator
         get() {
             return if (customBreaksGenerator != null) {
-                Transforms.BreaksGeneratorForTransformedDomain(transform, customBreaksGenerator!!)
+                Transforms.BreaksGeneratorForTransformedDomain(transform, customBreaksGenerator)
             } else {
                 createBreaksGeneratorForTransformedDomain(transform, labelFormatter)
             }
@@ -41,7 +42,8 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     ) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = Pair(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-        transform = Transforms.IDENTITY
+        continuousTransform = Transforms.IDENTITY
+        customBreaksGenerator = null
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -50,7 +52,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     }
 
     private constructor(b: MyBuilder<T>) : super(b) {
-        transform = b.myTransform
+        continuousTransform = b.myContinuousTransform
         customBreaksGenerator = b.myCustomBreaksGenerator
         isContinuous = b.myContinuousOutput
         val lower = if (SeriesUtil.isFinite(b.myLowerLimit)) b.myLowerLimit!! else Double.NEGATIVE_INFINITY
@@ -82,10 +84,12 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
 
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
-        internal var myCustomBreaksGenerator: BreaksGenerator? = scale.customBreaksGenerator
-        internal val myContinuousOutput: Boolean = scale.isContinuous
-        internal var myLowerLimit: Double? = scale.domainLimits.first
-        internal var myUpperLimit: Double? = scale.domainLimits.second
+        var myContinuousTransform: ContinuousTransform = scale.continuousTransform
+        var myCustomBreaksGenerator: BreaksGenerator? = scale.customBreaksGenerator
+        var myLowerLimit: Double? = scale.domainLimits.first
+        var myUpperLimit: Double? = scale.domainLimits.second
+
+        val myContinuousOutput: Boolean = scale.isContinuous
 
         override fun lowerLimit(v: Double): Scale.Builder<T> {
             require(v.isFinite()) { "`lower` can't be $v" }
@@ -103,8 +107,9 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
             throw IllegalArgumentException("Can't apply discrete limits to scale with continuous domain")
         }
 
-        override fun continuousTransform(v: Transform): Scale.Builder<T> {
-            return transform(v)
+        override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {
+            myContinuousTransform = v
+            return this
         }
 
         override fun breaksGenerator(v: BreaksGenerator): Scale.Builder<T> {

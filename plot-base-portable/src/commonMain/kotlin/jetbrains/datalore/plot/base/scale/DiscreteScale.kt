@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
@@ -13,19 +14,15 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     private val discreteTransform: DiscreteTransform
 
-    override var breaks: List<Any>
+    override val breaks: List<Any>
         get() {
-            val breaks = super.breaks
             return if (!hasDomainLimits()) {
-                breaks
+                super.breaks
             } else {
                 // Filter and preserve the order defined by limits.
-                val breaksSet = breaks.toSet()
+                val breaksSet = super.breaks.toSet()
                 discreteTransform.domainLimits.filter { it in breaksSet }
             }
-        }
-        set(breaks) {
-            super.breaks = breaks
         }
 
     override val labels: List<String>
@@ -58,9 +55,8 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         name: String,
         domainValues: Collection<Any>,
         mapper: ((Double?) -> T?)
-    ) : super(name, mapper) {
+    ) : super(name, mapper, breaks = domainValues.toList()) {
         discreteTransform = DiscreteTransform(domainValues, emptyList())
-        breaks = domainValues.toList()
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for discrete scale.
@@ -70,9 +66,6 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     private constructor(b: MyBuilder<T>) : super(b) {
         discreteTransform = DiscreteTransform(b.myDomainValues, b.myDomainLimits)
-        if (!hasBreaks()) {
-            breaks = b.myDomainValues.toList()
-        }
     }
 
     override fun hasBreaksGenerator() = false
@@ -110,7 +103,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             return this
         }
 
-        override fun continuousTransform(v: Transform): Scale.Builder<T> {
+        override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {
             // ignore
             return this
         }

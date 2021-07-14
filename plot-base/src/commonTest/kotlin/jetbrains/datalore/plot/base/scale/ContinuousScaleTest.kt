@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesInLimits
@@ -48,13 +49,33 @@ class ContinuousScaleTest {
     fun withTransform() {
         val scale = createScale()
 
-        val t = object : Transform {
+        val t = object : ContinuousTransform {
+            override fun hasDomainLimits(): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun isInDomain(v: Double?): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun apply(v: Double?): Double? {
+                TODO("Not yet implemented")
+            }
+
             override fun apply(l: List<*>): List<Double?> {
                 return emptyList()
             }
 
             override fun applyInverse(v: Double?): Double? {
                 return null
+            }
+
+            override fun applyInverse(l: List<Double?>): List<Double?> {
+                TODO("Not yet implemented")
+            }
+
+            override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+                TODO("Not yet implemented")
             }
         }
 
