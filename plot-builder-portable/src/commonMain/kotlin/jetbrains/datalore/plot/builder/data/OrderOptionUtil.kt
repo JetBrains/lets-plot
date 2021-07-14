@@ -44,17 +44,31 @@ object OrderOptionUtil {
         val varBinding = varBindings.find { it.aes.name == orderOption.aesName }
             ?: error("No variable binding for aes ${orderOption.aesName}")
         var variable = varBinding.variable
-        var byVariable = orderOption.byVariable?.let {
-            variables.find { it.name == orderOption.byVariable }
-                ?: error("No variable with name ${orderOption.byVariable}")
+        var byVariable = orderOption.byVariable?.let { varName ->
+            variables.find { it.name == varName }
+                ?: error("Undefined variable '$varName' in order options. Full variable list: ${variables.map { "'${it.name}'" }}")
         }
-        if (varBinding.aes == Aes.X) {
-            val xVar = SamplingUtil.xVar(variables)
-            if (xVar != null) {
-                variable = xVar
-                byVariable = byVariable ?: varBinding.variable
-            }
+        if (varBinding.aes == Aes.X && SamplingUtil.xVar(variables) != null) {
+            variable = SamplingUtil.xVar(variables)!!
+            byVariable = byVariable ?: varBinding.variable
         }
-        return DataFrame.OrderingSpec(variable, byVariable, orderOption.orderDir)
+
+        // TODO Need to define the aggregate operation
+        return if (byVariable == null || byVariable == varBinding.variable) {
+            // Use ordering by the 'variable' without aggregation
+            DataFrame.OrderingSpec(
+                variable,
+                byVariable,
+                orderOption.orderDir,
+                aggregateOperation = null
+            )
+        } else {
+            // Use ordering by the 'order_by' variable with default aggregation
+            DataFrame.OrderingSpec(
+                variable,
+                byVariable,
+                orderOption.orderDir
+            )
+        }
     }
 }
