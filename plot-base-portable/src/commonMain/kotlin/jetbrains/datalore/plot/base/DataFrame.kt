@@ -22,25 +22,8 @@ class DataFrame private constructor(builder: Builder) {
         val variable: Variable,
         val orderBy: Variable?,
         val direction: Int,
-        val aggregateOperation: (List<Any?>) -> Any? = { v -> v.defaultAggregation() }
-    ) {
-        companion object {
-            @Suppress("UNCHECKED_CAST")
-            private fun <E> List<E>.defaultAggregation(): Any? {
-                // todo Need to define the default aggregate function
-                //   mean - for numerics
-                //   ?? - for non-numerics (now it's min)
-
-                if (isEmpty()) {
-                    return null
-                }
-                if (first() is Double) {
-                    return SeriesUtil.mean(this as List<Double?>, defaultValue = null)
-                }
-                return (this as List<Comparable<Any?>>).minOrNull()
-            }
-        }
-    }
+        val aggregateOperation: ((List<Double?>) -> Double?)? = { v -> SeriesUtil.mean(v, defaultValue = null) }
+    )
 
     private val myOrderSpecs: List<OrderingSpec>
 
@@ -238,29 +221,28 @@ class DataFrame private constructor(builder: Builder) {
     private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
         fun isEmptyValue(value: Any?) = value == null || (value is Double && !value.isFinite())
 
-        // will be placed at the end of the result
-        val emptyValuesAppendix: List<Any> = if (orderSpec.orderBy != null) {
-            SeriesUtil.pickAtIndices(
-                list = get(orderSpec.variable),
-                indices = get(orderSpec.orderBy)
-                    .withIndex()
-                    .filter { isEmptyValue(it.value) }
-                    .map { it.index }
-            ).filterNotNull()
+        val orderByVariable = orderSpec.orderBy ?: orderSpec.variable
+        val orderedValues: List<Any> = if (orderSpec.aggregateOperation != null) {
+            require(isNumeric(orderByVariable)) { "Can't apply aggregate operation to non-numeric values" }
+            get(orderSpec.variable)
+                .zip(getNumeric(orderByVariable))
+                .groupBy({ (value) -> value }) { (_, byValues) -> byValues }
+                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues) }
+                .filterValues { !isEmptyValue(it) }
+                .toList()
+                .sortedWith(compareBy { (_, aggregationResult) -> aggregationResult })
+                .mapNotNull { (value) -> value }
         } else {
-            emptyList()
+            get(orderSpec.variable).zip(get(orderByVariable))
+                .filterNot { isEmptyValue(it.second) }
+                .sortedWith(compareBy { it.second as Comparable<*> })
+                .mapNotNull { it.first }
         }
 
-        val orderedValues = get(orderSpec.variable)
-            .zip(get(orderSpec.orderBy ?: orderSpec.variable))
-            .groupBy({ (value) -> value }) { (_, byValues) -> byValues }
-            .mapValues { (_, byValues) ->
-                orderSpec.aggregateOperation(byValues.filterNot(::isEmptyValue))
-            }
-            .filterValues { !isEmptyValue(it) }
-            .toList()
-            .sortedWith(compareBy { it.second as Comparable<*> })
-            .mapNotNull { (value) -> value }
+        // will be placed at the end of the result
+        val emptyValuesAppendix = get(orderSpec.variable).zip(get(orderByVariable))
+            .filter { isEmptyValue(it.second) }
+            .mapNotNull { it.first }
 
         // Put the values corresponding to empty values at the end of the result
         return (if (orderSpec.direction < 0) {

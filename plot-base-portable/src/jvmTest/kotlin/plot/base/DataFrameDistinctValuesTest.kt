@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.plot.base.DataFrame.OrderingSpec
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import java.lang.Double.NaN
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,7 +40,7 @@ class DataFrameDistinctValuesTest {
         run {
             // Ascending
             val orderSpecs = listOf(
-                OrderingSpec(variable, orderBy = null, direction = 1),
+                OrderingSpec(variable, orderBy = null, direction = 1, aggregateOperation = null),
                 OrderingSpec(orderByVariable, orderBy = null, direction = 1)
             )
             val df = builder()
@@ -55,7 +56,7 @@ class DataFrameDistinctValuesTest {
         run {
             // Descending
             val orderSpecs = listOf(
-                OrderingSpec(variable, orderBy = null, direction = -1),
+                OrderingSpec(variable, orderBy = null, direction = -1, aggregateOperation = null),
                 OrderingSpec(orderByVariable, orderBy = null, direction = -1)
             )
             val df = builder()
@@ -74,7 +75,7 @@ class DataFrameDistinctValuesTest {
                 .addOrderSpec(
                     OrderingSpec(
                         variable, orderByVariable, direction = 1,
-                        aggregateOperation = { v: List<Any?> -> (v as List<Comparable<Any>>).minOrNull() }
+                        aggregateOperation = { v: List<Double?> -> v.filterNotNull().minOrNull() }
                     )
                 )
                 .build()
@@ -87,10 +88,7 @@ class DataFrameDistinctValuesTest {
             // order by descending orderByVariable
             val df = builder()
                 .addOrderSpec(
-                    OrderingSpec(
-                        variable, orderByVariable, direction = -1,
-                        aggregateOperation = { v: List<Any?> -> (v as List<Comparable<Any>>).maxOrNull() }
-                    )
+                    OrderingSpec(variable, orderByVariable, direction = -1)
                 )
                 .build()
 
@@ -103,7 +101,7 @@ class DataFrameDistinctValuesTest {
     @Test
     fun `correct ordering should be kept after dataframe rebuilding`() {
         val orderSpecs = listOf(
-            OrderingSpec(variable, null, direction = 1),
+            OrderingSpec(variable, null, direction = 1, aggregateOperation = null),
             OrderingSpec(orderByVariable, null, direction = -1)
         )
         // Build dataFrame with ordering specifications
@@ -136,7 +134,7 @@ class DataFrameDistinctValuesTest {
         run {
             // Add ordering specs
             val df = builder
-                .addOrderSpec(OrderingSpec(variable, orderBy = null, direction = 1))
+                .addOrderSpec(OrderingSpec(variable, orderBy = null, direction = 1, aggregateOperation = null))
                 .build()
             assertDistinctValues(df, mapOf(variable to listOf("A", "B", "C")))
         }
@@ -257,7 +255,7 @@ class DataFrameDistinctValuesTest {
             // Add ordering specs
             val df = DataFrame.Builder()
                 .put(variable, listOf<Any>())
-                .put(orderByVariable, listOf<Any>())
+                .putNumeric(orderByVariable, listOf<Double>())
                 .addOrderSpec(OrderingSpec(variable, orderByVariable, direction = 1))
                 .build()
             assertDistinctValues(df, mapOf(variable to emptyList()))
@@ -274,7 +272,7 @@ class DataFrameDistinctValuesTest {
                     variable,
                     Stats.COUNT,
                     direction = 1,
-                    aggregateOperation = List<Double>::sum as ((List<Any?>) -> Any?)
+                    aggregateOperation = SeriesUtil::sum
                 )
             )
             .build()
@@ -287,9 +285,9 @@ class DataFrameDistinctValuesTest {
             .put(variable,        listOf("B", "A", "B", "C", "A", "A"))
             .put(orderByVariable, listOf(1.0, 0.0, 2.0, 0.0, 1.0, 0.0))
 
-        val aggregateOperation = { v: List<Any?> -> (v as List<Comparable<Any>>).minOrNull() }
-        val spec1 = OrderingSpec(variable, orderBy = null, direction = 1, aggregateOperation)
-        val spec2 = OrderingSpec(variable, orderByVariable, direction = 1, aggregateOperation)  // orderBy is specified => more specific
+        val aggregateOperation = { v: List<Double?> -> v.filterNotNull().minOrNull() }
+        val spec1 = OrderingSpec(variable, orderBy = null, direction = 1, aggregateOperation = aggregateOperation)
+        val spec2 = OrderingSpec(variable, orderByVariable, direction = 1, aggregateOperation = aggregateOperation)  // orderBy is specified => more specific
 
         val expectedDistinctValues = mapOf(variable to listOf("A", "C", "B"))
 
