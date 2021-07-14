@@ -222,22 +222,19 @@ class DataFrame private constructor(builder: Builder) {
         fun isEmptyValue(value: Any?) = value == null || (value is Double && !value.isFinite())
 
         val orderByVariable = orderSpec.orderBy ?: orderSpec.variable
-        val orderedValues: List<Any> = if (orderSpec.aggregateOperation != null) {
+        val orderedValues = if (orderSpec.aggregateOperation != null) {
             require(isNumeric(orderByVariable)) { "Can't apply aggregate operation to non-numeric values" }
             get(orderSpec.variable)
                 .zip(getNumeric(orderByVariable))
-                .groupBy({ (value) -> value }) { (_, byValues) -> byValues }
+                .groupBy({ (value) -> value }) { (_, byValue) -> byValue }
                 .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues) }
-                .filterValues { !isEmptyValue(it) }
                 .toList()
-                .sortedWith(compareBy { (_, aggregationResult) -> aggregationResult })
-                .mapNotNull { (value) -> value }
         } else {
             get(orderSpec.variable).zip(get(orderByVariable))
-                .filterNot { isEmptyValue(it.second) }
-                .sortedWith(compareBy { it.second as Comparable<*> })
-                .mapNotNull { it.first }
         }
+            .filterNot { isEmptyValue(it.second) }
+            .sortedWith(compareBy { it.second as Comparable<*> })
+            .mapNotNull { it.first }
 
         // will be placed at the end of the result
         val emptyValuesAppendix = get(orderSpec.variable).zip(get(orderByVariable))
