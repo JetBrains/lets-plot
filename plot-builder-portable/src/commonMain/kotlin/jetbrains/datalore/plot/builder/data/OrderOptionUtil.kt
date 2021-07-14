@@ -49,6 +49,13 @@ object OrderOptionUtil {
                     orderDir ?: other.orderDir
                 )
             }
+
+            // for Tests
+            fun create(
+                variableName: String,
+                byVariable: String,
+                orderDir: Int
+            )  = OrderOption(variableName, byVariable, orderDir)
         }
     }
 
