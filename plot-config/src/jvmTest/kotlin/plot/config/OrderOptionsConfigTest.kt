@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
 import jetbrains.datalore.plot.config.DataMetaUtil.toDiscrete
@@ -13,6 +12,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class OrderOptionsConfigTest {
@@ -27,11 +27,7 @@ class OrderOptionsConfigTest {
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), toDiscrete("bar"), 1)
-                )
-            )
+            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
     }
 
     @Test
@@ -41,11 +37,7 @@ class OrderOptionsConfigTest {
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), "foo", -1)
-                )
-            )
+            .assertOrderOption(toDiscrete("bar"), "foo", -1)
     }
 
     @Test
@@ -56,12 +48,8 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "fill", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("foo"), "foo", 1),
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), "foo", -1)
-                )
-            )
+            .assertOrderOptions(0, toDiscrete("foo"), "foo", 1)
+            .assertOrderOptions(1, toDiscrete("bar"), "foo", -1)
     }
 
     @Test
@@ -72,11 +60,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = null, order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), "foo", -1)
-                )
-            )
+            .assertOrderOption(toDiscrete("bar"), "foo", -1)
     }
 
     @Test
@@ -87,11 +71,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), "foo", -1)
-                )
-            )
+            .assertOrderOption(toDiscrete("bar"), "foo", -1)
     }
 
 
@@ -103,11 +83,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = null, order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), "foo", 1)
-                )
-            )
+            .assertOrderOption(toDiscrete("bar"), "foo", 1)
     }
 
     @Test
@@ -118,11 +94,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = "foo", order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertLayerOrderOptions(
-                listOf(
-                    OrderOptionUtil.OrderOption.create(toDiscrete("bar"), "foo", 1)
-                )
-            )
+            .assertOrderOption(toDiscrete("bar"), "foo", 1)
     }
 
     @Test
@@ -156,7 +128,7 @@ class OrderOptionsConfigTest {
     // plot/layer settings
 
     private val myOrderSetting = makeOrderingSettings(aes = "fill", orderBy = null, order = 1)
-    private val myExpectedOption = OrderOptionUtil.OrderOption.create(toDiscrete("bar"), toDiscrete("bar"), 1)
+
     @Test
     fun plot_LayerDataMapping() {
         val spec = makePlotSpec(
@@ -165,7 +137,7 @@ class OrderOptionsConfigTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertLayerOrderOptions(listOf(myExpectedOption))
+            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
     }
 
     @Test
@@ -176,7 +148,7 @@ class OrderOptionsConfigTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertLayerOrderOptions(listOf(myExpectedOption))
+            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
     }
 
     @Test
@@ -187,7 +159,7 @@ class OrderOptionsConfigTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertLayerOrderOptions(listOf(myExpectedOption))
+            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
     }
 
     @Test
@@ -198,7 +170,7 @@ class OrderOptionsConfigTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertLayerOrderOptions(listOf(myExpectedOption))
+            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
     }
 
 
@@ -243,16 +215,28 @@ class OrderOptionsConfigTest {
     }
 
     companion object {
-        private fun PlotConfigClientSide.assertLayerOrderOptions(expectedOptions: List<OrderOptionUtil.OrderOption>) {
+        private fun PlotConfigClientSide.assertOrderOptions(
+            index: Int,
+            expectedVariableName: String,
+            expectedByVariable: String,
+            expectedOrderDir: Int,
+        ): PlotConfigClientSide {
             val actualOptions = layerConfigs.first().orderOptions
-            assertEquals(expectedOptions.size, actualOptions.size)
-            for (i in actualOptions.indices) {
-                val expected = expectedOptions[i]
-                val actual = actualOptions[i]
-                assertEquals(expected.variableName, actual.variableName)
-                assertEquals(expected.byVariable, actual.byVariable ?: actual.variableName)
-                assertEquals(expected.getOrderDir(), actual.getOrderDir())
-            }
+            assertTrue(index < actualOptions.size)
+            val actual = actualOptions[index]
+            assertEquals(expectedVariableName, actual.variableName)
+            assertEquals(expectedByVariable, actual.byVariable ?: actual.variableName)
+            assertEquals(expectedOrderDir, actual.getOrderDir())
+            return this
+        }
+
+        private fun PlotConfigClientSide.assertOrderOption(
+            expectedVariableName: String,
+            expectedByVariable: String,
+            expectedOrderDir: Int,
+        ): PlotConfigClientSide {
+            assertOrderOptions(index = 0, expectedVariableName, expectedByVariable, expectedOrderDir)
+            return this
         }
 
         private fun assertFailed(spec: String, expectedMessage: String) {
