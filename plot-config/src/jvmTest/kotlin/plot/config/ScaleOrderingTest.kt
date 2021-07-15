@@ -190,7 +190,6 @@ class ScaleOrderingTest {
             assertScaleBreaks(geomLayer, Aes.X, listOf("C", "A"))
             assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
         }
-
     }
 
     @Test

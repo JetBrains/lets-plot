@@ -790,7 +790,7 @@ class DropUnusedDataTest {
     fun `should not drop variables used to order by`() {
         val spec = """{
             "kind": "plot",
-            "data": { "x": [0, 0],  "g": ['a', 'b'] },
+            "data": { "x": [0, 0],  "g": [0, 1] },
             "mapping": { "x": "x" },
             "layers": [
               {

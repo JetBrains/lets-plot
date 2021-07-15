@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
@@ -21,8 +20,9 @@ class DataFrame private constructor(builder: Builder) {
 
     class OrderingSpec(
         val variable: Variable,
-        val orderBy: Variable?,
-        val direction: Int
+        val orderBy: Variable,
+        val direction: Int,
+        val aggregateOperation: ((List<Double?>) -> Double?)? = null
     )
 
     private val myOrderSpecs: List<OrderingSpec>
@@ -219,46 +219,32 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
-        var nullValuesAppendix: List<Any> = emptyList() // will be placed at the end of the result
+        fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
 
-        val orderedValues: List<Any> = if (orderSpec.orderBy == null || orderSpec.variable == orderSpec.orderBy) {
+        val orderedValues = if (orderSpec.aggregateOperation != null) {
+            require(isNumeric(orderSpec.orderBy)) { "Can't apply aggregate operation to non-numeric values" }
             get(orderSpec.variable)
-                .distinct()
-                .filterNotNull()
-                .sortedWith(compareBy { value -> value as Comparable<*> })
-        } else if (orderSpec.orderBy == Stats.COUNT) {
-            get(orderSpec.variable)
-                .zip(getNumeric(orderSpec.orderBy).requireNoNulls()) // stat count is always zero or value
-                .groupBy({ (value) -> value }) { (_, statCount) -> statCount }
-                .mapValues { (_, statCounts) -> statCounts.sum() }
+                .zip(getNumeric(orderSpec.orderBy))
+                .groupBy({ (value) -> value }) { (_, byValue) -> byValue }
+                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues) }
                 .toList()
-                .sortedWith(compareBy { (_, totalStatCount) -> totalStatCount })
-                .mapNotNull { (value) -> value }
         } else {
-            nullValuesAppendix = SeriesUtil.pickAtIndices(
-                list = get(orderSpec.variable),
-                indices = get(orderSpec.orderBy)
-                    .withIndex()
-                    .filter { it.value == null }
-                    .map { it.index }
-            ).filterNotNull()
-
-            SeriesUtil.pickAtIndices(
-                list = get(orderSpec.variable),
-                indices = get(orderSpec.orderBy)
-                    .withIndex()
-                    .filter { it.value != null }
-                    .sortedWith(compareBy { it.value as Comparable<*> })
-                    .map { it.index })
-                .filterNotNull()
+            get(orderSpec.variable).zip(get(orderSpec.orderBy))
         }
+            .filter { isValueComparable(it.second) }
+            .sortedWith(compareBy { it.second as Comparable<*> })
+            .mapNotNull { it.first }
 
-        // Put the values corresponding to nulls at the end of the result
+        // the values corresponding to non-comparable values will be placed at the end of the result
+        val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
+            .filterNot { isValueComparable(it.second) }
+            .mapNotNull { it.first }
+
         return (if (orderSpec.direction < 0) {
             orderedValues.reversed()
         } else {
             orderedValues
-        } + nullValuesAppendix).toSet()
+        } + nonComparableAppendix).toSet()
     }
 
     companion object {
@@ -314,8 +300,7 @@ class DataFrame private constructor(builder: Builder) {
         fun addOrderSpec(orderSpec: OrderingSpec): Builder {
             val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
             // If multiple specifications for the variable - choose a more specific one:
-            // prefer with specified 'orderBy'
-            if (currentOrderSpec?.orderBy == null) {
+            if (currentOrderSpec?.aggregateOperation == null) {
                 myOrderSpecs.remove(currentOrderSpec)
                 myOrderSpecs.add(orderSpec)
             }
