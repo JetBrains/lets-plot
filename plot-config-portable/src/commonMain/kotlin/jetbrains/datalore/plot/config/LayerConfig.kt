@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderingSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
@@ -210,8 +211,14 @@ class LayerConfig(
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
         }
 
-        val orderOptionsFromPlot = plotOrderOptions.filter { orderOption -> orderOption.aesName in varBindings.map { it.aes.name } }
-        myOrderOptions = orderOptionsFromPlot + DataMetaUtil.getOrderOptions(layerOptions)
+        myOrderOptions = (
+                plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
+                        + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+                )
+            // Try to combine order options:
+            .groupingBy(OrderOption::variableName)
+            .reduce { _, combined, element -> combined.mergeWith(element) }
+            .values.toList()
 
         myCombinedData = if (clientSide) {
             val orderSpecs = myOrderOptions.map { createOrderingSpec(combinedData.variables(), varBindings, it) }

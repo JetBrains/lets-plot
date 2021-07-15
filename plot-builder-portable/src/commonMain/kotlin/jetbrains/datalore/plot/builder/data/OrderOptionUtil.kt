@@ -12,27 +12,43 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object OrderOptionUtil {
     class OrderOption internal constructor(
-        val aesName: String,
+        val variableName: String,
         val byVariable: String?,
-        val orderDir: Int
+        private val orderDir: Int?
     ) {
+        fun getOrderDir(): Int = orderDir ?: -1 // descending by default
+
         companion object {
             fun create(
-                aesName: String,
+                variableName: String,
                 orderBy: String?,
                 order: Any?
             ): OrderOption? {
                 if (orderBy == null && order == null) {
                     return null
                 }
-                val orderDir = when (order) {
-                    null -> -1 // descending by default
-                    is Number -> order.toInt()
-                    else -> throw IllegalArgumentException(
-                        "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
-                    )
+                require(order == null || order is Number) {
+                    "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                 }
-                return OrderOption(aesName, orderBy, orderDir)
+
+                return OrderOption(variableName, orderBy, (order as? Number)?.toInt())
+            }
+
+            fun OrderOption.mergeWith(other: OrderOption): OrderOption {
+                require(variableName == other.variableName) {
+                    "Can't merge order options for different variables: '$variableName' and '${other.variableName}'"
+                }
+                require(byVariable == null || other.byVariable == null || other.byVariable == byVariable) {
+                    "Multiple ordering options for the variable '$variableName' with different non-empty 'order_by' fields: '$byVariable' and '${other.byVariable}'"
+                }
+                require(orderDir == null || other.orderDir == null || other.orderDir == orderDir) {
+                    "Multiple ordering options for the variable '$variableName' with different order direction: '$orderDir' and '${other.orderDir}'"
+                }
+                return OrderOption(
+                    variableName,
+                    byVariable ?: other.byVariable,
+                    orderDir ?: other.orderDir
+                )
             }
         }
     }
@@ -42,19 +58,27 @@ object OrderOptionUtil {
         varBindings: List<VarBinding>,
         orderOption: OrderOption
     ): DataFrame.OrderingSpec {
-        val varBinding = varBindings.find { it.aes.name == orderOption.aesName }
-            ?: error("No variable binding for aes ${orderOption.aesName}")
-        var variable = varBinding.variable
-        var byVariable = orderOption.byVariable?.let { varName ->
-            variables.find { it.name == varName }
+        fun getVariableByName(varName: String): DataFrame.Variable {
+            return variables.find { it.name == varName }
                 ?: error("Undefined variable '$varName' in order options. Full variable list: ${variables.map { "'${it.name}'" }}")
         }
-        if (varBinding.aes == Aes.X && SamplingUtil.xVar(variables) != null) {
-            variable = SamplingUtil.xVar(variables)!!
-            byVariable = byVariable ?: varBinding.variable
-        }
 
-        // TODO Need to define the aggregate operation
+        val xBinding = varBindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X }
+        if (xBinding != null && SamplingUtil.xVar(variables) != null) {
+            return DataFrame.OrderingSpec(
+                SamplingUtil.xVar(variables)!!,
+                orderOption.byVariable?.let(::getVariableByName) ?: xBinding.variable,
+                orderOption.getOrderDir()
+            )
+        }
+        return DataFrame.OrderingSpec(
+            getVariableByName(orderOption.variableName),
+            orderOption.byVariable?.let(::getVariableByName),
+            orderOption.getOrderDir()
+        )
+        /*
+
+                // TODO Need to define the aggregate operation
         return if (byVariable == null || byVariable == varBinding.variable) {
             // Use ordering by the 'variable' without aggregation
             DataFrame.OrderingSpec(
@@ -71,5 +95,6 @@ object OrderOptionUtil {
                 aggregateOperation = { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
             )
         }
+         */
     }
 }
