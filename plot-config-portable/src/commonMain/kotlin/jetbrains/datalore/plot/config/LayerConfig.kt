@@ -215,7 +215,7 @@ class LayerConfig(
                 plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
                         + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
                 )
-            // Try to combine order options:
+            // TODO: handle order options combining to a config parsing stage
             .groupingBy(OrderOption::variableName)
             .reduce { _, combined, element -> combined.mergeWith(element) }
             .values.toList()

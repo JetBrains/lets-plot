@@ -63,38 +63,31 @@ object OrderOptionUtil {
                 ?: error("Undefined variable '$varName' in order options. Full variable list: ${variables.map { "'${it.name}'" }}")
         }
 
-        val xBinding = varBindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X }
-        if (xBinding != null && SamplingUtil.xVar(variables) != null) {
-            return DataFrame.OrderingSpec(
-                SamplingUtil.xVar(variables)!!,
-                orderOption.byVariable?.let(::getVariableByName) ?: xBinding.variable,
-                orderOption.getOrderDir()
-            )
-        }
-        return DataFrame.OrderingSpec(
-            getVariableByName(orderOption.variableName),
-            orderOption.byVariable?.let(::getVariableByName),
-            orderOption.getOrderDir()
-        )
-        /*
+        val variable =
+            if (varBindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } != null &&
+                SamplingUtil.xVar(variables) != null
+            ) {
+                // Apply ordering to the X variable which is used for sampling
+                SamplingUtil.xVar(variables)!!
+            } else {
+                getVariableByName(orderOption.variableName)
+            }
 
-                // TODO Need to define the aggregate operation
-        return if (byVariable == null || byVariable == varBinding.variable) {
-            // Use ordering by the 'variable' without aggregation
-            DataFrame.OrderingSpec(
-                variable,
-                byVariable,
-                orderOption.orderDir
-            )
-        } else {
-            // Use ordering by the 'order_by' variable with the specified aggregation
-            DataFrame.OrderingSpec(
-                variable,
-                byVariable,
-                orderOption.orderDir,
-                aggregateOperation = { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
-            )
-        }
-         */
+        // TODO Need to define the aggregate operation
+        val aggregateOperation =
+            if (orderOption.byVariable != null && orderOption.byVariable != orderOption.variableName) {
+                // Use ordering by the 'order_by' variable with the specified aggregation
+                { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
+            } else {
+                // Use ordering by the 'variable' without aggregation
+                null
+            }
+
+        return DataFrame.OrderingSpec(
+            variable,
+            orderOption.byVariable?.let(::getVariableByName) ?: getVariableByName(orderOption.variableName),
+            orderOption.getOrderDir(),
+            aggregateOperation
+        )
     }
 }
