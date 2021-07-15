@@ -219,7 +219,7 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
-        fun isEmptyValue(value: Any?) = value == null || (value is Double && !value.isFinite())
+        fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
 
         val orderedValues = if (orderSpec.aggregateOperation != null) {
             require(isNumeric(orderSpec.orderBy)) { "Can't apply aggregate operation to non-numeric values" }
@@ -231,21 +231,20 @@ class DataFrame private constructor(builder: Builder) {
         } else {
             get(orderSpec.variable).zip(get(orderSpec.orderBy))
         }
-            .filterNot { isEmptyValue(it.second) }
+            .filter { isValueComparable(it.second) }
             .sortedWith(compareBy { it.second as Comparable<*> })
             .mapNotNull { it.first }
 
-        // will be placed at the end of the result
-        val emptyValuesAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
-            .filter { isEmptyValue(it.second) }
+        // the values corresponding to non-comparable values will be placed at the end of the result
+        val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
+            .filterNot { isValueComparable(it.second) }
             .mapNotNull { it.first }
 
-        // Put the values corresponding to empty values at the end of the result
         return (if (orderSpec.direction < 0) {
             orderedValues.reversed()
         } else {
             orderedValues
-        } + emptyValuesAppendix).toSet()
+        } + nonComparableAppendix).toSet()
     }
 
     companion object {
