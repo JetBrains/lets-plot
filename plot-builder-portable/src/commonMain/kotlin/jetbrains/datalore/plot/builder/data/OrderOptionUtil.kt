@@ -8,6 +8,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object OrderOptionUtil {
     class OrderOption internal constructor(
@@ -59,15 +60,15 @@ object OrderOptionUtil {
             DataFrame.OrderingSpec(
                 variable,
                 byVariable,
-                orderOption.orderDir,
-                aggregateOperation = null
+                orderOption.orderDir
             )
         } else {
-            // Use ordering by the 'order_by' variable with default aggregation
+            // Use ordering by the 'order_by' variable with the specified aggregation
             DataFrame.OrderingSpec(
                 variable,
                 byVariable,
-                orderOption.orderDir
+                orderOption.orderDir,
+                aggregateOperation = { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
             )
         }
     }

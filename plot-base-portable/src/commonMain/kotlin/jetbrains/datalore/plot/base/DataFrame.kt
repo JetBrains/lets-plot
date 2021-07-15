@@ -22,7 +22,7 @@ class DataFrame private constructor(builder: Builder) {
         val variable: Variable,
         val orderBy: Variable?,
         val direction: Int,
-        val aggregateOperation: ((List<Double?>) -> Double?)? = { v -> SeriesUtil.mean(v, defaultValue = null) }
+        val aggregateOperation: ((List<Double?>) -> Double?)? = null
     )
 
     private val myOrderSpecs: List<OrderingSpec>
