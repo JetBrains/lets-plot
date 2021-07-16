@@ -14,14 +14,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksUtil
-import jetbrains.datalore.plot.config.Option.GeomName.POINT
-import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.Plot.SCALES
-import jetbrains.datalore.plot.config.Option.PlotBase.DATA
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.plot.config.Option.Scale.DATE_TIME
@@ -29,7 +22,7 @@ import jetbrains.datalore.plot.config.Option.Scale.DISCRETE_DOMAIN
 import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.LABELS
 import jetbrains.datalore.plot.config.Option.Scale.LIMITS
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -243,21 +236,7 @@ class ScaleConfigLabelsTest {
             data: Map<String, Any>,
             mapping: Map<String, Any>,
             scales: List<Map<String, Any>>,
-        ): TypedScaleMap {
-            val plotOpts = mutableMapOf(
-                Option.Meta.KIND to Option.Meta.Kind.PLOT,
-                DATA to data,
-                MAPPING to mapping,
-                LAYERS to listOf(
-                    mapOf(
-                        GEOM to POINT
-                    )
-                ),
-                SCALES to scales
-            )
-            val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts)
-            return TestUtil.assertClientWontFail(transformed).scaleMap
-        }
+        ) = buildPointLayer(data, mapping, scales = scales).scaleMap
 
         private fun getScaleLabels(
             scale: Scale<Double>,
