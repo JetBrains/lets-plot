@@ -22,7 +22,11 @@ class SqrtTransform : FunTransform(
 
     override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
         @Suppress("NAME_SHADOWING")
-        val middle = if (isInDomain(middle)) middle else 1.0
+        val middle = when {
+            isInDomain(middle) -> middle
+            else -> 0.0
+        }
+
         val lower = max(middle - 0.5, 0.0)
         return ClosedRange(lower, lower + 1.0)
     }

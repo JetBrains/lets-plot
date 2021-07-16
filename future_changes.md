@@ -13,3 +13,4 @@
 - Need to skip "bad" values during scale transformation [[#301](https://github.com/JetBrains/lets-plot/issues/301)].
 - NPE on negative value in data and scale_xxx(trans='log10') [[#292](https://github.com/JetBrains/lets-plot/issues/292)].
 - Legend is broken when using scale_fill_brewer with 'trans' parameter [[#284](https://github.com/JetBrains/lets-plot/issues/284)].
+- scale_y_log10: hidden segments [[#372](https://github.com/JetBrains/lets-plot/issues/372)].

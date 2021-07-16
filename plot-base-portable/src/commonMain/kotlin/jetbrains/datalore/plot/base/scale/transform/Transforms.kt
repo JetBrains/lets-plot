@@ -16,9 +16,12 @@ object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
     val LOG10: ContinuousTransform = Log10Transform()
     val REVERSE: ContinuousTransform = ReverseTransform()
-    val SQRT: ContinuousTransform = Log10Transform()
+    val SQRT: ContinuousTransform = SqrtTransform()
 
-    fun createBreaksGeneratorForTransformedDomain(transform: Transform, labelFormatter: ((Any) -> String)? = null): BreaksGenerator {
+    fun createBreaksGeneratorForTransformedDomain(
+        transform: Transform,
+        labelFormatter: ((Any) -> String)? = null
+    ): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform) {
             is IdentityTransform -> LinearBreaksGen(labelFormatter)
             is ReverseTransform -> LinearBreaksGen(labelFormatter)

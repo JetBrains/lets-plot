@@ -38,7 +38,7 @@ abstract class FunTransform(
 
     protected fun safeCastToDoubles(list: List<*>): List<Double?> {
         val checkedDoubles = SeriesUtil.checkedDoubles(list)
-        require(checkedDoubles.canBeCast()) { "Not a collections of numbers" }
+        require(checkedDoubles.canBeCast()) { "Not a collections of Double(s)" }
         return checkedDoubles.cast()
     }
 }

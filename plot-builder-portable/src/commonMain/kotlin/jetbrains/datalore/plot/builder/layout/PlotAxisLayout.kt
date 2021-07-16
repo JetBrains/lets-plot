@@ -10,23 +10,30 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksUtil
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-class PlotAxisLayout private constructor(private val myScale: Scale<Double>, private val myXDomain: ClosedRange<Double>, private val myYDomain: ClosedRange<Double>, private val myCoordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider,
-                                         private val myTheme: AxisTheme, private val myOrientation: jetbrains.datalore.plot.builder.guide.Orientation
+class PlotAxisLayout private constructor(
+    private val scale: Scale<Double>,
+    private val domainX: ClosedRange<Double>,
+    private val domainY: ClosedRange<Double>,
+    private val coordProvider: CoordProvider,
+    private val theme: AxisTheme,
+    private val orientation: Orientation
 ) : AxisLayout {
 
     override fun initialThickness(): Double {
-        if (myTheme.showTickMarks() || myTheme.showTickLabels()) {
-            val v = myTheme.tickLabelDistance()
-            return if (myTheme.showTickLabels()) {
-                v + initialTickLabelSize(
-                    myOrientation
-                )
-            } else v
+        if (theme.showTickMarks() || theme.showTickLabels()) {
+            val v = theme.tickLabelDistance()
+            return if (theme.showTickLabels()) {
+                v + initialTickLabelSize(orientation)
+            } else {
+                v
+            }
         }
         return 0.0
     }
@@ -34,57 +41,71 @@ class PlotAxisLayout private constructor(private val myScale: Scale<Double>, pri
     override fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle?): AxisLayoutInfo {
         val layouter = createLayouter(displaySize)
         return layouter.doLayout(
-            axisLength(
-                displaySize,
-                myOrientation
-            ), maxTickLabelsBoundsStretched)
+            axisLength(displaySize, orientation),
+            maxTickLabelsBoundsStretched
+        )
     }
 
     private fun createLayouter(displaySize: DoubleVector): AxisLayouter {
-        val domains = myCoordProvider.adjustDomains(myXDomain, myYDomain, displaySize)
+        val domains = coordProvider.adjustDomains(domainX, domainY, displaySize)
         val axisDomain = axisDomain(
             domains,
-            myOrientation
+            orientation
         )
 
-        val breaksProvider = AxisBreaksUtil.createAxisBreaksProvider(myScale, axisDomain)
-        return AxisLayouter.create(myOrientation, axisDomain, breaksProvider, myTheme)
+        val breaksProvider = AxisBreaksUtil.createAxisBreaksProvider(scale, axisDomain)
+        return AxisLayouter.create(orientation, axisDomain, breaksProvider, theme)
     }
 
     companion object {
         private val TICK_LABEL_SPEC = PlotLabelSpec.AXIS_TICK
 
-        fun bottom(scale: Scale<Double>, xDomain: ClosedRange<Double>, yDomain: ClosedRange<Double>, coordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider, theme: AxisTheme): AxisLayout {
+        fun bottom(
+            scale: Scale<Double>,
+            xDomain: ClosedRange<Double>,
+            yDomain: ClosedRange<Double>,
+            coordProvider: CoordProvider,
+            theme: AxisTheme
+        ): AxisLayout {
             return PlotAxisLayout(
                 scale, xDomain, yDomain, coordProvider,
                 theme,
-                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+                Orientation.BOTTOM
             )
         }
 
-        fun left(scale: Scale<Double>, xDomain: ClosedRange<Double>, yDomain: ClosedRange<Double>, coordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider, theme: AxisTheme): AxisLayout {
+        fun left(
+            scale: Scale<Double>,
+            xDomain: ClosedRange<Double>,
+            yDomain: ClosedRange<Double>,
+            coordProvider: CoordProvider,
+            theme: AxisTheme
+        ): AxisLayout {
             return PlotAxisLayout(
                 scale, xDomain, yDomain, coordProvider,
                 theme,
-                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+                Orientation.LEFT
             )
         }
 
-        private fun initialTickLabelSize(orientation: jetbrains.datalore.plot.builder.guide.Orientation): Double {
+        private fun initialTickLabelSize(orientation: Orientation): Double {
             return if (orientation.isHorizontal)
                 TICK_LABEL_SPEC.height()
             else
                 TICK_LABEL_SPEC.width(1)
         }
 
-        private fun axisLength(displaySize: DoubleVector, orientation: jetbrains.datalore.plot.builder.guide.Orientation): Double {
+        private fun axisLength(displaySize: DoubleVector, orientation: Orientation): Double {
             return if (orientation.isHorizontal)
                 displaySize.x
             else
                 displaySize.y
         }
 
-        private fun axisDomain(xyDomains: Pair<ClosedRange<Double>, ClosedRange<Double>>, orientation: jetbrains.datalore.plot.builder.guide.Orientation): ClosedRange<Double> {
+        private fun axisDomain(
+            xyDomains: Pair<ClosedRange<Double>, ClosedRange<Double>>,
+            orientation: Orientation
+        ): ClosedRange<Double> {
             return if (orientation.isHorizontal)
                 xyDomains.first
             else
