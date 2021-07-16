@@ -18,14 +18,14 @@ class DataFrame private constructor(builder: Builder) {
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
-    class OrderingSpec(
+    class OrderSpec(
         val variable: Variable,
         val orderBy: Variable,
         val direction: Int,
         val aggregateOperation: ((List<Double?>) -> Double?)? = null
     )
 
-    private val myOrderSpecs: List<OrderingSpec>
+    private val myOrderSpecs: List<OrderSpec>
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -218,7 +218,7 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    private fun getOrderedDistinctValues(orderSpec: OrderingSpec): Set<Any> {
+    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any> {
         fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
 
         val orderedValues = if (orderSpec.aggregateOperation != null) {
@@ -254,7 +254,7 @@ class DataFrame private constructor(builder: Builder) {
     class Builder {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
-        internal val myOrderSpecs = ArrayList<OrderingSpec>()
+        internal val myOrderSpecs = ArrayList<OrderSpec>()
 
         constructor()
 
@@ -292,12 +292,12 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-        fun addOrderSpecs(orderSpecs: List<OrderingSpec>): Builder {
+        fun addOrderSpecs(orderSpecs: List<OrderSpec>): Builder {
             orderSpecs.forEach(::addOrderSpec)
             return this
         }
 
-        fun addOrderSpec(orderSpec: OrderingSpec): Builder {
+        fun addOrderSpec(orderSpec: OrderSpec): Builder {
             val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
             // If multiple specifications for the variable - choose a more specific one:
             if (currentOrderSpec?.aggregateOperation == null) {

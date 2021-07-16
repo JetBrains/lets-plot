@@ -15,7 +15,6 @@ import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
@@ -132,7 +131,7 @@ object DataProcessing {
 
             // set ordering specifications
             val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderingSpec(resultSeries.keys, bindings, orderOption)
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption)
             }
             addOrderSpecs(orderSpecs)
 

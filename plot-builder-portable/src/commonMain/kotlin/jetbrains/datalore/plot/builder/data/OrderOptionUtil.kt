@@ -53,11 +53,11 @@ object OrderOptionUtil {
         }
     }
 
-    fun createOrderingSpec(
+    fun createOrderSpec(
         variables: Set<DataFrame.Variable>,
         varBindings: List<VarBinding>,
         orderOption: OrderOption
-    ): DataFrame.OrderingSpec {
+    ): DataFrame.OrderSpec {
         fun getVariableByName(varName: String): DataFrame.Variable {
             return variables.find { it.name == varName }
                 ?: error("Undefined variable '$varName' in order options. Full variable list: ${variables.map { "'${it.name}'" }}")
@@ -83,7 +83,7 @@ object OrderOptionUtil {
                 null
             }
 
-        return DataFrame.OrderingSpec(
+        return DataFrame.OrderSpec(
             variable,
             orderOption.byVariable?.let(::getVariableByName) ?: getVariableByName(orderOption.variableName),
             orderOption.getOrderDir(),
