@@ -6,13 +6,10 @@
 package jetbrains.livemap.model
 
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.livemap.api.ChartSource
-import jetbrains.livemap.api.LineBuilder
-import jetbrains.livemap.api.PointBuilder
-import jetbrains.livemap.api.TextBuilder
+import jetbrains.livemap.api.*
 
 fun PointBuilder.coord(geoObj: GeoObject) {
-    point = explicitVec(geoObj.lon, geoObj.lat)
+    point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
 fun PointBuilder.coord(lon: Double, lat: Double) {
@@ -20,7 +17,7 @@ fun PointBuilder.coord(lon: Double, lat: Double) {
 }
 
 fun LineBuilder.coord(geoObj: GeoObject) {
-    point = explicitVec(geoObj.lon, geoObj.lat)
+    point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
 fun LineBuilder.coord(lon: Double, lat: Double) {
@@ -28,7 +25,7 @@ fun LineBuilder.coord(lon: Double, lat: Double) {
 }
 
 fun ChartSource.coord(geoObj: GeoObject) {
-    point = explicitVec(geoObj.lon, geoObj.lat)
+    point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
 fun ChartSource.coord(lon: Double, lat: Double) {
@@ -36,7 +33,7 @@ fun ChartSource.coord(lon: Double, lat: Double) {
 }
 
 fun TextBuilder.coord(geoObj: GeoObject) {
-    point = explicitVec(geoObj.lon, geoObj.lat)
+    point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
 fun TextBuilder.coord(lon: Double, lat: Double) {

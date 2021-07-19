@@ -95,11 +95,10 @@ class MapLocationInitializationSystem(
     }
 
     private fun calculateMaxZoom(regionLength: Double, containerLength: Double): Double {
-        if (regionLength == 0.0) {
-            return myViewport.maxZoom.toDouble()
+        return when {
+            regionLength == 0.0 -> myViewport.maxZoom.toDouble()
+            containerLength == 0.0 -> myViewport.minZoom.toDouble()
+            else -> (ln(containerLength / regionLength) / ln(2.0))
         }
-        return if (containerLength == 0.0) {
-            myViewport.minZoom.toDouble()
-        } else (ln(containerLength / regionLength) / ln(2.0))
     }
 }

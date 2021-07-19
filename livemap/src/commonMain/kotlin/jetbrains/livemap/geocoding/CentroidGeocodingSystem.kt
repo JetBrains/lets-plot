@@ -40,7 +40,7 @@ class CentroidGeocodingSystem(
             .setFeatures(listOf(CENTROID))
             .build()
             .run(myGeocodingService::execute)
-            .map { features -> features.associateBy(GeocodedFeature::request) { it } }
+            .map { features -> regionIds.zip(features).associate { (id, feature) -> id to feature } }
             .map(::parseCentroidMap)
 
         entities.forEach {

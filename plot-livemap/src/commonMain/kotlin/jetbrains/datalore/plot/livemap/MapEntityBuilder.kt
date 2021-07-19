@@ -120,7 +120,7 @@ internal class MapEntityBuilder {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
     }
 
-    fun toPointBuilder(): (PointBuilder.() -> Unit)? {
+    fun toPointBuilder(): PointBuilder.() -> Unit {
         return {
             layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index

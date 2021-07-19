@@ -40,7 +40,7 @@ object LiveMapUtil {
     ): LayersBuilder.() -> Unit = {
         when (layerKind) {
             MapLayerKind.POINT -> points {
-                entityBuilders.forEach { it.toPointBuilder()?.run(::point) }
+                entityBuilders.forEach { it.toPointBuilder().run(::point) }
             }
             MapLayerKind.POLYGON -> polygons {
                 entityBuilders.forEach { polygon(it.createPolygonConfigurator()) }

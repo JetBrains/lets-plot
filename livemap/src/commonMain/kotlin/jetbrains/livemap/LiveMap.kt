@@ -14,9 +14,8 @@ import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.div
-import jetbrains.datalore.base.typedGeometry.plus
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
@@ -61,9 +60,6 @@ import jetbrains.livemap.effects.GrowingPath
 import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
-import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
-import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
-import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.projection.*
 import jetbrains.livemap.regions.*
 import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
@@ -76,6 +72,9 @@ import jetbrains.livemap.basemap.BasemapCellLoadingSystem
 import jetbrains.livemap.basemap.TileSystemProvider
 import jetbrains.livemap.basemap.raster.RasterTileLayerComponent
 import jetbrains.livemap.basemap.vector.debug.DebugDataSystem
+import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
+import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.ui.CursorService
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
@@ -192,6 +191,8 @@ class LiveMap(
         } else {
             Diagnostics()
         }
+
+
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
@@ -345,9 +346,7 @@ class LiveMap(
             TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         )
 
-        layers.forEach {
-            layersBuilder.apply(it)
-        }
+        layers.forEach(layersBuilder::apply)
 
         if (myTileSystemProvider.isVector) {
             componentManager

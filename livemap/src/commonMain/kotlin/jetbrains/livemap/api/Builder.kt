@@ -185,10 +185,6 @@ fun splitPathByAntiMeridian(path: List<Vec<LonLat>>): List<List<Vec<LonLat>>> {
 
 @LiveMapDsl
 class Location {
-    var name: String? = null
-        set(v) {
-            field = v; mapLocation = v?.let { MapLocation.create(MapRegion.withName(it)) }
-        }
     var osmId: String? = null
         set(v) {
             field = v; mapLocation = v?.let { MapLocation.create(MapRegion.withId(it)) }

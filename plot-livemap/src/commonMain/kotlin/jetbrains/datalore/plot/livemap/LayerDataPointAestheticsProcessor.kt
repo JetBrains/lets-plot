@@ -20,6 +20,7 @@ import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.MultiPointData
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
+import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
 import jetbrains.livemap.api.LayersBuilder
@@ -165,15 +166,12 @@ internal class LayerDataPointAestheticsProcessor(
             internal fun path(geom: Geom): List<MapEntityBuilder> {
                 setAnimation(if (geom is PathGeom) geom.animation else null)
 
-                return process(
-                    multiPointDataByGroup(MultiPointDataConstructor.singlePointAppender(GeomUtil.TO_LOCATION_X_Y)),
-                    false
-                )
+                return process(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), false)
             }
 
             internal fun polygon(): List<MapEntityBuilder> {
                 return process(
-                    multiPointDataByGroup(MultiPointDataConstructor.singlePointAppender(GeomUtil.TO_LOCATION_X_Y)),
+                    multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)),
                     true
                 )
             }

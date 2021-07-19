@@ -8,11 +8,8 @@ package jetbrains.gis.geoprotocol.json
 import jetbrains.datalore.base.json.Obj
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.GeocodingRequestBuilder
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.RegionQueryBuilder
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.RequestBuilderBase
 import jetbrains.gis.geoprotocol.GeocodingMode.BY_ID
 import jetbrains.gis.geoprotocol.GeocodingMode.BY_NAME
@@ -38,10 +35,6 @@ class RequestJsonBuilder private constructor(private val myRequestBuilder: Reque
 
     }
 
-    private fun geocodingRequestBuilder(): GeocodingRequestBuilder {
-        return myRequestBuilder as GeocodingRequestBuilder
-    }
-
     private fun explicitRequestBuilder(): ExplicitRequestBuilder {
         return myRequestBuilder as ExplicitRequestBuilder
     }
@@ -55,29 +48,15 @@ class RequestJsonBuilder private constructor(private val myRequestBuilder: Reque
     fun limit() = apply { myRequestBuilder.addFeature(FeatureOption.LIMIT) }
     fun boundary() = apply { myRequestBuilder.addFeature(FeatureOption.BOUNDARY) }
 
-    fun level(v: FeatureLevel?) = apply { geocodingRequestBuilder().setLevel(v) }
-    fun autoDetectLevel() = apply { geocodingRequestBuilder().setLevel(null) }
-    fun country() = apply { geocodingRequestBuilder().setLevel(FeatureLevel.COUNTRY) }
-    fun state() = apply { geocodingRequestBuilder().setLevel(FeatureLevel.STATE) }
-    fun county() = apply { geocodingRequestBuilder().setLevel(FeatureLevel.COUNTY) }
-    fun city() = apply { geocodingRequestBuilder().setLevel(FeatureLevel.CITY) }
     fun regionId(vararg ids: String) = apply { myParent = MapRegion.withIdList(listOf(*ids)) }
     fun region(name: String) = apply { myParent = MapRegion.withName(name) }
-    fun namesakeExampleLimit(v: Int) = apply { geocodingRequestBuilder().setNamesakeExampleLimit(v) }
 
     fun build(): Obj {
         if (myNames != null && myNames.size > 1) {
             throw IllegalStateException("TODO")
         }
 
-        if (myRequestBuilder.mode === BY_NAME) {
-            geocodingRequestBuilder().addQuery(
-                RegionQueryBuilder()
-                    .setQueryNames(myNames!!)
-                    .setParent(myParent)
-                    .build()
-            )
-        } else if (myRequestBuilder.mode === BY_ID) {
+        if (myRequestBuilder.mode === BY_ID) {
             explicitRequestBuilder().setIds(myIds!!)
         } else {
             throw IllegalStateException("Unkown mode")
@@ -90,11 +69,6 @@ class RequestJsonBuilder private constructor(private val myRequestBuilder: Reque
         internal fun explicit(vararg ids: String): RequestJsonBuilder {
             val requestBuilder = ExplicitRequestBuilder()
             return RequestJsonBuilder(requestBuilder, listOf(*ids))
-        }
-
-        fun geocoding(vararg names: String): RequestJsonBuilder {
-            val requestBuilder = GeocodingRequestBuilder()
-            return RequestJsonBuilder(requestBuilder, listOf(*names))
         }
     }
 }

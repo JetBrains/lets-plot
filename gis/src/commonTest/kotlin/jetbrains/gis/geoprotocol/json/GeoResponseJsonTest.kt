@@ -19,7 +19,7 @@ import jetbrains.gis.geoprotocol.GeoResponseBuilder
 import jetbrains.gis.geoprotocol.json.ResponseAssertions.assertThatAmbiguousResponse
 import jetbrains.gis.geoprotocol.json.ResponseAssertions.assertThatSuccessResponse
 import kotlin.test.Test
-
+/*
 class GeoResponseJsonTest {
 
     @Test
@@ -121,3 +121,4 @@ class GeoResponseJsonTest {
 
 private fun GeoResponseBuilder.NamesakeBuilder.addParent(name: String, level: FeatureLevel)
         = apply { addParentLevel(level).addParentName(name) }
+*/

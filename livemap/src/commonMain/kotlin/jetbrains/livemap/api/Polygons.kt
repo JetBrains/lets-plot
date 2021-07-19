@@ -8,7 +8,6 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -18,13 +17,19 @@ import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
+import jetbrains.livemap.geocoding.RegionBBoxComponent
+import jetbrains.livemap.geocoding.RegionIdComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldDimensionComponent
 import jetbrains.livemap.placement.WorldOriginComponent
+import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
+import jetbrains.livemap.projection.WorldPoint
+import jetbrains.livemap.regions.RegionFragmentsComponent
+import jetbrains.livemap.regions.RegionRenderer
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PolygonRenderer
 import jetbrains.livemap.scaling.ScaleComponent
@@ -37,7 +42,7 @@ class Polygons(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection,
     val mapRuler: MapRuler<World>
-    )
+)
 
 fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
@@ -70,6 +75,8 @@ class PolygonsBuilder(
     var layerIndex: Int? = null
     var index: Int? = null
 
+    var geoObject: GeoObject? = null
+
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
@@ -80,6 +87,7 @@ class PolygonsBuilder(
     fun build(): EcsEntity? {
 
         return when {
+            geoObject != null -> createGeoObjectEntity()
             multiPolygon != null -> createStaticEntity()
             else -> null
         }
@@ -112,6 +120,29 @@ class PolygonsBuilder(
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
                 + LocatorComponent(PolygonLocatorHelper())
+            }
+    }
+
+    private fun createGeoObjectEntity(): EcsEntity {
+        val geoObject = this@PolygonsBuilder.geoObject!!
+
+        return myFactory
+            .createMapEntity("map_ent_geo_object_polygon_" + geoObject.id)
+            .addComponents {
+                + RegionIdComponent(geoObject.id)
+                + RegionFragmentsComponent()
+                + RegionBBoxComponent(geoObject.bbox)
+                + RendererComponent(RegionRenderer())
+                + ScreenLoopComponent()
+                + StyleComponent().apply {
+                    setFillColor(this@PolygonsBuilder.fillColor)
+                    setStrokeColor(this@PolygonsBuilder.strokeColor)
+                    setStrokeWidth(this@PolygonsBuilder.strokeWidth)
+                }
+                + NeedLocationComponent
+                + NeedCalculateLocationComponent
+            }.apply {
+                get<ScreenLoopComponent>().origins = listOf(Coordinates.ZERO_CLIENT_POINT)
             }
     }
 }

@@ -6,6 +6,8 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
 import jetbrains.livemap.model.Cities.BOSTON
@@ -13,12 +15,12 @@ import jetbrains.livemap.model.Cities.FRISCO
 import jetbrains.livemap.model.Cities.MOSCOW
 import jetbrains.livemap.model.Cities.NEW_YORK
 import jetbrains.livemap.model.Cities.SPB
-import jetbrains.livemap.model.GeoObject
 import jetbrains.livemap.model.coord
 
 class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
+            geocodingService = Services.devGeocodingService()
             layers {
 
                 points {
@@ -58,13 +60,13 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                 paths {
                     path {
-                        geometry(listOf(MOSCOW, SPB).map(GeoObject::geoCoord), isGeodesic = false)
+                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid), isGeodesic = false)
 
                         strokeWidth = 1.0
                     }
 
                     path {
-                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::geoCoord), isGeodesic = true)
+                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid), isGeodesic = true)
 
                         strokeWidth = 1.0
                         //animation = 2
@@ -73,7 +75,22 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                 polygons {
                     polygon {
-                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::geoCoord), isGeodesic = false)
+                        geoObject = GeoObject(
+                            id="148838",
+                            centroid=Vec(-99.74261, 37.25026),
+                            bbox=GeoRectangle(
+                                startLongitude = 144.618412256241,
+                                endLongitude = -64.56484794616701,
+                                minLatitude = -14.3740922212601,
+                                maxLatitude = 71.38780832290649
+                            )
+                        )
+                    }
+                }
+
+                polygons {
+                    polygon {
+                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid), isGeodesic = false)
 
                         fillColor = Color.LIGHT_CYAN
                     }
