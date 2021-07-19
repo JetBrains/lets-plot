@@ -63,10 +63,19 @@ abstract class PlotConfig(
         layerConfigs = createLayerConfigs(sharedData)
 
         // build all scales
+        val excludeStatVariables = !isClientSide
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        val scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
+        val scaleProviderByAes = PlotConfigUtil.createScaleProviders(
+            layerConfigs, scaleConfigs, excludeStatVariables
+        )
+        val transformsByAes = PlotConfigUtil.createTransforms(
+            layerConfigs, scaleProviderByAes, excludeStatVariables
+        )
 
-        scaleMap = PlotConfigUtil.createScales(layerConfigs, scaleProvidersMap, isClientSide)
+        // ToDo: First transform data then create scales.
+        scaleMap = PlotConfigUtil.createScales(
+            layerConfigs, transformsByAes, scaleProviderByAes, excludeStatVariables
+        )
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)

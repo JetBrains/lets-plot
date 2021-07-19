@@ -6,19 +6,16 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 
 object ScaleProviderHelper {
-    fun getOrCreateDefault(aes: Aes<*>, providers: TypedScaleProviderMap): ScaleProvider<*> {
-        var realAes = aes
-        if (Aes.isPositionalX(aes)) {
-            realAes = Aes.X
-        } else if (Aes.isPositionalY(aes)) {
-            realAes = Aes.Y
+    fun getOrCreateDefault(aes: Aes<*>, providers: Map<Aes<*>, ScaleProvider<*>>): ScaleProvider<*> {
+        val realAes = when {
+            Aes.isPositionalX(aes) -> Aes.X
+            Aes.isPositionalY(aes) -> Aes.Y
+            else -> aes
         }
-        return if (providers.containsKey(realAes)) {
-            providers[realAes]
-        } else createDefault(realAes)
+
+        return providers[realAes] ?: createDefault(realAes)
     }
 
     fun <T> createDefault(aes: Aes<T>): ScaleProvider<T> {
@@ -27,14 +24,14 @@ object ScaleProviderHelper {
 
     fun <T> createDefault(aes: Aes<T>, name: String): ScaleProvider<T> {
         return ScaleProviderBuilder(aes)
-                .name(name)
-                .build()
+            .name(name)
+            .build()
     }
 
     fun <T> create(name: String, aes: Aes<T>, mapperProvider: MapperProvider<T>): ScaleProvider<T> {
         return ScaleProviderBuilder(aes)
-                .mapperProvider(mapperProvider)
-                .name(name)
-                .build()
+            .mapperProvider(mapperProvider)
+            .name(name)
+            .build()
     }
 }

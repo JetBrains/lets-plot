@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
@@ -26,7 +25,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
     private var myLabelFormat: String? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
-    private var myLimits: List<*>? = null
+    private var myLimits: List<Any?>? = null
     private var myContinuousTransform: ContinuousTransform = Transforms.IDENTITY
     private var myBreaksGenerator: BreaksGenerator? = null
 
@@ -145,12 +144,12 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         private val myName: String? = b.myName
 
-        private val myBreaks: List<Any>? = b.myBreaks?.let { ArrayList(b.myBreaks!!) }
-        private val myLabels: List<String>? = b.myLabels?.let { ArrayList(b.myLabels!!) }
+        private val myBreaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
+        private val myLabels: List<String>? = b.myLabels?.let { ArrayList(it) }
         private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
-        private val myLimits: List<*>? = b.myLimits?.let { ArrayList(b.myLimits!!) }
+        private val myLimits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
 
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
@@ -159,6 +158,10 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val mapperProvider: MapperProvider<T> = b.mapperProvider
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
+
+        // This is only to use by 'discrete' transforms/scales
+        override val discreteDomainLimits: List<Any>? = myLimits?.filterNotNull()
+
         override val continuousTransform: ContinuousTransform = b.myContinuousTransform
 
         private fun scaleName(variable: DataFrame.Variable): String {
@@ -188,16 +191,16 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 mapper
             )
 
-            if (myLimits != null) {
-                val limits = myLimits.filterNotNull().let { limits ->
-                    if (discreteDomainReverse) {
-                        limits.reversed()
-                    } else {
-                        limits
-                    }
+            val discreteLimits = discreteDomainLimits?.let {
+                if (discreteDomainReverse) {
+                    it.reversed()
+                } else {
+                    it
                 }
+            }
+            if (discreteLimits != null) {
                 scale = scale.with()
-                    .limits(limits)
+                    .limits(discreteLimits)
                     .build()
             }
 
@@ -303,17 +306,6 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private fun absentMapper(label: String): (Double?) -> T {
             // mapper for empty data is a special case - should never be used
             return { v -> throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v) }
-        }
-
-        override fun computeContinuousDomain(data: DataFrame, variable: DataFrame.Variable): ClosedRange<Double>? {
-            return if (!continuousTransform.hasDomainLimits()) {
-                data.range(variable)
-            } else {
-                val filtered = data.getNumeric(variable).filter {
-                    continuousTransform.isInDomain(it)
-                }
-                SeriesUtil.range(filtered)
-            }
         }
     }
 }

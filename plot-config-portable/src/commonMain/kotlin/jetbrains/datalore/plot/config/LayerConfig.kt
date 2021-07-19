@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -66,7 +64,8 @@ class LayerConfig(
 
     val combinedData: DataFrame
         get() {
-            checkState(!myOwnDataUpdated)
+            // 'combinedData' is only valid before 'stst'/'sampling' occurs.
+            check(!myOwnDataUpdated)
             return myCombinedData
         }
 
@@ -77,7 +76,7 @@ class LayerConfig(
 
     val samplings: List<Sampling>?
         get() {
-            checkState(!clientSide)
+            check(!clientSide)
             return mySamplings
         }
 
@@ -110,6 +109,7 @@ class LayerConfig(
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
             // Only keep those mapping options which can be consumed by this layer.
             // ToDo: report to user that some mappings are not applicable to this layer.
+            @Suppress("CascadeIf")
             if (it == Option.Mapping.GROUP) {
                 true
             } else if (it is String) {
@@ -255,7 +255,7 @@ class LayerConfig(
     }
 
     fun replaceOwnData(dataFrame: DataFrame?) {
-        checkState(!clientSide)   // This class is immutable on client-side
+        check(!clientSide)   // This class is immutable on client-side
         require(dataFrame != null)
         update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame
@@ -300,10 +300,9 @@ class LayerConfig(
             layerOptions: Map<*, *>,
             geomProto: GeomProto
         ): Map<String, Any> {
-            checkArgument(
-                layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT),
+            require(layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT)) {
                 "Either 'geom' or 'stat' must be specified."
-            )
+            }
 
             val defaults = HashMap<String, Any>()
             defaults.putAll(geomProto.defaultOptions())
