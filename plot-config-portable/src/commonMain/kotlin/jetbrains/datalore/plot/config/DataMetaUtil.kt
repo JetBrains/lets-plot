@@ -156,7 +156,30 @@ object DataMetaUtil {
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )
-            } ?: emptyList()
+            }.run {
+                // non-discrete mappings should inherit settings from the as_discrete
+                val inherited = commonMappings.variables()
+                    .filterNot(::isDiscrete)
+                    .mapNotNull { varName ->
+                        val orderOptionForVar = this
+                            ?.filter { isDiscrete(it.variableName) }
+                            ?.find { fromDiscrete(it.variableName) == varName }
+                            ?: return@mapNotNull null
+
+                        OrderOptionUtil.OrderOption.create(
+                            varName,
+                            orderBy = if (orderOptionForVar.byVariable != orderOptionForVar.variableName) {
+                                orderOptionForVar.byVariable
+                            } else {
+                                null
+                            },
+                            orderOptionForVar.getOrderDir()
+                        )
+                    }
+
+                return@run this?.plus(inherited)
+            }
+            ?: emptyList()
     }
 }
 

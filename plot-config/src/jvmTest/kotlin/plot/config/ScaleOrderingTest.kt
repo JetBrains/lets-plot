@@ -653,13 +653,13 @@ class ScaleOrderingTest {
     }
 
     @Test
-    fun `x=as_discrete('x', order=1), fill='x' - now the ordering is not applied to the 'fill'`() {
+    fun `x=as_discrete('x', order=1), fill='x' - the ordering also applies to the 'fill'`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
         val orderingSettings = makeOrderingSettings("x", null, 1)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
         assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C")) // TODO  Should apply the ordering to the 'fill'?
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
     }
 
     @Test
