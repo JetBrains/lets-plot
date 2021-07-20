@@ -29,9 +29,9 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val breaksGenerator: BreaksGenerator
         get() {
             return if (customBreaksGenerator != null) {
-                Transforms.BreaksGeneratorForTransformedDomain(transform, customBreaksGenerator)
+                Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
             } else {
-                createBreaksGeneratorForTransformedDomain(transform, labelFormatter)
+                createBreaksGeneratorForTransformedDomain(continuousTransform, labelFormatter)
             }
         }
 

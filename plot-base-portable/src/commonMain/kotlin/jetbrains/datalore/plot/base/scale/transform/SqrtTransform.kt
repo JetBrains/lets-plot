@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.sqrt
 
-class SqrtTransform : FunTransform(
+internal class SqrtTransform : FunTransform(
     transformFun = { v -> sqrt(v) },
     inverseFun = { v -> v * v }
 ) {
