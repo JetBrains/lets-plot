@@ -13,11 +13,6 @@ internal class AdaptableAxisBreaksProvider(
     private val breaksGenerator: BreaksGenerator
 ) : AxisBreaksProvider {
 
-    init {
-        if(domainAfterTransform.upperEnd > 10E100) {
-            println("!!!")
-        }
-    }
     override val isFixedBreaks: Boolean
         get() = false
 
