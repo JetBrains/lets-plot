@@ -17,7 +17,7 @@ fun length(v: Long): Int {
 
     var len = 0
     var rem = v
-    while(rem > 0) {
+    while (rem > 0) {
         len++
         rem /= 10
     }
@@ -64,7 +64,7 @@ class NumberFormat(private val spec: Spec) {
         companion object {
             /**
              * max fraction length we can format (as any other format library does)
-            */
+             */
             private const val MAX_DECIMALS = 18
             internal val MAX_DECIMAL_VALUE = 10.0.pow(MAX_DECIMALS).toLong()
 
@@ -90,7 +90,7 @@ class NumberFormat(private val spec: Spec) {
                 val exponent: Int = exponentString.toIntOrNull() ?: 0
 
                 // number = 1.23456E+55
-                if (exponent.absoluteValue > MAX_DECIMALS) {
+                if (exponent.absoluteValue >= MAX_DECIMALS) {
                     return NumberInfo(
                         number = num,
                         // "1" -> 1
@@ -148,7 +148,8 @@ class NumberFormat(private val spec: Spec) {
         val fractionalPart: String = "",
         val exponentialPart: String = ""
     ) {
-        val fractionalLength = 0.takeIf {fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
+        val fractionalLength =
+            0.takeIf { fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
         val fullLength = integerPart.length + fractionalLength + exponentialPart.length
 
         override fun toString() =
@@ -186,14 +187,10 @@ class NumberFormat(private val spec: Spec) {
 
     private fun handleNonNumbers(num: Number): String? {
         val number = num.toDouble()
-
-        if (number.isNaN()) {
-            return "NaN"
-        }
-
-        return when (num.toDouble()) {
-            Double.NEGATIVE_INFINITY -> "-Infinity"
-            Double.POSITIVE_INFINITY -> "+Infinity"
+        return when {
+            number.isNaN() -> "NaN"
+            number == Double.NEGATIVE_INFINITY -> "-Infinity"
+            number == Double.POSITIVE_INFINITY -> "+Infinity"
             else -> null
         }
     }
@@ -259,14 +256,15 @@ class NumberFormat(private val spec: Spec) {
 
     private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
         val num = numberInfo.number
-        if (num == 0.0) {
-            return numberInfo.copy(exponent = 0)
+        if (num < TYPE_E_MIN) {
+            return NumberInfo(0.0)
         }
 
         var e = if (numberInfo.integerPart == 0L) {
             -(numberInfo.fractionLeadingZeros + 1)
         } else {
-            numberInfo.integerLength - 1
+            numberInfo.integerLength - 1 +
+                    (numberInfo.exponent ?: 0)
         }
         val n = num / 10.0.pow(e)
 
@@ -374,7 +372,11 @@ class NumberFormat(private val spec: Spec) {
             }
         } else {
             val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
-            fractionalPart = (numberInfo.fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
+            fractionalPart = if (precisionExp == 0L) {
+                numberInfo.fractionalPart
+            } else {
+                (numberInfo.fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
+            }
             integerPart = numberInfo.integerPart
             if (fractionalPart == NumberInfo.MAX_DECIMAL_VALUE) {
                 fractionalPart = 0
@@ -434,6 +436,9 @@ class NumberFormat(private val spec: Spec) {
     }
 
     companion object {
+        const val TYPE_E_MIN = 1E-323
+        const val TYPE_S_MAX = 1E40
+
         private const val CURRENCY = "$"
         private const val PERCENT = "%"
         private const val COMMA = ","
@@ -474,7 +479,8 @@ class NumberFormat(private val spec: Spec) {
             return spec.copy(type = type, precision = precision, zero = zero, fill = fill, align = align, trim = trim)
         }
 
-        private val NUMBER_REGEX = """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
+        private val NUMBER_REGEX =
+            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
 
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
