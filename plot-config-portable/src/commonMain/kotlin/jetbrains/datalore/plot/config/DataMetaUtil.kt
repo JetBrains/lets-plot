@@ -145,7 +145,7 @@ object DataMetaUtil {
     }
 
     fun getOrderOptions(options: Map<*, *>?, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
-        return options
+        val orderOptions = options
             ?.getMappingAnnotationsSpec(AS_DISCRETE)
             ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             ?.mapNotNull { (aesName, parameters) ->
@@ -156,30 +156,26 @@ object DataMetaUtil {
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )
-            }.run {
-                // non-discrete mappings should inherit settings from the as_discrete
-                val inherited = commonMappings.variables()
-                    .filterNot(::isDiscrete)
-                    .mapNotNull { varName ->
-                        val orderOptionForVar = this
-                            ?.filter { isDiscrete(it.variableName) }
-                            ?.find { fromDiscrete(it.variableName) == varName }
-                            ?: return@mapNotNull null
-
-                        OrderOptionUtil.OrderOption.create(
-                            varName,
-                            orderBy = if (orderOptionForVar.byVariable != orderOptionForVar.variableName) {
-                                orderOptionForVar.byVariable
-                            } else {
-                                null
-                            },
-                            orderOptionForVar.getOrderDir()
-                        )
-                    }
-
-                return@run this?.plus(inherited)
             }
             ?: emptyList()
+
+        // non-discrete mappings should inherit settings from the as_discrete
+        val inherited = commonMappings.variables()
+            .filterNot(::isDiscrete)
+            .mapNotNull { varName ->
+                val orderOptionForVar = orderOptions
+                    .filter { isDiscrete(it.variableName) }
+                    .find { fromDiscrete(it.variableName) == varName }
+                    ?: return@mapNotNull null
+
+                OrderOptionUtil.OrderOption.create(
+                    varName,
+                    orderBy = orderOptionForVar.byVariable.takeIf { it != orderOptionForVar.variableName },
+                    orderOptionForVar.getOrderDir()
+                )
+            }
+
+        return orderOptions + inherited
     }
 }
 
