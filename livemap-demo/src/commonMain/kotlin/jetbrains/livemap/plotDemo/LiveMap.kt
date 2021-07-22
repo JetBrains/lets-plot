@@ -11,20 +11,38 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            blankPoint(),
+            blankMap(),
             barWithNanValuesInData(),
             //pieWithNullValuesInData(),
             //barWithNullValuesInData()
 //            multiLayerTooltips()
-            mapJoinBar(),
+//            mapJoinBar(),
 //            antiMeridian(),
 //            tooltips(),
 //            symbol_point(),
 //            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
-//            bunch(),
-//           facet()
+            bunch(),
+           facet()
         )
+    }
+
+
+    private fun blankPoint(): MutableMap<String, Any> {
+        val spec = """{
+            "kind": "plot",
+            "layers": [
+            {
+            "geom": "point",
+            "data": {},
+            "mapping": {}
+            }
+            ]
+            }""".trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun pieWithNullValuesInData(): MutableMap<String, Any> {
@@ -118,6 +136,31 @@ class LiveMap {
       "display_mode": "pie",
       "tiles": {
         "kind": "vector_lets_plot",
+        "url": "wss://tiles.datalore.jetbrains.com",
+        "theme": null,
+        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+      },
+      "geocoding": {
+        "url": "http://localhost:3020"
+      }
+    }
+  ]
+}""".trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun blankMap(): MutableMap<String, Any> {
+        val spec = """{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "livemap",
+      "data": {},
+      "mapping": {},
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "wss://tiles.datalore.jetbrains.com",
         "url": "wss://tiles.datalore.jetbrains.com",
         "theme": null,
         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."

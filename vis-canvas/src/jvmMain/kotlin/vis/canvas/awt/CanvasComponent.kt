@@ -18,9 +18,8 @@ internal class CanvasComponent(
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
-        g?.drawImage(canvas.image, 0, 0, canvas.size.x, canvas.size.y, this)
+        g!!.drawImage(canvas.image, 0, 0, canvas.size.x, canvas.size.y, this)
     }
 
-    override fun isOpaque(): Boolean = false
-    override fun isPaintingOrigin(): Boolean = true
+    override fun isOpaque(): Boolean = true
 }
