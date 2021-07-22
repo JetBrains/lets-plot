@@ -66,17 +66,14 @@ object DataProcessing {
 
         val groups = groupingContext.groupMapper
 
-        val resultSeries: Map<Variable, List<Any>>
+        val resultSeries: Map<Variable, List<Any?>>
         val groupSizeListAfterStat: List<Int>
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
             val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
             groupSizeListAfterStat = listOf(sd.rowCount())
-            resultSeries = sd.variables().associateWith { variable ->
-                @Suppress("UNCHECKED_CAST")
-                sd[variable] as List<Any>
-            }
+            resultSeries = sd.variables().associateWith { variable -> sd[variable] }
         } else { // add offset to each group
             val groupMerger = GroupsMerger()
             var lastStatGroupEnd = -1
@@ -166,15 +163,11 @@ object DataProcessing {
                 .map { OrderOptionUtil.createOrderSpec(variables, bindings, it) }
         }
 
-        fun getResultSeries(): HashMap<Variable, List<Any>> {
-            val resultSeries = HashMap<Variable, List<Any>>()
+        fun getResultSeries(): HashMap<Variable, MutableList<Any?>> {
+            val resultSeries = HashMap<Variable, MutableList<Any?>>()
             myOrderedGroups.forEach { group ->
-                for (variable in group.df.variables()) {
-                    if (!resultSeries.containsKey(variable)) {
-                        resultSeries[variable] = ArrayList()
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    (resultSeries[variable] as MutableList).addAll(group.df[variable] as List<Any>)
+                group.df.variables().forEach { variable ->
+                    resultSeries.getOrPut(variable, ::ArrayList).addAll(group.df[variable])
                 }
             }
             return resultSeries
