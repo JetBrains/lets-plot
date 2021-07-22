@@ -16,3 +16,4 @@
 - scale_y_log10: hidden segments [[#372](https://github.com/JetBrains/lets-plot/issues/372)].
 - Scale breaks should be distributed evenly on 'sqrt' scale. [[#407](https://github.com/JetBrains/lets-plot/issues/407)].
 - Wrong tooltip formatting when used with log10 scales [[#406](https://github.com/JetBrains/lets-plot/issues/406)].
+- Bad axis labels when using both plot and layer data [[#327](https://github.com/JetBrains/lets-plot/issues/327)].
