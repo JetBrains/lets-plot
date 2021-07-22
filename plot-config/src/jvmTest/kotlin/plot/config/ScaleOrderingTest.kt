@@ -569,6 +569,7 @@ class ScaleOrderingTest {
             'color': [ '2', null, '1']
         }"""
         run {
+            // color ascending
             val orderingSettings = makeOrderingSettings("color", null, 1) + "," + makeOrderingSettings("fill", null, 1)
             val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
             val geomLayer = getSingleGeomLayer(spec)
@@ -586,6 +587,25 @@ class ScaleOrderingTest {
             )
         }
         run {
+            // color descending
+            val orderingSettings = makeOrderingSettings("color", null, -1) + "," + makeOrderingSettings("fill", null, 1)
+            val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.COLOR to listOf("2", "1"),
+                    Aes.FILL to listOf("v")
+
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.COLOR to listOf(listOf("2", "1", null)),
+                    Aes.FILL to listOf(listOf(null, null, "v"))
+                )
+            )
+        }
+        run {
+            // color ascending
             val orderingSettings = makeOrderingSettings("fill", null, 1) + "," + makeOrderingSettings("color", null, 1)
             val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
             val geomLayer = getSingleGeomLayer(spec)
@@ -599,6 +619,24 @@ class ScaleOrderingTest {
                 expectedOrderInBar = mapOf(
                     Aes.FILL to listOf(listOf("v", null, null)),
                     Aes.COLOR to listOf(listOf(null, "1", "2"))
+                )
+            )
+        }
+        run {
+            // color descending
+            val orderingSettings = makeOrderingSettings("fill", null, 1) + "," + makeOrderingSettings("color", null, -1)
+            val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.COLOR to listOf("2", "1"),
+                    Aes.FILL to listOf("v")
+
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(listOf("v", null, null)),
+                    Aes.COLOR to listOf(listOf(null, "2", "1"))
                 )
             )
         }

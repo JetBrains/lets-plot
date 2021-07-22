@@ -27,7 +27,7 @@ object OrderOptionUtil {
                 if (orderBy == null && order == null) {
                     return null
                 }
-                require(order == null || order is Number) {
+                require(order == null || (order is Number && order.toInt() in listOf(-1, 1))){
                     "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                 }
 

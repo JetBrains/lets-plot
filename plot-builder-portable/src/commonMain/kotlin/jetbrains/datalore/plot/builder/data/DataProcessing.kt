@@ -183,13 +183,11 @@ object DataProcessing {
         ) : Comparable<Group> {
             override fun compareTo(other: Group): Int {
                 fun compareGroupValue(v1: Any?, v2: Any?, dir: Int): Int {
+                    // null value is always greater - will be at the end of the result
+                    if (v1 == null && v2 == null ) return 0
                     if (v1 == null) return 1
                     if (v2 == null) return -1
-                    val cmp = compareValues(v1 as Comparable<*>, v2 as Comparable<*>)
-                    if (cmp != 0) {
-                        return if (dir < 0) -1 * cmp else cmp
-                    }
-                    return 0
+                    return compareValues(v1 as Comparable<*>, v2 as Comparable<*>) * dir
                 }
                 fun getValue(
                     df: DataFrame,
