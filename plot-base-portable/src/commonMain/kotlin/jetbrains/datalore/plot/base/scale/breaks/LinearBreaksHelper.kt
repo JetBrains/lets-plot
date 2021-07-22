@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.math.*
 
 class LinearBreaksHelper(
@@ -15,7 +14,6 @@ class LinearBreaksHelper(
     precise: Boolean = false
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
     override val breaks: List<Double>
-    override val formatter: (Any) -> String
 
     init {
         check(count > 0) { "Can't compute breaks for count: $count" }
@@ -39,12 +37,6 @@ class LinearBreaksHelper(
         } else {
             breaks
         }
-
-
-        // auto format
-        val range = ClosedRange(normalStart, normalEnd)
-        formatter = QuantitativeTickFormatterFactory.forLinearScale()
-            .getFormatter(range, step)
     }
 
     companion object {

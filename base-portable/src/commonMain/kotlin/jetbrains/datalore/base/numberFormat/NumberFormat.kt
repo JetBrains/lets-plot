@@ -436,8 +436,9 @@ class NumberFormat(private val spec: Spec) {
     }
 
     companion object {
-        const val TYPE_E_MIN = 1E-323
-        const val TYPE_S_MAX = 1E40
+        const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
+        const val TYPE_S_UPPER_LIMiT = 1E40  // Will likely crash on bigger numbers.
+        const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
 
         private const val CURRENCY = "$"
         private const val PERCENT = "%"

@@ -11,7 +11,7 @@ interface BreaksGenerator {
     fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks
 
     /**
-     * Do not use this formatter on axis/legends
+     * Formatting arbitrary datapoints (like in tooltips).
      */
     fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String
 }

@@ -5,13 +5,12 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-abstract class BreaksHelperBase protected constructor(
+abstract class BreaksHelperBase(
     start: Double,
     end: Double,
     targetCount: Int
 ) {
     abstract val breaks: List<Double>
-    abstract val formatter: (Any) -> String
 
     protected val normalStart: Double
     protected val normalEnd: Double

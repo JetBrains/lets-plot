@@ -19,15 +19,13 @@ class DateTimeBreaksHelper(
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
-    override val formatter: (Any) -> String
+    val formatter: (Any) -> String
 
     init {
 
         val step = targetStep
         if (step < 1000) {        // milliseconds
-            formatter = QuantitativeTickFormatterFactory.forTimeScale(
-                minInterval
-            ).getFormatter(step)
+            formatter = TimeScaleTickFormatterFactory(minInterval).getFormatter(step)
             // compute step so that it is multiple of automatic time steps
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count).breaks
 

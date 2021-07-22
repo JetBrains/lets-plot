@@ -9,32 +9,54 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.LinearBreaksHelper
+import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
+import kotlin.math.abs
+import kotlin.math.max
 
 internal class LinearBreaksGen(
     private val formatter: ((Any) -> String)? = null
 ) : BreaksGenerator {
+
     override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val helper = breaksHelper(domain, targetCount)
-        val breaks = helper.breaks
-        val labelFormatter = formatter ?: helper.formatter
-        val labels = breaks.map { labelFormatter(it) }
+        val breaks = generateBreakValues(domain, targetCount)
+        val fmt = formatter ?: createFormatter(breaks)
+        val labels = breaks.map { fmt(it) }
         return ScaleBreaks(breaks, breaks, labels)
     }
 
     override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return formatter ?: breaksHelper(domain, targetCount).formatter
+        return formatter ?: createFormatter(generateBreakValues(domain, targetCount))
     }
 
     companion object {
-        private fun breaksHelper(
-            domainAfterTransform: ClosedRange<Double>,
-            targetCount: Int
-        ): LinearBreaksHelper {
-            return LinearBreaksHelper(
-                domainAfterTransform.lowerEnd,
-                domainAfterTransform.upperEnd,
+        internal fun generateBreakValues(domain: ClosedRange<Double>, targetCount: Int): List<Double> {
+            val helper = LinearBreaksHelper(
+                domain.lowerEnd,
+                domain.upperEnd,
                 targetCount
             )
+            return helper.breaks
+        }
+
+        private fun createFormatter(breakValues: List<Double>): (Any) -> String {
+            val (referenceValue, step) = when {
+                breakValues.isEmpty() -> Pair(0.0, 0.5)
+                else -> {
+                    val v = max(abs(breakValues.first()), abs(breakValues.last()))
+                    val s = when {
+                        breakValues.size == 1 -> v / 10
+                        else -> abs(breakValues[1] - breakValues[0])
+                    }
+                    Pair(v, s)
+                }
+            }
+
+            val formatter = NumericBreakFormatter(
+                referenceValue,
+                step,
+                allowMetricPrefix = true
+            )
+            return formatter::apply
         }
     }
 }
