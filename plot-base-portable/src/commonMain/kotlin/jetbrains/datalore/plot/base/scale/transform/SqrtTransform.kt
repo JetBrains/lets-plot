@@ -5,25 +5,29 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.max
 import kotlin.math.sqrt
 
-class SqrtTransform(labelFormatter: ((Any) -> String)? = null) : FunTransform(
-    F,
-    F_INVERSE,
-    labelFormatter
+internal class SqrtTransform : FunTransform(
+    transformFun = { v -> sqrt(v) },
+    inverseFun = { v -> v * v }
 ) {
-    companion object {
-        private val F: (Double?) -> Double? = { v ->
-            if (v != null)
-                sqrt(v)
-            else
-                null
+    override fun hasDomainLimits() = true
+
+    override fun isInDomain(v: Double?): Boolean {
+        return SeriesUtil.isFinite(v) && v!! >= 0.0
+    }
+
+    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+        @Suppress("NAME_SHADOWING")
+        val middle = when {
+            isInDomain(middle) -> middle
+            else -> 0.0
         }
-        private val F_INVERSE: (Double?) -> Double? = { v ->
-            if (v != null)
-                v * v
-            else
-                null
-        }
+
+        val lower = max(middle - 0.5, 0.0)
+        return ClosedRange(lower, lower + 1.0)
     }
 }

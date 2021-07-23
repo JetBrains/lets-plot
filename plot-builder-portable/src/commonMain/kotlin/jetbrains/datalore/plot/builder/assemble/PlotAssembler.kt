@@ -51,7 +51,7 @@ class PlotAssembler private constructor(
     }
 
     fun createPlot(): Plot {
-        checkState(hasLayers(), "No layers in plot")
+        check(hasLayers()) { "No layers in plot" }
 
         val legendsBoxInfos = if (myLegendsEnabled)
             PlotAssemblerUtil.createLegends(
@@ -78,14 +78,8 @@ class PlotAssembler private constructor(
             return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos, hasLiveMap = true)
         }
 
-        // train scales
-        val xyRange = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
-        val xDomain = xyRange.first
-        val yDomain = xyRange.second
-        checkState(SeriesUtil.isFinite(xDomain.lowerEnd), "X domain lower end: " + xDomain.lowerEnd)
-        checkState(SeriesUtil.isFinite(xDomain.upperEnd), "X domain upper end: " + xDomain.upperEnd)
-        checkState(SeriesUtil.isFinite(yDomain.lowerEnd), "Y domain lower end: " + yDomain.lowerEnd)
-        checkState(SeriesUtil.isFinite(yDomain.upperEnd), "Y domain upper end: " + yDomain.upperEnd)
+        // train X/Y scales
+        val (xDomain, yDomain) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
 
         val xAxisLayout: AxisLayout
         val yAxisLayout: AxisLayout

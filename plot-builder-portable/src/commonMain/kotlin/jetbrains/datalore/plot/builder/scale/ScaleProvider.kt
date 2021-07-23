@@ -6,10 +6,13 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 
 interface ScaleProvider<T> {
     val discreteDomain: Boolean
+    val discreteDomainLimits: List<Any>?
+    val continuousTransform: ContinuousTransform
 
     /**
      * Create scale for discrete input (domain)

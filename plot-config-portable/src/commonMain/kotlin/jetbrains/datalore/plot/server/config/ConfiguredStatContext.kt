@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
@@ -37,34 +38,34 @@ internal class ConfiguredStatContext(
     }
 
     private fun overallRange(aes: Aes<*>): ClosedRange<Double>? {
-        val variable = DataFrameUtil.transformVarFor(aes)
+        val transformVar = DataFrameUtil.transformVarFor(aes)
 
-        var scaleLimits: ClosedRange<Double>? = null
-        if (scaleByAes.containsKey(aes)) {
-            // We only need to access 'limits' so no 'real' data required
-//            val emptyData = DataFrame.Builder()
-//                .putNumeric(TransformVar.X, ArrayList())
-//                .putNumeric(TransformVar.Y, ArrayList())
-//                .build()
-//            val scale = scaleByAes[aes].createScale(emptyData, variable)
+        val undefinedLimits = Pair(Double.NaN, Double.NaN)
+        val transformedLimits: Pair<Double, Double> = if (scaleByAes.containsKey(aes)) {
             val scale = scaleByAes[aes]
-            if (scale.isContinuousDomain && scale.hasDomainLimits()) {
-                scaleLimits = scale.domainLimits!!
-                if (SeriesUtil.isFinite(scaleLimits)) {
-                    return scaleLimits
-                }
+            if (scale.isContinuousDomain) {
+                ScaleUtil.transformedDefinedLimits(scale)
+            } else {
+                undefinedLimits
             }
+        } else {
+            undefinedLimits
         }
 
-        var dataRange = overallRange(variable, dataFrames)
-        return if (scaleLimits == null) {
-            dataRange
-        } else if (dataRange == null) {
-            scaleLimits
+        val (limitsLower, limitsUpper) = transformedLimits
+        val dataRange = overallRange(transformVar, dataFrames)
+        val ends = if (dataRange != null) {
+            val lower = if (limitsLower.isFinite()) limitsLower else dataRange.lowerEnd
+            val upper = if (limitsUpper.isFinite()) limitsUpper else dataRange.upperEnd
+            (lower to upper)
+        } else if (SeriesUtil.allFinite(limitsLower, limitsUpper)) {
+            (limitsLower to limitsUpper)
         } else {
-            val lower = if (scaleLimits.lowerEnd.isFinite()) scaleLimits.lowerEnd else dataRange.lowerEnd
-            val upper = if (scaleLimits.upperEnd.isFinite()) scaleLimits.upperEnd else dataRange.upperEnd
-            ClosedRange(lower, upper)
+            null
+        }
+
+        return ends?.let {
+            ClosedRange(ends.first, ends.second)
         }
     }
 }

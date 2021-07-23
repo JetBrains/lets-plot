@@ -7,7 +7,8 @@ from typing import Union, Optional, List
 
 from lets_plot._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, \
     GEOCODING_PROVIDER_URL, \
-    TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
+    TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM, TILES_SOLID, \
+    MAPTILES_SOLID_FILL_COLOR, TILES_CHESSBOARD
 from lets_plot._global_settings import has_global_value, get_global_val
 from .geom import _geom
 
@@ -238,6 +239,7 @@ OPTIONS_MAPTILES_THEME = 'theme'
 OPTIONS_MAPTILES_ATTRIBUTION = 'attribution'
 OPTIONS_MAPTILES_MIN_ZOOM = 'min_zoom'
 OPTIONS_MAPTILES_MAX_ZOOM = 'max_zoom'
+OPTIONS_MAPTILES_FILL_COLOR = 'fill_color'
 OPTIONS_GEOCODING_PROVIDER_URL = 'url'
 
 
@@ -280,6 +282,15 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
                 OPTIONS_MAPTILES_THEME: tiles[MAPTILES_THEME],
                 OPTIONS_MAPTILES_ATTRIBUTION: tiles[MAPTILES_ATTRIBUTION],
             }
+        elif tiles.get(MAPTILES_KIND, None) == TILES_SOLID:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_SOLID,
+                OPTIONS_MAPTILES_FILL_COLOR: tiles[MAPTILES_SOLID_FILL_COLOR]
+            }
+        elif tiles.get(MAPTILES_KIND, None) == TILES_CHESSBOARD:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_CHESSBOARD
+            }
         else:
             raise ValueError("Unsupported 'tiles' kind: " + tiles.get(MAPTILES_KIND, None))
 
@@ -310,6 +321,12 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
                 OPTIONS_MAPTILES_THEME: get_global_val(MAPTILES_THEME) if has_global_value(MAPTILES_THEME) else None,
                 OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(
                     MAPTILES_ATTRIBUTION) else None,
+            }
+
+        if get_global_val(MAPTILES_KIND) == TILES_SOLID:
+            return {
+                OPTIONS_MAPTILES_KIND: TILES_SOLID,
+                OPTIONS_MAPTILES_FILL_COLOR: get_global_val(MAPTILES_SOLID_FILL_COLOR),
             }
 
     raise ValueError('Tile provider is not set.')

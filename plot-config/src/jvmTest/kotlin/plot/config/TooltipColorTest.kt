@@ -14,14 +14,9 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
-import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_COLOR
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
-import jetbrains.datalore.plot.config.Option.Meta
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -49,19 +44,11 @@ class TooltipColorTest {
                 TOOLTIP_LINES to listOf("text"),
                 TOOLTIP_COLOR to tooltipColor
             )
-            val plotOpts = mutableMapOf(
-                Meta.KIND to Meta.Kind.PLOT,
-                MAPPING to mapOf(Aes.X.name to listOf(1.0), Aes.Y.name to listOf(1.0)),
-                LAYERS to listOf(
-                    mapOf(
-                        GEOM to Option.GeomName.POINT,
-                        TOOLTIPS to tooltips
-                    )
-                )
+             return buildPointLayer(
+                data = emptyMap(),
+                mapping = mapOf(Aes.X.name to listOf(1.0), Aes.Y.name to listOf(1.0)),
+                tooltips = tooltips
             )
-            val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts)
-            val config = PlotConfigClientSide.create(transformed) {}
-            return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single().single()
         }
 
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {

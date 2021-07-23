@@ -22,7 +22,7 @@ internal class PickSampling(sampleSize: Int) : SamplingBase(sampleSize),
                 "n=" + sampleSize + ")"
 
     override fun apply(population: DataFrame): DataFrame {
-        checkArgument(isApplicable(population))
+        require(isApplicable(population))
 
         val xVar = xVar(population)
         val xFactors = population.distinctValues(xVar)

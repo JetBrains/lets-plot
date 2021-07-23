@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.scale
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.builder.scale.provider.ColorBrewerMapperProvider
@@ -29,7 +29,7 @@ object DefaultMapperProviderUtil {
                 domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
-                trans: Transform?
+                trans: ContinuousTransform
             ): GuideMapper<Color> {
                 return continuous.createContinuousMapper(domain, lowerLimit, upperLimit, trans)
             }
@@ -46,7 +46,7 @@ object DefaultMapperProviderUtil {
                 domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
-                trans: Transform?
+                trans: ContinuousTransform
             ): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(
                     MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans),
@@ -63,9 +63,9 @@ object DefaultMapperProviderUtil {
                 domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
-                trans: Transform?
+                trans: ContinuousTransform
             ): GuideMapper<Any?> {
-                return GuideMappers.adaptContinuous { it }
+                return GuideMappers.asContinuous { it }
             }
         }
     }
@@ -95,10 +95,10 @@ object DefaultMapperProviderUtil {
                 domain: ClosedRange<Double>,
                 lowerLimit: Double?,
                 upperLimit: Double?,
-                trans: Transform?
+                trans: ContinuousTransform
             ): GuideMapper<T> {
                 if (continuousMapper != null) {
-                    return GuideMappers.adaptContinuous(continuousMapper)
+                    return GuideMappers.asContinuous(continuousMapper)
                 }
                 throw IllegalStateException("Can't create $aes mapper for continuous domain $domain")
             }

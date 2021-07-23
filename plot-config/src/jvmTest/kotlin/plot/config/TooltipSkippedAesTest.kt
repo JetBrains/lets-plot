@@ -10,11 +10,9 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
-import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -42,7 +40,7 @@ class TooltipSkippedAesTest {
             ]
         }"""
 
-        val layer = createGeomLayers(spec).single()
+        val layer = getSingleGeomLayer(spec)
         val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
         assertGeneralTooltips(
             tooltipSpecs,
@@ -74,7 +72,7 @@ class TooltipSkippedAesTest {
             ]
         }"""
 
-        val layer = createGeomLayers(spec).single()
+        val layer = getSingleGeomLayer(spec)
         val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
         // No tooltips
         assertGeneralTooltips(
@@ -110,7 +108,7 @@ class TooltipSkippedAesTest {
             $layerSpec
         }"""
 
-        val layer = createGeomLayers(spec).single()
+        val layer = getSingleGeomLayer(spec)
         val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
         assertGeneralTooltips(
             tooltipSpecs,
@@ -130,7 +128,7 @@ class TooltipSkippedAesTest {
             ]   
         }"""
 
-        val layer = createGeomLayers(spec).single()
+        val layer = getSingleGeomLayer(spec)
         val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
         assertGeneralTooltips(
             tooltipSpecs,
@@ -151,7 +149,7 @@ class TooltipSkippedAesTest {
             ]
         }"""
 
-            val layer = createGeomLayers(spec).single()
+            val layer = getSingleGeomLayer(spec)
             val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
             assertGeneralTooltips(
                 tooltipSpecs,
@@ -169,7 +167,7 @@ class TooltipSkippedAesTest {
             ]
         }"""
 
-            val layer = createGeomLayers(spec).single()
+            val layer = getSingleGeomLayer(spec)
             val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
             assertGeneralTooltips(
                 tooltipSpecs,
@@ -179,13 +177,6 @@ class TooltipSkippedAesTest {
     }
 
     companion object {
-
-        private fun createGeomLayers(spec: String): List<GeomLayer> {
-            val transformed = PlotConfigServerSide.processTransform(parsePlotSpec(spec))
-            val config = PlotConfigClientSide.create(transformed) {}
-            return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single()
-        }
-
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {
             val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO)
             return factory.create(

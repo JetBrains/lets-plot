@@ -4,9 +4,9 @@
 #
 from typing import Any, Tuple, Sequence
 
+from lets_plot.geo_data_internals.utils import is_geocoder, find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
-from lets_plot.geo_data_internals.utils import is_geocoder, find_geo_names
 
 
 def as_boolean(val, *, default):
@@ -88,8 +88,16 @@ def normalize_map_join(map_join):
         map_names = None
     elif isinstance(map_join, Sequence):
         if all(isinstance(v, str) for v in map_join):  # all items are strings
-            data_names = map_join
-            map_names = None
+            if len(map_join) == 1:
+                data_names = map_join
+                map_names = None
+            elif len(map_join) == 2:
+                data_names = [map_join[0]]
+                map_names = [map_join[1]]
+            elif len(map_join) > 2:
+                raise ValueError("map_join of type list[str] expected to have 1 or 2 items, but was {}".format(len(map_join)))
+            else:
+                raise invalid_map_join_format()
         elif all(isinstance(v, Sequence) and not isinstance(v, str) for v in map_join):  # all items are lists
             if len(map_join) == 1:
                 data_names = map_join[0]
@@ -118,8 +126,6 @@ def auto_join_geo_names(map_join: Any, gdf):
     if map_names is None:
         map_names = find_geo_names(gdf)
         if len(map_names) == 0:
-            print(map_join)
-            print(gdf)
             raise ValueError(
                 "Can't deduce joining keys.\n"
                 "Define both data and map key columns in map_join "

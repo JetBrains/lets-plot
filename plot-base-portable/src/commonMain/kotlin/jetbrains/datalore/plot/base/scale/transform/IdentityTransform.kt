@@ -5,35 +5,25 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.jvm.JvmOverloads
 
-internal class IdentityTransform @JvmOverloads constructor(
-    private val myBreaksGenerator: BreaksGenerator
-) : Transform, BreaksGenerator {
+internal class IdentityTransform : FunTransform({ v -> v }, { v -> v }) {
+    override fun hasDomainLimits(): Boolean = false
 
-    constructor(labelFormatter: ((Any) -> String)? = null) : this(LinearBreaksGen(labelFormatter))
+    override fun isInDomain(v: Double?) = SeriesUtil.isFinite(v)
 
-    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return myBreaksGenerator.labelFormatter(domainAfterTransform, targetCount)
+    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+        @Suppress("NAME_SHADOWING")
+        val middle = if (middle.isFinite()) middle else 0.0
+        return ClosedRange(middle - 0.5, middle + 0.5)
     }
 
-    override fun apply(rawData: List<*>): List<Double?> {
-        val checkedDoubles = SeriesUtil.checkedDoubles(rawData)
-        checkArgument(checkedDoubles.canBeCast(), "Not a collections of numbers")
-        return checkedDoubles.cast()
+    override fun apply(l: List<*>): List<Double?> {
+        return safeCastToDoubles(l)
     }
 
-    override fun applyInverse(v: Double?): Any? {
-        return v
-    }
-
-    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        return myBreaksGenerator.generateBreaks(domainAfterTransform, targetCount)
+    override fun applyInverse(l: List<Double?>): List<Double?> {
+        return l
     }
 }

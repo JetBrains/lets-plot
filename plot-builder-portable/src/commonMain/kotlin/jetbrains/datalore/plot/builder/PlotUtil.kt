@@ -11,10 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -361,8 +358,17 @@ object PlotUtil {
         val scale = layer.scaleMap[aes]
         val mulExp = scale.multiplicativeExpand
         val addExp = scale.additiveExpand
-        val lowerEndpoint = range.lowerEnd
-        val upperEndpoint = range.upperEnd
+
+        // Compute expands in terms of the original data.
+        // Otherwise can easy run into Infinities then using 'log10' transform
+        val continuousTransform: ContinuousTransform? = if (scale.isContinuousDomain) {
+            scale.transform as ContinuousTransform
+        } else {
+            null
+        }
+
+        val lowerEndpoint = continuousTransform?.applyInverse(range.lowerEnd) ?: range.lowerEnd
+        val upperEndpoint = continuousTransform?.applyInverse(range.upperEnd) ?: range.upperEnd
 
         val length = upperEndpoint - lowerEndpoint
         var lowerExpand = addExp + length * mulExp
@@ -381,6 +387,22 @@ object PlotUtil {
             }
         }
 
-        return ClosedRange(lowerEndpoint - lowerExpand, upperEndpoint + upperExpand)
+        val lowerEndWithExpand = (lowerEndpoint - lowerExpand).let {
+            val transformed = continuousTransform?.apply(it) ?: it
+            if (transformed.isNaN()) {
+                range.lowerEnd
+            } else {
+                transformed
+            }
+        }
+        val upperEndWithExpand = (upperEndpoint + upperExpand).let {
+            val transformed = continuousTransform?.apply(it) ?: it
+            if (transformed.isNaN()) {
+                range.upperEnd
+            } else {
+                transformed
+            }
+        }
+        return ClosedRange(lowerEndWithExpand, upperEndWithExpand)
     }
 }

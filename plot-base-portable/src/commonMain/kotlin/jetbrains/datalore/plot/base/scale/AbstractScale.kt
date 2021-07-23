@@ -5,24 +5,20 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.Transform
 
 internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
+    private val definedBreaks: List<DomainT>?
+    private val definedLabels: List<String>?
+
     final override val name: String
-    final override var mapper: ((Double?) -> T?)
-        private set
+    final override val mapper: ((Double?) -> T?)
     final override var multiplicativeExpand = 0.0
         protected set
     final override var additiveExpand = 0.0
         protected set
-
-    private val myTransform: Transform?
-    private var myBreaks: List<DomainT>? = null
-    private var myLabels: List<String>? = null
-    private var myLabelFormatter: ((Any) -> String)? = null
+    final override val labelFormatter: ((Any) -> String)?
 
     override val isContinuous: Boolean
         get() = false
@@ -30,45 +26,32 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     override val isContinuousDomain: Boolean
         get() = false
 
-    override var breaks: List<Any>
+    override val breaks: List<Any>
         get() {
-            Preconditions.checkState(hasBreaks(), "No breaks defined for scale $name")
+            check(hasBreaks()) { "No breaks defined for scale $name" }
             @Suppress("UNCHECKED_CAST")
-            return myBreaks!! as List<Any>
-        }
-        protected set(breaks) {
-            myBreaks = breaks.map {
-                @Suppress("UNCHECKED_CAST")
-                it as DomainT
-            }
+            return definedBreaks as List<Any>
         }
 
     override val labels: List<String>
         get() {
-            Preconditions.checkState(labelsDefined(), "No labels defined for scale $name")
-            return myLabels!!
+            check(labelsDefined()) { "No labels defined for scale $name" }
+            return definedLabels!!
         }
 
-    override val labelFormatter: ((Any) -> String)?
-        get() = myLabelFormatter
-
-    override val transform: Transform
-        get() = myTransform ?: defaultTransform
-
-    protected abstract val defaultTransform: Transform
-
-    protected constructor(name: String, mapper: ((Double?) -> T?)) {
+    protected constructor(name: String, mapper: ((Double?) -> T?), breaks: List<DomainT>? = null) {
         this.name = name
         this.mapper = mapper
-        myTransform = null
+        this.definedBreaks = breaks
+        definedLabels = null
+        labelFormatter = null
     }
 
     protected constructor(b: AbstractBuilder<DomainT, T>) {
         name = b.myName
-        myBreaks = b.myBreaks
-        myLabels = b.myLabels
-        myLabelFormatter = b.myLabelFormatter
-        myTransform = b.myTransform
+        definedBreaks = b.myBreaks
+        definedLabels = b.myLabels
+        labelFormatter = b.myLabelFormatter
         mapper = b.myMapper
 
         multiplicativeExpand = b.myMultiplicativeExpand
@@ -76,7 +59,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     }
 
     override fun hasBreaks(): Boolean {
-        return myBreaks != null
+        return definedBreaks != null
     }
 
     override fun hasLabels(): Boolean {
@@ -84,16 +67,15 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     }
 
     private fun labelsDefined(): Boolean {
-        return myLabels != null
+        return definedLabels != null
     }
 
     protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {
         internal val myName: String = scale.name
-        internal var myTransform: Transform? = scale.myTransform
 
-        internal var myBreaks: List<DomainT>? = scale.myBreaks
-        internal var myLabels: List<String>? = scale.myLabels
-        internal var myLabelFormatter: ((Any) -> String)? = scale.myLabelFormatter
+        internal var myBreaks: List<DomainT>? = scale.definedBreaks
+        internal var myLabels: List<String>? = scale.definedLabels
+        internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
         internal var myMapper: (Double?) -> T? = scale.mapper
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -112,7 +94,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             return this
         }
 
-        override fun labelFormatter(v: (Any) -> String): Scale.Builder<T>{
+        override fun labelFormatter(v: (Any) -> String): Scale.Builder<T> {
             myLabelFormatter = v
             return this
         }
@@ -129,11 +111,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
         override fun additiveExpand(v: Double): Scale.Builder<T> {
             myAdditiveExpand = v
-            return this
-        }
-
-        protected fun transform(v: Transform): Scale.Builder<T> {
-            myTransform = v
             return this
         }
     }

@@ -102,106 +102,9 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
-//        var plotData = sharedData
-//        val plotVars = DataFrameUtil.variables(plotData)
-//        val plotVarsToKeep = HashSet<String>()
-//        for (varName in plotVars.keys) {
-//            var dropPlotVar = true
-//            for (layerConfig in layerConfigs) {
-//                val layerData = layerConfig.ownData
-//
-//                if (!DataFrameUtil.variables(layerData!!).containsKey(varName)) {
-//                    dropPlotVar = when {
-//                        layerConfig.hasVarBinding(varName) -> false // don't drop if used in mapping
-//                        layerConfig.isExplicitGrouping(varName) -> false
-//                        varName == facets.xVar -> false // don't drop if used for facets
-//                        varName == facets.yVar -> false // don't drop if used for facets
-//                        else -> true
-//                    }
-//                    if (!dropPlotVar) {
-//                        break
-//                    }
-//                }
-//
-//                // keep vars used in tooltips
-//                val userTooltipVars = layerConfig.tooltips.valueSources
-//                    .filterIsInstance<DataFrameValue>()
-//                    .map(DataFrameValue::getVariableName)
-//
-//                // keep vars used in map_join
-//                if (layerConfig.getMapJoin()?.first == varName) {
-//                    dropPlotVar = false
-//                    break
-//                }
-//
-//                if (userTooltipVars.contains(varName)) {
-//                    dropPlotVar = false
-//                    break
-//                }
-//            }
-//
-//            if (!dropPlotVar) {
-//                plotVarsToKeep.add(varName)
-//            }
-//        }
-//
-//        if (plotVarsToKeep.size < plotVars.size) {
-//            plotData = DataFrameUtil.removeAllExcept(plotData, plotVarsToKeep)
-//            replaceSharedData(plotData)
-//        }
-//
-//        // clean-up data in layers
-//        for (layerConfig in layerConfigs) {
-//            var layerData = layerConfig.ownData
-//            val stat = layerConfig.stat
-//            // keep all original vars
-//            // keep default-mapped stat vars only if not overwritten by actual mapping
-//            val defStatMapping = Stats.defaultMapping(stat)
-//            val bindings = layerConfig.varBindings
-//            val varsToKeep = HashSet(defStatMapping.values)  // initially add all def stat mapping
-//            for (binding in bindings) {
-//                val aes = binding.aes
-//                if (stat.hasDefaultMapping(aes)) {
-//                    varsToKeep.remove(stat.getDefaultMapping(aes))
-//                }
-//                val `var` = binding.variable
-//                varsToKeep.add(`var`)
-//            }
-//
-//            // drop var if aes is not rendered by geom
-//            val renderedAes = HashSet(layerConfig.geomProto.renders())
-//            val renderedVars = HashSet<Variable>()
-//            val notRenderedVars = HashSet<Variable>()
-//            for (binding in bindings) {
-//                val aes = binding.aes
-//                if (renderedAes.contains(aes)) {
-//                    renderedVars.add(binding.variable)
-//                } else {
-//                    notRenderedVars.add(binding.variable)
-//                }
-//            }
-//            varsToKeep.removeAll(notRenderedVars)
-//            varsToKeep.addAll(renderedVars)
-//
-//            val varNamesToKeep = HashSet<String>() +
-//                    varsToKeep.map(Variable::name) +
-//                    Stats.GROUP.name +
-//                    listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
-//                    listOfNotNull(layerConfig.getMapJoin()?.first) +
-//                    listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName) +
-//                    layerConfig.tooltips.valueSources
-//                        .filterIsInstance<DataFrameValue>()
-//                        .map(DataFrameValue::getVariableName)
-//
-//            layerData = DataFrameUtil.removeAllExcept(layerData!!, varNamesToKeep)
-//            layerConfig.replaceOwnData(layerData)
-//        }
-
-
         // Clean-up shared data (aka plot data)
-        val variablesToKeepByLayerConfig: Map<LayerConfig, Set<String>> = layerConfigs
-            .map { it to variablesToKeep(facets, it) }
-            .toMap()
+        val variablesToKeepByLayerConfig: Map<LayerConfig, Set<String>> =
+            layerConfigs.associateWith { variablesToKeep(facets, it) }
 
         val plotData = sharedData
         val plotVars = DataFrameUtil.variables(plotData)
@@ -313,15 +216,16 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
                 // Apply sampling to layer tile data if necessary
                 tileLayerDataAfterStat =
-                    PlotSampling.apply(tileLayerDataAfterStat, // layerConfig,
+                    PlotSampling.apply(
+                        tileLayerDataAfterStat, // layerConfig,
                         layerConfig.samplings!!,
-                        groupingContextAfterStat.groupMapper,
-                        { message ->
-                            layerIndexAndSamplingMessage(
-                                layerIndex,
-                                createSamplingMessage(message, layerConfig)
-                            )
-                        })
+                        groupingContextAfterStat.groupMapper
+                    ) { message ->
+                        layerIndexAndSamplingMessage(
+                            layerIndex,
+                            createSamplingMessage(message, layerConfig)
+                        )
+                    }
                 result[tileIndex].add(tileLayerDataAfterStat)
             }
 

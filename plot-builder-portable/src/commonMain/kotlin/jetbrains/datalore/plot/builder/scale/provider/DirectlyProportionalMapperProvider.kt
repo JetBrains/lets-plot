@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -23,7 +23,7 @@ open class DirectlyProportionalMapperProvider(
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): GuideMapper<Double> {
         val dataMax = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans).upperEnd
         return GuideMappers.continuousToContinuous(ClosedRange(0.0, dataMax), ClosedRange(0.0, max), naValue)

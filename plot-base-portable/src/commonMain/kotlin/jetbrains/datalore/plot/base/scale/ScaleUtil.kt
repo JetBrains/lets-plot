@@ -5,12 +5,14 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.transform.LinearBreaksGen
+import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.max
+import kotlin.math.min
 
 object ScaleUtil {
 
@@ -55,17 +57,8 @@ object ScaleUtil {
         return result
     }
 
-    fun breaksAsNumbers(scale: Scale<*>): List<Double> {
-        val breaks = scale.breaks
-        val numbers = ArrayList<Double>()
-        for (o in breaks) {
-            numbers.add(scale.asNumber(o)!!)
-        }
-        return numbers
-    }
-
     fun breaksTransformed(scale: Scale<*>): List<Double> {
-        return transform(scale.breaks, scale).map { it!! }
+        return scale.transform.apply(scale.breaks).map { it as Double }
     }
 
     fun axisBreaks(scale: Scale<Double>, coord: CoordinateSystem, horizontal: Boolean): List<Double> {
@@ -105,55 +98,47 @@ object ScaleUtil {
         return MapperUtil.map(range, scale.mapper)
     }
 
-    fun <T> map(d: Double?, scale: Scale<T>): T? {
-        return scale.mapper(d)
-    }
-
-    fun <T> map(d: List<Double?>, scale: Scale<T>): List<T?> {
-        val result = ArrayList<T?>()
-        for (t in d) {
-            result.add(map(t, scale))
+    fun <T> map(l: List<Double?>, scale: Scale<T>): List<T?> {
+        val mapper = scale.mapper
+        return l.map {
+            mapper(it)
         }
-        return result
     }
 
     private fun <T> transformAndMap(l: List<*>, scale: Scale<T>): List<T?> {
-        val tl = transform(l, scale)
+        val tl = scale.transform.apply(l)
         return map(tl, scale)
     }
 
-    fun transform(l: List<*>, scale: Scale<*>): List<Double?> {
-        return scale.transform.apply(l)
-    }
-
     fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale<*>): List<Double?> {
-        checkState(scale.isContinuousDomain, "Not continuous numeric domain: $scale")
-        @Suppress("UNCHECKED_CAST")
-        return inverseTransform(l, scale) as List<Double?>
+        check(scale.isContinuousDomain) { "Not continuous numeric domain: $scale" }
+        return (scale.transform as ContinuousTransform).applyInverse(l)
     }
 
     fun inverseTransform(l: List<Double?>, scale: Scale<*>): List<*> {
         val transform = scale.transform
-        val result = ArrayList<Any?>(l.size)
-        for (v in l) {
-            result.add(transform.applyInverse(v))
-        }
-        return result
-    }
-
-    fun transformedDefinedLimits(scale: Scale<*>): List<Double> {
-        return if (scale.hasDomainLimits()) {
-            val l = listOf(scale.domainLimits!!.lowerEnd, scale.domainLimits!!.upperEnd)
-            transform(l, scale).filterNotNull().filter { it.isFinite() }.toList()
+        return if (transform is ContinuousTransform) {
+            transform.applyInverse(l)
         } else {
-            emptyList()
+            l.map { transform.applyInverse(it) }
         }
     }
 
-    fun getBreaksGenerator(scale: Scale<*>): BreaksGenerator {
-        return when {
-            scale.hasBreaksGenerator() -> scale.breaksGenerator
-            else -> LinearBreaksGen(scale.labelFormatter)
+    fun transformedDefinedLimits(scale: Scale<*>): Pair<Double, Double> {
+        val (lower, upper) = scale.domainLimits
+        val transform = scale.transform as ContinuousTransform
+        val (transformedLower, transformedUpper) = Pair(
+            if (transform.isInDomain(lower)) transform.apply(lower)!! else Double.NaN,
+            if (transform.isInDomain(upper)) transform.apply(upper)!! else Double.NaN
+        )
+
+        return if (SeriesUtil.allFinite(transformedLower, transformedUpper)) {
+            Pair(
+                min(transformedLower, transformedUpper),
+                max(transformedLower, transformedUpper)
+            )
+        } else {
+            Pair(transformedLower, transformedUpper)
         }
     }
 }

@@ -11,13 +11,13 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.vis.svg.SvgGElement
 
 class LegendBreak(val label: String) {
-    private val myLayers = ArrayList<MyLayer>()
+    private val myLayers = ArrayList<LegendBreakLayer>()
 
     val minimumKeySize: DoubleVector
         get() {
             var minSize = DoubleVector.ZERO
             for (layer in myLayers) {
-                val layerMinKeySize = layer.keyElementFactory.minimumKeySize(layer.aesthetics)
+                val layerMinKeySize = layer.keyElementFactory.minimumKeySize(layer.dataPoint)
                 minSize = minSize.max(layerMinKeySize)
             }
             return minSize
@@ -26,10 +26,10 @@ class LegendBreak(val label: String) {
     val isEmpty: Boolean
         get() = myLayers.isEmpty()
 
-    fun addLayer(aesthetics: DataPointAesthetics, keyElementFactory: LegendKeyElementFactory) {
+    fun addLayer(dataPoint: DataPointAesthetics, keyElementFactory: LegendKeyElementFactory) {
         myLayers.add(
-            MyLayer(
-                aesthetics,
+            LegendBreakLayer(
+                dataPoint,
                 keyElementFactory
             )
         )
@@ -39,19 +39,26 @@ class LegendBreak(val label: String) {
         val g = SvgGElement()
 
         for (layer in myLayers) {
-            val keyElement = layer.keyElementFactory.createKeyElement(layer.aesthetics, size)
+            val keyElement = layer.keyElementFactory.createKeyElement(layer.dataPoint, size)
             g.children().add(keyElement)
         }
 
         return g
     }
 
-    private class MyLayer internal constructor(internal val aesthetics: DataPointAesthetics, internal val keyElementFactory: LegendKeyElementFactory)
+    private class LegendBreakLayer(
+        val dataPoint: DataPointAesthetics,
+        val keyElementFactory: LegendKeyElementFactory
+    )
 
     companion object {
-        fun simple(label: String, aesthetics: DataPointAesthetics, keyElementFactory: LegendKeyElementFactory): LegendBreak {
+        fun simple(
+            label: String,
+            dataPoint: DataPointAesthetics,
+            keyElementFactory: LegendKeyElementFactory
+        ): LegendBreak {
             val br = LegendBreak(label)
-            br.addLayer(aesthetics, keyElementFactory)
+            br.addLayer(dataPoint, keyElementFactory)
             return br
         }
     }

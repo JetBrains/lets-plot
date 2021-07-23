@@ -9,33 +9,54 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.LinearBreaksHelper
+import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
+import kotlin.math.abs
+import kotlin.math.max
 
-class LinearBreaksGen(
-    private val myLabelFormatter: ((Any) -> String)? = null
+internal class LinearBreaksGen(
+    private val formatter: ((Any) -> String)? = null
 ) : BreaksGenerator {
-    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val helper = breaksHelper(domainAfterTransform, targetCount)
-        val ticks = helper.breaks
-        val labelFormatter = myLabelFormatter ?: helper.labelFormatter
-        val labels = ArrayList<String>()
-        for (tick in ticks) {
-            labels.add(labelFormatter(tick))
+
+    override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+        val breaks = generateBreakValues(domain, targetCount)
+        val fmt = formatter ?: createFormatter(breaks)
+        val labels = breaks.map { fmt(it) }
+        return ScaleBreaks(breaks, breaks, labels)
+    }
+
+    override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return formatter ?: createFormatter(generateBreakValues(domain, targetCount))
+    }
+
+    companion object {
+        internal fun generateBreakValues(domain: ClosedRange<Double>, targetCount: Int): List<Double> {
+            val helper = LinearBreaksHelper(
+                domain.lowerEnd,
+                domain.upperEnd,
+                targetCount
+            )
+            return helper.breaks
         }
-        return ScaleBreaks(ticks, ticks, labels)
-    }
 
-    private fun breaksHelper(
-        domainAfterTransform: ClosedRange<Double>,
-        targetCount: Int
-    ): LinearBreaksHelper {
-        return LinearBreaksHelper(
-            domainAfterTransform.lowerEnd,
-            domainAfterTransform.upperEnd,
-            targetCount
-        )
-    }
+        private fun createFormatter(breakValues: List<Double>): (Any) -> String {
+            val (referenceValue, step) = when {
+                breakValues.isEmpty() -> Pair(0.0, 0.5)
+                else -> {
+                    val v = max(abs(breakValues.first()), abs(breakValues.last()))
+                    val s = when {
+                        breakValues.size == 1 -> v / 10
+                        else -> abs(breakValues[1] - breakValues[0])
+                    }
+                    Pair(v, s)
+                }
+            }
 
-    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return myLabelFormatter ?: breaksHelper(domainAfterTransform, targetCount).labelFormatter
+            val formatter = NumericBreakFormatter(
+                referenceValue,
+                step,
+                allowMetricPrefix = true
+            )
+            return formatter::apply
+        }
     }
 }

@@ -144,13 +144,15 @@ object DataMetaUtil {
         )
     }
 
-    fun getOrderOptions(options: Map<*, *>?): List<OrderOptionUtil.OrderOption> {
+    fun getOrderOptions(options: Map<*, *>?, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
         return options
             ?.getMappingAnnotationsSpec(AS_DISCRETE)
             ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
-            ?.mapNotNull { (aes, parameters) ->
+            ?.mapNotNull { (aesName, parameters) ->
+                require(aesName in commonMappings)
+                val variableName = commonMappings[aesName] as String
                 OrderOptionUtil.OrderOption.create(
-                    aes,
+                    variableName,
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )

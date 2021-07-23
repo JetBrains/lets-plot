@@ -70,7 +70,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-//        maven { url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven" }
     }
 
     // jar jvm sources of this project

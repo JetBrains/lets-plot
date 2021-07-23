@@ -113,8 +113,18 @@ def get_layer_spec(plot_spec, spec_name):
             [DF_COLUMN_CITY],
             [['City_Name'], [DF_COLUMN_CITY]]
     ),
-    (  # automatically use all names from map as multi-key
-            ['City_Name', 'State_Name'],
+    (  # Pair of string - simple keys for both data and map
+            ['City_Name', DF_COLUMN_CITY],
+            [DF_COLUMN_CITY],
+            [['City_Name'], [DF_COLUMN_CITY]]
+    ),
+    (  # Pair of lists - simple keys for both data and map
+            [['City_Name'], [DF_COLUMN_CITY]],
+            [DF_COLUMN_CITY],
+            [['City_Name'], [DF_COLUMN_CITY]]
+    ),
+    (  # List of list - data multikey. Deduce map multikey
+            [['City_Name', 'State_Name']],
             [DF_COLUMN_CITY, DF_COLUMN_STATE],
             [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
     ),
@@ -129,9 +139,14 @@ def get_layer_spec(plot_spec, spec_name):
             None
     ),
     (
-            ['City_Name', 'State_Name'],
+            [['City_Name', 'State_Name']],
             [DF_COLUMN_CITY],
             "Data key columns count exceeds map key columns count: 2 > 1"
+    ),
+    (
+            ['City_Name', 'County_Name', 'State_Name'],
+            [DF_COLUMN_CITY, DF_COLUMN_COUNTY, DF_COLUMN_STATE],
+            "map_join of type list[str] expected to have 1 or 2 items, but was 3"
     ),
     (
             'City_Name',

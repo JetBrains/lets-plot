@@ -52,7 +52,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         shape = 21
                         radius = 10.0
                         fillColor = Color.MAGENTA
-                        animation = 2
+                        //animation = 2
                     }
                 }
 
@@ -67,7 +67,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         geometry(listOf(BOSTON, FRISCO).map(GeoObject::geoCoord), isGeodesic = true)
 
                         strokeWidth = 1.0
-                        animation = 2
+                        //animation = 2
                     }
                 }
 

@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -17,7 +15,7 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderingSpec
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
@@ -65,7 +63,8 @@ class LayerConfig(
 
     val combinedData: DataFrame
         get() {
-            checkState(!myOwnDataUpdated)
+            // 'combinedData' is only valid before 'stst'/'sampling' occurs.
+            check(!myOwnDataUpdated)
             return myCombinedData
         }
 
@@ -76,7 +75,7 @@ class LayerConfig(
 
     val samplings: List<Sampling>?
         get() {
-            checkState(!clientSide)
+            check(!clientSide)
             return mySamplings
         }
 
@@ -109,6 +108,7 @@ class LayerConfig(
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
             // Only keep those mapping options which can be consumed by this layer.
             // ToDo: report to user that some mappings are not applicable to this layer.
+            @Suppress("CascadeIf")
             if (it == Option.Mapping.GROUP) {
                 true
             } else if (it is String) {
@@ -210,11 +210,17 @@ class LayerConfig(
             TooltipSpecification.defaultTooltip()
         }
 
-        val orderOptionsFromPlot = plotOrderOptions.filter { orderOption -> orderOption.aesName in varBindings.map { it.aes.name } }
-        myOrderOptions = orderOptionsFromPlot + DataMetaUtil.getOrderOptions(layerOptions)
+        myOrderOptions = (
+                plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
+                        + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+                )
+            // TODO: handle order options combining to a config parsing stage
+            .groupingBy(OrderOption::variableName)
+            .reduce { _, combined, element -> combined.mergeWith(element) }
+            .values.toList()
 
         myCombinedData = if (clientSide) {
-            val orderSpecs = myOrderOptions.map { createOrderingSpec(combinedData.variables(), varBindings, it) }
+            val orderSpecs = myOrderOptions.map { createOrderSpec(combinedData.variables(), varBindings, it) }
             DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
         } else {
             combinedData
@@ -248,7 +254,7 @@ class LayerConfig(
     }
 
     fun replaceOwnData(dataFrame: DataFrame?) {
-        checkState(!clientSide)   // This class is immutable on client-side
+        check(!clientSide)   // This class is immutable on client-side
         require(dataFrame != null)
         update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame
@@ -293,10 +299,9 @@ class LayerConfig(
             layerOptions: Map<*, *>,
             geomProto: GeomProto
         ): Map<String, Any> {
-            checkArgument(
-                layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT),
+            require(layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT)) {
                 "Either 'geom' or 'stat' must be specified."
-            )
+            }
 
             val defaults = HashMap<String, Any>()
             defaults.putAll(geomProto.defaultOptions())

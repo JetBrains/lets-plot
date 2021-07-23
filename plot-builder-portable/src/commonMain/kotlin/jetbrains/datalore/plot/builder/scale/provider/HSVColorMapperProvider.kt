@@ -44,7 +44,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
             HSV(newToHue, toHSV.s, toHSV.v),
             false, naValue
         )
-        return GuideMappers.adapt(gradient)
+        return GuideMappers.asNotContinuous(gradient)
     }
 
     protected fun createContinuousMapper(
@@ -57,7 +57,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
             else -> createCompositeColorMapper(domain, hsvIntervals, false, naValue)
         }
 
-        return GuideMappers.adaptContinuous(gradientMapper)
+        return GuideMappers.asContinuous(gradientMapper)
     }
 
 

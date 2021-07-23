@@ -11,9 +11,9 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
+import jetbrains.datalore.vis.canvas.awt.AwtAnimationTimerPeer
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.awt.AwtTimerPeer
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import java.awt.Color
 import java.awt.Cursor
@@ -24,12 +24,11 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
-import javax.swing.JPanel
 
 
 class AwtLiveMapPanel(
     private val plotContainer: PlotContainer,
-    private val plotComponent: JComponent,
+    private val plotOverlayComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val cursorServiceConfig: CursorServiceConfig
 ) : JLayeredPane(), Disposable {
@@ -47,56 +46,43 @@ class AwtLiveMapPanel(
 
     init {
         // Move tooltip when map moved
-        plotComponent.addMouseMotionListener(mouseMoutionListener)
+        plotOverlayComponent.addMouseMotionListener(mouseMoutionListener)
 
-        cursorServiceConfig.defaultSetter { plotComponent.cursor = Cursor.getDefaultCursor() }
-        cursorServiceConfig.pointerSetter { plotComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
+        cursorServiceConfig.defaultSetter { plotOverlayComponent.cursor = Cursor.getDefaultCursor() }
+        cursorServiceConfig.pointerSetter { plotOverlayComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
 
         background = Color.WHITE
-        preferredSize = plotComponent.preferredSize
+        preferredSize = plotOverlayComponent.preferredSize
 
         // layout
-        plotComponent.bounds = Rectangle(
-            0, 0,
+        plotOverlayComponent.bounds = Rectangle(
             preferredSize.width,
             preferredSize.height
         )
 
-        this.add(plotComponent)
-
-        val timer = AwtTimerPeer(executor)
+        add(plotOverlayComponent)
 
         plotContainer.liveMapFigures
             .map { it as CanvasFigure }
-            .forEach { canvasFigure ->
-                val canvasBounds = canvasFigure.bounds().get()
-
-                val layerPanel = object : JLayeredPane(), Disposable {
-                    override fun dispose() {
-                        timer.dispose()
-                    }
-                }.apply {
-                    background = Color.WHITE
-                    bounds = Rectangle(
-                        canvasBounds.origin.x,
-                        canvasBounds.origin.y,
-                        canvasBounds.dimension.x,
-                        canvasBounds.dimension.y
-                    )
+            .forEach { liveMapFigures ->
+                val liveMapBounds = liveMapFigures.bounds().get()
+                val livemapCanvasControl = AwtCanvasControl(
+                    liveMapBounds.dimension,
+                    AwtEventPeer(plotOverlayComponent, liveMapBounds),
+                    AwtAnimationTimerPeer(executor).also { registrations.add(Registration.from(it)) }
+                )
+                mappers.add {
+                    liveMapFigures.mapToCanvas(livemapCanvasControl).also(registrations::add)
                 }
-                this.add(layerPanel)
 
-                AwtCanvasControl(
-                    layerPanel,
-                    canvasBounds.dimension,
-                    1.0,
-                    AwtEventPeer(plotComponent, canvasBounds),
-                    timer
-                ).let {
-                    mappers.add {
-                        registrations.add(canvasFigure.mapToCanvas(it))
-                    }
-                }
+                add(
+                    object : JComponent(), Disposable { override fun dispose() { } }
+                        .apply {
+                            background = Color.WHITE
+                            bounds = liveMapBounds.run { Rectangle(origin.x, origin.y, dimension.x, dimension.y) }
+                            add(livemapCanvasControl.component())
+                        }
+                )
             }
 
         this.addComponentListener(object : ComponentAdapter() {
@@ -114,7 +100,7 @@ class AwtLiveMapPanel(
     override fun dispose() {
         awtContainerDisposer.dispose()
         registrations.forEach(Disposable::dispose)
-        plotComponent.removeMouseMotionListener(mouseMoutionListener)
+        plotOverlayComponent.removeMouseMotionListener(mouseMoutionListener)
         plotContainer.clearContent()
         cursorServiceConfig.defaultSetter { }
         cursorServiceConfig.pointerSetter { }

@@ -38,7 +38,7 @@ object Scales {
         return ContinuousScale<T>(name, mapper, continuousRange)
     }
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>): Scale<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any>): Scale<T> {
         return discreteDomain(
             name,
             domainValues,
@@ -46,13 +46,13 @@ object Scales {
         )
     }
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)): Scale<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any>, mapper: ((Double?) -> T?)): Scale<T> {
         return DiscreteScale(name, domainValues, mapper)
     }
 
     fun <T> pureDiscrete(
         name: String,
-        domainValues: List<Any?>,
+        domainValues: List<Any>,
         outputValues: List<T>,
         defaultOutputValue: T
     ): Scale<T> {

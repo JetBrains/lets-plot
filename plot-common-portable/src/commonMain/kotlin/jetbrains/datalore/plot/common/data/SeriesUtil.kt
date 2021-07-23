@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Iterables.all
@@ -13,6 +12,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables.filter
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import kotlin.math.max
 import kotlin.math.min
+
 
 object SeriesUtil {
     const val TINY = 1e-50
@@ -72,11 +72,11 @@ object SeriesUtil {
     }
 
     fun filterFinite(l0: List<Double?>, l1: List<Double?>): List<List<Double>> {
-        checkState(l0.size == l1.size)
+        check(l0.size == l1.size)
 
         val l0Copy = ArrayList<Double>()
         val l1Copy = ArrayList<Double>()
-        var copy: Boolean = false
+        var copy = false
         for ((i, v0) in l0.withIndex()) {
             val v1 = l1[i]
             if (!allFinite(v0, v1)) {
@@ -174,6 +174,10 @@ object SeriesUtil {
         return resolution
     }
 
+    /**
+     * ToDo: Use with caution.
+     * ToDo: The correct method of domain validation is temporarily in 'PlotConfigUtil.ensureApplicableDomain'.
+     */
     fun ensureApplicableRange(range: ClosedRange<Double>?): ClosedRange<Double> {
         if (range == null) {
             return ClosedRange(-0.5, 0.5)
@@ -325,7 +329,7 @@ object SeriesUtil {
         }
 
         open fun cast(): Iterable<Double?> {
-            checkState(myCanBeCast, "Can't cast to collection of numbers")
+            check(myCanBeCast) { "Can't cast to a collection of Double(s)" }
             // Safe cast: all values were checked
             @Suppress("UNCHECKED_CAST")
             return myIterable as Iterable<Double?>
