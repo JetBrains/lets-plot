@@ -34,7 +34,7 @@ open class Diagnostics {
         private val dirtyLayers: List<Int>,
         private val schedulerSystem: SchedulerSystem,
         private val debugService: MetricsService,
-        uiService: UiService,
+        private val uiService: UiService,
         private val registry: EcsComponentManager
     ) : Diagnostics() {
 
@@ -100,13 +100,16 @@ open class Diagnostics {
             debugService.setValue(TIMER_TICK, "Timer tick: $deltaTime")
             debugService.setValue(
                 SYSTEMS_UPDATE_TIME,
-                "Systems update: ${formatDouble(debugService.totalUpdateTime, 1)}"
+                "Systems update: ${debugService.totalUpdateTime}"
             )
             debugService.setValue(ENTITIES_COUNT, "Entities count: ${registry.entitiesCount}")
 
             diagnostics.forEach(Diagnostic::update)
 
-            metrics.text = debugService.values
+            if (metrics.text != debugService.values) {
+                metrics.text = debugService.values
+                uiService.repaint()
+            }
         }
 
         internal inner class FreezingSystemDiagnostic : Diagnostic {

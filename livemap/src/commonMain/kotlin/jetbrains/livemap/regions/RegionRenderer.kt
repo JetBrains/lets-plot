@@ -10,8 +10,8 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.rendering.Renderer
-import jetbrains.livemap.rendering.Renderers
-import jetbrains.livemap.rendering.Utils
+import jetbrains.livemap.rendering.Renderers.drawLines
+import jetbrains.livemap.rendering.StyleComponent
 import jetbrains.livemap.scaling.ScaleComponent
 
 class RegionRenderer : Renderer {
@@ -28,9 +28,11 @@ class RegionRenderer : Renderer {
             }
         }
 
-        Utils.apply(entity.get(), ctx)
-
-        ctx.beginPath()
+        entity.get<StyleComponent>().apply {
+            ctx.setFillStyle(fillColor)
+            ctx.setStrokeStyle(strokeColor)
+            ctx.setLineWidth(strokeWidth)
+        }
 
         val scale = fragments.first().get<ScaleComponent>().scale
 
@@ -42,16 +44,10 @@ class RegionRenderer : Renderer {
                 ctx.save()
                 ctx.translate(origin.x, origin.y)
                 ctx.scale(scale, scale)
-                Renderers.drawLines(
-                    screenGeometry.geometry,
-                    ctx
-                ) { nop() }
+                ctx.beginPath()
+                drawLines(screenGeometry.geometry, ctx, afterPolygon = Context2d::fill)
                 ctx.restore()
             }
         }
-
-        ctx.fill()
     }
-
-    private fun nop() {}
 }

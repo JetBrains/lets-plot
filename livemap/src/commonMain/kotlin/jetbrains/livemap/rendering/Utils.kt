@@ -11,12 +11,6 @@ import kotlin.math.sqrt
 
 object Utils {
 
-    fun apply(styleComponent: StyleComponent, ctx: Context2d) {
-        ctx.setFillStyle(styleComponent.fillColor)
-        ctx.setStrokeStyle(styleComponent.strokeColor)
-        ctx.setLineWidth(styleComponent.strokeWidth)
-    }
-
     internal fun drawPath(ctx: Context2d, radius: Double, shape: Int) {
         when (shape) {
             0 -> square(ctx, radius)
