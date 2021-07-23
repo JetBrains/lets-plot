@@ -7,8 +7,11 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MIN_SIZE
+import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.clipBounds
+import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.geomBounds
 
-internal class LiveMapTileLayout : TileLayoutBase() {
+internal class LiveMapTileLayout : TileLayout {
 
     override fun doLayout(preferredSize: DoubleVector): TileLayoutInfo {
         var geomBounds = geomBounds(
