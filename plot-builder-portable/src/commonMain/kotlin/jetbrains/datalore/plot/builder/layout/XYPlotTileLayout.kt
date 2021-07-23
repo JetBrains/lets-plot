@@ -136,7 +136,7 @@ internal class XYPlotTileLayout(
             )
 
             if (xAxisInfo.axisBounds().dimension.y > xAxisThickness) {
-                // Re-layout y-axis if x-axis became thicker.
+                // Re-layout y-axis if x-axis became thicker than its 'original thickness'.
                 yAxisInfo = computeYAxisInfo(
                     yAxisLayout,
                     geomBounds(
