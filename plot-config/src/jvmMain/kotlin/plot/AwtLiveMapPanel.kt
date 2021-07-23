@@ -23,7 +23,7 @@ import java.awt.event.ComponentEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.JLayeredPane
 
 
 class AwtLiveMapPanel(
@@ -31,7 +31,7 @@ class AwtLiveMapPanel(
     private val plotOverlayComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val cursorServiceConfig: CursorServiceConfig
-) : JPanel(null), Disposable {
+) : JLayeredPane(), Disposable {
     private val awtContainerDisposer = AwtContainerDisposer(this)
     private val mappers: MutableList<() -> Unit> = ArrayList()
     private val registrations: MutableList<Registration> = ArrayList()
@@ -64,23 +64,25 @@ class AwtLiveMapPanel(
 
         plotContainer.liveMapFigures
             .map { it as CanvasFigure }
-            .forEach { canvasFigure ->
-                val liveMapContainerComponent = object : JPanel(null), Disposable {
-                    override fun dispose() { }
-                }.apply {
-                    background = Color.WHITE
-                    bounds = canvasFigure.bounds().get().run { Rectangle(origin.x, origin.y, dimension.x, dimension.y) }
-                }
-                add(liveMapContainerComponent)
-
+            .forEach { liveMapFigures ->
+                val liveMapBounds = liveMapFigures.bounds().get()
                 val livemapCanvasControl = AwtCanvasControl(
-                    canvasFigure.bounds().get().dimension,
-                    AwtEventPeer(plotOverlayComponent, canvasFigure.bounds().get()),
+                    liveMapBounds.dimension,
+                    AwtEventPeer(plotOverlayComponent, liveMapBounds),
                     AwtAnimationTimerPeer(executor).also { registrations.add(Registration.from(it)) }
                 )
+                mappers.add {
+                    liveMapFigures.mapToCanvas(livemapCanvasControl).also(registrations::add)
+                }
 
-                liveMapContainerComponent.add(livemapCanvasControl.component())
-                mappers.add { canvasFigure.mapToCanvas(livemapCanvasControl).also(registrations::add) }
+                add(
+                    object : JComponent(), Disposable { override fun dispose() { } }
+                        .apply {
+                            background = Color.WHITE
+                            bounds = liveMapBounds.run { Rectangle(origin.x, origin.y, dimension.x, dimension.y) }
+                            add(livemapCanvasControl.component())
+                        }
+                )
             }
 
         this.addComponentListener(object : ComponentAdapter() {

@@ -7,12 +7,15 @@ package jetbrains.datalore.vis.canvas.awt
 
 import jetbrains.datalore.base.geometry.Vector
 import java.awt.Rectangle
-import javax.swing.JPanel
+import javax.swing.JLayeredPane
 
-class CanvasContainerPanel(size: Vector) : JPanel(null) {
+class CanvasContainerPanel(size: Vector) : JLayeredPane() {
     init {
         bounds = Rectangle(0, 0, size.x, size.y)
     }
 
-    override fun isOptimizedDrawingEnabled(): Boolean = false
+    override fun isPaintingOrigin(): Boolean = true
+    override fun isOpaque(): Boolean {
+        return true
+    }
 }

@@ -8,6 +8,8 @@ package jetbrains.datalore.vis.demoUtils.swing
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
+import java.awt.event.WindowEvent
+import java.awt.event.WindowListener
 import javax.swing.*
 import kotlin.math.min
 
@@ -26,6 +28,18 @@ abstract class PlotSpecsDemoWindowBase(
         rootPanel.layout = GridLayout(0, min(maxCol, specList.size))
         rootPanel.background = Color.WHITE
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        addWindowListener(object : WindowListener {
+            override fun windowActivated(e: WindowEvent?) {
+                repaint()
+            }
+
+            override fun windowOpened(e: WindowEvent?) {}
+            override fun windowClosing(e: WindowEvent?) {}
+            override fun windowClosed(e: WindowEvent?) {}
+            override fun windowIconified(e: WindowEvent?) {}
+            override fun windowDeiconified(e: WindowEvent?) {}
+            override fun windowDeactivated(e: WindowEvent?) {}
+        })
 
         if (plotSize == null) {
             contentPane.add(rootPanel)
