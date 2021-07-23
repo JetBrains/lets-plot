@@ -145,7 +145,7 @@ object DataMetaUtil {
     }
 
     fun getOrderOptions(options: Map<*, *>?, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
-        val orderOptions = options
+        return options
             ?.getMappingAnnotationsSpec(AS_DISCRETE)
             ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             ?.mapNotNull { (aesName, parameters) ->
@@ -158,12 +158,14 @@ object DataMetaUtil {
                 )
             }
             ?: emptyList()
+    }
 
+    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
         // non-discrete mappings should inherit settings from the as_discrete
-        val inherited = commonMappings.variables()
+        return this + mappings.variables()
             .filterNot(::isDiscrete)
             .mapNotNull { varName ->
-                val orderOptionForVar = orderOptions
+                val orderOptionForVar = this
                     .filter { isDiscrete(it.variableName) }
                     .find { fromDiscrete(it.variableName) == varName }
                     ?: return@mapNotNull null
@@ -174,8 +176,6 @@ object DataMetaUtil {
                     orderOptionForVar.getOrderDir()
                 )
             }
-
-        return orderOptions + inherited
     }
 }
 

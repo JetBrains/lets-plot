@@ -683,6 +683,47 @@ class ScaleOrderingTest {
         assertScaleBreaks(geomLayer, Aes.FILL, listOf("C", "A", "B"))
     }
 
+
+    // variable in plot and layer
+
+    @Test
+    fun `ggplot(aes(as_discrete('x',order=1))) + geom_bar(aes(fill='x')) - should apply the ordering to the 'fill'`() {
+        val spec = """{
+              "kind": "plot",
+              "data" : $myData,              
+              "mapping": { "x": "x" },
+              "data_meta": { "mapping_annotations": [ ${makeOrderingSettings("x", null, 1)} ] },             
+              "layers": [
+                {
+                  "mapping": { "fill": "x" },
+                  "geom": "bar"
+                }
+              ]
+            }""".trimIndent()
+        val geomLayer = getSingleGeomLayer(spec)
+        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+    }
+
+    @Test
+    fun `ggplot(aes('x')) + geom_bar(aes(fill=as_discrete('x',order=1))) - should apply the ordering to the 'x'`() {
+        val spec = """{
+              "kind": "plot",
+              "data" : $myData,              
+              "mapping": { "x": "x" },
+              "layers": [
+                {
+                  "mapping": { "fill": "x" },
+                  "geom": "bar",
+                  "data_meta": { "mapping_annotations": [ ${makeOrderingSettings("fill", null, 1)} ] }
+                }
+              ]
+            }""".trimIndent()
+        val geomLayer = getSingleGeomLayer(spec)
+        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+    }
+
     companion object {
         private fun assertScaleBreaks(
             layer: GeomLayer,

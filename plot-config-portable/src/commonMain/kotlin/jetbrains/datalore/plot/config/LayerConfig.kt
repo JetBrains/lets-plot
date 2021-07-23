@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
@@ -211,11 +212,12 @@ class LayerConfig(
             TooltipSpecification.defaultTooltip()
         }
 
+        // TODO: handle order options combining to a config parsing stage
         myOrderOptions = (
                 plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
                         + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
                 )
-            // TODO: handle order options combining to a config parsing stage
+            .inheritToNonDiscrete(combinedMappingOptions)
             .groupingBy(OrderOption::variableName)
             .reduce { _, combined, element -> combined.mergeWith(element) }
             .values.toList()
