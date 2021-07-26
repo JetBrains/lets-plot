@@ -63,19 +63,6 @@ def is_data_pub_stream(data: Any) -> bool:
     return False
 
 
-def as_annotated_map_data(raw_map: Any) -> dict:
-    if raw_map is None:
-        return {}
-
-    if is_geocoder(raw_map):
-        return {'map_data_meta': {'georeference': {}}}
-
-    if is_geo_data_frame(raw_map):
-        return {'map_data_meta': get_geo_data_frame_meta(raw_map)}
-
-    raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)) + '. Should be a GeoDataFrame.')
-
-
 def normalize_map_join(map_join):
     if map_join is None:
         return None

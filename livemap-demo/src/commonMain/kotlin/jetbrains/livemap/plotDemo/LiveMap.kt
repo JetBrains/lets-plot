@@ -11,9 +11,10 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            blankPoint(),
-            blankMap(),
-            barWithNanValuesInData(),
+            georeference(),
+//            blankPoint(),
+//            blankMap(),
+//            barWithNanValuesInData(),
             //pieWithNullValuesInData(),
             //barWithNullValuesInData()
 //            multiLayerTooltips()
@@ -24,9 +25,95 @@ class LiveMap {
 //            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
-            bunch(),
-           facet()
+//            bunch(),
+//           facet()
         )
+    }
+
+    private fun georeference() : MutableMap<String, Any> {
+        val spec = """{
+  "data": null,
+  "mapping": {
+    "x": null,
+    "y": null
+  },
+  "data_meta": {},
+  "ggsize": {
+    "width": 900,
+    "height": 400
+  },
+  "theme": {
+    "legend_position": "none"
+  },
+  "kind": "plot",
+  "scales": [],
+  "layers": [
+    {
+      "geom": "livemap",
+      "stat": null,
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "sampling": null,
+      "tooltips": null,
+      "data_meta": {},
+      "map": null,
+      "map_join": null,
+      "display_mode": null,
+      "location": null,
+      "zoom": null,
+      "projection": null,
+      "geodesic": null,
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "wss://tiles.datalore.jetbrains.com",
+        "theme": "color",
+        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+      },
+      "geocoding": {
+        "url": "http://10.0.0.127:3020"
+      }
+    },
+    {
+      "geom": "map",
+      "stat": null,
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "sampling": null,
+      "tooltips": null,
+      "data_meta": {},
+      "map": {
+        "id": [
+          "148838",
+          "1428125"
+        ],
+        "country": [
+          "usa",
+          "canada"
+        ],
+        "found name": [
+          "United States",
+          "Canada"
+        ]
+      },
+      "map_join": null,
+      "map_data_meta": {
+        "georeference": {}
+      }
+    }
+  ]
+}"""
+
+        return parsePlotSpec(spec)
     }
 
 
