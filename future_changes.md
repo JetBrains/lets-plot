@@ -2,6 +2,10 @@
 
 ### Added
 
+- Subdomains parameter `{s}` for raster tiles services.
+- Solid color tiles `maptiles_solid()`.
+- Chessboard tiles `maptiles_chessboard()`.
+- Module `lets_plot.tilesets` with collection of free tiles providers. 
 
 ### Changed
 
@@ -9,6 +13,7 @@
 
 ### Fixed
 
+- Properly handle `max_zoom` pamareter in `maptiles_zxy()`.
 - Strange looking legend for tiles [[#245](https://github.com/JetBrains/lets-plot/issues/245)].
 - Need to skip "bad" values during scale transformation [[#301](https://github.com/JetBrains/lets-plot/issues/301)].
 - NPE on negative value in data and scale_xxx(trans='log10') [[#292](https://github.com/JetBrains/lets-plot/issues/292)].
