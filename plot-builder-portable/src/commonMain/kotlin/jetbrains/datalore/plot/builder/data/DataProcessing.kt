@@ -58,6 +58,7 @@ object DataProcessing {
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
+        aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
@@ -82,7 +83,7 @@ object DataProcessing {
                 if (sd.isEmpty) {
                     continue
                 }
-                groupMerger.initOrderSpecs(orderOptions, sd.variables(), bindings)
+                groupMerger.initOrderSpecs(orderOptions, sd.variables(), bindings, aggregateOperation)
 
                 val curGroupSizeAfterStat = sd.rowCount()
 
@@ -126,7 +127,7 @@ object DataProcessing {
 
             // set ordering specifications
             val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption)
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption, aggregateOperation)
             }
             addOrderSpecs(orderSpecs)
 
@@ -152,7 +153,8 @@ object DataProcessing {
         fun initOrderSpecs(
             orderOptions: List<OrderOptionUtil.OrderOption>,
             variables: Set<Variable>,
-            bindings: List<VarBinding>
+            bindings: List<VarBinding>,
+            aggregateOperation: ((List<Double?>) -> Double?)?
         ) {
             if (myOrderSpecs != null) return
             myOrderSpecs = orderOptions
@@ -160,7 +162,7 @@ object DataProcessing {
                     // no need to reorder groups by X
                     bindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } == null
                 }
-                .map { OrderOptionUtil.createOrderSpec(variables, bindings, it) }
+                .map { OrderOptionUtil.createOrderSpec(variables, bindings, it, aggregateOperation) }
         }
 
         fun getResultSeries(): HashMap<Variable, MutableList<Any?>> {

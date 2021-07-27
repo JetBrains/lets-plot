@@ -202,7 +202,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         facets,
                         statCtx,
                         varsWithoutBinding,
-                        layerConfig.orderOptions
+                        layerConfig.orderOptions,
+                        layerConfig.aggregateOperation
                     ) { message ->
                         layerIndexAndSamplingMessage(
                             layerIndex,

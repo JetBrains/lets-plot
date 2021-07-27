@@ -8,7 +8,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object OrderOptionUtil {
     class OrderOption internal constructor(
@@ -27,7 +26,7 @@ object OrderOptionUtil {
                 if (orderBy == null && order == null) {
                     return null
                 }
-                require(order == null || (order is Number && order.toInt() in listOf(-1, 1))){
+                require(order == null || (order is Number && order.toInt() in listOf(-1, 1))) {
                     "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                 }
 
@@ -56,7 +55,8 @@ object OrderOptionUtil {
     fun createOrderSpec(
         variables: Set<DataFrame.Variable>,
         varBindings: List<VarBinding>,
-        orderOption: OrderOption
+        orderOption: OrderOption,
+        aggregateOperation: ((List<Double?>) -> Double?)?
     ): DataFrame.OrderSpec {
         fun getVariableByName(varName: String): DataFrame.Variable {
             return variables.find { it.name == varName }
@@ -73,21 +73,14 @@ object OrderOptionUtil {
                 getVariableByName(orderOption.variableName)
             }
 
-        // TODO Need to define the aggregate operation
-        val aggregateOperation =
-            if (orderOption.byVariable != null && orderOption.byVariable != orderOption.variableName) {
-                // Use ordering by the 'order_by' variable with the specified aggregation
-                { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
-            } else {
-                // Use ordering by the 'variable' without aggregation
-                null
-            }
-
         return DataFrame.OrderSpec(
             variable,
             orderOption.byVariable?.let(::getVariableByName) ?: getVariableByName(orderOption.variableName),
             orderOption.getOrderDir(),
-            aggregateOperation
+            aggregateOperation.takeIf {
+                // Use the aggregation for ordering by the specified 'order_by' variable
+                orderOption.byVariable != null && orderOption.byVariable != orderOption.variableName
+            }
         )
     }
 }

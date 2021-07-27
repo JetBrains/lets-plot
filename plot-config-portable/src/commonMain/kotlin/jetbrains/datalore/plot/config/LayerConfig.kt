@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companio
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
@@ -26,6 +27,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Layer.NONE
+import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -86,6 +88,11 @@ class LayerConfig(
 
     val orderOptions: List<OrderOption>
         get() = myOrderOptions
+
+    val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
+        PosProto.STACK -> SeriesUtil::sum
+        else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
+    }
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -223,7 +230,9 @@ class LayerConfig(
             .values.toList()
 
         myCombinedData = if (clientSide) {
-            val orderSpecs = myOrderOptions.map { createOrderSpec(combinedData.variables(), varBindings, it) }
+            val orderSpecs = myOrderOptions.map {
+                createOrderSpec(combinedData.variables(), varBindings, it, aggregateOperation)
+            }
             DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
         } else {
             combinedData
