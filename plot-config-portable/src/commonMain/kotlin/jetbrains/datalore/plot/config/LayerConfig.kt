@@ -179,24 +179,6 @@ class LayerConfig(
             geomProto.preferredPositionAdjustments(this)
         )
 
-        // tooltip list
-        tooltips = if (has(TOOLTIPS)) {
-            when (get(TOOLTIPS)) {
-                is Map<*, *> -> {
-                    TooltipConfig(getMap(TOOLTIPS), constantsMap, explicitGroupingVarName).createTooltips()
-                }
-                NONE -> {
-                    // not show tooltips
-                    TooltipSpecification.withoutTooltip()
-                }
-                else -> {
-                    error("Incorrect tooltips specification")
-                }
-            }
-        } else {
-            TooltipSpecification.defaultTooltip()
-        }
-
         varBindings = LayerConfigUtil.createBindings(
             combinedData,
             aesMappings,
@@ -209,6 +191,24 @@ class LayerConfig(
             null
         } else {
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        }
+
+        // tooltip list
+        tooltips = if (has(TOOLTIPS)) {
+            when (get(TOOLTIPS)) {
+                is Map<*, *> -> {
+                    TooltipConfig(getMap(TOOLTIPS), constantsMap, explicitGroupingVarName, varBindings).createTooltips()
+                }
+                NONE -> {
+                    // not show tooltips
+                    TooltipSpecification.withoutTooltip()
+                }
+                else -> {
+                    error("Incorrect tooltips specification")
+                }
+            }
+        } else {
+            TooltipSpecification.defaultTooltip()
         }
 
         myOrderOptions = (
