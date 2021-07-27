@@ -224,18 +224,6 @@ class TooltipConfig(
             }
         }
 
-        private inner class Field(val name: String, val isAes: Boolean) {
-            override fun equals(other: Any?): Boolean {
-                if (other !is Field) return false
-                return name == other.name && isAes == other.isAes
-            }
-            override fun hashCode(): Int {
-                var result = name.hashCode()
-                result = 31 * result + isAes.hashCode()
-                return result
-            }
-        }
-
         private fun aesField(aesName: String) = Field(aesName, true)
         private fun varField(varName: String) = Field(varName, false)
 
@@ -290,6 +278,8 @@ class TooltipConfig(
             return null
         }
     }
+
+    private data class Field(val name: String, val isAes: Boolean)
 
     companion object {
         private const val AES_NAME_PREFIX = "^"
