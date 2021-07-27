@@ -11,20 +11,20 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.plot.builder.guide.ColorBarComponent
-import jetbrains.datalore.plot.builder.guide.ColorBarComponentLayout
-import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec
-import jetbrains.datalore.plot.builder.guide.LegendBox
+import jetbrains.datalore.plot.builder.guide.*
+import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
-class ColorBarAssembler(private val legendTitle: String,
-                        private val domain: ClosedRange<Double>,
-                        private val scale: Scale<Color>,
-                        private val theme: LegendTheme) {
+class ColorBarAssembler(
+    private val legendTitle: String,
+    private val domain: ClosedRange<Double>,
+    private val scale: Scale<Color>,
+    private val theme: LegendTheme
+) {
 
-    private var myOptions: ColorBarOptions? = null
+    private var colorBarOptions: ColorBarOptions? = null
 
     fun createColorBar(): LegendBoxInfo {
         var scale = scale
@@ -43,46 +43,46 @@ class ColorBarAssembler(private val legendTitle: String,
             return LegendBoxInfo.EMPTY
         }
 
-        val spec =
-            createColorBarSpec(
-                legendTitle,
-                domain,
-                guideBreaks,
-                scale,
-                theme,
-                myOptions
-            )
+        val spec = createColorBarSpec(
+            legendTitle,
+            domain,
+            guideBreaks,
+            scale,
+            theme,
+            colorBarOptions
+        )
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
                 val c = ColorBarComponent(spec)
-                c.debug =
-                    DEBUG_DRAWING
+                c.debug = DEBUG_DRAWING
                 return c
             }
         }
     }
 
     internal fun setOptions(options: ColorBarOptions?) {
-        myOptions = options
+        colorBarOptions = options
     }
 
     companion object {
         private const val DEBUG_DRAWING = jetbrains.datalore.plot.FeatureSwitch.LEGEND_DEBUG_DRAWING
 
-        fun createColorBarSpec(title: String,
-                               domain: ClosedRange<Double>,
-                               breaks: List<GuideBreak<Double>>,
-                               scale: Scale<Color>,
-                               theme: LegendTheme,
-                               options: ColorBarOptions? = null): ColorBarComponentSpec {
+        fun createColorBarSpec(
+            title: String,
+            domain: ClosedRange<Double>,
+            breaks: List<GuideBreak<Double>>,
+            scale: Scale<Color>,
+            theme: LegendTheme,
+            options: ColorBarOptions? = null
+        ): ColorBarComponentSpec {
 
-            val legendDirection =
-                LegendAssemblerUtil.legendDirection(theme)
+            val legendDirection = LegendAssemblerUtil.legendDirection(theme)
+            val horizontal: Boolean = legendDirection == LegendDirection.HORIZONTAL
 
             val width = options?.width
             val height = options?.height
-            var barSize = ColorBarComponentSpec.barAbsoluteSize(legendDirection, theme)
+            var barSize = ColorBarComponentSpec.barAbsoluteSize(horizontal, theme)
             if (width != null) {
                 barSize = DoubleVector(width, barSize.y)
             }
@@ -90,28 +90,23 @@ class ColorBarAssembler(private val legendTitle: String,
                 barSize = DoubleVector(barSize.x, height)
             }
 
+            val reverse = !horizontal
+
             val layout = when {
-                legendDirection === jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL ->
-                    ColorBarComponentLayout.horizontal(title, domain, breaks, barSize)
-                else ->
-                    ColorBarComponentLayout.vertical(title, domain, breaks, barSize)
+                horizontal -> ColorBarComponentLayout.horizontal(title, domain, breaks, barSize, reverse)
+                else -> ColorBarComponentLayout.vertical(title, domain, breaks, barSize, reverse)
             }
 
-            val spec =
-                ColorBarComponentSpec(
-                    title,
-                    domain,
-                    breaks,
-                    scale,
-                    theme,
-                    layout
-                )
-            val binCount = options?.binCount
-            if (binCount != null) {
-                spec.binCount = binCount
-            }
-
-            return spec
+            return ColorBarComponentSpec(
+                title,
+                domain,
+                breaks,
+                scale,
+                binCount = options?.binCount ?: DEF_NUM_BIN,
+                theme,
+                layout,
+                reverse
+            )
         }
     }
 }

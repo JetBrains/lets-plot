@@ -97,8 +97,7 @@ class LegendAssembler(
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
                 val c = LegendComponent(spec)
-                c.debug =
-                    DEBUG_DRAWING
+                c.debug = DEBUG_DRAWING
                 return c
             }
         }
@@ -153,8 +152,7 @@ class LegendAssembler(
             options: LegendOptions = LegendOptions()
         ): LegendComponentSpec {
 
-            val legendDirection =
-                LegendAssemblerUtil.legendDirection(theme)
+            val legendDirection = LegendAssemblerUtil.legendDirection(theme)
 
             // key size
             fun pretty(v: DoubleVector): DoubleVector {
@@ -218,7 +216,8 @@ class LegendAssembler(
                 title,
                 breaks,
                 theme,
-                layout
+                layout,
+                reverse = false
             )
         }
     }

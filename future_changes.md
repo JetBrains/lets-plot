@@ -25,3 +25,4 @@
 - Plot layout looks wrong [[#403](https://github.com/JetBrains/lets-plot/issues/403)].
 - Tooltip default formatting should not change after adding other variables to tooltip [[#388](https://github.com/JetBrains/lets-plot/issues/388)].
 - Tooltip format for variable is not working [[#401](https://github.com/JetBrains/lets-plot/issues/401)].
+- Wrong direction in colorbars (legend) [[#204](https://github.com/JetBrains/lets-plot/issues/204)].

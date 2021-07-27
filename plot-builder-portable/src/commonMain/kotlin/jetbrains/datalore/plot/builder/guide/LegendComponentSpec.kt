@@ -7,8 +7,10 @@ package jetbrains.datalore.plot.builder.guide
 
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
-class LegendComponentSpec(title: String,
-                          internal val breaks: List<LegendBreak>,
-                          theme: LegendTheme,
-                          override val layout: LegendComponentLayout
-) : LegendBoxSpec(title, theme)
+class LegendComponentSpec(
+    title: String,
+    internal val breaks: List<LegendBreak>,
+    theme: LegendTheme,
+    override val layout: LegendComponentLayout,
+    reverse: Boolean
+) : LegendBoxSpec(title, theme, reverse)

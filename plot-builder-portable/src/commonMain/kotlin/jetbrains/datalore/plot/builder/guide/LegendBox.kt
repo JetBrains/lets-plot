@@ -15,11 +15,10 @@ import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 
-abstract class LegendBox internal constructor(
-    protected open val spec: LegendBoxSpec
-) : SvgComponent() {
+abstract class LegendBox : SvgComponent() {
 
     var debug: Boolean = false
+    abstract val spec: LegendBoxSpec
 
     private val title: String
         get() = spec.title

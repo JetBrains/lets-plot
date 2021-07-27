@@ -40,9 +40,8 @@ object GuideMappers {
         val mapper = Mappers.discrete(outputValues, naValue)
         return GuideMapperWithGuideBreaks(
             mapper,
-            domainValues.mapNotNull { it },
-            { v: Any -> v.toString() }
-        )
+            domainValues.mapNotNull { it }
+        ) { v: Any -> v.toString() }
     }
 
     fun <TargetT> continuousToDiscrete(
@@ -64,21 +63,20 @@ object GuideMappers {
         val mapper = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
         return GuideMapperWithGuideBreaks(
             mapper,
-            domainValues.mapNotNull { it },
-            { v: Any -> v.toString() }
-        )
+            domainValues.mapNotNull { it }
+        ) { v: Any -> v.toString() }
     }
 
     fun continuousToContinuous(
         domain: ClosedRange<Double>,
         range: ClosedRange<Double>,
-        naValue: Double?
+        naValue: Double
     ): GuideMapper<Double> {
         return asContinuous(
             Mappers.linear(
                 domain,
                 range,
-                naValue!!
+                naValue
             )
         )
     }
