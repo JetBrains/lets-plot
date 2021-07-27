@@ -19,9 +19,9 @@ import kotlin.test.assertEquals
 
 class ScaleOrderingTest {
     private val myData = """{
-        'x'   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C", "B" ],
-        'fill':  [ '4', '2', '3', '3', '2', '3', '1', '1', '3', '4', '2', '2' ],
-        'color': [ '1', '0', '2', '1', '1', '2', '1', '1', '0', '2', '0', '0' ]
+        'x'   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C", "B", "C" ],
+        'fill':  [ '4', '2', '3', '3', '2', '3', '1', '1', '3', '4', '2', '2', '2' ],
+        'color': [ '1', '0', '2', '1', '1', '2', '1', '1', '0', '2', '0', '0', '0' ]
     }"""
     private val myMappingFill: String = """{ "x": "x", "fill": "fill" }"""
     private val myMappingFillColor = """{ "x": "x", "fill": "fill", "color": "color" }"""
