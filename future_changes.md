@@ -22,4 +22,6 @@
 - Scale breaks should be distributed evenly on 'sqrt' scale. [[#407](https://github.com/JetBrains/lets-plot/issues/407)].
 - Wrong tooltip formatting when used with log10 scales [[#406](https://github.com/JetBrains/lets-plot/issues/406)].
 - Bad axis labels when using both plot and layer data [[#327](https://github.com/JetBrains/lets-plot/issues/327)].
-- Plot layout looks wrong [[#403](https://github.com/JetBrains/lets-plot/issues/403)]
+- Plot layout looks wrong [[#403](https://github.com/JetBrains/lets-plot/issues/403)].
+- Tooltip default formatting should not change after adding other variables to tooltip [[#388](https://github.com/JetBrains/lets-plot/issues/388)].
+- Tooltip format for variable is not working [[#401](https://github.com/JetBrains/lets-plot/issues/401)].
