@@ -6,7 +6,7 @@ from ._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTI
     MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, TILES_SOLID, _DATALORE_TILES_ATTRIBUTION
 from ._global_settings import has_global_value, get_global_val, _DATALORE_TILES_MIN_ZOOM, _DATALORE_TILES_MAX_ZOOM
 
-__all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid', 'maptiles_chessboard']
+__all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid']
 
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
@@ -135,14 +135,60 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     }
 
 
-def maptiles_solid(fill_color):
+def maptiles_solid(color: str):
+    """
+    Makes solid color tiles config. Can be used individually in `geom_livemap()`
+    or in every livemap via `LetsPlot.set()`.
+
+    Parameters
+    ----------
+    color : str
+        Color in HEX format.
+
+    Returns
+    -------
+    dict
+        Tile provider settings.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        tiles = maptiles_solid(color='#d3d3d3')
+        ggplot() + geom_livemap(tiles=tiles)
+
+    """
     return {
         MAPTILES_KIND: TILES_SOLID,
-        MAPTILES_SOLID_FILL_COLOR: fill_color
+        MAPTILES_SOLID_FILL_COLOR: color
     }
 
 
 def maptiles_chessboard():
+    """
+    Makes solid color tiles with chessboard pattern. Can be used individually in `geom_livemap()`
+    or in every livemap via `LetsPlot.set()`.
+
+    Returns
+    -------
+    dict
+        Tile provider settings.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        from lets_plot.settings_utils import maptiles_chessboard
+        LetsPlot.setup_html()
+        ggplot() + geom_livemap(tiles=maptiles_chessboard())
+
+    """
     return {
         MAPTILES_KIND: TILES_CHESSBOARD
     }
