@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.IntDev
+import jetbrains.datalore.plotDemo.model.plotConfig.TransformLog10
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
-    with(IntDev()) {
+    with(TransformLog10()) {
         PlotSpecsDemoWindowBatik(
             "Issues...",
             plotSpecList()
