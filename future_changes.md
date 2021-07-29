@@ -26,3 +26,4 @@
 - Tooltip default formatting should not change after adding other variables to tooltip [[#388](https://github.com/JetBrains/lets-plot/issues/388)].
 - Tooltip format for variable is not working [[#401](https://github.com/JetBrains/lets-plot/issues/401)].
 - Wrong direction in colorbars (legend) [[#204](https://github.com/JetBrains/lets-plot/issues/204)].
+- geom_jitter: show axis tooltips (same as geom_point) [[#412](https://github.com/JetBrains/lets-plot/issues/412)].
