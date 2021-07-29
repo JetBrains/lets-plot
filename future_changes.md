@@ -6,6 +6,14 @@
 - Solid color tiles `maptiles_solid()`.
 - Chessboard tiles `maptiles_chessboard()`.
 - Module `lets_plot.tilesets` with collection of free tiles providers. 
+- as_discrete: add support for ordered parameter [[#136](https://github.com/JetBrains/lets-plot/issues/136)].
+  
+  New parameters in function `as_discrete`:
+  * `order_by` (string) - the name of the variable by which the ordering will be performed;
+  * `order` (int) - the ordering direction - 1 for ascending direction and -1 for descending (default value).
+
+  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/doc-ordering/docs/as_discrete.md).
+
 
 ### Changed
 
