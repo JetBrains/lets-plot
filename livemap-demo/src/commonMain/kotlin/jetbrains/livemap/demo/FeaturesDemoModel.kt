@@ -75,6 +75,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                 polygons {
                     polygon {
+                        fillColor = Color.PACIFIC_BLUE
                         geoObject = GeoObject(
                             id="148838",
                             centroid=Vec(-99.74261, 37.25026),

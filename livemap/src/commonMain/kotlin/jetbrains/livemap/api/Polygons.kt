@@ -27,7 +27,6 @@ import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
 import jetbrains.livemap.regions.RegionFragmentsComponent
 import jetbrains.livemap.regions.RegionRenderer
 import jetbrains.livemap.rendering.*

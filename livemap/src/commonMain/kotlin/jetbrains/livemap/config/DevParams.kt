@@ -95,7 +95,7 @@ class DevParams(private val devParams: Map<*, *>) {
 
     companion object {
 
-        val PERF_STATS = BoolParam("perf_stats", true)
+        val PERF_STATS = BoolParam("perf_stats", false)
         val DEBUG_TILES = BoolParam("debug_tiles", false)
         val DEBUG_GRID = BoolParam("debug_grid", false)
         val TILE_CACHE_LIMIT = IntParam("tile_cache_limit", 36)

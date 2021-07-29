@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
+import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
@@ -121,6 +122,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun weight(v: (Int) -> Double?): AestheticsBuilder {
         return aes(WEIGHT, v)
+    }
+
+    fun mapId(v: (Int) -> Any?): AestheticsBuilder {
+        return aes(MAP_ID, v)
     }
 
     fun frame(v: (Int) -> String?): AestheticsBuilder {
@@ -443,6 +448,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun upper(): Double? {
             return get(UPPER)
+        }
+
+        override fun mapId(): Any {
+            return get(MAP_ID)
         }
 
         override fun frame(): String {

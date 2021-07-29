@@ -33,8 +33,15 @@ object Option {
             const val GEOMETRY = "geometry"
         }
 
-        object GeoDict {
-            const val TAG = "geodict"
+        object GeoReference {
+            const val GEOCODER = "georeference"
+            const val REQUEST = "request"
+            const val MAP_REGION_COLUMN = "region"
+
+            object Columns {
+                const val ID = "id"
+                const val BBOX = "bbox"
+            }
         }
 
         object MappingAnnotation {

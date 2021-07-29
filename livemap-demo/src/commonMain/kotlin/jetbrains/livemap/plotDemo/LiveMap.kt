@@ -75,11 +75,11 @@ class LiveMap {
         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
       },
       "geocoding": {
-        "url": "http://10.0.0.127:3020"
+        "url": "http://10.0.0.127:3020/map_data/geocoding"
       }
     },
     {
-      "geom": "map",
+      "geom": "polygon",
       "stat": null,
       "data": null,
       "mapping": {

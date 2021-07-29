@@ -15,7 +15,6 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
-import jetbrains.livemap.viewport.ViewportGridStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -37,6 +36,7 @@ import jetbrains.livemap.regions.Utils.RegionsIndex
 import jetbrains.livemap.regions.Utils.entityName
 import jetbrains.livemap.regions.Utils.zoom
 import jetbrains.livemap.scaling.ScaleComponent
+import jetbrains.livemap.viewport.ViewportGridStateComponent
 
 class FragmentEmitSystem(
     private val myProjectionQuant: Int,

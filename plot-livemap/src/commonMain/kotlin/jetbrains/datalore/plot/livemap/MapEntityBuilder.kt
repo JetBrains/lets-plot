@@ -6,12 +6,15 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.gcommon.collect.Lists.transform
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
@@ -56,6 +59,7 @@ internal class MapEntityBuilder {
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
     val speed get() = myP.speed()!!
+    val mapId get() = myP.mapId()
     val flow get() = myP.flow()!!
     val fillColor get() = colorWithAlpha(myP.fill()!!)
     val strokeColor get() = when (myLayerKind) {
@@ -141,6 +145,9 @@ internal class MapEntityBuilder {
             index = this@MapEntityBuilder.index
 
             multiPolygon = this@MapEntityBuilder.geometry
+            if (mapId != DefaultNaValue.get(MAP_ID)) {
+                geoObject = GeoObject(mapId.toString(), explicitVec(0, 0), GeoRectangle(-180.0, -70.0, 180.0, 70.0))
+            }
 
             lineDash = this@MapEntityBuilder.lineDash
             fillColor = this@MapEntityBuilder.fillColor

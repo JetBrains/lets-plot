@@ -56,6 +56,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val XEND: Aes<Double> = Aes("xend")
         val YEND: Aes<Double> = Aes("yend")
 
+        val MAP_ID: Aes<Any> = Aes("map_id", false)
         val FRAME: Aes<String> = Aes("frame", false)
 
         val SPEED: Aes<Double> = Aes("speed")
@@ -145,7 +146,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun noGuideNeeded(aes: Aes<*>): Boolean {
-            return aes == FRAME ||
+            return aes == MAP_ID ||
+                    aes == FRAME ||
                     aes == SPEED ||
                     aes == FLOW ||
                     aes == LABEL ||

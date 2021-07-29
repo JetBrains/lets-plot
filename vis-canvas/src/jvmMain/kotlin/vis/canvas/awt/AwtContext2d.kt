@@ -13,7 +13,6 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
-import java.awt.RenderingHints
 import java.awt.font.GlyphVector
 import java.awt.geom.*
 import java.awt.geom.Arc2D.OPEN
@@ -287,6 +286,10 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     override fun strokeText(text: String, x: Double, y: Double) {
         graphics.color = state.strokeColor
         paintText(text, x, y, graphics::draw)
+    }
+
+    override fun scale(xy: Double) {
+        scale(xy, xy)
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
