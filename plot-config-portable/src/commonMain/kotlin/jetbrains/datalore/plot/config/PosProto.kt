@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 internal object PosProto {
     // position adjustments
     private const val IDENTITY = "identity"
-    private const val STACK = "stack"
+    internal const val STACK = "stack"
     private const val DODGE = "dodge"
     private const val FILL = "fill"
     private const val NUDGE = "nudge"

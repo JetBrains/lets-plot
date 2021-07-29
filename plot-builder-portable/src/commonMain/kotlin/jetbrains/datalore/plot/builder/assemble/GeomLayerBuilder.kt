@@ -285,6 +285,7 @@ class GeomLayerBuilder {
                             statCtx,
                             varsWithoutBinding = emptyList(),
                             orderOptions = emptyList(),
+                            aggregateOperation = null,
                             ::println
                         )
 
