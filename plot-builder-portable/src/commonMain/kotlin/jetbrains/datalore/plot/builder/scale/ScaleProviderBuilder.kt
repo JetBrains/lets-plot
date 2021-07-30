@@ -144,7 +144,6 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         private val myName: String? = b.myName
 
-        private val myBreaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
         private val myLabels: List<String>? = b.myLabels?.let { ArrayList(it) }
         private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
@@ -157,6 +156,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myAes: Aes<T> = b.aes
         private val mapperProvider: MapperProvider<T> = b.mapperProvider
 
+        override val breaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
         override val discreteDomain: Boolean = b.myDiscreteDomain
 
         // This is only to use by 'discrete' transforms/scales
@@ -280,8 +280,8 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         private fun completeScale(scale: Scale<T>): Scale<T> {
             val with = scale.with()
-            if (myBreaks != null) {
-                with.breaks(myBreaks)
+            if (breaks != null) {
+                with.breaks(breaks)
             }
             if (myLabels != null) {
                 with.labels(myLabels)

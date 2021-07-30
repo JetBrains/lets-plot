@@ -11,7 +11,7 @@ import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 fun main() {
     with(TransformLog10()) {
         PlotSpecsDemoWindowBatik(
-            "Issues...",
+            "'log10' transform.",
             plotSpecList()
         ).open()
     }

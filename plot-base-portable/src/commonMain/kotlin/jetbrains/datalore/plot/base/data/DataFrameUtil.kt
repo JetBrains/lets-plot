@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.base.data
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import kotlin.jvm.JvmOverloads
 
@@ -39,21 +39,22 @@ object DataFrameUtil {
     private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
         var transformSource = data[variable]
 
-        // Replace values outside 'scale limits' with null-s.
-        if (scale.hasDomainLimits()) {
-            transformSource = transformSource.map { if (it == null || scale.isInDomainLimits(it)) it else null }
-        }
-
-        // Replace values outside of domain of 'continuous transform' with null-s.
-        if (scale.transform is ContinuousTransform) {
-            val continuousTransform = scale.transform as ContinuousTransform
-            if (continuousTransform.hasDomainLimits()) {
-                transformSource =
-                    transformSource.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
-            }
-        }
-
-        return transformSource
+//        // Replace values outside 'scale limits' with null-s.
+//        if (scale.hasDomainLimits()) {
+//            transformSource = transformSource.map { if (it == null || scale.isInDomainLimits(it)) it else null }
+//        }
+//
+//        // Replace values outside of domain of 'continuous transform' with null-s.
+//        if (scale.transform is ContinuousTransform) {
+//            val continuousTransform = scale.transform as ContinuousTransform
+//            if (continuousTransform.hasDomainLimits()) {
+//                transformSource =
+//                    transformSource.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
+//            }
+//        }
+//
+//        return transformSource
+        return ScaleUtil.cleanUpTransformSource(transformSource, scale)
     }
 
     fun hasVariable(data: DataFrame, varName: String): Boolean {
