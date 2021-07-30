@@ -1,14 +1,14 @@
+import gzip
 import json
 import urllib.parse
 import urllib.request
-import gzip
 from urllib.error import HTTPError
 
 from .json_request import RequestFormatter
 from .json_response import ResponseParser
 from .request import Request
 from .response import Response
-from ..._global_settings import has_global_value, get_global_str
+from ..._global_settings import has_global_value, get_global_str, GEOCODING_ROUTE
 from ...settings_utils import GEOCODING_PROVIDER_URL
 
 
@@ -22,7 +22,7 @@ class GeocodingService:
             request_str = json.dumps(request_json)
 
             request = urllib.request.Request(
-                url=get_global_str(GEOCODING_PROVIDER_URL) + '/map_data/geocoding',
+                url=get_global_str(GEOCODING_PROVIDER_URL) + GEOCODING_ROUTE,
                 headers={'Content-Type': 'application/json', 'Accept-Encoding': 'gzip'},
                 method='POST',
                 data=bytearray(request_str, 'utf-8')
