@@ -4,8 +4,7 @@
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, is_geo_data_frame, auto_join_geo_names, \
-    geo_data_frame_to_wgs84, normalize_map_join, get_geo_data_frame_meta
+from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84, get_geo_data_frame_meta
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -4235,35 +4234,6 @@ def _geom(name, *,
 
     if is_geocoder(data):
         data = data.get_geocodes()
-
-    def process_map_parameters():
-        map_join = kwargs.get('map_join', None)
-        map = kwargs.get('map', None)
-
-        if map_join is None and map is None:
-            return
-
-        map_join = normalize_map_join(map_join)
-
-        if is_geocoder(map):
-            map = map.get_geocodes()
-            kwargs['map_data_meta'] = {'georeference': {} }
-        elif is_geo_data_frame(map):
-            map_join = auto_join_geo_names(map_join, map)
-            map = geo_data_frame_to_wgs84(map)
-            kwargs['map_data_meta'] = get_geo_data_frame_meta(map)
-        elif map is None:
-            pass
-        else:
-            raise ValueError('Invalid map parameter type: ' + repr(type(map)))
-
-        if map_join is not None:
-            kwargs['map_join'] = map_join
-
-        if map is not None:
-            kwargs['map'] = map
-
-    process_map_parameters()
 
     # TODO: check why map shouldn't be a GeoDataFrame
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map', None)):
