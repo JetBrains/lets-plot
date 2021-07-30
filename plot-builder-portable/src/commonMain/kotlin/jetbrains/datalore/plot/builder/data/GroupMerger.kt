@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 
-internal class GroupsMerger {
+internal class GroupMerger {
     private var myOrderSpecs: List<DataFrame.OrderSpec>? = null
     private val myOrderedGroups = ArrayList<Group>()
 

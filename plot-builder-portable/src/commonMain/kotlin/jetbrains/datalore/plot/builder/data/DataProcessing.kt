@@ -76,7 +76,7 @@ object DataProcessing {
             groupSizeListAfterStat = listOf(sd.rowCount())
             resultSeries = sd.variables().associateWith { variable -> sd[variable] }
         } else { // add offset to each group
-            val groupMerger = GroupsMerger()
+            val groupMerger = GroupMerger()
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
                 var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
