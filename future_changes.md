@@ -21,6 +21,7 @@
 
 ### Fixed
 
+- Improved click events detection on livemap.
 - Properly handle `max_zoom` pamareter in `maptiles_zxy()`.
 - Strange looking legend for tiles [[#245](https://github.com/JetBrains/lets-plot/issues/245)].
 - Need to skip "bad" values during scale transformation [[#301](https://github.com/JetBrains/lets-plot/issues/301)].
