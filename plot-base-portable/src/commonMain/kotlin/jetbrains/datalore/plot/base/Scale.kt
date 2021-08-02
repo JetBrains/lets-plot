@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 
 /**
@@ -37,7 +36,7 @@ interface Scale<T> {
 
     val isContinuousDomain: Boolean
 
-    val domainLimits: ClosedRange<Double>?
+    val domainLimits: Pair<Double, Double>
 
     val multiplicativeExpand: Double
 
@@ -48,13 +47,6 @@ interface Scale<T> {
     val mapper: (Double?) -> T?
 
     val breaksGenerator: BreaksGenerator
-        get() {
-            val transform = transform
-            if (transform is BreaksGenerator) {
-                return transform
-            }
-            throw IllegalStateException("No breaks generator for '$name'")
-        }
 
     fun hasBreaks(): Boolean
 
@@ -64,11 +56,7 @@ interface Scale<T> {
 
     fun isInDomainLimits(v: Any): Boolean
 
-    fun asNumber(input: Any?): Double?
-
-    fun hasBreaksGenerator(): Boolean {
-        return transform is BreaksGenerator
-    }
+    fun hasBreaksGenerator(): Boolean
 
     fun with(): Builder<T>
 
@@ -101,7 +89,9 @@ interface Scale<T> {
 
         fun additiveExpand(v: Double): Builder<T>
 
-        fun continuousTransform(v: Transform): Builder<T>
+        fun continuousTransform(v: ContinuousTransform): Builder<T>
+
+        fun breaksGenerator(v: BreaksGenerator): Builder<T>
 
         fun build(): Scale<T>
     }

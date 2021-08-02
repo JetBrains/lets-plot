@@ -32,7 +32,7 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |	font-size: 12px;
         |}
         |.plt-axis-tooltip text {
-        |	font-size: 10px;
+        |	font-size: 12px;
         |}
         |.plt-axis line {
         |	shape-rendering: crispedges;
@@ -282,14 +282,14 @@ fun expectedSingleBunchItemSvg(index: Int) = """
         |    <g class="plt-axis">
         |      <g transform="translate(4.0 60.5 ) rotate(-90.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle" dy="0.7em">
-        |        y
+        |        b
         |        </text>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
         |      <g transform="translate(83.54545454545453 146.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle">
-        |        x
+        |        a
         |        </text>
         |      </g>
         |    </g>
@@ -325,7 +325,7 @@ val EXPECTED_BUNCH_SVG = """
         |	font-size: 12px;
         |}
         |.plt-axis-tooltip text {
-        |	font-size: 10px;
+        |	font-size: 12px;
         |}
         |.plt-axis line {
         |	shape-rendering: crispedges;
@@ -442,14 +442,14 @@ val EXPECTED_BUNCH_SVG = """
         |    <g class="plt-axis">
         |      <g transform="translate(4.0 60.5 ) rotate(-90.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle" dy="0.7em">
-        |        y
+        |        b
         |        </text>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
         |      <g transform="translate(83.54545454545453 146.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle">
-        |        x
+        |        a
         |        </text>
         |      </g>
         |    </g>
@@ -538,14 +538,14 @@ val EXPECTED_BUNCH_SVG = """
         |    <g class="plt-axis">
         |      <g transform="translate(4.0 60.5 ) rotate(-90.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle" dy="0.7em">
-        |        y
+        |        b
         |        </text>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
         |      <g transform="translate(83.54545454545453 146.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle">
-        |        x
+        |        a
         |        </text>
         |      </g>
         |    </g>

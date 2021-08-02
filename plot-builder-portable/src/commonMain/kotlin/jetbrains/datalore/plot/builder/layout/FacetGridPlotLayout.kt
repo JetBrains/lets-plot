@@ -126,7 +126,7 @@ internal class FacetGridPlotLayout(
             val info = TileLayoutInfo(
                 bounds,
                 geomBounds,
-                TileLayoutBase.clipBounds(geomBounds),
+                XYPlotLayoutUtil.clipBounds(geomBounds),
                 tileInfo.layoutInfo.xAxisInfo,
                 tileInfo.layoutInfo.yAxisInfo,
                 xAxisShown = facetTile.xAxis,

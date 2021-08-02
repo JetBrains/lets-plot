@@ -9,11 +9,14 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ANNOTATION
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AS_DISCRETE
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.LABEL
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
 import jetbrains.datalore.plot.config.Option.Scale
 
@@ -141,6 +144,39 @@ object DataMetaUtil {
         )
     }
 
+    fun getOrderOptions(options: Map<*, *>?, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+        return options
+            ?.getMappingAnnotationsSpec(AS_DISCRETE)
+            ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
+            ?.mapNotNull { (aesName, parameters) ->
+                require(aesName in commonMappings)
+                val variableName = commonMappings[aesName] as String
+                OrderOptionUtil.OrderOption.create(
+                    variableName,
+                    parameters?.getString(ORDER_BY),
+                    parameters?.read(ORDER)
+                )
+            }
+            ?: emptyList()
+    }
+
+    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+        // non-discrete mappings should inherit settings from the as_discrete
+        return this + mappings.variables()
+            .filterNot(::isDiscrete)
+            .mapNotNull { varName ->
+                val orderOptionForVar = this
+                    .filter { isDiscrete(it.variableName) }
+                    .find { fromDiscrete(it.variableName) == varName }
+                    ?: return@mapNotNull null
+
+                OrderOptionUtil.OrderOption.create(
+                    varName,
+                    orderBy = orderOptionForVar.byVariable.takeIf { it != orderOptionForVar.variableName },
+                    orderOptionForVar.getOrderDir()
+                )
+            }
+    }
 }
 
 

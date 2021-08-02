@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -28,7 +27,7 @@ object PlotConfigClientSideUtil {
         return guideOptionsByAes
     }
 
-    internal fun createGuideOptionsMap(guideOptionsList: Map<String,Any>): Map<Aes<*>, GuideOptions> {
+    internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<Aes<*>, GuideOptions> {
         val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
         for ((key, value) in guideOptionsList) {
             val aes = Option.Mapping.toAes(key)
@@ -36,10 +35,6 @@ object PlotConfigClientSideUtil {
         }
         return guideOptionsByAes
     }
-
-//    fun createPlotAssembler(opts: Map<String, Any>): PlotAssembler {
-//        return createPlotAssembler(PlotConfigClientSide(opts))
-//    }
 
     fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
@@ -73,7 +68,7 @@ object PlotConfigClientSideUtil {
             val isLiveMap = plotConfig.layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
 
             for (layerIndex in tileDataByLayer.indices) {
-                checkState(layerBuilders.size >= layerIndex)
+                check(layerBuilders.size >= layerIndex)
 
                 if (layerBuilders.size == layerIndex) {
                     val layerConfig = plotConfig.layerConfigs[layerIndex]

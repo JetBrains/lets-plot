@@ -11,10 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -40,8 +37,7 @@ object PlotUtil {
     }
 
     fun computeLayerDryRunXYRanges(
-        layer: GeomLayer,
-        aes: Aesthetics
+        layer: GeomLayer, aes: Aesthetics
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
@@ -349,19 +345,30 @@ object PlotUtil {
         } else dataValue
     }
 
-    fun rangeWithExpand(layer: GeomLayer, aes: Aes<Double>, range: ClosedRange<Double>?): ClosedRange<Double>? {
+    /**
+     * Expand X/Y-range to ensure that the data is placed some distance away from the axes.
+     */
+    fun rangeWithExpand(
+        layer: GeomLayer,
+        aes: Aes<Double>,
+        range: ClosedRange<Double>?
+    ): ClosedRange<Double>? {
         if (range == null) return null
-
-        // expand X-range to ensure that the data is placed some distance away from the axes.
-        // see: https://ggplot2.tidyverse.org/current/scale_continuous.html - expand
-//        val mulExp = getMultiplicativeExpand(layer, aes)
-//        val addExp = getAdditiveExpand(layer, aes)
 
         val scale = layer.scaleMap[aes]
         val mulExp = scale.multiplicativeExpand
         val addExp = scale.additiveExpand
-        val lowerEndpoint = range.lowerEnd
-        val upperEndpoint = range.upperEnd
+
+        // Compute expands in terms of the original data.
+        // Otherwise can easy run into Infinities then using 'log10' transform
+        val continuousTransform: ContinuousTransform? = if (scale.isContinuousDomain) {
+            scale.transform as ContinuousTransform
+        } else {
+            null
+        }
+
+        val lowerEndpoint = continuousTransform?.applyInverse(range.lowerEnd) ?: range.lowerEnd
+        val upperEndpoint = continuousTransform?.applyInverse(range.upperEnd) ?: range.upperEnd
 
         val length = upperEndpoint - lowerEndpoint
         var lowerExpand = addExp + length * mulExp
@@ -380,33 +387,22 @@ object PlotUtil {
             }
         }
 
-        return ClosedRange(lowerEndpoint - lowerExpand, upperEndpoint + upperExpand)
+        val lowerEndWithExpand = (lowerEndpoint - lowerExpand).let {
+            val transformed = continuousTransform?.apply(it) ?: it
+            if (transformed.isNaN()) {
+                range.lowerEnd
+            } else {
+                transformed
+            }
+        }
+        val upperEndWithExpand = (upperEndpoint + upperExpand).let {
+            val transformed = continuousTransform?.apply(it) ?: it
+            if (transformed.isNaN()) {
+                range.upperEnd
+            } else {
+                transformed
+            }
+        }
+        return ClosedRange(lowerEndWithExpand, upperEndWithExpand)
     }
-
-//    private fun getMultiplicativeExpand(layer: GeomLayer, aes: Aes<Double>): Double {
-//        val scale = findBoundScale(layer, aes)
-//        return scale?.multiplicativeExpand ?: 0.0
-//    }
-//
-//    private fun getAdditiveExpand(layer: GeomLayer, aes: Aes<Double>): Double {
-//        val scale = findBoundScale(layer, aes)
-//        return scale?.additiveExpand ?: 0.0
-//    }
-//
-//    private fun findBoundScale(layer: GeomLayer, aes: Aes<*>): Scale<*>? {
-//        if (layer.hasBinding(aes)) {
-//            return layer.scaleMap[aes]
-//        }
-//        if (Aes.isPositional(aes)) {
-//            val horizontal = Aes.isPositionalX(aes)
-//            for (rendered in layer.renderedAes()) {
-//                if (layer.hasBinding(rendered)) {
-//                    if (horizontal && Aes.isPositionalX(rendered) || !horizontal && Aes.isPositionalY(rendered)) {
-//                        return layer.scaleMap[aes]
-//                    }
-//                }
-//            }
-//        }
-//        return null
-//    }
 }

@@ -35,6 +35,10 @@ class PolygonLocatorHelper : LocatorHelper {
     }
 
     private fun isCoordinateOnEntity(coord: Vec<Client>, target: EcsEntity): Boolean {
+        if (!target.contains(LOCATABLE_COMPONENTS)) {
+            return false;
+        }
+
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
             if (isCoordinateInPolygon(coord - origin, target.get<ScreenGeometryComponent>().geometry)) {
                 return true
@@ -60,5 +64,9 @@ class PolygonLocatorHelper : LocatorHelper {
             }
         }
         return false
+    }
+
+    companion object {
+        val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
     }
 }

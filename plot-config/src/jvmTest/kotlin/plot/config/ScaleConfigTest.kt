@@ -58,7 +58,8 @@ class ScaleConfigTest {
         val mapper = mapperProvider.createContinuousMapper(
             data.range(datavar)!!,
             Double.NaN,
-            Double.NaN, Transforms.IDENTITY
+            Double.NaN,
+            Transforms.IDENTITY
         )
         for (v in input) {
             assertEquals(v, mapper.apply(v))

@@ -19,46 +19,46 @@ import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import kotlin.math.max
 
-class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
-
+class ColorBarComponent(
     override val spec: ColorBarComponentSpec
-        get() {
-            return super.spec as ColorBarComponentSpec
-        }
+) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
-        val spec = spec
-        val l = spec.layout
+        val layout = spec.layout
 
-        // ---------
         val guideBarGroup = SvgGElement()
 
         // bar
-        val barBounds = l.barBounds
-        addColorBar(guideBarGroup, spec.domain, spec.scale, spec.binCount, barBounds, l.barLengthExpand, l.isHorizontal)
+        val barBounds = layout.barBounds
+        val horizontal = layout.isHorizontal
+        addColorBar(
+            guideBarGroup,
+            spec.domain, spec.scale, spec.binCount, barBounds,
+            layout.barLengthExpand,
+            horizontal, spec.reverse
+        )
 
         // Ticks and labels
-        val barThickness = if (l.isHorizontal)
-            barBounds.height
-        else
-            barBounds.width
+        val barThickness = when {
+            horizontal -> barBounds.height
+            else -> barBounds.width
+        }
         val tickLength = barThickness / 5
 
-        val breakInfos = l.breakInfos.iterator()
+        val breakInfos = layout.breakInfos.iterator()
         for (br in spec.breaks) {
             val brInfo = breakInfos.next()
 
             val tickLocation = brInfo.tickLocation
-
             val tickMarkPoints = ArrayList<DoubleVector>()
-            if (l.isHorizontal) {
-                val tickX = tickLocation + barBounds.left
+            if (horizontal) {
+                val tickX = barBounds.left + tickLocation
                 tickMarkPoints.add(DoubleVector(tickX, barBounds.top))
                 tickMarkPoints.add(DoubleVector(tickX, barBounds.top + tickLength))
                 tickMarkPoints.add(DoubleVector(tickX, barBounds.bottom - tickLength))
                 tickMarkPoints.add(DoubleVector(tickX, barBounds.bottom))
             } else {
-                val tickY = tickLocation + barBounds.top
+                val tickY = barBounds.top + tickLocation
                 tickMarkPoints.add(DoubleVector(barBounds.left, tickY))
                 tickMarkPoints.add(DoubleVector(barBounds.left + tickLength, tickY))
                 tickMarkPoints.add(DoubleVector(barBounds.right - tickLength, tickY))
@@ -86,7 +86,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
 
         if (debug) {
             // frame bar and labels
-            val graphBounds = DoubleRectangle(DoubleVector.ZERO, l.graphSize)
+            val graphBounds = DoubleRectangle(DoubleVector.ZERO, layout.graphSize)
             guideBarGroup.children().add(
                 createBorder(
                     graphBounds,
@@ -97,7 +97,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         }
 
         contentRoot.children().add(guideBarGroup)
-        return l.size
+        return layout.size
     }
 
     private fun addColorBar(
@@ -107,7 +107,8 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         numBins: Int,
         barBounds: DoubleRectangle,
         barLengthExpand: Double,
-        horizontal: Boolean
+        horizontal: Boolean,
+        reverse: Boolean
     ) {
 
         val domainSpan = SeriesUtil.span(domain)
@@ -118,13 +119,15 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         for (i in 0 until stepCount) {
             domainValues.add(v + step * i)
         }
+        if (reverse) {
+            domainValues.reverse()
+        }
 
         val colors = ScaleUtil.map(domainValues, scale)
-
-        val barLength = if (horizontal)
-            barBounds.width
-        else
-            barBounds.height
+        val barLength = when {
+            horizontal -> barBounds.width
+            else -> barBounds.height
+        }
         val effectiveBarLength = barLength - barLengthExpand * 2
         val segmentStep = effectiveBarLength / stepCount
 
@@ -133,8 +136,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         val segmentBottom = barBounds.bottom
         var segmentTop = barBounds.top
 
-        var isFirst = true
-        for (color in colors) {
+        for ((i, color) in colors.withIndex()) {
             val r = SvgRectElement(
                 segmentLeft,
                 segmentTop,
@@ -150,14 +152,13 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
             } else {
                 segmentTop += segmentStep
             }
-            if (isFirst) {
-                // first segment was longer
+            if (i == 0) {
+                // first segment is a bit longer.
                 if (horizontal) {
                     segmentLeft += barLengthExpand
                 } else {
                     segmentTop += barLengthExpand
                 }
-                isFirst = false
             }
         }
     }

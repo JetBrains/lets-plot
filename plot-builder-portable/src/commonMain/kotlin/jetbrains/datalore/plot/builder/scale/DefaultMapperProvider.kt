@@ -43,7 +43,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
@@ -153,7 +153,7 @@ object DefaultMapperProvider {
                     domain: ClosedRange<Double>,
                     lowerLimit: Double?,
                     upperLimit: Double?,
-                    trans: Transform?
+                    trans: ContinuousTransform
                 ): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
@@ -168,7 +168,7 @@ object DefaultMapperProvider {
                     domain: ClosedRange<Double>,
                     lowerLimit: Double?,
                     upperLimit: Double?,
-                    trans: Transform?
+                    trans: ContinuousTransform
                 ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }

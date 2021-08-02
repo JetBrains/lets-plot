@@ -50,8 +50,8 @@ class FacetGrid(
         )
         val dataByLevelTuple = dataByLevelTupleList.toMap()
 
-        val colLevels = if (xLevels.isEmpty()) listOf(null) else xLevels
-        val rowLevels = if (yLevels.isEmpty()) listOf(null) else yLevels
+        val colLevels = xLevels.ifEmpty { listOf(null) }
+        val rowLevels = yLevels.ifEmpty { listOf(null) }
 
         val dataByTile: MutableList<DataFrame> = ArrayList()
         // Enumerate tiles by-row.
@@ -72,10 +72,10 @@ class FacetGrid(
      *          the index is computed like: row * nCols + col
      */
     override fun tileInfos(): List<FacetTileInfo> {
-        val colLabels = (if (xLevels.isEmpty()) listOf(null) else xLevels).map {
+        val colLabels = (xLevels.ifEmpty { listOf(null) }).map {
             it?.let { xFormatter(it) }
         }
-        val rowLabels = (if (yLevels.isEmpty()) listOf(null) else yLevels).map {
+        val rowLabels = (yLevels.ifEmpty { listOf(null) }).map {
             it?.let { yFormatter(it) }
         }
 

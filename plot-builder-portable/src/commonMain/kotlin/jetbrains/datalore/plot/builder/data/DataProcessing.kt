@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.data
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
@@ -36,7 +35,7 @@ object DataProcessing {
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isOrigin) {
-                checkState(data.has(variable), "Undefined variable $variable")
+                check(data.has(variable)) { "Undefined variable $variable" }
                 data = DataFrameUtil.applyTransform(
                     data,
                     variable,
@@ -58,6 +57,8 @@ object DataProcessing {
         facets: PlotFacets,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
+        orderOptions: List<OrderOptionUtil.OrderOption>,
+        aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
@@ -65,28 +66,26 @@ object DataProcessing {
         }
 
         val groups = groupingContext.groupMapper
-        val resultSeries = HashMap<Variable, List<Any>>()
 
-        val groupSizeListAfterStat = ArrayList<Int>()
+        val resultSeries: Map<Variable, List<Any?>>
+        val groupSizeListAfterStat: List<Int>
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
             val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
-            groupSizeListAfterStat.add(sd.rowCount())
-            for (variable in sd.variables()) {
-                @Suppress("UNCHECKED_CAST")
-                val list = sd[variable] as List<Any>
-                resultSeries[variable] = list
-            }
+            groupSizeListAfterStat = listOf(sd.rowCount())
+            resultSeries = sd.variables().associateWith { variable -> sd[variable] }
         } else { // add offset to each group
+            val groupMerger = GroupMerger()
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
                 var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
+                groupMerger.initOrderSpecs(orderOptions, sd.variables(), bindings, aggregateOperation)
 
-                groupSizeListAfterStat.add(sd.rowCount())
+                val curGroupSizeAfterStat = sd.rowCount()
 
                 // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                 if (sd.has(Stats.GROUP)) {
@@ -112,23 +111,30 @@ object DataProcessing {
                     }
                 }
 
-                // merge results
-                for (variable in sd.variables()) {
-                    if (!resultSeries.containsKey(variable)) {
-                        resultSeries[variable] = ArrayList()
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    (resultSeries[variable] as MutableList).addAll(sd[variable] as List<Any>)
-                }
+                // Add group's data
+                groupMerger.addGroup(sd, curGroupSizeAfterStat)
             }
+            // Get merged series
+            resultSeries = groupMerger.getResultSeries()
+            groupSizeListAfterStat = groupMerger.getGroupSizes()
         }
 
-        val b = Builder()
-        for (variable in resultSeries.keys) {
-            b.put(variable, resultSeries[variable]!!)
+        val dataAfterStat = Builder().run {
+            // put results
+            for (variable in resultSeries.keys) {
+                put(variable, resultSeries[variable]!!)
+            }
+
+            // set ordering specifications
+            val orderSpecs = orderOptions.map { orderOption ->
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption, aggregateOperation)
+            }
+            addOrderSpecs(orderSpecs)
+
+            // build DataFrame
+            build()
         }
 
-        val dataAfterStat = b.build()
         val groupingContextAfterStat = GroupingContext.withOrderedGroups(
             dataAfterStat,
             groupSizeListAfterStat
@@ -181,8 +187,6 @@ object DataProcessing {
         }
 
         // generate new 'input' series to match stat series
-        // see: https://ggplot2.tidyverse.org/current/aes_group_order.html
-        // "... the group is set to the interaction of all discrete variables in the plot."
 
         val inverseTransformedStatSeries =
             inverseTransformContinuousStatData(
@@ -260,7 +264,7 @@ object DataProcessing {
 
         val b = statData.builder()
         for (variable in newInputSeries.keys) {
-            b.put(variable, newInputSeries[variable]!!)
+            b.put(variable, newInputSeries.getValue(variable))
         }
         // also update stat series
         for (variable in inverseTransformedStatSeries.keys) {
@@ -294,10 +298,6 @@ object DataProcessing {
                 // ignore 'stat' var becaue ..?
                 continue
             }
-//            else if (stat.hasDefaultMapping(aes)) {
-//                val defaultStatVar = stat.getDefaultMapping(aes)
-//                aesByMappedStatVar[defaultStatVar] = aes
-//            }
 
             val scale = scaleMap[aes]
             if (scale.isContinuousDomain) {
@@ -346,25 +346,27 @@ object DataProcessing {
             currentGroups = computeGroups(data[groupingVar])
         }
 
-        for (`var` in groupingVariables) {
-            val values = data[`var`]
+        for (groupingVariable in groupingVariables) {
+            val values = data[groupingVariable]
             val groups = computeGroups(values)
             if (currentGroups == null) {
                 currentGroups = groups
                 continue
             }
 
-            checkState(
-                currentGroups.size == groups.size,
-                "Data series used to compute groups must be equal in size (encountered sizes: " + currentGroups.size + ", " + groups.size + ")"
-            )
+            check(currentGroups.size == groups.size) {
+                "Data series used to compute groups must be equal in size (encountered sizes: " +
+                        "${currentGroups?.size}, ${groups.size} )"
+            }
             val dummies = computeDummyValues(currentGroups, groups)
             currentGroups = computeGroups(dummies)
         }
 
         return if (currentGroups != null) {
             GroupUtil.wrap(currentGroups)
-        } else GroupUtil.SINGLE_GROUP
+        } else {
+            GroupUtil.SINGLE_GROUP
+        }
     }
 
     private fun computeGroups(values: List<*>): List<Int> {
@@ -386,7 +388,7 @@ object DataProcessing {
         val limit = 1000
 
         val max = natural<Int>().max(Iterables.concat(list1, list2))
-        checkState(max < limit, "Too many groups: " + max)
+        check(max < limit) { "Too many groups: $max" }
         val dummies = ArrayList<Int>()
         val it1 = list1.iterator()
         val it2 = list2.iterator()

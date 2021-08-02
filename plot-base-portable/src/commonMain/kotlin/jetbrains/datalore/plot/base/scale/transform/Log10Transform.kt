@@ -6,64 +6,53 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.log10
+import kotlin.math.max
 import kotlin.math.pow
 
-internal class Log10Transform(
-    private val myLabelFormatter: ((Any) -> String)? = null
-) : FunTransform(
-    F,
-    F_INVERSE
+internal class Log10Transform : FunTransform(
+    transformFun = { v -> log10(v) },
+    inverseFun = { v -> 10.0.pow(v) }
 ) {
-    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return myLabelFormatter ?: super.labelFormatter(domainAfterTransform, targetCount)
+    override fun hasDomainLimits() = true
+
+    override fun isInDomain(v: Double?): Boolean {
+        return SeriesUtil.isFinite(v) && v!! >= 0.0
     }
 
-    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val transformedBreaks = LinearBreaksGen()
-            .generateBreaks(domainAfterTransform, targetCount)
-        val transformValues = transformedBreaks.domainValues
-        val newDomainValues = ArrayList<Double>()
-        for (transformValue in transformValues) {
-            val domainValue =
-                F_INVERSE(transformValue)
-            newDomainValues.add(domainValue!!)
+    override fun apply(v: Double?): Double? {
+        return trimInfinity(super.apply(v))
+    }
+
+    override fun applyInverse(v: Double?): Double? {
+        return super.applyInverse(v)
+    }
+
+    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+        @Suppress("NAME_SHADOWING")
+        val middle = when {
+            isInDomain(middle) -> middle
+            else -> 0.0
         }
 
-        // format each tick with its own formatter
-        val labels = ArrayList<String>()
-        var step = 0.0
-        val maxI = newDomainValues.size - 1
-        for (i in 0..maxI) {
-            val domainValue = newDomainValues[i]
-            if (step == 0.0) {
-                if (i < maxI) {
-                    step = newDomainValues[i + 1] - domainValue
-                }
-            } else {
-                step = domainValue - newDomainValues[i - 1]
-            }
-            val formatter = myLabelFormatter ?: NumericBreakFormatter(domainValue, step, true)::apply
-            labels.add(formatter(domainValue))
-        }
-
-        return ScaleBreaks(newDomainValues, transformValues, labels)
+        val lower = middle / 2
+        val upper = if (middle == 0.0) 10.0 else middle * 2
+        return ClosedRange(lower, upper)
     }
 
     companion object {
-        private val F: (Double?) -> Double? = { v ->
-            if (v != null)
-                log10(v).takeIf { !it.isNaN() }
-            else
-                null
-        }
-        private val F_INVERSE: (Double?) -> Double? = { v ->
-            if (v != null)
-                10.0.pow(v)
-            else
-                null
+        internal const val LOWER_LIM: Double = -Double.MAX_VALUE / 10
+
+        /**
+         * Avoid transforming 0.0 -> -Infinity
+         */
+        private fun trimInfinity(v: Double?): Double? {
+            return when {
+                v == null -> null
+                v.isNaN() -> Double.NaN
+                else -> max(LOWER_LIM, v)
+            }
         }
     }
 }

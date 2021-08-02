@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.base.data
 
-import jetbrains.datalore.base.function.Predicate
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -32,34 +30,31 @@ object DataFrameUtil {
         scale: Scale<*>
     ): DataFrame {
         val transformSource = getTransformSource(data, variable, scale)
-        val transformResult = ScaleUtil.transform(transformSource, scale)
+        val transformResult = scale.transform.apply(transformSource)
         return data.builder()
             .putNumeric(transformVar, transformResult)
             .build()
     }
 
     private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
-        if (!scale.hasDomainLimits()) {
-            return data[variable]
-        }
+        var transformSource = data[variable]
 
-        return filterTransformSource(data[variable]) { input: Any? ->
-            // keep null(s)
-            input == null || scale.isInDomainLimits(input)
-        }
-    }
-
-    private fun <T> filterTransformSource(rawData: List<T>, retain: Predicate<T>): List<T?> {
-        val result = ArrayList<T?>(rawData.size)
-        for (v in rawData) {
-            if (retain(v)) {
-                result.add(v)
-            } else {
-                // drop this value
-                result.add(null)
-            }
-        }
-        return result
+//        // Replace values outside 'scale limits' with null-s.
+//        if (scale.hasDomainLimits()) {
+//            transformSource = transformSource.map { if (it == null || scale.isInDomainLimits(it)) it else null }
+//        }
+//
+//        // Replace values outside of domain of 'continuous transform' with null-s.
+//        if (scale.transform is ContinuousTransform) {
+//            val continuousTransform = scale.transform as ContinuousTransform
+//            if (continuousTransform.hasDomainLimits()) {
+//                transformSource =
+//                    transformSource.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
+//            }
+//        }
+//
+//        return transformSource
+        return ScaleUtil.cleanUpTransformSource(transformSource, scale)
     }
 
     fun hasVariable(data: DataFrame, varName: String): Boolean {
@@ -77,16 +72,16 @@ object DataFrameUtil {
                 return `var`
             }
         }
-        throw IllegalArgumentException("Variable not found: '$varName'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}")
+        throw IllegalArgumentException(
+            "Variable not found: '$varName'. Variables in data frame: ${
+                data.variables().map { "'${it.name}'" }
+            }"
+        )
     }
 
     fun isNumeric(data: DataFrame, varName: String): Boolean {
         return data.isNumeric(findVariableOrFail(data, varName))
     }
-
-//    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
-//        return data.distinctValues(variable)
-//    }
 
     fun sortedCopy(variables: Iterable<DataFrame.Variable>): List<DataFrame.Variable> {
         val ordering = Ordering.from(Comparator<DataFrame.Variable> { o1, o2 -> o1.name.compareTo(o2.name) })
@@ -127,15 +122,13 @@ object DataFrameUtil {
     fun fromMap(map: Map<*, *>): DataFrame {
         val frameBuilder = DataFrame.Builder()
         for ((key, value) in map) {
-            checkArgument(
-                key is String,
+            require(key is String) {
                 "Map to data-frame: key expected a String but was " + key!!::class.simpleName + " : " + key
-            )
-            checkArgument(
-                value is List<*>,
+            }
+            require(value is List<*>) {
                 "Map to data-frame: value expected a List but was " + value!!::class.simpleName + " : " + value
-            )
-            frameBuilder.put(createVariable(key as String), value as List<*>)
+            }
+            frameBuilder.put(createVariable(key), value)
         }
         return frameBuilder.build()
     }

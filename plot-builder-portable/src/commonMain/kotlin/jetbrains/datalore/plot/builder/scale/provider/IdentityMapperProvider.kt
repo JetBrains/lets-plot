@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -24,8 +24,8 @@ class IdentityMapperProvider<T>(
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): GuideMapper<T> {
-        return GuideMappers.adaptContinuous(continuousMapper)
+        return GuideMappers.asContinuous(continuousMapper)
     }
 }

@@ -5,15 +5,12 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-
-abstract class BreaksHelperBase protected constructor(
+abstract class BreaksHelperBase(
     start: Double,
     end: Double,
     targetCount: Int
 ) {
     abstract val breaks: List<Double>
-    abstract val labelFormatter: (Any) -> String
 
     protected val normalStart: Double
     protected val normalEnd: Double
@@ -22,9 +19,9 @@ abstract class BreaksHelperBase protected constructor(
     protected val isReversed: Boolean
 
     init {
-        checkArgument(start.isFinite(), "range start $start")
-        checkArgument(end.isFinite(), "range end $end")
-        checkArgument(targetCount > 0, "'count' must be positive: $targetCount")
+        require(start.isFinite()) { "range start $start" }
+        require(end.isFinite()) { "range end $end" }
+        require(targetCount > 0) { "'count' must be positive: $targetCount" }
         var span = end - start
         var reversed = false
         if (span < 0) {

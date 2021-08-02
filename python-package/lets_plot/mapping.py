@@ -15,7 +15,7 @@ class MappingMeta:
         self.parameters = parameters
 
 
-def as_discrete(variable, label=None):
+def as_discrete(variable, label=None, order_by=None, order=None):
     """
     Marks a numeric variable as categorical.
 
@@ -26,6 +26,11 @@ def as_discrete(variable, label=None):
 
     label : string
         The name of the scale - used as the axis label or the legend title
+
+    order_by : string
+        The variable name to order by.
+    order : int
+        The ordering direction. 1 - ascending, -1 - descending.
 
     Returns
     -------
@@ -46,6 +51,6 @@ def as_discrete(variable, label=None):
     """
     if isinstance(variable, str):
         label = variable if label is None else label
-        return MappingMeta(variable, 'as_discrete', label=label)
+        return MappingMeta(variable, 'as_discrete', label=label, order_by=order_by, order=order)
     # aes(x=as_discrete([1, 2, 3])) - pass as is
     return variable

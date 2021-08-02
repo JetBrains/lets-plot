@@ -5,23 +5,18 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-class ReverseTransform(labelFormatter: ((Any) -> String)? = null) : FunTransform(
-    F,
-    F_INVERSE,
-    labelFormatter
-) {
-    companion object {
-        private val F: (Double?) -> Double? = { v ->
-            if (v != null)
-                -v
-            else
-                null
-        }
-        private val F_INVERSE: (Double?) -> Double? = { v ->
-            if (v != null)
-                -v
-            else
-                null
-        }
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.common.data.SeriesUtil
+
+internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
+    override fun hasDomainLimits() = false
+    override fun isInDomain(v: Double?): Boolean {
+        return SeriesUtil.isFinite(v)
+    }
+
+    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+        @Suppress("NAME_SHADOWING")
+        val middle = if (middle.isFinite()) middle else 0.0
+        return ClosedRange(middle - 0.5, middle + 0.5)
     }
 }

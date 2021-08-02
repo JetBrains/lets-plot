@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -16,14 +14,20 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Layer.NONE
+import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -35,6 +39,7 @@ class LayerConfig(
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
     plotDiscreteAes: Set<*>,
+    plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
     private val clientSide: Boolean
 ) : OptionsAccessor(
@@ -53,6 +58,7 @@ class LayerConfig(
     val constantsMap: Map<Aes<*>, Any>
 
     private val mySamplings: List<Sampling>?
+    private val myOrderOptions: List<OrderOption>
     val tooltips: TooltipSpecification
 
     var ownData: DataFrame? = null
@@ -61,7 +67,8 @@ class LayerConfig(
 
     val combinedData: DataFrame
         get() {
-            checkState(!myOwnDataUpdated)
+            // 'combinedData' is only valid before 'stst'/'sampling' occurs.
+            check(!myOwnDataUpdated)
             return myCombinedData
         }
 
@@ -72,13 +79,20 @@ class LayerConfig(
 
     val samplings: List<Sampling>?
         get() {
-            checkState(!clientSide)
+            check(!clientSide)
             return mySamplings
         }
 
     val isLiveMap: Boolean
         get() = geomProto.geomKind == GeomKind.LIVE_MAP
 
+    val orderOptions: List<OrderOption>
+        get() = myOrderOptions
+
+    val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
+        PosProto.STACK -> SeriesUtil::sum
+        else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
+    }
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -103,6 +117,7 @@ class LayerConfig(
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
             // Only keep those mapping options which can be consumed by this layer.
             // ToDo: report to user that some mappings are not applicable to this layer.
+            @Suppress("CascadeIf")
             if (it == Option.Mapping.GROUP) {
                 true
             } else if (it is String) {
@@ -172,11 +187,25 @@ class LayerConfig(
             geomProto.preferredPositionAdjustments(this)
         )
 
+        varBindings = LayerConfigUtil.createBindings(
+            combinedData,
+            aesMappings,
+            consumedAesSet,
+            clientSide
+        )
+        ownData = layerData
+
+        mySamplings = if (clientSide) {
+            null
+        } else {
+            LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        }
+
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
             when (get(TOOLTIPS)) {
                 is Map<*, *> -> {
-                    TooltipConfig(getMap(TOOLTIPS), constantsMap, explicitGroupingVarName).createTooltips()
+                    TooltipConfig(getMap(TOOLTIPS), constantsMap, explicitGroupingVarName, varBindings).createTooltips()
                 }
                 NONE -> {
                     // not show tooltips
@@ -190,19 +219,23 @@ class LayerConfig(
             TooltipSpecification.defaultTooltip()
         }
 
-        varBindings = LayerConfigUtil.createBindings(
-            combinedData,
-            aesMappings,
-            consumedAesSet,
-            clientSide
-        )
-        ownData = layerData
-        myCombinedData = combinedData
+        // TODO: handle order options combining to a config parsing stage
+        myOrderOptions = (
+                plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
+                        + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+                )
+            .inheritToNonDiscrete(combinedMappingOptions)
+            .groupingBy(OrderOption::variableName)
+            .reduce { _, combined, element -> combined.mergeWith(element) }
+            .values.toList()
 
-        mySamplings = if (clientSide) {
-            null
+        myCombinedData = if (clientSide) {
+            val orderSpecs = myOrderOptions.map {
+                createOrderSpec(combinedData.variables(), varBindings, it, aggregateOperation)
+            }
+            DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
         } else {
-            LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+            combinedData
         }
     }
 
@@ -233,7 +266,7 @@ class LayerConfig(
     }
 
     fun replaceOwnData(dataFrame: DataFrame?) {
-        checkState(!clientSide)   // This class is immutable on client-side
+        check(!clientSide)   // This class is immutable on client-side
         require(dataFrame != null)
         update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame
@@ -278,10 +311,9 @@ class LayerConfig(
             layerOptions: Map<*, *>,
             geomProto: GeomProto
         ): Map<String, Any> {
-            checkArgument(
-                layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT),
+            require(layerOptions.containsKey(GEOM) || layerOptions.containsKey(STAT)) {
                 "Either 'geom' or 'stat' must be specified."
-            )
+            }
 
             val defaults = HashMap<String, Any>()
             defaults.putAll(geomProto.defaultOptions())

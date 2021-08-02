@@ -54,7 +54,7 @@ internal class SinCosLineData(xMapper: (Int) -> Any, size: Int) {
             .build()
     }
 
-    fun distinctXValues(): Collection<*> {
+    fun distinctXValues(): Collection<Any> {
         return dataFrame.distinctValues(varX)
     }
 }

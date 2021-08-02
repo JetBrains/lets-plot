@@ -10,38 +10,17 @@ import jetbrains.datalore.plot.base.Scale
 
 
 object ScaleBreaksUtil {
-    fun <TargetT> withBreaks(scale: Scale<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale<TargetT> {
-        if (scale.hasBreaksGenerator()) {
-            val breaksHelper = scale.breaksGenerator.generateBreaks(scaleDomain, breakCount)
-            val breaks = breaksHelper.domainValues
-            val labels = breaksHelper.labels
-            return scale.with()
-                    .breaks(breaks)
-                    .labels(labels)
-                    .build()
-        }
-        return withLinearBreaks(
-            scale,
-            scaleDomain,
-            breakCount
-        )
-    }
-
-    private fun <TargetT> withLinearBreaks(scale: Scale<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale<TargetT> {
-        val breaksHelper = LinearBreaksHelper(
-            scaleDomain.lowerEnd,
-            scaleDomain.upperEnd,
-            breakCount
-        )
-        val breaks = breaksHelper.breaks
-        val labels = ArrayList<String>()
-        for (br in breaks) {
-            labels.add(breaksHelper.labelFormatter(br))
-        }
-
+    fun <TargetT> withBreaks(
+        scale: Scale<TargetT>,
+        transformedDomain: ClosedRange<Double>,
+        breakCount: Int
+    ): Scale<TargetT> {
+        val scaleBreaks = scale.breaksGenerator.generateBreaks(transformedDomain, breakCount)
+        val breaks = scaleBreaks.domainValues
+        val labels = scaleBreaks.labels
         return scale.with()
-                .breaks(breaks)
-                .labels(labels)
-                .build()
+            .breaks(breaks)
+            .labels(labels)
+            .build()
     }
 }

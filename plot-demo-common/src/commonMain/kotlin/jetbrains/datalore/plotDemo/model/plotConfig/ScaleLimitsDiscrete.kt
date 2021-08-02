@@ -37,7 +37,12 @@ open class ScaleLimitsDiscrete {
         }
 
 
-        fun getSpec(data: String, limits: String?, reverse: Boolean = false): MutableMap<String, Any> {
+        private fun getSpec(data: String, limits: String?, reverse: Boolean = false): MutableMap<String, Any> {
+
+            val limitsDescr = limits?.let { "limits: $it" } ?: "no limits"
+            val reverseDescr = if (reverse) ", reversed" else ""
+            val title = "$data, x: $limitsDescr $reverseDescr".filterNot { it == '\'' }
+
             val spec = """
 {
     'mapping':{}, 
@@ -57,7 +62,8 @@ open class ScaleLimitsDiscrete {
                 'mapping':{'x':'x', 'fill':'x'},
                 'geom':'tile'
             }
-        ]
+        ],
+    'ggtitle': {'text': "$title"}        
 }                
             """.trimIndent()
 

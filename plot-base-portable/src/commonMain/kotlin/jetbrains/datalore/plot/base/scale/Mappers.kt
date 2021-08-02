@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -31,7 +30,7 @@ object Mappers {
 
     fun mul(domain: ClosedRange<Double>, rangeSpan: Double): (Double?) -> Double? {
         val factor = rangeSpan / (domain.upperEnd - domain.lowerEnd)
-        checkState(!(factor.isInfinite() || factor.isNaN()), "Can't create mapper with ratio: $factor")
+        check(!(factor.isInfinite() || factor.isNaN())) { "Can't create mapper with ratio: $factor" }
         return mul(factor)
     }
 
@@ -43,11 +42,11 @@ object Mappers {
         }
     }
 
-    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>): (Double?) -> Double {
+    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, reverse: Boolean = false): (Double?) -> Double {
         return linear(
             domain,
-            range.lowerEnd,
-            range.upperEnd,
+            rangeLow = if (reverse) range.upperEnd else range.lowerEnd,
+            rangeHigh = if (reverse) range.lowerEnd else range.upperEnd,
             Double.NaN
         )
     }

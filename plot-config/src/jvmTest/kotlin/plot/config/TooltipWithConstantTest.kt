@@ -8,8 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
-import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -98,9 +97,7 @@ class TooltipWithConstantTest {
             "kind": "plot",
             "layers": [  { $layerSpec } ]
         }"""
-        val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(parsePlotSpec(spec))
-        val config = PlotConfigClientSide.create(transformed) {}
-        return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single().single()
+        return getSingleGeomLayer(spec)
     }
 
     private fun getTooltipLines(geomLayer: GeomLayer): List<String> {

@@ -18,6 +18,15 @@ class DataFrame private constructor(builder: Builder) {
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
+    class OrderSpec(
+        val variable: Variable,
+        val orderBy: Variable,
+        val direction: Int,
+        val aggregateOperation: ((List<Double?>) -> Double?)? = null
+    )
+
+    private val myOrderSpecs: List<OrderSpec>
+
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
 
@@ -25,6 +34,10 @@ class DataFrame private constructor(builder: Builder) {
         assertAllSeriesAreSameSize(builder.myVectorByVar)
         myVectorByVar = HashMap(builder.myVectorByVar)
         myIsNumeric = HashMap(builder.myIsNumeric)
+        myOrderSpecs = builder.myOrderSpecs
+        myOrderSpecs.forEach { orderSpec ->
+            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
+        }
     }
 
     private fun assertAllSeriesAreSameSize(vectorByVar: Map<Variable, List<*>>) {
@@ -176,6 +189,9 @@ class DataFrame private constructor(builder: Builder) {
         val isStat: Boolean
             get() = source == Source.STAT
 
+        val isTransform: Boolean
+            get() = source == Source.TRANSFORM
+
         override fun toString(): String {
             // important
             return name
@@ -202,21 +218,50 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
+    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any> {
+        fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
+
+        val orderedValues = if (orderSpec.aggregateOperation != null) {
+            require(isNumeric(orderSpec.orderBy)) { "Can't apply aggregate operation to non-numeric values" }
+            get(orderSpec.variable)
+                .zip(getNumeric(orderSpec.orderBy))
+                .groupBy({ (value) -> value }) { (_, byValue) -> byValue }
+                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues.filter(::isValueComparable)) }
+                .toList()
+        } else {
+            get(orderSpec.variable).zip(get(orderSpec.orderBy))
+        }
+            .filter { isValueComparable(it.second) && isValueComparable(it.first)}
+            .sortedWith(compareBy({ it.second as Comparable<*> }, { it.first as Comparable<*> }))
+            .mapNotNull { it.first }
+
+        // the values corresponding to non-comparable values will be placed at the end of the result
+        val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
+            .filterNot { isValueComparable(it.second) }
+            .mapNotNull { it.first }
+
+        return (if (orderSpec.direction < 0) {
+            orderedValues.reversed()
+        } else {
+            orderedValues
+        } + nonComparableAppendix).toSet()
+    }
+
     companion object {
         private val LOG = PortableLogging.logger(DataFrame::class)
     }
 
     class Builder {
-
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
+        internal val myOrderSpecs = ArrayList<OrderSpec>()
 
         constructor()
 
         constructor(data: DataFrame) {
             myVectorByVar.putAll(data.myVectorByVar)
             myIsNumeric.putAll(data.myIsNumeric)
-
+            myOrderSpecs.addAll(data.myOrderSpecs)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {
@@ -237,13 +282,28 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-        fun putIntern(variable: Variable, v: List<*>) {
+        internal fun putIntern(variable: Variable, v: List<*>) {
             myVectorByVar[variable] = ArrayList(v)
         }
 
         fun remove(variable: Variable): Builder {
             myVectorByVar.remove(variable)
             myIsNumeric.remove(variable)
+            return this
+        }
+
+        fun addOrderSpecs(orderSpecs: List<OrderSpec>): Builder {
+            orderSpecs.forEach(::addOrderSpec)
+            return this
+        }
+
+        fun addOrderSpec(orderSpec: OrderSpec): Builder {
+            val currentOrderSpec = myOrderSpecs.find { it.variable == orderSpec.variable }
+            // If multiple specifications for the variable - choose a more specific one:
+            if (currentOrderSpec?.aggregateOperation == null) {
+                myOrderSpecs.remove(currentOrderSpec)
+                myOrderSpecs.add(orderSpec)
+            }
             return this
         }
 

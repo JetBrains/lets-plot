@@ -34,8 +34,8 @@ class LayersRenderingSystem internal constructor(
     interface RenderingStrategy {
         fun render(
             renderingOrder: List<CanvasLayer>,
-            layerEntities: Iterable<EcsEntity>,
-            dirtyLayerEntities: Iterable<EcsEntity>
+            layerEntities: Collection<EcsEntity>,
+            dirtyLayerEntities: Collection<EcsEntity>
         )
     }
 }

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
@@ -29,7 +28,7 @@ class LegendAssembler(
     private val theme: LegendTheme
 ) {
 
-    private val myLegendLayers = ArrayList<LegendLayer>()
+    private val legendLayers = ArrayList<LegendLayer>()
 
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
@@ -37,32 +36,29 @@ class LegendAssembler(
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleByAes: TypedScaleMap,
-        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
+        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
-        myLegendLayers.add(
+        legendLayers.add(
             LegendLayer(
                 keyFactory,
                 varBindings,
                 constantByAes,
                 aestheticsDefaults,
                 scaleByAes,
-                dataRangeByAes
+                transformedDataRangeByAes
             )
         )
     }
 
     fun createLegend(): LegendBoxInfo {
         val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
-        for (legendLayer in myLegendLayers) {
+        for (legendLayer in legendLayers) {
             val keyElementFactory = legendLayer.keyElementFactory
-            val dataPoints = legendLayer.keyAesthetics!!.dataPoints().iterator()
-            for (label in legendLayer.keyLabels!!) {
-                if (!legendBreaksByLabel.containsKey(label)) {
-                    legendBreaksByLabel[label] =
-                        LegendBreak(label)
-                }
-                legendBreaksByLabel[label]!!.addLayer(dataPoints.next(), keyElementFactory)
+            val dataPoints = legendLayer.keyAesthetics.dataPoints().iterator()
+            for (label in legendLayer.keyLabels) {
+                legendBreaksByLabel.getOrPut(label) { LegendBreak(label) }
+                    .addLayer(dataPoints.next(), keyElementFactory)
             }
         }
 
@@ -81,7 +77,7 @@ class LegendAssembler(
 
         // legend options
         val legendOptionsList = ArrayList<LegendOptions>()
-        for (legendLayer in myLegendLayers) {
+        for (legendLayer in legendLayers) {
             val aesList = legendLayer.aesList
             for (aes in aesList) {
                 if (guideOptionsMap[aes] is LegendOptions) {
@@ -101,8 +97,7 @@ class LegendAssembler(
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
                 val c = LegendComponent(spec)
-                c.debug =
-                    DEBUG_DRAWING
+                c.debug = DEBUG_DRAWING
                 return c
             }
         }
@@ -115,50 +110,29 @@ class LegendAssembler(
         private val constantByAes: Map<Aes<*>, Any>,
         private val aestheticsDefaults: AestheticsDefaults,
         private val scaleMap: TypedScaleMap,
-        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
+        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
-        internal var keyAesthetics: Aesthetics? = null
-        internal var keyLabels: List<String>? = null
+        internal val keyAesthetics: Aesthetics
+        internal val keyLabels: List<String>
 
         internal val aesList: List<Aes<*>>
-            get() {
-                val result = ArrayList<Aes<*>>()
-                for (binding in varBindings) {
-                    result.add(binding.aes)
-                }
-                return result
-            }
+            get() = varBindings.map { it.aes }
 
         init {
-            init(dataRangeByAes)
-        }
-
-        private fun init(dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>) {
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
             for (varBinding in varBindings) {
                 val aes = varBinding.aes
                 var scale = scaleMap[aes]
                 if (!scale.hasBreaks()) {
-                    if (dataRangeByAes.containsKey(aes)) {
-                        scale = ScaleBreaksUtil.withBreaks(scale, dataRangeByAes[aes]!!, 5)
-                    } else {
-                        // skip this scale
-                        // (we should never get here)
-                        continue
-                    }
+                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDataRangeByAes.getValue(aes), 5)
                 }
-                checkState(scale.hasBreaks(), "No breaks were defined for scale $aes")
-                val values = ScaleUtil.breaksAesthetics(scale).iterator()
-                val labels = ScaleUtil.labels(scale)
-                for (label in labels) {
-                    if (!aesValuesByLabel.containsKey(label)) {
-                        aesValuesByLabel[label] = HashMap()
-                    }
+                check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
-                    val value = values.next()
-                    @Suppress("ReplacePutWithAssignment")
-                    aesValuesByLabel[label]!!.put(aes, value!!)
+                val aesValues = ScaleUtil.transformAndMap(scale.breaks, scale)
+                val labels = ScaleUtil.labels(scale)
+                for ((label, aesValue) in labels.zip(aesValues)) {
+                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue!!
                 }
             }
 
@@ -178,8 +152,7 @@ class LegendAssembler(
             options: LegendOptions = LegendOptions()
         ): LegendComponentSpec {
 
-            val legendDirection =
-                LegendAssemblerUtil.legendDirection(theme)
+            val legendDirection = LegendAssemblerUtil.legendDirection(theme)
 
             // key size
             fun pretty(v: DoubleVector): DoubleVector {
@@ -229,8 +202,7 @@ class LegendAssembler(
                         keySize
                     )
                 } else {
-                    layout =
-                        LegendComponentLayout.horizontal(title, breaks, keySize)
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySize)
                 }
             } else {
                 layout = LegendComponentLayout.vertical(title, breaks, keySize)
@@ -244,7 +216,8 @@ class LegendAssembler(
                 title,
                 breaks,
                 theme,
-                layout
+                layout,
+                reverse = false
             )
         }
     }

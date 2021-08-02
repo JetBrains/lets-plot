@@ -34,12 +34,12 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
+import kotlinx.browser.document
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import kotlinx.browser.document
 import org.w3c.dom.events.MouseEvent as W3cMouseEvent
 
 class DomCanvasControl(
@@ -129,6 +129,8 @@ class DomCanvasControl(
         EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
         private var myWasDragged = false
+        private var myButtonPressCoord: Vector? = null
+        private val myDragToleranceDistance = 3.0
 
         init {
             handle(MOUSE_ENTER) {
@@ -162,20 +164,29 @@ class DomCanvasControl(
                 if (!isHitOnTarget(it)) return@handle
 
                 myButtonPressed = true
+                myButtonPressCoord = Vector(it.x.toInt(), it.y.toInt())
                 dispatch(MouseEventSpec.MOUSE_PRESSED, translateInPageCoord(it))
             }
 
             handle(MOUSE_UP) {
                 myButtonPressed = false
+                myButtonPressCoord = null
                 dispatch(MouseEventSpec.MOUSE_RELEASED, translate(it))
             }
 
             handle(MOUSE_MOVE) {
-                if (myButtonPressed) {
-                    myWasDragged = true
-
+                if (myWasDragged) {
                     dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
-                } else {
+                }
+                else if (myButtonPressed && !myWasDragged) {
+                    val distance = myButtonPressCoord?.sub(Vector(it.x.toInt(), it.y.toInt()))?.length() ?: 0.0
+                    if (distance > myDragToleranceDistance) {
+                        myWasDragged = true
+                        dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
+                    } else {
+                        // Just in case do not generate move event. Can be changed if needed.
+                    }
+                } else if (!myButtonPressed && !myWasDragged) {
                     if (!isHitOnTarget(it)) return@handle
 
                     dispatch(MouseEventSpec.MOUSE_MOVED, translate(it))

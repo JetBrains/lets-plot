@@ -15,15 +15,17 @@ from .geo_data import get_map_data_meta, assert_error
 
 
 def geo_data_frame(geometry, columns=[]):
-    data = { key: None for key in columns }
+    data = {key: None for key in columns}
     data['coord'] = geometry
     return GeoDataFrame(
         data=data,
         geometry='coord'
     )
 
+
 def get_map(plot_spec) -> dict:
     return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['map']
+
 
 def get_map_join(plot_spec) -> dict:
     return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['map_join']
@@ -40,7 +42,7 @@ def assert_map_data_meta(plot_spec):
 
 def test_geom_path_raises_an_error():
     assert_error(
-        "Geocoding doesn't provide geometries supported by geom_path",
+        "Geocoding doesn't provide geometries for geom_path",
         lambda: ggplot() + geom_path(map=mock_geocoder())
     )
 
@@ -100,8 +102,10 @@ def test_data_should_call_to_dataframe():
     geocoder.assert_get_geocodes_invocation()
     assert geocoder.get_test_geocodes() == get_layer_spec(plot_spec, 'data')
 
+
 def get_layer_spec(plot_spec, spec_name):
     return _standardize_plot_spec(plot_spec.as_dict())['layers'][0][spec_name]
+
 
 @pytest.mark.parametrize('map_join,map_columns,expected', [
     (
@@ -109,12 +113,22 @@ def get_layer_spec(plot_spec, spec_name):
             [DF_COLUMN_CITY],
             [['City_Name'], [DF_COLUMN_CITY]]
     ),
-    (       # automatically use all names from map as multi-key
-            ['City_Name', 'State_Name'],
+    (  # Pair of string - simple keys for both data and map
+            ['City_Name', DF_COLUMN_CITY],
+            [DF_COLUMN_CITY],
+            [['City_Name'], [DF_COLUMN_CITY]]
+    ),
+    (  # Pair of lists - simple keys for both data and map
+            [['City_Name'], [DF_COLUMN_CITY]],
+            [DF_COLUMN_CITY],
+            [['City_Name'], [DF_COLUMN_CITY]]
+    ),
+    (  # List of list - data multikey. Deduce map multikey
+            [['City_Name', 'State_Name']],
             [DF_COLUMN_CITY, DF_COLUMN_STATE],
             [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
     ),
-    (       # not all names were used for join
+    (  # not all names were used for join
             [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]],
             [DF_COLUMN_CITY, 'county', DF_COLUMN_STATE],
             [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
@@ -125,22 +139,37 @@ def get_layer_spec(plot_spec, spec_name):
             None
     ),
     (
-            ['City_Name', 'State_Name'],
+            [['City_Name', 'State_Name']],
             [DF_COLUMN_CITY],
-            "`map_join` expected to have (1) items, but was(2)"
+            "Data key columns count exceeds map key columns count: 2 > 1"
+    ),
+    (
+            ['City_Name', 'County_Name', 'State_Name'],
+            [DF_COLUMN_CITY, DF_COLUMN_COUNTY, DF_COLUMN_STATE],
+            "map_join of type list[str] expected to have 1 or 2 items, but was 3"
     ),
     (
             'City_Name',
             [DF_COLUMN_CITY, DF_COLUMN_STATE],
-            "`map_join` expected to have (2) items, but was(1)"
+            [['City_Name'], [DF_COLUMN_CITY]]
     ),
     (
+            # HACK
+            # Fake columns that never can be returned in real Geocoder to emulate generic GeoDataFrame
             'City_Name',
-            [DF_COLUMN_CITY, DF_COLUMN_STATE],
-            "`map_join` expected to have (2) items, but was(1)"
+            ['absolutely_not_geocoding_gdf_city', 'absolutely_not_geocoding_gdf_state'],
+            "Can't deduce joining keys.\n"
+            "Define both data and map key columns in map_join explicitly: map_join=[['data_column'], ['map_column']]."
+    ),
+    (
+            # HACK
+            # Fake columns that never can be returned in real Geocoder to emulate generic GeoDataFrame
+            [['City_Name', 'State_Name'], ['absolutely_not_geocoding_gdf_city', 'absolutely_not_geocoding_gdf_state']],
+            ['absolutely_not_geocoding_gdf_city', 'absolutely_not_geocoding_gdf_state'],
+            [['City_Name', 'State_Name'], ['absolutely_not_geocoding_gdf_city', 'absolutely_not_geocoding_gdf_state']]
     ),
 ])
-def test_map_join_regions(map_join, map_columns, expected):
+def test_map_join_with_geodata(map_join, map_columns, expected):
     class MockGeocoder(Geocoder):
         def get_centroids(self) -> 'GeoDataFrame':
             return geo_data_frame([Point(-5, 17)], map_columns)
@@ -148,47 +177,18 @@ def test_map_join_regions(map_join, map_columns, expected):
         def get_geocodes(self) -> pandas.DataFrame:
             return pandas.DataFrame(columns=map_columns)
 
-    geocoder = MockGeocoder()
+    def run_test(map_param):
+        if not isinstance(expected, str):
+            plot_spec = ggplot() + geom_point(map_join=map_join, map=map_param)
+            assert get_layer_spec(plot_spec, 'map_join') == expected
+        else:
+            assert_error(
+                expected,
+                lambda: ggplot() + geom_point(map_join=map_join, map=map_param)
+            )
 
-    if not isinstance(expected, str):
-        plot_spec = ggplot() + geom_point(map_join=map_join, map=geocoder)
-        assert get_layer_spec(plot_spec, 'map_join') == expected
-    else:
-        assert_error(
-            expected,
-            lambda :ggplot() + geom_point(map_join=map_join, map=geocoder)
-        )
-
-
-@pytest.mark.parametrize('map_join,geocoder_columns,expected', [
-    (
-            ['State_Name'],
-            [DF_COLUMN_STATE],
-            [['State_Name'], [DF_COLUMN_STATE]]
-    ),
-    (
-            ['City_Name', 'State_Name'],
-            [DF_COLUMN_CITY, DF_COLUMN_STATE],
-            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
-    ),
-    (
-            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]],
-            [DF_COLUMN_CITY, DF_COLUMN_STATE],
-            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
-    ),
-    (
-            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]],
-            [DF_COLUMN_CITY, DF_COLUMN_COUNTY, DF_COLUMN_STATE],
-            [['City_Name', 'State_Name'], [DF_COLUMN_CITY, DF_COLUMN_STATE]]
-    ),
-    (None, None, None)
-])
-def test_auto_join_geocoder(map_join, geocoder_columns, expected):
-    class MockGeocoder(Geocoder):
-        def get_geocodes(self):
-            return pandas.DataFrame(columns=geocoder_columns)
-
-    assert util.auto_join_geocoder(map_join, MockGeocoder()) == expected
+    run_test(MockGeocoder())  # with geocoder
+    run_test(MockGeocoder().get_centroids())  # same with GeoDataFrame
 
 
 def mock_geocoder() -> 'MockGeocoder':
@@ -203,7 +203,8 @@ def mock_geocoder() -> 'MockGeocoder':
 
     polygon_dict = {
         'coord': [
-            '{"type": "Polygon", "coordinates": [[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [7.0, 4.0], [11.0, 12.0]]]}', '{"type": "Polygon", "coordinates": [[[10.0, 2.0], [13.0, 10.0], [12.0, 3.0], [10.0, 2.0]]]}'
+            '{"type": "Polygon", "coordinates": [[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [7.0, 4.0], [11.0, 12.0]]]}',
+            '{"type": "Polygon", "coordinates": [[[10.0, 2.0], [13.0, 10.0], [12.0, 3.0], [10.0, 2.0]]]}'
         ]
     }
 
@@ -241,6 +242,5 @@ def mock_geocoder() -> 'MockGeocoder':
 
         def assert_get_geocodes_invocation(self):
             assert self._get_geocodes_invoked, 'to_data_frame() invocation expected, but not happened'
-
 
     return MockGeocoder()

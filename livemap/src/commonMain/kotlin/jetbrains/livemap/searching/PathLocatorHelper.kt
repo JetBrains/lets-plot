@@ -22,6 +22,11 @@ class PathLocatorHelper : LocatorHelper {
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
+        if (!target.contains(LOCATABLE_COMPONENTS)) {
+            println("missing locatable components")
+            return false
+        }
+
         val strokeRadius: Double = target.get<StyleComponent>().strokeWidth / 2
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
             if (isCoordinateInPath(coord - origin, strokeRadius, target.get<ScreenGeometryComponent>().geometry)) {
@@ -45,5 +50,9 @@ class PathLocatorHelper : LocatorHelper {
             }
         }
         return false
+    }
+
+    companion object {
+        val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
     }
 }

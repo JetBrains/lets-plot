@@ -5,13 +5,12 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
@@ -64,10 +63,19 @@ abstract class PlotConfig(
         layerConfigs = createLayerConfigs(sharedData)
 
         // build all scales
+        val excludeStatVariables = !isClientSide
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        val scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
+        val scaleProviderByAes = PlotConfigUtil.createScaleProviders(
+            layerConfigs, scaleConfigs, excludeStatVariables
+        )
+        val transformsByAes = PlotConfigUtil.createTransforms(
+            layerConfigs, scaleProviderByAes, excludeStatVariables
+        )
 
-        scaleMap = PlotConfigUtil.createScales(layerConfigs, scaleProvidersMap, isClientSide)
+        // ToDo: First transform data then create scales.
+        scaleMap = PlotConfigUtil.createScales(
+            layerConfigs, transformsByAes, scaleProviderByAes, excludeStatVariables
+        )
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
@@ -103,23 +111,21 @@ abstract class PlotConfig(
         return result
     }
 
-    private fun createLayerConfigs(
-        sharedData: DataFrame
-    ): List<LayerConfig> {
+    private fun createLayerConfigs(sharedData: DataFrame): List<LayerConfig> {
 
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
         for (layerOptions in layerOptionsList) {
-            checkArgument(
-                layerOptions is Map<*, *>,
-                "Layer options: expected Map but was " + layerOptions!!::class.simpleName
-            )
+            require(layerOptions is Map<*, *>) { "Layer options: expected Map but was ${layerOptions!!::class.simpleName}" }
             @Suppress("UNCHECKED_CAST")
+            layerOptions as Map<String, Any>
+
             val layerConfig = createLayerConfig(
-                layerOptions as Map<String, Any>,
+                layerOptions,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
+                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
+                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING))
             )
             layerConfigs.add(layerConfig)
         }
@@ -130,12 +136,13 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>
+        plotDiscreteAes: Set<*>,
+        plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig
 
 
     protected fun replaceSharedData(plotData: DataFrame) {
-        checkState(!isClientSide)   // This class is immutable on client-side
+        check(!isClientSide)   // This class is immutable on client-side
         sharedData = plotData
         update(DATA, DataFrameUtil.toMap(plotData))
     }

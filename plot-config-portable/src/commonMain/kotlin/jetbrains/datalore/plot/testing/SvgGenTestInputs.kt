@@ -57,10 +57,10 @@ fun rawSpecStr_GGBunchItemPlot(): String {
     return """
         |{
         |   'kind': 'plot',
-        |   'data': {'x': [1, 2], 'y': [0, 3]},
+        |   'data': {'a': [1, 2], 'b': [0, 3]},
         |   'mapping':  {
-        |                   'x': 'x',
-        |                   'y': 'y'
+        |                   'x': 'a',
+        |                   'y': 'b'
         |               },
         |   'layers':   [
         |                   {

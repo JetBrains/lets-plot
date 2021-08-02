@@ -8,11 +8,12 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.vis.canvas.awt.AwtAnimationTimerPeer
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
 import java.awt.Dimension
 import javax.swing.JFrame
+import javax.swing.JFrame.EXIT_ON_CLOSE
 import javax.swing.JPanel
 
 class FeaturesRawAwtDemo {
@@ -22,23 +23,21 @@ class FeaturesRawAwtDemo {
             size = canvasSize
         }
 
+        val canvasControl = AwtCanvasControl(
+            canvasSize.toVector(),
+            AwtEventPeer(canvasContainer, Rectangle(Vector.ZERO, canvasSize.toVector())),
+            AwtAnimationTimerPeer()
+        )
+
+        FeaturesDemoModel(canvasSize.toDoubleVector()).show(canvasControl)
+
         JFrame().apply {
             size = canvasSize
             isVisible = true
+            defaultCloseOperation = EXIT_ON_CLOSE
             add(canvasContainer)
         }
-
-        val canvasControl = AwtCanvasControl(
-            root = canvasContainer,
-            size = canvasSize.toVector(),
-            myPixelRatio = 1.0,
-            myEventPeer = AwtEventPeer(canvasContainer, Rectangle(Vector.ZERO, canvasSize.toVector())),
-            myTimer = AwtRepaintTimer(canvasContainer::repaint)
-        )
-
-        val canvas = canvasControl.createCanvas(canvasSize.toVector())
-        canvasControl.addChild(canvas)
-        FeaturesDemoModel(canvasSize.toDoubleVector()).show(canvasControl)
+        canvasContainer.add(canvasControl.component())
     }
 
     companion object {

@@ -13,11 +13,17 @@ import jetbrains.livemap.core.input.CursorStyle
 import jetbrains.livemap.core.input.CursorStyleComponent
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.MouseInputComponent
+import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.primitives.RenderBox
 import jetbrains.livemap.ui.UiRenderingTaskSystem.UiLayerComponent
 
 class UiService(private val myComponentManager: EcsComponentManager, val resourceManager: ResourceManager) {
+
+    fun repaint() {
+        val uiLayerEntityId = myComponentManager.getEntity(UiLayerComponent::class).id
+        myComponentManager.getEntityById(uiLayerEntityId).tag(::DirtyCanvasLayerComponent)
+    }
 
     fun addRenderable(renderBox: RenderBox, name: String = "ui_renderable"): EcsEntity {
         return addParentLayerComponent(myComponentManager.createEntity(name), renderBox)

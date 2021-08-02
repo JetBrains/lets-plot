@@ -29,14 +29,21 @@ import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.gcommon.collect.Comparables.min
 
 open class ClosedRange<T : Comparable<T>>(
-    val lowerEnd: T,
-    val upperEnd: T
+    lower: T,
+    upper: T
 ) {
+    val lowerEnd: T
+    val upperEnd: T
 
     init {
-        (lowerEnd as? Double)?.run { require(!isNaN()) { "ends can't be None: lower=$lowerEnd upper=$upperEnd" } }
-        (upperEnd as? Double)?.run { require(!isNaN()) { "ends can't be None: lower=$lowerEnd upper=$upperEnd" } }
-        require(lowerEnd <= upperEnd) { "`lower` must be less or equal to `upper`: lower=$lowerEnd upper=$upperEnd" }
+        (lower as? Double)?.run { require(isFinite()) {
+            "ends must be finite: lower=$lower upper=$upper"
+        } }
+        (upper as? Double)?.run { require(isFinite()) {
+            "ends must be finite: lower=$lower upper=$upper" }
+        }
+        lowerEnd = min(lower, upper)
+        upperEnd = max(lower, upper)
     }
 
     operator fun contains(v: T): Boolean {
