@@ -2673,7 +2673,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                            for i in range(1, m + 1)})
         ggplot(df.melt()) + \\
             geom_boxplot(aes(x='variable', y='value', color='variable', \\
-                             fill='variable', outlier_color='variable'), \\
+                             fill='variable'), \\
                          outlier_shape=21, outlier_size=4, size=2, \\
                          alpha=.5, width=.5, show_legend=False)
 
