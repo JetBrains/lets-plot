@@ -90,10 +90,6 @@ object ScaleUtil {
         return axisBreaks
     }
 
-    fun <T> breaksAesthetics(scale: Scale<T>): List<T?> {
-        return transformAndMap(scale.breaks, scale)
-    }
-
     fun map(range: ClosedRange<Double>, scale: Scale<Double>): ClosedRange<Double> {
         return MapperUtil.map(range, scale.mapper)
     }
@@ -105,9 +101,30 @@ object ScaleUtil {
         }
     }
 
-    private fun <T> transformAndMap(l: List<*>, scale: Scale<T>): List<T?> {
-        val tl = scale.transform.apply(l)
-        return map(tl, scale)
+    fun <T> transformAndMap(l: List<*>, scale: Scale<T>): List<T?> {
+        val cleaned = cleanUpTransformSource(l, scale)
+        val transformed = scale.transform.apply(cleaned)
+        return map(transformed, scale)
+    }
+
+    fun cleanUpTransformSource(source: List<*>, scale: Scale<*>): List<Any?> {
+        @Suppress("NAME_SHADOWING")
+        var source: List<Any?> = source
+
+        // Replace values outside 'scale limits' with null-s.
+        if (scale.hasDomainLimits()) {
+            source = source.map { if (it == null || scale.isInDomainLimits(it)) it else null }
+        }
+
+        // Replace values outside of domain of 'continuous transform' with null-s.
+        if (scale.transform is ContinuousTransform) {
+            val continuousTransform = scale.transform as ContinuousTransform
+            if (continuousTransform.hasDomainLimits()) {
+                source = source.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
+            }
+        }
+
+        return source
     }
 
     fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale<*>): List<Double?> {

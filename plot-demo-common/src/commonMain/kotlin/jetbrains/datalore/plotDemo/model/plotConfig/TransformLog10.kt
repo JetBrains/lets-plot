@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.math.pow
 import kotlin.random.Random
 
-class IntDev {
+class TransformLog10 {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             issue292(),

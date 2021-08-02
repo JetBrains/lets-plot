@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Scale
 
 interface ScaleProvider<T> {
     val discreteDomain: Boolean
+    val breaks: List<Any>?
     val discreteDomainLimits: List<Any>?
     val continuousTransform: ContinuousTransform
 

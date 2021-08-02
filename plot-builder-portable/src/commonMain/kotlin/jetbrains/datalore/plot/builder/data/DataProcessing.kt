@@ -58,6 +58,7 @@ object DataProcessing {
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
+        aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
@@ -65,28 +66,26 @@ object DataProcessing {
         }
 
         val groups = groupingContext.groupMapper
-        val resultSeries = HashMap<Variable, List<Any>>()
 
-        val groupSizeListAfterStat = ArrayList<Int>()
+        val resultSeries: Map<Variable, List<Any?>>
+        val groupSizeListAfterStat: List<Int>
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
             val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
-            groupSizeListAfterStat.add(sd.rowCount())
-            for (variable in sd.variables()) {
-                @Suppress("UNCHECKED_CAST")
-                val list = sd[variable] as List<Any>
-                resultSeries[variable] = list
-            }
+            groupSizeListAfterStat = listOf(sd.rowCount())
+            resultSeries = sd.variables().associateWith { variable -> sd[variable] }
         } else { // add offset to each group
+            val groupMerger = GroupMerger()
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
                 var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
+                groupMerger.initOrderSpecs(orderOptions, sd.variables(), bindings, aggregateOperation)
 
-                groupSizeListAfterStat.add(sd.rowCount())
+                val curGroupSizeAfterStat = sd.rowCount()
 
                 // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                 if (sd.has(Stats.GROUP)) {
@@ -112,15 +111,12 @@ object DataProcessing {
                     }
                 }
 
-                // merge results
-                for (variable in sd.variables()) {
-                    if (!resultSeries.containsKey(variable)) {
-                        resultSeries[variable] = ArrayList()
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    (resultSeries[variable] as MutableList).addAll(sd[variable] as List<Any>)
-                }
+                // Add group's data
+                groupMerger.addGroup(sd, curGroupSizeAfterStat)
             }
+            // Get merged series
+            resultSeries = groupMerger.getResultSeries()
+            groupSizeListAfterStat = groupMerger.getGroupSizes()
         }
 
         val dataAfterStat = Builder().run {
@@ -131,7 +127,7 @@ object DataProcessing {
 
             // set ordering specifications
             val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption)
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption, aggregateOperation)
             }
             addOrderSpecs(orderSpecs)
 

@@ -40,7 +40,7 @@ class DataFrameDistinctValuesTest {
         run {
             // Ascending
             val orderSpecs = listOf(
-                OrderSpec(variable, orderBy = variable, direction = 1, aggregateOperation = null),
+                OrderSpec(variable, orderBy = variable, direction = 1),
                 OrderSpec(orderByVariable, orderBy = orderByVariable, direction = 1)
             )
             val df = builder()
@@ -56,7 +56,7 @@ class DataFrameDistinctValuesTest {
         run {
             // Descending
             val orderSpecs = listOf(
-                OrderSpec(variable, orderBy = variable, direction = -1, aggregateOperation = null),
+                OrderSpec(variable, orderBy = variable, direction = -1),
                 OrderSpec(orderByVariable, orderBy = orderByVariable, direction = -1)
             )
             val df = builder()
@@ -72,12 +72,7 @@ class DataFrameDistinctValuesTest {
         run {
             // order by ascending orderByVariable
             val df = builder()
-                .addOrderSpec(
-                    OrderSpec(
-                        variable, orderByVariable, direction = 1,
-                        aggregateOperation = { v: List<Double?> -> v.filterNotNull().minOrNull() }
-                    )
-                )
+                .addOrderSpec(OrderSpec(variable, orderByVariable, direction = 1))
                 .build()
 
             assertDistinctValues(df, mapOf(
@@ -101,7 +96,7 @@ class DataFrameDistinctValuesTest {
     @Test
     fun `correct ordering should be kept after dataframe rebuilding`() {
         val orderSpecs = listOf(
-            OrderSpec(variable, variable, direction = 1, aggregateOperation = null),
+            OrderSpec(variable, variable, direction = 1),
             OrderSpec(orderByVariable, orderByVariable, direction = -1)
         )
         // Build dataFrame with ordering specifications
@@ -134,7 +129,7 @@ class DataFrameDistinctValuesTest {
         run {
             // Add ordering specs
             val df = builder
-                .addOrderSpec(OrderSpec(variable, orderBy = variable, direction = 1, aggregateOperation = null))
+                .addOrderSpec(OrderSpec(variable, orderBy = variable, direction = 1))
                 .build()
             assertDistinctValues(df, mapOf(variable to listOf("A", "B", "C")))
         }
@@ -176,7 +171,7 @@ class DataFrameDistinctValuesTest {
             val df = builder()
                 .addOrderSpec(OrderSpec(variable, orderByVariable, direction = -1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "D", "C")))
+            assertDistinctValues(df, mapOf(variable to listOf("B", "A", "D", "C")))
         }
         run {
             val df = DataFrame.Builder()
@@ -205,7 +200,7 @@ class DataFrameDistinctValuesTest {
             val df = builder()
                 .addOrderSpec(OrderSpec(variable, orderByVariable, direction = -1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "D", "C")))
+            assertDistinctValues(df, mapOf(variable to listOf("B", "A", "D", "C")))
         }
     }
 
@@ -307,6 +302,22 @@ class DataFrameDistinctValuesTest {
                 .build()
             assertDistinctValues(df, expectedDistinctValues)
         }
+    }
+
+    @Test
+    fun `order by the same values - check also the variable values`() {
+        fun builder() = DataFrame.Builder()
+            .put(variable, listOf("B", "A", "C"))
+            .put(orderByVariable, listOf(0.0, 0.0, 0.0))
+
+        val df = builder()
+            .addOrderSpec(OrderSpec(variable, orderBy = orderByVariable, direction = 1))
+            .build()
+        val expectedDistinctValues = mapOf(
+            variable to listOf("A", "B", "C"),
+            orderByVariable to listOf(0.0)
+        )
+        assertDistinctValues(df, expectedDistinctValues)
     }
 
     private fun assertDistinctValues(df: DataFrame, expectedDistinctValues: Map<DataFrame.Variable, List<Any>>) {

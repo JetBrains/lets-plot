@@ -57,7 +57,7 @@ final class DiscreteTransform(
             return numberByDomainValue[input]
         }
 
-        throw IllegalArgumentException(
+        throw IllegalStateException(
             "value $input is not in the domain: ${numberByDomainValue.keys}"
         )
     }

@@ -209,9 +209,13 @@ object PlotConfigUtil {
         // create discrete transforms.
         val discreteTransformByAes = HashMap<Aes<*>, DiscreteTransform>()
         for (aes in discreteAesSet) {
+            val scaleProvider = scaleProviderByAes.getValue(aes)
+            val scaleBreaks = scaleProvider.breaks ?: emptyList()
+            val domainValues = discreteDomainByAes.getValue(aes)
+            val effectiveDomain = (scaleBreaks + domainValues).distinct()
             val transform = DiscreteTransform(
-                domainValues = discreteDomainByAes.getValue(aes),
-                domainLimits = scaleProviderByAes.getValue(aes).discreteDomainLimits ?: emptyList()
+                domainValues = effectiveDomain,
+                domainLimits = scaleProvider.discreteDomainLimits ?: emptyList()
             )
             discreteTransformByAes[aes] = transform
         }

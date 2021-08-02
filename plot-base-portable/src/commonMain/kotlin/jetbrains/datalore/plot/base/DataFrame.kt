@@ -226,13 +226,13 @@ class DataFrame private constructor(builder: Builder) {
             get(orderSpec.variable)
                 .zip(getNumeric(orderSpec.orderBy))
                 .groupBy({ (value) -> value }) { (_, byValue) -> byValue }
-                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues) }
+                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues.filter(::isValueComparable)) }
                 .toList()
         } else {
             get(orderSpec.variable).zip(get(orderSpec.orderBy))
         }
-            .filter { isValueComparable(it.second) }
-            .sortedWith(compareBy { it.second as Comparable<*> })
+            .filter { isValueComparable(it.second) && isValueComparable(it.first)}
+            .sortedWith(compareBy({ it.second as Comparable<*> }, { it.first as Comparable<*> }))
             .mapNotNull { it.first }
 
         // the values corresponding to non-comparable values will be placed at the end of the result

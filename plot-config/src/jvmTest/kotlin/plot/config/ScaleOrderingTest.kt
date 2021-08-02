@@ -5,8 +5,13 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.PlotUtil
+import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,21 +19,24 @@ import kotlin.test.assertEquals
 
 class ScaleOrderingTest {
     private val myData = """{
-        'x'   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C" ],
-        'fill':  [ '4', '2', '3', '3', '2', '3', '1', '1', '3', '4', '2' ]
+        'x'   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C", "B", "C" ],
+        'fill':  [ '4', '2', '3', '3', '2', '3', '1', '1', '3', '4', '2', '2', '2' ],
+        'color': [ '1', '0', '2', '1', '1', '2', '1', '1', '0', '2', '0', '0', '0' ]
     }"""
-    private val myMapping: String = """{ "x": "x", "fill": "fill" }"""
+    private val myMappingFill: String = """{ "x": "x", "fill": "fill" }"""
+    private val myMappingFillColor = """{ "x": "x", "fill": "fill", "color": "color" }"""
 
     private fun makePlotSpec(
         annotations: String,
         sampling: String? = null,
-        mapping: String = myMapping
+        data: String = myData,
+        mapping: String = myMappingFill
     ): String {
         return """{
               "kind": "plot",
               "layers": [
                 {
-                  "data" : $myData,
+                  "data" : $data,
                   "mapping": $mapping,
                   "geom": "bar",
                   "data_meta": { "mapping_annotations": [ $annotations ] },
@@ -52,12 +60,23 @@ class ScaleOrderingTest {
             }""".trimIndent()
     }
 
-
     @Test
     fun default() {
         val geomLayer = getSingleGeomLayer(makePlotSpec(""))
-        assertScaleBreaks(geomLayer, Aes.X, listOf("B", "C", "A"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+        assertScaleOrdering(
+            geomLayer,
+            expectedScaleBreaks = mapOf(
+                Aes.X to listOf("B", "C", "A"),
+                Aes.FILL to listOf("4", "2", "3", "1")
+            ),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to listOf(
+                    listOf("4", "2", "3", "1"),  // B
+                    listOf("4", "2"),            // C
+                    listOf("2", "3", "1")        // A
+                )
+            )
+        )
     }
 
     @Test
@@ -66,15 +85,39 @@ class ScaleOrderingTest {
             //ascending
             val orderingSettings = makeOrderingSettings("x", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("A", "B", "C"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("2", "3", "1"),       // A
+                        listOf("4", "2", "3", "1"),  // B
+                        listOf("4", "2")             // C
+                    )
+                )
+            )
         }
         run {
             //descending
             val orderingSettings = makeOrderingSettings("x", null, -1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "B", "A"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "B", "A"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2"),            // C
+                        listOf("4", "2", "3", "1"),  // B
+                        listOf("2", "3", "1"),       // A
+                    )
+                )
+            )
         }
     }
 
@@ -84,17 +127,39 @@ class ScaleOrderingTest {
             //ascending
             val orderingSettings = makeOrderingSettings("fill", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("1", "2", "3", "4"))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "C", "A"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.FILL to listOf("1", "2", "3", "4"),
+                    Aes.X to listOf("A", "B", "C")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("1", "2", "3"),       // A
+                        listOf("1", "2", "3", "4"),  // B
+                        listOf("2", "4"),            // C
+                    )
+                )
+            )
         }
         run {
             //descending
             val orderingSettings = makeOrderingSettings("fill", null, -1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "3", "2", "1"))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "C", "A"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.FILL to listOf("4", "3", "2", "1"),
+                    Aes.X to listOf("B", "C", "A")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "3", "2", "1"), // B
+                        listOf("4", "2"),           // C
+                        listOf("3", "2", "1")       // A
+                    )
+                )
+            )
         }
     }
 
@@ -104,15 +169,39 @@ class ScaleOrderingTest {
             //ascending
             val orderingSettings = makeOrderingSettings("x", "..count..", 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "A", "B"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "A", "B"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2"),           // C
+                        listOf("2", "3", "1"),      // A
+                        listOf("4", "2", "3", "1")  // B
+                    )
+                )
+            )
         }
         run {
             //descending
             val orderingSettings = makeOrderingSettings("x", "..count..", -1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("B", "A", "C"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2", "3", "1"),  // B
+                        listOf("2", "3", "1"),       // A
+                        listOf("4", "2")             // C
+                    )
+                )
+            )
         }
     }
 
@@ -123,16 +212,40 @@ class ScaleOrderingTest {
             val orderingSettings =
                 makeOrderingSettings("x", null, -1) + "," + makeOrderingSettings("fill", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "B", "A"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("1", "2", "3", "4"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "B", "A"),
+                    Aes.FILL to listOf("1", "2", "3", "4")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("2", "4"),           // C
+                        listOf("1", "2", "3", "4"), // B
+                        listOf("1", "2", "3")       // A
+                    )
+                )
+            )
         }
         run {
             //x descending - fill descending
             val orderingSettings =
                 makeOrderingSettings("x", null, -1) + "," + makeOrderingSettings("fill", null, -1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "B", "A"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "3", "2", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "B", "A"),
+                    Aes.FILL to listOf("4", "3", "2", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2"),            // C
+                        listOf("4", "3", "2", "1"),  // B
+                        listOf("3", "2", "1")        // A
+                    )
+                )
+            )
         }
     }
 
@@ -143,18 +256,69 @@ class ScaleOrderingTest {
             val orderingSettings =
                 makeOrderingSettings("x", "..count..", 1) + "," + makeOrderingSettings("fill", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "A", "B"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("1", "2", "3", "4"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "A", "B"),
+                    Aes.FILL to listOf("1", "2", "3", "4")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("2", "4"),            // C
+                        listOf("1", "2", "3"),       // A
+                        listOf("1", "2", "3", "4")   // B
+                    )
+                )
+            )
         }
         run {
             //descending
             val orderingSettings =
                 makeOrderingSettings("x", "..count..", -1) + "," + makeOrderingSettings("fill", null, -1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "3", "2", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("B", "A", "C"),
+                    Aes.FILL to listOf("4", "3", "2", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "3", "2", "1"), // B
+                        listOf("3", "2", "1"),      // A
+                        listOf("4", "2")            // C
+                    )
+                )
+            )
         }
     }
+
+    @Test
+    fun `order by fill and color`() {
+        val orderingSettings = makeOrderingSettings("color", null, 1) + "," + makeOrderingSettings("fill", null, 1)
+        val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = myMappingFillColor))
+        assertScaleOrdering(
+            geomLayer,
+            expectedScaleBreaks = mapOf(
+                Aes.COLOR to listOf("0", "1", "2"),
+                Aes.FILL to listOf("1", "2", "3", "4"),
+                Aes.X to listOf("A", "C", "B")
+            ),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to listOf(
+                    listOf("2", "1", "2", "3"),             // A
+                    listOf("2", "4"),                       // C
+                    listOf("2", "3", "1", "3", "4", "3"),   // B
+                ),
+                Aes.COLOR to listOf(
+                    listOf("0", "1", "1", "2"),              // A
+                    listOf("0", "2"),                        // C
+                    listOf("0", "0", "1", "1", "1", "2"),    // B
+                ),
+            )
+        )
+    }
+
 
     @Test
     fun `pick sampling`() {
@@ -162,33 +326,74 @@ class ScaleOrderingTest {
         run {
             // no ordering
             val geomLayer = getSingleGeomLayer(makePlotSpec("", samplingPick))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "C"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("B", "C"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2", "3", "1"), // B
+                        listOf("4", "2")            // C
+                    )
+                )
+            )
         }
         run {
             // Order x
             val orderingSettings = makeOrderingSettings("x", null, -1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, samplingPick))
-
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "B"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "B"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2"),            // C
+                        listOf("4", "2", "3", "1")   // B
+                    )
+                )
+            )
         }
         run {
             // Order x and fill
             val orderingSettings =
                 makeOrderingSettings("x", null, -1) + "," + makeOrderingSettings("fill", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, samplingPick))
-
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "B"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("1", "2", "3", "4"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "B"),
+                    Aes.FILL to listOf("1", "2", "3", "4")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("2", "4"),            // C
+                        listOf("1", "2", "3", "4")   // B
+                    )
+                )
+            )
         }
         run {
             // Order x by count
             val orderingSettings = makeOrderingSettings("x", "..count..", 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, samplingPick))
-
-            assertScaleBreaks(geomLayer, Aes.X, listOf("C", "A"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "2", "3", "1"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("C", "A"),
+                    Aes.FILL to listOf("4", "2", "3", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "2"),       // C
+                        listOf("2", "3", "1")   // A
+                    )
+                )
+            )
         }
     }
 
@@ -208,15 +413,37 @@ class ScaleOrderingTest {
         run {
             // No ordering.
             val geomLayer = getSingleGeomLayer(makePlotSpec("", sampling))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "1"))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "C"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("B", "C"),
+                    Aes.FILL to listOf("4", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "1"),   // B
+                        listOf("4")         // C
+                    )
+                )
+            )
         }
         run {
             // Order x.
             val orderingSettings = makeOrderingSettings("x", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, sampling))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "1"))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("A", "B"),
+                    Aes.FILL to listOf("4", "1")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("1"),       // A
+                        listOf("4", "1")   // B
+                    )
+                )
+            )
         }
     }
 
@@ -227,15 +454,191 @@ class ScaleOrderingTest {
         run {
             // Default - no ordering
             val geomLayer = getSingleGeomLayer(makePlotSpec("", samplingGroup))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("B", "C", "A"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "3"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("B", "C", "A"),
+                    Aes.FILL to listOf("4", "3")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("4", "3"),   // B
+                        listOf("4"),        // C
+                        listOf("3")         // A
+                    )
+                )
+            )
         }
         run {
             // Order x
             val orderingSettings = makeOrderingSettings("x", null, 1)
             val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, samplingGroup))
-            assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-            assertScaleBreaks(geomLayer, Aes.FILL, listOf("4", "3"))
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.X to listOf("A", "B", "C"),
+                    Aes.FILL to listOf("4", "3")
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(
+                        listOf("3"),        // A
+                        listOf("4", "3"),   // B
+                        listOf("4")         // C
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `order in the bar and in the legend should be the same`() {
+        val data = """{
+            'x'   :  [ "A", "A", "A"],
+            'fill':  [ "2", "1", "3"]
+        }"""
+        val orderingSettings = makeOrderingSettings("fill", "..count..", -1)
+        val spec = makePlotSpec(orderingSettings, data = data)
+        val geomLayer = getSingleGeomLayer(spec)
+        val expectedOrder = listOf("3", "2", "1")
+        assertScaleOrdering(
+            geomLayer,
+            expectedScaleBreaks = mapOf(Aes.FILL to expectedOrder),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to listOf(expectedOrder)
+            )
+        )
+    }
+
+    @Test
+    fun `all null values`() {
+        val data = """{
+            'x'   :  [ null, null ],
+            'fill':  [ null, null ]
+        }"""
+        val orderingSettings = makeOrderingSettings("fill", null, 1)
+        val spec = makePlotSpec(orderingSettings, data = data)
+        val geomLayer = getSingleGeomLayer(spec)
+        assertScaleOrdering(
+            geomLayer,
+            expectedScaleBreaks = mapOf(Aes.FILL to emptyList()),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to emptyList()
+            )
+        )
+    }
+
+    @Test
+    fun `'order by' variable has null value`() {
+        val data = """{
+            'x'   :  [ "A", "A",  "A", "A"],
+            'fill':  [ "3", null, "1", "2"]
+        }"""
+        run {
+            //ascending
+            val orderingSettings = makeOrderingSettings("fill", null, 1)
+            val spec = makePlotSpec(orderingSettings, data = data)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(Aes.FILL to listOf("1", "2", "3")),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(listOf("1", "2", "3", null))
+                )
+            )
+        }
+        run {
+            //descending
+            val orderingSettings = makeOrderingSettings("fill", null, -1)
+            val spec = makePlotSpec(orderingSettings, data = data)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(Aes.FILL to listOf("3", "2", "1")),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(listOf("3", "2", "1", null))
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `few ordering fields with null values`() {
+        val data = """{
+            'x'   :  [ "A", "A", "A"],
+            'fill':  [ null, "v", null],
+            'color': [ '2', null, '1']
+        }"""
+        run {
+            // color ascending
+            val orderingSettings = makeOrderingSettings("color", null, 1) + "," + makeOrderingSettings("fill", null, 1)
+            val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.COLOR to listOf("1", "2"),
+                    Aes.FILL to listOf("v")
+
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.COLOR to listOf(listOf("1", "2", null)),
+                    Aes.FILL to listOf(listOf(null, null, "v"))
+                )
+            )
+        }
+        run {
+            // color descending
+            val orderingSettings = makeOrderingSettings("color", null, -1) + "," + makeOrderingSettings("fill", null, 1)
+            val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.COLOR to listOf("2", "1"),
+                    Aes.FILL to listOf("v")
+
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.COLOR to listOf(listOf("2", "1", null)),
+                    Aes.FILL to listOf(listOf(null, null, "v"))
+                )
+            )
+        }
+        run {
+            // color ascending
+            val orderingSettings = makeOrderingSettings("fill", null, 1) + "," + makeOrderingSettings("color", null, 1)
+            val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.COLOR to listOf("1", "2"),
+                    Aes.FILL to listOf("v")
+
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(listOf("v", null, null)),
+                    Aes.COLOR to listOf(listOf(null, "1", "2"))
+                )
+            )
+        }
+        run {
+            // color descending
+            val orderingSettings = makeOrderingSettings("fill", null, 1) + "," + makeOrderingSettings("color", null, -1)
+            val spec = makePlotSpec(orderingSettings, data = data, mapping = myMappingFillColor)
+            val geomLayer = getSingleGeomLayer(spec)
+            assertScaleOrdering(
+                geomLayer,
+                expectedScaleBreaks = mapOf(
+                    Aes.COLOR to listOf("2", "1"),
+                    Aes.FILL to listOf("v")
+
+                ),
+                expectedOrderInBar = mapOf(
+                    Aes.FILL to listOf(listOf("v", null, null)),
+                    Aes.COLOR to listOf(listOf(null, "2", "1"))
+                )
+            )
         }
     }
 
@@ -250,13 +653,13 @@ class ScaleOrderingTest {
     }
 
     @Test
-    fun `x=as_discrete('x', order=1), fill='x' - now the ordering is not applied to the 'fill'`() {
+    fun `x=as_discrete('x', order=1), fill='x' - the ordering also applies to the 'fill'`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
         val orderingSettings = makeOrderingSettings("x", null, 1)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
         assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C")) // TODO  Should apply the ordering to the 'fill'?
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
     }
 
     @Test
@@ -280,6 +683,47 @@ class ScaleOrderingTest {
         assertScaleBreaks(geomLayer, Aes.FILL, listOf("C", "A", "B"))
     }
 
+
+    // variable in plot and layer
+
+    @Test
+    fun `ggplot(aes(as_discrete('x',order=1))) + geom_bar(aes(fill='x')) - should apply the ordering to the 'fill'`() {
+        val spec = """{
+              "kind": "plot",
+              "data" : $myData,              
+              "mapping": { "x": "x" },
+              "data_meta": { "mapping_annotations": [ ${makeOrderingSettings("x", null, 1)} ] },             
+              "layers": [
+                {
+                  "mapping": { "fill": "x" },
+                  "geom": "bar"
+                }
+              ]
+            }""".trimIndent()
+        val geomLayer = getSingleGeomLayer(spec)
+        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+    }
+
+    @Test
+    fun `ggplot(aes('x')) + geom_bar(aes(fill=as_discrete('x',order=1))) - should apply the ordering to the 'x'`() {
+        val spec = """{
+              "kind": "plot",
+              "data" : $myData,              
+              "mapping": { "x": "x" },
+              "layers": [
+                {
+                  "mapping": { "fill": "x" },
+                  "geom": "bar",
+                  "data_meta": { "mapping_annotations": [ ${makeOrderingSettings("fill", null, 1)} ] }
+                }
+              ]
+            }""".trimIndent()
+        val geomLayer = getSingleGeomLayer(spec)
+        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+    }
+
     companion object {
         private fun assertScaleBreaks(
             layer: GeomLayer,
@@ -287,7 +731,50 @@ class ScaleOrderingTest {
             breaks: List<Any>
         ) {
             val scale = layer.scaleMap[aes]
-            assertEquals(breaks, scale.breaks)
+            assertEquals(breaks, scale.breaks, "Wrong ticks order on ${aes.name.toUpperCase()}.")
+        }
+
+        private fun getBarColumnValues(
+            geomLayer: GeomLayer,
+            valueToColors: Map<Color, Any>,
+            colorFactory: (DataPointAesthetics) -> Color?
+        ): Map<Int, List<Any?>> {
+            val colorInColumns = mutableMapOf<Int, ArrayList<Color>>()
+            val aesthetics = PlotUtil.createLayerDryRunAesthetics(geomLayer)
+            for (index in 0 until aesthetics.dataPointCount()) {
+                val p = aesthetics.dataPointAt(index)
+                val x = p.x()!!
+                val color = colorFactory(p)!!
+                colorInColumns.getOrPut(x.toInt(), ::ArrayList).add(color)
+            }
+            return colorInColumns.map { (x, values) ->
+                x to values.map { color -> valueToColors[color] }
+            }.toMap()
+        }
+
+        private val legendColors = ColorPalette.Qualitative.Set2.getColors(4).map(Colors::parseColor)
+
+        private fun assertScaleOrdering(
+            geomLayer: GeomLayer,
+            expectedScaleBreaks: Map<Aes<*>, List<String>>,
+            expectedOrderInBar: Map<Aes<*>, List<List<*>>>
+        ) {
+            expectedScaleBreaks.forEach { (aes, breaks) ->
+                assertScaleBreaks(geomLayer, aes, breaks)
+            }
+
+            expectedOrderInBar.forEach { (aes, expected) ->
+                val breaks = geomLayer.scaleMap[aes].breaks
+                val breakColors = breaks.zip(legendColors).map { it.second to it.first }.toMap()
+                val actual: Map<Int, List<Any?>> =
+                    getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->
+                        if (aes == Aes.FILL) p.fill() else p.color()
+                    }
+                assertEquals(expected.size, actual.size)
+                for (i in expected.indices) {
+                    assertEquals(expected[i], actual[i], "Wrong color order in ${aes.name.toUpperCase()}.")
+                }
+            }
         }
     }
 }
