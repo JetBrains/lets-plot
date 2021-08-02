@@ -196,6 +196,7 @@ object GeomInteractionUtil {
 
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.POINT,
+            GeomKind.JITTER,
             GeomKind.LINE,
             GeomKind.AREA,
             GeomKind.TILE,
@@ -266,6 +267,7 @@ object GeomInteractionUtil {
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
             GeomKind.POINT,
+            GeomKind.JITTER,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {

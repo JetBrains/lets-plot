@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
@@ -237,7 +236,7 @@ class GeomLayerBuilder {
         }
 
         override fun <T> getConstant(aes: Aes<T>): T {
-            checkArgument(hasConstant(aes), "Constant value is not defined for aes $aes")
+            require(hasConstant(aes)) { "Constant value is not defined for aes $aes" }
             return myConstantByAes[aes]
         }
 
@@ -281,7 +280,13 @@ class GeomLayerBuilder {
                             stat,
                             builder.myBindings,
                             scaleMap,
-                            groupingContext, PlotFacets.undefined(), statCtx, varsWithoutBinding = emptyList(), ::println
+                            groupingContext,
+                            PlotFacets.undefined(),
+                            statCtx,
+                            varsWithoutBinding = emptyList(),
+                            orderOptions = emptyList(),
+                            aggregateOperation = null,
+                            ::println
                         )
 
                         dataAndGroupingContext.data

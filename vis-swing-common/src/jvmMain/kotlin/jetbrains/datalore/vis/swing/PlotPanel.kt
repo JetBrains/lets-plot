@@ -55,7 +55,7 @@ open class PlotPanel(
         )
     }
 
-    final override fun dispose() {
+    override fun dispose() {
         removeAll()
     }
 

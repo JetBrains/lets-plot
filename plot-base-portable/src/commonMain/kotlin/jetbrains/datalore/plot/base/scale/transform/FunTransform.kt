@@ -5,44 +5,40 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.MapperUtil
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
-open class FunTransform(
-        private val myFun: (Double?) -> Double?,
-        private val myInverse: (Double?) -> Double?,
-        labelFormatter: ((Any) -> String)? = null
-) : Transform, BreaksGenerator {
-
-    private val myLinearBreaksGen = LinearBreaksGen(labelFormatter)
-
-    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        val domainBeforeTransform = MapperUtil.map(domainAfterTransform) { myInverse(it) }
-        return myLinearBreaksGen.labelFormatter(domainBeforeTransform, targetCount)
-    }
-
-    override fun apply(rawData: List<*>): List<Double?> {
-        return rawData.map { myFun(it as? Double) }
-    }
-
-    override fun applyInverse(v: Double?): Any? {
-        return myInverse(v)
-    }
-
-
-    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val domainBeforeTransform = MapperUtil.map(domainAfterTransform) { myInverse(it) }
-        val originalBreaks = myLinearBreaksGen.generateBreaks(domainBeforeTransform, targetCount)
-        val domainValues = originalBreaks.domainValues
-        val transformValues = ArrayList<Double>()
-        for (domainValue in domainValues) {
-            val transformed = myFun(domainValue)
-            transformValues.add(transformed!!)
+abstract class FunTransform(
+    private val transformFun: (Double) -> Double,
+    private val inverseFun: (Double) -> Double
+) : ContinuousTransform {
+    override fun apply(v: Double?): Double? {
+        return if (v != null) {
+            transformFun(v)
+        } else {
+            null
         }
+    }
 
-        return ScaleBreaks(domainValues, transformValues, originalBreaks.labels)
+    override fun apply(l: List<*>): List<Double?> {
+        return safeCastToDoubles(l).map { apply(it) }
+    }
+
+    override fun applyInverse(v: Double?): Double? {
+        return if (v != null) {
+            inverseFun(v)
+        } else {
+            null
+        }
+    }
+
+    override fun applyInverse(l: List<Double?>): List<Double?> {
+        return l.map { applyInverse(it) }
+    }
+
+    protected fun safeCastToDoubles(list: List<*>): List<Double?> {
+        val checkedDoubles = SeriesUtil.checkedDoubles(list)
+        require(checkedDoubles.canBeCast()) { "Not a collections of Double(s)" }
+        return checkedDoubles.cast()
     }
 }

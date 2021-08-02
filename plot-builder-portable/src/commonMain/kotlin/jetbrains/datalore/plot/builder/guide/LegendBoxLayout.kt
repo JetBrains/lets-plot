@@ -10,15 +10,13 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
-abstract class LegendBoxLayout protected constructor(
-    private val myTitle: String,
+abstract class LegendBoxLayout(
+    private val title: String,
     legendDirection: LegendDirection
 ) {
 
-    protected abstract val graphSize: DoubleVector
-
+    abstract val graphSize: DoubleVector
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
-
     val titleHorizontalAnchor = TextLabel.HorizontalAnchor.LEFT
     val titleVerticalAnchor = if (isHorizontal) {
         TextLabel.VerticalAnchor.CENTER
@@ -29,8 +27,7 @@ abstract class LegendBoxLayout protected constructor(
     val titleBounds: DoubleRectangle
         get() {
             var origin = titleLocation
-            val size =
-                titleSize(myTitle)
+            val size = titleSize(title)
             if (isHorizontal) {
                 origin = DoubleVector(origin.x, origin.y - size.y / 2)
             }
@@ -38,14 +35,12 @@ abstract class LegendBoxLayout protected constructor(
         }
 
     val graphOrigin: DoubleVector
-        get() = if (isHorizontal) {
-            DoubleVector(
-                titleSize(
-                    myTitle
-                ).x, 0.0)
-        } else DoubleVector(0.0, titleSize(
-            myTitle
-        ).y)
+        get() = when {
+            isHorizontal ->
+                DoubleVector(titleSize(title).x, 0.0)
+            else ->
+                DoubleVector(0.0, titleSize(title).y)
+        }
 
     val size: DoubleVector
         get() {
@@ -71,9 +66,10 @@ abstract class LegendBoxLayout protected constructor(
         internal val LABEL_SPEC = PlotLabelSpec.LEGEND_ITEM
 
         private fun titleSize(s: String): DoubleVector {
-            return if (s.isBlank()) {
-                DoubleVector.ZERO
-            } else TITLE_SPEC.dimensions(s.length)
+            return when {
+                s.isBlank() -> DoubleVector.ZERO
+                else -> TITLE_SPEC.dimensions(s.length)
+            }
         }
     }
 }

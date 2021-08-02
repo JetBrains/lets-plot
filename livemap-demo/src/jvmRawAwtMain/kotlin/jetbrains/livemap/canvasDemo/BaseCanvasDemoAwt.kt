@@ -9,26 +9,34 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.awt.AwtAnimationTimerPeer
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.awt.AwtRepaintTimer
 import java.awt.Dimension
 import javax.swing.JFrame
+import javax.swing.JFrame.EXIT_ON_CLOSE
 import javax.swing.JPanel
 
 fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {
     val dim = Vector(800, 600)
-    val panel = JPanel()
-    val timer = AwtRepaintTimer(panel::repaint)
-    val canvasControl = AwtCanvasControl(panel, dim, 1.0, AwtEventPeer(panel, Rectangle(Vector.ZERO, dim)), timer)
+    val frame = JFrame()
+    frame.size = Dimension(dim.x, dim.y)
+    frame.isVisible = true
+    frame.setDefaultCloseOperation(EXIT_ON_CLOSE)
+
+    val panel = JPanel(null)
+    val canvasControl = AwtCanvasControl(
+        dim,
+        AwtEventPeer(panel, Rectangle(Vector.ZERO, dim)),
+        AwtAnimationTimerPeer()
+    )
+    panel.add(canvasControl.component())
+    frame.add(panel)
 
     val canvas = canvasControl.createCanvas(dim)
-    demoModel(canvas, canvasControl::createSnapshot)
     canvasControl.addChild(canvas)
 
-    val frame = JFrame()
-    frame.add(panel)
-    frame.size = Dimension(dim.x, dim.y)
+    demoModel(canvas, canvasControl::createSnapshot)
 
-    frame.isVisible = true
+    canvasControl.component().repaint()
 }

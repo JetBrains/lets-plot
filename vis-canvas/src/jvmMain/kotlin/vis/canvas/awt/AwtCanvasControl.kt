@@ -13,67 +13,65 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.canvas.AnimationProvider
+import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
+import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import java.awt.Graphics2D
 import java.awt.Image
-import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.imageio.ImageIO
-import javax.swing.*
+import javax.swing.JComponent
 
 
 class AwtCanvasControl(
-    root: JPanel,
     override val size: Vector,
-    private val myPixelRatio: Double,
     private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>,
-    private val myTimer: AwtRepaintTimer
+    private val myAnimationTimerPeer: AwtAnimationTimerPeer,
+    private val myPixelRatio: Double = 1.0
 ) : CanvasControl {
 
-    private val myRoot: JComponent = JLayeredPane()
-    private val myChildren = HashMap<Canvas, JComponent>()
+    private val myComponent = CanvasContainerPanel(size)
+    private val myMappedCanvases = HashMap<Canvas, JComponent>()
 
-    init {
-        myRoot.bounds = Rectangle(0, 0, size.x, size.y)
-        root.add(myRoot)
-    }
+    fun component(): JComponent = myComponent
 
     override fun addChild(canvas: Canvas) {
-        ImageIcon((canvas as AwtCanvas).image)
-            .run(::JLabel)
-            .also {
-                it.bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
-                myChildren[canvas] = it
-            }
-            .run { myRoot.add(this, myRoot.componentCount) }
+        addChild(myComponent.componentCount, canvas)
     }
 
     override fun addChild(index: Int, canvas: Canvas) {
-        ImageIcon((canvas as AwtCanvas).image)
-            .run(::JLabel)
-            .also {
-                myChildren[canvas] = it
-                it.bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
-            }
-            .run { myRoot.add(this, myRoot.componentCount - index) }
+        val canvasComponent = CanvasComponent(canvas as AwtCanvas)
+        myComponent.add(canvasComponent, myComponent.componentCount - index)
+        myComponent.revalidate()
+        myMappedCanvases[canvas] = canvasComponent
     }
 
     override fun removeChild(canvas: Canvas) {
-        myRoot.remove(myChildren[canvas])
-        myChildren.remove(canvas)
+        myComponent.remove(myMappedCanvases[canvas])
+        myComponent.revalidate()
+        myMappedCanvases.remove(canvas)
     }
 
-    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
-        return object : AwtAnimationTimer(myTimer) {
-            override fun handle(millisTime: Long) {
-                eventHandler.onEvent(millisTime)
+    override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
+        return object : AnimationTimer {
+            override fun start() {
+                myAnimationTimerPeer.addHandler(::handle)
+            }
+
+            override fun stop() {
+                myAnimationTimerPeer.removeHandler(::handle)
+            }
+
+            fun handle(millisTime: Long) {
+                if (eventHandler.onEvent(millisTime)) {
+                    myComponent.repaint()
+                }
             }
         }
     }
@@ -124,6 +122,6 @@ class AwtCanvasControl(
 
     override fun <T> schedule(f: () -> T) {
 //        invokeLater { f() }
-        myTimer.executor { f() }
+        myAnimationTimerPeer.executor { f() }
     }
 }

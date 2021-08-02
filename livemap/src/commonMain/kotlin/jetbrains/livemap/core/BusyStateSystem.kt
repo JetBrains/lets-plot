@@ -78,13 +78,14 @@ class BusyStateSystem(
     override fun updateImpl(context: EcsContext, dt: Double) {
         val entitiesState = BUSY.takeIf { componentManager.count<BusyStateComponent>() > 0 } ?: NOT_BUSY
         val markerState = SHOWING.takeIf { componentManager.count<BusyMarkerComponent>() > 0 } ?: NOT_SHOWING
-        myStartAngle += (2 * PI * dt) / 1000
+
 
         when (Pair(entitiesState, markerState)) {
-            Pair(BUSY, SHOWING) -> { mySpinnerArc.apply { startAngle = myStartAngle } }
-            Pair(NOT_BUSY, NOT_SHOWING) -> {}
-            Pair(NOT_BUSY, SHOWING) -> {
-                spinnerEntity!!.remove()
+            Pair(NOT_BUSY, NOT_SHOWING) -> return
+            Pair(NOT_BUSY, SHOWING) -> spinnerEntity!!.remove()
+            Pair(BUSY, SHOWING) -> { mySpinnerArc.apply {
+                myStartAngle += (2 * PI * dt) / 1000
+                startAngle = myStartAngle }
             }
             Pair(BUSY, NOT_SHOWING) -> {
                 spinnerEntity = uiService
@@ -92,6 +93,8 @@ class BusyStateSystem(
                     .add(BusyMarkerComponent())
             }
         }
+
+        uiService.repaint()
     }
 
     private enum class EntitiesState {

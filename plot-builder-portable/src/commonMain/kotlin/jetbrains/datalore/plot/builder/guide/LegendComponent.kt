@@ -11,23 +11,22 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.*
 
-class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
-
+class LegendComponent(
     override val spec: LegendComponentSpec
-        get() = super.spec as LegendComponentSpec
+) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
-        val l = spec.layout
+        val layout = spec.layout
 
-        val keyLabelBoxes = l.keyLabelBoxes.iterator()
-        val labelBoxes = l.labelBoxes.iterator()
+        val keyLabelBoxes = layout.keyLabelBoxes.iterator()
+        val labelBoxes = layout.labelBoxes.iterator()
         for (br in spec.breaks) {
             val keyLabelBox = keyLabelBoxes.next()
             val labelBox = labelBoxes.next()
-            val breakElement = createBreakElement(br, l.keySize, keyLabelBox, labelBox)
+            val breakElement = createBreakElement(br, layout.keySize, keyLabelBox, labelBox)
             contentRoot.children().add(breakElement)
         }
-        return l.size
+        return layout.size
     }
 
     private fun createBreakElement(

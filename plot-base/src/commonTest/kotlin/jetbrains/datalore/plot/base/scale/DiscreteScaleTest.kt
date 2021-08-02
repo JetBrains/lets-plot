@@ -33,12 +33,12 @@ class DiscreteScaleTest {
     }
 
     @Test
-    fun buildWithTransform() {
+    fun withTransform() {
         val scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         val t = Transforms.IDENTITY
 
         val scale1 = scale.with().continuousTransform(t).build()
-        assertNotSame(scale1.transform, t, "'continuous transform' should be ignored")
+        assertNotSame(t, scale1.transform, "'continuous transform' should be ignored")
     }
 
     @Test
@@ -90,7 +90,7 @@ class DiscreteScaleTest {
 
         assertTrue(scale.hasBreaks())
         assertEquals(listOf("b", "c"), scale.breaks)
-        assertEquals(listOf(0.0, 1.0), ScaleUtil.breaksAsNumbers(scale))
+        assertEquals(listOf(0.0, 1.0), scale.transform.apply(scale.breaks))
     }
 
     @Test

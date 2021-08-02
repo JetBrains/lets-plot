@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.config.Option.Mapping.GROUP
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
@@ -20,7 +21,8 @@ import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 class TooltipConfig(
     opts: Map<String, Any>,
     private val constantsMap: Map<Aes<*>, Any>,
-    private val groupingVarName: String?
+    private val groupingVarName: String?,
+    private val varBindings: List<VarBinding>
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): TooltipSpecification {
@@ -40,15 +42,22 @@ class TooltipConfig(
         tooltipFormats: List<*>,
         tooltipVariables: List<String>
     ) {
-        // Key is Pair: <field name> + <isAes flag>
-        private val myValueSources: MutableMap<Pair<String, Boolean>, ValueSource> = prepareFormats(tooltipFormats)
-            .mapValues { (field, format) ->
-                createValueSource(fieldName = field.first, isAes = field.second, format = format)
+        private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(tooltipFormats)
+            .let { specifiedFormats ->
+                val valueSources = specifiedFormats.mapValues { (field, format) ->
+                    createValueSource(fieldName = field.name, isAes = field.isAes, format = format)
+                }
+                // the specified format for the variable should be applied also to the aes (if it doesn't have its own format())
+                val aesValueSources = mutableMapOf<Field, ValueSource>()
+                specifiedFormats.map { (field, format) ->
+                    aesValueSources += getAesValueSourceForVariable(field, format, valueSources)
+                }
+                valueSources + aesValueSources
             }.toMutableMap()
 
         // Create tooltip lines from the given variable list
-        private val myLinesForVariableList = tooltipVariables.map { variableName ->
-            val valueSource = getValueSource(VARIABLE_NAME_PREFIX + variableName)
+        private val myLinesForVariableList: List<TooltipLine> = tooltipVariables.map { variableName ->
+            val valueSource = getValueSource(varField(variableName))
             TooltipLine.defaultLineForValueSource(valueSource)
         }
 
@@ -92,17 +101,13 @@ class TooltipConfig(
         }
 
         private fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
-            fun getAesByName(aesName: String): Aes<*> {
-                return Aes.values().find { it.name == aesName } ?: error("$aesName is not an aes name")
-            }
-
             return when {
                 isAes && fieldName == GROUP -> {
-                    requireNotNull(groupingVarName) { "Variable name for 'group' is not specified"}
+                    requireNotNull(groupingVarName) { "Variable name for 'group' is not specified" }
                     DataFrameValue(groupingVarName, format)
                 }
                 isAes -> {
-                    val aes = getAesByName(fieldName)
+                    val aes = Option.Mapping.toAes(fieldName)
                     when (val constant = constantsMap[aes]) {
                         null -> MappingValue(aes, format = format)
                         else -> ConstantValue(constant, format)
@@ -114,8 +119,8 @@ class TooltipConfig(
             }
         }
 
-        private fun prepareFormats(tooltipFormats: List<*>): Map<Pair<String, Boolean>, String> {
-            val allFormats = mutableMapOf<Pair<String, Boolean>, String>()
+        private fun prepareFormats(tooltipFormats: List<*>): Map<Field, String> {
+            val allFormats = mutableMapOf<Field, String>()
             tooltipFormats.forEach { tooltipFormat ->
                 require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
                 require(tooltipFormat.has(FIELD) && tooltipFormat.has(FORMAT)) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
@@ -147,6 +152,53 @@ class TooltipConfig(
             return allFormats
         }
 
+        private fun getAesValueSourceForVariable(
+            field: Field,
+            format: String?,
+            valueSources: Map<Field, ValueSource>
+        ): Map<Field, ValueSource> {
+            if (field.isAes) {
+                return emptyMap()
+            }
+
+            return varBindings
+                .filter { it.variable.name == field.name }
+                .map(VarBinding::aes)
+                .map { aes ->
+                    val aesField = aesField(aes.name)
+                    if (aesField in valueSources)
+                        aesField to valueSources[aesField]!!
+                    else
+                        aesField to createValueSource(
+                            fieldName = aes.name,
+                            isAes = true,
+                            format = format
+                        )
+                }
+                .toMap()
+        }
+
+        private fun getValueSource(field: Field): ValueSource {
+            if (field !in myValueSources) {
+                // If format() is not specified for the variable, use the aes formatting
+                val aesValueSources =
+                    getAesValueSourceForVariable(field, format = null, valueSources = myValueSources)
+
+                // Choose the specified before or use the first aes
+                val specifiedBefore = (aesValueSources
+                    .filter { it.key in myValueSources }
+                    .takeIf { it.isNotEmpty() }
+                    ?: aesValueSources)
+                    .toList()
+                    .minByOrNull { (aesField, _) -> aesField.name }
+                    ?.second
+
+                myValueSources[field] =
+                    specifiedBefore ?: createValueSource(fieldName = field.name, isAes = field.isAes)
+            }
+            return myValueSources[field]!!
+        }
+
         private fun getValueSource(fieldString: String): ValueSource {
             val field = when {
                 fieldString.startsWith(AES_NAME_PREFIX) -> {
@@ -158,10 +210,7 @@ class TooltipConfig(
                 else -> error("Unknown type of the field with name = \"$fieldString\"")
             }
 
-            if (field !in myValueSources) {
-                myValueSources[field] = createValueSource(fieldName = field.first, isAes = field.second)
-            }
-            return myValueSources[field]!!
+            return getValueSource(field)
         }
 
         private fun detachVariableName(field: String) =
@@ -175,9 +224,8 @@ class TooltipConfig(
             }
         }
 
-        private fun aesField(aesName: String) = Pair(aesName, true)
-
-        private fun varField(aesName: String) = Pair(aesName, false)
+        private fun aesField(aesName: String) = Field(aesName, true)
+        private fun varField(varName: String) = Field(varName, false)
 
         private fun readAnchor(): TooltipAnchor? {
             if (!has(Option.Layer.TOOLTIP_ANCHOR)) {
@@ -230,6 +278,8 @@ class TooltipConfig(
             return null
         }
     }
+
+    private data class Field(val name: String, val isAes: Boolean)
 
     companion object {
         private const val AES_NAME_PREFIX = "^"

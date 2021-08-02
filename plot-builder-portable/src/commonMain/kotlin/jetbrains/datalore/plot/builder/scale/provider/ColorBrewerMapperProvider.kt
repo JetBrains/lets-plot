@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -58,7 +58,7 @@ class ColorBrewerMapperProvider(
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): GuideMapper<Color> {
         val colorScheme = colorScheme(false)
         val colors = colors(colorScheme, colorScheme.maxColors)

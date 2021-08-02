@@ -25,8 +25,8 @@ open class LegendDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                simple(),
-                colorBar()
+            simple(),
+            colorBar()
         )
     }
 
@@ -37,9 +37,9 @@ open class LegendDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .fill(array(colors))
-                //      .width(constant(0.75))
-                .build()
+            .fill(array(colors))
+            //      .width(constant(0.75))
+            .build()
 
         val keyElementFactory =
             GenericLegendKeyElementFactory()
@@ -71,12 +71,14 @@ open class LegendDemo : SimpleDemoBase() {
 
         val mapper = ColorMapper.gradientDefault(domain)
         val scale = Scales.continuousDomain("color", mapper, true)
-                .with()
-                .lowerLimit(domain.lowerEnd)
-                .upperLimit(domain.upperEnd)
-                .build()
+            .with()
+            .lowerLimit(domain.lowerEnd)
+            .upperLimit(domain.upperEnd)
+            .build()
 
-        val spec = ColorBarAssembler.createColorBarSpec("Color Bar", domain, breaks, scale, theme.legend())
+        val spec = ColorBarAssembler.createColorBarSpec(
+            "Color Bar", domain, breaks, scale, theme.legend()
+        )
         val legendComponent = ColorBarComponent(spec)
         legendComponent.debug = DEBUG_DRAWING
 
@@ -88,5 +90,4 @@ open class LegendDemo : SimpleDemoBase() {
     companion object {
         private const val DEBUG_DRAWING = true
     }
-
 }

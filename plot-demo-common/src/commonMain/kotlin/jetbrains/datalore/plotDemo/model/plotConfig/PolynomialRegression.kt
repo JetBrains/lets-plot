@@ -169,9 +169,17 @@ class PolynomialRegression {
                       "size": 1.5,
                       "color": "#d62728"
                     }
-                  ]
+                  ],
+                  'scales': [
+                              {
+                                'name': 'log10(y)',
+                                'aesthetic': 'y',
+                                'trans': 'identity'
+                              }
+                            ]
                 } 
         """.trimMargin()
+
 
         return parsePlotSpec(spec)
     }
@@ -659,7 +667,13 @@ class PolynomialRegression {
                           },
                           "data_meta": {},
                           "kind": "plot",
-                          "scales": [],
+                  'scales': [
+                              {
+                                'name': 'log10(y)',
+                                'aesthetic': 'y',
+                                'trans': 'identity'
+                              }
+                            ],
                           "layers": [
                             {
                               "geom": "point",

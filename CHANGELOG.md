@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2021-06-09
+
+### Changed
+
+- Upgraded `kotlinx.html` version to 0.7.3 (was 0.7.2)
+>  In JVM projects it's no longer necessary to add `https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven` repository
+>  to the project configuration.
+
+### Fixed
+
+- Multilayer plots are corrupted [[#385](https://github.com/JetBrains/lets-plot/issues/385)].
+
 ## [2.0.3] - 2021-06-02
 
 ### Added

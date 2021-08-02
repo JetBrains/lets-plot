@@ -13,8 +13,7 @@ import jetbrains.datalore.vis.canvas.ScaledCanvas
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.image.BufferedImage
-import java.awt.image.BufferedImage.TYPE_INT_ARGB
-import java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE
+import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
 
 internal class AwtCanvas
 private constructor(
@@ -29,7 +28,7 @@ private constructor(
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage(s.x, s.y, TYPE_INT_ARGB_PRE), s, pixelRatio)
+            return AwtCanvas(BufferedImage(s.x, s.y, TYPE_4BYTE_ABGR), s, pixelRatio)
         }
     }
 

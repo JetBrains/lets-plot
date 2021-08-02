@@ -81,7 +81,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
 
             val colorScale = Scales.discreteDomain(
                 "Supplement",
-                data[varSupp],
+                data[varSupp].filterNotNull(),
                 Mappers.discrete(listOf(Color.ORANGE, Color.DARK_GREEN), Color.GRAY)
             )
 

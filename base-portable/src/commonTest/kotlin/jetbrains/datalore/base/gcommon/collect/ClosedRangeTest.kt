@@ -12,12 +12,20 @@ class ClosedRangeTest {
         return ClosedRange(lower, upper)
     }
 
-    private fun <T : Comparable<T>> assertSpan(expected: ClosedRange<T>, range0: ClosedRange<T>, range1: ClosedRange<T>) {
+    private fun <T : Comparable<T>> assertSpan(
+        expected: ClosedRange<T>,
+        range0: ClosedRange<T>,
+        range1: ClosedRange<T>
+    ) {
         assertEquals(expected, range0.span(range1))
         assertEquals(expected, range1.span(range0))
     }
 
-    private fun <T : Comparable<T>> assertIntersection(expected: ClosedRange<T>, range0: ClosedRange<T>, range1: ClosedRange<T>) {
+    private fun <T : Comparable<T>> assertIntersection(
+        expected: ClosedRange<T>,
+        range0: ClosedRange<T>,
+        range1: ClosedRange<T>
+    ) {
         assertEquals(expected, range0.intersection(range1))
         assertEquals(expected, range1.intersection(range0))
     }
@@ -25,10 +33,19 @@ class ClosedRangeTest {
 
     @Test
     fun illegalEndpoints() {
-        range(0, 1) // ok
-        range(0, 0) // ok
+        assertFailsWith<IllegalArgumentException> { range(0.0, Double.NaN) }
+        assertFailsWith<IllegalArgumentException> { range(0.0, Double.NEGATIVE_INFINITY) }
+        assertFailsWith<IllegalArgumentException> { range(0.0, Double.POSITIVE_INFINITY) }
+        assertFailsWith<IllegalArgumentException> { range(Double.NaN, 0.0) }
+        assertFailsWith<IllegalArgumentException> { range(Double.NEGATIVE_INFINITY, 0.0) }
+        assertFailsWith<IllegalArgumentException> { range(Double.POSITIVE_INFINITY, 0.0) }
+    }
 
-        assertFailsWith<IllegalArgumentException> { range(1, 0) }
+    @Test
+    fun endpointsNormalization() {
+        val r_01 = range(0.0, 1.0)
+        val r_10 = range(1.0, 0.0)
+        assertTrue(r_01.equals(r_10))
     }
 
     @Test
@@ -78,24 +95,24 @@ class ClosedRangeTest {
         assertSame(r, inner.span(r))
 
         assertSpan(
-                range(-3, 2),
-                r,
-                range(-3, 1)
+            range(-3, 2),
+            r,
+            range(-3, 1)
         )
         assertSpan(
-                range(-2, 3),
-                r,
-                range(-1, 3)
+            range(-2, 3),
+            r,
+            range(-1, 3)
         )
         assertSpan(
-                range(-5, 2),
-                r,
-                range(-5, -3)
+            range(-5, 2),
+            r,
+            range(-5, -3)
         )
         assertSpan(
-                range(-2, 5),
-                r,
-                range(3, 5)
+            range(-2, 5),
+            r,
+            range(3, 5)
         )
     }
 
@@ -119,14 +136,14 @@ class ClosedRangeTest {
         }
 
         assertIntersection(
-                range(-2, 1),
-                r,
-                range(-3, 1)
+            range(-2, 1),
+            r,
+            range(-3, 1)
         )
         assertIntersection(
-                range(-1, 2),
-                r,
-                range(-1, 3)
+            range(-1, 2),
+            r,
+            range(-1, 3)
         )
     }
 
@@ -136,7 +153,8 @@ class ClosedRangeTest {
         assertFailsWith<NoSuchElementException> { ClosedRange.encloseAll<Int>(emptyList()) }
 
         assertEquals(
-                range(-3, 0),
-                ClosedRange.encloseAll(listOf(-3, 0)))
+            range(-3, 0),
+            ClosedRange.encloseAll(listOf(-3, 0))
+        )
     }
 }

@@ -17,17 +17,17 @@ class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSys
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val uiLayer = getSingletonEntity(UiLayerComponent::class)
 
-        uiLayer
-            .get<CanvasLayerComponent>()
-            .canvasLayer
-            .addRenderTask { context2d ->
-                getEntities(UiRenderComponent::class).forEach {
-                    val renderObject = it.get<UiRenderComponent>().renderBox
-                    context.mapRenderContext.draw(context2d, renderObject.origin, renderObject)
+        if (uiLayer.contains<DirtyCanvasLayerComponent>()) {
+            uiLayer
+                .get<CanvasLayerComponent>()
+                .canvasLayer
+                .addRenderTask { context2d ->
+                    getEntities(UiRenderComponent::class).forEach {
+                        val renderObject = it.get<UiRenderComponent>().renderBox
+                        context.mapRenderContext.draw(context2d, renderObject.origin, renderObject)
+                    }
                 }
-            }
-
-        uiLayer.tag(::DirtyCanvasLayerComponent)
+        }
     }
 
     class UiLayerComponent : EcsComponent

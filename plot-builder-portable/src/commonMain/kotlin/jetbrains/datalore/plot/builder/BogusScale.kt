@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.scale.BreaksGenerator
 
 internal class BogusScale : Scale<Double> {
     override val name: String
@@ -28,7 +28,7 @@ internal class BogusScale : Scale<Double> {
     override val isContinuousDomain: Boolean
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val domainLimits: ClosedRange<Double>?
+    override val domainLimits: Pair<Double, Double>
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val multiplicativeExpand: Double
@@ -43,6 +43,13 @@ internal class BogusScale : Scale<Double> {
     override val mapper: (Double?) -> Double?
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
+    override val breaksGenerator: BreaksGenerator
+        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
+
+    override fun hasBreaksGenerator(): Boolean {
+        throw IllegalStateException("Bogus scale is not supposed to be used.")
+    }
+
     override fun hasBreaks(): Boolean {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
@@ -56,10 +63,6 @@ internal class BogusScale : Scale<Double> {
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
-    override fun asNumber(input: Any?): Double {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 

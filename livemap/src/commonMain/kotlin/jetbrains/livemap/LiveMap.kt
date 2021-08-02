@@ -75,7 +75,6 @@ import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
 import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.tiles.TileSystemProvider.VectorTileSystemProvider
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
 import jetbrains.livemap.ui.CursorService
@@ -174,7 +173,7 @@ class LiveMap(
 
         myDiagnostics.update(dt)
 
-        return true
+        return myLayerRenderingSystem.dirtyLayers.isNotEmpty()
     }
 
     private fun init(componentManager: EcsComponentManager) {
@@ -318,7 +317,7 @@ class LiveMap(
             .createEntity("layers_order")
             .addComponents { + myLayerManager.createLayersOrderComponent() }
 
-        if (myTileSystemProvider is VectorTileSystemProvider) {
+        if (myTileSystemProvider.isVector) {
             componentManager
                 .createEntity("vector_layer_ground")
                 .addComponents {
@@ -350,7 +349,7 @@ class LiveMap(
             layersBuilder.apply(it)
         }
 
-        if (myTileSystemProvider is VectorTileSystemProvider) {
+        if (myTileSystemProvider.isVector) {
             componentManager
                 .createEntity("vector_layer_labels")
                 .addComponents {

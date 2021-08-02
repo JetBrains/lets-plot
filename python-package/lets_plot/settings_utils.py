@@ -1,12 +1,12 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from ._global_settings import has_global_value, get_global_val
+from ._global_settings import GEOCODING_PROVIDER_URL, MAPTILES_SOLID_FILL_COLOR, TILES_CHESSBOARD
 from ._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, MAPTILES_MIN_ZOOM, \
-    MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, _DATALORE_TILES_ATTRIBUTION
-from ._global_settings import GEOCODING_PROVIDER_URL
+    MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, TILES_SOLID, _DATALORE_TILES_ATTRIBUTION
+from ._global_settings import has_global_value, get_global_val, _DATALORE_TILES_MIN_ZOOM, _DATALORE_TILES_MAX_ZOOM
 
-__all__ = ['maptiles_zxy', 'maptiles_lets_plot']
+__all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid']
 
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
@@ -54,11 +54,14 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
         MAPTILES_KIND: TILES_VECTOR_LETS_PLOT,
         MAPTILES_URL: url,
         MAPTILES_THEME: theme,
-        MAPTILES_ATTRIBUTION: _DATALORE_TILES_ATTRIBUTION
+        MAPTILES_ATTRIBUTION: _DATALORE_TILES_ATTRIBUTION,
+        MAPTILES_MIN_ZOOM: _DATALORE_TILES_MIN_ZOOM,
+        MAPTILES_MAX_ZOOM: _DATALORE_TILES_MAX_ZOOM,
     }
 
 
-def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None, **other_args) -> dict:
+def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None, subdomains: str = None,
+                 **other_args) -> dict:
     """
     Makes raster tiles config. Can be used individually in `geom_livemap()`
     or in every livemap via `LetsPlot.set()`.
@@ -66,8 +69,9 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     Parameters
     ----------
     url : str
-        Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards,
-        e.g. ``"http://my.tile.com/{z}/{x}/{y}.png"``.
+        Template for a standard raster ZXY tile provider with {z}, {x}, {y} and {s} placeholders,
+        e.g. ``"https://{s}.tile.com/{z}/{x}/{y}.png"``. Where {z} means zoom, {x} and {y} means
+        tile coordinate, {s} means subdomains.
     attribution : str
         An attribution or a copyright notice to display on the map as required by the tile license.
         Supports HTML links: ``'<a href="http://www.example.com">Example</a>'``.
@@ -75,6 +79,10 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         Minimal zoom limit.
     max_zoom : int
         Maximal zoom limit.
+    subdomains : str
+        Each character of this list is interpreted as standalone tile servers, so an interactive map
+        can request tiles from any of these servers independently for better load balance. If url
+        contains {s} placeholder and subdomains parameter is not set default string 'abc' will be used.
     other_args
         Any key-value pairs that can be substituted into the URL template, e.g.
         ``maptiles_zxy(url='http://maps.example.com/{z}/{x}/{y}.png?access_key={key}', key='MY_ACCESS_KEY')``.
@@ -106,10 +114,17 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     """
     assert isinstance(url, str), "'url' argument is not str: {}".format(type(url))
     assert isinstance(attribution, (str, type(None))), "'attribution' argument is not str: {}".format(type(url))
+    if subdomains is not None and "{s}" not in url:
+        raise ValueError("Subdomains are set but {s} placeholder is not found in url: " + subdomains)
 
     for k, v in other_args.items():
-        assert k not in ["x", "y", "z"], "other_args can't contain keys x, y and z"
+        assert k not in ["x", "y", "z", "s"], "other_args can't contain keys x, y, z and s"
         url = url.replace("{" + k + "}", v)
+
+    if subdomains is not None and "{s}" in url:
+        url = url.replace("{s}", '[' + subdomains + ']')
+    elif subdomains is None and "{s}" in url:
+        url = url.replace("{s}", '[abs]')
 
     return {
         MAPTILES_KIND: TILES_RASTER_ZXY,
@@ -117,6 +132,65 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         MAPTILES_ATTRIBUTION: attribution,
         MAPTILES_MIN_ZOOM: min_zoom,
         MAPTILES_MAX_ZOOM: max_zoom
+    }
+
+
+def maptiles_solid(color: str):
+    """
+    Makes solid color tiles config. Can be used individually in `geom_livemap()`
+    or in every livemap via `LetsPlot.set()`.
+
+    Parameters
+    ----------
+    color : str
+        Color in HEX format.
+
+    Returns
+    -------
+    dict
+        Tile provider settings.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        tiles = maptiles_solid(color='#d3d3d3')
+        ggplot() + geom_livemap(tiles=tiles)
+
+    """
+    return {
+        MAPTILES_KIND: TILES_SOLID,
+        MAPTILES_SOLID_FILL_COLOR: color
+    }
+
+
+def maptiles_chessboard():
+    """
+    Makes solid color tiles with chessboard pattern. Can be used individually in `geom_livemap()`
+    or in every livemap via `LetsPlot.set()`.
+
+    Returns
+    -------
+    dict
+        Tile provider settings.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        from lets_plot.settings_utils import maptiles_chessboard
+        LetsPlot.setup_html()
+        ggplot() + geom_livemap(tiles=maptiles_chessboard())
+
+    """
+    return {
+        MAPTILES_KIND: TILES_CHESSBOARD
     }
 
 

@@ -49,6 +49,7 @@ class LiveMapUiSystem(
     private lateinit var myViewport: Viewport
     private lateinit var myButtonPlus: EcsEntity
     private lateinit var myButtonMinus: EcsEntity
+    private var myDrawingGeometry = false
 
     private var myUiState: UiState = ResourcesLoading()
 
@@ -235,28 +236,32 @@ class LiveMapUiSystem(
     private inner class Processing : UiState() {
 
         fun initialize(context: LiveMapContext) {
-            val res = myUiService.resourceManager
 
-            myGetCenter.snapshot = res[KEY_GET_CENTER]
-            updateMakeGeometryButton()
+            myGetCenter.snapshot = myUiService.resourceManager[KEY_GET_CENTER]
+            updateMakeGeometryButton(drawingGeometry = false)
             updateZoomButtons(context.camera.zoom)
         }
 
         override fun update(context: LiveMapContext) {
-            updateMakeGeometryButton()
+            val drawingGeometry = containsEntity(MakeGeometryWidgetComponent::class)
+            if (myDrawingGeometry != drawingGeometry) {
+                updateMakeGeometryButton(drawingGeometry)
+            }
 
             if (context.camera.isZoomChanged) {
                 updateZoomButtons(context.camera.zoom)
             }
         }
 
-        internal fun updateMakeGeometryButton() {
-            val res = myUiService.resourceManager
-            myMakeGeometry.snapshot = if (containsEntity(MakeGeometryWidgetComponent::class)) {
-                res[KEY_MAKE_GEOMETRY_ACTIVE]
-            } else {
-                res[KEY_MAKE_GEOMETRY]
+        internal fun updateMakeGeometryButton(drawingGeometry: Boolean) {
+            myDrawingGeometry = drawingGeometry
+
+            val buttonImage = when(myDrawingGeometry) {
+                true -> myUiService.resourceManager[KEY_MAKE_GEOMETRY_ACTIVE]
+                false -> myUiService.resourceManager[KEY_MAKE_GEOMETRY]
             }
+            myMakeGeometry.snapshot = buttonImage
+            myUiService.repaint()
         }
 
         internal fun updateZoomButtons(zoom: Double) {
@@ -274,8 +279,16 @@ class LiveMapUiSystem(
                 myButtonPlus.add(CursorStyleComponent(CursorStyle.POINTER))
             }
 
-            myZoomMinus.snapshot = if (zoom == myViewport.minZoom.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
-            myZoomPlus.snapshot = if (zoom == myViewport.maxZoom.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]
+            myZoomMinus.snapshot = when (zoom) {
+                myViewport.minZoom.toDouble() -> res[KEY_MINUS_DISABLED]
+                else -> res[KEY_MINUS]
+            }
+            myZoomPlus.snapshot = when (zoom) {
+                myViewport.maxZoom.toDouble() -> res[KEY_PLUS_DISABLED]
+                else -> res[KEY_PLUS]
+            }
+
+            myUiService.repaint()
         }
     }
 

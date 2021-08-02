@@ -34,15 +34,15 @@ Check out documentation on-line at https://lets-plot.org.
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 
-## JVM/Kotlin-JS artifacts and Kotlin API
+## JVM, Kotlin/JS artifacts and Kotlin API
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.lets-plot/lets-plot-common?color=blue&label=Maven%20Central)](https://search.maven.org/search?q=lets-plot)
 
 [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
-Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into JVM and Kotlin-JS applications.
+Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into JVM and Kotlin/JS applications.
 
-To learn more about embedding plots into JVM/Kotlin-JS apps see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) 
+To learn more about embedding plots into JVM and Kotlin/JS apps see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) 
 in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
 
 <a id="pycharm_plugin"></a>

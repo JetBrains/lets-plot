@@ -30,10 +30,17 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class RasterTileLoadingSystem(
-    private val myRequestFormat: String,
+    private val myDomains: List<String>,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
+    private var myIndex = 0
     private val myTileTransport: HttpTileTransport = HttpTileTransport()
+
+    private fun nextDomain(): String {
+        return myDomains[myIndex++].also {
+            myIndex = myIndex % myDomains.size
+        }
+    }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->
@@ -45,7 +52,7 @@ class RasterTileLoadingSystem(
                     + tileResponseComponent
                 }
 
-            myTileTransport.get(getZXY(cellKey, myRequestFormat)).onResult(
+            myTileTransport.get(replacePlaceholders(cellKey, nextDomain())).onResult(
                 successHandler = { tileResponseComponent.imageData = it },
                 failureHandler = {
                     tileResponseComponent.imageData = ByteArray(0)
@@ -112,12 +119,12 @@ class RasterTileLoadingSystem(
     }
 
     companion object {
-        fun getZXY(cellKey: CellKey, format: String): String {
+        fun replacePlaceholders(cellKey: CellKey, domain: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Generic>(0.0, 0.0, it, it) }
                 .let { cellKey.projectOrigin(it) }
                 .let {
-                    format
+                    domain
                         .replace("{z}", cellKey.length.toString(),  ignoreCase = true)
                         .replace("{x}", it.x.roundToInt().toString(), ignoreCase = true)
                         .replace("{y}", it.y.roundToInt().toString(), ignoreCase = true)

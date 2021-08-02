@@ -13,6 +13,6 @@ fun main() {
         PlotSpecsDemoWindowBatik(
             "geom_raster",
             plotSpecList()
-        )
+        ).open()
     }
 }
