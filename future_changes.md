@@ -21,8 +21,10 @@
 
 ### Fixed
 
-- Improved click events detection on livemap.
-- Properly handle `max_zoom` pamareter in `maptiles_zxy()`.
+- geom_livemap: missing ScreenGeometryComponent exception.
+- geom_livemap: repaint only on visual changes to reduce a CPU usage at idle.
+- geom_livemap: improved click events detection.
+- geom_livemap: properly handle `max_zoom` pamareter in `maptiles_zxy()`.
 - Strange looking legend for tiles [[#245](https://github.com/JetBrains/lets-plot/issues/245)].
 - Need to skip "bad" values during scale transformation [[#301](https://github.com/JetBrains/lets-plot/issues/301)].
 - NPE on negative value in data and scale_xxx(trans='log10') [[#292](https://github.com/JetBrains/lets-plot/issues/292)].
@@ -32,7 +34,10 @@
 - Wrong tooltip formatting when used with log10 scales [[#406](https://github.com/JetBrains/lets-plot/issues/406)].
 - Bad axis labels when using both plot and layer data [[#327](https://github.com/JetBrains/lets-plot/issues/327)].
 - Plot layout looks wrong [[#403](https://github.com/JetBrains/lets-plot/issues/403)].
+- map_join is not working correctly when `map=geocoder` [[#380](https://github.com/JetBrains/lets-plot/issues/380)]
 - Tooltip default formatting should not change after adding other variables to tooltip [[#388](https://github.com/JetBrains/lets-plot/issues/388)].
+- Tooltip on axis: increase the font size. [[#399](https://github.com/JetBrains/lets-plot/issues/399)].
 - Tooltip format for variable is not working [[#401](https://github.com/JetBrains/lets-plot/issues/401)].
 - Wrong direction in colorbars (legend) [[#204](https://github.com/JetBrains/lets-plot/issues/204)].
 - geom_jitter: show axis tooltips (same as geom_point) [[#412](https://github.com/JetBrains/lets-plot/issues/412)].
+- Memory leak in IDEA caused by a `final void dispose()` method in PlotPanel.
