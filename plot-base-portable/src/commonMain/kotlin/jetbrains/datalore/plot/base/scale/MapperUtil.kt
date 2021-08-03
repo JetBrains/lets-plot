@@ -36,11 +36,20 @@ object MapperUtil {
         dataRange: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: Transform
     ): ClosedRange<Double> {
-        val lower = lowerLimit ?: dataRange.lowerEnd
-        val upper = upperLimit ?: dataRange.upperEnd
+        val lower = if (lowerLimit != null && lowerLimit.isFinite()) {
+            lowerLimit
+        } else {
+            dataRange.lowerEnd
+        }
+        val upper = if (upperLimit != null && upperLimit.isFinite()) {
+            upperLimit
+        } else {
+            dataRange.upperEnd
+        }
         val limits = listOf(lower, upper)
-        return ClosedRange.encloseAll(trans?.apply(limits) ?: limits)
+//        return ClosedRange.encloseAll(trans?.apply(limits) ?: limits)
+        return ClosedRange.encloseAll(trans.apply(limits))
     }
 }
