@@ -117,7 +117,7 @@ object StatProto {
         // max_n (1000)  - maximum points in DF for LOESS
 
         val smoothingMethod = options.getString(Smooth.METHOD)?.let {
-            when (it.toLowerCase()) {
+            when (it.lowercase()) {
                 "lm" -> SmoothStat.Method.LM
                 "loess", "lowess" -> SmoothStat.Method.LOESS
                 "glm" -> SmoothStat.Method.GLM
@@ -147,14 +147,14 @@ object StatProto {
 
     private fun configureCorrStat(options: OptionsAccessor): CorrelationStat {
         val correlationMethod = options.getString(Corr.METHOD)?.let {
-            when (it.toLowerCase()) {
+            when (it.lowercase()) {
                 "pearson" -> CorrelationStat.Method.PEARSON
                 else -> throw IllegalArgumentException("Unsupported correlation method: '$it'. Must be: 'pearson'")
             }
         }
 
         val type = options.getString(Corr.TYPE)?.let {
-            when (it.toLowerCase()) {
+            when (it.lowercase()) {
                 "full" -> CorrelationStat.Type.FULL
                 "upper" -> CorrelationStat.Type.UPPER
                 "lower" -> CorrelationStat.Type.LOWER

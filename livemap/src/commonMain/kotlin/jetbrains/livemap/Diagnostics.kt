@@ -191,7 +191,7 @@ open class Diagnostics {
 
             override fun update() {
                 val counts = registry.tryGetSingleton<DownloadingFragmentsComponent>()
-                    ?.let { "D: ${it.downloading.size} Q: ${it.queue.values.sumBy(MutableSet<FragmentKey>::size)}" }
+                    ?.let { "D: ${it.downloading.size} Q: ${it.queue.values.sumOf(MutableSet<FragmentKey>::size)}" }
                     ?: "D: 0 Q: 0"
 
                 debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: $counts")

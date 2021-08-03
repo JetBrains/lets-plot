@@ -731,7 +731,7 @@ class ScaleOrderingTest {
             breaks: List<Any>
         ) {
             val scale = layer.scaleMap[aes]
-            assertEquals(breaks, scale.breaks, "Wrong ticks order on ${aes.name.toUpperCase()}.")
+            assertEquals(breaks, scale.breaks, "Wrong ticks order on ${aes.name.uppercase()}.")
         }
 
         private fun getBarColumnValues(
@@ -772,7 +772,7 @@ class ScaleOrderingTest {
                     }
                 assertEquals(expected.size, actual.size)
                 for (i in expected.indices) {
-                    assertEquals(expected[i], actual[i], "Wrong color order in ${aes.name.toUpperCase()}.")
+                    assertEquals(expected[i], actual[i], "Wrong color order in ${aes.name.uppercase()}.")
                 }
             }
         }

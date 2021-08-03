@@ -5,14 +5,13 @@
 
 package jetbrains.datalore.plot.config.transform.encode
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.common.base64.BinaryUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object DataFrameEncoding {
-    private const val DATA_FRAME_KEY = "__data_frame_encoded" // depricated
+    private const val DATA_FRAME_KEY = "__data_frame_encoded" // deprecated
     private const val DATA_SPEC_KEY = "__data_spec_encoded"
 
     // deprecated
@@ -27,7 +26,7 @@ object DataFrameEncoding {
     }
 
     fun decode(map: Map<*, *>): DataFrame {
-        checkArgument(isEncodedDataFrame(map), "Not a data frame")
+        require(isEncodedDataFrame(map)) { "Not a data frame" }
 
         val encodedData = map[DATA_FRAME_KEY] as List<*>
         val varNames = encodedData[0] as List<*>
@@ -54,7 +53,7 @@ object DataFrameEncoding {
     }
 
     fun decode1(map: Map<String, *>): Map<String, List<*>> {
-        checkArgument(isEncodedDataSpec(map), "Not an encoded data spec")
+        require(isEncodedDataSpec(map)) { "Not an encoded data spec" }
 
         val encodedData = map[DATA_SPEC_KEY] as List<*>
 

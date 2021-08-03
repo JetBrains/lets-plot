@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
@@ -19,24 +18,26 @@ internal class VerticalFlexBreaksLabelsLayout(
     axisDomain: ClosedRange<Double>,
     labelSpec: PlotLabelSpec,
     private val myBreaksProvider: AxisBreaksProvider,
-    theme: AxisTheme) :
-        AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+    theme: AxisTheme
+) :
+    AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
     private fun maxTickCount(axisLength: Double): Int {
         return ceil(axisLength / (TICK_LABEL_SPEC.height() + MIN_TICK_LABEL_DISTANCE)).toInt()
     }
 
     init {
-        checkArgument(!orientation.isHorizontal, orientation.toString())
-        checkArgument(!myBreaksProvider.isFixedBreaks, "fixed breaks")
+        require(!orientation.isHorizontal) { orientation.toString() }
+        require(!myBreaksProvider.isFixedBreaks) { "fixed breaks" }
     }
 
     override fun doLayout(
-            axisLength: Double,
-            axisMapper: (Double?) -> Double?,
-            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+        axisLength: Double,
+        axisMapper: (Double?) -> Double?,
+        maxLabelsBounds: DoubleRectangle?
+    ): AxisLabelsLayoutInfo {
 
-        checkArgument(axisLength > 0, "axis length: $axisLength")
+        require(axisLength > 0) { "axis length: $axisLength" }
         val maxTickCount = maxTickCount(axisLength)
         val breaks = getBreaks(maxTickCount, axisLength)
 

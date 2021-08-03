@@ -12,7 +12,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.livemap.demo.DemoBaseJs
 import org.w3c.dom.HTMLElement
-import kotlin.browser.document
+import kotlinx.browser.document
 
 fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {
     val size = Vector(800, 600)

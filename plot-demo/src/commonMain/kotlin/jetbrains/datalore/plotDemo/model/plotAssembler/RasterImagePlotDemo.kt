@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plotDemo.model.plotAssembler
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -40,10 +39,7 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
         val varAlpha = DataFrame.Variable("alpha")
         val builder = DataFrame.Builder()
         for (variable in listOf(varX, varY, varFill, varAlpha)) {
-            Preconditions.checkArgument(
-                data.containsKey(variable.name),
-                "Couldn't find input variable " + variable.name
-            )
+            require(data.containsKey(variable.name)) { "Couldn't find input variable " + variable.name }
             builder.put(variable, data.getValue(variable.name))
         }
         val df = builder.build()

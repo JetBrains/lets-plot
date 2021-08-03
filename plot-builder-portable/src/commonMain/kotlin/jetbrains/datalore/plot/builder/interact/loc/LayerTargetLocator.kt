@@ -20,7 +20,8 @@ internal class LayerTargetLocator(
     private val geomKind: GeomKind,
     private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
-    targetPrototypes: List<TargetPrototype>) :
+    targetPrototypes: List<TargetPrototype>
+) :
     GeomTargetLocator {
 
     private val myTargets = ArrayList<Target>()
@@ -89,21 +90,24 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun addLookupResults(collector: Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LookupResult>) {
+    private fun addLookupResults(
+        collector: Collector<GeomTarget>,
+        targets: MutableList<GeomTargetLocator.LookupResult>
+    ) {
         if (collector.size() == 0) {
             return
         }
 
         targets.add(
-                GeomTargetLocator.LookupResult(
-                        collector.collection(),
-                        // Distance can be negative when lookup space is X
-                        // In this case use 0.0 as a distance - we have a direct hit.
-                        max(0.0, collector.closestPointChecker.distance),
-                        geomKind,
-                        contextualMapping,
-                        contextualMapping.isCrosshairEnabled
-                )
+            GeomTargetLocator.LookupResult(
+                collector.collection(),
+                // Distance can be negative when lookup space is X
+                // In this case use 0.0 as a distance - we have a direct hit.
+                max(0.0, collector.closestPointChecker.distance),
+                geomKind,
+                contextualMapping,
+                contextualMapping.isCrosshairEnabled
+            )
         )
     }
 
@@ -163,7 +167,7 @@ internal class LayerTargetLocator(
         }
 
         var closestTargets: GeomTargetLocator.LookupResult = lookupResults[0]
-        checkArgument(closestTargets.distance >= 0)
+        require(closestTargets.distance >= 0)
 
         for (lookupResult in lookupResults) {
             if (lookupResult.distance < closestTargets.distance) {
@@ -178,15 +182,15 @@ internal class LayerTargetLocator(
 
             val rect = target.prototype.hitShape.rect
             val yOffset = when (target.prototype.tooltipKind) {
-                                    CURSOR_TOOLTIP -> rect.height / 2.0
-                                    else -> 0.0
-                                 }
+                CURSOR_TOOLTIP -> rect.height / 2.0
+                else -> 0.0
+            }
 
             resultCollector.collect(
-                    target.prototype.createGeomTarget(
-                            rect.origin.add(DoubleVector(rect.width / 2, yOffset)),
-                            getKeyForSingleObjectGeometry(target.prototype)
-                    )
+                target.prototype.createGeomTarget(
+                    rect.origin.add(DoubleVector(rect.width / 2, yOffset)),
+                    getKeyForSingleObjectGeometry(target.prototype)
+                )
             )
         }
     }
@@ -195,10 +199,10 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkPolygon(coord, target.polygonProjection, resultCollector.closestPointChecker)) {
 
             resultCollector.collect(
-                    target.prototype.createGeomTarget(
-                            coord,
-                            getKeyForSingleObjectGeometry(target.prototype)
-                    )
+                target.prototype.createGeomTarget(
+                    coord,
+                    getKeyForSingleObjectGeometry(target.prototype)
+                )
             )
         }
     }
@@ -207,10 +211,10 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkPoint(coord, target.pointProjection, resultCollector.closestPointChecker)) {
 
             resultCollector.collect(
-                    target.prototype.createGeomTarget(
-                            target.prototype.hitShape.point.center,
-                            getKeyForSingleObjectGeometry(target.prototype)
-                    )
+                target.prototype.createGeomTarget(
+                    target.prototype.hitShape.point.center,
+                    getKeyForSingleObjectGeometry(target.prototype)
+                )
             )
         }
     }
@@ -226,10 +230,10 @@ internal class LayerTargetLocator(
         val hitPoint = myTargetDetector.checkPath(coord, target.pathProjection, pointChecker)
         if (hitPoint != null) {
             resultCollector.collect(
-                    target.prototype.createGeomTarget(
-                            hitPoint.originalCoord,
-                            hitPoint.index
-                    )
+                target.prototype.createGeomTarget(
+                    hitPoint.originalCoord,
+                    hitPoint.index
+                )
             )
         }
     }

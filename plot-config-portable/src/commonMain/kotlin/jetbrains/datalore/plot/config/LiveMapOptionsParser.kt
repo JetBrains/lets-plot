@@ -48,12 +48,12 @@ class LiveMapOptionsParser {
         }
 
         private fun <ValueT : Enum<ValueT>> formatValues(values: Array<ValueT>): String {
-            return values.joinToString(prefix = "=[", separator = "|", postfix = "]") { "'${it.name.toLowerCase()}'" }
+            return values.joinToString(prefix = "=[", separator = "|", postfix = "]") { "'${it.name.lowercase()}'" }
         }
 
         private fun parseDisplayMode(displayMode: String): DisplayMode {
             try {
-                return DisplayMode.valueOf(displayMode.toUpperCase())
+                return DisplayMode.valueOf(displayMode.uppercase())
             } catch (ignored: Exception) {
                 throw IllegalArgumentException("geom" + formatValues(DisplayMode.values()))
             }
@@ -61,7 +61,7 @@ class LiveMapOptionsParser {
 
         private fun parseProjection(projection: String): Projection {
             try {
-                return Projection.valueOf(projection.toUpperCase())
+                return Projection.valueOf(projection.uppercase())
             } catch (ignored: Exception) {
                 throw IllegalArgumentException(LiveMap.PROJECTION + formatValues(Projection.values()))
             }

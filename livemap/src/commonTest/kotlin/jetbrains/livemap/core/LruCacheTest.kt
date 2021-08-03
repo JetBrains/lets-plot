@@ -8,6 +8,7 @@ package jetbrains.livemap.core
 import jetbrains.livemap.containers.LruCache
 import kotlin.math.min
 import kotlin.test.*
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
@@ -187,7 +188,7 @@ class LruCacheTest {
     fun measure(n: Int, f: () -> Unit): Double {
         var minTime: Double = Double.MAX_VALUE
         repeat(n) {
-            minTime = min(measureTime(f).inMilliseconds, minTime)
+            minTime = min(measureTime(f).toDouble(DurationUnit.MILLISECONDS), minTime)
         }
         return minTime
     }

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -27,10 +26,10 @@ class AxisLayoutInfo private constructor(b: Builder) {
     internal val tickLabelsBoundsMax: DoubleRectangle?                     // debug
 
     init {
-        checkArgument(b.myAxisBreaks != null)
-        checkArgument(b.myOrientation != null)
-        checkArgument(b.myTickLabelsBounds != null)
-        checkArgument(b.myAxisDomain != null)
+        require(b.myAxisBreaks != null)
+        require(b.myOrientation != null)
+        require(b.myTickLabelsBounds != null)
+        require(b.myAxisDomain != null)
 
         this.axisBreaks = b.myAxisBreaks
         this.axisLength = b.myAxisLength

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
@@ -72,7 +71,7 @@ open class PlotContainerPortable(
     }
 
     protected open fun buildContent() {
-        checkState(!myContentBuilt)
+        check(!myContentBuilt)
         myContentBuilt = true
 
         svg.setStyle(object : SvgCssResource {

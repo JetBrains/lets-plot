@@ -65,11 +65,11 @@ object Colors {
     }
 
     fun isColorName(colorName: String): Boolean {
-        return namedColors.containsKey(colorName.toLowerCase())
+        return namedColors.containsKey(colorName.lowercase())
     }
 
     fun forName(colorName: String): Color {
-        return namedColors[colorName.toLowerCase()] ?: throw IllegalArgumentException()
+        return namedColors[colorName.lowercase()] ?: throw IllegalArgumentException()
     }
 
     fun generateHueColor(): Double {

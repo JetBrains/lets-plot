@@ -16,7 +16,7 @@ object Area_PNG_Resolutions {
             @Suppress("UNCHECKED_CAST")
             (PlotImageDemoUtil.show(
                 "Area plot",
-                plotSpecList().first() as MutableMap<String, Any>,
+                plotSpecList().first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),
                 formats = MutableList(3) { Format.PNG }

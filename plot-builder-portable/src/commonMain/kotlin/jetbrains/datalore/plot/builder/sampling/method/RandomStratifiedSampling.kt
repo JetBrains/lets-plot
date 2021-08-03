@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.data.GroupUtil
 import jetbrains.datalore.plot.base.util.SamplingUtil
@@ -32,7 +31,7 @@ internal class RandomStratifiedSampling(
     }
 
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
-        checkArgument(isApplicable(population, groupMapper))
+        require(isApplicable(population, groupMapper))
         val indicesByGroup = GroupUtil.indicesByGroup(population.rowCount(), groupMapper)
 
         var minSubSampleSize = myMinSubsampleSize ?: DEF_MIN_SUBSAMPLE_SIZE

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.spatial.LongitudeSegment.Companion.splitSegment
 import jetbrains.datalore.base.typedGeometry.*
@@ -14,8 +13,9 @@ import kotlin.math.min
 
 // Segment have direction, i.e. `start` can be less than `end` for the case
 // of the antimeridian intersection.
-// Thats why we can't use ClosedRange class with lower <= upper invariant
+// That's why we can't use ClosedRange class with lower <= upper invariant
 typealias Segment = Pair<Double, Double>
+
 val Segment.start get() = first
 val Segment.end get() = second
 
@@ -64,7 +64,10 @@ class GeoBoundingBoxCalculator<TypeT>(
     }
 
     companion object {
-        internal fun calculateLoopLimitRange(segments: Sequence<Segment>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
+        internal fun calculateLoopLimitRange(
+            segments: Sequence<Segment>,
+            mapRange: ClosedRange<Double>
+        ): ClosedRange<Double> {
             return segments
                 .map {
                     splitSegment(
@@ -152,7 +155,7 @@ fun <T> GeoBoundingBoxCalculator<T>.geoRectsBBox(rectangles: List<GeoRectangle>)
 }
 
 fun <T> GeoBoundingBoxCalculator<T>.pointsBBox(xyCoords: List<Double>): Rect<T> {
-    Preconditions.checkArgument(xyCoords.size % 2 == 0, "Longitude-Latitude list is not even-numbered.")
+    require(xyCoords.size % 2 == 0) { "Longitude-Latitude list is not even-numbered." }
     val x: (Int) -> Double = { index -> xyCoords[2 * index] }
     val y: (Int) -> Double = { index -> xyCoords[2 * index + 1] }
 

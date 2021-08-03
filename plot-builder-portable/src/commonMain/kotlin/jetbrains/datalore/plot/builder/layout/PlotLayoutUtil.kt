@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -43,7 +42,7 @@ object PlotLayoutUtil {
     }
 
     fun absoluteGeomBounds(origin: DoubleVector, plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
-        Preconditions.checkArgument(!plotLayoutInfo.tiles.isEmpty(), "Plot is empty")
+        require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
 
         var result: DoubleRectangle? = null
         for (tile in plotLayoutInfo.tiles) {

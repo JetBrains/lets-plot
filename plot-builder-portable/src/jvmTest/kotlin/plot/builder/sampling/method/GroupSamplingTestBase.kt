@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.builder.data.generateData
@@ -24,7 +23,7 @@ internal abstract class GroupSamplingTestBase {
         // add groups
         val random = Random(9999)
         val groups = (0 until pointCount).map { random.nextInt(groupCount) }
-        checkState(groups.distinct().count() == groupCount)
+        check(groups.distinct().count() == groupCount)
 
         groupMapper = { groups[it] }
         this.data = data.builder()

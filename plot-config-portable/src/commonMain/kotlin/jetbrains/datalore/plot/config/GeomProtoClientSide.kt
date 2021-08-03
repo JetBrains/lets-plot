@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.base.stringFormat.StringFormat
@@ -51,7 +50,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
-            GeomKind.CROSS_BAR -> return GeomProvider.crossBar() {
+            GeomKind.CROSS_BAR -> return GeomProvider.crossBar {
                 val geom = CrossBarGeom()
                 if (opts.hasOwn(CrossBar.FATTEN)) {
                     geom.fattenMidline = opts.getDouble(CrossBar.FATTEN)!!
@@ -59,7 +58,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
-            GeomKind.POINT_RANGE -> return GeomProvider.pointRange() {
+            GeomKind.POINT_RANGE -> return GeomProvider.pointRange {
                 val geom = PointRangeGeom()
                 if (opts.hasOwn(PointRange.FATTEN)) {
                     geom.fattenMidPoint = opts.getDouble(PointRange.FATTEN)!!
@@ -121,7 +120,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.animation = opts[Point.ANIMATION]
                 }
 
-                geom.sizeUnit = opts.getString(Point.SIZE_UNIT)?.toLowerCase()
+                geom.sizeUnit = opts.getString(Point.SIZE_UNIT)?.lowercase()
                 geom
             }
 
@@ -146,21 +145,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
                     if (naValue != null) {
                         geom.naValue = naValue
-                    }else {
+                    } else {
                         throw IllegalArgumentException("Expected: na_value = 'some string'")
                     }
                 }
 
-                geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.toLowerCase()
+                geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
 
                 geom
             }
 
             GeomKind.IMAGE -> return GeomProvider.image {
-                Preconditions.checkArgument(
-                    opts.hasOwn(Image.HREF),
-                    "Image reference URL (href) is not specified"
-                )
+                require(opts.hasOwn(Image.HREF)) { "Image reference URL (href) is not specified" }
                 ImageGeom(
                     opts.getString(Image.HREF)!!
                 )
@@ -168,10 +164,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
 
             else -> {
-                Preconditions.checkArgument(
-                    PROVIDER.containsKey(geomKind),
-                    "Provider doesn't support geom kind: '$geomKind'"
-                )
+                require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 return PROVIDER[geomKind]!!
             }
         }

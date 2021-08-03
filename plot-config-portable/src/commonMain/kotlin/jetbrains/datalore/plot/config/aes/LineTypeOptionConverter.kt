@@ -44,7 +44,7 @@ internal class LineTypeOptionConverter : Function<Any?, LineType?> {
         init {
             for (lineType in NamedLineType.values()) {
                 LINE_TYPE_BY_CODE[lineType.code] = lineType
-                LINE_TYPE_BY_NAME[lineType.name.toLowerCase()] = lineType
+                LINE_TYPE_BY_NAME[lineType.name.lowercase()] = lineType
             }
         }
     }

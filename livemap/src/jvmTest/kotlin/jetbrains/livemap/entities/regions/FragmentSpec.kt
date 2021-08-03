@@ -53,7 +53,7 @@ class FragmentSpec (private var myKey: FragmentKey) {
     }
 
     fun readyEntity(): EcsEntity? {
-        checkArgument(myGeometries != null && !myGeometries!!.asMultipolygon().isEmpty())
+        require(myGeometries != null && !myGeometries!!.asMultipolygon().isEmpty())
         return myEntity
     }
 

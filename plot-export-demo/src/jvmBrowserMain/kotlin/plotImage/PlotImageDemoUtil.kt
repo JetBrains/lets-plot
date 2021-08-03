@@ -77,7 +77,7 @@ object PlotImageDemoUtil {
                             targetDPI = targetDPI.toDouble()
                         )
 
-                    val titleTrimmed = Regex("[^a-z0-9_]").replace(title.toLowerCase(), "_")
+                    val titleTrimmed = Regex("[^a-z0-9_]").replace(title.lowercase(), "_")
                     val namePrefix = "${titleTrimmed}_scale_${scalingFactor}_"
                     val imgFile = createDemoFile(DEMO_PROJECT, namePrefix, format.defFileExt)
                     imgFile.writeBytes(image.bytes)

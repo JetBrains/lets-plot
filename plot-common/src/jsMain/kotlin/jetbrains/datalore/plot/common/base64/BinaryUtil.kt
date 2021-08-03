@@ -41,17 +41,17 @@ actual object BinaryUtil {
                 bytes[pos + 1],
                 bytes[pos],
                 */
-                binStr[pos + 7].toByte(),
-                binStr[pos + 6].toByte(),
-                binStr[pos + 5].toByte(),
-                binStr[pos + 4].toByte(),
-                binStr[pos + 3].toByte(),
-                binStr[pos + 2].toByte(),
-                binStr[pos + 1].toByte(),
-                binStr[pos].toByte(),
+                binStr[pos + 7].code.toByte(),
+                binStr[pos + 6].code.toByte(),
+                binStr[pos + 5].code.toByte(),
+                binStr[pos + 4].code.toByte(),
+                binStr[pos + 3].code.toByte(),
+                binStr[pos + 2].code.toByte(),
+                binStr[pos + 1].code.toByte(),
+                binStr[pos].code.toByte(),
                 bytesView
             )
-            doubles.add(doublesView.get(0))
+            doubles.add(doublesView[0])
         }
         return doubles
     }
