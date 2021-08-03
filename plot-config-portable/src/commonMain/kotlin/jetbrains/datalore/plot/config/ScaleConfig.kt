@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.scale.Mappers.nullable
@@ -239,8 +238,8 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
 
         fun aesOrFail(options: Map<String, Any>): Aes<*> {
             val accessor = OptionsAccessor(options)
-            checkArgument(accessor.has(AES), "Required parameter '$AES' is missing")
-            return Option.Mapping.toAes(accessor.getString(AES)!!)
+            require(accessor.has(AES)) { "Required parameter '$AES' is missing" }
+            return Option.Mapping.toAes(accessor.getStringSafe(AES))
         }
 
         fun <T> createIdentityMapperProvider(aes: Aes<T>, naValue: T): MapperProvider<T> {

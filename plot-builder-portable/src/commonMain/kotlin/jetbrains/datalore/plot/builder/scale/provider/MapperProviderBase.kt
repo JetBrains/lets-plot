@@ -5,6 +5,6 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.plot.builder.scale.MapperProviderAdapter
+import jetbrains.datalore.plot.builder.scale.MapperProvider
 
-abstract class MapperProviderBase<T>(protected val naValue: T) : MapperProviderAdapter<T>()
+abstract class MapperProviderBase<T>(protected val naValue: T) : MapperProvider<T>

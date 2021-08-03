@@ -7,19 +7,15 @@ package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.builder.scale.provider.MapperProviderBase
 
-open class MapperProviderAdapter<T> : MapperProvider<T> {
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
-        throw IllegalStateException("Can't create mapper for discrete domain: ${domainValues.map { "'$it'" }
-            .joinToString(limit = 3)}")
-    }
-
+abstract class DiscreteOnlyMapperProvider<T>(naValue: T) : MapperProviderBase<T>(naValue) {
     override fun createContinuousMapper(
         domain: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
         trans: ContinuousTransform
     ): GuideMapper<T> {
-        throw IllegalStateException("Can't create mapper for continuous domain $domain")
+        throw IllegalStateException("[${this::class.simpleName}] Can't create mapper for continuous domain $domain")
     }
 }
