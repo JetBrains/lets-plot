@@ -42,21 +42,21 @@ object PlotUtil {
 
         val rangesAfterPosAdjustment =
             computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
-        val (rangeAfterSizeExpandFirst, rangeAfterSizeExpandSecond) =
+        val (xRangeAfterSizeExpand, yRangeAfterSizeExpand) =
             computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
 
         var rangeX = rangesAfterPosAdjustment.first
         if (rangeX == null) {
-            rangeX = rangeAfterSizeExpandFirst
-        } else if (rangeAfterSizeExpandFirst != null) {
-            rangeX = rangeX.span(rangeAfterSizeExpandFirst)
+            rangeX = xRangeAfterSizeExpand
+        } else if (xRangeAfterSizeExpand != null) {
+            rangeX = rangeX.span(xRangeAfterSizeExpand)
         }
 
         var rangeY = rangesAfterPosAdjustment.second
         if (rangeY == null) {
-            rangeY = rangeAfterSizeExpandSecond
-        } else if (rangeAfterSizeExpandSecond != null) {
-            rangeY = rangeY.span(rangeAfterSizeExpandSecond)
+            rangeY = yRangeAfterSizeExpand
+        } else if (yRangeAfterSizeExpand != null) {
+            rangeY = rangeY.span(yRangeAfterSizeExpand)
         }
 
         return Pair(rangeX, rangeY)
