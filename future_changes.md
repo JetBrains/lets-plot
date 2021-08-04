@@ -41,3 +41,4 @@
 - Wrong direction in colorbars (legend) [[#204](https://github.com/JetBrains/lets-plot/issues/204)].
 - geom_jitter: show axis tooltips (same as geom_point) [[#412](https://github.com/JetBrains/lets-plot/issues/412)].
 - Memory leak in IDEA caused by a `final void dispose()` method in PlotPanel.
+- Outlier tooltips: the spout sometimes is too long (boxplot) [[#358](https://github.com/JetBrains/lets-plot/issues/358)].
