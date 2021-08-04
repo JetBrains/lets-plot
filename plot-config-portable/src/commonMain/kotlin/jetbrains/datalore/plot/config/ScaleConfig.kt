@@ -239,7 +239,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
         fun aesOrFail(options: Map<String, Any>): Aes<*> {
             val accessor = OptionsAccessor(options)
             require(accessor.has(AES)) { "Required parameter '$AES' is missing" }
-            return Option.Mapping.toAes(accessor.getString(AES)!!)
+            return Option.Mapping.toAes(accessor.getStringSafe(AES))
         }
 
         fun <T> createIdentityMapperProvider(aes: Aes<T>, naValue: T): MapperProvider<T> {

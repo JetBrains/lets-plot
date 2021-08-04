@@ -301,8 +301,20 @@ class LayoutManager(
                     stemX = targetCoordX
                 }
                 !(canFitLeft || canFitRight) -> {
-                    tooltipX = 0.0
-                    stemX = targetCoordX
+                    when (myPreferredHorizontalAlignment) {
+                        HorizontalAlignment.LEFT -> {
+                            stemX = targetCoordX - hintSize
+                            tooltipX = stemX + stemLength
+                        }
+                        HorizontalAlignment.RIGHT -> {
+                            stemX = targetCoordX + hintSize
+                            tooltipX = stemX - tooltipWidth - stemLength
+                        }
+                        HorizontalAlignment.CENTER -> {
+                            stemX = targetCoordX
+                            tooltipX = targetCoordX - tooltipWidth / 2
+                        }
+                    }
                 }
                 myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight -> {
                     tooltipX = leftTooltipPlacement.start()

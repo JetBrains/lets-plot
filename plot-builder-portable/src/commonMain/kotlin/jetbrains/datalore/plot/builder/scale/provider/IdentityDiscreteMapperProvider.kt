@@ -5,12 +5,14 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
+import jetbrains.datalore.plot.builder.scale.DiscreteOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 
 open class IdentityDiscreteMapperProvider<T>(
-    private val inputConverter: (Any?) -> T?, naValue: T
-) : MapperProviderBase<T>(naValue) {
+    private val inputConverter: (Any?) -> T?,
+    naValue: T
+) : DiscreteOnlyMapperProvider<T>(naValue) {
 
     override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
         val outputValues = ArrayList<T>()

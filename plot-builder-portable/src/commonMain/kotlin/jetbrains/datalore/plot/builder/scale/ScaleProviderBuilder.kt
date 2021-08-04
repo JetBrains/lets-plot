@@ -139,8 +139,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         return MyScaleProvider(this)
     }
 
-    private class MyScaleProvider<T>(b: ScaleProviderBuilder<T>) :
-        ScaleProvider<T> {
+    private class MyScaleProvider<T>(b: ScaleProviderBuilder<T>) : ScaleProvider<T> {
 
         private val myName: String? = b.myName
 
@@ -148,19 +147,14 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
-        private val myLimits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
         private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
-
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
-
         private val myAes: Aes<T> = b.aes
-        private val mapperProvider: MapperProvider<T> = b.mapperProvider
 
-        override val breaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
         override val discreteDomain: Boolean = b.myDiscreteDomain
-
-        // This is only to use by 'discrete' transforms/scales
-        override val discreteDomainLimits: List<Any>? = myLimits?.filterNotNull()
+        override val mapperProvider: MapperProvider<T> = b.mapperProvider
+        override val breaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
+        override val limits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
 
         override val continuousTransform: ContinuousTransform = b.myContinuousTransform
 
@@ -191,7 +185,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 mapper
             )
 
-            val discreteLimits = discreteDomainLimits?.let {
+            val discreteLimits = limits?.filterNotNull()?.let {
                 if (discreteDomainReverse) {
                     it.reversed()
                 } else {
@@ -216,9 +210,9 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
             var lowerLimit: Double? = null
             var upperLimit: Double? = null
-            if (myLimits != null) {
+            if (limits != null) {
                 var lower = true
-                for (limit in myLimits) {
+                for (limit in limits) {
                     if (limit is Number) {
                         val v = limit.toDouble()
                         if (v.isFinite()) {
@@ -263,7 +257,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                     .build()
             }
 
-            if (myLimits != null) {
+            if (limits != null) {
                 val with = scale.with()
                 if (lowerLimit != null) {
                     with.lowerLimit(lowerLimit)
