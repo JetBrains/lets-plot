@@ -60,4 +60,4 @@ include 'base-portable',
  */
 
 // publishing
-//enableFeaturePreview('GRADLE_METADATA')
+enableFeaturePreview('GRADLE_METADATA')

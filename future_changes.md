@@ -18,6 +18,8 @@
 ### Changed
 
 - Upgraded Apach Batik version to 1.14 (was 1.12) [[#398](https://github.com/JetBrains/lets-plot/issues/398)].
+- Upgraded Kotlin version to 1.5.21 (was 1.4.21)
+- Upgraded Gradle version to 7.1.1 (was 6.8.3)
 
 ### Fixed
 
