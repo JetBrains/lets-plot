@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
@@ -29,7 +28,13 @@ class RasterGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = FilledSquareLegendKeyElementFactory()
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val iter = with_X_Y(aesthetics.dataPoints()).iterator()
         if (!iter.hasNext()) {
             return
@@ -42,14 +47,15 @@ class RasterGeom : GeomBase() {
             aesBoundingBox(aesthetics)
         val stepX = ctx.getResolution(Aes.X)
         val stepY = ctx.getResolution(Aes.Y)
-        checkArgument(stepX > SeriesUtil.TINY, "x-step is too small: $stepX")
-        checkArgument(stepY > SeriesUtil.TINY, "y-step is too small: $stepY")
+        require(stepX > SeriesUtil.TINY) { "x-step is too small: $stepX" }
+        require(stepY > SeriesUtil.TINY) { "y-step is too small: $stepY" }
         val width = (round(boundsXY.dimension.x / stepX) + 1)
         val height = (round(boundsXY.dimension.y / stepY) + 1)
 
         if (width * height > 5000000) {
             val center = boundsXY.center
-            val lines = arrayOf("Raster image size", "[$width X $height]", "exceeds capability", "of", "your imaging device")
+            val lines =
+                arrayOf("Raster image size", "[$width X $height]", "exceeds capability", "of", "your imaging device")
             val fontSize = 12.0
             val lineHeight = fontSize + 4
             var y = center.y + lineHeight * lines.size / 2.0

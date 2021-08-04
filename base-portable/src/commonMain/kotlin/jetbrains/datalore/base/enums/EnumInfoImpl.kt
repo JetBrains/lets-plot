@@ -14,7 +14,7 @@ class EnumInfoImpl<EnumT : Enum<EnumT>>(enumConstants: Array<EnumT>) : EnumInfo<
         get() = myOriginalNames
 
     private fun toNormalizedName(name: String): String {
-        return name.toUpperCase()
+        return name.uppercase()
     }
 
     init {

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.config.ConfigUtil
 import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
 import jetbrains.datalore.plot.config.OptionsAccessor
@@ -23,7 +22,7 @@ internal class ViewElementConfig private constructor(
         get() = ELEMENT_BLANK == name
 
     init {
-        checkState(ELEMENT_BLANK == name, "Only 'element_blank' is supported")
+        check(ELEMENT_BLANK == name) { "Only 'element_blank' is supported" }
     }
 
     companion object {

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -19,8 +18,8 @@ import kotlin.math.min
 
 internal object BreakLabelsLayoutUtil {
     fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): GuideBreaks {
-        checkArgument(!breaksProvider.isFixedBreaks, "fixed breaks not expected")
-        checkArgument(maxCount > 0, "maxCount=$maxCount")
+        require(!breaksProvider.isFixedBreaks) { "fixed breaks not expected" }
+        require(maxCount > 0) { "maxCount=$maxCount" }
         var breaks = breaksProvider.getBreaks(maxCount, axisLength)
 
         if (maxCount == 1 && !breaks.isEmpty) {
@@ -57,7 +56,8 @@ internal object BreakLabelsLayoutUtil {
         breaks: GuideBreaks,
         axisDomain: ClosedRange<Double>,
         axisMapper: (Double?) -> Double?,
-        theme: AxisTheme): AxisLabelsLayoutInfo {
+        theme: AxisTheme
+    ): AxisLabelsLayoutInfo {
 
         val axisBounds = when {
             theme.showTickLabels() -> {
@@ -85,12 +85,16 @@ internal object BreakLabelsLayoutUtil {
         }
 
         return AxisLabelsLayoutInfo.Builder()
-                .breaks(breaks)
-                .bounds(axisBounds)     // labels bounds actually
-                .build()
+            .breaks(breaks)
+            .bounds(axisBounds)     // label bounds actually
+            .build()
     }
 
-    fun mapToAxis(breaks: List<Double>, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): List<Double> {
+    fun mapToAxis(
+        breaks: List<Double>,
+        axisDomain: ClosedRange<Double>,
+        axisMapper: (Double?) -> Double?
+    ): List<Double> {
         val axisMin = axisDomain.lowerEnd
         val axisBreaks = ArrayList<Double>()
         for (v in breaks) {
@@ -100,7 +104,11 @@ internal object BreakLabelsLayoutUtil {
         return axisBreaks
     }
 
-    fun applyLabelsOffset(labelsBounds: DoubleRectangle, offset: Double, orientation: jetbrains.datalore.plot.builder.guide.Orientation): DoubleRectangle {
+    fun applyLabelsOffset(
+        labelsBounds: DoubleRectangle,
+        offset: Double,
+        orientation: jetbrains.datalore.plot.builder.guide.Orientation
+    ): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
         var labelsBounds = labelsBounds
         val offsetVector = when (orientation) {
@@ -120,7 +128,11 @@ internal object BreakLabelsLayoutUtil {
     }
 
 
-    private fun verticalAxisLabelsBounds(breaks: GuideBreaks, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): DoubleRectangle {
+    private fun verticalAxisLabelsBounds(
+        breaks: GuideBreaks,
+        axisDomain: ClosedRange<Double>,
+        axisMapper: (Double?) -> Double?
+    ): DoubleRectangle {
         val maxLength =
             maxLength(breaks.labels)
         val maxLabelWidth = AxisLabelsLayout.TICK_LABEL_SPEC.width(maxLength)

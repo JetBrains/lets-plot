@@ -14,7 +14,7 @@ object GGBunch_PNG_Resolutions {
     fun main(args: Array<String>) {
         with(GGBunch()) {
             @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+            val plotSpecList = plotSpecList()
             PlotImageDemoUtil.show(
                 "GGBunch",
                 plotSpecList.first(),

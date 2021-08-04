@@ -10,11 +10,11 @@ import kotlinx.browser.window
 actual object Base64 {
     actual fun decode(s: String): ByteArray {
         val bin = window.atob(s)
-        return ByteArray(bin.length) { i -> bin[i].toByte()}
+        return ByteArray(bin.length) { i -> bin[i].code.toByte() }
     }
 
     actual fun encode(data: ByteArray): String {
-        val binStr = data.fold(StringBuilder()) { str, byte -> str.append(byte.toChar()) }.toString()
+        val binStr = data.fold(StringBuilder()) { str, byte -> str.append(byte.toInt().toChar()) }.toString()
         return window.btoa(binStr)
     }
 }

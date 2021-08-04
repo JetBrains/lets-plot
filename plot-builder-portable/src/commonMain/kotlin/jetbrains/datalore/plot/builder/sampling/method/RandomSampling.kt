@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.base.util.SamplingUtil
@@ -24,7 +23,7 @@ internal class RandomSampling(sampleSize: Int, private val mySeed: Long?) : Samp
                 ")"
 
     override fun apply(population: DataFrame): DataFrame {
-        checkArgument(isApplicable(population))
+        require(isApplicable(population))
         val rand = mySeed?.let { Random(it) } ?: Random.Default
 
         return SamplingUtil.sampleWithoutReplacement(sampleSize, rand, population)

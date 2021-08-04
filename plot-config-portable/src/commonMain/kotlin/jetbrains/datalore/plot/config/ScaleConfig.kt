@@ -166,7 +166,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
             b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
             val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
-            val transform = when (transformName.toLowerCase()) {
+            val transform = when (transformName.lowercase()) {
                 TransformName.IDENTITY -> Transforms.IDENTITY
                 TransformName.LOG10 -> Transforms.LOG10
                 TransformName.REVERSE -> Transforms.REVERSE

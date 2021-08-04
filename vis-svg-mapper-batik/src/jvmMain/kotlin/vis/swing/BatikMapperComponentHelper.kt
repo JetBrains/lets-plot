@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.vis.swing
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.batik.SvgRootDocumentMapper
@@ -99,7 +98,7 @@ class BatikMapperComponentHelper private constructor(
 
     companion object {
         fun forUnattached(svgRoot: SvgSvgElement, messageCallback: BatikMessageCallback): BatikMapperComponentHelper {
-            checkArgument(!svgRoot.isAttached(), "SvgSvgElement must be unattached")
+            require(!svgRoot.isAttached()) { "SvgSvgElement must be unattached" }
             return BatikMapperComponentHelper(svgRoot, messageCallback)
         }
     }

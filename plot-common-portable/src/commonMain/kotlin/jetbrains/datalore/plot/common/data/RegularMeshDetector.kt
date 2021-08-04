@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import kotlin.math.abs
@@ -15,7 +14,7 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
         protected set
     var resolution: Double = 0.toDouble()
         get() {
-            Preconditions.checkState(isMesh, "Not a mesh")
+            check(isMesh) { "Not a mesh" }
             return field
         }
         protected set

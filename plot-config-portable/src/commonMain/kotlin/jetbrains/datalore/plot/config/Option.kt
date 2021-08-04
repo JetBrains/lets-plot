@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 
@@ -357,12 +356,12 @@ object Option {
         }
 
         fun toAes(option: String): Aes<*> {
-            checkArgument(AES_BY_OPTION.containsKey(option), "Not an aesthetic: '$option'")
+            require(AES_BY_OPTION.containsKey(option)) { "Not an aesthetic: '$option'" }
             return AES_BY_OPTION[option]!!
         }
 
         fun toOption(aes: Aes<*>): String {
-            return aes.name.toLowerCase()
+            return aes.name.lowercase()
         }
     }
 

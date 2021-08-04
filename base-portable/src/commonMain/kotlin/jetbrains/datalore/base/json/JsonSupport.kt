@@ -62,7 +62,7 @@ fun String.escape(): String {
             '\n' -> appendOutput("""\n""")
             '\r' -> appendOutput("""\r""")
             '\t' -> appendOutput("""\t""")
-            in CONTROL_CHARS -> appendOutput("""\u${ch.toInt().toString(16).padStart(4, '0')}""")
+            in CONTROL_CHARS -> appendOutput("""\u${ch.code.toString(16).padStart(4, '0')}""")
             else -> output?.append(ch)
         }
         i++

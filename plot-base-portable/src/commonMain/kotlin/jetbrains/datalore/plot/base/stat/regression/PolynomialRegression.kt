@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.stat.math3.ForsythePolynomialGenerator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialFunction
 import jetbrains.datalore.plot.base.stat.math3.TDistribution
@@ -24,27 +23,21 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
     private val tcritical: Double
 
     init {
-        Preconditions.checkArgument(
-            deg >= 2,
-            "Degree of polynomial must be at least 2"
-        )
+        require(deg >= 2) { "Degree of polynomial must be at least 2" }
 
         val (xVals, yVals) = averageByX(xs, ys)
         n = xVals.size
 
-        Preconditions.checkArgument(
-            n > deg,
-            "The number of valid data points must be greater than deg"
-        )
+        require(n > deg) { "The number of valid data points must be greater than deg" }
 
         p = calcPolynomial(deg, xVals, yVals)
 
         meanX = xVals.average()
-        sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
+        sumXX = xVals.sumOf { (it - meanX).pow(2) }
         val df = n - deg - 1.0
 
         sy = run { // Standard error of estimate
-            val sse = xVals.zip(yVals).sumByDouble { (x, y) -> (y - p.value(x)).pow(2) }
+            val sse = xVals.zip(yVals).sumOf { (x, y) -> (y - p.value(x)).pow(2) }
             sqrt(sse / (df))
         }
 

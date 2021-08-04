@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.config.transform
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-
 class PlotSpecTransform private constructor(builder: Builder) {
 
     /*
@@ -22,7 +20,7 @@ class PlotSpecTransform private constructor(builder: Builder) {
         myMakeCleanCopy = builder.myMakeCleanCopy
         mySpecChanges = HashMap()
         for ((key, list) in builder.mySpecChanges) {
-            checkState(list.isNotEmpty())
+            check(list.isNotEmpty())
             mySpecChanges[key] = list
         }
     }

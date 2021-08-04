@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
@@ -37,7 +36,6 @@ import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.tiles.TileSystemProvider.*
 import jetbrains.livemap.tiles.Tilesets
 import jetbrains.livemap.ui.CursorService
 
@@ -259,8 +257,10 @@ internal class LiveMapSpecBuilder {
                     val handlerMap = HashMap<String, (Any) -> MapLocation>()
                     handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
                     handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(getWithIdList(data)) }
-                    handlerMap[REGION_TYPE_COORDINATES] = { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
-                    handlerMap[REGION_TYPE_DATAFRAME] = { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
+                    handlerMap[REGION_TYPE_COORDINATES] =
+                        { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
+                    handlerMap[REGION_TYPE_DATAFRAME] =
+                        { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                     handleRegionObject(location, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: location" + " = [String|Array|DataFrame]")
@@ -285,7 +285,7 @@ internal class LiveMapSpecBuilder {
                 return Tilesets.chessboard()
             }
 
-            return when(options[Tile.KIND]) {
+            return when (options[Tile.KIND]) {
                 KIND_CHESSBOARD -> Tilesets.chessboard()
                 KIND_SOLID -> Tilesets.solid(Color.parseHex(options.getString(Tile.FILL_COLOR)!!))
                 KIND_RASTER_ZXY -> options.getString(Tile.URL)!!.let(::splitSubdomains).let(Tilesets::raster)
@@ -293,7 +293,7 @@ internal class LiveMapSpecBuilder {
                     quantumIterations = quant,
                     tileService = liveMapVectorTiles {
                         options.getString(Tile.URL)?.let { url = it }
-                        options.getString(Tile.THEME)?.let { theme = TileService.Theme.valueOf(it.toUpperCase()) }
+                        options.getString(Tile.THEME)?.let { theme = TileService.Theme.valueOf(it.uppercase()) }
                     }
                 )
                 else -> throw IllegalArgumentException("Tile provider is not set.")
@@ -317,7 +317,7 @@ internal class LiveMapSpecBuilder {
             if (subdomains.isEmpty()) {
                 throw IllegalArgumentException("Empty subdomains list")
             }
-            if (subdomains.any { it.toLowerCase() !in 'a'..'z' }) {
+            if (subdomains.any { it.lowercaseChar() !in 'a'..'z' }) {
                 throw IllegalArgumentException("subdomain list contains non-letter symbols")
             }
 
@@ -340,10 +340,7 @@ internal class LiveMapSpecBuilder {
         }
 
         fun calculateBoundingBox(xCoords: List<Double>, yCoords: List<Double>): Rect<LonLat> {
-            Preconditions.checkArgument(
-                xCoords.size == yCoords.size,
-                "Longitude list count is not equal Latitude list count."
-            )
+            require(xCoords.size == yCoords.size) { "Longitude list count is not equal Latitude list count." }
 
             return BBOX_CALCULATOR.calculateBoundingBox(
                 makeSegments(
@@ -366,10 +363,8 @@ internal class LiveMapSpecBuilder {
             maxYCoords: List<Double>
         ): Rect<LonLat> {
             val count = minXCoords.size
-            Preconditions.checkArgument(
-                minYCoords.size == count && maxXCoords.size == count && maxYCoords.size == count,
-                "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal."
-            )
+            require(minYCoords.size == count && maxXCoords.size == count && maxYCoords.size == count)
+            { "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal." }
 
             return BBOX_CALCULATOR.calculateBoundingBox(
                 makeSegments(

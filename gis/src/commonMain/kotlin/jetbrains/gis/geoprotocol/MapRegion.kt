@@ -5,22 +5,20 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
-
 class MapRegion private constructor(private val myKind: MapRegionKind, valueList: List<String>) {
     private val myValueList: List<String>
 
     val idList: List<String>
         get() {
-            Preconditions.checkArgument(containsId(), "Can't get ids from MapRegion with name")
+            require(containsId()) { "Can't get ids from MapRegion with name" }
 
             return myValueList
         }
 
     val name: String
         get() {
-            Preconditions.checkArgument(containsName(), "Can't get name from MapRegion with ids")
-            Preconditions.checkArgument(myValueList.size == 1, "MapRegion should contain one name")
+            require(containsName()) { "Can't get name from MapRegion with ids" }
+            require(myValueList.size == 1) { "MapRegion should contain one name" }
 
             return myValueList[0]
         }

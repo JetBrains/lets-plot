@@ -36,6 +36,6 @@ enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) 
             if (!(isSolid || isBlank)) {
                 return myDashArray!!
             }
-            throw IllegalStateException("No dash array in " + name.toLowerCase() + " linetype")
+            throw IllegalStateException("No dash array in " + name.lowercase() + " linetype")
         }
 }

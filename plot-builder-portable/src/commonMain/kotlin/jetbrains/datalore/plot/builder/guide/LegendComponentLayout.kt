@@ -5,16 +5,16 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import kotlin.math.max
 
-abstract class LegendComponentLayout(title: String,
-                                     protected val breaks: List<LegendBreak>,
-                                     val keySize: DoubleVector,
-                                     legendDirection: LegendDirection
+abstract class LegendComponentLayout(
+    title: String,
+    protected val breaks: List<LegendBreak>,
+    val keySize: DoubleVector,
+    legendDirection: LegendDirection
 ) : LegendBoxLayout(title, legendDirection) {
 
     private var myContentSize: DoubleVector? = null
@@ -24,12 +24,12 @@ abstract class LegendComponentLayout(title: String,
     var isFillByRow = false
     var rowCount = 0
         set(rowCount) {
-            checkState(rowCount > 0, "Row count must be greater than 0, was $rowCount")
+            check(rowCount > 0) { "Row count must be greater than 0, was $rowCount" }
             field = rowCount
         }
     var colCount = 0
         set(colCount) {
-            checkState(colCount > 0, "Col count must be greater than 0, was $colCount")
+            check(colCount > 0) { "Col count must be greater than 0, was $colCount" }
             field = colCount
         }
 
@@ -69,15 +69,17 @@ abstract class LegendComponentLayout(title: String,
             val labelSize = labelSize(i)
             val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, keySize.y)
             breakBoxBounds = DoubleRectangle(
-                    breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
-                    breakBoxSize
+                breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
+                breakBoxSize
             )
 
             myKeyLabelBoxes.add(breakBoxBounds)
-            myLabelBoxes.add(DoubleRectangle(
+            myLabelBoxes.add(
+                DoubleRectangle(
                     labelHOffset, labelVOffset,
                     labelSize.x, labelSize.y
-            ))
+                )
+            )
         }
 
         myContentSize = GeometryUtil.union(DoubleRectangle(contentOrigin, DoubleVector.ZERO), myKeyLabelBoxes).dimension
@@ -87,9 +89,11 @@ abstract class LegendComponentLayout(title: String,
 
     protected abstract fun labelSize(index: Int): DoubleVector
 
-    private class MyHorizontal internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) : LegendComponentLayout(title, breaks, keySize,
-        LegendDirection.HORIZONTAL
-    ) {
+    private class MyHorizontal internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) :
+        LegendComponentLayout(
+            title, breaks, keySize,
+            LegendDirection.HORIZONTAL
+        ) {
         init {
             colCount = breaks.size
             rowCount = 1
@@ -105,7 +109,12 @@ abstract class LegendComponentLayout(title: String,
         }
     }
 
-    private class MyHorizontalMultiRow internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) : MyMultiRow(title, breaks, keySize,
+    private class MyHorizontalMultiRow internal constructor(
+        title: String,
+        breaks: List<LegendBreak>,
+        keySize: DoubleVector
+    ) : MyMultiRow(
+        title, breaks, keySize,
         LegendDirection.HORIZONTAL
     ) {
         init {
@@ -114,16 +123,23 @@ abstract class LegendComponentLayout(title: String,
         }
     }
 
-    private class MyVertical internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) : MyMultiRow(title, breaks, keySize,
-        LegendDirection.VERTICAL
-    ) {
+    private class MyVertical internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) :
+        MyMultiRow(
+            title, breaks, keySize,
+            LegendDirection.VERTICAL
+        ) {
         init {
             colCount = 1
             rowCount = breaks.size
         }
     }
 
-    private abstract class MyMultiRow internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector, legendDirection: LegendDirection) : LegendComponentLayout(title, breaks, keySize, legendDirection) {
+    private abstract class MyMultiRow internal constructor(
+        title: String,
+        breaks: List<LegendBreak>,
+        keySize: DoubleVector,
+        legendDirection: LegendDirection
+    ) : LegendComponentLayout(title, breaks, keySize, legendDirection) {
         private var myMaxLabelWidth = 0.0
 
         init {

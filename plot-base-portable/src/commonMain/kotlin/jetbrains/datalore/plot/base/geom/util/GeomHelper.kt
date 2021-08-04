@@ -266,7 +266,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
         }
 
         fun getSizeUnitAes(sizeUnitName: String): Aes<Double> {
-            return when (sizeUnitName.toLowerCase()) {
+            return when (sizeUnitName.lowercase()) {
                 "x" -> Aes.X
                 "y" -> Aes.Y
                 else -> error("Size unit value must be either 'x' or 'y', but was $sizeUnitName.")
