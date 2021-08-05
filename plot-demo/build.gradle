@@ -122,8 +122,8 @@ task copyProcessedResources(type: Copy) {
 build.dependsOn += copyProcessedResources
 
 // Fix Gradle 7 error:
-// Execution failed for task ':plot-builder:jvmJar'.
-// Entry svgMapper/jfx/plot.css is a duplicate but no duplicate handling strategy has been set.
+// Execution failed for task ':plot-demo:jvm*Jar'.
+// Entry diamonds.csv is a duplicate but no duplicate handling strategy has been set.
 jvmJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
