@@ -19,16 +19,16 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
-internal class CreateApplicableDomainTest(
+internal class EnsureApplicableDomainTest(
     private val transform: ContinuousTransform,
-    private val value: Double,
+    private val range: ClosedRange<Double>?,
     private val expected: ClosedRange<Double>
 ) {
 
     @Test
     fun verify() {
-        val actual = transform.createApplicableDomain(value)
-        assertEqualRanges(expected, actual, "${transform::class.simpleName} [$value]")
+        val actual = Transforms.ensureApplicableDomain(range, transform)
+        assertEqualRanges(expected, actual, "${transform::class.simpleName} [$range]")
 
         // Try to apply
         val lowerTransformed = transform.apply(actual.lowerEnd)
@@ -42,117 +42,127 @@ internal class CreateApplicableDomainTest(
         val upperInversed = transform.applyInverse(upperTransformed)
 
         val actualInversed = ClosedRange(lowerInversed!!, upperInversed!!)
-        assertEqualRanges(expected, actualInversed, "${transform::class.simpleName} [$value] <inversed>")
+        assertEqualRanges(expected, actualInversed, "${transform::class.simpleName} [$range] <inversed>")
     }
 
     companion object {
         @JvmStatic
         @Parameterized.Parameters
-        fun params(): List<Array<Any>> {
+        fun params(): List<Array<Any?>> {
             return paramsIdentity() + paramsReverse() + paramsSqrt() + paramsLog10()
         }
 
-        private fun paramsIdentity(): List<Array<Any>> {
+        private fun paramsIdentity(): List<Array<Any?>> {
             return listOf(
                 arrayOf(
                     Transforms.IDENTITY,
-                    0.0,
+                    null,
                     ClosedRange(-0.5, 0.5)
                 ),
                 arrayOf(
                     Transforms.IDENTITY,
-                    -5.0,
+                    ClosedRange(-5.0, -5.0),
                     ClosedRange(-5.5, -4.5)
                 ),
                 arrayOf(
                     Transforms.IDENTITY,
-                    Double.NaN,
+                    ClosedRange(0.0, 0.0),
                     ClosedRange(-0.5, 0.5)
                 ),
             )
         }
 
-        private fun paramsReverse(): List<Array<Any>> {
+        private fun paramsReverse(): List<Array<Any?>> {
             return listOf(
                 arrayOf(
                     Transforms.REVERSE,
-                    0.0,
+                    null,
                     ClosedRange(-0.5, 0.5)
                 ),
                 arrayOf(
                     Transforms.REVERSE,
-                    -5.0,
+                    ClosedRange(-5.0, -5.0),
                     ClosedRange(-5.5, -4.5)
                 ),
                 arrayOf(
                     Transforms.REVERSE,
-                    Double.NaN,
+                    ClosedRange(0.0, 0.0),
                     ClosedRange(-0.5, 0.5)
                 ),
             )
         }
 
-        private fun paramsSqrt(): List<Array<Any>> {
+        private fun paramsSqrt(): List<Array<Any?>> {
             return listOf(
                 arrayOf(
                     Transforms.SQRT,
-                    0.0,
+                    null,
+                    ClosedRange(0.5, 1.5)
+                ),
+                arrayOf(
+                    Transforms.SQRT,
+                    ClosedRange(-5.0, -5.0),
                     ClosedRange(0.0, 0.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
-                    -5.0,
-                    ClosedRange(0.5, 1.5)
+                    ClosedRange(-5.0, 0.0),
+                    ClosedRange(0.0, 0.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
-                    Double.NaN,
-                    ClosedRange(0.5, 1.5)
+                    ClosedRange(-5.0, 5.0),
+                    ClosedRange(0.0, 5.0)
                 ),
                 arrayOf(
-                    Transforms.SQRT,
-                    0.3,
-                    ClosedRange(0.0, 0.8)
+                    Transforms.LOG10,
+                    ClosedRange(0.0, 0.0),
+                    ClosedRange(0.0, 0.5)
                 ),
                 arrayOf(
-                    Transforms.SQRT,
-                    0.7,
-                    ClosedRange(0.2, 1.2)
+                    Transforms.LOG10,
+                    ClosedRange(10.0, 10.0),
+                    ClosedRange(9.5, 10.5)
                 ),
             )
         }
 
-        private fun paramsLog10(): List<Array<Any>> {
+        private fun paramsLog10(): List<Array<Any?>> {
             return listOf(
                 arrayOf(
                     Transforms.LOG10,
-                    0.0,
-                    ClosedRange(0.0, 0.5)
-                ),
-                arrayOf(
-                    Transforms.LOG10,
-                    -5.0,
+                    null,
                     ClosedRange(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
-                    Double.NaN,
-                    ClosedRange(0.5, 1.5)
-                ),
-                arrayOf(
-                    Transforms.LOG10,
-                    0.3,
-                    ClosedRange(0.0, 0.8)
-                ),
-                arrayOf(
-                    Transforms.LOG10,
-                    10.0.pow(20),
-                    ClosedRange(1.0E20, 1.0E20)
-                ),
-                arrayOf(
-                    Transforms.LOG10,
-                    10.0.pow(-20),
+                    ClosedRange(-5.0, -5.0),
                     ClosedRange(0.0, 0.5)
+                ),
+                arrayOf(
+                    Transforms.LOG10,
+                    ClosedRange(-5.0, 0.0),
+                    ClosedRange(0.0, 0.5)
+                ),
+                arrayOf(
+                    Transforms.LOG10,
+                    ClosedRange(-5.0, 5.0),
+                    ClosedRange(0.0, 5.0)
+                ),
+                arrayOf(
+                    Transforms.LOG10,
+                    ClosedRange(0.0, 5.0),
+                    ClosedRange(0.0, 5.0)
+                ),
+                arrayOf(
+                    Transforms.LOG10,
+                    ClosedRange(0.0, 0.0),
+                    ClosedRange(0.0, 0.5)
+                ),
+                arrayOf(
+                    Transforms.LOG10,
+                    ClosedRange(10.0, 10.0),
+                    ClosedRange(9.5, 10.5)
                 ),
             )
         }

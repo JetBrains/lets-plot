@@ -5,12 +5,10 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -74,7 +72,11 @@ class ContinuousScaleTest {
                 TODO("Not yet implemented")
             }
 
-            override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+            override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+                TODO("Not yet implemented")
+            }
+
+            override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
                 TODO("Not yet implemented")
             }
         }

@@ -95,21 +95,21 @@ internal object PlotAssemblerUtil {
             )
         }
 
-        val transformedDataRangeByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+        val transformedDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
         for (stitchedPlotLayers in stitchedLayersList) {
             val layerTransformedDomainByAes = guideTransformedDomainByAes(stitchedPlotLayers, guideOptionsMap)
             for ((aes, transformedDomain) in layerTransformedDomainByAes) {
                 updateAesRangeMap(
                     aes,
                     transformedDomain,
-                    transformedDataRangeByAes
+                    transformedDomainByAes
                 )
             }
         }
 
         return createLegends(
             stitchedLayersList,
-            transformedDataRangeByAes,
+            transformedDomainByAes,
             guideOptionsMap,
             theme
         )
@@ -117,7 +117,7 @@ internal object PlotAssemblerUtil {
 
     private fun createLegends(
         stitchedLayersList: List<StitchedPlotLayers>,
-        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
+        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -149,7 +149,7 @@ internal object PlotAssemblerUtil {
                         val colorScale = scale as Scale<Color>
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                             scaleName, binding.aes,
-                            transformedDataRangeByAes, colorScale, guideOptions, theme
+                            transformedDomainByAes, colorScale, guideOptions, theme
                         )
                     }
                 } else if (fitsColorBar(binding.aes, scale)) {
@@ -158,7 +158,7 @@ internal object PlotAssemblerUtil {
                     val colorScale = scale as Scale<Color>
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                         scaleName, binding.aes,
-                        transformedDataRangeByAes, colorScale, null, theme
+                        transformedDomainByAes, colorScale, null, theme
                     )
                 }
 
@@ -185,7 +185,7 @@ internal object PlotAssemblerUtil {
                     layerConstantByAes,
                     aestheticsDefaults,
                     stitchedLayers.getScaleMap(),
-                    transformedDataRangeByAes
+                    transformedDomainByAes
                 )
             }
         }

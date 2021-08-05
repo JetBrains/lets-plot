@@ -36,7 +36,7 @@ class LegendAssembler(
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleByAes: TypedScaleMap,
-        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
+        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
         legendLayers.add(
@@ -46,7 +46,7 @@ class LegendAssembler(
                 constantByAes,
                 aestheticsDefaults,
                 scaleByAes,
-                transformedDataRangeByAes
+                transformedDomainByAes
             )
         )
     }
@@ -110,7 +110,7 @@ class LegendAssembler(
         private val constantByAes: Map<Aes<*>, Any>,
         private val aestheticsDefaults: AestheticsDefaults,
         private val scaleMap: TypedScaleMap,
-        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
+        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
         internal val keyAesthetics: Aesthetics
@@ -125,7 +125,7 @@ class LegendAssembler(
                 val aes = varBinding.aes
                 var scale = scaleMap[aes]
                 if (!scale.hasBreaks()) {
-                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDataRangeByAes.getValue(aes), 5)
+                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDomainByAes.getValue(aes), 5)
                 }
                 check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 

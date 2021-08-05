@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
@@ -383,22 +384,22 @@ object PlotConfigUtil {
     }
 
 
-    /**
-     * ToDo: move to SeriesUtil (or better place)
-     */
-    private fun ensureApplicableDomain(
-        dataRange: ClosedRange<Double>?,
-        transform: ContinuousTransform
-    ): ClosedRange<Double> {
-        return when {
-            dataRange == null ->
-                transform.createApplicableDomain(0.0)
-            SeriesUtil.isSubTiny(dataRange) ->
-                transform.createApplicableDomain(dataRange.lowerEnd)
-            else ->
-                dataRange
-        }
-    }
+//    /**
+//     * ToDo: move to SeriesUtil (or better place)
+//     */
+//    private fun ensureApplicableDomain(
+//        dataRange: ClosedRange<Double>?,
+//        transform: ContinuousTransform
+//    ): ClosedRange<Double> {
+//        return when {
+//            dataRange == null ->
+//                transform.createApplicableDomain(0.0)
+//            SeriesUtil.isSubTiny(dataRange) ->
+//                transform.createApplicableDomain(dataRange.lowerEnd)
+//            else ->
+//                dataRange
+//        }
+//    }
 
     private fun isDiscreteScaleForEmptyData(scaleProvider: ScaleProvider<*>): Boolean {
         // Empty data is neither 'discrete' nor 'numeric'.

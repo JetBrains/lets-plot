@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
@@ -31,6 +32,24 @@ object Transforms {
 
         return BreaksGeneratorForTransformedDomain(transform, breaksGenerator)
     }
+
+    fun ensureApplicableDomain(
+        dataRange: ClosedRange<Double>?,
+        transform: ContinuousTransform
+    ): ClosedRange<Double> {
+        if (dataRange == null) {
+            return transform.createApplicableDomain()
+        }
+
+        val domain = transform.toApplicableDomain(dataRange)
+        return when {
+            SeriesUtil.isSubTiny(domain) ->
+                transform.createApplicableDomain(domain.upperEnd)
+            else ->
+                domain
+        }
+    }
+
 
     class BreaksGeneratorForTransformedDomain(
         private val transform: ContinuousTransform,
