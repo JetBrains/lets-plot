@@ -106,7 +106,7 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 209.85245901639342 ) ">
+        |        <g class="tick" transform="translate(0.0 211.15873015873015 ) ">
         |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
         |          </line>
         |          <g transform="translate(-9.0 0.0 ) ">
@@ -115,7 +115,7 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 168.70491803278688 ) ">
+        |        <g class="tick" transform="translate(0.0 171.3174603174603 ) ">
         |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
         |          </line>
         |          <g transform="translate(-9.0 0.0 ) ">
@@ -124,7 +124,7 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 127.55737704918032 ) ">
+        |        <g class="tick" transform="translate(0.0 131.47619047619048 ) ">
         |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
         |          </line>
         |          <g transform="translate(-9.0 0.0 ) ">
@@ -133,7 +133,7 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 86.40983606557376 ) ">
+        |        <g class="tick" transform="translate(0.0 91.63492063492063 ) ">
         |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
         |          </line>
         |          <g transform="translate(-9.0 0.0 ) ">
@@ -142,7 +142,7 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 45.26229508196718 ) ">
+        |        <g class="tick" transform="translate(0.0 51.793650793650784 ) ">
         |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
         |          </line>
         |          <g transform="translate(-9.0 0.0 ) ">
@@ -151,7 +151,7 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 4.114754098360635 ) ">
+        |        <g class="tick" transform="translate(0.0 11.952380952380963 ) ">
         |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
         |          </line>
         |          <g transform="translate(-9.0 0.0 ) ">
@@ -170,9 +170,9 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |            </rect>
         |          </clipPath>
         |        </defs>
-        |        <rect x="175.94838709677418" y="4.114754098360635" height="246.88524590163937" width="98.97096774193545" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
+        |        <rect x="175.94838709677418" y="11.952380952380963" height="239.04761904761904" width="98.97096774193545" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
         |        </rect>
-        |        <rect x="65.98064516129033" y="86.40983606557376" height="164.59016393442624" width="98.97096774193547" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
+        |        <rect x="65.98064516129033" y="91.63492063492063" height="159.36507936507937" width="98.97096774193547" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
         |        </rect>
         |      </g>
         |    </g>

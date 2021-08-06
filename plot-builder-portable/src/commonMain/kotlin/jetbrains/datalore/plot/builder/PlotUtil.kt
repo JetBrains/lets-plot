@@ -345,19 +345,18 @@ object PlotUtil {
     /**
      * Expand X/Y-range to ensure that the data is placed some distance away from the axes.
      */
-    fun rangeWithExpand(
-        layer: GeomLayer,
-        aes: Aes<Double>,
-        range: ClosedRange<Double>?
+    internal fun rangeWithExpand(
+        range: ClosedRange<Double>?,
+        scale: Scale<*>,
+        includeZero: Boolean
     ): ClosedRange<Double>? {
         if (range == null) return null
 
-        val scale = layer.scaleMap[aes]
         val mulExp = scale.multiplicativeExpand
         val addExp = scale.additiveExpand
 
         // Compute expands in terms of the original data.
-        // Otherwise can easily run into Infinities then using 'log10' transform
+        // Otherwise, can easily run into Infinities then using 'log10' transform
         val continuousTransform: ContinuousTransform? = if (scale.isContinuousDomain) {
             scale.transform as ContinuousTransform
         } else {
@@ -370,7 +369,7 @@ object PlotUtil {
         val length = upperEndpoint - lowerEndpoint
         var lowerExpand = addExp + length * mulExp
         var upperExpand = lowerExpand
-        if (layer.rangeIncludesZero(aes)) {
+        if (includeZero) {
             // zero-based plots (like bar) - do not 'expand' on the zero-end
             if (lowerEndpoint == 0.0 ||
                 upperEndpoint == 0.0 ||
