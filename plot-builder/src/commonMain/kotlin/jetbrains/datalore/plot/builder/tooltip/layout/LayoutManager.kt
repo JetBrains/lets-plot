@@ -32,15 +32,15 @@ class LayoutManager(
     fun arrange(
         tooltips: List<MeasuredTooltip>,
         cursorCoord: DoubleVector,
-        geomBounds: DoubleRectangle?,
-        visibilityBounds: DoubleRectangle?
+        tooltipPlacementBounds: DoubleRectangle?,
+        geomVisibilityBounds: DoubleRectangle?
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
         myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
-        if (geomBounds != null) {
-            myHorizontalGeomSpace = DoubleRange.withStartAndLength(geomBounds.origin.x, geomBounds.dimension.x)
-            myVerticalGeomSpace = DoubleRange.withStartAndLength(geomBounds.origin.y, geomBounds.dimension.y)
+        if (tooltipPlacementBounds != null) {
+            myHorizontalGeomSpace = DoubleRange.withStartAndLength(tooltipPlacementBounds.origin.x, tooltipPlacementBounds.dimension.x)
+            myVerticalGeomSpace = DoubleRange.withStartAndLength(tooltipPlacementBounds.origin.y, tooltipPlacementBounds.dimension.y)
         }
 
         val desiredPosition = ArrayList<PositionedTooltip>()
@@ -68,21 +68,21 @@ class LayoutManager(
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it)) }
 
-        // add corner tooltips
-        desiredPosition += calculateCornerTooltipsPosition(tooltips)
+        // add corner tooltips - if the cursor is located within the visible boundaries
+        if (geomVisibilityBounds?.contains(cursorCoord) != false) {
+            desiredPosition += calculateCornerTooltipsPosition(tooltips)
+       }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
         desiredPosition += calculateDataTooltipsPosition(
             tooltips,
             // limit horizontal tooltips by y-axis tooltips
-            desiredPosition.select(Y_AXIS_TOOLTIP).map { it.rect() }
-        )
-
-        // Select tooltips within the visibility bounds
-        val visiblePositionedTooltips = desiredPosition.filter { positionedTooltip ->
-            visibilityBounds?.contains(positionedTooltip.stemCoord) ?: true
+            desiredPosition.select(Y_AXIS_TOOLTIP).map(PositionedTooltip::rect)
+        ).filter { positionedTooltip ->
+            // Select tooltips within the visibility bounds
+            geomVisibilityBounds?.contains(positionedTooltip.stemCoord) ?: true
         }
-        return rearrangeWithoutOverlapping(visiblePositionedTooltips)
+        return rearrangeWithoutOverlapping(desiredPosition)
     }
 
     private fun calculateDataTooltipsPosition(

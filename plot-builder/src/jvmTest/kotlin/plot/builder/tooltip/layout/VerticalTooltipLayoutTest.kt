@@ -117,7 +117,8 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
             .addTooltip(tooltipBuilder.vertical(VERTICAL_TIP_KEY, coord(10.0, 10.0)).buildTooltip())
             .addTooltip(tooltipBuilder.vertical(VERTICAL_TIP_KEY, coord(250.0, 350.0)).buildTooltip())
             .addTooltip(tooltipBuilder.vertical(VERTICAL_TIP_KEY, coord(350.0, 250.0)).buildTooltip())
-            .build(visibilityBounds = LIMIT_RECT)
+            .geomBounds(LIMIT_RECT)
+            .build()
         arrange(layoutManagerController)
 
         assertNoTooltips()

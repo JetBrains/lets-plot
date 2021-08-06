@@ -63,9 +63,6 @@ internal class PlotTile(
     private val isDebugDrawing: Boolean
         get() = myDebugDrawing.get()
 
-    var clipRect: DoubleRectangle? = null
-        private set
-
     init {
         myLayers = ArrayList(layers)
 
@@ -155,14 +152,20 @@ internal class PlotTile(
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
 
-                val xRange = myCoord.xClientLimit ?: ClosedRange(0.0, geomBounds.width)
-                val yRange = myCoord.yClientLimit ?: ClosedRange(0.0, geomBounds.height)
-                clipRect = GeometryUtil.doubleRange(xRange, yRange)
-
-                layerComponent.clipBounds(clipRect!!)
+                val clipRect = getClipRect(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
+                layerComponent.clipBounds(clipRect)
                 add(layerComponent)
             }
         }
+    }
+
+    fun getClipRect(geomBounds: DoubleRectangle): DoubleRectangle {
+        operator fun ClosedRange<Double>.plus(v: Double): ClosedRange<Double> {
+            return ClosedRange(this.lowerEnd + v, this.upperEnd + v)
+        }
+        val xRange = myCoord.xClientLimit?.plus(geomBounds.origin.x) ?: geomBounds.xRange()
+        val yRange = myCoord.yClientLimit?.plus(geomBounds.origin.y) ?: geomBounds.yRange()
+        return GeometryUtil.doubleRange(xRange, yRange)
     }
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {

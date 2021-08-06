@@ -253,7 +253,8 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
             .addTooltip(tooltipBuilder.horizontal(FIRST_TOOLTIP_KEY,  coord(10.0,  10.0)).buildTooltip())
             .addTooltip(tooltipBuilder.horizontal(SECOND_TOOLTIP_KEY, coord(250.0, 350.0)).buildTooltip())
             .addTooltip(tooltipBuilder.horizontal(THIRD_TOOLTIP_KEY,  coord(350.0, 250.0)).buildTooltip())
-            .build(visibilityBounds = LIMIT_RECT)
+            .geomBounds(LIMIT_RECT)
+            .build()
         arrange(layoutManagerController)
 
         assertNoTooltips()

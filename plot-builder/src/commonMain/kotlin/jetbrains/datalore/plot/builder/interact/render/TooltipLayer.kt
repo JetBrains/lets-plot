@@ -28,20 +28,20 @@ internal class TooltipLayer(
     fun showTooltips(
         cursor: DoubleVector,
         tooltipSpecs: List<TooltipSpec>,
-        geomBounds: DoubleRectangle?,
-        geomClipBounds: DoubleRectangle?
+        tooltipPlacementBounds: DoubleRectangle?,
+        geomVisibilityBounds: DoubleRectangle?
     ) {
         clearTooltips()
 
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
-            .also { specs -> geomBounds?.let { showCrosshair(specs, it) } }
             .map { spec -> spec
                 .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds, geomClipBounds) }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipPlacementBounds, geomVisibilityBounds) }
+            .also { tooltips -> geomVisibilityBounds?.let { showCrosshair(tooltips, it) } }
             .map { arranged ->
                 arranged.tooltipBox.apply {
                     setPosition(
@@ -66,20 +66,19 @@ internal class TooltipLayer(
         return CrosshairComponent().apply { myTooltipLayer.children().add(rootGroup) }
     }
 
-    private fun showCrosshair(tooltipSpecs: List<TooltipSpec>, geomBounds: DoubleRectangle) {
-        val showVertical = tooltipSpecs.any { it.layoutHint.kind == X_AXIS_TOOLTIP }
-        val showHorizontal = tooltipSpecs.any { it.layoutHint.kind == Y_AXIS_TOOLTIP }
+    private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
+        val showVertical = tooltips.any { it.hintKind == X_AXIS_TOOLTIP }
+        val showHorizontal = tooltips.any { it.hintKind == Y_AXIS_TOOLTIP }
         if (!showVertical && !showHorizontal) {
             return
         }
-        tooltipSpecs
-            .filter(TooltipSpec::isCrosshairEnabled)
-            .forEach { tooltipSpec ->
-                tooltipSpec.layoutHint.coord?.let { coord ->
-                    newCrosshairComponent().also { crosshair ->
-                        if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
-                        if (showVertical) crosshair.addVertical(coord, geomBounds)
-                    }
+        tooltips
+            .filter { tooltip -> tooltip.tooltipSpec.isCrosshairEnabled }
+            .mapNotNull{ tooltip -> tooltip.tooltipSpec.layoutHint.coord }
+            .forEach { coord ->
+                newCrosshairComponent().also { crosshair ->
+                    if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
+                    if (showVertical) crosshair.addVertical(coord, geomBounds)
                 }
             }
     }
