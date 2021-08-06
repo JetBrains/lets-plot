@@ -136,5 +136,5 @@ LetsPlot.setup_html()
 ggplot() + geom_livemap(tiles=tilesets.NASA_CITYLIGHTS_2012)
 ```
 # Examples
-![basemaps.jpg](basemaps.png)
+![basemaps.jpg](basemaps.jpg)
 See more in [gallery](TODO).
