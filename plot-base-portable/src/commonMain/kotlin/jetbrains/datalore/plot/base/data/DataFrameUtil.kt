@@ -38,22 +38,6 @@ object DataFrameUtil {
 
     private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
         var transformSource = data[variable]
-
-//        // Replace values outside 'scale limits' with null-s.
-//        if (scale.hasDomainLimits()) {
-//            transformSource = transformSource.map { if (it == null || scale.isInDomainLimits(it)) it else null }
-//        }
-//
-//        // Replace values outside of domain of 'continuous transform' with null-s.
-//        if (scale.transform is ContinuousTransform) {
-//            val continuousTransform = scale.transform as ContinuousTransform
-//            if (continuousTransform.hasDomainLimits()) {
-//                transformSource =
-//                    transformSource.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
-//            }
-//        }
-//
-//        return transformSource
         return ScaleUtil.cleanUpTransformSource(transformSource, scale)
     }
 
@@ -67,9 +51,9 @@ object DataFrameUtil {
     }
 
     fun findVariableOrFail(data: DataFrame, varName: String): DataFrame.Variable {
-        for (`var` in data.variables()) {
-            if (varName == `var`.name) {
-                return `var`
+        for (variable in data.variables()) {
+            if (varName == variable.name) {
+                return variable
             }
         }
         throw IllegalArgumentException(
