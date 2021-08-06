@@ -44,3 +44,4 @@
 - geom_jitter: show axis tooltips (same as geom_point) [[#412](https://github.com/JetBrains/lets-plot/issues/412)].
 - Memory leak in IDEA caused by a `final void dispose()` method in PlotPanel.
 - Outlier tooltips: the spout sometimes is too long (boxplot) [[#358](https://github.com/JetBrains/lets-plot/issues/358)].
+- Faceted plot is broken by geom with "constant" aesthetics [[#391](https://github.com/JetBrains/lets-plot/issues/391)].
