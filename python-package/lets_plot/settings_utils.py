@@ -96,19 +96,15 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 3-7
 
         from lets_plot import *
         LetsPlot.setup_html()
-        attribution = '''
-        Map tiles by
-        <a href="http://stamen.com">Stamen Design</a>, under
-        <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
-        Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under
-        <a href="http://www.openstreetmap.org/copyright">ODbL</a>
-        '''
-        tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
-                             attribution=attribution)
+        tiles = maptiles_zxy(
+            url="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_CityLights_2012/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",
+            attribution='<a href="https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">© NASA Global Imagery Browse Services (GIBS)</a>',
+            max_zoom=8
+        )
         ggplot() + geom_livemap(tiles=tiles)
 
     """
