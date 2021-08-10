@@ -135,11 +135,10 @@ class StringFormat private constructor(
 
         fun forNArgs(
             pattern: String,
-            type: FormatType? = null,
             argCount: Int,
             formatFor: String? = null
         ): StringFormat {
-            return create(pattern, type, formatFor, argCount)
+            return create(pattern, STRING_FORMAT, formatFor, argCount)
         }
 
         private fun detectFormatType(pattern: String): FormatType {
@@ -154,7 +153,7 @@ class StringFormat private constructor(
             }
         }
 
-        fun create(
+        internal fun create(
             pattern: String,
             type: FormatType? = null,
             formatFor: String? = null,

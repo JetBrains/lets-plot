@@ -166,7 +166,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             val dateTimeFormatter = getString(FORMAT)?.let { pattern ->
-                val stringFormat = StringFormat.create(pattern, type = DATETIME_FORMAT)
+                val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT)
                 return@let { value: Any -> stringFormat.format(value) }
             }
             b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
