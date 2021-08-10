@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.RIGHT
 import jetbrains.datalore.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
@@ -31,7 +30,7 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
                 expect()
-                        .tooltipX(expectedSideTipX(TOOLTIP_KEY, HorizontalAlignment.RIGHT))
+                        .tooltipX(expectedSideTipX(TOOLTIP_KEY, RIGHT))
                         .tooltipY(expectedSideTipY(TOOLTIP_KEY))
         )
     }
@@ -90,9 +89,9 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
         arrange(layoutManagerController)
 
         assertAllTooltips(
-                expect().tooltipX(expectedSideTipX(FIRST_TOOLTIP_KEY, HorizontalAlignment.RIGHT)),
-                expect().tooltipX(expectedSideTipX(SECOND_TOOLTIP_KEY, HorizontalAlignment.RIGHT)),
-                expect().tooltipX(expectedSideTipX(THIRD_TOOLTIP_KEY, HorizontalAlignment.RIGHT))
+                expect().tooltipX(expectedSideTipX(FIRST_TOOLTIP_KEY, RIGHT)),
+                expect().tooltipX(expectedSideTipX(SECOND_TOOLTIP_KEY, RIGHT)),
+                expect().tooltipX(expectedSideTipX(THIRD_TOOLTIP_KEY, RIGHT))
         )
     }
 

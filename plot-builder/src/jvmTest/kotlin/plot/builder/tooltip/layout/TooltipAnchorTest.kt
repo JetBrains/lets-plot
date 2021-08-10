@@ -27,7 +27,9 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, LEFT))
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
             )
             .build()
         arrange(layoutManagerController)
@@ -44,7 +46,9 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(BOTTOM, RIGHT))
+                )
+                    .anchor(TooltipAnchor(BOTTOM, RIGHT))
+                    .buildTooltip()
             )
             .build()
 
@@ -63,7 +67,9 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(MIDDLE, CENTER))
+                )
+                    .anchor(TooltipAnchor(MIDDLE, CENTER))
+                    .buildTooltip()
             )
             .build()
 
@@ -82,7 +88,9 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, LEFT))
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
             )
             .build()
         arrange(layoutManagerController)
@@ -99,13 +107,17 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, LEFT))
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
             )
             .addTooltip(
                 tooltipBuilder.horizontal(
                     SECOND_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, RIGHT))
+                )
+                    .anchor(TooltipAnchor(TOP, RIGHT))
+                    .buildTooltip()
             )
             .build()
 
@@ -125,13 +137,17 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, LEFT))
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
             )
             .addTooltip(
                 tooltipBuilder.horizontal(
                     SECOND_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, LEFT))
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
             )
             .build()
 
@@ -151,13 +167,16 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(TOP, LEFT))
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
             )
             .addTooltip(
                 tooltipBuilder.horizontal(
                     SECOND_TOOLTIP_KEY,
                     DoubleVector(120.0, 20.0)
-                ).buildTooltip(anchor = null)
+                )   // without anchor
+                    .buildTooltip()
             )
             .build()
 
@@ -177,13 +196,16 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
                 tooltipBuilder.horizontal(
                     FIRST_TOOLTIP_KEY,
                     COORD
-                ).buildTooltip(anchor = TooltipAnchor(MIDDLE, CENTER))
+                )
+                    .anchor(TooltipAnchor(MIDDLE, CENTER))
+                    .buildTooltip()
             )
             .addTooltip(
                 tooltipBuilder.vertical(
                     SECOND_TOOLTIP_KEY,
                     DoubleVector(200.0, 270.0)
-                ).buildTooltip(anchor = null)
+                )   // without anchor
+                    .buildTooltip()
             )
             .build()
 
@@ -193,6 +215,25 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
             expect(FIRST_TOOLTIP_KEY).tooltipX(210.0).tooltipY(227.5),
             expect(SECOND_TOOLTIP_KEY).tooltipX(212.0).tooltipY(280.0)
         )
+    }
+
+    @Test
+    fun `tooltips are out of visibility`() {
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .cursor(DoubleVector(10.0, 10.0))
+            .addTooltip(
+                tooltipBuilder.horizontal(
+                    FIRST_TOOLTIP_KEY,
+                    COORD
+                )
+                    .anchor(TooltipAnchor(TOP, LEFT))
+                    .buildTooltip()
+            )
+            .geomBounds(LIMIT_RECT)
+            .build()
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
     }
 
     companion object {
