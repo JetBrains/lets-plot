@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 /**
  * Translates input to aesthetics by
@@ -57,6 +58,10 @@ interface Scale<T> {
     fun isInDomainLimits(v: Any): Boolean
 
     fun hasBreaksGenerator(): Boolean
+
+    fun getScaleBreaks(): ScaleBreaks
+
+    fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?>
 
     fun with(): Builder<T>
 

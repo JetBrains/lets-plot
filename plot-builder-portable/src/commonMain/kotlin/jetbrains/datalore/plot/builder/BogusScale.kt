@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal class BogusScale : Scale<Double> {
     override val name: String
@@ -19,7 +20,7 @@ internal class BogusScale : Scale<Double> {
     override val labels: MutableList<String>
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val labelFormatter: ((Any) -> String)?
+    override val labelFormatter: ((Any) -> String)
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val isContinuous: Boolean
@@ -63,6 +64,14 @@ internal class BogusScale : Scale<Double> {
     }
 
     override fun isInDomainLimits(v: Any): Boolean {
+        throw IllegalStateException("Bogus scale is not supposed to be used.")
+    }
+
+    override fun getScaleBreaks(): ScaleBreaks {
+        throw IllegalStateException("Bogus scale is not supposed to be used.")
+    }
+
+    override fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 

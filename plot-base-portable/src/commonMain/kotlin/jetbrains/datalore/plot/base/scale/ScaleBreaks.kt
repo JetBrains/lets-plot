@@ -25,4 +25,7 @@ class ScaleBreaks(
         }
     }
 
+    companion object {
+        val EMPTY: ScaleBreaks = ScaleBreaks(emptyList(), emptyList(), emptyList())
+    }
 }

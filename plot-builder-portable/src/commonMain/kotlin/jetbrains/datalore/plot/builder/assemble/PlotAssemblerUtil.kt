@@ -282,8 +282,10 @@ internal object PlotAssemblerUtil {
             }
 
             if (scale.hasBreaks()) {
+                val scaleBreaks = scale.getScaleBreaks()
                 initialRange = updateRange(
-                    ScaleUtil.breaksTransformed(scale),
+//                    ScaleUtil.breaksTransformed(scale),
+                    scaleBreaks.transformedValues,
                     initialRange
                 )
             }

@@ -20,7 +20,7 @@ internal class ScaleProviderBuilderTest {
     fun withBreaksGenerator() {
         val bg = object : BreaksGenerator {
             override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-                return ScaleBreaks(emptyList(), emptyList(), emptyList())
+                return ScaleBreaks.EMPTY
             }
 
             override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {

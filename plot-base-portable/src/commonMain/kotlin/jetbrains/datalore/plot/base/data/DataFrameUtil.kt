@@ -9,7 +9,6 @@ import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import kotlin.jvm.JvmOverloads
 
@@ -29,17 +28,22 @@ object DataFrameUtil {
         transformVar: DataFrame.Variable,
         scale: Scale<*>
     ): DataFrame {
-        val transformSource = getTransformSource(data, variable, scale)
-        val transformResult = scale.transform.apply(transformSource)
+//        val transformSource = getTransformSource(data, variable, scale)
+//        val transformResult = scale.transform.apply(transformSource)
+
+        var transformed = scale.applyTransform(
+            data[variable],
+            checkLimits = true
+        )
         return data.builder()
-            .putNumeric(transformVar, transformResult)
+            .putNumeric(transformVar, transformed)
             .build()
     }
 
-    private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
-        var transformSource = data[variable]
-        return ScaleUtil.cleanUpTransformSource(transformSource, scale)
-    }
+//    private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
+//        var transformSource = data[variable]
+//        return ScaleUtil.cleanUpTransformSource(transformSource, scale)
+//    }
 
     fun hasVariable(data: DataFrame, varName: String): Boolean {
         for (`var` in data.variables()) {

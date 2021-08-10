@@ -37,7 +37,7 @@ class EmptyAxisLayout private constructor(
         }
 
         val builder = AxisLayoutInfo.Builder()
-            .axisBreaks(ScaleBreaks(emptyList(), emptyList(), emptyList()))
+            .axisBreaks(ScaleBreaks.EMPTY)
             .axisLength(axisLength)
             .orientation(myOrientation)
             .axisDomain(myAxisDomain)

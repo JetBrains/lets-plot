@@ -9,7 +9,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
@@ -32,13 +31,17 @@ class ColorBarAssembler(
             scale = ScaleBreaksUtil.withBreaks(scale, transformedDomain, 5)
         }
 
-        val guideBreaks = ArrayList<GuideBreak<Double>>()
-        val breaks = ScaleUtil.breaksTransformed(scale)
-        val label = ScaleUtil.labels(scale).iterator()
-        for (v in breaks) {
-            guideBreaks.add(GuideBreak(v, label.next()))
-        }
+//        val guideBreaks = ArrayList<GuideBreak<Double>>()
+//        val breaks = ScaleUtil.breaksTransformed(scale)
+//        val label = ScaleUtil.labels(scale).iterator()
+//        for (v in breaks) {
+//            guideBreaks.add(GuideBreak(v, label.next()))
+//        }
 
+        val scaleBreaks = scale.getScaleBreaks()
+        val guideBreaks = scaleBreaks.transformedValues.zip(scaleBreaks.labels).map {
+            GuideBreak(it.first, it.second)
+        }
         if (guideBreaks.isEmpty()) {
             return LegendBoxInfo.EMPTY
         }

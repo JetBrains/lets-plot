@@ -129,8 +129,11 @@ class LegendAssembler(
                 }
                 check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
-                val aesValues = ScaleUtil.transformAndMap(scale.breaks, scale)
-                val labels = ScaleUtil.labels(scale)
+//                val aesValues = ScaleUtil.transformAndMap(scale.breaks, scale)
+//                val labels = ScaleUtil.labels(scale)
+                val scaleBreaks = scale.getScaleBreaks()
+                val aesValues = ScaleUtil.map(scaleBreaks.transformedValues, scale)
+                val labels = scaleBreaks.labels
                 for ((label, aesValue) in labels.zip(aesValues)) {
                     aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue!!
                 }

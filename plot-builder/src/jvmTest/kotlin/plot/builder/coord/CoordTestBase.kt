@@ -86,7 +86,7 @@ internal open class CoordTestBase {
 
     companion object {
         private const val UNIT = 1.0
-        private val EMPTY_BREAKS = ScaleBreaks(emptyList(), emptyList(), emptyList())
+        private val EMPTY_BREAKS = ScaleBreaks.EMPTY
 
         fun unitDisplaySize(ratio: Double): DoubleVector {
             val w = if (ratio > 1) UNIT else UNIT / ratio
