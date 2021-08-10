@@ -5,8 +5,24 @@
 
 package jetbrains.datalore.plot.base.scale
 
-class ScaleBreaks(domainValues: List<Double>, transformValues: List<Double>, labels: List<String>) {
-    val domainValues: List<Double> = ArrayList(domainValues)
-    val transformValues: List<Double> = ArrayList(transformValues)
-    val labels: List<String> = ArrayList(labels)
+class ScaleBreaks(
+    val domainValues: List<Any>,
+    val transformedValues: List<Double>,
+    val labels: List<String>
+) {
+    val isEmpty: Boolean
+        get() = domainValues.isEmpty()
+
+    val size: Int
+        get() = domainValues.size
+
+    init {
+        require(domainValues.size == transformedValues.size) {
+            "Scale breaks size: ${domainValues.size} transformed size: ${transformedValues.size} but expected to be the same"
+        }
+        require(domainValues.size == labels.size) {
+            "Scale breaks size: ${domainValues.size} labels size: ${labels.size} but expected to be the same"
+        }
+    }
+
 }

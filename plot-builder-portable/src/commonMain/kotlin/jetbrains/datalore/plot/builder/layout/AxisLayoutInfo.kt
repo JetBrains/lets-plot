@@ -9,10 +9,10 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 class AxisLayoutInfo private constructor(b: Builder) {
-    val axisBreaks: GuideBreaks?
+    val axisBreaks: ScaleBreaks?
     val axisLength: Double
     val orientation: jetbrains.datalore.plot.builder.guide.Orientation?
     val axisDomain: ClosedRange<Double>?
@@ -23,7 +23,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
     val tickLabelVerticalAnchor: TextLabel.VerticalAnchor?        // optional
     val tickLabelAdditionalOffsets: List<DoubleVector>?           // optional
     val tickLabelSmallFont: Boolean
-    internal val tickLabelsBoundsMax: DoubleRectangle?                     // debug
+    private val tickLabelsBoundsMax: DoubleRectangle?                     // debug
 
     init {
         require(b.myAxisBreaks != null)
@@ -80,7 +80,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
         var myLabelVerticalAnchor: TextLabel.VerticalAnchor? = null
         var myTickLabelRotationAngle = 0.0
         var myTickLabelsBounds: DoubleRectangle? = null
-        var myAxisBreaks: GuideBreaks? = null
+        var myAxisBreaks: ScaleBreaks? = null
 
         fun build(): AxisLayoutInfo {
             return AxisLayoutInfo(this)
@@ -136,7 +136,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun axisBreaks(breaks: GuideBreaks?): Builder {
+        fun axisBreaks(breaks: ScaleBreaks?): Builder {
             myAxisBreaks = breaks
             return this
         }

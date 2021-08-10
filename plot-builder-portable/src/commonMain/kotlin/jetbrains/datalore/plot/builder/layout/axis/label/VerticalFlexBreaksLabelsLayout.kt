@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.ceil
@@ -49,7 +49,7 @@ internal class VerticalFlexBreaksLabelsLayout(
         )
     }
 
-    protected fun getBreaks(maxCount: Int, axisLength: Double): GuideBreaks {
+    protected fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {
         return BreakLabelsLayoutUtil.getFlexBreaks(
             myBreaksProvider,
             maxCount,

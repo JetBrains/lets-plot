@@ -5,13 +5,12 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import kotlin.test.assertEquals
 
 internal open class CoordTestBase {
@@ -21,7 +20,12 @@ internal open class CoordTestBase {
     /**
      * ratio - ratio between height and width of the display  (ratio = h / w)
      */
-    fun tryAdjustDomains(ratio: Double, provider: CoordProvider, expectedX: ClosedRange<Double>, expectedY: ClosedRange<Double>) {
+    fun tryAdjustDomains(
+        ratio: Double,
+        provider: CoordProvider,
+        expectedX: ClosedRange<Double>,
+        expectedY: ClosedRange<Double>
+    ) {
 
         val dataBounds = this.dataBounds
         val domainX = dataBounds.xRange()
@@ -37,7 +41,13 @@ internal open class CoordTestBase {
     /**
      * ratio - ratio between height and width of the display  (ratio = h / w)
      */
-    fun tryApplyScales(ratio: Double, provider: CoordProvider, expectedMin: DoubleVector, expectedMax: DoubleVector, accuracy: DoubleVector) {
+    fun tryApplyScales(
+        ratio: Double,
+        provider: CoordProvider,
+        expectedMin: DoubleVector,
+        expectedMax: DoubleVector,
+        accuracy: DoubleVector
+    ) {
 
         val dataBounds = this.dataBounds
         var domainX = dataBounds.xRange()
@@ -76,11 +86,7 @@ internal open class CoordTestBase {
 
     companion object {
         private const val UNIT = 1.0
-        private val EMPTY_BREAKS = GuideBreaks(
-            emptyList<Any>(),
-            emptyList(),
-            emptyList()
-        )
+        private val EMPTY_BREAKS = ScaleBreaks(emptyList(), emptyList(), emptyList())
 
         fun unitDisplaySize(ratio: Double): DoubleVector {
             val w = if (ratio > 1) UNIT else UNIT / ratio
@@ -93,36 +99,42 @@ internal open class CoordTestBase {
             val span = range.upperEnd - range.lowerEnd
             val expand = span * (ratio - 1) / 2.0
             return ClosedRange(
-                    range.lowerEnd - expand,
-                    range.upperEnd + expand
+                range.lowerEnd - expand,
+                range.upperEnd + expand
             )
         }
 
         fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleX(
-                    Scales.continuousDomainNumericRange("Test scale X"),
-                    domain,
-                    axisLength,
+                Scales.continuousDomainNumericRange("Test scale X"),
+                domain,
+                axisLength,
                 EMPTY_BREAKS
             )
         }
 
         fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleY(
-                    Scales.continuousDomainNumericRange("Test scale Y"),
-                    domain,
-                    axisLength,
+                Scales.continuousDomainNumericRange("Test scale Y"),
+                domain,
+                axisLength,
                 EMPTY_BREAKS
             )
         }
 
         fun applyScales(p: DoubleVector, scaleX: Scale<Double>, scaleY: Scale<Double>): DoubleVector {
             return DoubleVector(
-                    scaleX.mapper(p.x)!!,
-                    scaleY.mapper(p.y)!!)
+                scaleX.mapper(p.x)!!,
+                scaleY.mapper(p.y)!!
+            )
         }
 
-        private fun assertEqualPoints(text: String, expected: DoubleVector, actual: DoubleVector, accuracy: DoubleVector) {
+        private fun assertEqualPoints(
+            text: String,
+            expected: DoubleVector,
+            actual: DoubleVector,
+            accuracy: DoubleVector
+        ) {
             assertEquals(expected.x, actual.x, accuracy.x, "$text x")
             assertEquals(expected.y, actual.y, accuracy.y, "$text y")
         }

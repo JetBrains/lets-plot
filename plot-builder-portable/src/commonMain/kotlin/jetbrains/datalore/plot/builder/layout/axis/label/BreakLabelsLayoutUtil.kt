@@ -9,30 +9,30 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.max
 import kotlin.math.min
 
 internal object BreakLabelsLayoutUtil {
-    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): GuideBreaks {
+
+    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): ScaleBreaks {
         require(!breaksProvider.isFixedBreaks) { "fixed breaks not expected" }
         require(maxCount > 0) { "maxCount=$maxCount" }
         var breaks = breaksProvider.getBreaks(maxCount, axisLength)
 
         if (maxCount == 1 && !breaks.isEmpty) {
-            return GuideBreaks(
-                breaks.domainValues.subList(
-                    0,
-                    1
-                ), breaks.transformedValues.subList(0, 1), breaks.labels.subList(0, 1)
+            return ScaleBreaks(
+                breaks.domainValues.subList(0, 1),
+                breaks.transformedValues.subList(0, 1),
+                breaks.labels.subList(0, 1)
             )
         }
         var count = maxCount
-        while (breaks.size() > maxCount) {
-            val delta = max(1, (breaks.size() - maxCount) / 2)
+        while (breaks.size > maxCount) {
+            val delta = max(1, (breaks.size - maxCount) / 2)
             count -= delta
             breaks = breaksProvider.getBreaks(count, axisLength)
         }
@@ -53,7 +53,7 @@ internal object BreakLabelsLayoutUtil {
 
     fun doLayoutVerticalAxisLabels(
         orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-        breaks: GuideBreaks,
+        breaks: ScaleBreaks,
         axisDomain: ClosedRange<Double>,
         axisMapper: (Double?) -> Double?,
         theme: AxisTheme
@@ -129,7 +129,7 @@ internal object BreakLabelsLayoutUtil {
 
 
     private fun verticalAxisLabelsBounds(
-        breaks: GuideBreaks,
+        breaks: ScaleBreaks,
         axisDomain: ClosedRange<Double>,
         axisMapper: (Double?) -> Double?
     ): DoubleRectangle {

@@ -9,18 +9,19 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class HorizontalMultilineLabelsLayout(
-    orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+    orientation: Orientation,
     axisDomain: ClosedRange<Double>,
     labelSpec: PlotLabelSpec,
-    breaks: GuideBreaks,
+    breaks: ScaleBreaks,
     theme: AxisTheme,
-    private val myMaxLines: Int) :
-        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+    private val myMaxLines: Int
+) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     private val myShelfIndexForTickIndex = ArrayList<Int>()
 
@@ -28,20 +29,22 @@ internal class HorizontalMultilineLabelsLayout(
         get() {
             val h = labelSpec.height() * LINE_HEIGHT
             val result = ArrayList<DoubleVector>()
-            for (i in 0 until breaks.size()) {
+            for (i in 0 until breaks.size) {
                 result.add(DoubleVector(0.0, myShelfIndexForTickIndex[i] * h))
             }
             return result
         }
 
     override fun doLayout(
-            axisLength: Double,
-            axisMapper: (Double?) -> Double?,
-            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+        axisLength: Double,
+        axisMapper: (Double?) -> Double?,
+        maxLabelsBounds: DoubleRectangle?
+    ): AxisLabelsLayoutInfo {
 
         val boundsByShelfIndex = HashMap<Int, DoubleRectangle>()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
-        val boundsList = labelBoundsList(ticks, breaks.labels,
+        val boundsList = labelBoundsList(
+            ticks, breaks.labels,
             HORIZONTAL_TICK_LOCATION
         )
 
@@ -57,7 +60,9 @@ internal class HorizontalMultilineLabelsLayout(
 
                 var shelfBounds = boundsByShelfIndex[shelfIndex]!!
                 // not overlapped?
-                if (!shelfBounds.xRange().isConnected(ClosedRange(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))) {
+                if (!shelfBounds.xRange()
+                        .isConnected(ClosedRange(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))
+                ) {
                     myShelfIndexForTickIndex.add(shelfIndex)
                     shelfBounds = shelfBounds.union(labelBounds)
                     boundsByShelfIndex[shelfIndex] = shelfBounds
@@ -80,14 +85,14 @@ internal class HorizontalMultilineLabelsLayout(
 
         val linesCount = boundsByShelfIndex.size
         return AxisLabelsLayoutInfo.Builder()
-                .breaks(breaks)
-                .bounds(applyLabelsOffset(bounds))
-                .smallFont(false)
-                .overlap(linesCount > myMaxLines)
-                .labelAdditionalOffsets(labelAdditionalOffsets)
-                .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
-                .build()
+            .breaks(breaks)
+            .bounds(applyLabelsOffset(bounds))
+            .smallFont(false)
+            .overlap(linesCount > myMaxLines)
+            .labelAdditionalOffsets(labelAdditionalOffsets)
+            .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+            .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
+            .build()
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {

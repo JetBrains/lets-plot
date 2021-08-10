@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 class AxisLabelsLayoutInfo private constructor(b: Builder) {
-    val breaks: GuideBreaks?
+    val breaks: ScaleBreaks?
     val bounds: DoubleRectangle?
     val smallFont: Boolean
     val labelAdditionalOffsets: List<DoubleVector>?
@@ -36,7 +36,7 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
     }
 
     class Builder {
-        internal var myBreaks: GuideBreaks? = null
+        internal var myBreaks: ScaleBreaks? = null
         internal var myBounds: DoubleRectangle? = null
         internal var mySmallFont: Boolean = false
         internal var myOverlap: Boolean = false
@@ -45,7 +45,7 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
         internal var myLabelVerticalAnchor: TextLabel.VerticalAnchor? = null
         internal var myLabelRotationAngle = 0.0
 
-        fun breaks(breaks: GuideBreaks): Builder {
+        fun breaks(breaks: ScaleBreaks): Builder {
             myBreaks = breaks
             return this
         }

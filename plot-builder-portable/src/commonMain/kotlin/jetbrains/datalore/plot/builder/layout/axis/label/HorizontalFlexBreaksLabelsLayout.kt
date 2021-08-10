@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
@@ -59,7 +59,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
     }
 
     private fun doLayoutLabels(
-        breaks: GuideBreaks,
+        breaks: ScaleBreaks,
         axisLength: Double,
         axisMapper: (Double?) -> Double?,
         maxLabelsBounds: DoubleRectangle?
@@ -75,7 +75,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
         return layout.doLayout(axisLength, axisMapper, maxLabelsBounds)
     }
 
-    private fun getBreaks(maxCount: Int, axisLength: Double): GuideBreaks {
+    private fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {
         return BreakLabelsLayoutUtil.getFlexBreaks(
             myBreaksProvider,
             maxCount,
