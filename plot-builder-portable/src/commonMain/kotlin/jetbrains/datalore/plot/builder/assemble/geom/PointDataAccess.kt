@@ -71,7 +71,7 @@ internal class PointDataAccess(
                 .run(data::range)
                 .run(::ensureApplicableRange)
 
-            val formatter = scale.breaksGenerator.labelFormatter(domain, 100)
+            val formatter = scale.getBreaksGenerator().labelFormatter(domain, 100)
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)

@@ -14,12 +14,6 @@ internal class BogusScale : Scale<Double> {
     override val name: String
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val breaks: List<Any>
-        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
-
-    override val labels: MutableList<String>
-        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
-
     override val labelFormatter: ((Any) -> String)
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
@@ -27,9 +21,6 @@ internal class BogusScale : Scale<Double> {
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val isContinuousDomain: Boolean
-        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
-
-    override val domainLimits: Pair<Double, Double>
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val multiplicativeExpand: Double
@@ -44,18 +35,7 @@ internal class BogusScale : Scale<Double> {
     override val mapper: (Double?) -> Double?
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val breaksGenerator: BreaksGenerator
-        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
-
-    override fun hasBreaksGenerator(): Boolean {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
     override fun hasBreaks(): Boolean {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
-    override fun hasLabels(): Boolean {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
@@ -72,6 +52,10 @@ internal class BogusScale : Scale<Double> {
     }
 
     override fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?> {
+        throw IllegalStateException("Bogus scale is not supposed to be used.")
+    }
+
+    override fun getBreaksGenerator(): BreaksGenerator {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 

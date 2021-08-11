@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
@@ -39,20 +40,19 @@ object AxisUtil {
 
     fun setBreaks(axis: AxisComponent, scale: Scale<Double>, coord: CoordinateSystem, horizontal: Boolean) {
         val scaleBreaks = scale.getScaleBreaks()
-        val mappedBreaks = toAxisCoord(scaleBreaks.transformedValues, scale, coord, horizontal)
+        val mappedBreaks = toAxisCoord(scaleBreaks, scale, coord, horizontal)
 
-//        axis.breaks.set(ScaleUtil.axisBreaks(scale, coord, horizontal))
         axis.breaks.set(mappedBreaks)
         axis.labels.set(scaleBreaks.labels)
     }
 
     private fun toAxisCoord(
-        transformedBreaks: List<Double>,
+        scaleBreaks: ScaleBreaks,
         scale: Scale<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): List<Double> {
-        val breaksMapped = ScaleUtil.map(transformedBreaks, scale).map {
+        val breaksMapped = ScaleUtil.map(scaleBreaks.transformedValues, scale).map {
             // Don't expect NULLs.
             it as Double
         }
@@ -74,7 +74,7 @@ object AxisUtil {
                 throw IllegalStateException(
                     "Illegal axis '" + scale.name + "' break position " + axisBr +
                             " at index " + (axisBreaks.size - 1) +
-                            "\nsource breaks    : " + scale.breaks +
+                            "\nsource breaks    : " + scaleBreaks.domainValues +
                             "\ntranslated breaks: " + breaksMapped +
                             "\naxis breaks      : " + axisBreaks
                 )

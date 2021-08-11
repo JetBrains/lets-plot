@@ -11,18 +11,12 @@ import jetbrains.datalore.plot.base.Scale
 object AxisBreaksUtil {
     fun createAxisBreaksProvider(scale: Scale<Double>, axisDomain: ClosedRange<Double>): AxisBreaksProvider = when {
         scale.hasBreaks() -> {
-            val scaleBreaks = scale.getScaleBreaks()
-//            FixedAxisBreaksProvider(
-//                scale.breaks,
-//                breaksTransformed(scale),
-//                labels(scale)
-//            )
             FixedAxisBreaksProvider(scale.getScaleBreaks())
         }
         else -> {
             AdaptableAxisBreaksProvider(
                 axisDomain,
-                scale.breaksGenerator
+                scale.getBreaksGenerator()
             )
         }
     }

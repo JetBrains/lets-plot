@@ -27,19 +27,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     override val isContinuousDomain: Boolean
         get() = false
 
-    override val breaks: List<Any>
-        get() {
-            check(hasBreaks()) { "No breaks defined for scale $name" }
-            @Suppress("UNCHECKED_CAST")
-            return definedBreaks as List<Any>
-        }
-
-    override val labels: List<String>
-        get() {
-            check(labelsDefined()) { "No labels defined for scale $name" }
-            return definedLabels!!
-        }
-
     protected constructor(name: String, mapper: ((Double?) -> T?), breaks: List<DomainT>? = null) {
         this.name = name
         this.mapper = mapper
@@ -63,12 +50,15 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         return definedBreaks != null
     }
 
-    override fun hasLabels(): Boolean {
-        return labelsDefined()
+    protected open fun getBreaksIntern(): List<Any> {
+        check(hasBreaks()) { "No breaks defined for scale $name" }
+        @Suppress("UNCHECKED_CAST")
+        return definedBreaks as List<Any>
     }
 
-    private fun labelsDefined(): Boolean {
-        return definedLabels != null
+    protected open fun getLabelsIntern(): List<String> {
+        check(definedLabels != null) { "No labels defined for scale $name" }
+        return definedLabels
     }
 
     override fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?> {
@@ -96,8 +86,9 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             return ScaleBreaks.EMPTY
         }
 
-        val labels = getLabels(breaks)
-        val transformed = applyTransform(breaks, checkLimits = false)
+        val breakValuesIntern = getBreaksIntern()
+        val labels = getLabels(breakValuesIntern)
+        val transformed = applyTransform(breakValuesIntern, checkLimits = false)
 
         // drop NULLs which can occure after transform.
         val keepIndices: Set<Int> = transformed
@@ -106,14 +97,15 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             .toSet()
 
         return ScaleBreaks(
-            domainValues = breaks.filterIndexed { i, _ -> i in keepIndices },
+            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices },
             transformedValues = transformed.filterNotNull(),
             labels = labels.filterIndexed { i, _ -> i in keepIndices }
         )
     }
 
     private fun getLabels(breaks: List<Any>): List<String> {
-        if (hasLabels()) {
+        if (definedLabels != null) {
+            val labels = getLabelsIntern()
             return when {
                 labels.isEmpty() -> List(breaks.size) { "" }
                 breaks.size <= labels.size -> labels.subList(0, breaks.size)

@@ -53,7 +53,7 @@ class DiscreteScaleTest {
         assertValuesNotInLimits(scale, "a", "d")
 
         assertTrue(scale.hasBreaks())
-        assertEquals(listOf("b", "c"), scale.breaks)
+        assertEquals(listOf("b", "c"), scale.getScaleBreaks().domainValues)
     }
 
     @Test
@@ -89,8 +89,9 @@ class DiscreteScaleTest {
             .build()
 
         assertTrue(scale.hasBreaks())
-        assertEquals(listOf("b", "c"), scale.breaks)
-        assertEquals(listOf(0.0, 1.0), scale.transform.apply(scale.breaks))
+        val actualBreaks = scale.getScaleBreaks().domainValues
+        assertEquals(listOf("b", "c"), actualBreaks)
+        assertEquals(listOf(0.0, 1.0), scale.transform.apply(actualBreaks))
     }
 
     @Test
@@ -102,8 +103,9 @@ class DiscreteScaleTest {
             .build()
 
         assertTrue(scale.hasBreaks())
-        assertEquals(listOf("b", "c"), scale.breaks)
-        assertEquals(listOf("b-lab", "c-lab"), scale.labels)
+        val scaleBreaks = scale.getScaleBreaks()
+        assertEquals(listOf("b", "c"), scaleBreaks.domainValues)
+        assertEquals(listOf("b-lab", "c-lab"), scaleBreaks.labels)
     }
 
     @Test
@@ -115,8 +117,9 @@ class DiscreteScaleTest {
             .build()
 
         assertTrue(scale.hasBreaks())
-        assertEquals(listOf("c", "b"), scale.breaks)
-        assertEquals(listOf("c-lab", "b-lab"), scale.labels)
+        val scaleBreaks = scale.getScaleBreaks()
+        assertEquals(listOf("c", "b"), scaleBreaks.domainValues)
+        assertEquals(listOf("c-lab", "b-lab"), scaleBreaks.labels)
     }
 
     @Test

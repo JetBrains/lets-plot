@@ -58,11 +58,6 @@ internal class ScaleConfigDiscreteScaleTest(
         val scaleBreaks = scale.getScaleBreaks()
         val mappedBreaks = ScaleUtil.map(scaleBreaks.transformedValues, scale)
 
-//        val labels = ScaleUtil.labels(scale)
-//        assertEquals(expectedLabels, labels)
-//        assertEquals(expectedBreaks, scale.breaks)
-//        assertEquals(expectedBreakColors, ScaleUtil.transformAndMap(scale.breaks, scale), "[Break Colors]")
-//        assertEquals(expectedDataPointColors, ScaleUtil.transformAndMap(CAT_DATA, scale), "[Data Point Colors]")
         assertEquals(expectedLabels, scaleBreaks.labels)
         assertEquals(expectedBreaks, scaleBreaks.domainValues)
         assertEquals(expectedBreakColors, mappedBreaks, "[Break Colors]")

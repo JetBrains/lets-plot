@@ -14,42 +14,8 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     private val discreteTransform: DiscreteTransform
 
-    override val breaks: List<Any>
-        get() {
-            return if (!hasDomainLimits()) {
-                super.breaks
-            } else {
-                // Filter and preserve the order defined by limits.
-                val breaksSet = super.breaks.toSet()
-                discreteTransform.domainLimits.filter { it in breaksSet }
-            }
-        }
-
-    override val labels: List<String>
-        get() {
-            val labels = super.labels
-            return if (!hasDomainLimits() || labels.isEmpty()) {
-                labels
-            } else {
-                val breaks = super.breaks
-                val breakLabels = breaks.mapIndexed { i, _ -> labels[i % labels.size] }
-
-                // Filter and preserve the order defined by limits.
-                val labelByBreak = breaks.zip(breakLabels).toMap()
-                discreteTransform.domainLimits
-                    .filter { labelByBreak.containsKey(it) }
-                    .map { labelByBreak.getValue(it) }
-            }
-        }
-
     override val transform: Transform
         get() = discreteTransform
-
-    override val breaksGenerator: BreaksGenerator
-        get() = throw IllegalStateException("No breaks generator for discrete scale '$name'")
-
-    override val domainLimits: Pair<Double, Double>
-        get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
     constructor(
         name: String,
@@ -68,7 +34,9 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         discreteTransform = DiscreteTransform(b.myDomainValues, b.myDomainLimits)
     }
 
-    override fun hasBreaksGenerator() = false
+    override fun getBreaksGenerator(): BreaksGenerator {
+        throw IllegalStateException("No breaks generator for discrete scale '$name'")
+    }
 
     override fun hasDomainLimits(): Boolean {
         return discreteTransform.hasDomainLimits()
@@ -76,6 +44,32 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     override fun isInDomainLimits(v: Any): Boolean {
         return discreteTransform.isInDomain(v)
+    }
+
+    protected override fun getBreaksIntern(): List<Any> {
+        return if (!hasDomainLimits()) {
+            super.getBreaksIntern()
+        } else {
+            // Filter and preserve the order defined by limits.
+            val breaksSet = super.getBreaksIntern().toSet()
+            discreteTransform.domainLimits.filter { it in breaksSet }
+        }
+    }
+
+    override fun getLabelsIntern(): List<String> {
+        val labels = super.getLabelsIntern()
+        return if (!hasDomainLimits() || labels.isEmpty()) {
+            labels
+        } else {
+            val breaks = super.getBreaksIntern()
+            val breakLabels = breaks.mapIndexed { i, _ -> labels[i % labels.size] }
+
+            // Filter and preserve the order defined by limits.
+            val labelByBreak = breaks.zip(breakLabels).toMap()
+            discreteTransform.domainLimits
+                .filter { labelByBreak.containsKey(it) }
+                .map { labelByBreak.getValue(it) }
+        }
     }
 
     override fun with(): Scale.Builder<T> {

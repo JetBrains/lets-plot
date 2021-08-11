@@ -45,7 +45,8 @@ object ScaleUtil {
     }
 
     fun transformedDefinedLimits(scale: Scale<*>): Pair<Double, Double> {
-        val (lower, upper) = scale.domainLimits
+        scale as ContinuousScale
+        val (lower, upper) = scale.continuousDomainLimits
         val transform = scale.transform as ContinuousTransform
         val (transformedLower, transformedUpper) = Pair(
             if (transform.isInDomain(lower)) transform.apply(lower)!! else Double.NaN,

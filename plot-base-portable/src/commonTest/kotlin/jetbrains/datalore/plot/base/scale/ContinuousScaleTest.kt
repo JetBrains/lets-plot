@@ -105,10 +105,10 @@ class ContinuousScaleTest {
 
         fun actual(scale: Scale<*>): BreaksGenerator {
             assertTrue(
-                scale.breaksGenerator is Transforms.BreaksGeneratorForTransformedDomain,
-                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.breaksGenerator::class.simpleName}"
+                scale.getBreaksGenerator() is Transforms.BreaksGeneratorForTransformedDomain,
+                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.getBreaksGenerator()::class.simpleName}"
             )
-            return (scale.breaksGenerator as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+            return (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
         }
 
         val scale1 = scale.with().breaksGenerator(bg).build()
@@ -164,10 +164,11 @@ class ContinuousScaleTest {
             .upperLimit(10.0)
             .build()
 
-        val domainLimits = scale.domainLimits
+        scale as ContinuousScale
+        val domainLimits = scale.continuousDomainLimits
 
-        val copy = scale.with().build()
+        val copy = scale.with().build() as ContinuousScale
         assertTrue(copy.hasDomainLimits())
-        assertEquals(domainLimits, copy.domainLimits)
+        assertEquals(domainLimits, copy.continuousDomainLimits)
     }
 }

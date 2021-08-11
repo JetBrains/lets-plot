@@ -400,7 +400,7 @@ class ScaleOrderingTest {
     @Test
     fun `apply pick sampling after group sampling`() {
         val samplingGroup = """{ "name": "group_systematic", "n": 2 }"""
-        val samplingPick  = """{ "name": "pick", "n": 2 }"""
+        val samplingPick = """{ "name": "pick", "n": 2 }"""
         val sampling = """{
                  "feature-list": [ 
                     { "sampling": $samplingGroup }, 
@@ -665,7 +665,7 @@ class ScaleOrderingTest {
     @Test
     fun `x=as_discrete('x', order=1), fill=as_discrete('x') - should apply the ordering to the 'fill'`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
-        val orderingSettings = makeOrderingSettings("x", null, 1)  + "," +
+        val orderingSettings = makeOrderingSettings("x", null, 1) + "," +
                 makeOrderingSettings("fill", null, null)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
@@ -730,8 +730,8 @@ class ScaleOrderingTest {
             aes: Aes<*>,
             breaks: List<Any>
         ) {
-            val scale = layer.scaleMap[aes]
-            assertEquals(breaks, scale.breaks, "Wrong ticks order on ${aes.name.uppercase()}.")
+            val scaleBreaks = layer.scaleMap[aes].getScaleBreaks()
+            assertEquals(breaks, scaleBreaks.domainValues, "Wrong ticks order on ${aes.name.uppercase()}.")
         }
 
         private fun getBarColumnValues(
@@ -764,7 +764,7 @@ class ScaleOrderingTest {
             }
 
             expectedOrderInBar.forEach { (aes, expected) ->
-                val breaks = geomLayer.scaleMap[aes].breaks
+                val breaks = geomLayer.scaleMap[aes].getScaleBreaks().domainValues
                 val breakColors = breaks.zip(legendColors).map { it.second to it.first }.toMap()
                 val actual: Map<Int, List<Any?>> =
                     getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->

@@ -37,10 +37,10 @@ internal class ScaleProviderBuilderTest {
 
         fun actual(scale: Scale<*>): BreaksGenerator {
             assertTrue(
-                scale.breaksGenerator is Transforms.BreaksGeneratorForTransformedDomain,
-                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.breaksGenerator::class.simpleName}"
+                scale.getBreaksGenerator() is Transforms.BreaksGeneratorForTransformedDomain,
+                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.getBreaksGenerator()::class.simpleName}"
             )
-            return (scale.breaksGenerator as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+            return (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
         }
 
         assertSame(bg, actual(scale), "Scale must be created with 'breaksGenerator' object")
