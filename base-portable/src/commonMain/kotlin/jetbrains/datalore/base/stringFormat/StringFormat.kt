@@ -73,12 +73,7 @@ class StringFormat private constructor(
         }
         when (formatType) {
             NUMBER_FORMAT -> {
-                val numberFormatter: NumberFormat =
-                    try {
-                        NumberFormat(formatPattern)
-                    } catch (e: Exception) {
-                        error("Wrong number pattern: $formatPattern")
-                    }
+                val numberFormatter = NumberFormat.parseOrNull(formatPattern) ?: error("Wrong pattern of number format: '$formatPattern'")
                 return { value: Any ->
                     when (value) {
                         is Number -> numberFormatter.apply(value)

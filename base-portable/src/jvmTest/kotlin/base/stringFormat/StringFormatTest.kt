@@ -131,7 +131,7 @@ class StringFormatTest {
             StringFormat.create("pattern", type = NUMBER_FORMAT).format("text")
         }
         assertEquals(
-            "Wrong number pattern: pattern",
+            "Wrong pattern of number format: 'pattern'",
             exception.message
         )
     }
