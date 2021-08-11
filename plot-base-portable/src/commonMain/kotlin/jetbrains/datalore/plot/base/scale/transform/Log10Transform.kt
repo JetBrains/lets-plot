@@ -29,10 +29,6 @@ internal class Log10Transform : FunTransform(
         return trimInfinity(super.apply(v))
     }
 
-    override fun applyInverse(v: Double?): Double? {
-        return super.applyInverse(v)
-    }
-
     override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
         @Suppress("NAME_SHADOWING")
         val middle = when {
