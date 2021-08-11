@@ -115,12 +115,12 @@ internal class EnsureApplicableDomainTest(
                     ClosedRange(0.0, 5.0)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    Transforms.SQRT,
                     ClosedRange(0.0, 0.0),
                     ClosedRange(0.0, 0.5)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    Transforms.SQRT,
                     ClosedRange(10.0, 10.0),
                     ClosedRange(9.5, 10.5)
                 ),
@@ -137,27 +137,27 @@ internal class EnsureApplicableDomainTest(
                 arrayOf(
                     Transforms.LOG10,
                     ClosedRange(-5.0, -5.0),
-                    ClosedRange(0.0, 0.5)
+                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     ClosedRange(-5.0, 0.0),
-                    ClosedRange(0.0, 0.5)
+                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     ClosedRange(-5.0, 5.0),
-                    ClosedRange(0.0, 5.0)
+                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 5.0)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     ClosedRange(0.0, 5.0),
-                    ClosedRange(0.0, 5.0)
+                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 5.0)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     ClosedRange(0.0, 0.0),
-                    ClosedRange(0.0, 0.5)
+                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
