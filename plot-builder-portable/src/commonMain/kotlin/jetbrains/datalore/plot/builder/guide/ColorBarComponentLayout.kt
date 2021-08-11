@@ -10,12 +10,12 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.scale.GuideBreak
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 abstract class ColorBarComponentLayout(
     title: String,
     domain: ClosedRange<Double>,
-    breaks: List<GuideBreak<Double>>,
+    breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
     reverse: Boolean
@@ -36,8 +36,8 @@ abstract class ColorBarComponentLayout(
         val guideBarLength = guideBarLength
         val targetRange = ClosedRange(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
         val mapper = Mappers.linear(domain, targetRange, reverse)
-        breakInfos = breaks.map {
-            val tickLocation = mapper(it.domainValue)
+        breakInfos = breaks.transformedValues.map {
+            val tickLocation = mapper(it)
             createBreakInfo(tickLocation)
         }
         barBounds = DoubleRectangle(DoubleVector.ZERO, guideBarSize)
@@ -53,7 +53,7 @@ abstract class ColorBarComponentLayout(
     private class HorizontalLayout(
         title: String,
         domain: ClosedRange<Double>,
-        breaks: List<GuideBreak<Double>>,
+        breaks: ScaleBreaks,
         barSize: DoubleVector,
         reverse: Boolean
     ) : ColorBarComponentLayout(
@@ -85,7 +85,7 @@ abstract class ColorBarComponentLayout(
     private class VerticalLayout(
         title: String,
         domain: ClosedRange<Double>,
-        breaks: List<GuideBreak<Double>>,
+        breaks: ScaleBreaks,
         barSize: DoubleVector,
         reverse: Boolean
     ) : ColorBarComponentLayout(
@@ -99,8 +99,8 @@ abstract class ColorBarComponentLayout(
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
-            check(breaks.isNotEmpty()) { "Colorbar VerticalLayout received empty breaks list." }
-            val maxLabelWidth: Double = breaks.map { it.label.length }
+            check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
+            val maxLabelWidth: Double = breaks.labels.map { it.length }
                 .maxOf { LABEL_SPEC.width(it) }
 
             // Bar + labels bounds
@@ -122,7 +122,7 @@ abstract class ColorBarComponentLayout(
         fun horizontal(
             title: String,
             domain: ClosedRange<Double>,
-            breaks: List<GuideBreak<Double>>,
+            breaks: ScaleBreaks,
             barSize: DoubleVector,
             reverse: Boolean
         ): ColorBarComponentLayout {
@@ -138,7 +138,7 @@ abstract class ColorBarComponentLayout(
         fun vertical(
             title: String,
             domain: ClosedRange<Double>,
-            breaks: List<GuideBreak<Double>>,
+            breaks: ScaleBreaks,
             barSize: DoubleVector,
             reverse: Boolean
         ): ColorBarComponentLayout {
