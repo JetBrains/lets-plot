@@ -1,10 +1,9 @@
-## [2.0.5] - 2021-??-??
+## [2.1.0] - 2021-08-??
 
 ### Added
 
 - Subdomains parameter `{s}` for raster tiles services.
 - Solid color tiles `maptiles_solid()`.
-- Chessboard tiles `maptiles_chessboard()`.
 - Module `lets_plot.tilesets` with collection of free tiles providers. 
 - as_discrete: add support for ordered parameter [[#136](https://github.com/JetBrains/lets-plot/issues/136)].
   
@@ -23,15 +22,11 @@
 
 ### Fixed
 
-- geom_livemap: missing ScreenGeometryComponent exception.
-- geom_livemap: repaint only on visual changes to reduce a CPU usage at idle.
-- geom_livemap: improved click events detection.
 - geom_livemap: properly handle `max_zoom` pamareter in `maptiles_zxy()`.
 - Strange looking legend for tiles [[#245](https://github.com/JetBrains/lets-plot/issues/245)].
 - Need to skip "bad" values during scale transformation [[#301](https://github.com/JetBrains/lets-plot/issues/301)].
 - NPE on negative value in data and scale_xxx(trans='log10') [[#292](https://github.com/JetBrains/lets-plot/issues/292)].
 - Legend is broken when using scale_fill_brewer with 'trans' parameter [[#284](https://github.com/JetBrains/lets-plot/issues/284)].
-- scale_y_log10: hidden segments [[#372](https://github.com/JetBrains/lets-plot/issues/372)].
 - Scale breaks should be distributed evenly on 'sqrt' scale. [[#407](https://github.com/JetBrains/lets-plot/issues/407)].
 - Wrong tooltip formatting when used with log10 scales [[#406](https://github.com/JetBrains/lets-plot/issues/406)].
 - Bad axis labels when using both plot and layer data [[#327](https://github.com/JetBrains/lets-plot/issues/327)].
@@ -42,6 +37,9 @@
 - Tooltip format for variable is not working [[#401](https://github.com/JetBrains/lets-plot/issues/401)].
 - Wrong direction in colorbars (legend) [[#204](https://github.com/JetBrains/lets-plot/issues/204)].
 - geom_jitter: show axis tooltips (same as geom_point) [[#412](https://github.com/JetBrains/lets-plot/issues/412)].
-- Memory leak in IDEA caused by a `final void dispose()` method in PlotPanel.
-- Outlier tooltips: the spout sometimes is too long (boxplot) [[#358](https://github.com/JetBrains/lets-plot/issues/358)].
+- Outlier tooltips: the spout sometime is too long (boxplot) [[#358](https://github.com/JetBrains/lets-plot/issues/358)].
 - Faceted plot is broken by geom with "constant" aesthetics [[#391](https://github.com/JetBrains/lets-plot/issues/391)].
+- Interactive maps in AWT (PyCharm plugin):
+  - A memory leak in PyCharm caused by a `final void dispose()` method in PlotPanel. 
+  - When showing map in PyCharm CPU is busy all the time, even then nothing is changing on screen. 
+  - Click events detection.
