@@ -21,19 +21,10 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     override val isContinuous: Boolean
     override val isContinuousDomain: Boolean = true
-    override val domainLimits: Pair<Double, Double>
+    val continuousDomainLimits: Pair<Double, Double>
 
     override val transform: Transform
         get() = continuousTransform
-
-    override val breaksGenerator: BreaksGenerator
-        get() {
-            return if (customBreaksGenerator != null) {
-                Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
-            } else {
-                createBreaksGeneratorForTransformedDomain(continuousTransform, labelFormatter)
-            }
-        }
 
     constructor(
         name: String,
@@ -41,7 +32,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         continuousOutput: Boolean
     ) : super(name, mapper) {
         isContinuous = continuousOutput
-        domainLimits = Pair(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        continuousDomainLimits = Pair(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
         continuousTransform = Transforms.IDENTITY
         customBreaksGenerator = null
 
@@ -57,25 +48,31 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         isContinuous = b.myContinuousOutput
         val lower = if (SeriesUtil.isFinite(b.myLowerLimit)) b.myLowerLimit!! else Double.NEGATIVE_INFINITY
         val upper = if (SeriesUtil.isFinite(b.myUpperLimit)) b.myUpperLimit!! else Double.POSITIVE_INFINITY
-        domainLimits = Pair(
+        continuousDomainLimits = Pair(
             min(lower, upper),
             max(lower, upper)
         )
     }
 
-    override fun hasBreaksGenerator() = true
+    override fun getBreaksGenerator(): BreaksGenerator {
+        return if (customBreaksGenerator != null) {
+            Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
+        } else {
+            createBreaksGeneratorForTransformedDomain(continuousTransform, labelFormatter)
+        }
+    }
 
     override fun isInDomainLimits(v: Any): Boolean {
         return if (v is Number) {
             val d = v.toDouble()
-            d.isFinite() && d >= domainLimits.first && d <= domainLimits.second
+            d.isFinite() && d >= continuousDomainLimits.first && d <= continuousDomainLimits.second
         } else {
             false
         }
     }
 
     override fun hasDomainLimits(): Boolean {
-        return domainLimits.first.isFinite() || domainLimits.second.isFinite()
+        return continuousDomainLimits.first.isFinite() || continuousDomainLimits.second.isFinite()
     }
 
     override fun with(): Scale.Builder<T> {
@@ -86,8 +83,8 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
         var myContinuousTransform: ContinuousTransform = scale.continuousTransform
         var myCustomBreaksGenerator: BreaksGenerator? = scale.customBreaksGenerator
-        var myLowerLimit: Double? = scale.domainLimits.first
-        var myUpperLimit: Double? = scale.domainLimits.second
+        var myLowerLimit: Double? = scale.continuousDomainLimits.first
+        var myUpperLimit: Double? = scale.continuousDomainLimits.second
 
         val myContinuousOutput: Boolean = scale.isContinuous
 

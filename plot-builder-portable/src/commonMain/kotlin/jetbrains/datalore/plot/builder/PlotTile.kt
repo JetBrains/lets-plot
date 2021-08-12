@@ -243,8 +243,7 @@ internal class PlotTile(
         coord: CoordinateSystem,
         theme: AxisTheme
     ): AxisComponent {
-        val axis =
-            AxisComponent(info.axisLength, info.orientation!!)
+        val axis = AxisComponent(info.axisLength, info.orientation!!)
         AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
         AxisUtil.applyLayoutInfo(axis, info)
         AxisUtil.applyTheme(axis, theme)

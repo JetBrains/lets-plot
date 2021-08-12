@@ -83,7 +83,7 @@ class Format(private val spec: List<SpecPart>) {
                 Pattern.HOUR_12_LEADING_ZERO -> leadZero(getHours12(dateTime))
                 Pattern.HOUR_24 -> leadZero(getHours24(dateTime))
                 Pattern.MERIDIAN_LOWER -> getMeridian(dateTime)
-                Pattern.MERIDIAN_UPPER -> getMeridian(dateTime).toUpperCase()
+                Pattern.MERIDIAN_UPPER -> getMeridian(dateTime).uppercase()
                 Pattern.DAY_OF_WEEK -> getWeekDayNumber(dateTime)
                 Pattern.DAY_OF_WEEK_ABBR -> DateLocale.weekDayAbbr[dateTime.weekDay] ?: ""
                 Pattern.DAY_OF_WEEK_FULL -> DateLocale.weekDayFull[dateTime.weekDay] ?: ""

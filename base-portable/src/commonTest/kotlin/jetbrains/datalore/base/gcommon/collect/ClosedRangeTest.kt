@@ -33,12 +33,12 @@ class ClosedRangeTest {
 
     @Test
     fun illegalEndpoints() {
-        assertFailsWith<IllegalArgumentException> { range(0.0, Double.NaN) }
-        assertFailsWith<IllegalArgumentException> { range(0.0, Double.NEGATIVE_INFINITY) }
-        assertFailsWith<IllegalArgumentException> { range(0.0, Double.POSITIVE_INFINITY) }
-        assertFailsWith<IllegalArgumentException> { range(Double.NaN, 0.0) }
-        assertFailsWith<IllegalArgumentException> { range(Double.NEGATIVE_INFINITY, 0.0) }
-        assertFailsWith<IllegalArgumentException> { range(Double.POSITIVE_INFINITY, 0.0) }
+        assertFailsWith<IllegalStateException> { range(0.0, Double.NaN) }
+        assertFailsWith<IllegalStateException> { range(0.0, Double.NEGATIVE_INFINITY) }
+        assertFailsWith<IllegalStateException> { range(0.0, Double.POSITIVE_INFINITY) }
+        assertFailsWith<IllegalStateException> { range(Double.NaN, 0.0) }
+        assertFailsWith<IllegalStateException> { range(Double.NEGATIVE_INFINITY, 0.0) }
+        assertFailsWith<IllegalStateException> { range(Double.POSITIVE_INFINITY, 0.0) }
     }
 
     @Test

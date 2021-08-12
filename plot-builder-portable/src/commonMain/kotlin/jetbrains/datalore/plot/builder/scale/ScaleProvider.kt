@@ -12,8 +12,9 @@ import jetbrains.datalore.plot.base.Scale
 interface ScaleProvider<T> {
     val discreteDomain: Boolean
     val breaks: List<Any>?
-    val discreteDomainLimits: List<Any>?
+    val limits: List<Any?>? // when 'continuous' limits, NULL means undefined upper or lower limit.
     val continuousTransform: ContinuousTransform
+    val mapperProvider: MapperProvider<T>
 
     /**
      * Create scale for discrete input (domain)

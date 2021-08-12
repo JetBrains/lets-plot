@@ -79,7 +79,7 @@ internal class ListTransformTest(
                     if (it.isNaN()) {
                         Double.NaN
                     } else {
-                        max(Log10Transform.LOWER_LIM, it)
+                        max(Log10Transform.LOWER_LIM_TRANSFOTMED, it)
                     }
                 }
             }

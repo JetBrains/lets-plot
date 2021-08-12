@@ -11,13 +11,13 @@ import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.assemble.ColorBarAssembler
 import jetbrains.datalore.plot.builder.assemble.LegendAssembler
 import jetbrains.datalore.plot.builder.guide.ColorBarComponent
 import jetbrains.datalore.plot.builder.guide.LegendBreak
 import jetbrains.datalore.plot.builder.guide.LegendComponent
-import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
@@ -59,14 +59,6 @@ open class LegendDemo : SimpleDemoBase() {
     }
 
     private fun colorBar(): GroupComponent {
-        val count = 3
-        val breaks = ArrayList<GuideBreak<Double>>()
-        for (i in 0 until count) {
-            val v = (i + 1).toDouble()
-            val l = "" + v
-            breaks.add(GuideBreak(v, l))
-        }
-
         val domain = ClosedRange(0.0, 4.0)
 
         val mapper = ColorMapper.gradientDefault(domain)
@@ -76,8 +68,10 @@ open class LegendDemo : SimpleDemoBase() {
             .upperLimit(domain.upperEnd)
             .build()
 
+        val breakValues = List(3) { i -> (i + 1).toDouble() }
+        val scaleBreaks = ScaleBreaks(breakValues, breakValues, breakValues.map { "$it" })
         val spec = ColorBarAssembler.createColorBarSpec(
-            "Color Bar", domain, breaks, scale, theme.legend()
+            "Color Bar", domain, scaleBreaks, scale, theme.legend()
         )
         val legendComponent = ColorBarComponent(spec)
         legendComponent.debug = DEBUG_DRAWING

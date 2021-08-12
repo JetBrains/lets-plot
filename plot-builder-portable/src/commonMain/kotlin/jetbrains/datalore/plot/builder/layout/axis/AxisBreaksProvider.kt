@@ -5,10 +5,12 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
+
 interface AxisBreaksProvider {
     val isFixedBreaks: Boolean
 
-    val fixedBreaks: GuideBreaks
+    val fixedBreaks: ScaleBreaks
 
-    fun getBreaks(targetCount: Int, axisLength: Double): GuideBreaks
+    fun getBreaks(targetCount: Int, axisLength: Double): ScaleBreaks
 }

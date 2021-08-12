@@ -13,9 +13,9 @@ class NumberFormatExtremesTest {
     fun typeS() {
         val f = NumberFormat(".3s")
         assertEquals("0.00y", f.apply(Double.MIN_VALUE))
-        assertEquals("1000000000000000Y", f.apply(1E39))
+        assertEquals("100000000000000Y", f.apply(1E38))
         assertEquals("0.00y", f.apply(-Double.MIN_VALUE))
-        assertEquals("-1000000000000000Y", f.apply(-1E39))
+        assertEquals("-100000000000000Y", f.apply(-1E38))
 
         assertEquals("100Y", f.apply(NumberFormat.TYPE_S_MAX))
         assertEquals("-100Y", f.apply(-NumberFormat.TYPE_S_MAX))

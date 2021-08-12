@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Projection
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ProjectionCoordProvider(
@@ -70,7 +70,7 @@ internal class ProjectionCoordProvider(
         scaleProto: Scale<Double>,
         domain: ClosedRange<Double>,
         axisLength: Double,
-        breaks: GuideBreaks
+        breaks: ScaleBreaks
     ): Scale<Double> {
         return if (projectionX.nonlinear) {
             buildAxisScaleWithProjection(
@@ -89,7 +89,7 @@ internal class ProjectionCoordProvider(
         scaleProto: Scale<Double>,
         domain: ClosedRange<Double>,
         axisLength: Double,
-        breaks: GuideBreaks
+        breaks: ScaleBreaks
     ): Scale<Double> {
         return if (projectionY.nonlinear) {
             buildAxisScaleWithProjection(
@@ -109,7 +109,7 @@ internal class ProjectionCoordProvider(
             projection: Projection, scaleProto: Scale<Double>,
             domain: ClosedRange<Double>,
             axisLength: Double,
-            breaks: GuideBreaks
+            breaks: ScaleBreaks
         ): Scale<Double> {
 
             val validDomain = projection.toValidDomain(domain)
@@ -129,10 +129,7 @@ internal class ProjectionCoordProvider(
                 projectionInverse,
                 linearMapper
             )
-            val validBreaks = validateBreaks(
-                validDomain,
-                breaks
-            )
+            val validBreaks = validateBreaks(validDomain, breaks)
             return buildAxisScaleDefault(
                 scaleProto,
                 scaleMapper,
@@ -140,7 +137,7 @@ internal class ProjectionCoordProvider(
             )
         }
 
-        private fun validateBreaks(validDomain: ClosedRange<Double>, breaks: GuideBreaks): GuideBreaks {
+        private fun validateBreaks(validDomain: ClosedRange<Double>, breaks: ScaleBreaks): ScaleBreaks {
             val validIndices = ArrayList<Int>()
             var i = 0
             for (v in breaks.domainValues) {
@@ -157,7 +154,7 @@ internal class ProjectionCoordProvider(
             val validDomainValues = SeriesUtil.pickAtIndices(breaks.domainValues, validIndices)
             val validLabels = SeriesUtil.pickAtIndices(breaks.labels, validIndices)
             val validTransformedValues = SeriesUtil.pickAtIndices(breaks.transformedValues, validIndices)
-            return GuideBreaks(
+            return ScaleBreaks(
                 validDomainValues,
                 validTransformedValues,
                 validLabels

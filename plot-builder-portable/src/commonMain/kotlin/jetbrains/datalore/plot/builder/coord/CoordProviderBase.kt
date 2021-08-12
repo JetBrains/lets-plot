@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal abstract class CoordProviderBase(
     private val xLim: ClosedRange<Double>?,
@@ -24,7 +24,7 @@ internal abstract class CoordProviderBase(
         scaleProto: Scale<Double>,
         domain: ClosedRange<Double>,
         axisLength: Double,
-        breaks: GuideBreaks
+        breaks: ScaleBreaks
     ): Scale<Double> {
         return buildAxisScaleDefault(
             scaleProto,
@@ -38,7 +38,7 @@ internal abstract class CoordProviderBase(
         scaleProto: Scale<Double>,
         domain: ClosedRange<Double>,
         axisLength: Double,
-        breaks: GuideBreaks
+        breaks: ScaleBreaks
     ): Scale<Double> {
         return buildAxisScaleDefault(
             scaleProto,
@@ -87,7 +87,7 @@ internal abstract class CoordProviderBase(
             scaleProto: Scale<Double>,
             domain: ClosedRange<Double>,
             axisLength: Double,
-            breaks: GuideBreaks
+            breaks: ScaleBreaks
         ): Scale<Double> {
             return buildAxisScaleDefault(
                 scaleProto,
@@ -99,7 +99,7 @@ internal abstract class CoordProviderBase(
         fun buildAxisScaleDefault(
             scaleProto: Scale<Double>,
             axisMapper: (Double?) -> Double?,
-            breaks: GuideBreaks
+            breaks: ScaleBreaks
         ): Scale<Double> {
             return scaleProto.with()
                 .breaks(breaks.domainValues)

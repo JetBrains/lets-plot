@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.math.max
 import kotlin.math.min
@@ -57,7 +55,7 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
      * Set the scale's input domain.
      */
     fun domain(start: Double, end: Double): QuantizeScale<T> {
-        checkArgument(start <= end, "Domain start must be less then domain end: $start > $end")
+        require(start <= end) { "Domain start must be less then domain end: $start > $end" }
         myHasDomain = true
         myDomainStart = start
         myDomainEnd = end
@@ -78,8 +76,8 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     }
 
     private fun outputIndex(v: Double): Int {
-        checkState(myHasDomain, "Domain not defined.")
-        checkState(::myOutputValues.isInitialized && myOutputValues.isNotEmpty(), "Output values are not defined.")
+        check(myHasDomain) { "Domain not defined." }
+        check(::myOutputValues.isInitialized && myOutputValues.isNotEmpty()) { "Output values are not defined." }
         val bucketSize = bucketSize()
         val index = ((v - myDomainStart) / bucketSize).toInt()
         val maxIndex = myOutputValues.size - 1

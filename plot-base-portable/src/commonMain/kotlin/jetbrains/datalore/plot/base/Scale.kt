@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 /**
  * Translates input to aesthetics by
@@ -23,10 +24,6 @@ import jetbrains.datalore.plot.base.scale.BreaksGenerator
 interface Scale<T> {
     val name: String
 
-    val breaks: List<Any>
-
-    val labels: List<String>
-
     val labelFormatter: ((Any) -> String)?
 
     /**
@@ -36,8 +33,6 @@ interface Scale<T> {
 
     val isContinuousDomain: Boolean
 
-    val domainLimits: Pair<Double, Double>
-
     val multiplicativeExpand: Double
 
     val additiveExpand: Double
@@ -46,17 +41,17 @@ interface Scale<T> {
 
     val mapper: (Double?) -> T?
 
-    val breaksGenerator: BreaksGenerator
-
     fun hasBreaks(): Boolean
-
-    fun hasLabels(): Boolean
 
     fun hasDomainLimits(): Boolean
 
     fun isInDomainLimits(v: Any): Boolean
 
-    fun hasBreaksGenerator(): Boolean
+    fun getBreaksGenerator(): BreaksGenerator
+
+    fun getScaleBreaks(): ScaleBreaks
+
+    fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?>
 
     fun with(): Builder<T>
 

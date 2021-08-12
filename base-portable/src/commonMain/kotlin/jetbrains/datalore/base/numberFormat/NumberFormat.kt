@@ -83,7 +83,7 @@ class NumberFormat(private val spec: Spec) {
                 val (intStr, fracStr, exponentString) =
                     "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"
                         .toRegex()
-                        .find(num.toDouble().absoluteValue.toString().toLowerCase())
+                        .find(num.toDouble().absoluteValue.toString().lowercase())
                         ?.destructured
                         ?: error("Wrong number: $num")
 
@@ -246,7 +246,7 @@ class NumberFormat(private val spec: Spec) {
             "g" -> toPrecisionFormat(numberInfo, spec.precision)
             "b" -> FormattedNumber(numberInfo.number.roundToLong().toString(2))
             "o" -> FormattedNumber(numberInfo.number.roundToLong().toString(8))
-            "X" -> FormattedNumber(numberInfo.number.roundToLong().toString(16).toUpperCase())
+            "X" -> FormattedNumber(numberInfo.number.roundToLong().toString(16).uppercase())
             "x" -> FormattedNumber(numberInfo.number.roundToLong().toString(16))
             "s" -> toSiFormat(numberInfo, spec.precision)
             else -> throw IllegalArgumentException("Wrong type: ${spec.type}")
@@ -417,7 +417,7 @@ class NumberFormat(private val spec: Spec) {
     private fun computePrefix(output: Output): Output {
         val prefix = when (spec.symbol) {
             "$" -> CURRENCY
-            "#" -> if ("boxX".indexOf(spec.type) > -1) "0${spec.type.toLowerCase()}" else ""
+            "#" -> if ("boxX".indexOf(spec.type) > -1) "0${spec.type.lowercase()}" else ""
             else -> ""
         }
         return output.copy(prefix = prefix)

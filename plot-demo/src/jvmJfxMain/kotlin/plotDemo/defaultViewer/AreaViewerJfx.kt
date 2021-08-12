@@ -13,7 +13,7 @@ object AreaViewerJfx {
     fun main(args: Array<String>) {
         with(Area()) {
             @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+            val plotSpecList = plotSpecList()
             for (spec in plotSpecList) {
                 PlotViewerWindowJfx(
                     "Area plot",

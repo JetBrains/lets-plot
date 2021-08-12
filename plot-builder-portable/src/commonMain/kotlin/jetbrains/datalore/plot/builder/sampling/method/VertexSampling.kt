@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.algorithms.isClosed
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
@@ -33,7 +32,7 @@ internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSiz
     internal abstract fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int>
 
     override fun apply(population: DataFrame): DataFrame {
-        checkArgument(isApplicable(population))
+        require(isApplicable(population))
 
         val rings = splitRings(population)
         val limits = if (rings.size == 1 && !rings[0].isClosed())

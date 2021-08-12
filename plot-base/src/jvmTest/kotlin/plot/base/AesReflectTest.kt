@@ -31,7 +31,7 @@ class AesReflectTest {
                 val value = p1.get(Aes)
 
                 // check that the name passed to constructor corresponds to the field name
-                assertEquals(p.name.toLowerCase(), value.name)
+                assertEquals(p.name.lowercase(), value.name)
             }
         }
 

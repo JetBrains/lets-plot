@@ -5,35 +5,34 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.max
 import kotlin.math.min
 
 internal object BreakLabelsLayoutUtil {
-    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): GuideBreaks {
-        checkArgument(!breaksProvider.isFixedBreaks, "fixed breaks not expected")
-        checkArgument(maxCount > 0, "maxCount=$maxCount")
+
+    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): ScaleBreaks {
+        require(!breaksProvider.isFixedBreaks) { "fixed breaks not expected" }
+        require(maxCount > 0) { "maxCount=$maxCount" }
         var breaks = breaksProvider.getBreaks(maxCount, axisLength)
 
         if (maxCount == 1 && !breaks.isEmpty) {
-            return GuideBreaks(
-                breaks.domainValues.subList(
-                    0,
-                    1
-                ), breaks.transformedValues.subList(0, 1), breaks.labels.subList(0, 1)
+            return ScaleBreaks(
+                breaks.domainValues.subList(0, 1),
+                breaks.transformedValues.subList(0, 1),
+                breaks.labels.subList(0, 1)
             )
         }
         var count = maxCount
-        while (breaks.size() > maxCount) {
-            val delta = max(1, (breaks.size() - maxCount) / 2)
+        while (breaks.size > maxCount) {
+            val delta = max(1, (breaks.size - maxCount) / 2)
             count -= delta
             breaks = breaksProvider.getBreaks(count, axisLength)
         }
@@ -54,10 +53,11 @@ internal object BreakLabelsLayoutUtil {
 
     fun doLayoutVerticalAxisLabels(
         orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-        breaks: GuideBreaks,
+        breaks: ScaleBreaks,
         axisDomain: ClosedRange<Double>,
         axisMapper: (Double?) -> Double?,
-        theme: AxisTheme): AxisLabelsLayoutInfo {
+        theme: AxisTheme
+    ): AxisLabelsLayoutInfo {
 
         val axisBounds = when {
             theme.showTickLabels() -> {
@@ -85,12 +85,16 @@ internal object BreakLabelsLayoutUtil {
         }
 
         return AxisLabelsLayoutInfo.Builder()
-                .breaks(breaks)
-                .bounds(axisBounds)     // labels bounds actually
-                .build()
+            .breaks(breaks)
+            .bounds(axisBounds)     // label bounds actually
+            .build()
     }
 
-    fun mapToAxis(breaks: List<Double>, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): List<Double> {
+    fun mapToAxis(
+        breaks: List<Double>,
+        axisDomain: ClosedRange<Double>,
+        axisMapper: (Double?) -> Double?
+    ): List<Double> {
         val axisMin = axisDomain.lowerEnd
         val axisBreaks = ArrayList<Double>()
         for (v in breaks) {
@@ -100,7 +104,11 @@ internal object BreakLabelsLayoutUtil {
         return axisBreaks
     }
 
-    fun applyLabelsOffset(labelsBounds: DoubleRectangle, offset: Double, orientation: jetbrains.datalore.plot.builder.guide.Orientation): DoubleRectangle {
+    fun applyLabelsOffset(
+        labelsBounds: DoubleRectangle,
+        offset: Double,
+        orientation: jetbrains.datalore.plot.builder.guide.Orientation
+    ): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
         var labelsBounds = labelsBounds
         val offsetVector = when (orientation) {
@@ -120,7 +128,11 @@ internal object BreakLabelsLayoutUtil {
     }
 
 
-    private fun verticalAxisLabelsBounds(breaks: GuideBreaks, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): DoubleRectangle {
+    private fun verticalAxisLabelsBounds(
+        breaks: ScaleBreaks,
+        axisDomain: ClosedRange<Double>,
+        axisMapper: (Double?) -> Double?
+    ): DoubleRectangle {
         val maxLength =
             maxLength(breaks.labels)
         val maxLabelWidth = AxisLabelsLayout.TICK_LABEL_SPEC.width(maxLength)

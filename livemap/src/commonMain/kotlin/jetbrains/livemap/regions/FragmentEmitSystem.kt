@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.regions
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
@@ -122,7 +121,7 @@ class FragmentEmitSystem(
         boundaries: MultiPolygon<LonLat>,
         mapProjection: MapProjection
     ): EcsEntity {
-        checkArgument(!boundaries.isEmpty())
+        require(!boundaries.isEmpty())
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
         val zoomProjection = ProjectionUtil.square<World, Client>(ProjectionUtil.zoom(zoom(fragmentKey)))

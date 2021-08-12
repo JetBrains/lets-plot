@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -196,10 +195,7 @@ class SmoothStat constructor(
 
         val regression = when (smoothingMethod) {
             Method.LM -> {
-                Preconditions.checkArgument(
-                    polynomialDegree >= 1,
-                    "Degree of polynomial regression must be at least 1"
-                )
+                require(polynomialDegree >= 1) { "Degree of polynomial regression must be at least 1" }
                 if (polynomialDegree == 1) {
                     LinearRegression(valuesX, valuesY, confidenceLevel)
                 } else {

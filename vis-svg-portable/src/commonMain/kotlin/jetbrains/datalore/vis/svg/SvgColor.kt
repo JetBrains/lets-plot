@@ -170,16 +170,16 @@ enum class SvgColors(private val literal: String) : SvgColor {
 
         private fun createSvgColorList(): Map<String, SvgColor> {
             val colorList = HashMap<String, SvgColor>()
-            values().forEach { colorList[it.toString().toLowerCase()] = it }
+            values().forEach { colorList[it.toString().lowercase()] = it }
             return colorList
         }
 
         fun isColorName(colorName: String): Boolean {
-            return svgColorList.containsKey(colorName.toLowerCase())
+            return svgColorList.containsKey(colorName.lowercase())
         }
 
         fun forName(colorName: String): SvgColor {
-            return svgColorList[colorName.toLowerCase()] ?: throw IllegalArgumentException()
+            return svgColorList[colorName.lowercase()] ?: throw IllegalArgumentException()
         }
 
         fun create(r: Int, g: Int, b: Int): SvgColor {

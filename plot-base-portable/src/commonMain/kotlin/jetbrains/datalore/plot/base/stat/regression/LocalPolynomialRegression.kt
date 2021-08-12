@@ -41,11 +41,11 @@ class LocalPolynomialRegression(
         canCompute = (n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk)
 
         meanX = xVals.average()
-        sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
+        sumXX = xVals.sumOf { (it - meanX).pow(2) }
 
         val meanY = yVals.average()
-        val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
-        val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
+        val sumYY = yVals.sumOf { (it - meanY).pow(2) }
+        val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
 
         sy = run {
             val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)

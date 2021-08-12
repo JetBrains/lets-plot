@@ -87,7 +87,7 @@ class StringFormat private constructor(
         //     "{{text}}" -> "{text}"
         //     "{.1f} -> 1.2
         //     "{{{.1f}}} -> {1.2}
-        private val BRACES_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)})(?=[^}]|}}|$)""")
+        private val BRACES_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
         const val TEXT_IN_BRACES = 2
 
         fun valueInLinePattern() = "{}"

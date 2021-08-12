@@ -50,20 +50,7 @@ abstract class PlotFacets {
             // This also checks invariants.
             val nameLevelTuples = createNameLevelTuples(varNames, varLevels)
 
-            val vars = varNames.map { DataFrameUtil.findVariableOrFail(data, it) }
-
-            val indicesByVarByLevel = HashMap<String, Map<Any, List<Int>>>()
-            for ((i, variable) in vars.withIndex()) {
-                val levels = varLevels[i]
-
-                val indicesByLevel = HashMap<Any, List<Int>>()
-                for (level in levels) {
-                    val indices = SeriesUtil.matchingIndices(data[variable], level)
-                    indicesByLevel[level] = indices
-                }
-
-                indicesByVarByLevel[variable.name] = indicesByLevel
-            }
+            val indicesByVarByLevel = dataIndicesByVarByLevel(data, varNames, varLevels)
 
             val dataByLevelKey = ArrayList<Pair<List<Any>, DataFrame>>()
             for (nameLevelTuple in nameLevelTuples) {
@@ -93,6 +80,35 @@ abstract class PlotFacets {
             }
 
             return dataByLevelKey
+        }
+
+        private fun dataIndicesByVarByLevel(
+            data: DataFrame,
+            varNames: List<String>,
+            varLevels: List<List<Any>>
+        ): Map<String, Map<Any, List<Int>>> {
+
+            val indicesByVarByLevel = HashMap<String, Map<Any, List<Int>>>()
+            for ((i, varName) in varNames.withIndex()) {
+                val levels = varLevels[i]
+
+                val indicesByLevel = HashMap<Any, List<Int>>()
+                for (level in levels) {
+                    val indices = when {
+                        // 'empty' data in layers with no aes mapping (only constants)
+                        data.isEmpty -> emptyList()
+                        else -> {
+                            val variable = DataFrameUtil.findVariableOrFail(data, varName)
+                            SeriesUtil.matchingIndices(data[variable], level)
+                        }
+                    }
+                    indicesByLevel[level] = indices
+                }
+
+                indicesByVarByLevel[varName] = indicesByLevel
+            }
+
+            return indicesByVarByLevel
         }
 
         fun createNameLevelTuples(

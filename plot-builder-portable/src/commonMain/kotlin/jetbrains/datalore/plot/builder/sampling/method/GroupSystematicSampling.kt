@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.method.SystematicSampling.Companion.computeStep
 
@@ -21,7 +20,7 @@ internal class GroupSystematicSampling(sampleSize: Int) : GroupSamplingBase(samp
     }
 
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
-        checkArgument(isApplicable(population, groupMapper))
+        require(isApplicable(population, groupMapper))
         val distinctGroups = SamplingUtil.distinctGroups(
             groupMapper,
             population.rowCount()

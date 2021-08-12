@@ -176,7 +176,7 @@ object SeriesUtil {
 
     /**
      * ToDo: Use with caution.
-     * ToDo: The correct method of domain validation is temporarily in 'PlotConfigUtil.ensureApplicableDomain'.
+     * ToDo: The correct method of domain validation is temporarily in 'Transforms.ensureApplicableDomain'.
      */
     fun ensureApplicableRange(range: ClosedRange<Double>?): ClosedRange<Double> {
         if (range == null) {
