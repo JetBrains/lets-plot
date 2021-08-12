@@ -2,16 +2,19 @@
 
 ### Added
 
-- Subdomains parameter `{s}` for raster tiles services.
-- Solid color tiles `maptiles_solid()`.
-- Module `lets_plot.tilesets` with collection of free tiles providers. 
-- as_discrete: add support for ordered parameter [[#136](https://github.com/JetBrains/lets-plot/issues/136)].
-  
-  New parameters in function `as_discrete`:
+- Ordering categories. New parameters in the `as_discrete` function:
   * `order_by` (string) - the name of the variable by which the ordering will be performed;
   * `order` (int) - the ordering direction - 1 for ascending direction and -1 for descending (default value).
 
-  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/doc-ordering/docs/as_discrete.md).
+  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/master/docs/as_discrete.md).
+    
+        
+- Basemap tiles configuring:
+  - Subdomains parameter `{s}` for XYZ raster tiles.  
+  - Solid color tiles: `maptiles_solid()`.
+  - Builtin configurations for some 3rd party maptile services. The `lets_plot.tilesets` module.
+
+  See: [Configuring basemap tiles](https://github.com/JetBrains/lets-plot/blob/master/docs/basemap_tiles.md).
 
 
 ### Changed
@@ -19,6 +22,7 @@
 - Upgraded Apach Batik version to 1.14 (was 1.12) [[#398](https://github.com/JetBrains/lets-plot/issues/398)].
 - Upgraded Kotlin version to 1.5.21 (was 1.4.21)
 - Upgraded Gradle version to 7.1.1 (was 6.8.3)
+           
 
 ### Fixed
 
