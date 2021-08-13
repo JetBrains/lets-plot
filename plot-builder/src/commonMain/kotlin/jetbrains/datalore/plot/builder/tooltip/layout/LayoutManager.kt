@@ -33,7 +33,7 @@ class LayoutManager(
         tooltips: List<MeasuredTooltip>,
         cursorCoord: DoubleVector,
         tooltipPlacementBounds: DoubleRectangle?,
-        geomVisibilityBounds: DoubleRectangle?
+        tooltipResponseBounds: DoubleRectangle?
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
@@ -50,39 +50,64 @@ class LayoutManager(
             .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
             ?.let { xAxisTooltip ->
                 val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, true)
-                desiredPosition.add(positionedTooltip)
+                if (isTooltipWithinBounds(positionedTooltip, tooltipResponseBounds)) {
+                    desiredPosition.add(positionedTooltip)
 
-                // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
-                myVerticalSpace = DoubleRange.withStartAndEnd(
-                    myViewport.top,
-                    min(
-                        positionedTooltip.stemCoord.y,
-                        positionedTooltip.top
+                    // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
+                    myVerticalSpace = DoubleRange.withStartAndEnd(
+                        myViewport.top,
+                        min(
+                            positionedTooltip.stemCoord.y,
+                            positionedTooltip.top
+                        )
                     )
-                )
-                myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
+                    myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
+                }
             }
 
         // y-axis tooltip
         tooltips
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
-            ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it)) }
+            ?.let {
+                val positionedTooltip = calculateHorizontalTooltipPosition(it)
+                if (isTooltipWithinBounds(positionedTooltip, tooltipResponseBounds)) {
+                    desiredPosition.add(positionedTooltip)
+                }
+            }
 
         // add corner tooltips - if the cursor is located within the visible boundaries
-        if (geomVisibilityBounds?.contains(cursorCoord) != false) {
+        if (tooltipResponseBounds?.contains(cursorCoord) != false) {
             desiredPosition += calculateCornerTooltipsPosition(tooltips)
-       }
+        }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
         desiredPosition += calculateDataTooltipsPosition(
             tooltips,
             // limit horizontal tooltips by y-axis tooltips
             desiredPosition.select(Y_AXIS_TOOLTIP).map(PositionedTooltip::rect)
-        ).filter { positionedTooltip ->
-            // Select tooltips within the visibility bounds
-            geomVisibilityBounds?.contains(positionedTooltip.stemCoord) ?: true
+        )
+            .filter { positionedTooltip ->
+                // Select tooltips within the visibility bounds
+                isTooltipWithinBounds(positionedTooltip, tooltipResponseBounds)
+            }
+
+        // if general tooltips were removed => axis tooltips should also be hidden
+        if (tooltips.filterNot(::isAxisTooltip).isNotEmpty() && desiredPosition.all(::isAxisTooltip)) {
+            desiredPosition.clear()
         }
+
         return rearrangeWithoutOverlapping(desiredPosition)
+    }
+
+    private fun isTooltipWithinBounds(tooltip: PositionedTooltip, bounds: DoubleRectangle?): Boolean {
+        if (bounds == null) {
+            return true
+        }
+        return when (tooltip.hintKind) {
+            X_AXIS_TOOLTIP -> bounds.xRange().contains(tooltip.stemCoord.x)
+            Y_AXIS_TOOLTIP -> bounds.yRange().contains(tooltip.stemCoord.y)
+            VERTICAL_TOOLTIP, HORIZONTAL_TOOLTIP, CURSOR_TOOLTIP -> bounds.contains(tooltip.stemCoord)
+        }
     }
 
     private fun calculateDataTooltipsPosition(
@@ -404,14 +429,12 @@ class LayoutManager(
     }
 
     private fun isCorner(tooltipSpec: TooltipSpec) = tooltipSpec.anchor != null
+    private fun isCorner(tooltip: MeasuredTooltip) = isCorner(tooltip.tooltipSpec)
+    private fun isCorner(tooltip: PositionedTooltip) = isCorner(tooltip.tooltipSpec)
 
-    private fun isCorner(tooltip: MeasuredTooltip): Boolean {
-        return isCorner(tooltip.tooltipSpec)
-    }
-
-    private fun isCorner(tooltip: PositionedTooltip): Boolean {
-        return isCorner(tooltip.tooltipSpec)
-    }
+    private fun isAxisTooltip(tooltipSpec: TooltipSpec) = tooltipSpec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP)
+    private fun isAxisTooltip(tooltip: MeasuredTooltip) = isAxisTooltip(tooltip.tooltipSpec)
+    private fun isAxisTooltip(tooltip: PositionedTooltip) = isAxisTooltip(tooltip.tooltipSpec)
 
     private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
         return this.filter(::isCorner)

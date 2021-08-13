@@ -29,7 +29,7 @@ internal class TooltipLayer(
         cursor: DoubleVector,
         tooltipSpecs: List<TooltipSpec>,
         tooltipPlacementBounds: DoubleRectangle?,
-        geomVisibilityBounds: DoubleRectangle?
+        tooltipResponseBounds: DoubleRectangle?
     ) {
         clearTooltips()
 
@@ -40,8 +40,8 @@ internal class TooltipLayer(
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipPlacementBounds, geomVisibilityBounds) }
-            .also { tooltips -> geomVisibilityBounds?.let { showCrosshair(tooltips, it) } }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipPlacementBounds, tooltipResponseBounds) }
+            .also { tooltips -> tooltipResponseBounds?.let { showCrosshair(tooltips, it) } }
             .map { arranged ->
                 arranged.tooltipBox.apply {
                     setPosition(

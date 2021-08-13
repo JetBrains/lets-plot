@@ -120,7 +120,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     fun assertNoTooltips() {
-        assertTrue(myArrangedTooltips.isEmpty())
+        assertTrue(myArrangedTooltips.isEmpty(), "The tooltip list is not empty as expected.")
     }
 
     fun assertAllTooltips(vararg expectations: ExpectedTooltip) {
@@ -226,7 +226,7 @@ internal open class TooltipLayoutTestBase {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
                     LayoutManager(myViewport, myHorizontalAlignment)
-                        .arrange(myTooltipData, myCursor, tooltipPlacementBounds = null, geomVisibilityBounds = myGeomBounds)
+                        .arrange(myTooltipData, myCursor, tooltipPlacementBounds = null, tooltipResponseBounds = myGeomBounds)
             }
         }
 
