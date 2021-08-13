@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.gcommon.collect.Lists.transform
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
@@ -27,7 +28,7 @@ import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.*
 import kotlin.math.ceil
 
-internal class MapEntityBuilder {
+internal class DataPointLiveMapAesthetics {
     constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
         myLayerKind = layerKind
         myP = p
@@ -59,7 +60,30 @@ internal class MapEntityBuilder {
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
     val speed get() = myP.speed()!!
-    val mapId get() = myP.mapId()
+    val geoObject get(): GeoObject? {
+        if (myP.mapId() != DefaultNaValue.get(MAP_ID)) {
+            fun List<*>.toVec() = explicitVec<LonLat>(get(0) as Double, get(1) as Double)
+
+            fun List<*>.toGeoRect() =
+                GeoRectangle(
+                    startLongitude = get(0) as Double,
+                    minLatitude = get(1) as Double,
+                    endLongitude = get(2) as Double,
+                    maxLatitude = get(3) as Double
+                )
+
+            val geoReference = JsonSupport.parseJson(myP.mapId().toString())
+            val id = geoReference.get("id") as String
+            val lim = (geoReference.get("lim") as? List<*>)?.toGeoRect() ?: error("Limit have to be provided")
+            val pos = (geoReference.get("pos") as? List<*>)?.toGeoRect() ?: error("Position have to be provided")
+            val cen = (geoReference.get("cen") as? List<*>)?.toVec() ?: error("Centroid have to be provided")
+
+            return GeoObject(id, cen, lim, pos)
+        }
+
+        return null
+    }
+
     val flow get() = myP.flow()!!
     val fillColor get() = colorWithAlpha(myP.fill()!!)
     val strokeColor get() = when (myLayerKind) {
@@ -90,9 +114,6 @@ internal class MapEntityBuilder {
             TEXT, HEATMAP -> 0.0
         }
 
-//    val frame: String
-//        get() = myP.frame()
-
     val lineDash: List<Double>
         get() {
             val lineType = myP.lineType()
@@ -106,19 +127,11 @@ internal class MapEntityBuilder {
         }
 
     private val colorArray: List<Color>
-        get() = if (myLayerKind === PIE && allZeroes(myValueArray)) {
-            createNaColorList(myValueArray.size)
+        get() = if (myLayerKind === PIE && myValueArray.all(0.0::equals)) {
+            List(myValueArray.size) { DefaultNaValue[COLOR] }
         } else {
             myColorArray
         }
-
-    private fun allZeroes(values: List<Double>): Boolean {
-        return values.all(0.0::equals)
-    }
-
-    private fun createNaColorList(size: Int): List<Color> {
-        return List(size) { DefaultNaValue[COLOR] }
-    }
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
@@ -126,94 +139,90 @@ internal class MapEntityBuilder {
 
     fun toPointBuilder(): PointBuilder.() -> Unit {
         return {
-            layerIndex = this@MapEntityBuilder.layerIndex
-            index = this@MapEntityBuilder.index
-            point = this@MapEntityBuilder.point
-            label = this@MapEntityBuilder.label
-            animation = this@MapEntityBuilder.animation
-            shape = this@MapEntityBuilder.shape
-            radius = this@MapEntityBuilder.radius
-            fillColor = this@MapEntityBuilder.fillColor
-            strokeColor = this@MapEntityBuilder.strokeColor
-            strokeWidth = this@MapEntityBuilder.strokeWidth
+            layerIndex = this@DataPointLiveMapAesthetics.layerIndex
+            index = this@DataPointLiveMapAesthetics.index
+            point = this@DataPointLiveMapAesthetics.point
+            label = this@DataPointLiveMapAesthetics.label
+            animation = this@DataPointLiveMapAesthetics.animation
+            shape = this@DataPointLiveMapAesthetics.shape
+            radius = this@DataPointLiveMapAesthetics.radius
+            fillColor = this@DataPointLiveMapAesthetics.fillColor
+            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
+            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
         }
     }
 
     fun createPolygonConfigurator(): PolygonsBuilder.() -> Unit {
         return {
-            layerIndex = this@MapEntityBuilder.layerIndex
-            index = this@MapEntityBuilder.index
-
-            multiPolygon = this@MapEntityBuilder.geometry
-            if (mapId != DefaultNaValue.get(MAP_ID)) {
-                geoObject = GeoObject(mapId.toString(), explicitVec(0, 0), GeoRectangle(-180.0, -70.0, 180.0, 70.0))
-            }
-
-            lineDash = this@MapEntityBuilder.lineDash
-            fillColor = this@MapEntityBuilder.fillColor
-            strokeColor = this@MapEntityBuilder.strokeColor
-            strokeWidth = this@MapEntityBuilder.strokeWidth
+            layerIndex = this@DataPointLiveMapAesthetics.layerIndex
+            index = this@DataPointLiveMapAesthetics.index
+            multiPolygon = this@DataPointLiveMapAesthetics.geometry
+            geoObject = this@DataPointLiveMapAesthetics.geoObject
+            lineDash = this@DataPointLiveMapAesthetics.lineDash
+            fillColor = this@DataPointLiveMapAesthetics.fillColor
+            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
+            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
         }
     }
 
     fun toPathBuilder(): (PathBuilder.() -> Unit)? {
         return geometry?.let {
             {
-                layerIndex = this@MapEntityBuilder.layerIndex
-                index = this@MapEntityBuilder.index
+                layerIndex = this@DataPointLiveMapAesthetics.layerIndex
+                index = this@DataPointLiveMapAesthetics.index
 
                 multiPolygon = it
 
-                lineDash = this@MapEntityBuilder.lineDash
-                strokeColor = this@MapEntityBuilder.strokeColor
-                strokeWidth = this@MapEntityBuilder.strokeWidth
+                lineDash = this@DataPointLiveMapAesthetics.lineDash
+                strokeColor = this@DataPointLiveMapAesthetics.strokeColor
+                strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
 
-                animation = this@MapEntityBuilder.animation
-                speed = this@MapEntityBuilder.speed
-                flow = this@MapEntityBuilder.flow
+                animation = this@DataPointLiveMapAesthetics.animation
+                speed = this@DataPointLiveMapAesthetics.speed
+                flow = this@DataPointLiveMapAesthetics.flow
             }
         }
     }
 
-    fun toLineBuilder(): (LineBuilder.() -> Unit)? {
+    fun toLineBuilder(): LineBuilder.() -> Unit {
         return {
-            point = this@MapEntityBuilder.point
-            lineDash = this@MapEntityBuilder.lineDash
-            strokeColor = this@MapEntityBuilder.strokeColor
-            strokeWidth = this@MapEntityBuilder.strokeWidth
+            point = this@DataPointLiveMapAesthetics.point
+            lineDash = this@DataPointLiveMapAesthetics.lineDash
+            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
+            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
         }
     }
 
-    fun toChartBuilder(): (ChartSource.() -> Unit)? {
+    fun toChartBuilder(): ChartSource.() -> Unit {
         return {
-            layerIndex = this@MapEntityBuilder.layerIndex
-            point = this@MapEntityBuilder.point
+            layerIndex = this@DataPointLiveMapAesthetics.layerIndex
+            point = this@DataPointLiveMapAesthetics.point
 
-            radius = this@MapEntityBuilder.radius
+            radius = this@DataPointLiveMapAesthetics.radius
 
-            strokeColor = this@MapEntityBuilder.strokeColor
-            strokeWidth = this@MapEntityBuilder.strokeWidth
+            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
+            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
 
-            indices = this@MapEntityBuilder.indices
-            values = this@MapEntityBuilder.myValueArray
-            colors = this@MapEntityBuilder.colorArray
+            indices = this@DataPointLiveMapAesthetics.indices
+            values = this@DataPointLiveMapAesthetics.myValueArray
+            colors = this@DataPointLiveMapAesthetics.colorArray
         }
     }
 
-    fun toTextBuilder(): (TextBuilder.() -> Unit)? {
+    fun toTextBuilder(): TextBuilder.() -> Unit {
         return {
-            index = this@MapEntityBuilder.index
-            point = this@MapEntityBuilder.point
-            fillColor = this@MapEntityBuilder.strokeColor // Text is filled by strokeColor
-            strokeColor = this@MapEntityBuilder.strokeColor
-            strokeWidth = this@MapEntityBuilder.strokeWidth
-            label = this@MapEntityBuilder.label
-            size = this@MapEntityBuilder.size
-            family = this@MapEntityBuilder.family
-            fontface = this@MapEntityBuilder.fontface
-            hjust = this@MapEntityBuilder.hjust
-            vjust = this@MapEntityBuilder.vjust
-            angle = this@MapEntityBuilder.angle
+            index = this@DataPointLiveMapAesthetics.index
+            point = this@DataPointLiveMapAesthetics.point
+            fillColor = this@DataPointLiveMapAesthetics.strokeColor // Text is filled by strokeColor
+            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
+            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
+            label = this@DataPointLiveMapAesthetics.label
+            size = this@DataPointLiveMapAesthetics.size
+            family = this@DataPointLiveMapAesthetics.family
+            fontface = this@DataPointLiveMapAesthetics.fontface
+            hjust = this@DataPointLiveMapAesthetics.hjust
+            vjust = this@DataPointLiveMapAesthetics.vjust
+            angle = this@DataPointLiveMapAesthetics.angle
         }
     }
 
@@ -233,23 +242,23 @@ internal class MapEntityBuilder {
         }
     }
 
-    fun setGeometryPoint(lonlat: Vec<LonLat>): MapEntityBuilder {
+    fun setGeometryPoint(lonlat: Vec<LonLat>): DataPointLiveMapAesthetics {
         point = limitCoord(lonlat)
         return this
     }
 
-    fun setGeometryData(points: List<Vec<LonLat>>, isClosed: Boolean, isGeodesic: Boolean): MapEntityBuilder {
+    fun setGeometryData(points: List<Vec<LonLat>>, isClosed: Boolean, isGeodesic: Boolean): DataPointLiveMapAesthetics {
         geometry = geometry(points, isClosed, isGeodesic)
 
         return this
     }
 
-    fun setArrowSpec(arrowSpec: ArrowSpec?): MapEntityBuilder {
+    fun setArrowSpec(arrowSpec: ArrowSpec?): DataPointLiveMapAesthetics {
         myArrowSpec = arrowSpec
         return this
     }
 
-    fun setAnimation(animation: Int?): MapEntityBuilder {
+    fun setAnimation(animation: Int?): DataPointLiveMapAesthetics {
         if (animation != null) {
             this.animation = animation
         }

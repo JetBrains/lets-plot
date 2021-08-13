@@ -21,7 +21,7 @@ ShapelyPolygonType = 'shapely.geometry.Polygon'
 QuerySpec = namedtuple('QuerySpec', 'name, county, state, country')
 WhereSpec = namedtuple('WhereSpec', 'scope, ambiguity_resolver')
 
-parent_types = Optional[Union[str, Geocodes, 'Geocoder', MapRegion, List]] # list of same types
+parent_types = Optional[Union[str, Geocodes, 'Geocoder', MapRegion, List]]  # list of same types
 scope_types = Optional[Union[str, Geocodes, 'Geocoder', ShapelyPolygonType]]
 
 
@@ -66,7 +66,7 @@ class LazyShapely:
         try:
             import shapely
             return True
-        except:
+        except ImportError:
             return False
 
 
@@ -74,12 +74,14 @@ def _make_ambiguity_resolver(ignoring_strategy: Optional[IgnoringStrategyKind] =
                              scope: Optional[ShapelyPolygonType] = None,
                              closest_object: Optional[Union[Geocodes, ShapelyPointType]] = None):
     if LazyShapely.is_polygon(scope):
-        rect = GeoRect(min_lon=scope.bounds[0], min_lat=scope.bounds[1], max_lon=scope.bounds[2], max_lat=scope.bounds[3])
+        rect = GeoRect(start_lon=scope.bounds[0], min_lat=scope.bounds[1], end_lon=scope.bounds[2],
+                       max_lat=scope.bounds[3])
     elif scope is None:
         rect = None
     else:
-        assert scope is not None # else for empty scope - existing scope should be already handled
-        raise ValueError('Wrong type of parameter `scope` - expected `shapely.geometry.Polygon`, but was `{}`'.format(type(scope).__name__))
+        assert scope is not None  # else for empty scope - existing scope should be already handled
+        raise ValueError('Wrong type of parameter `scope` - expected `shapely.geometry.Polygon`, but was `{}`'.format(
+            type(scope).__name__))
 
     return AmbiguityResolver(
         ignoring_strategy=ignoring_strategy,
@@ -366,7 +368,8 @@ class Geocoder:
         raise ValueError('Abstract method')
 
 
-def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[Union[float, Series, List[float]]]) -> List[GeoPoint]:
+def _to_coords(lon: Optional[Union[float, Series, List[float]]], lat: Optional[Union[float, Series, List[float]]]) -> \
+        List[GeoPoint]:
     if type(lon) != type(lat):
         raise ValueError('lon and lat have different types')
 
@@ -844,7 +847,6 @@ class NamesGeocoder(Geocoder):
         self._overridings[query_spec] = WhereSpec(new_scope, ambiguity_resolver)
         return self
 
-
     def _build_request(self) -> GeocodingRequest:
         if len(self._names) == 0:
             def to_scope(parents):
@@ -853,7 +855,9 @@ class NamesGeocoder(Geocoder):
                 elif len(parents) == 1:
                     return parents[0]
                 else:
-                    raise ValueError('Too many parent objects. Expcted single object instead of {}'.format(len(parents)))
+                    raise ValueError(
+                        'Too many parent objects. Expcted single object instead of {}'.format(len(parents))
+                    )
 
             # all countries/states etc. We need one dummy query
             queries = [
@@ -870,7 +874,10 @@ class NamesGeocoder(Geocoder):
                     return
 
                 if len(parents) != len(self._names):
-                    raise ValueError('Invalid request: {} count({}) != names count({})'.format(parents_level, len(parents), len(self._names)))
+                    raise ValueError(
+                        'Invalid request: {} count({}) != names count({})'
+                            .format(parents_level, len(parents), len(self._names))
+                    )
 
             if len(self._countries) > 0 and len(self._scope) > 0:
                 raise ValueError("Invalid request: countries and scope can't be used simultaneously")
@@ -904,15 +911,19 @@ class NamesGeocoder(Geocoder):
 
         request = RequestBuilder() \
             .set_request_kind(RequestKind.geocoding) \
-            .set_requested_payload([PayloadKind.highlights] if self._highlights else []) \
             .set_queries(queries) \
             .set_scope(self._scope) \
             .set_level(self._level) \
             .set_namesake_limit(NAMESAKE_MAX_COUNT) \
-            .set_allow_ambiguous(self._allow_ambiguous) \
-            .build()
+            .set_allow_ambiguous(self._allow_ambiguous)
 
-        return request
+        payload = [PayloadKind.limits, PayloadKind.poisitions, PayloadKind.centroids]
+        if self._highlights:
+            payload.append(PayloadKind.highlights)
+
+        request.set_requested_payload(payload)
+
+        return request.build()
 
     def _geocode(self) -> Geocodes:
         if self._geocodes is None:
@@ -962,4 +973,3 @@ def _prepare_new_scope(scope: Optional[Union[str, Geocoder, Geocodes, MapRegion]
         return map_regions
 
     raise ValueError("Unsupported 'scope' type. Expected 'str' or 'Geocoder' but was '{}'".format(type(scope).__name__))
-

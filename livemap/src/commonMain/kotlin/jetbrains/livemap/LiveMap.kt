@@ -14,18 +14,18 @@ import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
-import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.basemap.BasemapLayerComponent
-import jetbrains.livemap.basemap.BasemapLayerKind
-import jetbrains.livemap.basemap.DebugCellLayerComponent
+import jetbrains.livemap.basemap.*
+import jetbrains.livemap.basemap.raster.RasterTileLayerComponent
+import jetbrains.livemap.basemap.vector.debug.DebugDataSystem
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.config.DevParams
@@ -57,30 +57,28 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
-import jetbrains.livemap.geocoding.*
+import jetbrains.livemap.geocoding.ApplyPointSystem
+import jetbrains.livemap.geocoding.LocationCalculateSystem
+import jetbrains.livemap.geocoding.LocationCounterSystem
+import jetbrains.livemap.geocoding.MapLocationInitializationSystem
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
+import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
+import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.projection.*
 import jetbrains.livemap.regions.*
 import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
-import jetbrains.livemap.searching.*
+import jetbrains.livemap.searching.HoverObjectComponent
+import jetbrains.livemap.searching.HoverObjectDetectionSystem
+import jetbrains.livemap.searching.SearchResult
 import jetbrains.livemap.services.FragmentProvider
-import jetbrains.livemap.basemap.BasemapCellsRemovingSystem
-import jetbrains.livemap.basemap.BasemapCellLoadingSystem
-import jetbrains.livemap.basemap.TileSystemProvider
-import jetbrains.livemap.basemap.raster.RasterTileLayerComponent
-import jetbrains.livemap.basemap.vector.debug.DebugDataSystem
-import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
-import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
-import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
-import jetbrains.livemap.ui.CursorService
-import jetbrains.livemap.ui.LiveMapUiSystem
-import jetbrains.livemap.ui.ResourceManager
-import jetbrains.livemap.ui.UiRenderingTaskSystem
-import jetbrains.livemap.ui.UiService
-import jetbrains.livemap.viewport.*
+import jetbrains.livemap.ui.*
+import jetbrains.livemap.viewport.Viewport
+import jetbrains.livemap.viewport.ViewportGridUpdateSystem
+import jetbrains.livemap.viewport.ViewportPositionUpdateSystem
 
 class LiveMap(
     private val myMapRuler: MapRuler<World>,
@@ -91,7 +89,6 @@ class LiveMap(
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myGeocodingService: GeocodingService,
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
     private val myAttribution: String?,
@@ -216,12 +213,8 @@ class LiveMap(
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
-                CentroidGeocodingSystem(componentManager, myGeocodingService),
-                BBoxGeocodingSystem(componentManager, myGeocodingService),
-
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
-                LocationGeocodingSystem(componentManager, myGeocodingService),
-                LocationCalculateSystem(myMapRuler, componentManager),
+                LocationCalculateSystem(myMapRuler, myMapProjection, componentManager),
                 MapLocationInitializationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 
                 ApplyPointSystem(componentManager),

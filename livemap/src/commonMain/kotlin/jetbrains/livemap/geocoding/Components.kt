@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.geocoding
 
-import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.core.ecs.ComponentsList
@@ -15,12 +14,8 @@ import jetbrains.livemap.projection.WorldPoint
 
 class RegionIdComponent(var regionId: String) : EcsComponent
 
-object NeedCentroidComponent : EcsComponent
-object WaitCentroidComponent : EcsComponent
-
 object NeedLocationComponent : EcsComponent
 object NeedGeocodeLocationComponent : EcsComponent
-object WaitGeocodeLocationComponent : EcsComponent
 
 object NeedCalculateLocationComponent : EcsComponent
 
@@ -42,12 +37,4 @@ class LocationComponent: EcsComponent {
 }
 
 class LonLatComponent(val point: LonLatPoint): EcsComponent
-
-object WaitingGeocodingComponent : EcsComponent
-
-object NeedBboxComponent : EcsComponent
-object WaitBboxComponent : EcsComponent
-
-class RegionBBoxComponent(val bbox: GeoRectangle) : EcsComponent
-
 class PointInitializerComponent(val worldPointInitializer: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsComponent

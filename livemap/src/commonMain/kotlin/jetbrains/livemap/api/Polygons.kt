@@ -17,7 +17,6 @@ import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
-import jetbrains.livemap.geocoding.RegionBBoxComponent
 import jetbrains.livemap.geocoding.RegionIdComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
@@ -27,6 +26,7 @@ import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
+import jetbrains.livemap.regions.RegionBBoxComponent
 import jetbrains.livemap.regions.RegionFragmentsComponent
 import jetbrains.livemap.regions.RegionRenderer
 import jetbrains.livemap.rendering.*

@@ -44,18 +44,6 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
     }
 
     companion object {
-
-        // ToDo: not static, depends on 'display mode'
-//        val RENDERS = listOf(
-//                Aes.ALPHA,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.SIZE,
-//                Aes.SHAPE,
-//                Aes.FRAME,
-//                Aes.X,
-//                Aes.Y
-//        )
         const val HANDLES_GROUPS = false
     }
 }

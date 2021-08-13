@@ -12,5 +12,6 @@ import jetbrains.datalore.base.typedGeometry.Vec
 class GeoObject(
     val id: String,
     val centroid: Vec<LonLat>,
-    val bbox: GeoRectangle
+    val bbox: GeoRectangle,
+    val position: GeoRectangle,
 )

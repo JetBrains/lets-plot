@@ -15,10 +15,14 @@ import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.placement.WorldDimensionComponent
 import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.Coordinates.ZERO_WORLD_POINT
+import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
+import jetbrains.livemap.regions.RegionBBoxComponent
+import jetbrains.livemap.services.MapLocationGeocoder.Companion.convertToWorldRects
 
 class LocationCalculateSystem(
     private val mapRuler: MapRuler<World>,
+    private val mapProjection: MapProjection,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLocation: LocationComponent
@@ -41,6 +45,10 @@ class LocationCalculateSystem(
                             entity.get<WorldOriginComponent>().origin,
                             entity.tryGet<WorldDimensionComponent>()?.dimension ?: ZERO_WORLD_POINT
                         )
+                    }
+                    entity.contains<RegionBBoxComponent>() -> {
+                        val worldRects = entity.get<RegionBBoxComponent>().bbox.convertToWorldRects(mapProjection)
+                        mapRuler.calculateBoundingBox(worldRects)
                     }
                     else -> null
                 }?.let { entityLocation ->

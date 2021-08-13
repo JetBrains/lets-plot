@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.plot.base.Aes
@@ -25,7 +26,7 @@ import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference
-import jetbrains.datalore.plot.config.Option.Meta.GeoReference.GEOCODER
+import jetbrains.datalore.plot.config.Option.Meta.GeoReference.GEOREFERENCE
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 
@@ -44,8 +45,8 @@ class GeoConfig(
                 dataAndCoordinates = it.dataAndCoordinates
                 mappings = it.mappings
             }
-        } else if (layerOptions.has(MAP_DATA_META, GEOCODER)) {
-            GeocoderProcessor(dataFrame, layerOptions, mappingOptions).let {
+        } else if (layerOptions.has(MAP_DATA_META, GEOREFERENCE)) {
+            GeoReferenceProcessor(dataFrame, layerOptions, mappingOptions).let {
                 dataAndCoordinates = it.processedDataFrame
                 mappings = it.processedMappings
             }
@@ -76,8 +77,8 @@ class GeoConfig(
 
             return layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(DATA_META, GDF, GEOMETRY) ||
-                    layerOptions.has(MAP_DATA_META, GEOCODER) ||
-                    layerOptions.has(DATA_META, GEOCODER)
+                    layerOptions.has(MAP_DATA_META, GEOREFERENCE) ||
+                    layerOptions.has(DATA_META, GEOREFERENCE)
         }
 
         fun isGeoDataframe(layerOptions: Map<*, *>, gdfRole: String): Boolean {
@@ -96,11 +97,11 @@ class GeoConfig(
     }
 }
 
-class GeocoderProcessor(
+class GeoReferenceProcessor(
     dataFrame: DataFrame,
     layerOptions: Map<*, *>,
     mappingOptions: Map<*, *>
-) {
+) { 
     val processedDataFrame: DataFrame
     val processedMappings: Map<Aes<*>, Variable>
 
@@ -108,13 +109,13 @@ class GeocoderProcessor(
         val data: DataFrame
 
         when {
-            // (aes(color='cyl'), data=data, map=gdf) - how to join without `map_join`?
-            with(layerOptions) { has(MAP_DATA_META, GEOCODER) && !has(MAP_JOIN) && !dataFrame.isEmpty && mappingOptions.isNotEmpty() } -> {
+            // (aes(color='cyl'), data=data, map=geocodes) - how to join without `map_join`?
+            with(layerOptions) { has(MAP_DATA_META, GEOREFERENCE) && !has(MAP_JOIN) && !dataFrame.isEmpty && mappingOptions.isNotEmpty() } -> {
                 error(GeoConfig.MAP_JOIN_REQUIRED_MESSAGE)
             }
 
-            // (data=data, map=geocoder, map_join=('City_Name', 'city'))
-            with(layerOptions) { has(MAP_DATA_META, GEOCODER) && has(MAP_JOIN) } -> {
+            // (data=data, map=, map_join=('City_Name', 'city'))
+            with(layerOptions) { has(MAP_DATA_META, GEOREFERENCE) && has(MAP_JOIN) } -> {
                 require(layerOptions.has(GEO_POSITIONS)) { "'map' parameter is mandatory with MAP_DATA_META" }
 
                 val mapJoin = layerOptions.getList(MAP_JOIN) ?: error("require map_join parameter")
@@ -126,23 +127,43 @@ class GeocoderProcessor(
                 )
             }
 
-            // (map=geocoder) - simple geometry
-            with(layerOptions) { has(MAP_DATA_META, GEOCODER) && !has(MAP_JOIN) && dataFrame.isEmpty } -> {
+            // (map=geocodes) - simple geometry
+            with(layerOptions) { has(MAP_DATA_META, GEOREFERENCE) && !has(MAP_JOIN) && dataFrame.isEmpty } -> {
                 require(layerOptions.has(GEO_POSITIONS)) { "'map' parameter is mandatory with MAP_DATA_META" }
                 data = DataFrameUtil.fromMap(layerOptions.getMap(GEO_POSITIONS)!!)
             }
 
-            // (data=geocoder)
-            with(layerOptions) { has(DATA_META, GEOCODER) && !has(GEO_POSITIONS) && !has(MAP_JOIN) } -> {
+            // (data=geocodes)
+            with(layerOptions) { has(DATA_META, GEOREFERENCE) && !has(GEO_POSITIONS) && !has(MAP_JOIN) } -> {
                 require(layerOptions.has(DATA)) { "'data' parameter is mandatory with DATA_META" }
-
                 data = dataFrame
             }
 
             else -> throw IllegalStateException("Unknown state")
         }
 
-        processedDataFrame = data
+
+        val idVar = findVariableOrFail(data, GeoReference.Columns.ID)
+        val id = data[idVar]
+        val pos = data[findVariableOrFail(data, GeoReference.Columns.POSITION)]
+        val lim = data[findVariableOrFail(data, GeoReference.Columns.LIMIT)]
+        val cen = data[findVariableOrFail(data, GeoReference.Columns.CENTROID)]
+        val mapids = IntRange(0, id.lastIndex).map { i ->
+            JsonSupport.formatJson(
+                mapOf(
+                    "id" to id[i],
+                    "pos" to pos.get(i),
+                    "lim" to lim.get(i),
+                    "cen" to cen.get(i)
+                )
+            )
+        }
+
+        processedDataFrame = data.builder()
+            .remove(idVar)
+            .put(idVar, mapids)
+            .build()
+
         processedMappings = createAesMapping(processedDataFrame, mappingOptions + mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
     }
 }

@@ -34,13 +34,15 @@ object Option {
         }
 
         object GeoReference {
-            const val GEOCODER = "georeference"
+            const val GEOREFERENCE = "georeference"
             const val REQUEST = "request"
             const val MAP_REGION_COLUMN = "region"
 
             object Columns {
                 const val ID = "id"
-                const val BBOX = "bbox"
+                const val POSITION = "position"
+                const val LIMIT = "limit"
+                const val CENTROID = "centroid"
             }
         }
 

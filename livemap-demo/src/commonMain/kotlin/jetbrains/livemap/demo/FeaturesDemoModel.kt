@@ -17,7 +17,7 @@ import jetbrains.livemap.model.Cities.NEW_YORK
 import jetbrains.livemap.model.Cities.SPB
 import jetbrains.livemap.model.coord
 
-class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
+class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
             geocodingService = Services.devGeocodingService()
@@ -25,7 +25,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                 points {
                     point {
-                        coord(96.37587535342406,61.8742484121002) // Russia
+                        coord(96.37587535342406, 61.8742484121002) // Russia
 
                         shape = 21
                         radius = 10.0
@@ -33,7 +33,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
 
                     point {
-                        coord(-101.44978535214234,40.21841813198989) // USA
+                        coord(-101.44978535214234, 40.21841813198989) // USA
 
                         shape = 21
                         radius = 10.0
@@ -77,9 +77,15 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     polygon {
                         fillColor = Color.PACIFIC_BLUE
                         geoObject = GeoObject(
-                            id="148838",
-                            centroid=Vec(-99.74261, 37.25026),
-                            bbox=GeoRectangle(
+                            id = "148838",
+                            centroid = Vec(-99.74261, 37.25026),
+                            bbox = GeoRectangle(
+                                startLongitude = 144.618412256241,
+                                endLongitude = -64.56484794616701,
+                                minLatitude = -14.3740922212601,
+                                maxLatitude = 71.38780832290649
+                            ),
+                            position = GeoRectangle(
                                 startLongitude = 144.618412256241,
                                 endLongitude = -64.56484794616701,
                                 minLatitude = -14.3740922212601,
@@ -103,7 +109,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
 
                     line {
-                        coord(12.45326376667447,41.90352424895908)// = "Vatican"
+                        coord(12.45326376667447, 41.90352424895908)// = "Vatican"
                         strokeColor = Color.PINK
                         strokeWidth = 3.0
                     }
@@ -115,7 +121,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
 
                     line {
-                        coord(0.011590487865875687,51.324793768104506) // = "UK"
+                        coord(0.011590487865875687, 51.324793768104506) // = "UK"
                         strokeColor = Color.PINK
                         strokeWidth = 3.0
                     }
@@ -132,7 +138,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
 
                     bar {
-                        coord(26.642449862865874,63.339789715873216) // = "Finland"
+                        coord(26.642449862865874, 63.339789715873216) // = "Finland"
 
                         indices = listOf(3, 4, 5)
 
@@ -145,7 +151,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 pies {
                     pie {
                         indices = listOf(0, 1, 2)
-                        coord(17.439340121654936,64.22860968236267) // = "Sweden"
+                        coord(17.439340121654936, 64.22860968236267) // = "Sweden"
                         radius = 20.0
                         values = listOf(-2.0, 5.0, 1.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
@@ -163,7 +169,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 texts {
                     text {
                         label = "POLAND"
-                        coord(20.19278860798306,51.50358834244579) // = "99431"
+                        coord(20.19278860798306, 51.50358834244579) // = "99431"
                         size = 25.0
                         angle = 30.0
                     }
