@@ -218,7 +218,7 @@ internal class TooltipAnchorTest : TooltipLayoutTestBase() {
     }
 
     @Test
-    fun `tooltips are out of visibility`() {
+    fun `corner tooltip is out of visibility`() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
             .cursor(DoubleVector(10.0, 10.0))
             .addTooltip(

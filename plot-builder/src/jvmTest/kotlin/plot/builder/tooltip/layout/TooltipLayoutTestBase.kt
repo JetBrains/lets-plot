@@ -200,7 +200,7 @@ internal open class TooltipLayoutTestBase {
         private val myTooltipData = ArrayList<MeasuredTooltip>()
         private var myHorizontalAlignment: HorizontalAlignment = LEFT
         private var myCursor = DoubleVector.ZERO
-        private var myGeomBounds: DoubleRectangle = myViewport
+        private var myTooltipBounds: DoubleRectangle = myViewport
 
         fun cursor(cursor: DoubleVector): TipLayoutManagerBuilder {
             myCursor = cursor
@@ -218,7 +218,7 @@ internal open class TooltipLayoutTestBase {
         }
 
         fun geomBounds(geomBounds: DoubleRectangle): TipLayoutManagerBuilder {
-            myGeomBounds = geomBounds
+            myTooltipBounds = geomBounds
             return this
         }
 
@@ -226,7 +226,7 @@ internal open class TooltipLayoutTestBase {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
                     LayoutManager(myViewport, myHorizontalAlignment)
-                        .arrange(myTooltipData, myCursor, tooltipPlacementBounds = null, tooltipResponseBounds = myGeomBounds)
+                        .arrange(myTooltipData, myCursor, tooltipPlacementBounds = null, tooltipResponseBounds = myTooltipBounds)
             }
         }
 
