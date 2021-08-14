@@ -3,7 +3,7 @@
 
 
 from lets_plot import maptiles_lets_plot as _maptiles_lets_plot  # to not polute scope with maptiles_lets_plot
-from lets_plot import maptiles_solid as _maptiles_solid  # to not polute scope with maptiles_zxy
+from lets_plot import maptiles_solid as _maptiles_solid  # to not polute scope with maptiles_solid
 from lets_plot import maptiles_zxy as _maptiles_zxy  # to not polute scope with maptiles_zxy
 
 LETS_PLOT_COLOR = _maptiles_lets_plot(theme='color')
