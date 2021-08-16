@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Outlier tooltips: the spout sometime is too long (boxplot) [[#358](https://github.com/JetBrains/lets-plot/issues/358)].
 - Faceted plot is broken by geom with "constant" aesthetics [[#391](https://github.com/JetBrains/lets-plot/issues/391)].
 - Interactive maps in AWT (PyCharm plugin):
-    - Memory leaks in PyCharm caused by a `final void dispose()` method in PlotPanel.
+    - Memory leaks in PyCharm caused by `dispose()` method in PlotPanel.
     - While showing map in PyCharm CPU is busy all the time, even when nothing is changing on screen.
     - Click events detection.
 
