@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec.*
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
@@ -40,7 +39,7 @@ class PlotContainer(
     }
 
     private fun hookupInteractions() {
-        checkState(plot.isInteractionsEnabled)
+        check(plot.isInteractionsEnabled)
 
         val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize().get())
         val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)

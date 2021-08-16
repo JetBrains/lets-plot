@@ -35,5 +35,5 @@ class ForsythePolynomialGeneratorTest {
     }
 
     private fun dot(p1: PolynomialFunction, p2: PolynomialFunction) =
-        knots.sumByDouble { p1.value(it) * p2.value(it) }
+        knots.sumOf { p1.value(it) * p2.value(it) }
 }

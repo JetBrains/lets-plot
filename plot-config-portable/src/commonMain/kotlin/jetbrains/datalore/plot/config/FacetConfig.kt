@@ -123,7 +123,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
     private fun getDirOption(): FacetWrap.Direction {
         return when (val opt = get(FACETS_FILL_DIR)) {
             null -> FacetWrap.Direction.H
-            else -> when (opt.toString().toUpperCase()) {
+            else -> when (opt.toString().uppercase()) {
                 "V" -> FacetWrap.Direction.V
                 "H" -> FacetWrap.Direction.H
                 else -> throw IllegalArgumentException(

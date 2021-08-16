@@ -9,25 +9,27 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
 internal class HorizontalSimpleLabelsLayout(
-    orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+    orientation: Orientation,
     axisDomain: ClosedRange<Double>,
     labelSpec: PlotLabelSpec,
-    breaks: GuideBreaks,
-    theme: AxisTheme) :
-        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+    breaks: ScaleBreaks,
+    theme: AxisTheme
+) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     override fun doLayout(
-            axisLength: Double,
-            axisMapper: (Double?) -> Double?,
-            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+        axisLength: Double,
+        axisMapper: (Double?) -> Double?,
+        maxLabelsBounds: DoubleRectangle?
+    ): AxisLabelsLayoutInfo {
 
         if (breaks.isEmpty) {
             return noLabelsLayoutInfo(axisLength, orientation)
@@ -41,24 +43,26 @@ internal class HorizontalSimpleLabelsLayout(
         var overlap = false
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
 
-        val boundsList = labelBoundsList(ticks, breaks.labels,
+        val boundsList = labelBoundsList(
+            ticks, breaks.labels,
             HORIZONTAL_TICK_LOCATION
         )
         for (labelBounds in boundsList) {
             overlap = overlap || bounds != null && bounds.xRange().isConnected(
-                    SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0))
+                SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
+            )
             bounds = GeometryUtil.union(labelBounds, bounds)
         }
 
         return AxisLabelsLayoutInfo.Builder()
-                .breaks(breaks)
-                .bounds(applyLabelsOffset(bounds!!))
-                .smallFont(false)
-                .overlap(overlap)
-                .labelAdditionalOffsets(null)
-                .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
-                .build()
+            .breaks(breaks)
+            .bounds(applyLabelsOffset(bounds!!))
+            .smallFont(false)
+            .overlap(overlap)
+            .labelAdditionalOffsets(null)
+            .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+            .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
+            .build()
     }
 
     /*

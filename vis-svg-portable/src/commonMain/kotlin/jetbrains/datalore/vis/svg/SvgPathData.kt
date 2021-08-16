@@ -24,7 +24,7 @@ class SvgPathData internal constructor(private val myPathData: String) {
         }
 
         fun absoluteCmd(): Char {
-            return myChar.toUpperCase()
+            return myChar.uppercaseChar()
         }
 
         companion object {

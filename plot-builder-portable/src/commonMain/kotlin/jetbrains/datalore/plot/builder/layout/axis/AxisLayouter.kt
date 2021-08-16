@@ -12,25 +12,29 @@ import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-abstract class AxisLayouter protected constructor(val orientation: jetbrains.datalore.plot.builder.guide.Orientation, val domainRange: ClosedRange<Double>, val labelsLayout: AxisLabelsLayout) {
+abstract class AxisLayouter(
+    val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+    private val domainRange: ClosedRange<Double>,
+    private val labelsLayout: AxisLabelsLayout
+) {
 
     fun doLayout(axisLength: Double, maxTickLabelsBounds: DoubleRectangle?): AxisLayoutInfo {
         val labelsInfo = labelsLayout.doLayout(axisLength, toAxisMapper(axisLength), maxTickLabelsBounds)
         val labelsBounds = labelsInfo.bounds
 
         val builder = AxisLayoutInfo.Builder()
-                .axisBreaks(labelsInfo.breaks)
-                .axisLength(axisLength)
-                .orientation(orientation)
-                .axisDomain(domainRange)
-                .tickLabelsBoundsMax(maxTickLabelsBounds)
-                // todo: add 1 labels info object
-                .tickLabelSmallFont(labelsInfo.smallFont)
-                .tickLabelAdditionalOffsets(labelsInfo.labelAdditionalOffsets)
-                .tickLabelHorizontalAnchor(labelsInfo.labelHorizontalAnchor)
-                .tickLabelVerticalAnchor(labelsInfo.labelVerticalAnchor)
-                .tickLabelRotationAngle(labelsInfo.labelRotationAngle)
-                .tickLabelsBounds(labelsBounds)
+            .axisBreaks(labelsInfo.breaks)
+            .axisLength(axisLength)
+            .orientation(orientation)
+            .axisDomain(domainRange)
+            .tickLabelsBoundsMax(maxTickLabelsBounds)
+            // todo: add 1 labels info object
+            .tickLabelSmallFont(labelsInfo.smallFont)
+            .tickLabelAdditionalOffsets(labelsInfo.labelAdditionalOffsets)
+            .tickLabelHorizontalAnchor(labelsInfo.labelHorizontalAnchor)
+            .tickLabelVerticalAnchor(labelsInfo.labelVerticalAnchor)
+            .tickLabelRotationAngle(labelsInfo.labelRotationAngle)
+            .tickLabelsBounds(labelsBounds)
 
         return builder.build()
     }
@@ -42,15 +46,21 @@ abstract class AxisLayouter protected constructor(val orientation: jetbrains.dat
     }
 
     companion object {
-        fun create(orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-                   axisDomain: ClosedRange<Double>, breaksProvider: AxisBreaksProvider, theme: AxisTheme): AxisLayouter {
+        fun create(
+            orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+            axisDomain: ClosedRange<Double>, breaksProvider: AxisBreaksProvider, theme: AxisTheme
+        ): AxisLayouter {
 
             if (orientation.isHorizontal) {
-                val labelsLayout: AxisLabelsLayout
-                if (breaksProvider.isFixedBreaks) {
-                    labelsLayout = AxisLabelsLayout.horizontalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme)
+                val labelsLayout: AxisLabelsLayout = if (breaksProvider.isFixedBreaks) {
+                    AxisLabelsLayout.horizontalFixedBreaks(
+                        orientation,
+                        axisDomain,
+                        breaksProvider.fixedBreaks,
+                        theme
+                    )
                 } else {
-                    labelsLayout = AxisLabelsLayout.horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                    AxisLabelsLayout.horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
                 }
                 return HorizontalAxisLayouter(
                     orientation,
@@ -60,11 +70,10 @@ abstract class AxisLayouter protected constructor(val orientation: jetbrains.dat
             }
 
             // vertical
-            val labelsLayout: AxisLabelsLayout
-            if (breaksProvider.isFixedBreaks) {
-                labelsLayout = AxisLabelsLayout.verticalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme)
+            val labelsLayout: AxisLabelsLayout = if (breaksProvider.isFixedBreaks) {
+                AxisLabelsLayout.verticalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme)
             } else {
-                labelsLayout = AxisLabelsLayout.verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                AxisLabelsLayout.verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
             }
             return VerticalAxisLayouter(
                 orientation,

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -128,10 +127,9 @@ class BinStat(
             BinStatUtil.weightAtIndex(data),
             densityNormalizingFactor
         )
-        checkState(
-            binsData.x.size == binCount,
-            "Internal: stat data size=" + binsData.x.size + " expected bin count=" + binCount
-        )
+        check(binsData.x.size == binCount)
+        { "Internal: stat data size=" + binsData.x.size + " expected bin count=" + binCount }
+
         return binsData
     }
 

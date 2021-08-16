@@ -10,8 +10,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
@@ -19,12 +20,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 internal class HorizontalTiltedLabelsLayout(
-    orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+    orientation: Orientation,
     axisDomain: ClosedRange<Double>,
     labelSpec: PlotLabelSpec,
-    breaks: GuideBreaks,
-    theme: AxisTheme) :
-        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+    breaks: ScaleBreaks,
+    theme: AxisTheme
+) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     private val labelHorizontalAnchor: TextLabel.HorizontalAnchor
         get() {
@@ -38,34 +39,37 @@ internal class HorizontalTiltedLabelsLayout(
         get() = TextLabel.VerticalAnchor.TOP
 
     override fun doLayout(
-            axisLength: Double,
-            axisMapper: (Double?) -> Double?,
-            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+        axisLength: Double,
+        axisMapper: (Double?) -> Double?,
+        maxLabelsBounds: DoubleRectangle?
+    ): AxisLabelsLayoutInfo {
 
         val height = labelSpec.height()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
-        if (breaks.size() >= 2) {
+        if (breaks.size >= 2) {
             val minTickDistance = abs((height + MIN_DISTANCE) / SIN)
             val tickDistance = abs(ticks[0] - ticks[1])
             overlap = tickDistance < minTickDistance
         }
 
-        val bounds = labelsBounds(ticks, breaks.labels,
+        val bounds = labelsBounds(
+            ticks, breaks.labels,
             HORIZONTAL_TICK_LOCATION
         )
         return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
-                .labelHorizontalAnchor(labelHorizontalAnchor)
-                .labelVerticalAnchor(labelVerticalAnchor)
-                .labelRotationAngle(ROTATION_DEGREE)
-                .build()
+            .labelHorizontalAnchor(labelHorizontalAnchor)
+            .labelVerticalAnchor(labelVerticalAnchor)
+            .labelRotationAngle(ROTATION_DEGREE)
+            .build()
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
-        // only works for RIGHT-TOP anchor ang angle 0..-90
+        // only works for RIGHT-TOP anchor ang angle 0...-90
         if (!(ROTATION_DEGREE >= -90 && ROTATION_DEGREE <= 0
-                        && labelHorizontalAnchor === TextLabel.HorizontalAnchor.RIGHT
-                        && labelVerticalAnchor === TextLabel.VerticalAnchor.TOP)) {
+                    && labelHorizontalAnchor === TextLabel.HorizontalAnchor.RIGHT
+                    && labelVerticalAnchor === TextLabel.VerticalAnchor.TOP)
+        ) {
             throw RuntimeException("Not implemented")
         }
 

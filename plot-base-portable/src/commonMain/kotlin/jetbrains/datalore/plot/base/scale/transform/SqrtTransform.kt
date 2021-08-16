@@ -20,14 +20,19 @@ internal class SqrtTransform : FunTransform(
         return SeriesUtil.isFinite(v) && v!! >= 0.0
     }
 
-    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
         @Suppress("NAME_SHADOWING")
         val middle = when {
-            isInDomain(middle) -> middle
-            else -> 0.0
+            isInDomain(middle) -> max(middle!!, 0.0)
+            else -> 1.0
         }
 
-        val lower = max(middle - 0.5, 0.0)
-        return ClosedRange(lower, lower + 1.0)
+        return ClosedRange(max(middle - 0.5, 0.0), middle + 0.5)
+    }
+
+    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+        val lower = max(range.lowerEnd, 0.0)
+        val upper = max(range.upperEnd, 0.0)
+        return ClosedRange(lower, upper)
     }
 }

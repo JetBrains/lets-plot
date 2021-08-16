@@ -13,10 +13,18 @@ internal class IdentityTransform : FunTransform({ v -> v }, { v -> v }) {
 
     override fun isInDomain(v: Double?) = SeriesUtil.isFinite(v)
 
-    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
+    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+        if (middle == null) {
+            return createApplicableDomain(0.0)
+        }
+
         @Suppress("NAME_SHADOWING")
         val middle = if (middle.isFinite()) middle else 0.0
         return ClosedRange(middle - 0.5, middle + 0.5)
+    }
+
+    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+        return range
     }
 
     override fun apply(l: List<*>): List<Double?> {

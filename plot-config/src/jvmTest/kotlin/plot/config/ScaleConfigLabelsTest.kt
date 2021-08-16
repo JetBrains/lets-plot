@@ -13,7 +13,6 @@ import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksUtil
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
@@ -227,7 +226,7 @@ class ScaleConfigLabelsTest {
         )
         val scaleMap = getScaleMap(data, mapping, scales)
 
-        val labels = ScaleUtil.labels(scaleMap[Aes.COLOR])
+        val labels = scaleMap[Aes.COLOR].getScaleBreaks().labels
         assertEquals(listOf("is red", "is green", "is blue"), labels)
     }
 

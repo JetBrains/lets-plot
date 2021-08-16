@@ -74,7 +74,7 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
     }
 
     private fun sendInitMessage() {
-        ConfigureConnectionRequest(myTheme.name.toLowerCase())
+        ConfigureConnectionRequest(myTheme.name.lowercase())
             .run(RequestFormatter::format)
             .run(::formatJson)
             .run(mySocket::send)
@@ -88,7 +88,10 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
     }
 
     inner class TileSocketHandler : SocketHandler {
-        override fun onOpen() { sendInitMessage() }
+        override fun onOpen() {
+            sendInitMessage()
+        }
+
         override fun onClose(message: String) {
             myMessageQueue.add(message)
             if (myStatus == CONFIGURED) {
@@ -96,7 +99,10 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
                 mySocket.connect()
             }
         }
-        override fun onError(cause: Throwable) { myStatus = ERROR; failPending(cause) }
+
+        override fun onError(cause: Throwable) {
+            myStatus = ERROR; failPending(cause)
+        }
 
         override fun onTextMessage(message: String) {
             if (mapConfig == null) {
@@ -115,7 +121,9 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
             }
         }
 
-        private fun failPending(cause: Throwable) { pendingRequests.pollAll().values.forEach { it.failure(cause) } }
+        private fun failPending(cause: Throwable) {
+            pendingRequests.pollAll().values.forEach { it.failure(cause) }
+        }
     }
 
     class RequestMap {
@@ -130,7 +138,7 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
             return HashMap(myAsyncMap).also { myAsyncMap.clear() }
         }
 
-        fun poll(key: String): ThreadSafeAsync<List<TileLayer>> = lock.execute{
+        fun poll(key: String): ThreadSafeAsync<List<TileLayer>> = lock.execute {
             return myAsyncMap.remove(key)!!
         }
     }

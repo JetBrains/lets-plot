@@ -8,10 +8,11 @@ package jetbrains.datalore.plotDemo.defaultViewer
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
 import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
 
+@Suppress("UNUSED_PARAMETER")
 fun main(args: Array<String>) {
     with(GGBunch()) {
         @Suppress("UNCHECKED_CAST")
-        val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+        val plotSpecList = plotSpecList()
         PlotViewerWindowBatik(
             "GGBunch",
             rawSpec = plotSpecList.first(),

@@ -5,19 +5,27 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-class FixedAxisBreaksProvider(domainBreaks: List<Any>, transformedBreaks: List<Double>, labels: List<String>) :
-    AxisBreaksProvider {
-    override val fixedBreaks: GuideBreaks =
-        GuideBreaks(
-            domainBreaks,
-            transformedBreaks,
-            labels
-        )
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
+
+//class FixedAxisBreaksProvider(
+//    domainBreaks: List<Any>,
+//    transformedBreaks: List<Double>,
+//    labels: List<String>
+//) : AxisBreaksProvider {
+class FixedAxisBreaksProvider(
+    override val fixedBreaks: ScaleBreaks
+) : AxisBreaksProvider {
+
+//    override val fixedBreaks: ScaleBreaks = ScaleBreaks(
+//        domainBreaks,
+//        transformedBreaks,
+//        labels
+//    )
 
     override val isFixedBreaks: Boolean
         get() = true
 
-    override fun getBreaks(targetCount: Int, axisLength: Double): GuideBreaks {
+    override fun getBreaks(targetCount: Int, axisLength: Double): ScaleBreaks {
         return fixedBreaks
     }
 }

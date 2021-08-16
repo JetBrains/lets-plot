@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-
 internal class MultiOrdering<K : Comparable<K>>(private val myKeys: List<K?>) {
     private val myIndices: MutableList<Int>
 
@@ -29,8 +27,7 @@ internal class MultiOrdering<K : Comparable<K>>(private val myKeys: List<K?>) {
     }
 
     fun <T> sortedCopy(l: List<T?>): List<T?> {
-        checkArgument(l.size == myIndices.size,
-                "Expected size " + myIndices.size + " but was size " + l.size)
+        require(l.size == myIndices.size) { "Expected size " + myIndices.size + " but was size " + l.size }
         val copy = ArrayList<T?>(myIndices.size)
         for (oldIndex in myIndices) {
             val v = l[oldIndex]

@@ -36,11 +36,15 @@ open class ClosedRange<T : Comparable<T>>(
     val upperEnd: T
 
     init {
-        (lower as? Double)?.run { require(isFinite()) {
-            "ends must be finite: lower=$lower upper=$upper"
-        } }
-        (upper as? Double)?.run { require(isFinite()) {
-            "ends must be finite: lower=$lower upper=$upper" }
+        (lower as? Double)?.run {
+            check(isFinite()) {
+                "ends must be finite: lower=$lower upper=$upper"
+            }
+        }
+        (upper as? Double)?.run {
+            check(isFinite()) {
+                "ends must be finite: lower=$lower upper=$upper"
+            }
         }
         lowerEnd = min(lower, upper)
         upperEnd = max(lower, upper)

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
@@ -40,7 +39,7 @@ internal class PointDataAccess(
     }
 
     override fun <T> getOriginalValue(aes: Aes<T>, index: Int): Any? {
-        checkArgument(isMapped(aes), "Not mapped: $aes")
+        require(isMapped(aes)) { "Not mapped: $aes" }
 
         val binding = myBindings.getValue(aes)
         val scale = getScale(aes)
@@ -72,7 +71,7 @@ internal class PointDataAccess(
                 .run(data::range)
                 .run(::ensureApplicableRange)
 
-            val formatter = scale.breaksGenerator.labelFormatter(domain, 100)
+            val formatter = scale.getBreaksGenerator().labelFormatter(domain, 100)
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)

@@ -9,17 +9,16 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
-import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 class ColorBarAssembler(
     private val legendTitle: String,
-    private val domain: ClosedRange<Double>,
+    private val transformedDomain: ClosedRange<Double>,
     private val scale: Scale<Color>,
     private val theme: LegendTheme
 ) {
@@ -29,24 +28,18 @@ class ColorBarAssembler(
     fun createColorBar(): LegendBoxInfo {
         var scale = scale
         if (!scale.hasBreaks()) {
-            scale = ScaleBreaksUtil.withBreaks(scale, domain, 5)
+            scale = ScaleBreaksUtil.withBreaks(scale, transformedDomain, 5)
         }
 
-        val guideBreaks = ArrayList<GuideBreak<Double>>()
-        val breaks = ScaleUtil.breaksTransformed(scale)
-        val label = ScaleUtil.labels(scale).iterator()
-        for (v in breaks) {
-            guideBreaks.add(GuideBreak(v, label.next()))
-        }
-
-        if (guideBreaks.isEmpty()) {
+        val scaleBreaks = scale.getScaleBreaks()
+        if (scaleBreaks.isEmpty) {
             return LegendBoxInfo.EMPTY
         }
 
         val spec = createColorBarSpec(
             legendTitle,
-            domain,
-            guideBreaks,
+            transformedDomain,
+            scaleBreaks,
             scale,
             theme,
             colorBarOptions
@@ -70,8 +63,8 @@ class ColorBarAssembler(
 
         fun createColorBarSpec(
             title: String,
-            domain: ClosedRange<Double>,
-            breaks: List<GuideBreak<Double>>,
+            transformedDomain: ClosedRange<Double>,
+            breaks: ScaleBreaks,
             scale: Scale<Color>,
             theme: LegendTheme,
             options: ColorBarOptions? = null
@@ -93,13 +86,13 @@ class ColorBarAssembler(
             val reverse = !horizontal
 
             val layout = when {
-                horizontal -> ColorBarComponentLayout.horizontal(title, domain, breaks, barSize, reverse)
-                else -> ColorBarComponentLayout.vertical(title, domain, breaks, barSize, reverse)
+                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse)
+                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse)
             }
 
             return ColorBarComponentSpec(
                 title,
-                domain,
+                transformedDomain,
                 breaks,
                 scale,
                 binCount = options?.binCount ?: DEF_NUM_BIN,

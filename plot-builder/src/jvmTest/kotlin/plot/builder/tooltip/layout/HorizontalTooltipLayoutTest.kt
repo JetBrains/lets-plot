@@ -6,10 +6,12 @@
 package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
+import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.RIGHT
 import jetbrains.datalore.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
 import kotlin.test.Test
 
@@ -194,6 +196,50 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
         assertAllTooltips(
             expect().text(SECOND_TOOLTIP_KEY)
                     .tooltipY(expectedSideTipY(SECOND_TOOLTIP_KEY))
+        )
+    }
+
+    @Test
+    fun whenThereIsNotEnoughHorizontalSpaceFromBothSides_AndHorizontalAlignmentIsLeft_ShouldAlignTooltipToRightOfTheLeftBorder() {
+        val objectRadius = 200.0
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(objectRadius)
+            .defaultTipSize(size(80.0, 80.0))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(tooltipBuilder.horizontal(TOOLTIP_KEY, VIEWPORT.center).buildTooltip())
+            .build()
+
+        arrange(layoutManagerController)
+
+        val stemX = VIEWPORT.center.x - objectRadius
+        assertAllTooltips(
+            expect()
+                .tooltipX(stemX + NORMAL_STEM_LENGTH)
+                .stemCoord(DoubleVector(stemX, VIEWPORT.center.y))
+        )
+    }
+
+    @Test
+    fun whenThereIsNotEnoughHorizontalSpaceFromBothSides_AndHorizontalAlignmentIsRight_ShouldAlignTooltipToLeftOfTheRightBorder() {
+        val objectRadius = 200.0
+        val tipSize = size(80.0, 80.0)
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(objectRadius)
+            .defaultTipSize(tipSize)
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .preferredHorizontalAlignment(RIGHT)
+            .addTooltip(tooltipBuilder.horizontal(TOOLTIP_KEY, VIEWPORT.center).buildTooltip())
+            .build()
+
+        arrange(layoutManagerController)
+
+        val stemX = VIEWPORT.center.x + objectRadius
+        assertAllTooltips(
+            expect()
+                .tooltipX(stemX - tipSize.x - NORMAL_STEM_LENGTH)
+                .stemCoord(DoubleVector(stemX, VIEWPORT.center.y))
         )
     }
 

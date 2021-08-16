@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
@@ -17,7 +17,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: ClosedRange<Double>,
     labelSpec: PlotLabelSpec,
-    breaks: GuideBreaks,
+    breaks: ScaleBreaks,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,

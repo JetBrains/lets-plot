@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import kotlin.math.round
@@ -26,7 +25,7 @@ internal class SystematicSampling(sampleSize: Int) : SamplingBase(sampleSize),
     }
 
     override fun apply(population: DataFrame): DataFrame {
-        checkArgument(isApplicable(population))
+        require(isApplicable(population))
         val popSize = population.rowCount()
 
         val step = computeStep(popSize)

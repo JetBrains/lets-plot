@@ -15,7 +15,7 @@ object ScaleBreaksUtil {
         transformedDomain: ClosedRange<Double>,
         breakCount: Int
     ): Scale<TargetT> {
-        val scaleBreaks = scale.breaksGenerator.generateBreaks(transformedDomain, breakCount)
+        val scaleBreaks = scale.getBreaksGenerator().generateBreaks(transformedDomain, breakCount)
         val breaks = scaleBreaks.domainValues
         val labels = scaleBreaks.labels
         return scale.with()

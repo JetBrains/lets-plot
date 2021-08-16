@@ -238,20 +238,20 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     private fun getStatName(layerConfig: LayerConfig): String {
         var stat: String = layerConfig.stat::class.simpleName!!
         stat = stat.replace("Stat", " stat")
-        stat = stat.replace("([a-z])([A-Z]+)".toRegex(), "$1_$2").toLowerCase()
+        stat = stat.replace("([a-z])([A-Z]+)".toRegex(), "$1_$2").lowercase()
 
         return stat
     }
 
     private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
-        val geomKind = layerConfig.geomProto.geomKind.name.toLowerCase()
+        val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
         val stat = getStatName(layerConfig)
 
         return "$samplingExpression was applied to [$geomKind/$stat] layer"
     }
 
     private fun createStatMessage(statInfo: String, layerConfig: LayerConfig): String {
-        val geomKind = layerConfig.geomProto.geomKind.name.toLowerCase()
+        val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
         val stat = getStatName(layerConfig)
 
         return "$statInfo in [$geomKind/$stat] layer"

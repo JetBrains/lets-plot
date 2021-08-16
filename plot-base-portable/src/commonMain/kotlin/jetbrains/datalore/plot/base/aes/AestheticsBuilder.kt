@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
@@ -295,7 +294,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
 
         override fun numericValues(aes: Aes<Double>): Iterable<Double?> {
-            checkArgument(aes.isNumeric, "Numeric aes is expected: $aes")
+            require(aes.isNumeric) { "Numeric aes is expected: $aes" }
             return object : Iterable<Double> {
                 override fun iterator(): Iterator<Double> {
                     return AesIterator(

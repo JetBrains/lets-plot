@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import kotlin.random.Random
 
@@ -18,7 +17,7 @@ internal class GroupRandomSampling(sampleSize: Int, private val mySeed: Long?) :
                 ")"
 
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
-        checkArgument(isApplicable(population, groupMapper))
+        require(isApplicable(population, groupMapper))
         val distinctGroups = SamplingUtil.distinctGroups(
             groupMapper,
             population.rowCount()

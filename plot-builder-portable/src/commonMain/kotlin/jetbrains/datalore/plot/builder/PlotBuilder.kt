@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -110,19 +109,19 @@ class PlotBuilder(private val myTheme: Theme) {
 
         override val title: String
             get() {
-                Preconditions.checkArgument(hasTitle(), "No title")
+                require(hasTitle()) { "No title" }
                 return myTitle!!
             }
 
         override val axisTitleLeft: String
             get() {
-                Preconditions.checkArgument(hasAxisTitleLeft(), "No left axis title")
+                require(hasAxisTitleLeft()) { "No left axis title" }
                 return myAxisTitleLeft!!
             }
 
         override val axisTitleBottom: String
             get() {
-                Preconditions.checkArgument(hasAxisTitleBottom(), "No bottom axis title")
+                require(hasAxisTitleBottom()) { "No bottom axis title" }
                 return myAxisTitleBottom!!
             }
 

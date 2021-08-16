@@ -8,10 +8,11 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
@@ -66,39 +67,85 @@ internal object PlotGuidesAssemblerUtil {
             check(transformVariable.isTransform)
 
             val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
-            if (transformedDataRange != null) {
-                val scale = stitchedLayers.getScale(aes)
-
-                val transformedDomain =
-                    if (scale.isContinuousDomain && scale.hasDomainLimits()) {
-                        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(scale)
-                        val lowerEnd = if (scaleLower.isFinite()) scaleLower else transformedDataRange.lowerEnd
-                        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else transformedDataRange.upperEnd
-                        ClosedRange<Double>(lowerEnd, upperEnd)
-                    } else {
-                        transformedDataRange
-                    }
-
-
-                transformedDomainByAes[aes] = transformedDomain
+            val scale = stitchedLayers.getScale(aes)
+            if (scale.isContinuousDomain) {
+                transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(transformedDataRange, scale)
+            } else if (transformedDataRange != null) {
+                transformedDomainByAes[aes] = transformedDataRange
             }
+
+
+//            if (transformedDataRange != null) {
+//
+//                val transformedDomain =
+//                    if (scale.isContinuousDomain && scale.hasDomainLimits()) {
+//                        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(scale)
+//                        val lowerEnd = if (scaleLower.isFinite()) scaleLower else transformedDataRange.lowerEnd
+//                        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else transformedDataRange.upperEnd
+//                        ClosedRange<Double>(lowerEnd, upperEnd)
+//                    } else {
+//                        transformedDataRange
+//                    }
+//
+//
+//                transformedDomainByAes[aes] = transformedDomain
+//            }
         }
 
         return transformedDomainByAes
     }
 
+    private fun refineTransformedDataRangeForContinuousDomain(
+        transformedDataRange: ClosedRange<Double>?,
+        scale: Scale<*>
+    ): ClosedRange<Double> {
+        val (dataLower, dataUpper) = when (transformedDataRange) {
+            null -> Pair(Double.NaN, Double.NaN)
+            else -> Pair(transformedDataRange.lowerEnd, transformedDataRange.upperEnd)
+        }
+        val (scaleLower, scaleUpper) = when (scale.hasDomainLimits()) {
+            true -> ScaleUtil.transformedDefinedLimits(scale)
+            else -> Pair(Double.NaN, Double.NaN)
+        }
+
+        val lowerEnd = if (scaleLower.isFinite()) scaleLower else dataLower
+        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
+
+        val newRange = when {
+            lowerEnd.isFinite() && upperEnd.isFinite() -> ClosedRange(lowerEnd, upperEnd)
+            lowerEnd.isFinite() -> ClosedRange(lowerEnd, lowerEnd)
+            upperEnd.isFinite() -> ClosedRange(upperEnd, upperEnd)
+            else -> null
+        }
+
+        return ensureApplicableDomain(newRange, scale.transform as ContinuousTransform)
+    }
+
     fun createColorBarAssembler(
         scaleName: String,
-        aes: Aes<*>, dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
+        aes: Aes<*>,
+        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>,
         scale: Scale<Color>,
         options: ColorBarOptions?,
         theme: LegendTheme
     ): ColorBarAssembler {
 
-        val domain = dataRangeByAes[aes]
+        val transformedDomain = transformedDomainByAes[aes]
+        checkNotNull(transformedDomain) { "Domain for continuous data must not be null" }
+
+//        // ToDo: this duplicates implementation code in MapperProvider.createContinuousMapper()
+//        val trans = scale.transform as ContinuousTransform
+//        val domainWithLims = MapperUtil.rangeWithLimitsAfterTransform(
+//            ensureApplicableDomain(transformedDomain, trans),
+//            scale.domainLimits.first,
+//            scale.domainLimits.second,
+//            trans
+//        )
+
         val result = ColorBarAssembler(
             scaleName,
-            ensureApplicableRange(domain),
+//            ensureApplicableRange(domainWithLims),
+            transformedDomain,
             scale,
             theme
         )

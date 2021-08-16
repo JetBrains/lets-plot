@@ -46,7 +46,7 @@ class ColorBarComponent(
         val tickLength = barThickness / 5
 
         val breakInfos = layout.breakInfos.iterator()
-        for (br in spec.breaks) {
+        for (brLabel in spec.breaks.labels) {
             val brInfo = breakInfos.next()
 
             val tickLocation = brInfo.tickLocation
@@ -68,7 +68,7 @@ class ColorBarComponent(
             addTickMark(guideBarGroup, tickMarkPoints[0], tickMarkPoints[1])
             addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
 
-            val label = TextLabel(br.label)
+            val label = TextLabel(brLabel)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setVerticalAnchor(brInfo.labelVerticalAnchor)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top)

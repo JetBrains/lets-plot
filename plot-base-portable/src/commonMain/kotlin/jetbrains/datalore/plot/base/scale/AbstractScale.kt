@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT, T> : Scale<T> {
@@ -25,19 +26,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
     override val isContinuousDomain: Boolean
         get() = false
-
-    override val breaks: List<Any>
-        get() {
-            check(hasBreaks()) { "No breaks defined for scale $name" }
-            @Suppress("UNCHECKED_CAST")
-            return definedBreaks as List<Any>
-        }
-
-    override val labels: List<String>
-        get() {
-            check(labelsDefined()) { "No labels defined for scale $name" }
-            return definedLabels!!
-        }
 
     protected constructor(name: String, mapper: ((Double?) -> T?), breaks: List<DomainT>? = null) {
         this.name = name
@@ -62,12 +50,72 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         return definedBreaks != null
     }
 
-    override fun hasLabels(): Boolean {
-        return labelsDefined()
+    protected open fun getBreaksIntern(): List<Any> {
+        check(hasBreaks()) { "No breaks defined for scale $name" }
+        @Suppress("UNCHECKED_CAST")
+        return definedBreaks as List<Any>
     }
 
-    private fun labelsDefined(): Boolean {
-        return definedLabels != null
+    protected open fun getLabelsIntern(): List<String> {
+        check(definedLabels != null) { "No labels defined for scale $name" }
+        return definedLabels
+    }
+
+    override fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?> {
+        @Suppress("NAME_SHADOWING")
+        var source: List<Any?> = source
+
+        // Replace values outside 'scale limits' with null-s.
+        if (checkLimits && hasDomainLimits()) {
+            source = source.map { if (it == null || isInDomainLimits(it)) it else null }
+        }
+
+        // Replace values outside of domain of 'continuous transform' with null-s.
+        if (transform is ContinuousTransform) {
+            val continuousTransform = transform as ContinuousTransform
+            if (continuousTransform.hasDomainLimits()) {
+                source = source.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
+            }
+        }
+
+        return transform.apply(source)
+    }
+
+    override fun getScaleBreaks(): ScaleBreaks {
+        if (!hasBreaks()) {
+            return ScaleBreaks.EMPTY
+        }
+
+        val breakValuesIntern = getBreaksIntern()
+        val labels = getLabels(breakValuesIntern)
+        val transformed = applyTransform(breakValuesIntern, checkLimits = false)
+
+        // drop NULLs which can occure after transform.
+        val keepIndices: Set<Int> = transformed
+            .mapIndexed { i, v -> if (v == null) null else i }
+            .filterNotNull()
+            .toSet()
+
+        return ScaleBreaks(
+            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices },
+            transformedValues = transformed.filterNotNull(),
+            labels = labels.filterIndexed { i, _ -> i in keepIndices }
+        )
+    }
+
+    private fun getLabels(breaks: List<Any>): List<String> {
+        if (definedLabels != null) {
+            val labels = getLabelsIntern()
+            return when {
+                labels.isEmpty() -> List(breaks.size) { "" }
+                breaks.size <= labels.size -> labels.subList(0, breaks.size)
+                else -> List(breaks.size) { i -> labels[i % labels.size] }
+            }
+        }
+
+        // generate labels
+        val formatter: (Any) -> String = labelFormatter ?: { v: Any -> v.toString() }
+        return breaks.map { formatter(it) }
     }
 
     protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {

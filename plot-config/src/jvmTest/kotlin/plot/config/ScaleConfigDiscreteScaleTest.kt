@@ -55,11 +55,17 @@ internal class ScaleConfigDiscreteScaleTest(
 
         val scaleMap = TestUtil.buildPointLayer(data, mapping, scales = scales).scaleMap
         val scale = scaleMap[Aes.COLOR]
-        val labels = ScaleUtil.labels(scale)
-        assertEquals(expectedLabels, labels)
-        assertEquals(expectedBreaks, scale.breaks)
-        assertEquals(expectedBreakColors, ScaleUtil.transformAndMap(scale.breaks, scale), "[Break Colors]")
-        assertEquals(expectedDataPointColors, ScaleUtil.transformAndMap(CAT_DATA, scale), "[Data Point Colors]")
+        val scaleBreaks = scale.getScaleBreaks()
+        val mappedBreaks = ScaleUtil.map(scaleBreaks.transformedValues, scale)
+
+        assertEquals(expectedLabels, scaleBreaks.labels)
+        assertEquals(expectedBreaks, scaleBreaks.domainValues)
+        assertEquals(expectedBreakColors, mappedBreaks, "[Break Colors]")
+        assertEquals(
+            expectedDataPointColors,
+            ScaleUtil.map(scale.applyTransform(CAT_DATA, true), scale),
+            "[Data Point Colors]"
+        )
     }
 
     companion object {
