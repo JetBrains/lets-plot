@@ -97,22 +97,22 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.SQRT,
                     0.0,
-                    ClosedRange(0.0, 1.0)
+                    ClosedRange(0.0, 0.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     -5.0,
-                    ClosedRange(0.0, 1.0)
+                    ClosedRange(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     Double.NaN,
-                    ClosedRange(0.0, 1.0)
+                    ClosedRange(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     0.3,
-                    ClosedRange(0.0, 1.0)
+                    ClosedRange(0.0, 0.8)
                 ),
                 arrayOf(
                     Transforms.SQRT,
@@ -127,32 +127,32 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.LOG10,
                     0.0,
-                    ClosedRange(0.0, 10.0)
+                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     -5.0,
-                    ClosedRange(0.0, 10.0)
+                    ClosedRange(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     Double.NaN,
-                    ClosedRange(0.0, 10.0)
+                    ClosedRange(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     0.3,
-                    ClosedRange(0.15, 0.6)
+                    ClosedRange(0.15, 0.8)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     10.0.pow(20),
-                    ClosedRange(5.0E19, 2.0E20)
+                    ClosedRange(1.0E20, 1.0E20)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     10.0.pow(-20),
-                    ClosedRange(5.0E-21, 2.0E-20)
+                    ClosedRange(5.0E-21, 0.5)
                 ),
             )
         }

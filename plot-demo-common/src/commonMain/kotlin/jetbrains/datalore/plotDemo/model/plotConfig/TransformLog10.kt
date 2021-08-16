@@ -33,7 +33,7 @@ class TransformLog10 {
                'scale_mapper_kind': 'color_gradient'}],
              'layers': [
              {'geom': 'point',
-               'mapping': {'color': 'v'}
+               'mapping': {'color': 'c'}
                 }]}
         """.trimIndent()
 
@@ -41,7 +41,7 @@ class TransformLog10 {
         plotSpec["data"] = mapOf(
             "x" to listOf(0, 1, 2, 3, 4),
             "y" to listOf(0, 1, 4, 9, 12),
-            "v" to listOf(-1, 0, 0.01, 1, 81),
+            "c" to listOf(-1, 0, 0.01, 1, 81),
         )
         return plotSpec
     }

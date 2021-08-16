@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable.Source.STAT
@@ -69,7 +68,7 @@ object Stats {
     }
 
     fun statVar(varName: String): DataFrame.Variable {
-        checkArgument(VARS.containsKey(varName), "Unknown stat variable $varName")
+        require(VARS.containsKey(varName)) { "Unknown stat variable $varName" }
         return VARS[varName]!!
     }
 

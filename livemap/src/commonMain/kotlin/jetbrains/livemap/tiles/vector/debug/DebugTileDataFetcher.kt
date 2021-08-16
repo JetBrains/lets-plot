@@ -26,8 +26,8 @@ internal class DebugTileDataFetcher(
         val start = mySystemTime.getTimeMs()
 
         tileDataAsync.onSuccess { tileLayers ->
-            myStats.add(cellKey, CELL_DATA_SIZE, "${tileLayers.sumBy { it.size } / 1024}Kb")
-            myStats.add(cellKey, LOADING_TIME,  "${mySystemTime.getTimeMs() - start}ms")
+            myStats.add(cellKey, CELL_DATA_SIZE, "${tileLayers.sumOf { it.size } / 1024}Kb")
+            myStats.add(cellKey, LOADING_TIME, "${mySystemTime.getTimeMs() - start}ms")
 
             val biggest: TileLayer? = tileLayers.maxByOrNull(TileLayer::size)
 

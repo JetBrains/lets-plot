@@ -51,7 +51,7 @@ class PlotAssembler private constructor(
     }
 
     fun createPlot(): Plot {
-        check(hasLayers()) { "No layers in plot" }
+        require(hasLayers()) { "No layers in plot" }
 
         val legendsBoxInfos = if (myLegendsEnabled)
             PlotAssemblerUtil.createLegends(

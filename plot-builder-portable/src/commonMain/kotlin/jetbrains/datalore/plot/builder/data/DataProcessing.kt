@@ -167,7 +167,6 @@ object DataProcessing {
     /**
      * Server-side only
      */
-
     private fun applyStat(
         data: DataFrame,
         stat: Stat,

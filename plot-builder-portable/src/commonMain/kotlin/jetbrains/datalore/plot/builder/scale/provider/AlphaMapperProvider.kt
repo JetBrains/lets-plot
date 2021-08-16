@@ -10,9 +10,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 
 class AlphaMapperProvider(
-        range: ClosedRange<Double>,
-        naValue: Double) :
-        LinearNormalizingMapperProvider(range, naValue) {
+    range: ClosedRange<Double>,
+    naValue: Double
+) : LinearNormalizingMapperProvider(range, naValue) {
 
     companion object {
         private val DEF_RANGE = ClosedRange(0.1, 1.0)

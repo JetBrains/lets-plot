@@ -8,9 +8,13 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
-class EmptyAxisLayout private constructor(xDomain: ClosedRange<Double>, yDomain: ClosedRange<Double>, private val myOrientation: jetbrains.datalore.plot.builder.guide.Orientation) :
+class EmptyAxisLayout private constructor(
+    xDomain: ClosedRange<Double>,
+    yDomain: ClosedRange<Double>,
+    private val myOrientation: jetbrains.datalore.plot.builder.guide.Orientation
+) :
     AxisLayout {
 
     private val myAxisDomain: ClosedRange<Double>
@@ -25,23 +29,19 @@ class EmptyAxisLayout private constructor(xDomain: ClosedRange<Double>, yDomain:
 
     override fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle?): AxisLayoutInfo {
         val axisLength = if (myOrientation.isHorizontal) displaySize.x else displaySize.y
-        val tickLabelsBounds = if (myOrientation.isHorizontal   // relative to axis component
-        )
+        // relative to axis component
+        val tickLabelsBounds = if (myOrientation.isHorizontal) {
             DoubleRectangle(0.0, 0.0, axisLength, 0.0)
-        else
+        } else {
             DoubleRectangle(0.0, 0.0, 0.0, axisLength)
-        val breaks = GuideBreaks(
-            emptyList<Any>(),
-            emptyList(),
-            emptyList()
-        )
+        }
 
         val builder = AxisLayoutInfo.Builder()
-                .axisBreaks(breaks)
-                .axisLength(axisLength)
-                .orientation(myOrientation)
-                .axisDomain(myAxisDomain)
-                .tickLabelsBounds(tickLabelsBounds)
+            .axisBreaks(ScaleBreaks.EMPTY)
+            .axisLength(axisLength)
+            .orientation(myOrientation)
+            .axisDomain(myAxisDomain)
+            .tickLabelsBounds(tickLabelsBounds)
 
         return builder.build()
     }

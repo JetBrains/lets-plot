@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
+import jetbrains.datalore.plot.builder.AxisUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
@@ -24,7 +25,7 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
-    fun createModel(): GroupComponent {
+    private fun createModel(): GroupComponent {
         val groupComponent = GroupComponent()
 
         val background = SvgRectElement(
@@ -114,10 +115,10 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             axisLength: Double,
             scale: Scale<Double>,
             coord: CoordinateSystem,
-            orientation: jetbrains.datalore.plot.builder.guide.Orientation
+            orientation: Orientation
         ): AxisComponent {
             val axis = AxisComponent(axisLength, orientation)
-            jetbrains.datalore.plot.builder.AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
+            AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
             axis.gridLineColor.set(Color.RED)
             axis.gridLineWidth.set(Plot.Axis.GRID_LINE_WIDTH)
             axis.gridLineLength.set(100.0)

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
@@ -43,21 +42,21 @@ object PlotUtil {
 
         val rangesAfterPosAdjustment =
             computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
-        val rangesAfterSizeExpand =
+        val (xRangeAfterSizeExpand, yRangeAfterSizeExpand) =
             computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
 
         var rangeX = rangesAfterPosAdjustment.first
         if (rangeX == null) {
-            rangeX = rangesAfterSizeExpand.first
-        } else if (rangesAfterSizeExpand.first != null) {
-            rangeX = rangeX.span(rangesAfterSizeExpand.first!!)
+            rangeX = xRangeAfterSizeExpand
+        } else if (xRangeAfterSizeExpand != null) {
+            rangeX = rangeX.span(xRangeAfterSizeExpand)
         }
 
         var rangeY = rangesAfterPosAdjustment.second
         if (rangeY == null) {
-            rangeY = rangesAfterSizeExpand.second
-        } else if (rangesAfterSizeExpand.second != null) {
-            rangeY = rangeY.span(rangesAfterSizeExpand.second!!)
+            rangeY = yRangeAfterSizeExpand
+        } else if (yRangeAfterSizeExpand != null) {
+            rangeY = rangeY.span(yRangeAfterSizeExpand)
         }
 
         return Pair(rangeX, rangeY)
@@ -294,27 +293,25 @@ object PlotUtil {
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
-                    checkState(mapperOption != null, "No scale mapper defined for aesthetic $aes")
+                    check(mapperOption != null) { "No scale mapper defined for aesthetic $aes" }
 
                     // variable at this point must be either STAT or TRANSFORM (but not ORIGIN)
                     val transformVar = DataFrameUtil.transformVarFor(aes)
-                    checkState(data.has(transformVar), "Undefined var $transformVar for aesthetic $aes")
+                    check(data.has(transformVar)) { "Undefined var $transformVar for aesthetic $aes" }
                     val numericValues = data.getNumeric(transformVar)
 
                     if (dataPointCount == null) {
                         dataPointCount = numericValues.size
                     } else {
-                        checkState(
-                            dataPointCount == numericValues.size,
-                            "" + aes + " expected data size=" + dataPointCount + " was size=" + numericValues.size
-                        )
+                        check(dataPointCount == numericValues.size)
+                        { "" + aes + " expected data size=" + dataPointCount + " was size=" + numericValues.size }
                     }
 
                     if (dataPointCount == 0 && hasPositionalConstants) {
                         // put constant instead of empty list
                         aesBuilder.constantAes(aes, layer.aestheticsDefaults.defaultValue(aes))
                     } else {
-                        val integerFunction = listMapper(numericValues, mapperOption as (Double?) -> Any?)
+                        val integerFunction = listMapper(numericValues, mapperOption)
                         aesBuilder.aes(aes, integerFunction)
                     }
                 } else {
@@ -331,7 +328,7 @@ object PlotUtil {
         if (dataPointCount != null && dataPointCount > 0) {
             aesBuilder.dataPointCount(dataPointCount)
         } else if (hasPositionalConstants) {
-            // some geoms (point, abline etc) can be plotted with only constants
+            // some geoms (point, abline etc.) can be plotted with only constants
             aesBuilder.dataPointCount(1)
         }
 
@@ -348,19 +345,18 @@ object PlotUtil {
     /**
      * Expand X/Y-range to ensure that the data is placed some distance away from the axes.
      */
-    fun rangeWithExpand(
-        layer: GeomLayer,
-        aes: Aes<Double>,
-        range: ClosedRange<Double>?
+    internal fun rangeWithExpand(
+        range: ClosedRange<Double>?,
+        scale: Scale<*>,
+        includeZero: Boolean
     ): ClosedRange<Double>? {
         if (range == null) return null
 
-        val scale = layer.scaleMap[aes]
         val mulExp = scale.multiplicativeExpand
         val addExp = scale.additiveExpand
 
         // Compute expands in terms of the original data.
-        // Otherwise can easy run into Infinities then using 'log10' transform
+        // Otherwise, can easily run into Infinities then using 'log10' transform
         val continuousTransform: ContinuousTransform? = if (scale.isContinuousDomain) {
             scale.transform as ContinuousTransform
         } else {
@@ -373,7 +369,7 @@ object PlotUtil {
         val length = upperEndpoint - lowerEndpoint
         var lowerExpand = addExp + length * mulExp
         var upperExpand = lowerExpand
-        if (layer.rangeIncludesZero(aes)) {
+        if (includeZero) {
             // zero-based plots (like bar) - do not 'expand' on the zero-end
             if (lowerEndpoint == 0.0 ||
                 upperEndpoint == 0.0 ||

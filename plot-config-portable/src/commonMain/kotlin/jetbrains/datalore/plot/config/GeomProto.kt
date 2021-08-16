@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
@@ -20,7 +19,7 @@ import jetbrains.datalore.plot.config.Option.Meta
 open class GeomProto constructor(val geomKind: GeomKind) {
 
     fun defaultOptions(): Map<String, Any> {
-        checkArgument(DEFAULTS.containsKey(geomKind), "Default values doesn't support geom kind: '$geomKind'")
+        require(DEFAULTS.containsKey(geomKind)) { "Default values doesn't support geom kind: '$geomKind'" }
         return DEFAULTS[geomKind]!!
     }
 

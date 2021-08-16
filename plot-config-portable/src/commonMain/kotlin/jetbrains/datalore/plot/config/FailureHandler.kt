@@ -12,15 +12,15 @@ object FailureHandler {
         @Suppress("NAME_SHADOWING")
         val e = Throwables.getRootCause(e)
         return if (!e.message.isNullOrBlank() && (
-                    e is IllegalStateException ||
-                            e is IllegalArgumentException)
+//                    e is IllegalStateException ||
+                    e is IllegalArgumentException)
         ) {
             // Not a bug - likely user configuration error like `No layers in plot`
             FailureInfo(e.message!!, false)
         } else {
             val className = e::class.simpleName ?: "<Anonymous exception>"
             FailureInfo(
-                "Internal error occurred in lets-plot: $className : ${e.message ?: "<no message>"}",
+                "Internal error: $className : ${e.message ?: "<no message>"}",
                 true
             )
         }

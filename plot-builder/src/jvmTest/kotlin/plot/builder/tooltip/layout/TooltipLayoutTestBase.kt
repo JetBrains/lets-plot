@@ -194,7 +194,7 @@ internal open class TooltipLayoutTestBase {
 
     internal class TipLayoutManagerBuilder(private val myViewport: DoubleRectangle) : TooltipDataProvider {
         private val myTooltipData = ArrayList<MeasuredTooltip>()
-        private val myHorizontalAlignment: HorizontalAlignment = LEFT
+        private var myHorizontalAlignment: HorizontalAlignment = LEFT
         private var myCursor = DoubleVector.ZERO
 
         fun cursor(cursor: DoubleVector): TipLayoutManagerBuilder {
@@ -204,6 +204,11 @@ internal open class TooltipLayoutTestBase {
 
         fun addTooltip(measuredTooltip: MeasuredTooltip): TipLayoutManagerBuilder {
             myTooltipData.add(measuredTooltip)
+            return this
+        }
+
+        fun preferredHorizontalAlignment(horizontalAlignment: HorizontalAlignment): TipLayoutManagerBuilder {
+            myHorizontalAlignment = horizontalAlignment
             return this
         }
 

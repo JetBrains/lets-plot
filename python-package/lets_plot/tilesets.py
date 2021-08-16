@@ -3,8 +3,8 @@
 
 
 from lets_plot import maptiles_lets_plot as _maptiles_lets_plot  # to not polute scope with maptiles_lets_plot
+from lets_plot import maptiles_solid as _maptiles_solid  # to not polute scope with maptiles_solid
 from lets_plot import maptiles_zxy as _maptiles_zxy  # to not polute scope with maptiles_zxy
-from lets_plot import maptiles_solid as _maptiles_solid  # to not polute scope with maptiles_zxy
 
 LETS_PLOT_COLOR = _maptiles_lets_plot(theme='color')
 LETS_PLOT_LIGHT = _maptiles_lets_plot(theme='light')
@@ -48,6 +48,7 @@ def _stamen_tiles(tileset, data_license, max_zoom, lowres_only=False):
 
 STAMEN_DESIGN_TONER, STAMEN_DESIGN_TONER_HIRES = _stamen_tiles('toner', data_license='osm', max_zoom=20)
 STAMEN_DESIGN_TONER_LIGHT, STAMEN_DESIGN_TONER_LIGHT_HIRES = _stamen_tiles('toner-lite', data_license='osm', max_zoom=20)
+STAMEN_DESIGN_TONER_HYBRID, STAMEN_DESIGN_TONER_HYBRID_HIRES = _stamen_tiles('toner-hybrid', data_license='osm', max_zoom=20)
 STAMEN_DESIGN_TONER_LABELS, STAMEN_DESIGN_TONER_LABELS_HIRES = _stamen_tiles('toner-labels', data_license='osm', max_zoom=20)
 STAMEN_DESIGN_TERRAIN, STAMEN_DESIGN_TERRAIN_HIRES = _stamen_tiles('terrain', data_license='osm', max_zoom=18)
 STAMEN_DESIGN_WATERCOLOR = _stamen_tiles('watercolor', data_license='cc', max_zoom=18, lowres_only=True)

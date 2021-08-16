@@ -61,7 +61,7 @@ internal class HorizontalTooltipExpander(private val mySpace: DoubleRange) {
             val start = when(tooltips.size) {
                 0 -> 0.0
                 1 -> tooltips[0].top
-                else -> tooltips.sumByDouble { it.middle } / tooltips.size  - length / 2
+                else -> tooltips.sumOf { it.middle } / tooltips.size  - length / 2
             }
 
             range = rangeWithLength(start, length).run { moveIntoLimit(this, space) }

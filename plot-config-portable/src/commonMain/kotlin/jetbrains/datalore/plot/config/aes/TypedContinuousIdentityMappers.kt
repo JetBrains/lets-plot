@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config.aes
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -19,9 +18,9 @@ object TypedContinuousIdentityMappers {
         } else {
             val value = abs(n.roundToInt())
             Color(
-                    value shr 16 and 0xff,
-                    value shr 8 and 0xff,
-                    value and 0xff
+                value shr 16 and 0xff,
+                value shr 8 and 0xff,
+                value and 0xff
             )
         }
     }
@@ -44,7 +43,7 @@ object TypedContinuousIdentityMappers {
     }
 
     operator fun <T> get(aes: Aes<T>): (Double?) -> T? {
-        checkArgument(contain(aes), "No continuous identity mapper found for aes " + aes.name)
+        require(contain(aes)) { "No continuous identity mapper found for aes " + aes.name }
         val mapper = MAP[aes]!!
         // Safe cast because MAP was initiated in type-safe manner
         @Suppress("UNCHECKED_CAST")

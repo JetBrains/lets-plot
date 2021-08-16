@@ -287,6 +287,6 @@ class TooltipConfig(
         private const val LABEL_SEPARATOR = "|"
 
         // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{(.*?)})|\.{2}\w+\.{2})""")
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{(.*?)\})|\.{2}\w+\.{2})""")
     }
 }

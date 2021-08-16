@@ -14,9 +14,11 @@ internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
         return SeriesUtil.isFinite(v)
     }
 
-    override fun createApplicableDomain(middle: Double): ClosedRange<Double> {
-        @Suppress("NAME_SHADOWING")
-        val middle = if (middle.isFinite()) middle else 0.0
-        return ClosedRange(middle - 0.5, middle + 0.5)
+    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+        return Transforms.IDENTITY.createApplicableDomain(middle)
+    }
+
+    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+        return Transforms.IDENTITY.toApplicableDomain(range)
     }
 }

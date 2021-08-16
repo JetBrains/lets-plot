@@ -9,9 +9,12 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.scale.ContinuousOnlyMapperProvider
+import jetbrains.datalore.plot.builder.scale.DiscreteOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -168,13 +171,18 @@ object PlotConfigUtil {
         // Extract "discrete" aes set.
         val discreteAesSet: MutableSet<Aes<*>> = HashSet()
         for (aes in aesSet) {
-            if (scaleProviderByAes.getValue(aes).discreteDomain) {
+            val scaleProvider = scaleProviderByAes.getValue(aes)
+            if (scaleProvider.discreteDomain) {
                 discreteAesSet.add(aes)
             } else if (variablesByMappedAes.containsKey(aes)) {
                 val variables = variablesByMappedAes.getValue(aes)
                 val anyNotNumericData = variables.any {
                     val data = dataByVarBinding.getValue(VarBinding(it, aes))
-                    !data.isNumeric(it)
+                    if (data.isEmpty(it)) {
+                        isDiscreteScaleForEmptyData(scaleProvider)
+                    } else {
+                        !data.isNumeric(it)
+                    }
                 }
                 if (anyNotNumericData) {
                     discreteAesSet.add(aes)
@@ -215,7 +223,7 @@ object PlotConfigUtil {
             val effectiveDomain = (scaleBreaks + domainValues).distinct()
             val transform = DiscreteTransform(
                 domainValues = effectiveDomain,
-                domainLimits = scaleProvider.discreteDomainLimits ?: emptyList()
+                domainLimits = (scaleProvider.limits ?: emptyList()).filterNotNull()
             )
             discreteTransformByAes[aes] = transform
         }
@@ -376,20 +384,47 @@ object PlotConfigUtil {
     }
 
 
-    /**
-     * ToDo: move to SeriesUtil (or better place)
-     */
-    private fun ensureApplicableDomain(
-        dataRange: ClosedRange<Double>?,
-        transform: ContinuousTransform
-    ): ClosedRange<Double> {
-        return when {
-            dataRange == null ->
-                transform.createApplicableDomain(0.0)
-            SeriesUtil.isSubTiny(dataRange) ->
-                transform.createApplicableDomain(dataRange.lowerEnd)
-            else ->
-                dataRange
-        }
+//    /**
+//     * ToDo: move to SeriesUtil (or better place)
+//     */
+//    private fun ensureApplicableDomain(
+//        dataRange: ClosedRange<Double>?,
+//        transform: ContinuousTransform
+//    ): ClosedRange<Double> {
+//        return when {
+//            dataRange == null ->
+//                transform.createApplicableDomain(0.0)
+//            SeriesUtil.isSubTiny(dataRange) ->
+//                transform.createApplicableDomain(dataRange.lowerEnd)
+//            else ->
+//                dataRange
+//        }
+//    }
+
+    private fun isDiscreteScaleForEmptyData(scaleProvider: ScaleProvider<*>): Boolean {
+        // Empty data is neither 'discrete' nor 'numeric'.
+        // Which scale to build?
+        if (scaleProvider.discreteDomain) return true
+
+        val mapperProvider = scaleProvider.mapperProvider
+        if (mapperProvider is DiscreteOnlyMapperProvider) return true
+        if (mapperProvider is ContinuousOnlyMapperProvider) return false
+
+        val breaks = scaleProvider.breaks
+        val limits = scaleProvider.limits
+
+        val breaksAreDiscrete = breaks?.let {
+            it.any { !(it is Number) }
+        } ?: false
+
+        val limitsAreDiscrete = limits?.let {
+            // Not a list of 2 numbers.
+            when {
+                it.size > 2 -> true
+                else -> it.filterNotNull().any { !(it is Number) }
+            }
+        } ?: false
+
+        return breaksAreDiscrete || limitsAreDiscrete
     }
 }

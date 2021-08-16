@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
@@ -25,7 +24,7 @@ abstract class SvgComponent {
 
     protected val childComponents: List<SvgComponent>
         get() {
-            Preconditions.checkState(myIsBuilt, "Plot has not yet built")
+            require(myIsBuilt) { "Plot has not yet built" }
             return ArrayList(myChildComponents)
         }
 

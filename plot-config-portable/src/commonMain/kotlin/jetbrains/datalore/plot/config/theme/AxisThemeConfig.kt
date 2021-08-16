@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TEXT
@@ -71,7 +70,7 @@ class AxisThemeConfig private constructor(
     }
 
     private fun getViewElementConfig(optionName: String): ViewElementConfig {
-        checkState(hasApplicable(optionName), "option '$optionName' is not specified")
+        check(hasApplicable(optionName)) { "option '$optionName' is not specified" }
         return ViewElementConfig.create(getApplicable(optionName)!!)
     }
 

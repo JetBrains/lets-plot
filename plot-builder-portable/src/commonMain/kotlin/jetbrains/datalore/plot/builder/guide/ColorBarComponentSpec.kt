@@ -9,13 +9,13 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.scale.GuideBreak
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 class ColorBarComponentSpec(
     title: String,
     val domain: ClosedRange<Double>,
-    val breaks: List<GuideBreak<Double>>,
+    val breaks: ScaleBreaks,
     val scale: Scale<Color>,
     val binCount: Int,
     theme: LegendTheme,

@@ -23,9 +23,9 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
+import jetbrains.datalore.plot.builder.AxisUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.common.color.ColorPalette
@@ -38,9 +38,9 @@ open class ScatterDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                gauss(),
-                gaussWithContinuousColor(),
-                gaussWithLimitsX()
+            gauss(),
+            gaussWithContinuousColor(),
+            gaussWithLimitsX()
         )
     }
 
@@ -51,9 +51,9 @@ open class ScatterDemo : SimpleDemoBase() {
         val varA = DataFrame.Variable("A")
         val varB = DataFrame.Variable("B")
         var data = DataFrame.Builder()
-                .putNumeric(varA, a)
-                .putNumeric(varB, b)
-                .build()
+            .putNumeric(varA, a)
+            .putNumeric(varB, b)
+            .build()
 
 
         // tmp: layout values
@@ -69,10 +69,10 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-                .mapper(mapperX)
-                .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
-                .labels(listOf("-200", "-100", "0", "100", "250"))
-                .build()
+            .mapper(mapperX)
+            .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
+            .labels(listOf("-200", "-100", "0", "100", "250"))
+            .build()
 
         // Y scale
         var scaleY = continuousScale("B")
@@ -80,10 +80,10 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
-                .mapper(mapperY)
-                .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
-                .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
-                .build()
+            .mapper(mapperY)
+            .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
+            .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
+            .build()
 
         // coord system
         val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
@@ -103,14 +103,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeX,
                 Orientation.BOTTOM
             )
-            axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
-            axis.labels.set(scaleX.labels)
-
-            axis.lineWidth.set(theme.axisX().lineWidth())
-            axis.tickMarkLength.set(theme.axisX().tickMarkLength())
-            axis.tickMarkPadding.set(theme.axisX().tickMarkPadding())
-            axis.tickMarkWidth.set(theme.axisX().tickMarkWidth())
-
+            AxisUtil.setBreaks(axis, scaleX, coord, horizontal = true)
+            AxisUtil.applyTheme(axis, theme.axisX())
 
             axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.MIDDLE)
             axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.TOP)
@@ -126,13 +120,9 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeY,
                 Orientation.LEFT
             )
-            axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
-            axis.labels.set(scaleY.labels)
 
-            axis.lineWidth.set(theme.axisY().lineWidth())
-            axis.tickMarkLength.set(theme.axisY().tickMarkLength())
-            axis.tickMarkPadding.set(theme.axisY().tickMarkPadding())
-            axis.tickMarkWidth.set(theme.axisY().tickMarkWidth())
+            AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
+            AxisUtil.applyTheme(axis, theme.axisY())
 
             // enable grid-lines
             axis.gridLineLength.set(rangeX)
@@ -147,17 +137,19 @@ open class ScatterDemo : SimpleDemoBase() {
         // points layer
         run {
             val aes = AestheticsBuilder(count)
-                    .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-                    .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
-                    .color(constant(Color.RED))
-                    .shape(constant(NamedShape.SOLID_CIRCLE))
-                    .size(constant(10.0))
-                    .build()
+                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
+                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+                .color(constant(Color.RED))
+                .shape(constant(NamedShape.SOLID_CIRCLE))
+                .size(constant(10.0))
+                .build()
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
-                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                    aes,
+                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
+                )
             layer.moveTo(plotLeftTop)
             groupComponent.add(layer.rootGroup)
         }
@@ -178,10 +170,10 @@ open class ScatterDemo : SimpleDemoBase() {
         val varB = DataFrame.Variable("B")
         val varC = DataFrame.Variable("C")
         var data = DataFrame.Builder()
-                .putNumeric(varA, a)
-                .putNumeric(varB, b)
-                .putNumeric(varC, c)
-                .build()
+            .putNumeric(varA, a)
+            .putNumeric(varB, b)
+            .putNumeric(varC, c)
+            .build()
 
 
         // tmp: layout values
@@ -197,10 +189,10 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-                .mapper(mapperX)
-                .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
-                .labels(listOf("-200", "-100", "0", "100", "250"))
-                .build()
+            .mapper(mapperX)
+            .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
+            .labels(listOf("-200", "-100", "0", "100", "250"))
+            .build()
 
         // Y scale
         var scaleY = continuousScale("B")
@@ -208,10 +200,10 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
-                .mapper(mapperY)
-                .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
-                .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
-                .build()
+            .mapper(mapperY)
+            .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
+            .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
+            .build()
 
 
         // Color scale
@@ -252,10 +244,10 @@ open class ScatterDemo : SimpleDemoBase() {
             }
 
             scaleColor = scaleColor.with()
-                    .mapper(mapperColor)
-                    .breaks(breaks)
-                    .labels(labels)
-                    .build()
+                .mapper(mapperColor)
+                .breaks(breaks)
+                .labels(labels)
+                .build()
         }
 
         // transform and stat always in this order
@@ -280,14 +272,9 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeX,
                 Orientation.BOTTOM
             )
-            axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
-            axis.labels.set(ScaleUtil.labels(scaleX))
 
-            axis.lineWidth.set(theme.axisX().lineWidth())
-            axis.tickMarkLength.set(theme.axisX().tickMarkLength())
-            axis.tickMarkPadding.set(theme.axisX().tickMarkPadding())
-            axis.tickMarkWidth.set(theme.axisX().tickMarkWidth())
-
+            AxisUtil.setBreaks(axis, scaleX, coord, horizontal = true)
+            AxisUtil.applyTheme(axis, theme.axisX())
 
             //      xAxis.tickLabelOffsets.set(info.tickLabelAdditionalOffsets);
             //      xAxis.tickLabelRotationDegree.set(info.tickLabelRotationAngle);
@@ -305,13 +292,9 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeY,
                 Orientation.LEFT
             )
-            axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
-            axis.labels.set(ScaleUtil.labels(scaleY))
 
-            axis.lineWidth.set(theme.axisY().lineWidth())
-            axis.tickMarkLength.set(theme.axisY().tickMarkLength())
-            axis.tickMarkPadding.set(theme.axisY().tickMarkPadding())
-            axis.tickMarkWidth.set(theme.axisY().tickMarkWidth())
+            AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
+            AxisUtil.applyTheme(axis, theme.axisY())
 
             // enable grid-lines
             axis.gridLineLength.set(rangeX)
@@ -329,17 +312,19 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // points layer
             val aes = AestheticsBuilder(count)
-                    .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-                    .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
-                    .color(AestheticsBuilder.listMapper(aesColor, scaleColor.mapper))
-                    .shape(constant(NamedShape.SOLID_CIRCLE))
-                    .size(constant(10.0))
-                    .build()
+                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
+                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+                .color(AestheticsBuilder.listMapper(aesColor, scaleColor.mapper))
+                .shape(constant(NamedShape.SOLID_CIRCLE))
+                .size(constant(10.0))
+                .build()
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
-                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                    aes,
+                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
+                )
             layer.moveTo(plotLeftTop)
             groupComponent.add(layer.rootGroup)
         }
@@ -355,9 +340,9 @@ open class ScatterDemo : SimpleDemoBase() {
         val varA = DataFrame.Variable("A")
         val varB = DataFrame.Variable("B")
         var data = DataFrame.Builder()
-                .putNumeric(varA, a)
-                .putNumeric(varB, b)
-                .build()
+            .putNumeric(varA, a)
+            .putNumeric(varB, b)
+            .build()
 
 
         // tmp: layout values
@@ -373,12 +358,12 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-                .mapper(mapperX)
-                .breaks(listOf(-100.0, 0.0, 100.0))
-                .labels(listOf("-100", "0", "100"))
-                .lowerLimit(-100.0)
-                .upperLimit(100.0)
-                .build()
+            .mapper(mapperX)
+            .breaks(listOf(-100.0, 0.0, 100.0))
+            .labels(listOf("-100", "0", "100"))
+            .lowerLimit(-100.0)
+            .upperLimit(100.0)
+            .build()
 
         // Y scale
         var scaleY = continuousScale("B")
@@ -387,10 +372,10 @@ open class ScatterDemo : SimpleDemoBase() {
         val mapperY = Mappers.mul(domainY, rangeY)
 
         scaleY = scaleY.with()
-                .mapper(mapperY)
-                .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
-                .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
-                .build()
+            .mapper(mapperY)
+            .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
+            .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
+            .build()
 
 
         // transform and stat always in this order
@@ -412,13 +397,9 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeX,
                 Orientation.BOTTOM
             )
-            axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
-            axis.labels.set(ScaleUtil.labels(scaleX))
 
-            axis.lineWidth.set(theme.axisX().lineWidth())
-            axis.tickMarkLength.set(theme.axisX().tickMarkLength())
-            axis.tickMarkPadding.set(theme.axisX().tickMarkPadding())
-            axis.tickMarkWidth.set(theme.axisX().tickMarkWidth())
+            AxisUtil.setBreaks(axis, scaleX, coord, horizontal = true)
+            AxisUtil.applyTheme(axis, theme.axisX())
 
             // enable grid-lines
             axis.gridLineLength.set(rangeY)
@@ -437,13 +418,15 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeY,
                 Orientation.LEFT
             )
-            axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
-            axis.labels.set(ScaleUtil.labels(scaleY))
+//            axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
+//            axis.labels.set(ScaleUtil.labels(scaleY))
+            AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
 
-            axis.lineWidth.set(theme.axisY().lineWidth())
-            axis.tickMarkLength.set(theme.axisY().tickMarkLength())
-            axis.tickMarkPadding.set(theme.axisY().tickMarkPadding())
-            axis.tickMarkWidth.set(theme.axisY().tickMarkWidth())
+//            axis.lineWidth.set(theme.axisY().lineWidth())
+//            axis.tickMarkLength.set(theme.axisY().tickMarkLength())
+//            axis.tickMarkPadding.set(theme.axisY().tickMarkPadding())
+//            axis.tickMarkWidth.set(theme.axisY().tickMarkWidth())
+            AxisUtil.applyTheme(axis, theme.axisY())
 
             // enable grid-lines
             axis.gridLineLength.set(rangeX)
@@ -458,17 +441,19 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // points layer
             val aes = AestheticsBuilder(count)
-                    .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-                    .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
-                    .color(constant(Color.DARK_BLUE))
-                    .shape(constant(NamedShape.SOLID_CIRCLE))
-                    .size(constant(10.0))
-                    .build()
+                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
+                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+                .color(constant(Color.DARK_BLUE))
+                .shape(constant(NamedShape.SOLID_CIRCLE))
+                .size(constant(10.0))
+                .build()
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
-                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                    aes,
+                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
+                )
             layer.moveTo(plotLeftTop)
             groupComponent.add(layer.rootGroup)
         }
@@ -481,11 +466,16 @@ open class ScatterDemo : SimpleDemoBase() {
             return Scales.continuousDomainNumericRange(name)
         }
 
-        fun quantizedColorScale(colorScheme: ColorScheme, colorCount: Int, minValue: Double, maxValue: Double): QuantizeScale<Color> {
+        fun quantizedColorScale(
+            colorScheme: ColorScheme,
+            colorCount: Int,
+            minValue: Double,
+            maxValue: Double
+        ): QuantizeScale<Color> {
             val colors = schemeColors(colorScheme, colorCount)
             return QuantizeScale<Color>()
-                    .range(colors)
-                    .domain(minValue, maxValue)
+                .range(colors)
+                .domain(minValue, maxValue)
         }
     }
 }

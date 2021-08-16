@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal class AdaptableAxisBreaksProvider(
     private val domainAfterTransform: ClosedRange<Double>,
@@ -16,15 +17,17 @@ internal class AdaptableAxisBreaksProvider(
     override val isFixedBreaks: Boolean
         get() = false
 
-    override val fixedBreaks: GuideBreaks
+    override val fixedBreaks: ScaleBreaks
         get() = throw IllegalStateException("Not a fixed breaks provider")
 
-    override fun getBreaks(targetCount: Int, axisLength: Double): GuideBreaks {
+    override fun getBreaks(targetCount: Int, axisLength: Double): ScaleBreaks {
+        @Suppress("UnnecessaryVariable")
         val scaleBreaks = breaksGenerator.generateBreaks(domainAfterTransform, targetCount)
-        return GuideBreaks(
-            scaleBreaks.domainValues,
-            scaleBreaks.transformValues,
-            scaleBreaks.labels
-        )
+        return scaleBreaks
+//        return ScaleBreaks(
+//            scaleBreaks.domainValues,
+//            scaleBreaks.transformedValues,
+//            scaleBreaks.labels
+//        )
     }
 }

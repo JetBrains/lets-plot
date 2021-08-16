@@ -36,7 +36,7 @@ fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T =
     values.first { mode -> mode.toString().equals(enumStringValue, ignoreCase = true) }
 
 inline fun <reified T : Enum<T>> parseEnum(enumStringValue: String): T = parseEnum(enumStringValue, enumValues<T>())
-fun <T : Enum<T>> formatEnum(enumValue: T): String = enumValue.toString().toLowerCase()
+fun <T : Enum<T>> formatEnum(enumValue: T): String = enumValue.toString().lowercase()
 
 fun <T : Enum<T>> FluentObject.put(key: String, v: Collection<T>) = this.put(key, v.map { formatEnum(it) })
 fun FluentObject.put(key: String, v: List<String>) = put(key, FluentArray().addStrings(v.map { it }))

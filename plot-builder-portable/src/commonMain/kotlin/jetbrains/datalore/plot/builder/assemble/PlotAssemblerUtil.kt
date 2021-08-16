@@ -95,21 +95,21 @@ internal object PlotAssemblerUtil {
             )
         }
 
-        val transformedDataRangeByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+        val transformedDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
         for (stitchedPlotLayers in stitchedLayersList) {
             val layerTransformedDomainByAes = guideTransformedDomainByAes(stitchedPlotLayers, guideOptionsMap)
             for ((aes, transformedDomain) in layerTransformedDomainByAes) {
                 updateAesRangeMap(
                     aes,
                     transformedDomain,
-                    transformedDataRangeByAes
+                    transformedDomainByAes
                 )
             }
         }
 
         return createLegends(
             stitchedLayersList,
-            transformedDataRangeByAes,
+            transformedDomainByAes,
             guideOptionsMap,
             theme
         )
@@ -117,7 +117,7 @@ internal object PlotAssemblerUtil {
 
     private fun createLegends(
         stitchedLayersList: List<StitchedPlotLayers>,
-        transformedDataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
+        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -149,7 +149,7 @@ internal object PlotAssemblerUtil {
                         val colorScale = scale as Scale<Color>
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                             scaleName, binding.aes,
-                            transformedDataRangeByAes, colorScale, guideOptions, theme
+                            transformedDomainByAes, colorScale, guideOptions, theme
                         )
                     }
                 } else if (fitsColorBar(binding.aes, scale)) {
@@ -158,7 +158,7 @@ internal object PlotAssemblerUtil {
                     val colorScale = scale as Scale<Color>
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                         scaleName, binding.aes,
-                        transformedDataRangeByAes, colorScale, null, theme
+                        transformedDomainByAes, colorScale, null, theme
                     )
                 }
 
@@ -185,7 +185,7 @@ internal object PlotAssemblerUtil {
                     layerConstantByAes,
                     aestheticsDefaults,
                     stitchedLayers.getScaleMap(),
-                    transformedDataRangeByAes
+                    transformedDomainByAes
                 )
             }
         }
@@ -229,6 +229,45 @@ internal object PlotAssemblerUtil {
             }
         }
 
+        // the "scale map" is shared by all layers.
+        val layers0 = layersByTile[0]
+        val scaleMap = layers0[0].scaleMap
+        val xScale = scaleMap[Aes.X]
+        val yScale = scaleMap[Aes.Y]
+        var xInitialRange: ClosedRange<Double>? = RangeUtil.initialRange(xScale)
+        var yInitialRange: ClosedRange<Double>? = RangeUtil.initialRange(yScale)
+
+        var xRangeOverall: ClosedRange<Double>? = null
+        var yRangeOverall: ClosedRange<Double>? = null
+        for (tileLayers in layersByTile) {
+            for (layer in tileLayers) {
+                // use dry-run aesthetics to estimate ranges
+                val aesthetics = dryRunAestheticsByTileLayer.getValue(layer)
+                // adjust X/Y range with 'pos adjustment' and 'expands'
+                val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
+
+                val xRangeLayer = updateRange(xInitialRange, xyRanges.first)
+                val yRangeLayer = updateRange(yInitialRange, xyRanges.second)
+
+                xRangeOverall = updateRange(xRangeLayer, xRangeOverall)
+                yRangeOverall = updateRange(yRangeLayer, yRangeOverall)
+            }
+        }
+
+        // 'expand' ranges and include '0' if necessary
+        xRangeOverall = RangeUtil.expandRange(xRangeOverall, Aes.X, xScale, layers0)
+        yRangeOverall = RangeUtil.expandRange(yRangeOverall, Aes.Y, yScale, layers0)
+
+        // validate XY ranges
+        xRangeOverall = SeriesUtil.ensureApplicableRange(xRangeOverall)
+        yRangeOverall = SeriesUtil.ensureApplicableRange(yRangeOverall)
+        return Pair(
+            xRangeOverall,
+            yRangeOverall
+        )
+    }
+
+    private object RangeUtil {
         fun initialRange(scale: Scale<Double>): ClosedRange<Double>? {
             var initialRange: ClosedRange<Double>? = null
 
@@ -243,57 +282,31 @@ internal object PlotAssemblerUtil {
             }
 
             if (scale.hasBreaks()) {
+                val scaleBreaks = scale.getScaleBreaks()
                 initialRange = updateRange(
-                    ScaleUtil.breaksTransformed(scale),
+//                    ScaleUtil.breaksTransformed(scale),
+                    scaleBreaks.transformedValues,
                     initialRange
                 )
             }
             return initialRange
         }
 
-        // the "scale map" is shared by all layers.
-        val scaleMap = layersByTile[0][0].scaleMap
-        var xInitialRange: ClosedRange<Double>? = initialRange(scaleMap[Aes.X])
-        var yInitialRange: ClosedRange<Double>? = initialRange(scaleMap[Aes.Y])
-
-        fun layerRange(
-            layer: GeomLayer,
+        fun expandRange(
+            range: ClosedRange<Double>?,
             aes: Aes<Double>,
-            initialRange: ClosedRange<Double>?,
-            aestheticsRange: ClosedRange<Double>?,
+            scale: Scale<*>,
+            layers: List<GeomLayer>
         ): ClosedRange<Double>? {
-            var range: ClosedRange<Double>? = updateRange(aestheticsRange, initialRange)
-            range = PlotUtil.rangeWithExpand(layer, aes, range)
-            // include zero if necessary
-            if (layer.rangeIncludesZero(aes)) {
-                range = updateRange(ClosedRange.singleton(0.0), range)
+            val includeZero = layers.any { it.rangeIncludesZero(aes) }
+
+            @Suppress("NAME_SHADOWING")
+            val range = when (includeZero) {
+                true -> updateRange(ClosedRange.singleton(0.0), range)
+                false -> range
             }
-            return range
+
+            return PlotUtil.rangeWithExpand(range, scale, includeZero)
         }
-
-        var xRangeOverall: ClosedRange<Double>? = null
-        var yRangeOverall: ClosedRange<Double>? = null
-        for (layers in layersByTile) {
-            for (layer in layers) {
-                // use dry-run aesthetics to estimate ranges
-                val aesthetics = dryRunAestheticsByTileLayer.getValue(layer)
-                // adjust X/Y range with 'pos adjustment' and 'expands'
-                val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
-
-                val xRangeLayer = layerRange(layer, Aes.X, xInitialRange, xyRanges.first)
-                val yRangeLayer = layerRange(layer, Aes.Y, yInitialRange, xyRanges.second)
-
-                xRangeOverall = updateRange(xRangeLayer, xRangeOverall)
-                yRangeOverall = updateRange(yRangeLayer, yRangeOverall)
-            }
-        }
-
-        // validate XY ranges
-        xRangeOverall = SeriesUtil.ensureApplicableRange(xRangeOverall)
-        yRangeOverall = SeriesUtil.ensureApplicableRange(yRangeOverall)
-        return Pair(
-            xRangeOverall,
-            yRangeOverall
-        )
     }
 }

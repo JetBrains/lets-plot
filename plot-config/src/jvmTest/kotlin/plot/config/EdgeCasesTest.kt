@@ -116,7 +116,7 @@ class EdgeCasesTest {
         }
     }
 
-    internal fun checkWithNaNInXYSeries(geom: String) {
+    private fun checkWithNaNInXYSeries(geom: String) {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 //"   'data': " + data +
@@ -144,5 +144,32 @@ class EdgeCasesTest {
 
         plotSpec["data"] = data
         assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+    }
+
+    @Test
+    fun transformLog10WithNegativeValues() {
+        // issue #292
+
+        val spec = """
+            {
+             'kind': 'plot',
+             'mapping': {'x': 'x', 'y': 'y'},
+             'scales': [{'aesthetic': 'color',
+               'trans': 'log10',
+               'scale_mapper_kind': 'color_gradient'}],
+             'layers': [
+             {'geom': 'point',
+               'mapping': {'color': 'c'}
+                }]}
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = mapOf(
+            "x" to listOf(0, 1, 2, 3, 4),
+            "y" to listOf(0, 1, 4, 9, 12),
+            "c" to listOf(-1, 0, 0.01, 1, 81),
+        )
+
+        assertDoesNotFail("log10 with negative data: ") { DemoAndTest.createPlot(plotSpec) }
     }
 }

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.data
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.plot.base.DataFrame
 
@@ -16,7 +15,8 @@ object Dummies {
     fun isDummyVar(varName: String): Boolean {
         if (!Strings.isNullOrEmpty(varName) && varName.length > PREFIX.length && varName.startsWith(
                 PREFIX
-            )) {
+            )
+        ) {
             val numStr = varName.substring(PREFIX.length)
             return numStr.matches("[0-9]+".toRegex())
         }
@@ -32,7 +32,7 @@ object Dummies {
     }
 
     fun newDummy(varName: String): DataFrame.Variable {
-        Preconditions.checkArgument(isDummyVar(varName), "Not a dummy var name")
+        require(isDummyVar(varName)) { "Not a dummy var name" }
         // no label
         return DataFrame.Variable(varName, DataFrame.Variable.Source.ORIGIN, "")
     }

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.ContinuousTransform
 import kotlin.math.max
 import kotlin.math.min
 
@@ -36,11 +36,27 @@ object MapperUtil {
         dataRange: ClosedRange<Double>,
         lowerLimit: Double?,
         upperLimit: Double?,
-        trans: Transform?
+        trans: ContinuousTransform
     ): ClosedRange<Double> {
-        val lower = lowerLimit ?: dataRange.lowerEnd
-        val upper = upperLimit ?: dataRange.upperEnd
+        val lower = if (lowerLimit != null && lowerLimit.isFinite()) {
+            lowerLimit
+        } else {
+            dataRange.lowerEnd
+        }
+        check(trans.isInDomain(lower)) {
+            "[${trans::class.simpleName}] Lower end $lower is outside of transform's domain."
+        }
+
+        val upper = if (upperLimit != null && upperLimit.isFinite()) {
+            upperLimit
+        } else {
+            dataRange.upperEnd
+        }
+        check(trans.isInDomain(upper)) {
+            "[${trans::class.simpleName}] Lower end $upper is outside of transform's domain."
+        }
+
         val limits = listOf(lower, upper)
-        return ClosedRange.encloseAll(trans?.apply(limits) ?: limits)
+        return ClosedRange.encloseAll(trans.apply(limits))
     }
 }

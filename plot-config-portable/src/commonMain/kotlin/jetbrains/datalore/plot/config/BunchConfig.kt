@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.config.Option.GGBunch
 import jetbrains.datalore.plot.config.Option.GGBunch.Item
@@ -50,7 +49,7 @@ class BunchConfig(opts: Map<String, Any>) : OptionsAccessor(opts) {
 
         val size: DoubleVector
             get() {
-                checkState(hasSize(), "Size is not defined")
+                check(hasSize()) { "Size is not defined" }
                 return DoubleVector(myWidth!!, myHeight!!)
             }
 

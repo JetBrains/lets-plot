@@ -2673,7 +2673,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                            for i in range(1, m + 1)})
         ggplot(df.melt()) + \\
             geom_boxplot(aes(x='variable', y='value', color='variable', \\
-                             fill='variable', outlier_color='variable'), \\
+                             fill='variable'), \\
                          outlier_shape=21, outlier_size=4, size=2, \\
                          alpha=.5, width=.5, show_legend=False)
 
@@ -3463,7 +3463,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 width=None,
                 height=None,
                 **other_args):
@@ -3494,6 +3494,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
     width : float, default=0.4
         Amount of horizontal variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
     height : float, default=0.4
@@ -3569,6 +3572,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
+                 tooltips=tooltips,
                  width=width, height=height, **other_args)
 
 
@@ -3920,8 +3924,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, arrow=None,
-                 **other_args):
+def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 arrow=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -3949,6 +3953,9 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     other_args
@@ -4016,6 +4023,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
+                 tooltips=tooltips,
                  arrow=arrow,
                  **other_args)
 
