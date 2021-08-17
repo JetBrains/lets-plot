@@ -12,7 +12,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraScale
-import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity

@@ -5,16 +5,13 @@
 
 package jetbrains.gis.geoprotocol
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.post
+import io.ktor.client.*
+import io.ktor.client.request.*
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.ThreadSafeAsync
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.base.json.JsonSupport.parseJson
 import jetbrains.gis.geoprotocol.json.RequestJsonFormatter
-import jetbrains.gis.geoprotocol.json.RequestJsonFormatter.format
 import jetbrains.gis.geoprotocol.json.ResponseJsonParser
-import jetbrains.gis.geoprotocol.json.ResponseJsonParser.parse
 import kotlinx.coroutines.launch
 
 class GeoTransportImpl(

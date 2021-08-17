@@ -143,6 +143,10 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.scale(x, y)
     }
 
+    override fun scale(xy: Double) {
+        scale(xy, xy)
+    }
+
     override fun rotate(angle: Double) {
         myContext2d.rotate(angle)
     }

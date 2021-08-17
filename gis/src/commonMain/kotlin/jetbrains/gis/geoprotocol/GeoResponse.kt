@@ -12,12 +12,15 @@ import jetbrains.datalore.base.typedGeometry.Vec
 interface GeoResponse {
 
     data class SuccessGeoResponse internal constructor(
-        val features: List<GeocodedFeature>,
+        val answers: List<GeocodingAnswer>,
         val featureLevel: FeatureLevel?
     ) : GeoResponse {
 
+        data class GeoParent(val id: String, val name: String, val level: FeatureLevel)
+
+        data class GeocodingAnswer(val geocodedFeatures: List<GeocodedFeature>)
+
         data class GeocodedFeature internal constructor(
-            val request: String,
             val id: String,
             val name: String,
             val centroid: Vec<Generic>?,
@@ -25,7 +28,8 @@ interface GeoResponse {
             val limit: GeoRectangle?,
             val boundary: Boundary<Generic>?,
             val highlights: List<String>?,
-            val fragments: List<Fragment>?
+            val fragments: List<Fragment>?,
+            val parents: List<GeoParent>?
         )
     }
 

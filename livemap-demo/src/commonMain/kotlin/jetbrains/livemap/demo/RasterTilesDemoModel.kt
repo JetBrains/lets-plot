@@ -7,7 +7,7 @@ package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.tiles.Tilesets
+import jetbrains.livemap.basemap.Tilesets
 
 class RasterTilesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 

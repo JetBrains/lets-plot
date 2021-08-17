@@ -11,18 +11,18 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.*
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse
-import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
+import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.*
 
 
 object GeoResponseBuilder {
 
     class SuccessResponseBuilder {
-        private var geocodedFeatures: ArrayList<GeocodedFeature> = ArrayList()
+        private val geocodingAnswers: MutableList<GeocodingAnswer> = ArrayList()
         private var featureLevel: FeatureLevel? = null
 
-        fun addGeocodedFeature(v: GeocodedFeature) = apply { geocodedFeatures.add(v) }
+        fun addGeocodingAnswer(v: GeocodingAnswer) = apply { geocodingAnswers.add(v) }
         fun setLevel(v: FeatureLevel?) = apply { featureLevel = v }
-        fun build() = SuccessGeoResponse(geocodedFeatures, featureLevel)
+        fun build() = SuccessGeoResponse(geocodingAnswers, featureLevel)
     }
 
     class AmbiguousResponseBuilder {
@@ -34,8 +34,17 @@ object GeoResponseBuilder {
         fun build() = AmbiguousGeoResponse(ambiguousFeatures, featureLevel)
     }
 
+    class GeocodingAnswerBuilder {
+        private val geocodedFeatures: MutableList<GeocodedFeature> = ArrayList<GeocodedFeature>()
+        fun addGeocodedFeature(v: GeocodedFeature) = apply { geocodedFeatures.add(v) }
+        fun addGeocodedFeatures(v: List<GeocodedFeature>) = apply { v.forEach(geocodedFeatures::add) }
+
+        fun build(): GeocodingAnswer {
+            return GeocodingAnswer(geocodedFeatures)
+        }
+    }
+
     class GeocodedFeatureBuilder() {
-        private lateinit var query: String
         private lateinit var id: String
         private lateinit var name: String
         private var centroid: Vec<Generic>? = null
@@ -43,9 +52,9 @@ object GeoResponseBuilder {
         private var position: GeoRectangle? = null
         private var boundary: Boundary<Generic>? = null
         private var highlights: MutableList<String> = ArrayList()
-        private var fragments: ArrayList<Fragment> = ArrayList()
+        private var fragments: MutableList<Fragment> = ArrayList()
+        private val parents: MutableList<GeoParent> = ArrayList()
 
-        fun setQuery(v: String) = apply { query = v }
         fun setId(v: String) = apply { id = v }
         fun setName(v: String) = apply { name = v }
         fun setBoundary(v: Boundary<Generic>) = apply { boundary = v }
@@ -54,10 +63,11 @@ object GeoResponseBuilder {
         fun setPosition(v: GeoRectangle) = apply { position = v }
         fun addHighlight(v: String) = apply { highlights.add(v) }
         fun addFragment(v: Fragment) = apply { fragments.add(v) }
+        fun addParent(v: GeoParent) = apply { parents.add(v) }
+        fun addParents(v: List<GeoParent>) = apply { parents.addAll(v) }
 
         fun build(): GeocodedFeature {
             return GeocodedFeature(
-                query,
                 id,
                 name,
                 centroid,
@@ -65,7 +75,8 @@ object GeoResponseBuilder {
                 limit,
                 boundary,
                 highlights.ifEmpty { null },
-                fragments.ifEmpty { null }
+                fragments.ifEmpty { null },
+                parents.ifEmpty { null }
             )
         }
     }

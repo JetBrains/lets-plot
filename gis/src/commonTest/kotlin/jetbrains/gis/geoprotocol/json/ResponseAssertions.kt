@@ -27,11 +27,10 @@ internal object ResponseAssertions {
     internal class SuccessResponseAssertion(private val actual: SuccessGeoResponse) {
 
         fun hasFeatures(vararg features: GeocodedFeature): SuccessResponseAssertion {
-            assertEquals(features.size, actual.features.size)
+            assertEquals(features.size, actual.answers.flatMap { it.geocodedFeatures }.size)
 
-            for (i in 0 until actual.features.size) {
-                val actualFeature = actual.features.get(i)
-                val expectedFeature = features[i]
+            actual.answers.flatMap { it.geocodedFeatures }.forEachIndexed { index, actualFeature ->
+                val expectedFeature = features[index]
                 assertEquals(expectedFeature, actualFeature)
             }
             return this

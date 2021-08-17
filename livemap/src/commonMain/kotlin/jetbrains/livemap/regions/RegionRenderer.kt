@@ -5,13 +5,15 @@
 
 package jetbrains.livemap.regions
 
+import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.rendering.Renderer
-import jetbrains.livemap.rendering.Renderers
-import jetbrains.livemap.rendering.Utils
+import jetbrains.livemap.rendering.Renderers.drawLines
+import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.rendering.translate
 import jetbrains.livemap.scaling.ScaleComponent
 
 class RegionRenderer : Renderer {
@@ -28,11 +30,13 @@ class RegionRenderer : Renderer {
             }
         }
 
-        Utils.apply(entity.get(), ctx)
+        entity.get<StyleComponent>().apply {
+            ctx.setFillStyle(fillColor)
+            ctx.setStrokeStyle(strokeColor)
+            ctx.setLineWidth(strokeWidth)
+        }
 
-        ctx.beginPath()
-
-        val scale = fragments.first().get<ScaleComponent>().scale
+        ctx.scale(fragments.first().get<ScaleComponent>().scale)
 
         for (fragment in fragments) {
             val screenGeometry = fragment.tryGet<ScreenGeometryComponent>() ?: error("")
@@ -40,17 +44,13 @@ class RegionRenderer : Renderer {
 
             for (origin in screenLoop.origins) {
                 ctx.save()
-                ctx.translate(origin.x, origin.y)
-                ctx.scale(scale, scale)
-                Renderers.drawLines(
-                    screenGeometry.geometry,
-                    ctx
-                ) { nop() }
+                ctx.beginPath()
+                ctx.translate(origin.div(fragments.first().get<ScaleComponent>().scale))
+                drawLines(screenGeometry.geometry, ctx) { nop() }
+                ctx.fill()
                 ctx.restore()
             }
         }
-
-        ctx.fill()
     }
 
     private fun nop() {}

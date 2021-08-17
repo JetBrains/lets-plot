@@ -12,7 +12,7 @@ import jetbrains.livemap.api.MapEntityFactory
 import jetbrains.livemap.api.PathBuilder
 import jetbrains.livemap.api.PointBuilder
 import jetbrains.livemap.api.geometry
-import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.core.animation.Animations.AnimationBuilder
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager

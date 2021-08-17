@@ -22,9 +22,9 @@ def assert_point(expected: GeoPoint, actual: GeoPoint):
 
 def assert_rect(expected: GeoRect, actual: GeoRect):
     if not _check_is_none(expected, actual):
-        assert expected.min_lon == actual.min_lon
+        assert expected.start_lon == actual.start_lon
         assert expected.min_lat == actual.min_lat
-        assert expected.max_lon == actual.max_lon
+        assert expected.end_lon == actual.end_lon
         assert expected.max_lat == actual.max_lat
 
 

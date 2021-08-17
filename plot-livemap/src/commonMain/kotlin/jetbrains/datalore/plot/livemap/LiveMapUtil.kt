@@ -36,37 +36,37 @@ object LiveMapUtil {
 
     internal fun createLayersConfigurator(
         layerKind: MapLayerKind,
-        entityBuilders: List<MapEntityBuilder>
+        liveMapDataPoints: List<DataPointLiveMapAesthetics>
     ): LayersBuilder.() -> Unit = {
         when (layerKind) {
             MapLayerKind.POINT -> points {
-                entityBuilders.forEach { it.toPointBuilder()?.run(::point) }
+                liveMapDataPoints.forEach { it.toPointBuilder().run(::point) }
             }
             MapLayerKind.POLYGON -> polygons {
-                entityBuilders.forEach { polygon(it.createPolygonConfigurator()) }
+                liveMapDataPoints.forEach { polygon(it.createPolygonConfigurator()) }
             }
             MapLayerKind.PATH -> paths {
-                entityBuilders.forEach { it.toPathBuilder()?.let(::path) }
+                liveMapDataPoints.forEach { it.toPathBuilder()?.let(::path) }
             }
 
             MapLayerKind.V_LINE -> vLines {
-                entityBuilders.forEach { it.toLineBuilder()?.let(::line) }
+                liveMapDataPoints.forEach { it.toLineBuilder().let(::line) }
             }
 
             MapLayerKind.H_LINE -> hLines {
-                entityBuilders.forEach { it.toLineBuilder()?.let(::line) }
+                liveMapDataPoints.forEach { it.toLineBuilder().let(::line) }
             }
 
             MapLayerKind.TEXT -> texts {
-                entityBuilders.forEach { it.toTextBuilder()?.let(::text) }
+                liveMapDataPoints.forEach { it.toTextBuilder().let(::text) }
             }
 
             MapLayerKind.PIE -> pies {
-                entityBuilders.forEach { it.toChartBuilder()?.let(::pie) }
+                liveMapDataPoints.forEach { it.toChartBuilder().let(::pie) }
             }
 
             MapLayerKind.BAR -> bars {
-                entityBuilders.forEach { it.toChartBuilder()?.let(::bar) }
+                liveMapDataPoints.forEach { it.toChartBuilder().let(::bar) }
             }
 
             else -> error("Unsupported layer kind: $layerKind")

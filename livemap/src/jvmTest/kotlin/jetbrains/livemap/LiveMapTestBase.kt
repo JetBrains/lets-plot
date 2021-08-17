@@ -9,7 +9,7 @@ import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.MapRenderContext
 import jetbrains.livemap.camera.MutableCamera
-import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor

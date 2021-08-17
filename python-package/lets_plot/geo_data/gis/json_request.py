@@ -3,7 +3,8 @@ from typing import Dict, List, Optional, Tuple
 
 from .fluent_dict import FluentDict, FluentList
 from .geometry import GeoPoint
-from .request import RegionQuery, MapRegion, MapRegionKind, PayloadKind, RegionQueryBuilder, IgnoringStrategyKind, MapRegionBuilder
+from .request import RegionQuery, MapRegion, MapRegionKind, PayloadKind, RegionQueryBuilder, IgnoringStrategyKind, \
+    MapRegionBuilder
 from .request import Request, GeocodingRequest, ExplicitRequest, RequestBuilder, RequestKind, ReverseGeocodingRequest
 from .response import LevelKind, GeoRect
 
@@ -150,9 +151,9 @@ class RequestFormatter:
             return None
 
         return FluentDict() \
-            .put(Field.min_lon, rect.min_lon) \
+            .put(Field.min_lon, rect.start_lon) \
             .put(Field.min_lat, rect.min_lat) \
-            .put(Field.max_lon, rect.max_lon) \
+            .put(Field.max_lon, rect.end_lon) \
             .put(Field.max_lat, rect.max_lat) \
             .to_dict()
 
@@ -220,9 +221,9 @@ class RequestParser:
     @staticmethod
     def _parse_geo_rect(jsonBox: FluentDict) -> GeoRect:
         return GeoRect(
-            min_lon=jsonBox.get_float(Field.min_lon),
+            start_lon=jsonBox.get_float(Field.min_lon),
             min_lat=jsonBox.get_float(Field.min_lat),
-            max_lon=jsonBox.get_float(Field.max_lon),
+            end_lon=jsonBox.get_float(Field.max_lon),
             max_lat=jsonBox.get_float(Field.max_lat),
         )
 

@@ -102,6 +102,10 @@ open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) :
         return p.upper()
     }
 
+    override fun mapId(): Any {
+        return p.mapId()
+    }
+
     override fun frame(): String {
         return p.frame()
     }

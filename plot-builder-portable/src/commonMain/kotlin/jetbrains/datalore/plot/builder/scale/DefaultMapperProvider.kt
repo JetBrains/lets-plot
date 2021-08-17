@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
+import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
@@ -104,6 +105,7 @@ object DefaultMapperProvider {
             this.put(MIDDLE, NUMERIC_IDENTITY)
             this.put(UPPER, NUMERIC_IDENTITY)
 
+            this.put(MAP_ID, createObjectIdentityDiscrete(MAP_ID))
             this.put(FRAME, createStringIdentity(FRAME))
 
             this.put(SPEED, NUMERIC_IDENTITY)

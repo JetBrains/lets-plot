@@ -6,7 +6,8 @@ from typing import List, Optional, Union, Dict
 from pandas import DataFrame, Series
 
 from lets_plot.geo_data_internals.constants import DF_COLUMN_HIGHLIGHTS, DF_COLUMN_COUNTRY, DF_COLUMN_STATE, \
-    DF_COLUMN_COUNTY, DF_COLUMN_CITY, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
+    DF_COLUMN_COUNTY, DF_COLUMN_CITY, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME, DF_COLUMN_POSITION, DF_COLUMN_LIMIT, \
+    DF_COLUMN_CENTROID
 from .gis.geocoding_service import GeocodingService
 from .gis.request import PayloadKind, RequestBuilder, RequestKind, MapRegion, RegionQuery
 from .gis.response import Answer, GeocodedFeature, Namesake, AmbiguousFeature, LevelKind
@@ -33,39 +34,6 @@ class Resolution(enum.Enum):
     world_high = 3
     world_medium = 2
     world_low = 1
-
-
-def _select_request_string(request: Optional[str], name: str) -> str:
-    if request is None:
-        return name
-
-    if len(request) == 0:
-        return name
-
-    if 'us-48' == request.lower():
-        return name
-
-    return request
-
-
-def _level_to_column_name(level_kind: LevelKind):
-    if level_kind == LevelKind.city:
-        return DF_COLUMN_CITY
-    elif level_kind == LevelKind.county:
-        return DF_COLUMN_COUNTY
-    elif level_kind == LevelKind.state:
-        return DF_COLUMN_STATE
-    elif level_kind == LevelKind.country:
-        return DF_COLUMN_COUNTRY
-    else:
-        raise ValueError('Unknown level kind: {}'.format(level_kind))
-
-
-def _zip_answers(queries: List, answers: List):
-    if len(queries) > 0:
-        return zip(queries, answers)
-    else:
-        return zip([None] * len(answers), answers)
 
 
 class PlacesDataFrameBuilder:
@@ -118,8 +86,7 @@ class PlacesDataFrameBuilder:
 
 
 class Geocodes:
-    def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery],
-                 highlights: bool = False):
+    def __init__(self, level_kind: LevelKind, answers: List[Answer], queries: List[RegionQuery], highlights: bool = False):
         assert_list_type(answers, Answer)
         assert_list_type(queries, RegionQuery)
 
@@ -130,7 +97,7 @@ class Geocodes:
 
         try:
             import geopandas
-        except:
+        except ImportError:
             raise ValueError('Module \'geopandas\'is required for geocoding') from None
 
         self._level_kind: LevelKind = level_kind
@@ -305,15 +272,21 @@ class Geocodes:
     def to_data_frame(self) -> DataFrame:
         places = PlacesDataFrameBuilder(self._level_kind)
 
-        data = {}
-        data[DF_COLUMN_ID] = [feature.id for feature in self._geocoded_features]
-
         # for us-48 queries doesnt' count
         for query, answer in _zip_answers(self._queries, self._answers):
             for feature in answer.features:
                 places.append_row(query, feature)
 
-        data = {**data, **places.build_dict()}
+        def geo_rect_to_list(geo_rect: 'GeoRect') -> List:
+            return [geo_rect.start_lon, geo_rect.min_lat, geo_rect.end_lon, geo_rect.max_lat]
+
+        data = {
+            DF_COLUMN_ID: [feature.id for feature in self._geocoded_features],
+            **places.build_dict(),
+            DF_COLUMN_CENTROID: [[feature.centroid.lon, feature.centroid.lat] for feature in self._geocoded_features],
+            DF_COLUMN_POSITION: [geo_rect_to_list(feature.position) for feature in self._geocoded_features],
+            DF_COLUMN_LIMIT: [geo_rect_to_list(feature.limit) for feature in self._geocoded_features]
+        }
 
         if self._highlights:
             data[DF_COLUMN_HIGHLIGHTS] = [feature.highlights for feature in self._geocoded_features]
@@ -504,3 +477,36 @@ def _autodetect_resolution(level: LevelKind, count: int) -> int:
             return Resolution.country_low.value
         else:
             return Resolution.world_high.value
+
+
+def _select_request_string(request: Optional[str], name: str) -> str:
+    if request is None:
+        return name
+
+    if len(request) == 0:
+        return name
+
+    if 'us-48' == request.lower():
+        return name
+
+    return request
+
+
+def _level_to_column_name(level_kind: LevelKind):
+    if level_kind == LevelKind.city:
+        return DF_COLUMN_CITY
+    elif level_kind == LevelKind.county:
+        return DF_COLUMN_COUNTY
+    elif level_kind == LevelKind.state:
+        return DF_COLUMN_STATE
+    elif level_kind == LevelKind.country:
+        return DF_COLUMN_COUNTRY
+    else:
+        raise ValueError('Unknown level kind: {}'.format(level_kind))
+
+
+def _zip_answers(queries: List, answers: List):
+    if len(queries) > 0:
+        return zip(queries, answers)
+    else:
+        return zip([None] * len(answers), answers)

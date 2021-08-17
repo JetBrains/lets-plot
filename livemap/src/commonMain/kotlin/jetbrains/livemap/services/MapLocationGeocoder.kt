@@ -10,8 +10,6 @@ import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.GeocodingRequestBuilder
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.RegionQueryBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.core.projections.MapRuler
@@ -53,25 +51,12 @@ class MapLocationGeocoder(
             }
     }
 
-    private fun createRequestBuilder(mapRegion: MapRegion) =
-        when {
-            mapRegion.containsId() -> {
-                ExplicitRequestBuilder().setIds(mapRegion.idList)
-            }
-            mapRegion.containsName() -> {
-                GeocodingRequestBuilder()
-                    .addQuery(
-                        RegionQueryBuilder()
-                            .setQueryNames(mapRegion.name)
-                            .build()
-                    )
-            }
-            else -> {
-                throw IllegalArgumentException("Unknown map region kind")
-            }
-        }
+    private fun createRequestBuilder(mapRegion: MapRegion): ExplicitRequestBuilder {
+        require(mapRegion.containsId()) { "location should contain geocode" }
+        return ExplicitRequestBuilder().setIds(mapRegion.idList)
+    }
 
-    fun calculateBBoxOfGeoRect(geoRect: GeoRectangle): Rect<World> {
+    internal fun calculateBBoxOfGeoRect(geoRect: GeoRectangle): Rect<World> {
         return myMapRuler.calculateBoundingBox(geoRect.convertToWorldRects(myMapProjection))
     }
 

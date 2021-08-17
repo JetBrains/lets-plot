@@ -4,7 +4,7 @@
 #
 from typing import Any, Tuple, Sequence
 
-from lets_plot.geo_data_internals.utils import is_geocoder, find_geo_names
+from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
 
@@ -16,7 +16,7 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
-def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
+def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     data_meta = {}
 
     # data
@@ -63,19 +63,6 @@ def is_data_pub_stream(data: Any) -> bool:
     return False
 
 
-def as_annotated_map_data(raw_map: Any) -> dict:
-    if raw_map is None:
-        return {}
-
-    if is_geocoder(raw_map):
-        return {'map_data_meta': {'georeference': {}}}
-
-    if is_geo_data_frame(raw_map):
-        return {'map_data_meta': get_geo_data_frame_meta(raw_map)}
-
-    raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)) + '. Should be a GeoDataFrame.')
-
-
 def normalize_map_join(map_join):
     if map_join is None:
         return None
@@ -83,26 +70,26 @@ def normalize_map_join(map_join):
     def invalid_map_join_format():
         return ValueError("map_join must be a str, list[str] or pair of list[str]")
 
-    if isinstance(map_join, str):
+    if isinstance(map_join, str):  # 'foo' -> [['foo'], None]
         data_names = [map_join]
         map_names = None
     elif isinstance(map_join, Sequence):
         if all(isinstance(v, str) for v in map_join):  # all items are strings
-            if len(map_join) == 1:
+            if len(map_join) == 1:  # ['foo'] -> [['foo'], None]
                 data_names = map_join
                 map_names = None
-            elif len(map_join) == 2:
+            elif len(map_join) == 2:  # ['foo', 'bar'] -> [['foo'], ['bar']]
                 data_names = [map_join[0]]
                 map_names = [map_join[1]]
-            elif len(map_join) > 2:
+            elif len(map_join) > 2:  # ['foo', 'bar', 'baz'] -> error
                 raise ValueError("map_join of type list[str] expected to have 1 or 2 items, but was {}".format(len(map_join)))
             else:
                 raise invalid_map_join_format()
         elif all(isinstance(v, Sequence) and not isinstance(v, str) for v in map_join):  # all items are lists
-            if len(map_join) == 1:
+            if len(map_join) == 1:  # [['foo', 'bar']] -> [['foo', 'bar'], None]
                 data_names = map_join[0]
                 map_names = None
-            elif len(map_join) == 2:
+            elif len(map_join) == 2:  # [['foo', 'bar'], ['baz', 'qux']] -> [['foo', 'bar'], ['baz', 'qux']]
                 data_names = map_join[0]
                 map_names = map_join[1]
             else:

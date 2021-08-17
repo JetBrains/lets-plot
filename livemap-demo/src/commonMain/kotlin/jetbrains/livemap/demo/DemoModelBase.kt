@@ -16,8 +16,7 @@ import jetbrains.livemap.api.projection
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.tiles.TileSystemProvider
-import jetbrains.livemap.tiles.Tilesets
+import jetbrains.livemap.basemap.Tilesets
 import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {

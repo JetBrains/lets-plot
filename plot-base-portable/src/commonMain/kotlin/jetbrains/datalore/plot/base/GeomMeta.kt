@@ -29,7 +29,8 @@ object GeomMeta {
         Aes.COLOR,
         Aes.FILL,
         Aes.ALPHA,
-        Aes.SHAPE
+        Aes.SHAPE,
+        Aes.MAP_ID
         // strokeWidth
     )
 
@@ -49,7 +50,8 @@ object GeomMeta {
         Aes.LINETYPE,
         Aes.COLOR,
         Aes.FILL,
-        Aes.ALPHA
+        Aes.ALPHA,
+        Aes.MAP_ID
     )
 
     private val AREA = listOf(

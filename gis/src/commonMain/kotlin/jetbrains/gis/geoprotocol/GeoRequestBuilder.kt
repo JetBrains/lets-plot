@@ -10,9 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoRequest.*
-import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver
-import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver.IgnoringStrategy
-import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.RegionQuery
 import jetbrains.gis.geoprotocol.LevelOfDetails.Companion.fromResolution
 
 
@@ -69,85 +66,6 @@ object GeoRequestBuilder {
         }
     }
 
-    class ReverseGeocodingRequestBuilder : RequestBuilderBase<ReverseGeocodingRequestBuilder>() {
-        override val mode: GeocodingMode = GeocodingMode.REVERSE
-
-        private lateinit var coordinates: List<DoubleVector>
-        private lateinit var level: FeatureLevel
-        private var parent: MapRegion? = null
-
-        init {
-            super.setSelf(this)
-        }
-
-        fun setCoordinates(v: List<DoubleVector>) = apply { coordinates = v }
-        fun setLevel(v: FeatureLevel) = apply { level = v }
-        fun setParent(v: MapRegion?) = apply { parent = v }
-
-        override fun build(): GeoRequest {
-            return MyReverseGeocodingSearchRequest(
-                features,
-                fragments,
-                levelOfDetails,
-                coordinates,
-                level,
-                parent
-            )
-        }
-
-        internal class MyReverseGeocodingSearchRequest(
-            features: Set<FeatureOption>,
-            fragments: Map<String, List<QuadKey<LonLat>>>?,
-            levelOfDetails: LevelOfDetails?,
-            override val coordinates: List<DoubleVector>,
-            override val level: FeatureLevel,
-            override val parent: MapRegion?
-        ) : MyGeoRequestBase(features, fragments, levelOfDetails), ReverseGeocodingSearchRequest
-    }
-
-    class GeocodingRequestBuilder : RequestBuilderBase<GeocodingRequestBuilder>() {
-        override val mode: GeocodingMode = GeocodingMode.BY_NAME
-
-        private var featureLevel: FeatureLevel? = null
-        private var namesakeExampleLimit = DEFAULT_NAMESAKE_EXAMPLE_LIMIT
-        private val regionQueries = ArrayList<RegionQuery>()
-
-        init {
-            super.setSelf(this)
-        }
-
-        fun addQuery(query: RegionQuery): GeocodingRequestBuilder {
-            regionQueries.add(query)
-            return this
-        }
-
-        fun setLevel(v: FeatureLevel?) = apply { featureLevel = v }
-        fun setNamesakeExampleLimit(v: Int) = apply { namesakeExampleLimit = v }
-
-        override fun build(): GeoRequest {
-            return MyGeocodingSearchRequest(
-                regionQueries,
-                featureLevel,
-                namesakeExampleLimit,
-                features,
-                fragments,
-                levelOfDetails
-            )
-        }
-
-        internal class MyGeocodingSearchRequest(
-            override val queries: List<RegionQuery>,
-            override val level: FeatureLevel?,
-            override val namesakeExampleLimit: Int,
-            features: Set<FeatureOption>,
-            fragments: Map<String, List<QuadKey<LonLat>>>?,
-            levelOfDetails: LevelOfDetails?
-        ) : MyGeoRequestBase(features, fragments, levelOfDetails), GeocodingSearchRequest
-
-        companion object {
-            private const val DEFAULT_NAMESAKE_EXAMPLE_LIMIT = 10
-        }
-    }
 
     class ExplicitRequestBuilder : RequestBuilderBase<ExplicitRequestBuilder>() {
         override val mode: GeocodingMode = GeocodingMode.BY_ID
@@ -201,24 +119,4 @@ object GeoRequestBuilder {
                 MapRegion.withName(values[0])
         }
     }
-
-    class RegionQueryBuilder {
-        private var parent: MapRegion? = null
-        private var names: List<String> = ArrayList()
-        private var ambiguityResolver = AmbiguityResolver.empty()
-
-        fun setQueryNames(v: List<String>) = apply { names = v }
-        fun setQueryNames(vararg v: String) = apply { names = listOf(*v) }
-        fun setParent(v: MapRegion?) = apply { parent = v }
-        fun setIgnoringStrategy(v: IgnoringStrategy?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.ignoring(it) } }
-        fun setClosestObject(v: DoubleVector?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.closestTo(it) } }
-        fun setBox(v: DoubleRectangle?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.within(it) } }
-        fun setAmbiguityResolver(v: AmbiguityResolver) = apply { ambiguityResolver = v }
-
-        fun build(): RegionQuery {
-            return RegionQuery(names, parent, ambiguityResolver)
-        }
-
-    }
-
 }
