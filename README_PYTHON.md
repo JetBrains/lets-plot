@@ -331,7 +331,7 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
                       
 - Upgraded dependencies:
   - Kotlin: 1.5.21
-  - Apach Batik: 1.14 [[#398](https://github.com/JetBrains/lets-plot/issues/398)]
+  - Apache Batik: 1.14 [[#398](https://github.com/JetBrains/lets-plot/issues/398)]
 
 - Ordering categories:
  
