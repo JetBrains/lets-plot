@@ -6,6 +6,7 @@
 package jetbrains.datalore.base.stringFormat
 
 import jetbrains.datalore.base.dateFormat.DateTimeFormat
+import jetbrains.datalore.base.dateFormat.Pattern.Companion.isDateTimeFormat
 import jetbrains.datalore.base.datetime.Instant
 import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.numberFormat.NumberFormat
@@ -73,7 +74,7 @@ class StringFormat private constructor(
         }
         when (formatType) {
             NUMBER_FORMAT -> {
-                val numberFormatter = NumberFormat.parseOrNull(formatPattern) ?: error("Wrong pattern of number format: '$formatPattern'")
+                val numberFormatter = NumberFormat(formatPattern)
                 return { value: Any ->
                     when (value) {
                         is Number -> numberFormatter.apply(value)
@@ -137,13 +138,9 @@ class StringFormat private constructor(
         }
 
         private fun detectFormatType(pattern: String): FormatType {
-            fun isDateTimeFormatPattern(pattern: String): Boolean {
-                return DateTimeFormat.parse(pattern).find { it is DateTimeFormat.PatternSpecPart } != null
-            }
-
             return when {
                 NumberFormat.isValidPattern(pattern) -> NUMBER_FORMAT
-                isDateTimeFormatPattern(pattern) -> DATETIME_FORMAT
+                isDateTimeFormat(pattern) -> DATETIME_FORMAT
                 else -> STRING_FORMAT
             }
         }

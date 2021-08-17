@@ -50,5 +50,7 @@ enum class Pattern(val string: String, val kind: Kind) {
         }
 
         fun patternByString(patternString: String) = values().find { it.string == patternString }
+
+        fun isDateTimeFormat(patternString: String) = PATTERN_REGEX.containsMatchIn(patternString)
     }
 }

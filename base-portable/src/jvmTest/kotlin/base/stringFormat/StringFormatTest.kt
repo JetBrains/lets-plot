@@ -127,11 +127,11 @@ class StringFormatTest {
 
     @Test
     fun `try to format static text as number format`() {
-        val exception = assertFailsWith(IllegalStateException::class) {
+        val exception = assertFailsWith(IllegalArgumentException::class) {
             StringFormat.create("pattern", type = NUMBER_FORMAT).format("text")
         }
         assertEquals(
-            "Wrong pattern of number format: 'pattern'",
+            "Wrong number format pattern: 'pattern'",
             exception.message
         )
     }
