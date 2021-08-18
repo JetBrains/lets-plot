@@ -38,15 +38,7 @@ class GeomInteractionBuilderCreationTest {
         val mappedData = data + mapOf(
             Aes.FILL.name to listOf(4.0)
         )
-        val plotOpts = mutableMapOf(
-            Meta.KIND to Meta.Kind.PLOT,
-            MAPPING to mappedData,
-            LAYERS to listOf(
-                mapOf(
-                    GEOM to Option.GeomName.HISTOGRAM
-                )
-            )
-        )
+        val plotOpts = getPlotOptions(mappedData)
         val builder = createGeomInteractionBuilder(plotOpts)
         val expectedAesList = listOf(Aes.X, Aes.Y, Aes.FILL)
         val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
@@ -55,26 +47,30 @@ class GeomInteractionBuilderCreationTest {
 
     @Test
     fun `should not duplicate var to axis and generic tooltip`() {
-        val mappedData = mapOf(
-            Aes.X.name to listOf(4.0),
-            Aes.FILL.name to Aes.X.name
-        )
+        fun checkDuplicatedWithAxis(mappedData: Map<String, Any>) {
+            val builder = createGeomInteractionBuilder(getPlotOptions(mappedData))
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
+            val expectedAesList = listOf(Aes.X, Aes.Y)
+            assertAesList(expectedAesList, aesListForTooltip)
+        }
 
-        val plotOpts = mutableMapOf(
-            Meta.KIND to Meta.Kind.PLOT,
-            MAPPING to mappedData,
-            LAYERS to listOf(
-                mapOf(
-                    GEOM to Option.GeomName.HISTOGRAM
-                )
+        run {
+            val mappedData = mapOf(
+                Aes.X.name to listOf(4.0),
+                Aes.FILL.name to Aes.X.name
             )
-        )
-        val builder = createGeomInteractionBuilder(plotOpts)
+            checkDuplicatedWithAxis(mappedData)
+        }
 
-        val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-        assertFalse { aesListForTooltip.contains(Aes.FILL) }
-        val expectedAesList = listOf(Aes.X, Aes.Y)
-        assertAesList(expectedAesList, aesListForTooltip)
+        run {
+            // discrete var with multiple factors enough for the tooltip
+            val mappedData = mapOf(
+                Aes.X.name to listOf('a', 'b', 'c', 'd', 'e'),
+                Aes.FILL.name to Aes.X.name
+            )
+            checkDuplicatedWithAxis(mappedData)
+        }
     }
 
     @Test
@@ -85,20 +81,12 @@ class GeomInteractionBuilderCreationTest {
             Aes.COLOR.name to listOf('a'),
             Aes.SIZE.name to listOf(1.0)
         )
-        val plotOpts = mutableMapOf(
-            Meta.KIND to Meta.Kind.PLOT,
-            MAPPING to mappedData,
-            LAYERS to listOf(
-                mapOf(
-                    GEOM to Option.GeomName.HISTOGRAM
-                )
-            )
-        )
+        val plotOpts = getPlotOptions(mappedData)
         val builder = createGeomInteractionBuilder(plotOpts)
 
         val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-        assertFalse { aesListForTooltip.contains(Aes.FILL) }
-        assertFalse { aesListForTooltip.contains(Aes.COLOR) }
+        assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
+        assertNoTooltipForAes(Aes.COLOR, aesListForTooltip)
         val expectedAesList = listOf(Aes.X, Aes.Y, Aes.SIZE)
         assertAesList(expectedAesList, aesListForTooltip)
     }
@@ -111,12 +99,12 @@ class GeomInteractionBuilderCreationTest {
         run {
             val builder = tileWithBrewerScale(useBrewerScale = true, useContinuousVars = true)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertTrue { Aes.FILL in aesListForTooltip }
+            assertTooltipForAes(Aes.FILL, aesListForTooltip)
         }
         run {
             val builder = tileWithBrewerScale(useBrewerScale = false, useContinuousVars = true)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertTrue { Aes.FILL in aesListForTooltip }
+            assertTooltipForAes(Aes.FILL, aesListForTooltip)
         }
     }
 
@@ -125,12 +113,63 @@ class GeomInteractionBuilderCreationTest {
         run {
             val builder = tileWithBrewerScale(useBrewerScale = true, useContinuousVars = false)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertFalse { Aes.FILL in aesListForTooltip }
+            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
         }
         run {
             val builder = tileWithBrewerScale(useBrewerScale = false, useContinuousVars = false)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
-            assertFalse { Aes.FILL in aesListForTooltip }
+            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
+        }
+    }
+
+    @Test
+    fun `tooltips depending on number of factors`() {
+        val tooltipsShouldBeShown = listOf('a', 'b', 'c', 'd', 'e')
+        val noTooltips = listOf('a', 'b', 'a', 'b', 'c')
+
+        run {
+            val plotOpts = getPlotOptions(
+                mapOf(
+                    Aes.X.name to tooltipsShouldBeShown,
+                    Aes.FILL.name to tooltipsShouldBeShown
+                )
+            )
+            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
+            assertTooltipForAes(Aes.FILL, aesListForTooltip)
+            assertTooltipForAes(Aes.X, aesListForTooltip)
+        }
+        run {
+            val plotOpts = getPlotOptions(
+                mapOf(
+                    Aes.X.name to tooltipsShouldBeShown,
+                    Aes.FILL.name to noTooltips
+                )
+            )
+            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
+            assertTooltipForAes(Aes.X, aesListForTooltip)
+            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
+        }
+        run {
+            val plotOpts = getPlotOptions(
+                mapOf(
+                    Aes.X.name to noTooltips,
+                    Aes.FILL.name to tooltipsShouldBeShown
+                )
+            )
+            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
+            assertNoTooltipForAes(Aes.X, aesListForTooltip)
+            assertTooltipForAes(Aes.FILL, aesListForTooltip)
+        }
+        run {
+            val plotOpts = getPlotOptions(
+                mapOf(
+                    Aes.X.name to noTooltips,
+                    Aes.FILL.name to noTooltips
+                )
+            )
+            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
+            assertNoTooltipForAes(Aes.X, aesListForTooltip)
+            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
         }
     }
 
@@ -166,6 +205,18 @@ class GeomInteractionBuilderCreationTest {
         return createGeomInteractionBuilder(plotOpts)
     }
 
+    private fun getPlotOptions(mappedData: Map<String, Any>): MutableMap<String, Any> {
+        return mutableMapOf(
+            Meta.KIND to Meta.Kind.PLOT,
+            MAPPING to mappedData,
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to Option.GeomName.HISTOGRAM
+                )
+            )
+        )
+    }
+
     private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>): GeomInteractionBuilder {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
         val plotConfig = PlotConfigClientSide.create(plotSpec) {}
@@ -188,7 +239,18 @@ class GeomInteractionBuilderCreationTest {
     private fun assertAesList(expectedList: List<Aes<*>>, actualList: List<Aes<*>>) {
         assertEquals(expectedList.size, actualList.size)
         expectedList.forEach { aes ->
-            assertTrue(aes in actualList, "No tooltips for aes = ${aes.name}")
+            assertTooltipForAes(aes, actualList)
         }
+    }
+
+    private fun assertNoTooltipForAes(aes: Aes<*>, aesListForTooltip: List<Aes<*>>) {
+        assertFalse(
+            aes in aesListForTooltip,
+            "Aes '${aes.name}' should not be in tooltips, actual list: $aesListForTooltip"
+        )
+    }
+
+    private fun assertTooltipForAes(aes: Aes<*>, aesListForTooltip: List<Aes<*>>) {
+        assertTrue(aes in aesListForTooltip, "No tooltips for aes = '${aes.name}', actual list: $aesListForTooltip")
     }
 }
