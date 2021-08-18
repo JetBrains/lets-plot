@@ -10,7 +10,7 @@ import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Time
 
-class Format(private val spec: List<SpecPart>) {
+class DateTimeFormat(private val spec: List<SpecPart>) {
 
     constructor(spec: String): this(parse(spec))
 
@@ -19,7 +19,7 @@ class Format(private val spec: List<SpecPart>) {
     }
 
     class PatternSpecPart(str: String): SpecPart(str) {
-        val pattern: Pattern = Pattern.patternByString(str) ?: throw IllegalArgumentException("Wrong pattern: $str")
+        val pattern: Pattern = Pattern.patternByString(str) ?: throw IllegalArgumentException("Wrong date-time pattern: $str")
 
         override fun exec(dateTime: DateTime): String {
             return getValueForPattern(pattern, dateTime)

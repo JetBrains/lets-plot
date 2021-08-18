@@ -281,7 +281,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                 with.labels(myLabels)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat.create(myLabelFormat)::format)
+                with.labelFormatter(StringFormat.forOneArg(myLabelFormat)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)
