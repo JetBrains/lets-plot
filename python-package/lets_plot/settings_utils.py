@@ -165,12 +165,14 @@ def maptiles_solid(color: str):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 5
 
         from lets_plot import *
+        from lets_plot.geo_data import *
         LetsPlot.setup_html()
+        nyc = geocode_cities('New York').get_boundaries()
         tiles = maptiles_solid(color='#d3d3d3')
-        ggplot() + geom_livemap(tiles=tiles)
+        ggplot() + geom_livemap(tiles=tiles) + geom_map(data=nyc)
 
     """
     return {
@@ -193,7 +195,7 @@ def maptiles_chessboard():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 3
 
         from lets_plot.settings_utils import maptiles_chessboard
         LetsPlot.setup_html()
