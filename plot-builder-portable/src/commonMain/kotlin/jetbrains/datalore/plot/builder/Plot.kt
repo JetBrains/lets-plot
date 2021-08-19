@@ -356,7 +356,20 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             tile.liveMapFigure?.let(myLiveMapFigures::add)
 
             val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
-            myTooltipHelper.addTileInfo(geomBoundsAbsolute, tile.getClipRect(geomBoundsAbsolute), tile.targetLocators)
+            val tooltipBounds = PlotTooltipBounds(
+                placementArea = geomBoundsAbsolute,
+                handlingArea = tile.limitRect(geomBoundsAbsolute) // = drawing area of geoms
+            )
+            myTooltipHelper.addTileInfo(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
+
+            @Suppress("ConstantConditionIf")
+            if (DEBUG_DRAWING) {
+                val rect = SvgRectElement(tooltipBounds.handlingArea)
+                rect.strokeColor().set(Color.ORANGE)
+                rect.strokeWidth().set(1.0)
+                rect.fillOpacity().set(0.0)
+                add(rect)
+            }
         }
 
         @Suppress("ConstantConditionIf")
@@ -424,12 +437,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         return myTooltipHelper.createTooltipSpecs(plotCoord)
     }
 
-    fun getAbsoluteGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
-        return myTooltipHelper.getAbsoluteGeomBounds(plotCoord)
-    }
-
-    fun getClippedGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
-        return myTooltipHelper.getClippedGeomBounds(plotCoord)
+    fun getTooltipBounds(plotCoord: DoubleVector): PlotTooltipBounds? {
+        return myTooltipHelper.getTooltipBounds(plotCoord)
     }
 
     companion object {

@@ -22,13 +22,13 @@ internal class PlotTooltipHelper {
     }
 
     fun addTileInfo(
-        geomBoundsAbsolute: DoubleRectangle,
-        geomClipBounds: DoubleRectangle?,
+        geomBounds: DoubleRectangle,
+        tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>
     ) {
         val tileInfo = TileInfo(
-            geomBoundsAbsolute,
-            geomClipBounds,
+            geomBounds,
+            tooltipBounds,
             targetLocators
         )
         myTileInfos.add(tileInfo)
@@ -41,14 +41,9 @@ internal class PlotTooltipHelper {
         return createTooltipSpecs(lookupResults, tileInfo.axisOrigin)
     }
 
-    fun getAbsoluteGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
+    fun getTooltipBounds(plotCoord: DoubleVector): PlotTooltipBounds? {
         val tileInfo = findTileInfo(plotCoord) ?: return null
-        return tileInfo.absoluteGeomBounds
-    }
-
-    fun getClippedGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
-        val tileInfo = findTileInfo(plotCoord) ?: return null
-        return tileInfo.clippedGeomBounds
+        return tileInfo.tooltipBounds
     }
 
     private fun findTileInfo(plotCoord: DoubleVector): TileInfo? {
@@ -57,7 +52,6 @@ internal class PlotTooltipHelper {
                 return tileInfo
             }
         }
-
         return null
     }
 
@@ -72,17 +66,16 @@ internal class PlotTooltipHelper {
         return tooltipSpecs
     }
 
-
     private class TileInfo(
-        val absoluteGeomBounds: DoubleRectangle,
-        val clippedGeomBounds: DoubleRectangle?,
+        val geomBounds: DoubleRectangle,
+        val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>
     ) {
 
         private val myTargetLocators = targetLocators.map { TileTargetLocator(it) }
 
         internal val axisOrigin: DoubleVector
-            get() = DoubleVector(absoluteGeomBounds.left, absoluteGeomBounds.bottom)
+            get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<LookupResult> {
             val targetsPicker = LocatedTargetsPicker().apply {
@@ -97,17 +90,17 @@ internal class PlotTooltipHelper {
         }
 
         internal operator fun contains(plotCoord: DoubleVector): Boolean {
-            return absoluteGeomBounds.contains(plotCoord)
+            return geomBounds.contains(plotCoord)
         }
 
         private inner class TileTargetLocator(locator: GeomTargetLocator) : TransformedTargetLocator(locator) {
 
             override fun convertToTargetCoord(coord: DoubleVector): DoubleVector {
-                return coord.subtract(absoluteGeomBounds.origin)
+                return coord.subtract(geomBounds.origin)
             }
 
             override fun convertToPlotCoord(coord: DoubleVector): DoubleVector {
-                return coord.add(absoluteGeomBounds.origin)
+                return coord.add(geomBounds.origin)
             }
 
             override fun convertToPlotDistance(distance: Double): Double {
@@ -115,5 +108,4 @@ internal class PlotTooltipHelper {
             }
         }
     }
-
 }

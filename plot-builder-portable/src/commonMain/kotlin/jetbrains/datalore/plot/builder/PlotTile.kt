@@ -152,14 +152,14 @@ internal class PlotTile(
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
 
-                val clipRect = getClipRect(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
+                val clipRect = limitRect(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
                 layerComponent.clipBounds(clipRect)
                 add(layerComponent)
             }
         }
     }
 
-    fun getClipRect(geomBounds: DoubleRectangle): DoubleRectangle {
+    fun limitRect(geomBounds: DoubleRectangle): DoubleRectangle {
         operator fun ClosedRange<Double>.plus(v: Double): ClosedRange<Double> {
             return ClosedRange(this.lowerEnd + v, this.upperEnd + v)
         }

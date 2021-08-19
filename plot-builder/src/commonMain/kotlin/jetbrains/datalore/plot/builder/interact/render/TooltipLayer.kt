@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.interact.render
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import jetbrains.datalore.plot.builder.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
@@ -28,8 +29,7 @@ internal class TooltipLayer(
     fun showTooltips(
         cursor: DoubleVector,
         tooltipSpecs: List<TooltipSpec>,
-        tooltipPlacementBounds: DoubleRectangle?,
-        tooltipResponseBounds: DoubleRectangle?
+        tooltipBounds: PlotTooltipBounds?
     ) {
         clearTooltips()
 
@@ -40,8 +40,8 @@ internal class TooltipLayer(
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipPlacementBounds, tooltipResponseBounds) }
-            .also { tooltips -> tooltipResponseBounds?.let { showCrosshair(tooltips, it) } }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
+            .also { tooltips -> tooltipBounds?.let { showCrosshair(tooltips, it.handlingArea) } }
             .map { arranged ->
                 arranged.tooltipBox.apply {
                     setPosition(

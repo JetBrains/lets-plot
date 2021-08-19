@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import jetbrains.datalore.plot.builder.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
@@ -32,15 +33,14 @@ class LayoutManager(
     fun arrange(
         tooltips: List<MeasuredTooltip>,
         cursorCoord: DoubleVector,
-        tooltipPlacementBounds: DoubleRectangle?,
-        tooltipResponseBounds: DoubleRectangle?
+        tooltipBounds: PlotTooltipBounds?
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
         myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
-        if (tooltipPlacementBounds != null) {
-            myHorizontalTooltipSpace = DoubleRange.withStartAndLength(tooltipPlacementBounds.origin.x, tooltipPlacementBounds.dimension.x)
-            myVerticalTooltipSpace = DoubleRange.withStartAndLength(tooltipPlacementBounds.origin.y, tooltipPlacementBounds.dimension.y)
+        if (tooltipBounds != null) {
+            myHorizontalTooltipSpace = DoubleRange.withStartAndLength(tooltipBounds.placementArea.origin.x, tooltipBounds.placementArea.dimension.x)
+            myVerticalTooltipSpace = DoubleRange.withStartAndLength(tooltipBounds.placementArea.origin.y, tooltipBounds.placementArea.dimension.y)
         }
 
         val desiredPosition = ArrayList<PositionedTooltip>()
@@ -50,7 +50,7 @@ class LayoutManager(
             .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
             ?.let { xAxisTooltip ->
                 val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, true)
-                if (isTooltipWithinBounds(positionedTooltip, tooltipResponseBounds)) {
+                if (isTooltipWithinBounds(positionedTooltip, tooltipBounds?.handlingArea)) {
                     desiredPosition.add(positionedTooltip)
 
                     // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
@@ -70,13 +70,13 @@ class LayoutManager(
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let {
                 val positionedTooltip = calculateHorizontalTooltipPosition(it)
-                if (isTooltipWithinBounds(positionedTooltip, tooltipResponseBounds)) {
+                if (isTooltipWithinBounds(positionedTooltip, tooltipBounds?.handlingArea)) {
                     desiredPosition.add(positionedTooltip)
                 }
             }
 
         // add corner tooltips - if the cursor is located within the visible boundaries
-        if (tooltipResponseBounds?.contains(cursorCoord) != false) {
+        if (tooltipBounds?.handlingArea?.contains(cursorCoord) != false) {
             desiredPosition += calculateCornerTooltipsPosition(tooltips)
         }
 
@@ -88,7 +88,7 @@ class LayoutManager(
         )
             .filter { positionedTooltip ->
                 // Select tooltips within the visibility bounds
-                isTooltipWithinBounds(positionedTooltip, tooltipResponseBounds)
+                isTooltipWithinBounds(positionedTooltip, tooltipBounds?.handlingArea)
             }
 
         // if general tooltips were removed => axis tooltips should also be hidden
