@@ -11,7 +11,6 @@ import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequest.*
-import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.RegionQuery
 import jetbrains.gis.geoprotocol.LevelOfDetails
 import jetbrains.gis.geoprotocol.MapRegion
 import kotlin.test.assertEquals
@@ -22,14 +21,6 @@ internal object RequestAssertions {
 
     fun assertThatExplicitRequest(request: ExplicitSearchRequest): ExplicitSearchRequestAssertion {
         return ExplicitSearchRequestAssertion(request)
-    }
-
-    fun assertThatReverseRequest(request: ReverseGeocodingSearchRequest): ReverseGeocodingSearchRequestAssertion {
-        return ReverseGeocodingSearchRequestAssertion(request)
-    }
-
-    fun assertThatGeocodingRequest(request: GeocodingSearchRequest): GeocodingSearchRequestAssertion {
-        return GeocodingSearchRequestAssertion(request)
     }
 
     internal open class SearchRequestBaseAssertion
@@ -85,65 +76,4 @@ internal object RequestAssertions {
             return this
         }
     }
-
-
-    internal class ReverseGeocodingSearchRequestAssertion(request: ReverseGeocodingSearchRequest) :
-        SearchRequestBaseAssertion<ReverseGeocodingSearchRequestAssertion, ReverseGeocodingSearchRequest>
-            (request) {
-
-        init {
-            setSelf(this)
-        }
-
-        fun hasCoordinates(vararg v: DoubleVector): ReverseGeocodingSearchRequestAssertion {
-            assertEquals(listOf(*v), actual.coordinates)
-            return this
-        }
-
-        fun hasLevel(v: FeatureLevel): ReverseGeocodingSearchRequestAssertion {
-            assertEquals(v, actual.level)
-            return this
-        }
-
-        fun hasParent(v: MapRegion): ReverseGeocodingSearchRequestAssertion {
-            assertEquals(v, actual.parent)
-            return this
-        }
-
-        fun hasNoParent(): ReverseGeocodingSearchRequestAssertion {
-            assertNull(actual.parent)
-            return this
-        }
-
-    }
-
-    internal class GeocodingSearchRequestAssertion(request: GeocodingSearchRequest) :
-        SearchRequestBaseAssertion<GeocodingSearchRequestAssertion, GeocodingSearchRequest>(request) {
-
-        init {
-            setSelf(this)
-        }
-
-        fun hasQueries(vararg v: RegionQuery): GeocodingSearchRequestAssertion {
-            assertEquals(listOf(*v), actual.queries)
-            return this
-        }
-
-        fun hasLevel(v: FeatureLevel): GeocodingSearchRequestAssertion {
-            assertEquals(v, actual.level)
-            return this
-        }
-
-        fun hasNoLevel(): GeocodingSearchRequestAssertion {
-            assertNull(actual.level)
-            return this
-        }
-
-        fun hasNamesakeExampleLimit(v: Int): GeocodingSearchRequestAssertion {
-            assertEquals(v, actual.namesakeExampleLimit)
-            return this
-        }
-    }
-
-
 }

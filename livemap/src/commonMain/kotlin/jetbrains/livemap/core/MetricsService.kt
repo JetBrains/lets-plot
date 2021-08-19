@@ -13,7 +13,7 @@ class MetricsService (private val mySystemTime: SystemTime) {
 
     private var myBeginTime: Long = 0
 
-    var totalUpdateTime = 0.0
+    var totalUpdateTime = 0L
         private set
 
     private val myValuesMap = HashMap<String, String>()
@@ -38,7 +38,7 @@ class MetricsService (private val mySystemTime: SystemTime) {
 
     fun reset() {
         myMeasures.clear()
-        totalUpdateTime = 0.0
+        totalUpdateTime = 0L
     }
 
     fun slowestSystem(): Pair<EcsSystem, Double>? {

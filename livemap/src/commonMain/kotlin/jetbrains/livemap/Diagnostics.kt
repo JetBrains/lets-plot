@@ -8,6 +8,8 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.basemap.raster.RasterTileLoadingSystem.HttpTileResponseComponent
+import jetbrains.livemap.basemap.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
@@ -21,8 +23,6 @@ import jetbrains.livemap.regions.CachedFragmentsComponent
 import jetbrains.livemap.regions.DownloadingFragmentsComponent
 import jetbrains.livemap.regions.FragmentKey
 import jetbrains.livemap.regions.StreamingFragmentsComponent
-import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.HttpTileResponseComponent
-import jetbrains.livemap.tiles.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {
@@ -34,7 +34,7 @@ open class Diagnostics {
         private val dirtyLayers: List<Int>,
         private val schedulerSystem: SchedulerSystem,
         private val debugService: MetricsService,
-        uiService: UiService,
+        private val uiService: UiService,
         private val registry: EcsComponentManager
     ) : Diagnostics() {
 
@@ -97,16 +97,19 @@ open class Diagnostics {
 
         override fun update(dt: Long) {
             deltaTime = dt
-            debugService.setValue(TIMER_TICK, "Timer tick: $deltaTime")
+            debugService.setValue(TIMER_TICK, "Timer tick: ${deltaTime.toOdd()}") // reduces excessive repaints
             debugService.setValue(
                 SYSTEMS_UPDATE_TIME,
-                "Systems update: ${formatDouble(debugService.totalUpdateTime, 1)}"
+                "Systems update: ${debugService.totalUpdateTime.toOdd()}"
             )
             debugService.setValue(ENTITIES_COUNT, "Entities count: ${registry.entitiesCount}")
 
             diagnostics.forEach(Diagnostic::update)
 
-            metrics.text = debugService.values
+            if (metrics.text != debugService.values) {
+                metrics.text = debugService.values
+                uiService.repaint()
+            }
         }
 
         internal inner class FreezingSystemDiagnostic : Diagnostic {
@@ -248,4 +251,6 @@ open class Diagnostics {
             private const val IS_LOADING = "is_loading"
         }
     }
+
+    fun Long.toOdd() = this - this % 2
 }

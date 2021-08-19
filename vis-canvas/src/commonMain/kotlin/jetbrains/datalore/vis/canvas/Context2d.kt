@@ -45,6 +45,7 @@ interface Context2d {
     fun strokeText(text: String, x: Double, y: Double)
     fun fillText(text: String, x: Double, y: Double)
     fun scale(x: Double, y: Double)
+    fun scale(xy: Double)
     fun rotate(angle: Double)
     fun translate(x: Double, y: Double)
     fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)

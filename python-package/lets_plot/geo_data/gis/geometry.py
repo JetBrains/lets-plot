@@ -22,17 +22,20 @@ class GeoPoint(GeometryBase):
 
 
 class GeoRect(GeometryBase):
-    def __init__(self, min_lon: float, min_lat: float, max_lon: float, max_lat: float):
-        self.min_lon: float = min_lon
+    def __init__(self, start_lon: float, min_lat: float, end_lon: float, max_lat: float):
+        self.start_lon: float = start_lon
         self.min_lat: float = min_lat
-        self.max_lon: float = max_lon
+        self.end_lon: float = end_lon
         self.max_lat: float = max_lat
+
+    def crosses_antimeridian(self):
+        return self.start_lon > self.end_lon
 
     def __eq__(self, other):
         return isinstance(other, GeoRect) \
-               and self.min_lon == other.min_lon \
+               and self.start_lon == other.start_lon \
                and self.min_lat == other.min_lat \
-               and self.max_lon == other.max_lon \
+               and self.end_lon == other.end_lon \
                and self.max_lat == other.max_lat
 
     def __ne__(self, other):

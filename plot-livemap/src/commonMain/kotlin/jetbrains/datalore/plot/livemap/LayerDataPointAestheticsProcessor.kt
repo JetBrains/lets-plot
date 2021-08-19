@@ -20,7 +20,9 @@ import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.MultiPointData
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
+import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
 import jetbrains.livemap.api.LayersBuilder
 import kotlin.math.abs
@@ -31,70 +33,61 @@ internal class LayerDataPointAestheticsProcessor(
 ) {
 
     internal fun createConfigurator(layerIndex: Int, layerData: LiveMapLayerData): LayersBuilder.() -> Unit {
-        val geomKind = layerData.geomKind
-
-//        if (isDebugLogEnabled()) {
-//            debugLog("Geom Kind: $geomKind")
-//        }
-
-        val aesthetics = layerData.aesthetics
-
-        val dataPointsConverter = DataPointsConverter(aesthetics, myGeodesic)
-
-        val mapEntityBuilders: List<MapEntityBuilder>
+        val dataPointsConverter = DataPointsConverter(layerData.aesthetics, myGeodesic)
+        val dataPointLiveMapAesthetics: List<DataPointLiveMapAesthetics>
         val layerKind: MapLayerKind
-        when (geomKind) {
+        when (layerData.geomKind) {
             POINT -> {
-                mapEntityBuilders = dataPointsConverter.toPoint(layerData.geom)
+                dataPointLiveMapAesthetics = dataPointsConverter.toPoint(layerData.geom)
                 layerKind = MapLayerKind.POINT
             }
 
             H_LINE -> {
-                mapEntityBuilders = dataPointsConverter.toHorizontalLine()
+                dataPointLiveMapAesthetics = dataPointsConverter.toHorizontalLine()
                 layerKind = MapLayerKind.H_LINE
             }
 
             V_LINE -> {
-                mapEntityBuilders = dataPointsConverter.toVerticalLine()
+                dataPointLiveMapAesthetics = dataPointsConverter.toVerticalLine()
                 layerKind = MapLayerKind.V_LINE
             }
 
             SEGMENT -> {
-                mapEntityBuilders = dataPointsConverter.toSegment(layerData.geom)
+                dataPointLiveMapAesthetics = dataPointsConverter.toSegment(layerData.geom)
                 layerKind = MapLayerKind.PATH
             }
 
             RECT -> {
-                mapEntityBuilders = dataPointsConverter.toRect()
+                dataPointLiveMapAesthetics = dataPointsConverter.toRect()
                 layerKind = MapLayerKind.POLYGON
             }
 
             TILE, BIN_2D -> {
-                mapEntityBuilders = dataPointsConverter.toTile()
+                dataPointLiveMapAesthetics = dataPointsConverter.toTile()
                 layerKind = MapLayerKind.POLYGON
             }
 
             DENSITY2D, CONTOUR, PATH -> {
-                mapEntityBuilders = dataPointsConverter.toPath(layerData.geom)
+                dataPointLiveMapAesthetics = dataPointsConverter.toPath(layerData.geom)
                 layerKind = MapLayerKind.PATH
             }
 
             TEXT -> {
-                mapEntityBuilders = dataPointsConverter.toText()
+                dataPointLiveMapAesthetics = dataPointsConverter.toText()
                 layerKind = MapLayerKind.TEXT
             }
 
             DENSITY2DF, CONTOURF, POLYGON, MAP -> {
-                mapEntityBuilders = dataPointsConverter.toPolygon()
+                dataPointLiveMapAesthetics = dataPointsConverter.toPolygon()
                 layerKind = MapLayerKind.POLYGON
             }
 
-            else -> throw IllegalArgumentException("Layer '" + geomKind.name + "' is not supported on Live Map.")
+            else -> throw IllegalArgumentException("Layer '" + layerData.geomKind.name + "' is not supported on Live Map.")
         }
 
-        mapEntityBuilders.forEach { it.layerIndex = layerIndex + 1 }
+        dataPointLiveMapAesthetics.forEach { it.layerIndex = layerIndex + 1 }
 
-        return createLayersConfigurator(layerKind, mapEntityBuilders)
+        return createLayersConfigurator(layerKind, dataPointLiveMapAesthetics)
     }
 
     internal class DataPointsConverter(
@@ -115,7 +108,7 @@ internal class LayerDataPointAestheticsProcessor(
         fun toPolygon() = myMultiPathFeatureConverter.polygon()
         fun toText() = myPointFeatureConverter.text()
 
-        private abstract inner class PathFeatureConverterBase internal constructor(
+        private abstract class PathFeatureConverterBase internal constructor(
             internal val aesthetics: Aesthetics,
             private val myGeodesic: Boolean
         ) {
@@ -138,16 +131,17 @@ internal class LayerDataPointAestheticsProcessor(
                 p: DataPointAesthetics,
                 points: List<Vec<LonLat>>,
                 isClosed: Boolean
-            ): MapEntityBuilder {
-                return MapEntityBuilder(p, getRender(isClosed))
+            ): DataPointLiveMapAesthetics {
+                return DataPointLiveMapAesthetics(
+                    p = p,
+                    layerKind = when {
+                        isClosed -> MapLayerKind.POLYGON
+                        else -> MapLayerKind.PATH
+                    }
+                )
                     .setGeometryData(points, isClosed, myGeodesic)
                     .setArrowSpec(myArrowSpec)
                     .setAnimation(myAnimation)
-            }
-
-            private fun getRender(isPolygon: Boolean): MapLayerKind = when {
-                isPolygon -> MapLayerKind.POLYGON
-                else -> MapLayerKind.PATH
             }
 
             internal fun setArrowSpec(arrowSpec: ArrowSpec?) {
@@ -162,23 +156,20 @@ internal class LayerDataPointAestheticsProcessor(
         private inner class MultiPathFeatureConverter(aes: Aesthetics, geodesic: Boolean) :
             PathFeatureConverterBase(aes, geodesic) {
 
-            internal fun path(geom: Geom): List<MapEntityBuilder> {
-                setAnimation(if (geom is PathGeom) geom.animation else null)
+            internal fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
+                setAnimation((geom as? PathGeom)?.animation)
 
-                return process(
-                    multiPointDataByGroup(MultiPointDataConstructor.singlePointAppender(GeomUtil.TO_LOCATION_X_Y)),
-                    false
-                )
+                return process(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), false)
             }
 
-            internal fun polygon(): List<MapEntityBuilder> {
+            internal fun polygon(): List<DataPointLiveMapAesthetics> {
                 return process(
-                    multiPointDataByGroup(MultiPointDataConstructor.singlePointAppender(GeomUtil.TO_LOCATION_X_Y)),
+                    multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)),
                     true
                 )
             }
 
-            internal fun rect(): List<MapEntityBuilder> {
+            internal fun rect(): List<DataPointLiveMapAesthetics> {
                 return process(
                     multiPointDataByGroup(MultiPointDataConstructor.multiPointAppender(GeomUtil.TO_RECTANGLE)),
                     true
@@ -196,8 +187,8 @@ internal class LayerDataPointAestheticsProcessor(
             private fun process(
                 multiPointDataList: List<MultiPointData>,
                 isClosed: Boolean
-            ): List<MapEntityBuilder> {
-                val mapObjects = ArrayList<MapEntityBuilder>()
+            ): List<DataPointLiveMapAesthetics> {
+                val mapObjects = ArrayList<DataPointLiveMapAesthetics>()
 
                 for (multiPointData in multiPointDataList) {
                     pathToBuilder(
@@ -213,38 +204,9 @@ internal class LayerDataPointAestheticsProcessor(
         private inner class SinglePathFeatureConverter(aesthetics: Aesthetics, geodesic: Boolean) :
             PathFeatureConverterBase(aesthetics, geodesic) {
 
-            internal fun tile(): List<MapEntityBuilder> {
-                return process(true, tileGeometryGenerator())
-            }
-
-            internal fun segment(geom: Geom): List<MapEntityBuilder> {
-                setArrowSpec(if (geom is SegmentGeom) geom.arrowSpec else null)
-                setAnimation(if (geom is SegmentGeom) geom.animation else null)
-
-                return process(false, ::pointToSegmentGeometry)
-            }
-
-            private fun process(
-                isClosed: Boolean,
-                dataPointToGeometry: (DataPointAesthetics) -> List<DoubleVector>
-            ): List<MapEntityBuilder> {
-                val mapObjects = ArrayList<MapEntityBuilder>(aesthetics.dataPointCount())
-
-                for (p in aesthetics.dataPoints()) {
-                    val points = dataPointToGeometry(p)
-                    if (points.isEmpty()) {
-                        continue
-                    }
-                    pathToBuilder(p, points.toVecs(), isClosed).let(mapObjects::add)
-                }
-                mapObjects.trimToSize()
-                return mapObjects
-            }
-
-            private fun tileGeometryGenerator(): (DataPointAesthetics) -> List<DoubleVector> {
+            internal fun tile(): List<DataPointLiveMapAesthetics> {
                 val d = getMinXYNonZeroDistance(aesthetics)
-
-                return { p ->
+                return process(isClosed = true, dataPointToGeometry = { p ->
                     if (SeriesUtil.allFinite(p.x(), p.y(), p.width(), p.height())) {
                         val w = nonZero(p.width()!! * d.x, 1.0)
                         val h = nonZero(p.height()!! * d.y, 1.0)
@@ -257,16 +219,40 @@ internal class LayerDataPointAestheticsProcessor(
                     } else {
                         emptyList()
                     }
+                })
+            }
+
+            internal fun segment(geom: Geom): List<DataPointLiveMapAesthetics> {
+                setArrowSpec((geom as? SegmentGeom)?.arrowSpec)
+                setAnimation((geom as? SegmentGeom)?.animation)
+
+                return process(isClosed = false) {
+                    if (SeriesUtil.allFinite(it.x(), it.y(), it.xend(), it.yend())) {
+                        listOf(
+                            DoubleVector(it.x()!!, it.y()!!),
+                            DoubleVector(it.xend()!!, it.yend()!!)
+                        )
+                    } else {
+                        emptyList()
+                    }
                 }
             }
 
-            private fun pointToSegmentGeometry(p: DataPointAesthetics): List<DoubleVector> {
-                return if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
-                    listOf(
-                        DoubleVector(p.x()!!, p.y()!!),
-                        DoubleVector(p.xend()!!, p.yend()!!)
-                    )
-                } else emptyList()
+            private fun process(
+                isClosed: Boolean,
+                dataPointToGeometry: (DataPointAesthetics) -> List<DoubleVector>
+            ): List<DataPointLiveMapAesthetics> {
+                val mapObjects = ArrayList<DataPointLiveMapAesthetics>(aesthetics.dataPointCount())
+
+                for (p in aesthetics.dataPoints()) {
+                    val points = dataPointToGeometry(p)
+                    if (points.isEmpty()) {
+                        continue
+                    }
+                    pathToBuilder(p, points.toVecs(), isClosed).let(mapObjects::add)
+                }
+                mapObjects.trimToSize()
+                return mapObjects
             }
 
             private fun nonZero(d: Double, defaultValue: Double): Double = when (d) {
@@ -308,14 +294,16 @@ internal class LayerDataPointAestheticsProcessor(
                     return minDistance
                 }
 
-                return if (minDistance == 0.0) {
-                    delta
-                } else min(minDistance, delta)
-
+                return when (minDistance) {
+                    0.0 -> delta
+                    else -> min(minDistance, delta)
+                }
             }
         }
 
-        private inner class PointFeatureConverter(private val myAesthetics: Aesthetics) {
+        private class PointFeatureConverter(
+            private val myAesthetics: Aesthetics
+        ) {
             private var myAnimation: Int? = null
             private fun parsePointAnimation(animation: Any?): Int? {
                 when (animation) {
@@ -328,62 +316,50 @@ internal class LayerDataPointAestheticsProcessor(
                 throw IllegalArgumentException("Unknown point animation: '$animation'")
             }
 
-            internal fun point(geom: Geom): List<MapEntityBuilder> {
-                myAnimation = parsePointAnimation(if (geom is PointGeom) geom.animation else null)
+            internal fun point(geom: Geom): List<DataPointLiveMapAesthetics> {
+                myAnimation = parsePointAnimation((geom as? PointGeom)?.animation)
 
-                return process(MapLayerKind.POINT, ::pointToVector)
+                return process(MapLayerKind.POINT) { explicitVec(it.x()!!, it.y()!!) }
             }
 
-            internal fun hLine(): List<MapEntityBuilder> {
-                return process(MapLayerKind.H_LINE, ::pointToHorizontalLine)
+            internal fun hLine(): List<DataPointLiveMapAesthetics> {
+                return process(MapLayerKind.H_LINE) {
+                    if (isFinite(it.interceptY())) {
+                        explicitVec(0.0, it.interceptY()!!)
+                    } else {
+                        null
+                    }
+                }
             }
 
-            internal fun vLine(): List<MapEntityBuilder> {
-                return process(MapLayerKind.V_LINE, ::pointToVerticalLine)
+            internal fun vLine(): List<DataPointLiveMapAesthetics> {
+                return process(MapLayerKind.V_LINE) {
+                    if (isFinite(it.interceptX())) {
+                        explicitVec(it.interceptX()!!, 0.0)
+                    } else {
+                        null
+                    }
+                }
             }
 
-            internal fun text(): List<MapEntityBuilder> {
-                return process(MapLayerKind.TEXT, ::pointToVector)
+            internal fun text(): List<DataPointLiveMapAesthetics> {
+                return process(MapLayerKind.TEXT) { explicitVec(it.x()!!, it.y()!!) }
             }
 
             private fun process(
                 layerKind: MapLayerKind,
                 dataPointToGeometry: (DataPointAesthetics) -> Vec<LonLat>?
-            ): List<MapEntityBuilder> {
-                val mapObjects = ArrayList<MapEntityBuilder>(myAesthetics.dataPointCount())
+            ): List<DataPointLiveMapAesthetics> {
+                val mapObjects = ArrayList<DataPointLiveMapAesthetics>(myAesthetics.dataPointCount())
                 for (p in myAesthetics.dataPoints()) {
-                    pointToBuilder(p, layerKind, dataPointToGeometry)?.let(mapObjects::add)
+                    dataPointToGeometry(p)?.let { v ->
+                        DataPointLiveMapAesthetics(p, layerKind)
+                            .setGeometryPoint(v)
+                            .setAnimation(myAnimation)
+                    }?.let(mapObjects::add)
                 }
 
                 return mapObjects
-            }
-
-            private fun pointToBuilder(
-                p: DataPointAesthetics,
-                layerKind: MapLayerKind,
-                dataPointToGeometry: (DataPointAesthetics) -> Vec<LonLat>?
-            ): MapEntityBuilder? {
-                return dataPointToGeometry(p)?.let { v ->
-                    MapEntityBuilder(p, layerKind)
-                        .setGeometryPoint(v)
-                        .setAnimation(myAnimation)
-                }
-            }
-
-            private fun pointToVerticalLine(p: DataPointAesthetics): Vec<LonLat>? {
-                return if (SeriesUtil.isFinite(p.interceptX())) {
-                    explicitVec(p.interceptX()!!, 0.0)
-                } else null
-            }
-
-            private fun pointToVector(p: DataPointAesthetics): Vec<LonLat> {
-                return explicitVec(p.x()!!, p.y()!!)
-            }
-
-            private fun pointToHorizontalLine(p: DataPointAesthetics): Vec<LonLat>? {
-                return if (SeriesUtil.isFinite(p.interceptY())) {
-                    explicitVec(0.0, p.interceptY()!!)
-                } else null
             }
         }
 

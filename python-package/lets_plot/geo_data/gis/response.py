@@ -38,11 +38,11 @@ class Boundary(GeometryBase):
 class GeocodedFeature:
     def __init__(self,
                  id: str, name: str,
-                 highlights: Optional[List[str]]=None,
-                 boundary: Optional[Boundary]=None,
-                 centroid: Optional[GeoPoint]=None,
-                 limit: Optional[GeoRect]=None,
-                 position: Optional[GeoRect]=None):
+                 highlights: Optional[List[str]] = None,
+                 boundary: Optional[Boundary] = None,
+                 centroid: Optional[GeoPoint] = None,
+                 limit: Optional[GeoRect] = None,
+                 position: Optional[GeoRect] = None):
         assert_type(id, str)
         assert_type(name, str)
         assert_optional_list_type(highlights, str)
@@ -75,6 +75,7 @@ class Response:
     def __init__(self, message: str):
         assert_type(message, str)
         self.message: str = message
+
 
 class Answer:
     def __init__(self, features: List[GeocodedFeature]):
@@ -189,7 +190,8 @@ class FeatureBuilder:
         return AmbiguousFeature(self.query, self.total_namesake_count, self.namesake_examples)
 
     def build_geocoded(self) -> GeocodedFeature:
-        return GeocodedFeature(self.id, self.name, self.highlights, self.boundary, self.centroid, self.limit, self.position)
+        return GeocodedFeature(self.id, self.name, self.highlights, self.boundary, self.centroid, self.limit,
+                               self.position)
 
 
 class ResponseBuilder:
@@ -233,7 +235,6 @@ class ResponseBuilder:
         assert_list_type(v, GeocodedFeature)
         self.answers = [Answer([f]) for f in v]
         return self
-
 
     def build(self) -> Response:
         if self.status == Status.error:

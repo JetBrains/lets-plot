@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
-import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
+import jetbrains.gis.geoprotocol.Boundary
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -43,7 +43,7 @@ internal class MapObjectMatcher {
     private var arrowSpec = Expectation.any<ArrowSpec>()
     private var animation = Expectation.any<Int>()
 
-    fun match(mapEntity: MapEntityBuilder) {
+    fun match(mapEntity: DataPointLiveMapAesthetics) {
         when (mapEntity.myLayerKind) {
             PIE -> matchPieSector(mapEntity)
             BAR -> matchBar(mapEntity)
@@ -57,7 +57,7 @@ internal class MapObjectMatcher {
         }
     }
 
-    private fun matchPieSector(pieSector: MapEntityBuilder) {
+    private fun matchPieSector(pieSector: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(pieSector))
         index.assertExpectation(pieSector.index)
         fillColor.assertExpectation(pieSector.fillColor)
@@ -69,7 +69,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(pieSector.point)
     }
 
-    private fun matchBar(bar: MapEntityBuilder) {
+    private fun matchBar(bar: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
         index.assertExpectation(bar.index)
         fillColor.assertExpectation(bar.fillColor)
@@ -80,7 +80,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(bar.point)
     }
 
-    private fun matchHeatmap(heatmap: MapEntityBuilder) {
+    private fun matchHeatmap(heatmap: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(heatmap))
         index.assertExpectation(heatmap.index)
         // radius.assertExpectation(heatmap.getRadius())
@@ -88,7 +88,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(heatmap.point)
     }
 
-    private fun matchLine(line: MapEntityBuilder) {
+    private fun matchLine(line: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(line))
         index.assertExpectation(line.index)
         lineDash.assertExpectation(line.lineDash)
@@ -97,7 +97,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(line.point)
     }
 
-    private fun matchPath(path: MapEntityBuilder) {
+    private fun matchPath(path: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(path))
         index.assertExpectation(path.index)
         lineDash.assertExpectation(path.lineDash)
@@ -110,7 +110,7 @@ internal class MapObjectMatcher {
         animation.assertExpectation(path.animation)
     }
 
-    private fun matchPoint(mapPoint: MapEntityBuilder) {
+    private fun matchPoint(mapPoint: DataPointLiveMapAesthetics) {
         //locationBoundingBoxes.assertExpectation(calculateBBoxes(mapPoint))
         index.assertExpectation(mapPoint.index)
         shape.assertExpectation(mapPoint.shape)
@@ -123,7 +123,7 @@ internal class MapObjectMatcher {
         animation.assertExpectation(mapPoint.animation)
     }
 
-    private fun matchPolygon(polygon: MapEntityBuilder) {
+    private fun matchPolygon(polygon: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(polygon))
         index.assertExpectation(polygon.index)
         lineDash.assertExpectation(polygon.lineDash)
@@ -133,7 +133,7 @@ internal class MapObjectMatcher {
         //geometry.assertExpectation(polygon.geometry!!)
     }
 
-    private fun matchText(text: MapEntityBuilder) {
+    private fun matchText(text: DataPointLiveMapAesthetics) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(text))
         index.assertExpectation(text.index)
         fillColor.assertExpectation(text.fillColor)

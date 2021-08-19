@@ -6,7 +6,7 @@
 package jetbrains.livemap.regions
 
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.cells.CellStateComponent
+import jetbrains.livemap.viewport.ViewportGridStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.regions.Utils.zoom
@@ -54,7 +54,7 @@ class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: Ec
         }
 
         val fragmentsCache = getSingleton<CachedFragmentsComponent>()
-        val visibleQuads = getSingleton<CellStateComponent>().visibleQuads
+        val visibleQuads = getSingleton<ViewportGridStateComponent>().visibleQuads
 
         val fragmentsToRemove = HashSet(fragmentsCache.keys())
         fragmentsToRemove.addAll(getSingleton<ChangedFragmentsComponent>().obsolete)

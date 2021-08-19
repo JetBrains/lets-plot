@@ -12,7 +12,7 @@ import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.tiles.TileSystemProvider
+import jetbrains.livemap.basemap.TileSystemProvider
 import jetbrains.livemap.ui.CursorService
 
 class LiveMapSpec(

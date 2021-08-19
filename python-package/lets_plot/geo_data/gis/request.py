@@ -17,6 +17,7 @@ class PayloadKind(enum.Enum):
     centroids = 'centroid'
     boundaries = 'boundary'
     limits = 'limit'
+    poisitions = 'position'
 
 
 class RequestKind(enum.Enum):

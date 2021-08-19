@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.regions
 
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Generic
@@ -131,6 +132,8 @@ class DownloadingFragmentsComponent : EcsComponent {
 }
 
 class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent
+
+class RegionBBoxComponent(val bbox: GeoRectangle) : EcsComponent
 
 class RegionFragmentsComponent : EcsComponent {
     private val myFragmentEntities = HashSet<EcsEntity>()

@@ -245,15 +245,16 @@ class PlotSpec(FeatureSpec):
 
     @classmethod
     def duplicate(cls, other):
-        dup = PlotSpec(data=None, mapping=None, scales=other.__scales, layers=other.__layers)
+        dup = PlotSpec(data=None, mapping=None, scales=other.__scales, layers=other.__layers, is_livemap=other.__is_livemap)
         dup.props().update(other.props())
         return dup
 
-    def __init__(self, data, mapping, scales, layers, **kwargs):
+    def __init__(self, data, mapping, scales, layers, is_livemap=False, **kwargs):
         """Initialize self."""
         super().__init__('plot', name=None, data=data, mapping=mapping, **kwargs)
         self.__scales = list(scales)
         self.__layers = list(layers)
+        self.__is_livemap = is_livemap
 
     def get_plot_shared_data(self):
         """
@@ -343,6 +344,10 @@ class PlotSpec(FeatureSpec):
         elif isinstance(other, FeatureSpec):
             plot = PlotSpec.duplicate(self)
             if other.kind == 'layer':
+                if other.props()['geom'] == 'livemap':
+                    plot.__is_livemap = True
+
+                other.before_append(plot.__is_livemap)
                 plot.__layers.append(other)
                 return plot
 
@@ -434,6 +439,51 @@ class LayerSpec(FeatureSpec):
 
     def __init__(self, **kwargs):
         super().__init__('layer', name=None, **kwargs)
+
+    def before_append(self, is_livemap):
+        from .util import normalize_map_join, is_geo_data_frame, auto_join_geo_names, geo_data_frame_to_wgs84, \
+            get_geo_data_frame_meta
+        from lets_plot.geo_data_internals.utils import is_geocoder
+
+        name = self.props().get('geom', None)
+        map_join = self.props().get('map_join', None)
+        map = self.props().get('map', None)
+        map_data_meta = None
+
+        if map_join is None and map is None:
+            return
+
+        map_join = normalize_map_join(map_join)
+
+        if is_geocoder(map):
+            if is_livemap:
+                map = map.get_geocodes()
+                map_join = auto_join_geo_names(map_join, map)
+                map_data_meta = {'georeference': {}}
+            else:
+                # Fetch proper GeoDataFrame. Further processing is the same as if map was a GDF.
+                if name in ['point', 'text', 'livemap']:
+                    map = map.get_centroids()
+                elif name in ['map', 'polygon']:
+                    map = map.get_boundaries()
+                elif name in ['rect']:
+                    map = map.get_limits()
+                else:
+                    raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
+
+        if is_geo_data_frame(map):
+            map = geo_data_frame_to_wgs84(map)
+            map_join = auto_join_geo_names(map_join, map)
+            map_data_meta = get_geo_data_frame_meta(map)
+
+        if map_join is not None:
+            self.props()['map_join'] = map_join
+
+        if map is not None:
+            self.props()['map'] = map
+
+        if map_data_meta is not None:
+            self.props()['map_data_meta'] = map_data_meta
 
     def get_plot_layer_data(self):
         # used to evaluate 'completion'

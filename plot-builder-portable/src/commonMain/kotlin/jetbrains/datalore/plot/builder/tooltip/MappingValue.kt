@@ -21,9 +21,6 @@ class MappingValue(
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = null
     private val myFormatter = format?.let {
-//        StringFormat(format).also {
-//            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'. Expected 1 argument instead of ${it.argsNumber}" }
-//        }
         StringFormat.forOneArg(format, formatFor = aes.name)
     }
 

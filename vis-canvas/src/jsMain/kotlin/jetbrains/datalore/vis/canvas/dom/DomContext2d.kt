@@ -80,6 +80,10 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.beginPath()
     }
 
+    override fun scale(xy: Double) {
+        scale(xy, xy)
+    }
+
     override fun closePath() {
         myContext2d.closePath()
     }

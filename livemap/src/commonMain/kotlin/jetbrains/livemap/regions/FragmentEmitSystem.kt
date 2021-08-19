@@ -15,7 +15,6 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
-import jetbrains.livemap.cells.CellStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -37,6 +36,7 @@ import jetbrains.livemap.regions.Utils.RegionsIndex
 import jetbrains.livemap.regions.Utils.entityName
 import jetbrains.livemap.regions.Utils.zoom
 import jetbrains.livemap.scaling.ScaleComponent
+import jetbrains.livemap.viewport.ViewportGridStateComponent
 
 class FragmentEmitSystem(
     private val myProjectionQuant: Int,
@@ -60,7 +60,7 @@ class FragmentEmitSystem(
 
         val emptyFragments = HashSet<FragmentKey>()
         if (downloaded.isNotEmpty()) {
-            val visibleQuads = getSingleton<CellStateComponent>().visibleQuads
+            val visibleQuads = getSingleton<ViewportGridStateComponent>().visibleQuads
 
             val processing = HashSet<QuadKey<LonLat>>()
             val obsolete = HashSet<QuadKey<LonLat>>()

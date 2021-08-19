@@ -24,10 +24,10 @@ def find_geo_names(obj) -> List[str]:
     return names
 
 
-def is_geocoder(data: Any) -> bool:
+def is_geocoder(v: Any) -> bool:
     # do not import Geocoder directly to suppress OSM attribution from geo_data package
-    if data is None:
+    if v is None:
         return False
 
-    return any(base.__name__ == 'Geocoder' for base in type(data).mro())
+    return any(base.__name__ == 'Geocoder' for base in type(v).mro())
 

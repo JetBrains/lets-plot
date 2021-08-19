@@ -32,6 +32,7 @@ object TransformVar {
     val LOWER = DataFrame.Variable("transform.LOWER", TRANSFORM)
     val MIDDLE = DataFrame.Variable("transform.MIDDLE", TRANSFORM)
     val UPPER = DataFrame.Variable("transform.UPPER", TRANSFORM)
+    val MAP_ID = DataFrame.Variable("transform.MAP_ID", TRANSFORM)
     val FRAME = DataFrame.Variable("transform.FRAME", TRANSFORM)
     val SPEED = DataFrame.Variable("transform.SPEED", TRANSFORM)
     val FLOW = DataFrame.Variable("transform.FLOW", TRANSFORM)
@@ -158,6 +159,10 @@ object TransformVar {
 
         override fun upper(): DataFrame.Variable {
             return UPPER
+        }
+
+        override fun mapId(): DataFrame.Variable {
+            return MAP_ID
         }
 
         override fun frame(): DataFrame.Variable {

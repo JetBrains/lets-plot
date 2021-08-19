@@ -91,6 +91,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.beginPath()
     }
 
+    override fun scale(xy: Double) {
+        scale(xy, xy)
+    }
+
     override fun closePath() {
         myContext2d.closePath()
     }

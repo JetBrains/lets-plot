@@ -11,9 +11,10 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            blankPoint(),
-            blankMap(),
-            barWithNanValuesInData(),
+            georeference(),
+//            blankPoint(),
+//            blankMap(),
+//            barWithNanValuesInData(),
             //pieWithNullValuesInData(),
             //barWithNullValuesInData()
 //            multiLayerTooltips()
@@ -24,9 +25,54 @@ class LiveMap {
 //            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
-            bunch(),
-           facet()
+//            bunch(),
+//           facet()
         )
+    }
+
+    private fun georeference() : MutableMap<String, Any> {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "tiles": {
+            |        "kind": "vector_lets_plot",
+            |        "url": "wss://tiles.datalore.jetbrains.com",
+            |        "theme": "color",
+            |        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |      },
+            |      "geocoding": {
+            |        "url": "http://10.0.0.127:3020/map_data/geocoding"
+            |      }
+            |    },
+            |    {
+            |      "geom": "polygon",
+            |      "map": {
+            |        "id": ["148838", "1428125"],
+            |        "country": ["usa", "canada"],
+            |        "found name": ["United States", "Canada"],
+            |        "centroid": [[-99.7426055742426, 37.2502586245537], [-110.450525298983, 56.8387750536203]],
+            |        "position": [
+            |          [-124.733375608921, 25.1162923872471, -66.9498561322689, 49.3844716250896],
+            |          [-141.002660393715, 41.6765552759171, -55.6205673515797, 72.0015004277229]
+            |        ],
+            |        "limit": [
+            |          [144.618412256241, -14.3740922212601, -64.564847946167, 71.3878083229065],
+            |          [-141.002660393715, 41.6765552759171, -52.6194141805172, 83.1445701420307]
+            |        ]
+            |      },
+            |      "fill": "orange",
+            |      "map_data_meta": {
+            |        "georeference": {}
+            |      }
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        return parsePlotSpec(spec)
     }
 
 

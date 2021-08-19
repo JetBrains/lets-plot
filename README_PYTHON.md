@@ -21,7 +21,7 @@
     </tr>
     <tr>
         <td>Python versions</td>
-        <td>3.6, 3.7, 3.8, 3.9</td>
+        <td>3.6 - 3.9</td>
     </tr>
 </table>
 
@@ -46,7 +46,7 @@
 - [Offline Mode](#offline-mode)
 - [Interesting Demos](#interesting-demos)
 - [Scientific Mode in IntelliJ IDEA / PyCharm](#scientific-mode-in-intellij-idea-pycharm)
-- [What is new in 2.0.0](#what-is-new-in-2-0-0)
+- [What is new in 2.1.0](#what-is-new)
 - [Change Log](#change-log)
 - [License](#license)
 
@@ -326,51 +326,26 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
 </div>
 
-<a id="what-is-new-in-2-0-0"></a>
-### What is new in 2.0.0
-     
-- Python 3.9 support
-- Faceted plots:
-  - new `facet_wrap()` function.
-  - ordering of faceting values.
-  - formatting of faceting values.
+<a id="what-is-new"></a>
+### What is new in 2.1.0
+                      
+- Upgraded dependencies:
+  - Kotlin: 1.5.21
+  - Apache Batik: 1.14 [[#398](https://github.com/JetBrains/lets-plot/issues/398)]
 
-  See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
+- Ordering categories:
+ 
+  New parameters added to the `as_discrete` function:
+  - `order_by` (string) - the name of the variable by which the ordering will be performed;
+  - `order` (int) - the ordering direction: 1 for ascending direction and -1 for descending (default).
 
+  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/master/docs/as_discrete.md).
 
-- new `format` parameter on scales: formatting tick labels on X/Y axis.
+- Interactive maps:
+  - Pre-configured raster tilesets in new `lets_plot.tilesets` module.
+  - Builtin blank maptiles.
 
-  Example:
-    ```python
-    scale_x_datetime(format="%b %Y")
-    scale_x_continuous(format='is {.2f}')
-    ```
-  Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
-
-  See also: [Formatting](https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html)
-
-
-- Tooltips:
-  - new `color` option: overrides the default tooltip color:
-
-    ```python
-    geom_xxx(tooltips=layer_tooltips().color('red'))
-    ```
-
-    Learn more: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
-  - *crosshair* cursor when tooltip is in a fixed position specified by the `anchor` option.
-
-
-- Brand new Geocoding API.
-
-  Note: This is a **breaking change!** Hence we bumped the Lets-Plot version to 2.0.0. 
-
-  In the Lets-Plot v2.0.0 the peviouse Geocoding API is no longer working.
-
-  The old version of geocoding backend remains on-line for a couple of release cycles
-  to continue support of prior Lets-Plot versions.
-
-  To learn more about new Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html).
+  See: [Configuring basemap tiles](https://github.com/JetBrains/lets-plot/blob/master/docs/basemap_tiles.md).
 
 
 <a id="change-log"></a>
