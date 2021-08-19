@@ -19,9 +19,6 @@ class DataFrameValue(
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
     private val myFormatter = format?.let {
-//        StringFormat(format).also {
-//            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'$name\'. Expected 1 argument instead of ${it.argsNumber}" }
-//        }
         StringFormat.forOneArg(format, formatFor = name)
     }
 

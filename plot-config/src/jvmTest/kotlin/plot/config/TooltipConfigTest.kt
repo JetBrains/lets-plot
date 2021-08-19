@@ -796,6 +796,33 @@ class TooltipConfigTest {
         }
     }
 
+    @Test
+    fun `format() should understand DateTime format`() {
+        val geomLayer = buildPointLayer(
+            data = mapOf(
+                "x" to listOf(1609459200000),
+                "y" to listOf(0.0)
+            ),
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y",
+            ),
+            tooltips = mapOf(
+                TOOLTIP_LINES to listOf("^x"),
+                TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        FIELD to "^x",
+                        FORMAT to "%d.%m.%y"
+                    )
+                )
+            )
+        )
+        assertTooltipStrings(
+            expected = listOf("01.01.21"),
+            actual = getGeneralTooltipStrings(geomLayer)
+        )
+    }
+
     companion object {
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
             return getGeneralTooltipLines(geomLayer).map(Line::toString)

@@ -7,7 +7,8 @@ from .fluent_dict import FluentDict
 from .geometry import Ring
 from .response import Multipolygon, GeoPoint, GeoRect, Boundary, Polygon
 from .response import Response, ResponseBuilder, SuccessResponse, AmbiguousResponse
-from .response import Status, LevelKind, Answer, GeocodedFeature, AmbiguousFeature, Namesake, NamesakeParent, FeatureBuilder
+from .response import Status, LevelKind, Answer, GeocodedFeature, AmbiguousFeature, Namesake, NamesakeParent, \
+    FeatureBuilder
 
 
 class ResponseField(Enum):
@@ -198,9 +199,9 @@ class ResponseFormatter:
             return None
 
         return FluentDict() \
-            .put(ResponseField.min_lon, rect.min_lon) \
+            .put(ResponseField.min_lon, rect.start_lon) \
             .put(ResponseField.min_lat, rect.min_lat) \
-            .put(ResponseField.max_lon, rect.max_lon) \
+            .put(ResponseField.max_lon, rect.end_lon) \
             .put(ResponseField.max_lat, rect.max_lat) \
             .to_dict()
 

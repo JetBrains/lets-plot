@@ -111,31 +111,33 @@ class FragmentDownloadingSystem(
         }
 
         regionRequest.forEach { (requestRegionId, requestQuads) ->
-            myFragmentGeometryProvider
-                .getFragments(listOf(requestRegionId), requestQuads)
-                .onSuccess { receivedFragments ->
-                    receivedFragments.forEach { (regionId, fragments) ->
-                        val registeredFragments = ArrayList(fragments)
+            val async = myFragmentGeometryProvider.getFragments(listOf(requestRegionId), requestQuads)
+            async.onFailure { throwable ->
+                println(throwable)
+            }
+            async.onSuccess { receivedFragments ->
+                receivedFragments.forEach { (regionId, fragments) ->
+                    val registeredFragments = ArrayList(fragments)
 
-                        // Emulate response for empty quads - this is needed to finish waiting for a fragment data
-                        val receivedQuads = fragments.map(Fragment::key).toSet()
+                    // Emulate response for empty quads - this is needed to finish waiting for a fragment data
+                    val receivedQuads = fragments.map(Fragment::key).toSet()
 
-                        requestQuads.subtract(receivedQuads) // not received means empty
-                            .forEach { emptyQuad ->
-                                registeredFragments.add(
-                                    Fragment(emptyQuad, emptyList())
-                                )
+                    requestQuads.subtract(receivedQuads) // not received means empty
+                        .forEach { emptyQuad ->
+                            registeredFragments.add(
+                                Fragment(emptyQuad, emptyList())
+                            )
                         }
 
-                        myLock.execute {
-                            myRegionFragments
-                                .getOrPut(regionId, ::ArrayList)
-                                .addAll(registeredFragments)
+                    myLock.execute {
+                        myRegionFragments
+                            .getOrPut(regionId, ::ArrayList)
+                            .addAll(registeredFragments)
 
-                            return@execute
-                        }
+                        return@execute
                     }
                 }
+            }
         }
     }
 }

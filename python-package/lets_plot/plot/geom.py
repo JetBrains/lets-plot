@@ -2,10 +2,9 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, auto_join_geo_names, \
-    geo_data_frame_to_wgs84, normalize_map_join, get_geo_data_frame_meta
 from lets_plot.geo_data_internals.utils import is_geocoder
+from .core import FeatureSpec, LayerSpec
+from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84, get_geo_data_frame_meta
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -4236,39 +4235,6 @@ def _geom(name, *,
     if is_geocoder(data):
         data = data.get_geocodes()
 
-    def process_map_parameters():
-        map_join = kwargs.get('map_join', None)
-        map = kwargs.get('map', None)
-
-        if map_join is None and map is None:
-            return
-
-        map_join = normalize_map_join(map_join)
-
-        if is_geocoder(map):
-            if name in ['point', 'text', 'livemap']:
-                map = map.get_centroids()
-            elif name in ['map', 'polygon']:
-                map = map.get_boundaries()
-            elif name in ['rect']:
-                map = map.get_limits()
-            else:
-                raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
-
-        if is_geo_data_frame(map):
-            map_join = auto_join_geo_names(map_join, map)
-            map = geo_data_frame_to_wgs84(map)
-
-        if map_join is not None:
-            kwargs['map_join'] = map_join
-
-        if map is not None:
-            kwargs['map'] = map
-
-    process_map_parameters()
-
-    map_data_meta = as_annotated_map_data(kwargs.get('map', None))
-
     # TODO: check why map shouldn't be a GeoDataFrame
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map', None)):
         data = geo_data_frame_to_wgs84(data)
@@ -4283,5 +4249,4 @@ def _geom(name, *,
                      sampling=sampling,
                      tooltips=tooltips,
                      **data_meta,
-                     **map_data_meta,
                      **kwargs)

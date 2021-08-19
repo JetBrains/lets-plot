@@ -5,7 +5,12 @@
 
 package jetbrains.datalore.base.stringFormat
 
+import jetbrains.datalore.base.dateFormat.DateTimeFormat
+import jetbrains.datalore.base.dateFormat.Pattern.Companion.isDateTimeFormat
+import jetbrains.datalore.base.datetime.Instant
+import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.numberFormat.NumberFormat
+import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class StringFormat private constructor(
     private val pattern: String,
@@ -13,55 +18,48 @@ class StringFormat private constructor(
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
+        DATETIME_FORMAT,
         STRING_FORMAT
     }
 
-    private val myNumberFormatters: List<NumberFormat?>
+    private val myFormatters: List<((Any) -> String)>
 
     init {
-        fun initNumberFormat(pattern: String): NumberFormat {
-            try {
-                return NumberFormat(pattern)
-            } catch (e: Exception) {
-                error("Wrong number pattern: $pattern")
-            }
-        }
-
-        myNumberFormatters = when (formatType) {
-            FormatType.NUMBER_FORMAT -> listOf(initNumberFormat(pattern))
-            FormatType.STRING_FORMAT -> {
+        myFormatters = when (formatType) {
+            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType))
+            STRING_FORMAT -> {
                 BRACES_REGEX.findAll(pattern)
                     .map { it.groupValues[TEXT_IN_BRACES] }
                     .map { format ->
-                        if (format.isNotEmpty()) {
-                            initNumberFormat(format)
-                        } else {
-                            null
+                        val formatType = detectFormatType(format)
+                        require(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
+                            error("Can't detect type of pattern '$format' used in string pattern '$pattern'")
                         }
+                        initFormatter(format, formatType)
                     }
                     .toList()
             }
         }
     }
 
-    val argsNumber = myNumberFormatters.size
+    val argsNumber = myFormatters.size
 
     fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
         if (argsNumber != values.size) {
-            error("Can't format values $values with pattern \"$pattern\"). Wrong number of arguments: expected $argsNumber instead of ${values.size}")
+            error("Can't format values $values with pattern '$pattern'). Wrong number of arguments: expected $argsNumber instead of ${values.size}")
         }
         return when (formatType) {
-            FormatType.NUMBER_FORMAT -> {
-                require(myNumberFormatters.size == 1)
-                formatValue(values.single(), myNumberFormatters.single())
+            NUMBER_FORMAT, DATETIME_FORMAT -> {
+                require(myFormatters.size == 1)
+                formatValue(values.single(), myFormatters.single())
             }
-            FormatType.STRING_FORMAT -> {
+            STRING_FORMAT -> {
                 var index = 0
                 BRACES_REGEX.replace(pattern) {
                     val originalValue = values[index]
-                    val formatter = myNumberFormatters[index++]
+                    val formatter = myFormatters[index++]
                     formatValue(originalValue, formatter)
                 }
                     .replace("{{", "{")
@@ -70,12 +68,43 @@ class StringFormat private constructor(
         }
     }
 
-    private fun formatValue(value: Any, numberFormatter: NumberFormat?): String {
-        return when {
-            numberFormatter == null -> value.toString()
-            value is Number -> numberFormatter.apply(value)
-            value is String -> value.toFloatOrNull()?.let(numberFormatter::apply) ?: value
-            else -> error("Failed to format value with type ${value::class.simpleName}. Supported types are Number and String.")
+    private fun initFormatter(formatPattern: String, formatType: FormatType): ((Any) -> String) {
+        if (formatPattern.isEmpty()) {
+            return Any::toString
+        }
+        when (formatType) {
+            NUMBER_FORMAT -> {
+                val numberFormatter = NumberFormat(formatPattern)
+                return { value: Any ->
+                    when (value) {
+                        is Number -> numberFormatter.apply(value)
+                        is String -> value.toFloatOrNull()?.let(numberFormatter::apply) ?: value
+                        else -> error("Failed to format value with type ${value::class.simpleName}. Supported types are Number and String.")
+                    }
+                }
+            }
+            DATETIME_FORMAT -> {
+                val dateTimeFormatter = DateTimeFormat(formatPattern)
+                return { value: Any ->
+                    require(value is Number) {
+                        error("Value '$value' to be formatted as DateTime expected to be a Number, but was ${value::class.simpleName}")
+                    }
+                    value.toLong()
+                        .let(::Instant)
+                        .let(TimeZone.UTC::toDateTime)
+                        .let(dateTimeFormatter::apply)
+                }
+            }
+            else -> {
+                error("Undefined format pattern $formatPattern")
+            }
+        }
+    }
+
+    private fun formatValue(value: Any, formatter: ((Any) -> String)?): String {
+        return when (formatter) {
+            null -> value.toString()
+            else -> formatter(value)
         }
     }
 
@@ -102,25 +131,27 @@ class StringFormat private constructor(
 
         fun forNArgs(
             pattern: String,
-            type: FormatType? = null,
             argCount: Int,
             formatFor: String? = null
         ): StringFormat {
-            return create(pattern, type, formatFor, argCount)
+            return create(pattern, STRING_FORMAT, formatFor, argCount)
         }
 
-        fun create(
+        private fun detectFormatType(pattern: String): FormatType {
+            return when {
+                NumberFormat.isValidPattern(pattern) -> NUMBER_FORMAT
+                isDateTimeFormat(pattern) -> DATETIME_FORMAT
+                else -> STRING_FORMAT
+            }
+        }
+
+        internal fun create(
             pattern: String,
             type: FormatType? = null,
             formatFor: String? = null,
             expectedArgs: Int = -1
         ): StringFormat {
-            val formatType = when {
-                type != null -> type
-                NumberFormat.isValidPattern(pattern) -> FormatType.NUMBER_FORMAT
-                else -> FormatType.STRING_FORMAT
-            }
-
+            val formatType = type ?: detectFormatType(pattern)
             return StringFormat(pattern, formatType).also {
                 if (expectedArgs > 0) {
                     require(it.argsNumber == expectedArgs) {

@@ -8,7 +8,7 @@ package jetbrains.datalore.jetbrains.livemap.tile
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
-import jetbrains.livemap.cells.CellStateComponent
+import jetbrains.livemap.viewport.ViewportGridStateComponent
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.component1
@@ -44,8 +44,8 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingleton<CellStateComponent>()
-            component.quadsToAdd = myToAdd
+            val component = componentManager.getSingleton<ViewportGridStateComponent>()
+            component.quadsToLoad = myToAdd
             component.quadsToRemove = myToRemove
             myVisibleQuads.forEach { (key, counter) -> component.quadsRefCounter[key] = counter }
         }

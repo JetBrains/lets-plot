@@ -505,6 +505,43 @@ class GeoConfigTest {
             .assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
+
+
+    @Test
+    fun `georeference with limit and oposition`() {
+        singleGeomLayer(
+            """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "polygon",
+            |      "map": {
+            |        "id": ["148838", "1428125"],
+            |        "country": ["usa", "canada"],
+            |        "found name": ["United States", "Canada"],
+            |        "centroid": [[-99.7426055742426, 37.2502586245537], [-110.450525298983, 56.8387750536203]],
+            |        "position": [
+            |          [-124.733375608921, 25.1162923872471, -66.9498561322689, 49.3844716250896],
+            |          [-141.002660393715, 41.6765552759171, -55.6205673515797, 72.0015004277229]
+            |        ],
+            |        "limit": [
+            |          [144.618412256241, -14.3740922212601, -64.564847946167, 71.3878083229065],
+            |          [-141.002660393715, 41.6765552759171, -52.6194141805172, 83.1445701420307]
+            |        ]
+            |      },
+            |      "fill": "blue",
+            |      "map_data_meta": {
+            |        "georeference": {}
+            |      }
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+        )
+            //.assertBinding(Aes.X, "price") // was not rebind to gdf
+    }
+
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
         assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
         assertEquals(variable, scaleMap[aes].name)

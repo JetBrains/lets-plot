@@ -11,40 +11,22 @@ import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeoResponse.*
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.AmbiguousFeature
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
+import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodingAnswer
 
 
 class GeocodingService(private val myTransport: GeoTransport) {
 
     fun execute(request: GeoRequest): Async<List<GeocodedFeature>> {
-        val queries: List<String> = when (request) {
-            is ExplicitSearchRequest -> request.ids
-            is GeocodingSearchRequest -> request.queries.flatMap { regionQuery -> regionQuery.names }
-            is ReverseGeocodingSearchRequest -> emptyList()
-            else -> return Asyncs.failure(IllegalStateException("Unknown request type: $request"))
-        }
-
-        val featureSelector: (SuccessGeoResponse) -> List<GeocodedFeature> =
-            if (queries.isEmpty()) {
-                { response -> response.features }
-            } else {
-                { response -> queries.leftJoin(response.features) { query, feature -> feature.request == query } }
-            }
-
         return myTransport
             .send(request)
             .map { response ->
                 when (response) {
-                    is SuccessGeoResponse -> featureSelector(response)
+                    is SuccessGeoResponse -> response.answers.flatMap(GeocodingAnswer::geocodedFeatures)
                     is AmbiguousGeoResponse -> throw RuntimeException(createAmbiguousMessage(response.features))
                     is ErrorGeoResponse -> throw RuntimeException("GIS error: " + response.message)
                     else -> throw IllegalStateException("Unknown response status: $response")
                 }
             }
-
-    }
-
-    private fun <T, U : Any> List<T>.leftJoin(collection: List<U>, filter: (T, U) -> Boolean): List<U> {
-        return mapNotNull { key -> collection.firstOrNull { obj -> filter(key, obj) } }
     }
 
     companion object {

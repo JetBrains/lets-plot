@@ -18,10 +18,7 @@ class TooltipLine(
 ) : TooltipLineSpec {
     constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
 
-    //    private val myLineFormatter = StringFormat(pattern, STRING_FORMAT).also {
-//        require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format fields. Expected ${fields.size} arguments instead of ${it.argsNumber}" }
-//    }
-    private val myLineFormatter = StringFormat.forNArgs(pattern, STRING_FORMAT, fields.size, "fields")
+    private val myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields")
 
     fun initDataContext(dataContext: DataContext) {
         fields.forEach { it.initDataContext(dataContext) }

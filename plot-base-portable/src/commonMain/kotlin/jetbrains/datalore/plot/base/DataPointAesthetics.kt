@@ -54,6 +54,8 @@ interface DataPointAesthetics {
 
     fun upper(): Double?
 
+    fun mapId(): Any
+
     fun frame(): String
 
     fun speed(): Double?

@@ -49,18 +49,22 @@ class LruCache<K, E>(private val limit: Int) {
     }
 
     fun put(key: K, value: E) {
+        println(key)
         map[key]
             ?.let {
                 it.myItem = value
                 nodeToHead(it)
             }
             ?:let {
-                head = if (map.isNotEmpty()) {
+                if (map.isNotEmpty()) {
                     head!!.myPrev = Node(key, value, null, head)
                     head!!.myPrev
                 } else {
                     tail = Node(key, value, null, null)
                     tail
+                }.let {
+                    requireNotNull(it)
+                    head = it
                 }
 
                 map[key] = head!!

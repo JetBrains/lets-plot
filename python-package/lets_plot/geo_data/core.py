@@ -277,7 +277,6 @@ def regions_city(request=None, within=None):
     #return regions('city', request, within)
 
 
-
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
     Create a `Geocoder`. Allows to refine ambiguous request with `where()` method,
@@ -483,6 +482,7 @@ def geocode_countries(names=None) -> NamesGeocoder:
     """
     return NamesGeocoder('country', names)
 
+
 def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
     """
     Convert a location as described by geographic coordinates to a `Geocoder` object.
@@ -519,6 +519,7 @@ def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
 
     """
     return ReverseGeocoder(lon, lat, level, scope)
+
 
 def distance(lon0, lat0, lon1, lat1, units='km'):
     """

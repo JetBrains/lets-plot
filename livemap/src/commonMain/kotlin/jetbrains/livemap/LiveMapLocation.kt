@@ -10,7 +10,7 @@ import jetbrains.datalore.base.spatial.FULL_LONGITUDE
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.projection.WorldPoint

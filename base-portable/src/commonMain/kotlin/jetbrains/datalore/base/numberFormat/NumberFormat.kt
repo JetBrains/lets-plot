@@ -486,7 +486,7 @@ class NumberFormat(private val spec: Spec) {
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
         private fun parse(spec: String): Spec {
-            val matchResult = NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong pattern format")
+            val matchResult = NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
 
             return Spec(
                 fill = matchResult.groups[1]?.value ?: " ",

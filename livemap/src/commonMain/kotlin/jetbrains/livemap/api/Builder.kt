@@ -34,7 +34,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.tiles.TileSystemProvider
+import jetbrains.livemap.basemap.TileSystemProvider
 import jetbrains.livemap.ui.CursorService
 import kotlin.math.abs
 
@@ -185,10 +185,6 @@ fun splitPathByAntiMeridian(path: List<Vec<LonLat>>): List<List<Vec<LonLat>>> {
 
 @LiveMapDsl
 class Location {
-    var name: String? = null
-        set(v) {
-            field = v; mapLocation = v?.let { MapLocation.create(MapRegion.withName(it)) }
-        }
     var osmId: String? = null
         set(v) {
             field = v; mapLocation = v?.let { MapLocation.create(MapRegion.withId(it)) }

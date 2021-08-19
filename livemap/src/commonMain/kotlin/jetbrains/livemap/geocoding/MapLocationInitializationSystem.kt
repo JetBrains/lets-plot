@@ -12,7 +12,7 @@ import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMapConstants.DEFAULT_LOCATION
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -95,11 +95,10 @@ class MapLocationInitializationSystem(
     }
 
     private fun calculateMaxZoom(regionLength: Double, containerLength: Double): Double {
-        if (regionLength == 0.0) {
-            return myViewport.maxZoom.toDouble()
+        return when {
+            regionLength == 0.0 -> myViewport.maxZoom.toDouble()
+            containerLength == 0.0 -> myViewport.minZoom.toDouble()
+            else -> (ln(containerLength / regionLength) / ln(2.0))
         }
-        return if (containerLength == 0.0) {
-            myViewport.minZoom.toDouble()
-        } else (ln(containerLength / regionLength) / ln(2.0))
     }
 }

@@ -5,8 +5,8 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data.geocodes import _zip_answers
 from lets_plot.geo_data import PlacesDataFrameBuilder, abstractmethod
+from lets_plot.geo_data.geocodes import _zip_answers
 from lets_plot.geo_data.gis.request import RegionQuery, LevelKind
 from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 
@@ -19,21 +19,12 @@ ShapelyMultiPolygon = shapely.geometry.MultiPolygon
 def _create_geo_data_frame(data, geometry) -> DataFrame:
     return GeoDataFrame(
         data,
-        #crs={'init': 'epsg:4326'}, # causes warning in Jupyter. Everything looks fine w/o. Related issue: https://github.com/geopandas/geopandas/issues/1245
+        # crs={'init': 'epsg:4326'}, # causes warning in Jupyter. Everything looks fine w/o. Related issue: https://github.com/geopandas/geopandas/issues/1245
         geometry=geometry
     )
 
 
 class RectGeoDataFrame:
-
-    @staticmethod
-    def intersected_by_antimeridian(lonmin: float, lonmax: float):
-        return lonmin > lonmax
-
-    @staticmethod
-    def limit2geometry(lonmin: float, latmin: float, lonmax: float, latmax: float):
-        return box(lonmin, latmin, lonmax, latmax)
-
     def __init__(self):
         super().__init__()
         self._lonmin: List[float] = []
@@ -50,22 +41,22 @@ class RectGeoDataFrame:
                 rects: List[GeoRect] = self._read_rect(feature)
                 for rect in rects:
                     places.append_row(query, feature)
-                    self._lonmin.append(rect.min_lon)
+                    self._lonmin.append(rect.start_lon)
                     self._latmin.append(rect.min_lat)
-                    self._lonmax.append(rect.max_lon)
+                    self._lonmax.append(rect.end_lon)
                     self._latmax.append(rect.max_lat)
 
-        geometry = [RectGeoDataFrame.limit2geometry(lmt[0], lmt[1], lmt[2], lmt[3]) for lmt in
-                        zip(self._lonmin, self._latmin, self._lonmax, self._latmax)]
+        geometry = [
+            box(lmt[0], lmt[1], lmt[2], lmt[3]) for lmt in zip(self._lonmin, self._latmin, self._lonmax, self._latmax)
+        ]
         return _create_geo_data_frame(places.build_dict(), geometry=geometry)
-
 
     def _read_rect(self, feature: GeocodedFeature) -> List[GeoRect]:
         rect: GeoRect = self._select_rect(feature)
-        if RectGeoDataFrame.intersected_by_antimeridian(rect.min_lon, rect.max_lon):
+        if rect.crosses_antimeridian():
             return [
-                GeoRect(min_lon=rect.min_lon, max_lon=180., min_lat=rect.min_lat, max_lat=rect.max_lat),
-                GeoRect(min_lon=-180., max_lon=rect.max_lon, min_lat=rect.min_lat, max_lat=rect.max_lat)
+                GeoRect(start_lon=rect.start_lon, end_lon=180., min_lat=rect.min_lat, max_lat=rect.max_lat),
+                GeoRect(start_lon=-180., end_lon=rect.end_lon, min_lat=rect.min_lat, max_lat=rect.max_lat)
             ]
         else:
             return [rect]
@@ -110,7 +101,6 @@ class BoundariesGeoDataFrame:
         return _create_geo_data_frame(places.build_dict(), geometry=geometry)
 
     def _geo_parse_geometry(self, boundary: Boundary):
-
         geometry = boundary.geometry
         if isinstance(geometry, GeoPoint):
             return self._geo_parse_point(geometry)
@@ -128,7 +118,9 @@ class BoundariesGeoDataFrame:
         return ShapelyMultiPolygon(geo_polygons)
 
     def _geo_parse_polygon(self, polygon: Polygon) -> ShapelyPolygon:
-        geo_rings: List[ShapelyLinearRing] = [ShapelyLinearRing([(p.lon, p.lat) for p in ring.points]) for ring in polygon.rings]
+        geo_rings: List[ShapelyLinearRing] = [
+            ShapelyLinearRing([(p.lon, p.lat) for p in ring.points]) for ring in polygon.rings
+        ]
         return ShapelyPolygon(shell=geo_rings[0], holes=geo_rings[1:])
 
     def _geo_parse_point(self, geometry_data: GeoPoint) -> ShapelyPoint:
