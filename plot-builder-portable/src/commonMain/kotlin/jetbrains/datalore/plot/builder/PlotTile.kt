@@ -164,12 +164,12 @@ internal class PlotTile(
             return geomBounds
         }
 
-        operator fun ClosedRange<Double>.plus(v: Double): ClosedRange<Double> {
-            return ClosedRange(this.lowerEnd + v, this.upperEnd + v)
+        fun ClosedRange<Double>.offset(delta: Double): ClosedRange<Double> {
+            return ClosedRange(this.lowerEnd + delta, this.upperEnd + delta)
         }
-        val xRange = myCoord.xClientLimit?.plus(geomBounds.origin.x) ?: geomBounds.xRange()
-        val yRange = myCoord.yClientLimit?.plus(geomBounds.origin.y) ?: geomBounds.yRange()
-        return GeometryUtil.doubleRange(xRange, yRange)
+        val absoluteXRange = myCoord.xClientLimit?.offset(geomBounds.origin.x) ?: geomBounds.xRange()
+        val absoluteYRange = myCoord.yClientLimit?.offset(geomBounds.origin.y) ?: geomBounds.yRange()
+        return GeometryUtil.doubleRange(absoluteXRange, absoluteYRange)
     }
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
