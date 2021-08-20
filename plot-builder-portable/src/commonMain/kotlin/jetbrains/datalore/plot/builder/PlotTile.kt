@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
@@ -62,6 +63,9 @@ internal class PlotTile(
 
     private val isDebugDrawing: Boolean
         get() = myDebugDrawing.get()
+
+    lateinit var geomDrawingBounds: DoubleRectangle  // the area between axes or x/y limits
+        private set
 
     init {
         myLayers = ArrayList(layers)
@@ -131,6 +135,7 @@ internal class PlotTile(
 
             liveMapFigure = liveMapData.canvasFigure
             myTargetLocators.add(liveMapData.targetLocator)
+            geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
         } else {
             // normal plot tile
             val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()
@@ -152,24 +157,14 @@ internal class PlotTile(
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
 
-                val clipRect = limitRect(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
-                layerComponent.clipBounds(clipRect)
+                val xRange = myCoord.xClientLimit ?: ClosedRange(0.0, geomBounds.width)
+                val yRange = myCoord.yClientLimit ?: ClosedRange(0.0, geomBounds.height)
+                geomDrawingBounds = GeometryUtil.doubleRange(xRange, yRange)
+
+                layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }
         }
-    }
-
-    fun limitRect(geomBounds: DoubleRectangle): DoubleRectangle {
-        if (myLayers.find { it.isLiveMap } != null) {
-            return geomBounds
-        }
-
-        fun ClosedRange<Double>.offset(delta: Double): ClosedRange<Double> {
-            return ClosedRange(this.lowerEnd + delta, this.upperEnd + delta)
-        }
-        val absoluteXRange = myCoord.xClientLimit?.offset(geomBounds.origin.x) ?: geomBounds.xRange()
-        val absoluteYRange = myCoord.yClientLimit?.offset(geomBounds.origin.y) ?: geomBounds.yRange()
-        return GeometryUtil.doubleRange(absoluteXRange, absoluteYRange)
     }
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {

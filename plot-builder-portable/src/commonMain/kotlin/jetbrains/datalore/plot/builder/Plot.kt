@@ -358,7 +358,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
                 placementArea = geomBoundsAbsolute,
-                handlingArea = tile.limitRect(geomBoundsAbsolute) // = drawing area of geoms
+                handlingArea = tile.geomDrawingBounds.add(geomBoundsAbsolute.origin)
             )
             myTooltipHelper.addTileInfo(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
 
