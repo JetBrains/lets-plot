@@ -575,13 +575,12 @@ class LiveMap {
                     "y": "lat"
                   },
                   "tooltips": {
-                    "lines": [
-                      {
-                        "value": "aes@x",
-                        "label": null,
-                        "format": "mean = {.4f}"
-                      }
-                    ]
+                    "tooltip_lines": [
+                        "^x"
+                     ],
+                     "tooltip_formats": [
+                        { "field": "^x", "format": "mean = {.4f}" }
+                     ]
                   },
                   "symbol": "point",
                   "size": 50
