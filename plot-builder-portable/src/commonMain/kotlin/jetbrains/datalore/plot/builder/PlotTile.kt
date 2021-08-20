@@ -160,6 +160,10 @@ internal class PlotTile(
     }
 
     fun limitRect(geomBounds: DoubleRectangle): DoubleRectangle {
+        if (myLayers.find { it.isLiveMap } != null) {
+            return geomBounds
+        }
+
         operator fun ClosedRange<Double>.plus(v: Double): ClosedRange<Double> {
             return ClosedRange(this.lowerEnd + v, this.upperEnd + v)
         }
