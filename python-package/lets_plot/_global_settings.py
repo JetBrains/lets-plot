@@ -59,6 +59,7 @@ TILES_SOLID = 'solid'
 TILES_CHESSBOARD = 'chessboard'
 GEOCODING_PROVIDER_URL = 'geocoding_url'
 GEOCODING_ROUTE = '/map_data/geocoding'
+FRAGMENTS_ENABLED = 'fragments_enabled'
 
 _DATALORE_TILES_SERVICE = 'wss://tiles.datalore.jetbrains.com'
 _DATALORE_TILES_ATTRIBUTION = 'Map: <a href="https://github.com/JetBrains/lets-plot">\u00a9 Lets-Plot</a>, map data: <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap contributors</a>.'

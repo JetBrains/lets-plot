@@ -6,6 +6,8 @@ import json
 
 __all__ = ['aes', 'layer']
 
+from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
+
 
 def aes(x=None, y=None, **other):
     """
@@ -456,7 +458,7 @@ class LayerSpec(FeatureSpec):
         map_join = normalize_map_join(map_join)
 
         if is_geocoder(map):
-            if is_livemap:
+            if is_livemap and get_global_bool(FRAGMENTS_ENABLED) if has_global_value(FRAGMENTS_ENABLED) else False:
                 map = map.get_geocodes()
                 map_join = auto_join_geo_names(map_join, map)
                 map_data_meta = {'georeference': {}}
