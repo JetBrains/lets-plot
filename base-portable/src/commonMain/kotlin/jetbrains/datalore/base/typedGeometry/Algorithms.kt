@@ -48,3 +48,17 @@ fun <TypeT> Iterable<Vec<TypeT>>.boundingBox(): Rect<TypeT> {
     }
 }
 
+fun <TypeT> bbox(multiPolygon: MultiPolygon<TypeT>): Rect<TypeT>? {
+    val rects = multiPolygon.limit()
+    return if (rects.isEmpty()) {
+        null
+    } else {
+        sequenceOf(
+            rects.asSequence().map { it.origin },
+            rects.asSequence().map { it.origin + it.dimension }
+        )
+            .flatten()
+            .asIterable()
+            .boundingBox()
+    }
+}

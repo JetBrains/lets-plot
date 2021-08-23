@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.geometry
 
+import jetbrains.datalore.base.typedGeometry.AdaptiveResampling
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiLineString
 import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPoint
@@ -14,7 +15,6 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.core.projections.AdaptiveResampling
 
 private const val SAMPLING_EPSILON = 0.001
 

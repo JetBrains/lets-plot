@@ -10,17 +10,17 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasProvider
-import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.basemap.BasemapCellComponent
-import jetbrains.livemap.viewport.CellKey
+import jetbrains.livemap.basemap.BasemapTileComponent
+import jetbrains.livemap.basemap.RequestTilesComponent
+import jetbrains.livemap.basemap.Tile
+import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.onEachEntity
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.basemap.RequestTilesComponent
-import jetbrains.livemap.basemap.Tile
-import jetbrains.livemap.basemap.BasemapTileComponent
+import jetbrains.livemap.viewport.CellKey
 import kotlin.random.Random
 
 class SolidColorTileSystem(
@@ -49,7 +49,7 @@ class SolidColorTileSystem(
 }
 
 private fun drawSolidColorTile(color: Color, canvasProvider: CanvasProvider): Async<Canvas.Snapshot> {
-    var tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
+    val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
     tileCanvas.context2d.apply {
         setFillStyle(color)
         fillRect(0.0, 0.0, TILE_PIXEL_SIZE.toDouble(), TILE_PIXEL_SIZE.toDouble())
@@ -71,7 +71,7 @@ fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Async<C
 
     fun drawChessQuad(canvasProvider: CanvasProvider): Async<Canvas.Snapshot> {
 
-        var tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
+        val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
         val centerX = TILE_PIXEL_SIZE / 2
         val centerY = TILE_PIXEL_SIZE / 2
         tileCanvas.context2d.apply {

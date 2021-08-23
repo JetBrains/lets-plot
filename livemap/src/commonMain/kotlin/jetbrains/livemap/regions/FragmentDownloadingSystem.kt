@@ -113,7 +113,9 @@ class FragmentDownloadingSystem(
         regionRequest.forEach { (requestRegionId, requestQuads) ->
             val async = myFragmentGeometryProvider.getFragments(listOf(requestRegionId), requestQuads)
             async.onFailure { throwable ->
-                println(throwable)
+                requestQuads.forEach { quadKey ->
+                    fetchingFragments.remove(FragmentKey(requestRegionId, quadKey))
+                }
             }
             async.onSuccess { receivedFragments ->
                 receivedFragments.forEach { (regionId, fragments) ->

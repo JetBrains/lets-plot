@@ -10,10 +10,11 @@ import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.camera.isIntegerZoom
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projection.ClientPoint
+import jetbrains.livemap.projection.Client
+import jetbrains.livemap.projection.World
 import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.projection.WorldProjection
 
 class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -38,8 +39,6 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
             ParentLayerComponent::class
         )
 
-        fun world2Screen(p: WorldPoint, zoom: Int): ClientPoint {
-            return WorldProjection(zoom).project(p)
-        }
+        fun world2Screen(p: WorldPoint, zoom: Int) = Projections.zoom<World, Client> { zoom }.project(p)
     }
 }

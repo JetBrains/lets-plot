@@ -14,7 +14,7 @@ import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.livemap.LiveMapConstants
+import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.containers.LruCache
 
 fun newFragmentProvider(geocodingService: GeocodingService, mapSize: DoubleVector): FragmentProvider {
@@ -25,56 +25,61 @@ fun newFragmentProvider(geocodingService: GeocodingService, mapSize: DoubleVecto
     )
 }
 
-class FragmentProvider internal constructor (
+// open for tests
+open class FragmentProvider internal constructor (
     private val fragmentCache: FragmentCache,
     private val geocodingService: GeocodingService
 ) {
 
-    fun getFragments(mapObjectIds: List<String>, quads: Collection<QuadKey<LonLat>>): Async<Map<String, List<Fragment>>> {
-        val objectsWithMissingFragments = HashMap<String, List<QuadKey<LonLat>>>()
+    open fun getFragments(mapObjectIds: List<String>, quads: Collection<QuadKey<LonLat>>): Async<Map<String, List<Fragment>>> {
+        if (/*Random.nextBoolean()*/false) {
+            return Asyncs.failure(RuntimeException("Test error response"))
+        } else {
+            val objectsWithMissingFragments = HashMap<String, List<QuadKey<LonLat>>>()
 
-        var isMissing = false
-        for (mapObjectId in mapObjectIds) {
-            val missingFragments = ArrayList<QuadKey<LonLat>>()
-            for (quadKey in quads) {
-                if (!fragmentCache.contains(mapObjectId, quadKey)) {
-                    missingFragments.add(quadKey)
-                    isMissing = true
+            var isMissing = false
+            for (mapObjectId in mapObjectIds) {
+                val missingFragments = ArrayList<QuadKey<LonLat>>()
+                for (quadKey in quads) {
+                    if (!fragmentCache.contains(mapObjectId, quadKey)) {
+                        missingFragments.add(quadKey)
+                        isMissing = true
+                    }
+                }
+                if (!missingFragments.isEmpty()) {
+                    objectsWithMissingFragments[mapObjectId] = missingFragments
                 }
             }
-            if (!missingFragments.isEmpty()) {
-                objectsWithMissingFragments[mapObjectId] = missingFragments
+
+            if (!isMissing) {
+                return Asyncs.constant(getCachedGeometries(mapObjectIds, quads))
             }
-        }
 
-        if (!isMissing) {
-            return Asyncs.constant(getCachedGeometries(mapObjectIds, quads))
-        }
+            val request = GeoRequestBuilder.ExplicitRequestBuilder()
+                .setIds(mapObjectIds)
+                .addFeature(GeoRequest.FeatureOption.FRAGMENTS)
+                .setFragments(objectsWithMissingFragments)
+                .build()
 
-        val request = GeoRequestBuilder.ExplicitRequestBuilder()
-            .setIds(mapObjectIds)
-            .addFeature(GeoRequest.FeatureOption.FRAGMENTS)
-            .setFragments(objectsWithMissingFragments)
-            .build()
-
-        return geocodingService
-            .execute(request)
-            .map { features ->
-                quads.forEach { quadKey ->
-                    mapObjectIds.forEach { mapObjectId ->
-                        if (!fragmentCache.contains(mapObjectId, quadKey)) {
-                            fragmentCache.putEmpty(mapObjectId, quadKey)
+            return geocodingService
+                .execute(request)
+                .map { features ->
+                    quads.forEach { quadKey ->
+                        mapObjectIds.forEach { mapObjectId ->
+                            if (!fragmentCache.contains(mapObjectId, quadKey)) {
+                                fragmentCache.putEmpty(mapObjectId, quadKey)
+                            }
                         }
                     }
-                }
 
-                features.forEach { geocodedFeature ->
-                    geocodedFeature.fragments?.forEach {
-                        fragmentCache.put(geocodedFeature.id, it.key, it)
+                    features.forEach { geocodedFeature ->
+                        geocodedFeature.fragments?.forEach {
+                            fragmentCache.put(geocodedFeature.id, it.key, it)
+                        }
                     }
+                    getCachedGeometries(mapObjectIds, quads)
                 }
-                getCachedGeometries(mapObjectIds, quads)
-            }
+        }
     }
 
     private fun getCachedGeometries(
@@ -124,7 +129,7 @@ class FragmentProvider internal constructor (
             private const val CACHED_VIEW_COUNT = 2
 
             private fun calculateCachedSideTileCount(sideLength: Double): Int {
-                return (CACHED_VIEW_COUNT * sideLength / LiveMapConstants.TILE_PIXEL_SIZE + 1).toInt()
+                return (CACHED_VIEW_COUNT * sideLength / TILE_PIXEL_SIZE + 1).toInt()
             }
         }
     }

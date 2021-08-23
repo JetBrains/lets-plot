@@ -7,15 +7,31 @@ package jetbrains.livemap.config
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMap
-import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
+import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.projection.*
+import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.projection.WorldRectangle
+import jetbrains.livemap.projection.toClientPoint
 import jetbrains.livemap.services.MapLocationGeocoder
 import jetbrains.livemap.services.newFragmentProvider
 import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.viewport.ViewportHelper
+
+const val MIN_ZOOM = 1
+const val MAX_ZOOM = 15
+const val TILE_PIXEL_SIZE = 256.0
+val WORLD_RECTANGLE = WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
+val DEFAULT_LOCATION = GeoRectangle(-124.76, 25.52, -66.94, 49.39)
+
+fun createMapProjection(geoProjection: GeoProjection): MapProjection {
+    return MapProjectionBuilder(geoProjection, WORLD_RECTANGLE).apply {
+        reverseY = true
+    }.create()
+}
 
 class LiveMapFactory(
     private val myLiveMapSpec: LiveMapSpec
@@ -25,15 +41,14 @@ class LiveMapFactory(
     private val myMapRuler: MapRuler<World>
 
     init {
-        val mapRect = WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
-        myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
-        val multiMapHelper = ViewportHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
+        myMapProjection = createMapProjection(myLiveMapSpec.geoProjection)
+        val multiMapHelper = ViewportHelper(myMapProjection.mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
         myMapRuler = multiMapHelper
 
         myViewport = Viewport.create(
             multiMapHelper,
             myLiveMapSpec.size.toClientPoint(),
-            mapRect.center,
+            myMapProjection.mapRect.center,
             myLiveMapSpec.minZoom,
             myLiveMapSpec.maxZoom
         )
@@ -48,7 +63,7 @@ class LiveMapFactory(
                 myMapProjection = myMapProjection,
                 viewport = myViewport,
                 layers = myLiveMapSpec.layers,
-                myTileSystemProvider = myLiveMapSpec.tileSystemProvider,
+                myBasemapTileSystemProvider = myLiveMapSpec.basemapTileSystemProvider,
                 myFragmentProvider = newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
                 myDevParams = myLiveMapSpec.devParams,
                 myMapLocationConsumer = myLiveMapSpec.mapLocationConsumer,

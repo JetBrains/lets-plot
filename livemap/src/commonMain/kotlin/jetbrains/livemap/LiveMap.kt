@@ -85,7 +85,7 @@ class LiveMap(
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
     private val layers: List<LayersBuilder.() -> Unit>,
-    private val myTileSystemProvider: TileSystemProvider,
+    private val myBasemapTileSystemProvider: BasemapTileSystemProvider,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
@@ -188,8 +188,6 @@ class LiveMap(
         } else {
             Diagnostics()
         }
-
-
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
@@ -235,7 +233,7 @@ class LiveMap(
                 ),
 
                 BasemapCellLoadingSystem(componentManager),
-                myTileSystemProvider.create(componentManager),
+                myBasemapTileSystemProvider.create(componentManager),
 
                 BasemapCellsRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 DebugDataSystem(componentManager),
@@ -311,7 +309,7 @@ class LiveMap(
             .createEntity("layers_order")
             .addComponents { + myLayerManager.createLayersOrderComponent() }
 
-        if (myTileSystemProvider.isVector) {
+        if (myBasemapTileSystemProvider.isVector) {
             componentManager
                 .createEntity("vector_layer_ground")
                 .addComponents {
@@ -334,14 +332,13 @@ class LiveMap(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myMapRuler,
             myDevParams.isSet(DevParams.POINT_SCALING),
             TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         )
 
         layers.forEach(layersBuilder::apply)
 
-        if (myTileSystemProvider.isVector) {
+        if (myBasemapTileSystemProvider.isVector) {
             componentManager
                 .createEntity("vector_layer_labels")
                 .addComponents {

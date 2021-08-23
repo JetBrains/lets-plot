@@ -9,33 +9,32 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.viewport.ViewportGridStateComponent
-import java.util.*
-import kotlin.collections.HashSet
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
 object Mocks {
-    fun cellState(testBase: LiveMapTestBase): CellStateSpec {
-        return CellStateSpec(testBase)
-    }
-
-    class CellStateSpec(testBase: LiveMapTestBase) : LiveMapTestBase.MockSpec(testBase) {
+    class ViewportGridSpec(testBase: LiveMapTestBase) : LiveMapTestBase.MockSpec(testBase) {
         private var myToAdd = emptySet<QuadKey<LonLat>>()
         private var myToRemove = emptySet<QuadKey<LonLat>>()
         private var myVisibleQuads: MutableMap<QuadKey<LonLat>, Int> = HashMap()
 
-        fun quadsToAdd(vararg ts: QuadKey<LonLat>): CellStateSpec {
+        fun quadsToAdd(vararg ts: QuadKey<LonLat>): ViewportGridSpec {
             myToAdd = HashSet<QuadKey<LonLat>>(listOf(*ts))
             return this
         }
 
-        fun quadsToRemove(vararg ts: QuadKey<LonLat>): CellStateSpec {
+        fun quadsToRemove(vararg ts: QuadKey<LonLat>): ViewportGridSpec {
             myToRemove = HashSet<QuadKey<LonLat>>(listOf(*ts))
             return this
         }
 
-        fun visibleQuads(vararg quads: QuadKey<LonLat>): CellStateSpec {
+        fun visibleQuads(vararg quads: QuadKey<LonLat>): ViewportGridSpec {
+            visibleQuads(listOf(*quads))
+            return this
+        }
+
+        fun visibleQuads(quads: Iterable<QuadKey<LonLat>>): ViewportGridSpec {
             myVisibleQuads = HashMap()
             for (quad in quads) {
                 myVisibleQuads[quad] = 1

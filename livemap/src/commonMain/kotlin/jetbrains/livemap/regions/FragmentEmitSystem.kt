@@ -8,9 +8,9 @@ package jetbrains.livemap.regions
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
-import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
@@ -22,7 +22,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.core.projections.ProjectionUtil
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.geometry.GeometryTransform
 import jetbrains.livemap.geometry.ScreenGeometryComponent
@@ -34,7 +34,6 @@ import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.regions.Utils.RegionsIndex
 import jetbrains.livemap.regions.Utils.entityName
-import jetbrains.livemap.regions.Utils.zoom
 import jetbrains.livemap.scaling.ScaleComponent
 import jetbrains.livemap.viewport.ViewportGridStateComponent
 
@@ -124,12 +123,12 @@ class FragmentEmitSystem(
         require(!boundaries.isEmpty())
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
-        val zoomProjection = ProjectionUtil.square<World, Client>(ProjectionUtil.zoom(zoom(fragmentKey)))
+        val zoomProjection = Projections.zoom<World, Client>(fragmentKey::zoom)
 
         val projector = GeometryTransform
             .resampling(boundaries, mapProjection::project)
             .flatMap { worldMultiPolygon: MultiPolygon<World> ->
-                val bbox = GeometryUtil.bbox(worldMultiPolygon) ?: error("Fragment bbox can't be null")
+                val bbox = bbox(worldMultiPolygon) ?: error("Fragment bbox can't be null")
                 runLaterBySystem(
                     fragmentEntity
                 ) { theEntity ->
@@ -150,7 +149,7 @@ class FragmentEmitSystem(
                             + CameraListenerComponent()
                             + CenterChangedComponent()
                             + ZoomChangedComponent()
-                            + ScaleComponent().apply { zoom = zoom(fragmentKey) }
+                            + ScaleComponent().apply { zoom = fragmentKey.zoom() }
                             + FragmentComponent(fragmentKey)
                             + ScreenLoopComponent()
                             + ScreenGeometryComponent().apply { geometry = screenMultiPolygon }
