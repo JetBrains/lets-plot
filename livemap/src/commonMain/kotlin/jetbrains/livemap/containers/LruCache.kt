@@ -49,7 +49,6 @@ class LruCache<K, E>(private val limit: Int) {
     }
 
     fun put(key: K, value: E) {
-        println(key)
         map[key]
             ?.let {
                 it.myItem = value

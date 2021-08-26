@@ -8,14 +8,14 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.projections.ProjectionUtil.transformMultiPolygon
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
@@ -84,7 +84,7 @@ class PathBuilder(
     fun build(nonInteractive: Boolean = false): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
-        return GeometryUtil.bbox(coord)?.let { bbox ->
+        return bbox(coord)?.let { bbox ->
             val entity = myFactory
                 .createMapEntity("map_ent_path")
                 .addComponents {

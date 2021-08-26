@@ -8,18 +8,21 @@ package jetbrains.datalore.jetbrains.livemap
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
-import jetbrains.datalore.jetbrains.livemap.tile.Mocks.CellStateSpec
+import jetbrains.datalore.jetbrains.livemap.tile.Mocks.ViewportGridSpec
 import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.projection.WorldPoint
 import jetbrains.livemap.regions.*
 import java.util.*
-import kotlin.collections.HashMap
+
 
 object Mocks {
-    fun cellState(testBase: LiveMapTestBase): CellStateSpec {
-        return CellStateSpec(testBase)
+    fun viewportGrid(testBase: LiveMapTestBase): ViewportGridSpec {
+        return ViewportGridSpec(testBase)
     }
 
     fun changedFragments(testBase: LiveMapTestBase): ChangedFragmentsSpec {
@@ -54,6 +57,9 @@ object Mocks {
         return testBase.repeatSpec()
     }
 
+    fun cameraUpdate(testBase: LiveMapTestBase?): CameraUpdateSpec {
+        return CameraUpdateSpec(testBase)
+    }
 
     class ChangedFragmentsSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
 
@@ -151,7 +157,59 @@ object Mocks {
         }
     }
 
+    class CameraUpdateSpec internal constructor(testBase: LiveMapTestBase?) : MockSpec(testBase!!) {
+        private var myNone = false
+        private var myIntegerZoomChanged = false
+        private var myFractionZoomChanged = false
+        private var myZoom: Optional<Double> = Optional.empty()
+        private var myIntegerZoom: Optional<Int> = Optional.empty()
+        fun zoom(zoom: Double): CameraUpdateSpec {
+            myZoom = Optional.of(zoom)
+            myIntegerZoom = Optional.of(zoom.toInt())
+            myIntegerZoomChanged = false
+            myFractionZoomChanged = true
+            return this
+        }
+
+        fun zoom(zoom: Int): CameraUpdateSpec {
+            myZoom = Optional.of(zoom.toDouble())
+            myIntegerZoom = Optional.of(zoom)
+            myIntegerZoomChanged = true
+            myFractionZoomChanged = true
+            return this
+        }
+
+        fun kind(zoomKinds: EnumSet<ZoomKind>): CameraUpdateSpec {
+            myIntegerZoomChanged = zoomKinds.contains(ZoomKind.INTEGER)
+            myFractionZoomChanged = zoomKinds.contains(ZoomKind.FRACTION)
+            return this
+        }
+
+        fun none(): CameraUpdateSpec {
+            myNone = true
+            return this
+        }
+
+        override fun apply() {
+            //val component: CameraUpdateComponent = componentManager.getSingleton<CameraUpdateComponent>()
+            if (myNone) {
+                myNone = false
+            //    component.nothing()
+            } else {
+                myZoom.ifPresent { liveMapContext.camera.requestZoom(it) }
+                myIntegerZoom.ifPresent { liveMapContext.camera.requestZoom(it.toDouble()) }
+                //component.setIntegerZoomChanged(myIntegerZoomChanged)
+                //component.setFractionZoomChanged(myFractionZoomChanged)
+            }
+        }
+
+        enum class ZoomKind {
+            INTEGER, FRACTION
+        }
+    }
+
     class CameraSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
+        private var myPosition: Vec<World>? = null
         private var myZoom: Double? = null
 
         fun zoom(zoom: Double): CameraSpec {
@@ -159,9 +217,14 @@ object Mocks {
             return this
         }
 
+        fun position(p: WorldPoint): CameraSpec {
+            myPosition = p
+            return this
+        }
+
         override fun apply() {
-            // val cameraComponent = componentManager.getSingleton<CameraComponent>()
-            myZoom?.let { liveMapContext.camera.requestZoom(it) }
+            myZoom?.let { liveMapContext.camera.requestZoom(it); myZoom = null }
+            myPosition?.let { liveMapContext.camera.requestPosition(it); myPosition = null }
         }
     }
 
@@ -171,7 +234,7 @@ object Mocks {
         fun downloaded(vararg downloaded: FragmentSpec): DownloadingFragmentsSpec {
             val r = HashMap<FragmentKey, MultiPolygon<Generic>>()
             for (fragmentSpec in downloaded) {
-                r[fragmentSpec.key()] = fragmentSpec.geometries()!!.asMultipolygon()
+                r[fragmentSpec.key()] = fragmentSpec.geometries().asMultipolygon()
             }
             myDownloaded = r
             return this

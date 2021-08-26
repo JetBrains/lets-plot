@@ -14,19 +14,8 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 
 internal class GeographicProjection : GeoProjection {
-
-    override fun project(v: LonLatPoint): GeographicPoint = explicitVec(
-        limitLon(
-            v.x
-        ), limitLat(v.y)
-    )
-
-    override fun invert(v: GeographicPoint): LonLatPoint = explicitVec(
-        limitLon(
-            v.x
-        ), limitLat(v.y)
-    )
-    
+    override fun project(v: LonLatPoint): GeographicPoint = explicitVec(limitLon(v.x), limitLat(v.y))
+    override fun invert(v: GeographicPoint): LonLatPoint = explicitVec(limitLon(v.x), limitLat(v.y))
     override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
 
     companion object {

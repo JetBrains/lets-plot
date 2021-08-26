@@ -17,6 +17,7 @@ import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.MapLocation
+import jetbrains.livemap.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
@@ -25,16 +26,14 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.core.projections.ProjectionType
+import jetbrains.livemap.core.projections.GeoProjection
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.projections.createArcPath
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
 import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.basemap.TileSystemProvider
 import jetbrains.livemap.ui.CursorService
 import kotlin.math.abs
 
@@ -45,7 +44,7 @@ annotation class LiveMapDsl
 class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
-    lateinit var tileSystemProvider: TileSystemProvider
+    lateinit var tileSystemProvider: BasemapTileSystemProvider
 
     var layers: List<LayersBuilder.() -> Unit> = emptyList()
 
@@ -53,11 +52,11 @@ class LiveMapBuilder {
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
 
-    var projectionType: ProjectionType = ProjectionType.MERCATOR
+    var projection: GeoProjection = Projections.mercator()
     var isLoopX: Boolean = true
     var isLoopY: Boolean = false
 
-    var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
+    var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> }
 
     var attribution: String? = null
 
@@ -73,7 +72,7 @@ class LiveMapBuilder {
 
             location = mapLocation,
 
-            projectionType = projectionType,
+            geoProjection = projection,
             isLoopX = isLoopX,
             isLoopY = isLoopY,
 
@@ -81,7 +80,7 @@ class LiveMapBuilder {
 
             mapLocationConsumer = mapLocationConsumer,
 
-            tileSystemProvider = tileSystemProvider,
+            basemapTileSystemProvider = tileSystemProvider,
 
             devParams = devParams,
 
@@ -103,7 +102,6 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
-    val mapRuler: MapRuler<World>,
     val pointScaling: Boolean,
     val textMeasurer: TextMeasurer
 )
@@ -215,7 +213,7 @@ class GeocodingHint {
 
 @LiveMapDsl
 class Projection {
-    var kind = ProjectionType.MERCATOR
+    var geoProjection = Projections.mercator()
     var loopX = true
     var loopY = false
 }
@@ -285,7 +283,7 @@ fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
 
 fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     Projection().apply(block).let {
-        projectionType = it.kind
+        projection = it.geoProjection
         isLoopX = it.loopX
         isLoopY = it.loopY
     }

@@ -8,12 +8,12 @@ package jetbrains.livemap.services
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.projection.WorldRectangle
@@ -111,10 +111,7 @@ class MapLocationGeocoder(
 
     companion object {
         fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
-            return splitByAntiMeridian()
-                .map { rect ->
-                    ProjectionUtil.transformBBox(rect) { mapProjection.project(it) }
-                }
+            return splitByAntiMeridian().map { rect -> transformBBox(rect, mapProjection::project) }
         }
     }
 }

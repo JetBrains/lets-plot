@@ -9,8 +9,8 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.spatial.calculateQuadKeys
 import jetbrains.datalore.base.spatial.computeRect
+import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.World
 
@@ -18,7 +18,7 @@ typealias CellKey = QuadKey<World>
 
 fun convertCellKeyToQuadKeys(mapProjection: MapProjection, cellKey: CellKey): Set<QuadKey<LonLat>> {
     val cellRect = cellKey.computeRect(mapProjection.mapRect)
-    val geoRect = ProjectionUtil.transformBBox(cellRect, mapProjection::invert)
+    val geoRect = transformBBox(cellRect, mapProjection::invert)
     return calculateQuadKeys(geoRect, cellKey.length)
 }
 

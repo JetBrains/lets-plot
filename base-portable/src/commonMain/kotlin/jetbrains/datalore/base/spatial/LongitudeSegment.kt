@@ -12,20 +12,11 @@ internal class LongitudeSegment(start: Double, end: Double) {
     private val myStart: Double = limitLon(start)
     private val myEnd: Double = limitLon(end)
 
-    val isEmpty: Boolean
-        get() = myEnd == myStart
-
-    fun start(): Double {
-        return myStart
-    }
-
-    fun end(): Double {
-        return myEnd
-    }
-
-    fun length(): Double {
-        return myEnd - myStart + if (myEnd < myStart) FULL_LONGITUDE else 0.0
-    }
+    val isEmpty: Boolean = myEnd == myStart
+    fun start(): Double = myStart
+    fun end(): Double = myEnd
+    fun length(): Double = myEnd - myStart + if (myEnd < myStart) FULL_LONGITUDE else 0.0
+    fun invert(): LongitudeSegment = LongitudeSegment(myEnd, myStart)
 
     fun encloses(longitudeSegment: LongitudeSegment): Boolean {
         val externalRanges = splitByAntiMeridian()
@@ -43,17 +34,8 @@ internal class LongitudeSegment(start: Double, end: Double) {
         return true
     }
 
-    fun invert(): LongitudeSegment {
-        return LongitudeSegment(myEnd, myStart)
-    }
 
-    fun splitByAntiMeridian(): List<ClosedRange<Double>> {
-        return splitSegment(
-            myStart, myEnd,
-            MIN_LONGITUDE,
-            MAX_LONGITUDE
-        )
-    }
+    fun splitByAntiMeridian(): List<ClosedRange<Double>> = splitSegment(myStart, myEnd, MIN_LONGITUDE, MAX_LONGITUDE)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

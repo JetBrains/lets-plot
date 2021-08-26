@@ -23,20 +23,20 @@ import jetbrains.datalore.plot.config.getString
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
-import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.Services
 import jetbrains.livemap.api.liveMapGeocoding
 import jetbrains.livemap.api.liveMapVectorTiles
-import jetbrains.livemap.basemap.TileSystemProvider
+import jetbrains.livemap.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.basemap.Tilesets
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.config.LiveMapSpec
-import jetbrains.livemap.core.projections.ProjectionType
+import jetbrains.livemap.config.MAX_ZOOM
+import jetbrains.livemap.config.MIN_ZOOM
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.ui.CursorService
 
 
@@ -96,7 +96,13 @@ internal class LiveMapSpecBuilder {
     }
 
     fun build(): LiveMapSpec {
-        val projectionType = convertProjectionType(myLiveMapOptions.projection)
+        // loopX <-> cylindrical
+        val (geoProjection, loopX) = when (myLiveMapOptions.projection) {
+            LivemapConstants.Projection.EPSG3857 -> Projections.mercator() to true
+            LivemapConstants.Projection.EPSG4326 -> Projections.geographic() to true
+            LivemapConstants.Projection.AZIMUTHAL -> Projections.azimuthalEqualArea() to false
+            LivemapConstants.Projection.CONIC -> Projections.conicEqualArea() to false
+        }
 
         val liveMapLayerProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
         val geomLayersProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
@@ -113,15 +119,15 @@ internal class LiveMapSpecBuilder {
             isLabels = myLiveMapOptions.labels,
             isTiles = DEFAULT_SHOW_TILES,
             isUseFrame = false, //liveMapProcessor.heatMapWithFrame(),
-            projectionType = projectionType,
+            geoProjection = geoProjection,
             location = createMapLocation(myLiveMapOptions.location),
             zoom = checkZoom(myLiveMapOptions.zoom),
             layers = layersConfigurators,
-            isLoopX = CYLINDRICAL_PROJECTIONS.contains(projectionType),
+            isLoopX = loopX,
             isLoopY = DEFAULT_LOOP_Y,
             mapLocationConsumer = myMapLocationConsumer,
             geocodingService = createGeocodingService(myLiveMapOptions.geocodingService),
-            tileSystemProvider = createTileSystemProvider(
+            basemapTileSystemProvider = createTileSystemProvider(
                 myLiveMapOptions.tileProvider,
                 myDevParams.isSet(DEBUG_TILES),
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
@@ -164,10 +170,6 @@ internal class LiveMapSpecBuilder {
 
         private const val DEFAULT_SHOW_TILES = true
         private const val DEFAULT_LOOP_Y = false
-        private val CYLINDRICAL_PROJECTIONS = setOf(
-            ProjectionType.GEOGRAPHIC,
-            ProjectionType.MERCATOR
-        )
 
         private fun <T> List<T>.toDoubleList(): List<Double> {
             if (isEmpty()) {
@@ -228,15 +230,6 @@ internal class LiveMapSpecBuilder {
             )
         }
 
-        private fun convertProjectionType(projection: LivemapConstants.Projection): ProjectionType {
-            return when (projection) {
-                LivemapConstants.Projection.EPSG3857 -> ProjectionType.MERCATOR
-                LivemapConstants.Projection.EPSG4326 -> ProjectionType.GEOGRAPHIC
-                LivemapConstants.Projection.AZIMUTHAL -> ProjectionType.AZIMUTHAL_EQUAL_AREA
-                LivemapConstants.Projection.CONIC -> ProjectionType.CONIC_EQUAL_AREA
-            }
-        }
-
         private fun createMapRegion(region: Any?): MapRegion? {
             return when (region) {
                 null -> null
@@ -280,7 +273,7 @@ internal class LiveMapSpecBuilder {
             throw IllegalArgumentException("Invalid map region type: $regionType")
         }
 
-        fun createTileSystemProvider(options: Map<*, *>, debugTiles: Boolean, quant: Int): TileSystemProvider {
+        fun createTileSystemProvider(options: Map<*, *>, debugTiles: Boolean, quant: Int): BasemapTileSystemProvider {
             if (debugTiles) {
                 return Tilesets.chessboard()
             }

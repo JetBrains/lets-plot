@@ -1,13 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.projections
-
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.div
-import jetbrains.datalore.base.typedGeometry.plus
+package jetbrains.datalore.base.typedGeometry
 
 class AdaptiveResampling<InT, OutT>(
     private val transform: (Vec<InT>) -> Vec<OutT>,
@@ -54,7 +50,7 @@ class AdaptiveResampling<InT, OutT>(
     }
 
     private fun getSamplePoint(p1: Vec<InT>, p2: Vec<InT>): Vec<InT>? {
-        val pc = (p1 + p2) / 2.0;
+        val pc = (p1 + p2) / 2.0
         val q1 = transform(p1)
         val q2 = transform(p2)
         val qc = transform(pc)

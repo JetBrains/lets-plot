@@ -12,22 +12,11 @@ import kotlin.math.min
 class LonLat
 typealias LonLatPoint = Vec<LonLat>
 
-val EARTH_RECT = Rect<LonLat>(
-    MIN_LONGITUDE,
-    MIN_LATITUDE,
-    FULL_LONGITUDE,
-    FULL_LATITUDE
-)
+val EARTH_RECT = Rect<LonLat>(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
+val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, myLoopX = true, myLoopY = false)
 
-fun limitLon(lon: Double) = max(
-    MIN_LONGITUDE, min(lon,
-        MAX_LONGITUDE
-    ))
-
-fun limitLat(lat: Double) = max(
-    MIN_LATITUDE, min(lat,
-        MAX_LATITUDE
-    ))
+fun limitLon(lon: Double) = max(MIN_LONGITUDE, min(lon, MAX_LONGITUDE))
+fun limitLat(lat: Double) = max(MIN_LATITUDE, min(lat, MAX_LATITUDE))
 
 fun normalizeLon(lon: Double): Double {
     var result = lon - (lon / FULL_LONGITUDE).toInt() * FULL_LONGITUDE
@@ -42,11 +31,6 @@ fun normalizeLon(lon: Double): Double {
     return result
 }
 
-val BBOX_CALCULATOR = GeoBoundingBoxCalculator(
-    EARTH_RECT,
-    myLoopX = true,
-    myLoopY = false
-)
 
 fun convertToGeoRectangle(rect: Rect<LonLat>): GeoRectangle {
     val left: Double

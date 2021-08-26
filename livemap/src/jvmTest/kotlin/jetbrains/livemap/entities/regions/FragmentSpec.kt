@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Generic
@@ -16,7 +15,7 @@ import jetbrains.livemap.regions.FragmentKey
 import jetbrains.livemap.regions.Utils.entityName
 
 class FragmentSpec (private var myKey: FragmentKey) {
-    private var myGeometries: Boundary<Generic>? = null
+    private lateinit var myGeometries: Boundary<Generic>
     private var myEntity: EcsEntity? = null
 
     internal constructor(regionId: String, quad: QuadKey<LonLat>) : this(FragmentKey(regionId, quad))
@@ -38,7 +37,7 @@ class FragmentSpec (private var myKey: FragmentKey) {
     }
 
 
-    fun geometries(): Boundary<Generic>? {
+    fun geometries(): Boundary<Generic> {
         return myGeometries
     }
 
@@ -53,13 +52,13 @@ class FragmentSpec (private var myKey: FragmentKey) {
     }
 
     fun readyEntity(): EcsEntity? {
-        require(myGeometries != null && !myGeometries!!.asMultipolygon().isEmpty())
+        require(!myGeometries.asMultipolygon().isEmpty())
         return myEntity
     }
 
     companion object {
-        fun quads(vararg specs: FragmentSpec): Array<QuadKey<LonLat>> {
-            return listOf(*specs).map { it.quad() }.toTypedArray()
+        fun quads(vararg specs: FragmentSpec): Iterable<QuadKey<LonLat>> {
+            return listOf(*specs).map(FragmentSpec::quad)
         }
     }
 }

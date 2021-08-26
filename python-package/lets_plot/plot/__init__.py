@@ -10,7 +10,6 @@ from .geom_extras import *
 from .geom_image_ import *
 from .geom_livemap_ import *
 from .guide import *
-from .image_matrix import *
 from .label import *
 from .plot import *
 from .pos import *
@@ -31,7 +30,6 @@ __all__ = (coord.__all__ +
            geom_image_.__all__ +
            geom_livemap_.__all__ +
            guide.__all__ +
-           image_matrix.__all__ +
            label.__all__ +
            plot.__all__ +
            pos.__all__ +

@@ -8,11 +8,10 @@ package jetbrains.livemap.config
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.basemap.TileSystemProvider
+import jetbrains.livemap.basemap.BasemapTileSystemProvider
+import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.ui.CursorService
 
 class LiveMapSpec(
@@ -24,17 +23,17 @@ class LiveMapSpec(
     val isLabels: Boolean,
     val isTiles: Boolean,
     val isUseFrame: Boolean,
-    val projectionType: ProjectionType,
+    val geoProjection: GeoProjection,
     val location: MapLocation?,
     val zoom: Int?,
     val layers: List<LayersBuilder.() -> Unit>,
     val isLoopX: Boolean,
     val isLoopY: Boolean,
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
-    val tileSystemProvider: TileSystemProvider,
+    val basemapTileSystemProvider: BasemapTileSystemProvider,
     val attribution: String?,
     val cursorService: CursorService,
-    val minZoom: Int = LiveMapConstants.MIN_ZOOM,
-    val maxZoom: Int = LiveMapConstants.MAX_ZOOM,
+    val minZoom: Int = MIN_ZOOM,
+    val maxZoom: Int = MAX_ZOOM,
     val devParams: DevParams
 )

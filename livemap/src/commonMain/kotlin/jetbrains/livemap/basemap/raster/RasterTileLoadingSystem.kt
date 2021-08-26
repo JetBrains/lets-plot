@@ -11,20 +11,15 @@ import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
-import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.basemap.BasemapCellComponent
-import jetbrains.livemap.viewport.CellKey
-import jetbrains.livemap.basemap.BasemapLayerKind
-import jetbrains.livemap.basemap.KindComponent
+import jetbrains.livemap.basemap.*
+import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.basemap.RequestTilesComponent
-import jetbrains.livemap.basemap.Tile
-import jetbrains.livemap.basemap.BasemapTileComponent
+import jetbrains.livemap.viewport.CellKey
 import kotlin.math.pow
 import kotlin.math.roundToInt
 

@@ -9,19 +9,19 @@ import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.MapRenderContext
 import jetbrains.livemap.camera.MutableCamera
-import jetbrains.livemap.viewport.Viewport
+import jetbrains.livemap.config.WORLD_RECTANGLE
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.Coordinates
+import jetbrains.livemap.projection.ClientPoint
 import jetbrains.livemap.projection.WorldPoint
+import jetbrains.livemap.viewport.Viewport
+import jetbrains.livemap.viewport.ViewportHelper
 import org.junit.Before
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import java.util.*
-import kotlin.NoSuchElementException
 import kotlin.reflect.KClass
 import kotlin.test.assertTrue
 
@@ -45,9 +45,14 @@ abstract class LiveMapTestBase {
 
         liveMapContext = mock(LiveMapContext::class.java)
 
+        val viewport = Viewport(ViewportHelper(WORLD_RECTANGLE, myLoopX = true, myLoopY = false), ClientPoint(500, 500), 1, 15)
+
         val mapRenderContext = mock(MapRenderContext::class.java)
+        `when`(mapRenderContext.viewport).thenReturn(viewport)
+
         `when`(liveMapContext.mapRenderContext).thenReturn(mapRenderContext)
         `when`(liveMapContext.camera).thenReturn(myCamera)
+
 
         mySystemTime = mock(SystemTime::class.java)
         `when`(liveMapContext.systemTime).thenReturn(mySystemTime)
@@ -58,11 +63,6 @@ abstract class LiveMapTestBase {
                 componentManager
             )
         )
-
-        val viewport = mock(Viewport::class.java)
-
-        `when`(viewport.position).thenReturn(Coordinates.ZERO_WORLD_POINT)
-        `when`(mapRenderContext.viewport).thenReturn(viewport)
     }
 
    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT {
@@ -75,14 +75,17 @@ abstract class LiveMapTestBase {
         }
     }
 
-    protected fun createEntity(name: String, componentTypes: List<Class<out EcsComponent>>): EcsEntity {
+    protected fun createEntity(name: String, componentTypes: List<KClass<out EcsComponent>>): EcsEntity {
         val entity = componentManager.createEntity(name)
         componentTypes.forEach { aType ->
             try {
-                entity.addComponents{ + aType.getDeclaredConstructor().newInstance() }
+                entity.addComponents{ + aType.constructors.first().call() }
             } catch (e: InstantiationException) {
                 throw IllegalStateException(e)
             } catch (e: IllegalAccessException) {
+                throw IllegalStateException(e)
+            } catch (e: IllegalArgumentException) {
+                println(aType)
                 throw IllegalStateException(e)
             }
         }
@@ -92,7 +95,7 @@ abstract class LiveMapTestBase {
 
     protected fun createEntity(
         name: String,
-        componentTypes: List<Class<out EcsComponent>>,
+        componentTypes: List<KClass<out EcsComponent>>,
         vararg extraComponents: EcsComponent
     ): EcsEntity {
         return createEntity(name, componentTypes).apply {
@@ -100,15 +103,12 @@ abstract class LiveMapTestBase {
         }
     }
 
-    /**
-     * By default delta time is 16 and scheduler runs all microthreads
-     */
-    protected fun update(vararg specs: MockSpec) {
+    protected fun update(specs: Iterable<MockSpec>) {
         deltaTimeSpec().standard().apply()
         schedulerSpec().runAll().apply()
         repeatSpec().times(1).apply()
 
-        Arrays.stream(specs).forEach { it.apply() }
+        specs.forEach { it.apply() }
 
         while (updateRepeatTimes-- > 0) {
             systemsOrder.forEach { systemClass ->
@@ -119,7 +119,14 @@ abstract class LiveMapTestBase {
         afterUpdateCleanup().forEach { it.apply() }
     }
 
-    protected fun afterUpdateCleanup(): List<MockSpec> {
+    /**
+     * By default, delta time is 16 and scheduler runs all microthreads
+     */
+    protected fun update(vararg specs: MockSpec) {
+        update(listOf(*specs))
+    }
+
+    protected open fun afterUpdateCleanup(): List<MockSpec> {
         return emptyList()
     }
 

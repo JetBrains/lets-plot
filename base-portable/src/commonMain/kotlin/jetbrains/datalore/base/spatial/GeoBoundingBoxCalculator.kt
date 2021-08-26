@@ -24,28 +24,10 @@ class GeoBoundingBoxCalculator<TypeT>(
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
 ) {
-
-
-    fun calculateBoundingBox(
-        xSegments: Sequence<Segment>,
-        ySegments: Sequence<Segment>
-    ): Rect<TypeT> {
-        val xRange = calculateBoundingRange(
-            xSegments,
-            myMapRect.xRange(),
-            myLoopX
-        )
-        val yRange = calculateBoundingRange(
-            ySegments,
-            myMapRect.yRange(),
-            myLoopY
-        )
-        return Rect(
-            xRange.lowerEnd,
-            yRange.lowerEnd,
-            xRange.length(),
-            yRange.length()
-        )
+    fun calculateBoundingBox(xSegments: Sequence<Segment>, ySegments: Sequence<Segment>): Rect<TypeT> {
+        val xRange = calculateBoundingRange(xSegments, myMapRect.xRange(), myLoopX)
+        val yRange = calculateBoundingRange(ySegments, myMapRect.yRange(), myLoopY)
+        return Rect(xRange.lowerEnd, yRange.lowerEnd, xRange.length(), yRange.length())
     }
 
     private fun calculateBoundingRange(
@@ -64,18 +46,9 @@ class GeoBoundingBoxCalculator<TypeT>(
     }
 
     companion object {
-        internal fun calculateLoopLimitRange(
-            segments: Sequence<Segment>,
-            mapRange: ClosedRange<Double>
-        ): ClosedRange<Double> {
+        internal fun calculateLoopLimitRange(segments: Sequence<Segment>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
             return segments
-                .map {
-                    splitSegment(
-                        it.start, it.end,
-                        mapRange.lowerEnd,
-                        mapRange.upperEnd
-                    )
-                }
+                .map { splitSegment(it.start, it.end, mapRange.lowerEnd, mapRange.upperEnd) }
                 .flatten()
                 .run { findMaxGapBetweenRanges(this, mapRange.length()) }
                 .run { invertRange(this, mapRange.length()) }
@@ -120,18 +93,13 @@ class GeoBoundingBoxCalculator<TypeT>(
             fun safeRange(first: Double, second: Double) = ClosedRange(min(first, second), max(first, second))
 
             return when {
-                range.length() > width ->
-                    ClosedRange(range.lowerEnd, range.lowerEnd)
-                range.upperEnd > width ->
-                    safeRange(range.upperEnd - width, range.lowerEnd)
-                else ->
-                    safeRange(range.upperEnd, width + range.lowerEnd)
+                range.length() > width -> ClosedRange(range.lowerEnd, range.lowerEnd)
+                range.upperEnd > width -> safeRange(range.upperEnd - width, range.lowerEnd)
+                else -> safeRange(range.upperEnd, width + range.lowerEnd)
             }
         }
 
-        private fun ClosedRange<Double>.length(): Double {
-            return upperEnd - lowerEnd
-        }
+        private fun ClosedRange<Double>.length(): Double = upperEnd - lowerEnd
     }
 }
 

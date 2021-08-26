@@ -10,7 +10,6 @@ import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.livemap.core.projections.ProjectionUtil.safePoint
 import kotlin.math.*
 
 internal abstract class AzimuthalBaseProjection : GeoProjection {

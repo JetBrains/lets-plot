@@ -10,7 +10,7 @@ import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.livemap.core.projections.Projection
-import jetbrains.livemap.core.projections.ProjectionUtil
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.projection.*
 import kotlin.math.max
 import kotlin.math.min
@@ -22,7 +22,7 @@ open class Viewport internal constructor(
     val maxZoom: Int
 ) {
 
-    private val zoomTransform = ProjectionUtil.square<World, Client>(ProjectionUtil.zoom { zoom })
+    private val zoomTransform = Projections.zoom<World, Client> { zoom }
     val center: ClientPoint = size / 2.0
     private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
     private var windowSize = Coordinates.ZERO_WORLD_POINT
@@ -78,24 +78,14 @@ open class Viewport internal constructor(
         center: () -> ClientPoint
     ): Projection<WorldPoint, ClientPoint> {
         return object : Projection<WorldPoint, ClientPoint> {
-            override fun project(v: WorldPoint): ClientPoint {
-                return zoomProjection.project(v - position()) + center()
-            }
-
-            override fun invert(v: ClientPoint): WorldPoint {
-                return zoomProjection.invert(v - center()) + position()
-            }
+            override fun project(v: WorldPoint): ClientPoint = zoomProjection.project(v - position()) + center()
+            override fun invert(v: ClientPoint): WorldPoint = zoomProjection.invert(v - center()) + position()
         }
     }
 
     companion object {
         fun create(helper: ViewportHelper, size: ClientPoint, position: WorldPoint, minZoom: Int, maxZoom: Int): Viewport {
-            return Viewport(
-                helper,
-                size,
-                minZoom,
-                maxZoom
-            ).apply {
+            return Viewport(helper, size, minZoom, maxZoom).apply {
                 this.position = position
             }
         }
