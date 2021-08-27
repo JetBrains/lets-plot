@@ -6,9 +6,8 @@ except ImportError:
 from .core import *
 from .geocoder import *
 from .geocodes import *
-from .map_geometry import *
 
-__all__ = (core.__all__ + map_geometry.__all__)
+__all__ = core.__all__
 
 #  Use geo_data package only for executing geocoding requests.
 #  For accessing variuous checks, contants, types etc use package geo_data_internals
