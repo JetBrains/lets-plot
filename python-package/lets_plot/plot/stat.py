@@ -18,53 +18,107 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
               threshold=None,
               **other_args):
     """
-    Computes correlations between numeric variables in the 'data'
-    and draws a correlation matrix.
-    By default uses the 'tile' geometry.
-
-    The correlation statistic computes the following variables that can be used in
-    the aesthetic mapping:
-    - '..x..' : X coordinates
-    - '..y..' : Y coordinates
-    - '..corr..' : correlation (in range -1..1)
-    - '..corr_abs..' : absolute value of correlation (in range 0..1)
+    Computes correlations between numeric variables in the `data` and draws a correlation matrix.
+    By default uses the `tile` geometry.
 
     Parameters
     ----------
-    mapping : set of aesthetic mappings created by aes() function.
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dict or `DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    geom : string, optional
-        The name of 'geometry' used to draw correlation matrix.
+    geom : str
+        The name of geometry used to draw correlation matrix.
         For example: 'tile' or 'point' or 'text'.
-    position : string, optional
-        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
-        position adjustment function.
-    show_legend: bool
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : result of the call to the sampling_xxx() function.
-        Value 'none' will disable sampling for this layer.
-    tooltips : result of the call to the layer_tooltips() function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    type : string
-        Type of matrix. Possible values - "upper", "lower", "full".
-        Default - "full".
-    diag : Boolean
+    type : {'upper', 'lower', 'full'}, default='full'
+        Type of matrix.
+    diag : bool
         Determines whether to fill the main diagonal with values.
         Default - True if 'full' matrix, else - False.
-    flip : Boolean
+    flip : bool, default=True
         If True the y axis is flipped.
-        Default - True.
-    threshold: Double
+    threshold : float, default=0.0
         Minimal correlation abs value to be included in result.
-        Default - 0.0.
 
     Returns
     -------
-        geom object specification
+    `LayerSpec`
+        Geom object specification.
+
+    Note
+    ----
+    The correlation statistic computes the following variables that can be used in the aesthetic mapping:
+
+    - ..x.. : X coordinates.
+    - ..y.. : Y coordinates.
+    - ..corr.. : correlation (in range -1..1).
+    - ..corr_abs.. : absolute value of correlation (in range 0..1).
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.poisson(size=10) for var in 'abcdef'}
+        ggplot(data) + stat_corr() + coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.uniform(size=10) for var in 'abcd'}
+        ggplot(data) + \\
+            stat_corr(type='upper', diag=True, color='white') + \\
+            stat_corr(aes(size='..corr_abs..'), geom='text', \\
+                      type='upper', diag=True, color='black') + \\
+            scale_fill_brewer(type='div', palette='RdYlBu', limits=[-1, 1]) + \\
+            coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {var: np.random.normal(size=10) for var in 'abcdef'}
+        ggplot(data) + \\
+            stat_corr(aes(size='..corr_abs..'), geom='point', \\
+                      type='upper', flip=False, threshold=.4) + \\
+            stat_corr(geom='text', type='lower', \\
+                      flip=False, threshold=.4) + \\
+            scale_color_gradient2(low='#d73027', mid='#ffffbf', \\
+                                  high='#1a9850', limits=[-1, 1]) + \\
+            coord_fixed()
+
     """
 
     geom = geom if geom else "tile"
