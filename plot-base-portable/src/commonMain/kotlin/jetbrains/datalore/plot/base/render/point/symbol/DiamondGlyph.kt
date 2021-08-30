@@ -13,19 +13,13 @@ class DiamondGlyph(location: DoubleVector, width: Double) : SingletonGlyph(locat
 
     override fun createShape(location: DoubleVector, width: Double): SvgSlimShape {
         val half = width / 2
-        val x = doubleArrayOf(half, width, half, 0.0)
-        val y = doubleArrayOf(0.0, half, width, half)
         val ox = location.x - half
         val oy = location.y - half
-        for (i in 0..3) {
-            x[i] = ox + x[i]
-            y[i] = oy + y[i]
-        }
 
-        val pathData = GlyphUtil.buildPathData(
-            x.asList(),
-            y.asList()
-        )
+        val x = listOf(half, width, half, 0.0).map { it + ox }
+        val y = listOf(0.0, half, width, half).map { it + oy }
+
+        val pathData = GlyphUtil.buildPathData(x, y)
         return SvgSlimElements.path(pathData)
     }
 }

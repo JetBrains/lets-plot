@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.layout.axis.label
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
@@ -146,8 +145,8 @@ internal object BreakLabelsLayoutUtil {
                     axisMapper
                 )
 
-            y1 = min(axisBreaks[0], Iterables.getLast(axisBreaks))
-            y2 = max(axisBreaks[0], Iterables.getLast(axisBreaks))
+            y1 = min(axisBreaks[0], axisBreaks.last())
+            y2 = max(axisBreaks[0], axisBreaks.last())
             y1 -= AxisLabelsLayout.TICK_LABEL_SPEC.height() / 2
             y2 += AxisLabelsLayout.TICK_LABEL_SPEC.height() / 2
         }

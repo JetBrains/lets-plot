@@ -14,7 +14,7 @@ import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.rectToGeometry
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
@@ -30,7 +30,6 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.first
 import jetbrains.datalore.plot.builder.interact.TestUtil.last
-import jetbrains.datalore.plot.builder.interact.TestUtil.map
 import jetbrains.datalore.plot.builder.interact.TestUtil.multipolygon
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.polygon
@@ -42,7 +41,8 @@ import kotlin.test.assertTrue
 class PolygonEdgeCasesTest {
 
     private val polygonLocator: GeomTargetLocator
-        get() = createLocator(LookupStrategy.HOVER, LookupSpace.XY,
+        get() = createLocator(
+            LookupStrategy.HOVER, LookupSpace.XY,
             TARGET
         )
 
@@ -86,9 +86,9 @@ class PolygonEdgeCasesTest {
     @Test
     fun whenOutside_AndPointsAreNotClosed_ShouldFindPolygon() {
         val points = listOf(
-                point(0.0, 0.0),
-                point(0.0, 100.0),
-                point(100.0, 100.0)
+            point(0.0, 0.0),
+            point(0.0, 100.0),
+            point(100.0, 100.0)
         )
 
         val locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY, polygonTarget(POLYGON_KEY, points))
@@ -174,8 +174,8 @@ class PolygonEdgeCasesTest {
         )
 
         val aes = AestheticsBuilder(polygon.size)
-            .x(collection(map(polygon) { point -> point.x }))
-            .y(collection(map(polygon) { point -> point.y }))
+            .x(list(polygon.map { point -> point.x }))
+            .y(list(polygon.map { point -> point.y }))
             .build()
 
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
@@ -292,12 +292,12 @@ class PolygonEdgeCasesTest {
   */
 
         private val POLYGON = polygon(
-                point(LEFT_COORD, BOTTOM_COORD),
-                point(LEFT_COORD, JOINT.y),
-                point(LEFT_COORD, TOP_COORD),
-                point(RIGHT_COORD, TOP_COORD),
-                point(RIGHT_COORD, JOINT.y),
-                point(RIGHT_COORD, BOTTOM_COORD)
+            point(LEFT_COORD, BOTTOM_COORD),
+            point(LEFT_COORD, JOINT.y),
+            point(LEFT_COORD, TOP_COORD),
+            point(RIGHT_COORD, TOP_COORD),
+            point(RIGHT_COORD, JOINT.y),
+            point(RIGHT_COORD, BOTTOM_COORD)
         )
 
 

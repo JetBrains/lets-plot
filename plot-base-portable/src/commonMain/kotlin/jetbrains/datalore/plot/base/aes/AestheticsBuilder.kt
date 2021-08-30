@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
@@ -546,15 +545,11 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         fun <T> constant(v: T): (Int) -> T = { v }
 
         fun <T> array(v: Array<T>): (Int) -> T {
-            return { value -> v[value] }
+            return { index -> v[index] }
         }
 
-//        fun <T> array(vararg v: T): (Int) -> T {
-//            return { value -> v[value] }
-//        }
-
-        fun <T> collection(v: Collection<T>): (Int) -> T {
-            return { value -> Iterables[v, value] }
+        fun <T> list(v: List<T>): (Int) -> T {
+            return { index -> v[index] }
         }
 
         fun <T> listMapper(v: List<Double?>, f: (Double?) -> T?): (Int) -> T? {

@@ -5,12 +5,11 @@
 
 package jetbrains.datalore.plot.base.render.point.symbol
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.vis.svg.SvgPathData
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 
 internal object GlyphUtil {
-    fun buildPathData(xs: Collection<Double>, ys: Collection<Double>): SvgPathData {
+    fun buildPathData(xs: List<Double>, ys: List<Double>): SvgPathData {
         require(xs.size == ys.size) { "Sizes of X/Y collections must be equal" }
 
         if (xs.isEmpty()) {
@@ -18,7 +17,7 @@ internal object GlyphUtil {
         }
 
         val builder = SvgPathDataBuilder(true)
-            .moveTo(Iterables[xs, 0], Iterables[ys, 0])
+            .moveTo(xs[0], ys[0])
             .interpolatePoints(xs, ys, SvgPathDataBuilder.Interpolation.LINEAR)
             .closePath()
 

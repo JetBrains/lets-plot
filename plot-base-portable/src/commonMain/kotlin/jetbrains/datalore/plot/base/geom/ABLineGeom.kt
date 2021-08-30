@@ -35,7 +35,7 @@ class ABLineGeom : GeomBase() {
         helper.setStrokeAlphaEnabled(true)
 
         val viewPort = aesViewPort(aesthetics)
-        val boundaries = Iterables.toList(viewPort.parts)
+        val boundaries = viewPort.parts.toList()
 
         val lines = ArrayList<SvgLineElement>()
         for (p in aesthetics.dataPoints()) {

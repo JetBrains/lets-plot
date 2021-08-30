@@ -9,7 +9,7 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 
 
 internal object ConverterDataHelper {
@@ -104,9 +104,9 @@ internal object ConverterDataHelper {
             }
 
             myAes = builder()
-                .group(collection(groups))
-                .x(collection(x))
-                .y(collection(y))
+                .group(list(groups))
+                .x(list(x))
+                .y(list(y))
                 .dataPointCount(x.size)
                 .build()
 

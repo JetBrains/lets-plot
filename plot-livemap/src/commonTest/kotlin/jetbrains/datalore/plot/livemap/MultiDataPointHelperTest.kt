@@ -10,7 +10,7 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.BAR
@@ -32,7 +32,8 @@ class MultiDataPointHelperTest {
             point().value(10.0).order(2.0)
         )
 
-        assertPointsOrder(PIE_CHART, dataPointBuilders,
+        assertPointsOrder(
+            PIE_CHART, dataPointBuilders,
             POINT_2,
             POINT_1,
             POINT_3,
@@ -129,10 +130,10 @@ class MultiDataPointHelperTest {
             }
 
             myBuilder
-                .x(collection(coord.map(Vec<LonLat>::x)))
-                .y(collection(coord.map(Vec<LonLat>::y)))
-                .symX(collection(order))
-                .symY(collection(values))
+                .x(list(coord.map(Vec<LonLat>::x)))
+                .y(list(coord.map(Vec<LonLat>::y)))
+                .symX(list(order))
+                .symY(list(values))
                 .dataPointCount(order.size)
 
             return myBuilder.build()

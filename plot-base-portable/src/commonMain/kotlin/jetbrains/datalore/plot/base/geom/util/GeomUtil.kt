@@ -83,17 +83,17 @@ object GeomUtil {
     }
 
     @Suppress("FunctionName")
-    fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
         return dataPoints.filter { p -> WITH_X_Y.invoke(p) }
     }
 
     @Suppress("FunctionName")
-    fun with_X(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    fun with_X(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
         return dataPoints.filter { p -> WITH_X.invoke(p) }
     }
 
     @Suppress("FunctionName")
-    fun with_Y(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    fun with_Y(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
         return dataPoints.filter { p -> WITH_Y.invoke(p) }
     }
 
@@ -105,6 +105,7 @@ object GeomUtil {
         return ORDERING_X.sortedCopy(dataPoints)
     }
 
+    @Suppress("FunctionName")
     fun ordered_Y(dataPoints: Iterable<DataPointAesthetics>, reversed: Boolean): Iterable<DataPointAesthetics> {
         val ordering = if (reversed) ORDERING_Y.reverse() else ORDERING_Y
         if (ordering.isOrdered(dataPoints)) {

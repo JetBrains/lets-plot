@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.builder.data
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
 import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
@@ -385,7 +383,7 @@ object DataProcessing {
 
         val limit = 1000
 
-        val max = natural<Int>().max(Iterables.concat(list1, list2))
+        val max = (list1 + list2).maxOrNull()!!
         check(max < limit) { "Too many groups: $max" }
         val dummies = ArrayList<Int>()
         val it1 = list1.iterator()

@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.*
@@ -75,8 +74,8 @@ object PlotUtil {
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
         layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
-        val posAesX = Iterables.toList(Aes.affectingScaleX(layer.renderedAes()))
-        val posAesY = Iterables.toList(Aes.affectingScaleY(layer.renderedAes()))
+        val posAesX = Aes.affectingScaleX(layer.renderedAes())
+        val posAesY = Aes.affectingScaleY(layer.renderedAes())
 
         val pos = createLayerPos(layer, aes)
         if (pos.isIdentity) {

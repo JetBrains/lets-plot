@@ -42,14 +42,11 @@ abstract class Ordering<T> : Comparator<T> {
      * @return immutable sorted list
      */
     fun <E : T> sortedCopy(elements: Iterable<E>): List<E> {
-        @Suppress("UNCHECKED_CAST")
-        val array = Iterables.toArray(elements) as Array<E>
-        array.sortWith(object : Comparator<E> {
+        return elements.sortedWith(object : Comparator<E> {
             override fun compare(a: E, b: E): Int {
                 return this@Ordering.compare(a, b)
             }
         })
-        return array.toList()
     }
 
     fun reverse(): Ordering<T> {

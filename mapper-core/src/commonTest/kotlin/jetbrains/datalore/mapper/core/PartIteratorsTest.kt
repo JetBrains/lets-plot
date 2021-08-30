@@ -23,13 +23,13 @@ class PartIteratorsTest {
         assertTrue(Iterables.isEmpty(mapper.synchronizers()))
 
         mapper.attachRoot()
-        assertEquals(1, Iterables.size(mapper.synchronizers()))
+        assertEquals(1, mapper.synchronizers().count())
 
         val children = mapper.createChildSet<Mapper<*, *>>()
         children.add(object : Mapper<Unit, Unit>(Unit, Unit) {
 
         })
-        assertEquals(1, Iterables.size(mapper.synchronizers()))
+        assertEquals(1, mapper.synchronizers().count())
     }
 
     @Test
@@ -41,11 +41,11 @@ class PartIteratorsTest {
             }
         }
 
-        assertEquals(0, Iterables.size(mapper.children()))
+        assertEquals(0, mapper.children().count())
 
         mapper.attachRoot()
-        assertEquals(0, Iterables.size(mapper.children()))
-        assertEquals(1, Iterables.size(mapper.synchronizers()))
+        assertEquals(0, mapper.children().count())
+        assertEquals(1, mapper.synchronizers().count())
 
         mapper.createChildList<Mapper<*, *>>().add(object : Mapper<Any, Any>(Any(), Any()) {
 
@@ -59,15 +59,15 @@ class PartIteratorsTest {
         childProperty.set(object : Mapper<Any, Any>(Any(), Any()) {
 
         })
-        assertEquals(3, Iterables.size(mapper.children()))
+        assertEquals(3, mapper.children().count())
 
         childProperty.set(null)
-        assertEquals(2, Iterables.size(mapper.children()))
+        assertEquals(2, mapper.children().count())
 
         val i = childSet.iterator()
         i.next()
         i.remove()
 
-        assertEquals(1, Iterables.size(mapper.children()))
+        assertEquals(1, mapper.children().count())
     }
 }
