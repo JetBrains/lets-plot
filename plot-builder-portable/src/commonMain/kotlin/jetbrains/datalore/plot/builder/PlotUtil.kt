@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.*
@@ -29,7 +28,7 @@ object PlotUtil {
 
             override val groupCount: Int
                     by lazy {
-                        val set = Sets.newHashSet(aes.groups())
+                        val set = aes.groups().toSet()
                         set.size
                     }
         })

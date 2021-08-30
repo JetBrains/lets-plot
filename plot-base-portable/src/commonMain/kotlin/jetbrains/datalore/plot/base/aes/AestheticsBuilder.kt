@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
@@ -59,7 +58,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     private val myIndexFunctionMap: MutableMap<Aes<*>, (Int) -> Any?>
     private var myGroup = constant(0)
-    private val myConstantAes = Sets.newHashSet(Aes.values())  // initially contains all Aes;
+    private val myConstantAes = HashSet(Aes.values())  // initially contains all Aes;
     private val myOverallRangeByNumericAes = HashMap<Aes<Double>, ClosedRange<Double>>()
 
     init {

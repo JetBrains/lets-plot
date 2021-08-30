@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
@@ -43,7 +42,7 @@ class TextGeom : GeomBase() {
             val x = p.x()
             val y = p.y()
             val text = toString(p.label())
-            if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
+            if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p, sizeUnitRatio)
 
@@ -69,7 +68,7 @@ class TextGeom : GeomBase() {
     // Current implementation works for label_format ='.2f'
     // and values between -1.0 and 1.0.
     private fun getSizeUnitRatio(ctx: GeomContext): Double {
-        return if ( sizeUnit != null)  {
+        return if (sizeUnit != null) {
             val textWidth = 6.0
             val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
             unitRes / textWidth

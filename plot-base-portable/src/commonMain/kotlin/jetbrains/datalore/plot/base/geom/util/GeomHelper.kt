@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
@@ -186,7 +185,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             // fontface
             // ignore 'plain' / 'normal' as it is default values
             val fontface = p.fontface()
-            if (!Strings.isNullOrEmpty(fontface)) {
+            if (fontface.isNotBlank()) {
                 for (s in fontface.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
                     if (FONT_WEIGHT_SET.contains(s)) {
                         label.setFontWeight(s)

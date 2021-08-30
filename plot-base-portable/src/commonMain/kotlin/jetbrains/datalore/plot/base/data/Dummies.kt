@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.data
 
-import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.plot.base.DataFrame
 
 object Dummies {
@@ -13,7 +12,7 @@ object Dummies {
     private const val PREFIX = "__"
 
     fun isDummyVar(varName: String): Boolean {
-        if (!Strings.isNullOrEmpty(varName) && varName.length > PREFIX.length && varName.startsWith(
+        if (varName.isNotBlank() && varName.length > PREFIX.length && varName.startsWith(
                 PREFIX
             )
         ) {
