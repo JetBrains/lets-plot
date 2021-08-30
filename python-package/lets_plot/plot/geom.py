@@ -326,6 +326,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
             scale_color_discrete()
 
     """
+
     return _geom('path',
                  mapping=mapping,
                  data=data,
@@ -3237,6 +3238,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                                    ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
                                j * 400, i * 400, 400, 400)
         bunch.show()
+
+    |
 
     .. jupyter-execute::
         :linenos:
