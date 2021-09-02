@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.ContextualMapping

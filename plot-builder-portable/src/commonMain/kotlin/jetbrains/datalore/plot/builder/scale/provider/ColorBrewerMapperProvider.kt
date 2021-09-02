@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
@@ -71,7 +70,7 @@ class ColorBrewerMapperProvider(
     private fun colors(colorScheme: ColorScheme, count: Int): List<Color> {
         val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count)
         return when (direction?.let { direction < 0 } ?: false) {
-            true -> Lists.reverse(colors)
+            true -> colors.reversed()
             false -> colors
         }
     }

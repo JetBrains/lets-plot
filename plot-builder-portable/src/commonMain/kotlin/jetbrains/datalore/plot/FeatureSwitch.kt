@@ -35,7 +35,7 @@ object FeatureSwitch {
         @Suppress("ConstantConditionIf")
         if (PRINT_ENCODED_DATA_SUMMARY) {
             //ToDo:
-            //Preconditions.checkState(!GWT.isClient(), "Not expected on client")
+            //check(!GWT.isClient()) {"Not expected on client"}
             val summary = DataFrameUtil.getSummaryText(df)
             println(header)
             println(summary)

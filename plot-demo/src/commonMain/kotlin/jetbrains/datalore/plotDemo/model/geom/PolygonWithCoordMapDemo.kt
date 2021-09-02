@@ -9,8 +9,8 @@ import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.geom.PolygonGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
@@ -30,7 +30,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                create()
+            create()
         )
     }
 
@@ -73,15 +73,15 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         val lengthX = spanX / ratio
         val lengthY = spanY / ratio
         val aes = AestheticsBuilder(KANSAS_X.size)
-                .x(listMapper(coordsX, mapper))
-                .y(listMapper(coordsY, mapper))
-                .fill(collection(toColors(values.toList())))
-                .group(array(groups))
-                .color(constant(Color.DARK_MAGENTA))
-                .alpha(constant(0.5))
-                .build()
+            .x(listMapper(coordsX, mapper))
+            .y(listMapper(coordsY, mapper))
+            .fill(list(toColors(values.toList())))
+            .group(array(groups))
+            .color(constant(Color.DARK_MAGENTA))
+            .alpha(constant(0.5))
+            .build()
         val coord = CoordProviders.map()
-                .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
+            .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
         val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
             aes,
             PolygonGeom(),

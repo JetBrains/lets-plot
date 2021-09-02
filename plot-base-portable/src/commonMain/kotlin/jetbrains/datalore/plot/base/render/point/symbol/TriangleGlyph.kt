@@ -13,7 +13,12 @@ import kotlin.jvm.JvmOverloads
 import kotlin.math.PI
 import kotlin.math.sin
 
-internal class TriangleGlyph @JvmOverloads constructor(location: DoubleVector, size: Double, pointingUp: Boolean, inscribedInSquare: Boolean = false) : SingletonGlyph(
+internal class TriangleGlyph @JvmOverloads constructor(
+    location: DoubleVector,
+    size: Double,
+    pointingUp: Boolean,
+    inscribedInSquare: Boolean = false
+) : SingletonGlyph(
     createTriangleShape(
         location,
         size,
@@ -32,7 +37,11 @@ internal class TriangleGlyph @JvmOverloads constructor(location: DoubleVector, s
         private const val VERTICAL_OFFSET_RATIO = 1.0 / 12
 
         private fun createTriangleShape(
-                location: DoubleVector, size: Double, pointingUp: Boolean, inscribedInSquare: Boolean): SvgSlimShape {
+            location: DoubleVector,
+            size: Double,
+            pointingUp: Boolean,
+            inscribedInSquare: Boolean
+        ): SvgSlimShape {
             val half = size / 2
             val height = if (inscribedInSquare)
                 size
@@ -44,31 +53,26 @@ internal class TriangleGlyph @JvmOverloads constructor(location: DoubleVector, s
             else
                 height * VERTICAL_OFFSET_RATIO
 
-            val x: DoubleArray
-            val y: DoubleArray
+            val x: List<Double>
+            val y: List<Double>
             var dy = (size - height) / 2
             if (pointingUp) {
                 dy -= vOffset
-                x = doubleArrayOf(half, size, 0.0)
-                y = doubleArrayOf(0.0 + dy, height + dy, height + dy)
+                x = listOf(half, size, 0.0)
+                y = listOf(0.0 + dy, height + dy, height + dy)
             } else {
                 dy += vOffset
-                x = doubleArrayOf(0.0, size, half)
-                y = doubleArrayOf(0.0 + dy, 0.0 + dy, height + dy)
+                x = listOf(0.0, size, half)
+                y = listOf(0.0 + dy, 0.0 + dy, height + dy)
             }
 
             val ox = location.x - half
             val oy = location.y - half
-            for (i in 0..2) {
-                x[i] = ox + x[i]
-                y[i] = oy + y[i]
-            }
 
-            val pathData =
-                GlyphUtil.buildPathData(
-                    x.asList(),
-                    y.asList()
-                )
+            val pathData = GlyphUtil.buildPathData(
+                x.map { it + ox },
+                y.map { it + oy }
+            )
             return SvgSlimElements.path(pathData)
         }
     }

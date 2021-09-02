@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import kotlin.math.abs
 
@@ -134,8 +133,9 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
 
         fun tryRow(values: Iterable<Double?>): RegularMeshDetector {
             // choose 'error' value
-            val v0 = Iterables[values, 0, null]
-            val v1 = Iterables[values, 1, null]
+            val valuesIterator = values.iterator()
+            val v0 = if (valuesIterator.hasNext()) valuesIterator.next() else null
+            val v1 = if (valuesIterator.hasNext()) valuesIterator.next() else null
             if (v0 == null || v1 == null) {
                 return NO_MESH
             }

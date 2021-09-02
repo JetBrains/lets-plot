@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.DATETIME_FORMAT
 import jetbrains.datalore.base.values.Color

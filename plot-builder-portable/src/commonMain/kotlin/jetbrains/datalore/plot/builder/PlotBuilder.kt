@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
@@ -140,15 +139,15 @@ class PlotBuilder(private val myTheme: Theme) {
         }
 
         override fun hasTitle(): Boolean {
-            return !Strings.isNullOrEmpty(myTitle)
+            return !myTitle.isNullOrEmpty()
         }
 
         override fun hasAxisTitleLeft(): Boolean {
-            return myAxisYTitleEnabled && !Strings.isNullOrEmpty(myAxisTitleLeft)
+            return myAxisYTitleEnabled && !myAxisTitleLeft.isNullOrEmpty()
         }
 
         override fun hasAxisTitleBottom(): Boolean {
-            return myAxisXTitleEnabled && !Strings.isNullOrEmpty(myAxisTitleBottom)
+            return myAxisXTitleEnabled && !myAxisTitleBottom.isNullOrEmpty()
         }
 
         override fun hasLiveMap(): Boolean {

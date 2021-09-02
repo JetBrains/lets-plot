@@ -46,7 +46,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
     }
 
     fun withAxisLength(axisLength: Double): Builder {
-        //checkState(axisDomain != null);
+        //check(axisDomain != null)
 
         val b = Builder()
         b.myAxisBreaks = axisBreaks

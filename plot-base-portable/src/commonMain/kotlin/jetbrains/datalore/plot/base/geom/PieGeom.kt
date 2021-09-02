@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Iterables.get
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
@@ -22,13 +20,20 @@ import kotlin.math.PI
  */
 internal class PieGeom(private val myCenter: DoubleVector, private val myRadius: Double) : GeomBase() {
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = PieHelper(pos, coord, ctx)
         val segments = helper.createSegments(aesthetics, myCenter, myRadius)
         appendNodes(segments, root)
     }
 
-    private class PieHelper internal constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : LinesHelper(pos, coord, ctx) {
+    private class PieHelper internal constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
+        LinesHelper(pos, coord, ctx) {
 
         internal fun createSegments(aesthetics: Aesthetics, center: DoubleVector, radius: Double): List<LinePath> {
             val result = ArrayList<LinePath>()
@@ -70,31 +75,29 @@ internal class PieGeom(private val myCenter: DoubleVector, private val myRadius:
 
     companion object {
         val RENDERS = listOf(
-                Aes.X, // optional, can specify order of segments in pie
-                Aes.Y, // angle width of segments
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA,
-                Aes.WIDTH,
-                Aes.SIZE
+            Aes.X, // optional, can specify order of segments in pie
+            Aes.Y, // angle width of segments
+            Aes.COLOR,
+            Aes.FILL,
+            Aes.ALPHA,
+            Aes.WIDTH,
+            Aes.SIZE
         )
 
         const val HANDLES_GROUPS = false
 
         private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
             val withX = GeomUtil.with_X_Y(aesthetics.dataPoints())
-            return if (Iterables.isEmpty(withX) || allEqualX(
-                    withX,
-                    get(withX, 0).x()
-                )
-            ) {
+            return if (withX.isEmpty() || allEqualX(withX, withX[0].x())) {
                 GeomUtil.ordered_Y(GeomUtil.with_Y(aesthetics.dataPoints()), true)
-            } else GeomUtil.ordered_X(withX)
+            } else {
+                GeomUtil.ordered_X(withX)
+            }
         }
 
-        private fun allEqualX(hasX: Iterable<DataPointAesthetics>, `val`: Double?): Boolean {
+        private fun allEqualX(hasX: Iterable<DataPointAesthetics>, value: Double?): Boolean {
             for (p in hasX) {
-                if (p.x() != `val`) {
+                if (p.x() != value) {
                     return false
                 }
             }
