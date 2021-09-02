@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.Iterables.filter
 import jetbrains.datalore.base.typedKey.TypedKey
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.linetype.LineType
@@ -78,10 +77,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val SYM_Y: Aes<Double> = Aes("sym_y")
 
 
-        fun numeric(unfiltered: Iterable<Aes<*>>): Iterable<Aes<Double>> {
+        fun numeric(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
             @Suppress("UNCHECKED_CAST")
-            return filter(unfiltered) { aes -> aes.isNumeric } as Iterable<Aes<Double>>
+            return unfiltered.filter { aes -> aes.isNumeric } as List<Aes<Double>>
         }
 
         fun isPositional(aes: Aes<*>): Boolean {
@@ -135,14 +134,14 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 //                    aes != YINTERCEPT
         }
 
-        fun affectingScaleX(unfiltered: Iterable<Aes<*>>): Iterable<Aes<Double>> {
+        fun affectingScaleX(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             val numeric = numeric(unfiltered)
-            return filter(numeric) { isAffectingScaleX(it) }
+            return numeric.filter { isAffectingScaleX(it) }
         }
 
-        fun affectingScaleY(unfiltered: Iterable<Aes<*>>): Iterable<Aes<Double>> {
+        fun affectingScaleY(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             val numeric = numeric(unfiltered)
-            return filter(numeric) { isAffectingScaleY(it) }
+            return numeric.filter { isAffectingScaleY(it) }
         }
 
         fun noGuideNeeded(aes: Aes<*>): Boolean {

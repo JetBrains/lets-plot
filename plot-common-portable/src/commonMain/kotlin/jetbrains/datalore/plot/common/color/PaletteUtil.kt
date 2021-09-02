@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.common.color
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Iterables.concat
 import jetbrains.datalore.base.values.Color
 
 object PaletteUtil {
@@ -46,13 +44,9 @@ object PaletteUtil {
     fun schemeColors(colorScheme: ColorScheme, colorCount: Int): List<Color> {
         val colorsHex = colorScheme.getColors(colorCount)
         val colors = fromColorsHex(colorsHex)
-        if (colorsHex.size < colorCount && isExtensibleScheme(
-                colorScheme
-            )
-        ) {
-            val addColors =
-                ColorUtil.genColors(colorCount - colorsHex.size, colors)
-            return Iterables.toList(concat(colors, addColors))
+        if (colorsHex.size < colorCount && isExtensibleScheme(colorScheme)) {
+            val addColors = ColorUtil.genColors(colorCount - colorsHex.size, colors)
+            return colors + addColors
         }
         return colors
     }

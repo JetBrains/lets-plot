@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
@@ -18,7 +17,7 @@ object PlotLayoutUtil {
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
     fun titleDimensions(text: String): DoubleVector {
-        if (isNullOrEmpty(text)) {
+        if (text.isEmpty()) {
             return DoubleVector.ZERO
         }
 
@@ -30,7 +29,7 @@ object PlotLayoutUtil {
     }
 
     fun axisTitleDimensions(text: String): DoubleVector {
-        if (isNullOrEmpty(text)) {
+        if (text.isEmpty()) {
             return DoubleVector.ZERO
         }
 

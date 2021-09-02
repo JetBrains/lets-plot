@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.GeomTarget
@@ -23,22 +22,22 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
 
     private fun convertLookupResult(lookupResult: GeomTargetLocator.LookupResult): GeomTargetLocator.LookupResult {
         return GeomTargetLocator.LookupResult(
-                convertGeomTargets(lookupResult.targets),
-                convertToPlotDistance(lookupResult.distance),
-                lookupResult.geomKind,
-                lookupResult.contextualMapping,
-                lookupResult.contextualMapping.isCrosshairEnabled
+            convertGeomTargets(lookupResult.targets),
+            convertToPlotDistance(lookupResult.distance),
+            lookupResult.geomKind,
+            lookupResult.contextualMapping,
+            lookupResult.contextualMapping.isCrosshairEnabled
         )
     }
 
     private fun convertGeomTargets(geomTargets: List<GeomTarget>): List<GeomTarget> {
-        return ArrayList(Lists.transform(geomTargets) { geomTarget ->
+        return geomTargets.map { geomTarget ->
             GeomTarget(
                 geomTarget.hitIndex,
                 convertTipLayoutHint(geomTarget.tipLayoutHint),
                 convertTipLayoutHints(geomTarget.aesTipLayoutHints)
             )
-        })
+        }
     }
 
     private fun convertTipLayoutHint(hint: TipLayoutHint): TipLayoutHint {

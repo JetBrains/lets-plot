@@ -7,8 +7,6 @@ package jetbrains.datalore.plot.common.data
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Iterables.all
-import jetbrains.datalore.base.gcommon.collect.Iterables.filter
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import kotlin.math.max
 import kotlin.math.min
@@ -146,7 +144,7 @@ object SeriesUtil {
 
     private fun resolutionFullScan(values: Iterable<Double?>, naValue: Double): Double {
         @Suppress("UNCHECKED_CAST")
-        val goodDataVector = filter(values, REAL_NUMBER) as Iterable<Double>
+        val goodDataVector = values.filter(REAL_NUMBER) as Iterable<Double>
         if (Iterables.isEmpty(goodDataVector)) {
             return naValue
         }
@@ -316,7 +314,7 @@ object SeriesUtil {
             myCanBeCast = if (myEmpty) {
                 true
             } else {
-                all(filter(myIterable) { it != null }) { input -> input is Double }
+                myIterable.filterNotNull().all { input -> input is Double }
             }
         }
 

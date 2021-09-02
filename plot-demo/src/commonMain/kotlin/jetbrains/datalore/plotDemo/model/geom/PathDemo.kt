@@ -10,8 +10,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.geom.PathGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
@@ -70,10 +70,10 @@ open class PathDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(x.size)
-                .x(collection(x))
-                .y(collection(y))
+                .x(list(x))
+                .y(list(y))
                 .color(colorGen)
-                .group(collection(group))
+                .group(list(group))
                 .build()
 
         return createGeomLayer(aes)

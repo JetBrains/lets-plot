@@ -23,8 +23,8 @@ internal object LegendAssemblerUtil {
             builder.constantAes(aes as Aes<Any>, aestheticsDefaults.defaultValue(aes))
         }
         for (aes in valuesByAes.keys) {
-            val values = valuesByAes[aes]!!
-            builder.aes(aes, AestheticsBuilder.collection(values))
+            val values = valuesByAes.getValue(aes)
+            builder.aes(aes, AestheticsBuilder.list(values))
             builder.dataPointCount(values.size)
         }
         for (aes in constantByAes.keys) {
