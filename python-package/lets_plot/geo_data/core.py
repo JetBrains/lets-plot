@@ -30,7 +30,7 @@ GEOFUNC_TYPES = {
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
-    Create a `Geocoder`. Allows to refine ambiguous request with `where()` method,
+    Create a `NamesGeocoder`. Allows to refine ambiguous request with `where()` method,
     scope that limits area of geocoding or with parents.
 
     Parameters
@@ -101,7 +101,7 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
 
 def geocode_cities(names=None) -> NamesGeocoder:
     """
-    Create a `Geocoder` object for cities. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for cities. Allows to refine ambiguous request with
     `where()` method, with a scope that limits area of geocoding or with parents.
 
     Parameters
@@ -135,7 +135,7 @@ def geocode_cities(names=None) -> NamesGeocoder:
 
 def geocode_counties(names=None) -> NamesGeocoder:
     """
-    Create a `Geocoder` object for counties. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for counties. Allows to refine ambiguous request with
     `where()` method, with a scope that limits area of geocoding or with parents.
 
     Parameters
@@ -168,7 +168,7 @@ def geocode_counties(names=None) -> NamesGeocoder:
 
 def geocode_states(names=None) -> NamesGeocoder:
     """
-    Create a `Geocoder` object for states. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for states. Allows to refine ambiguous request with
     `where()` method, with a scope that limits area of geocoding or with parents.
 
     Parameters
@@ -203,7 +203,7 @@ def geocode_states(names=None) -> NamesGeocoder:
 
 def geocode_countries(names=None) -> NamesGeocoder:
     """
-    Create a `Geocoder` object for countries. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for countries. Allows to refine ambiguous request with
     `where()` method.
 
     Parameters
@@ -236,7 +236,7 @@ def geocode_countries(names=None) -> NamesGeocoder:
 
 def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
     """
-    Convert a location as described by geographic coordinates to a `Geocoder` object.
+    Convert a location as described by geographic coordinates to a `ReverseGeocoder` object.
 
     Parameters
     ----------
