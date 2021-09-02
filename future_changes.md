@@ -13,3 +13,4 @@
 ### Fixed
 
 - Tooltips for discrete variables: add the dependence of the tooltip on the number of factors.
+- map_join doesn't work when join variables with same names without mappings [[#428](https://github.com/JetBrains/lets-plot/issues/428)]

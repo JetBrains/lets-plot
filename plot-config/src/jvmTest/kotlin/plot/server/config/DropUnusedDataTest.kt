@@ -652,33 +652,35 @@ class DropUnusedDataTest {
     }
 
     @Test
-    fun `should not drop geometry column when GeoDataFrame in data`() {
+    fun `ggplot(data=_city_) + geom_point(map_join=_city_, map=centroids_gdf)`() {
         val spec = """
+
 {
+  "data": {
+    "city": ["New York", "Los Angeles", "Chicago"]
+  },
   "kind": "plot",
   "layers": [
     {
-      "geom": "polygon",
-      "data": {
-        "id": ["A", "B", "C"],
-        "coord": [
-          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
-          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
-          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+      "geom": "point",
+      "map": {
+        "city": ["New York", "Los Angeles", "Chicago"],
+        "found name": ["New York", "Los Angeles", "Chicago"],
+        "geometry": [
+          "{\"type\": \"Point\", \"coordinates\": [-73.8673749469137, 40.6847005337477]}",
+          "{\"type\": \"Point\", \"coordinates\": [-118.286736944616, 34.0204504877329]}",
+          "{\"type\": \"Point\", \"coordinates\": [-87.6717840965281, 41.8337749689817]}"
         ]
       },
-      "mapping": { "fill": "id" },
-      "data_meta": {
+      "map_join": [["city"],["city"]],
+      "map_data_meta": {
         "geodataframe": {
-          "geometry": "coord"
+          "geometry": "geometry"
         }
-      } 
+      }
     }
   ]
-}
 }"""
-
-
         parsePlotSpec(spec)
             .let(ServerSideTestUtil::serverTransformWithoutEncoding)
             .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
