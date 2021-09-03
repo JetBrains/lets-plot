@@ -8,8 +8,6 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.basemap.raster.RasterTileLoadingSystem.HttpTileResponseComponent
-import jetbrains.livemap.basemap.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
@@ -19,10 +17,12 @@ import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.regions.CachedFragmentsComponent
-import jetbrains.livemap.regions.DownloadingFragmentsComponent
-import jetbrains.livemap.regions.FragmentKey
-import jetbrains.livemap.regions.StreamingFragmentsComponent
+import jetbrains.livemap.fragment.CachedFragmentsComponent
+import jetbrains.livemap.fragment.DownloadingFragmentsComponent
+import jetbrains.livemap.fragment.FragmentKey
+import jetbrains.livemap.fragment.StreamingFragmentsComponent
+import jetbrains.livemap.mapengine.basemap.raster.RasterTileLoadingSystem.HttpTileResponseComponent
+import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {

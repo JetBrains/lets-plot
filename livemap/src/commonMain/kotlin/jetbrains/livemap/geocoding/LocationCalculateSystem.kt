@@ -7,18 +7,18 @@ package jetbrains.livemap.geocoding
 
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.limit
-import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.Coordinates.ZERO_WORLD_POINT
+import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.projections.MapRuler
+import jetbrains.livemap.fragment.RegionBBoxComponent
+import jetbrains.livemap.geocoding.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.geometry.WorldGeometryComponent
-import jetbrains.livemap.placement.WorldDimensionComponent
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.Coordinates.ZERO_WORLD_POINT
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.regions.RegionBBoxComponent
-import jetbrains.livemap.services.MapLocationGeocoder.Companion.convertToWorldRects
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 class LocationCalculateSystem(
     private val mapRuler: MapRuler<World>,

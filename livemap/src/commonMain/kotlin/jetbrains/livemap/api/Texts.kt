@@ -8,13 +8,16 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.Renderers.TextRenderer
+import jetbrains.livemap.chart.TextSpec
+import jetbrains.livemap.chart.TextSpecComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.placement.*
-import jetbrains.livemap.rendering.*
-import jetbrains.livemap.rendering.Renderers.TextRenderer
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.placement.*
 
 @LiveMapDsl
 class Texts(
@@ -71,17 +74,16 @@ class TextBuilder(
             else -> error("Can't create text entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
+                + ChartElementComponent().apply {
+                    renderer = TextRenderer()
+                    fillColor = this@TextBuilder.fillColor
+                    strokeColor = this@TextBuilder.strokeColor
+                    strokeWidth = this@TextBuilder.strokeWidth
+                }
+                + TextSpecComponent().apply { this.textSpec = textSpec }
                 + WorldOriginComponent(worldPoint)
-                + RendererComponent(TextRenderer())
                 + ScreenLoopComponent()
                 + ScreenOriginComponent()
-                + TextSpecComponent().apply { this.textSpec = textSpec }
-                + StyleComponent().apply {
-                    setFillColor(this@TextBuilder.fillColor)
-                    setStrokeColor(this@TextBuilder.strokeColor)
-                    setStrokeWidth(this@TextBuilder.strokeWidth)
-                }
-
                 + ScreenOffsetComponent()
                 + ScreenDimensionComponent().apply {
                     dimension = textSpec.dimension

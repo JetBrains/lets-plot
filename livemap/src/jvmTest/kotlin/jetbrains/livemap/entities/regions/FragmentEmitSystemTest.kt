@@ -8,24 +8,24 @@ import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec.Compan
 import jetbrains.datalore.maps.Utils.empty
 import jetbrains.datalore.maps.Utils.quad
 import jetbrains.datalore.maps.Utils.square
-import jetbrains.livemap.camera.CameraUpdateDetectionSystem
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
+import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.placement.WorldDimensionComponent
-import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.regions.*
-import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.scaling.ScaleComponent
-import jetbrains.livemap.viewport.ViewportGridStateComponent
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.camera.CameraInputSystem
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -38,7 +38,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
     private lateinit var emptyFragmentFoo2: FragmentSpec
     protected override val systemsOrder
         get() = listOf(
-            CameraUpdateDetectionSystem::class,
+            CameraInputSystem::class,
             FragmentEmitSystem::class,
             WorldOrigin2ScreenUpdateSystem::class,
             WorldGeometry2ScreenUpdateSystem::class,
@@ -71,7 +71,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             RegionIdComponent(FOO_REGION_ID),
             ParentLayerComponent(parentLayerEntity.id)
         )
-        addSystem(CameraUpdateDetectionSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager))
         addSystem(WorldOrigin2ScreenUpdateSystem(componentManager))
         addSystem(WorldGeometry2ScreenUpdateSystem(Int.MAX_VALUE, componentManager))
         addSystem(FragmentEmitSystem(Int.MAX_VALUE, componentManager))

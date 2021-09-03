@@ -16,11 +16,6 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
-import jetbrains.livemap.MapLocation
-import jetbrains.livemap.basemap.BasemapTileSystemProvider
-import jetbrains.livemap.camera.CameraListenerComponent
-import jetbrains.livemap.camera.CenterChangedComponent
-import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -32,8 +27,12 @@ import jetbrains.livemap.core.projections.createArcPath
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
+import jetbrains.livemap.mapengine.camera.CameraListenerComponent
+import jetbrains.livemap.mapengine.camera.CenterChangedComponent
+import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.ui.CursorService
 import kotlin.math.abs
 
@@ -102,16 +101,15 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
-    val pointScaling: Boolean,
+    val zoomable: Boolean,
     val textMeasurer: TextMeasurer
 )
 
 @LiveMapDsl
-class ChartSource {
+class Symbol {
     var layerIndex: Int? = null
-    var point: Vec<LonLat>? = null
-
     var radius: Double = 0.0
+    var point: Vec<LonLat>? = null
 
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
@@ -128,10 +126,9 @@ fun geometry(
 ): MultiPolygon<LonLat> {
     val coord = points.map(::limitCoord)
 
-    return if (isClosed) {
-        createMultiPolygon(coord)
-    } else {
-        coord
+    return when {
+        isClosed -> createMultiPolygon(coord)
+        else -> coord
             .run { if (isGeodesic) createArcPath(this) else this }
             .run(::splitPathByAntiMeridian)
             .map { path -> Polygon(listOf(Ring(path))) }
@@ -248,7 +245,7 @@ fun mapEntity(
             + parentLayerComponent
             + CameraListenerComponent()
             + CenterChangedComponent()
-            + ZoomChangedComponent()
+            + ZoomFractionChangedComponent()
         }
 }
 

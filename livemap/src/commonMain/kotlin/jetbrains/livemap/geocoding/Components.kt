@@ -7,10 +7,10 @@ package jetbrains.livemap.geocoding
 
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
 
 class RegionIdComponent(var regionId: String) : EcsComponent
 

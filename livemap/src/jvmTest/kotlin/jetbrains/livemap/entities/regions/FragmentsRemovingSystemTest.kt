@@ -5,9 +5,9 @@ import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.Mocks
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.maps.Utils.quad
-import jetbrains.livemap.regions.CachedFragmentsComponent
-import jetbrains.livemap.regions.ChangedFragmentsComponent
-import jetbrains.livemap.regions.FragmentsRemovingSystem
+import jetbrains.livemap.fragment.CachedFragmentsComponent
+import jetbrains.livemap.fragment.ChangedFragmentsComponent
+import jetbrains.livemap.fragment.FragmentsRemovingSystem
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName

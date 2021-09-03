@@ -9,17 +9,16 @@ import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.viewport.CellKey
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.basemap.DonorTileCalculator
-import jetbrains.livemap.basemap.Tile
-import jetbrains.livemap.basemap.BasemapCellRenderer
+import jetbrains.livemap.Client
+import jetbrains.livemap.mapengine.basemap.BasemapCellRenderer
+import jetbrains.livemap.mapengine.basemap.DonorTileCalculator
+import jetbrains.livemap.mapengine.basemap.Tile
+import jetbrains.livemap.mapengine.viewport.CellKey
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import java.util.*
 
 class DonorTileCalculatorTest {
     private val myCellRect = Rect<Client>(

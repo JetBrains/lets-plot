@@ -6,9 +6,41 @@
 package jetbrains.livemap.config
 
 import jetbrains.livemap.core.rendering.layers.RenderTarget
+import jetbrains.livemap.core.util.EasingFunction
+import kotlin.math.pow
 
 class DevParams(private val devParams: Map<*, *>) {
+
     companion object {
+        val SCALABLE_SYMBOLS = BoolParam("scalable_symbols", true)
+        val SCALABLE_SYMBOLS_MIN_FACTOR = DoubleParam("scalable_symbols_min_factor", 0.5)
+        val SCALABLE_SYMBOLS_MAX_FACTOR = DoubleParam("scalable_symbols_max_factor", 2.5)
+        val SCALABLE_SYMBOL_ZOOM_IN_EASING = EnumParam<Easing>(
+            key = "scalable_symbol_zoom_in_easing",
+            defaultValue = Easing.IN_QUAD,
+            valuesMap = listOf(
+                "IN_QUAD" to Easing.IN_QUAD,
+                "IN_QUBIC" to Easing.IN_QUBIC,
+                "IN_QUART" to Easing.IN_QUART,
+                "OUT_QUAD" to Easing.OUT_QUAD,
+                "OUT_QUBIC" to Easing.OUT_QUBIC,
+                "OUT_QUART" to Easing.OUT_QUART,
+            )
+        )
+
+        val SCALABLE_SYMBOL_ZOOM_OUT_EASING = EnumParam<Easing>(
+            key = "scalable_symbol_zoom_out_easing",
+            defaultValue = Easing.OUT_QUAD,
+            valuesMap = listOf(
+                "IN_QUAD" to Easing.IN_QUAD,
+                "IN_QUBIC" to Easing.IN_QUBIC,
+                "IN_QUART" to Easing.IN_QUART,
+                "OUT_QUAD" to Easing.OUT_QUAD,
+                "OUT_QUBIC" to Easing.OUT_QUBIC,
+                "OUT_QUART" to Easing.OUT_QUART,
+            )
+        )
+
         val PERF_STATS = BoolParam("perf_stats", false)
         val DEBUG_TILES = BoolParam("debug_tiles", false)
         val DEBUG_GRID = BoolParam("debug_grid", false)
@@ -19,7 +51,6 @@ class DevParams(private val devParams: Map<*, *>) {
         val COMPUTATION_FRAME_TIME = IntParam("computation_frame_time", 28)
         val UPDATE_PAUSE_MS = IntParam("update_pause_ms", 0)
         val UPDATE_TIME_MULTIPLIER = DoubleParam("update_time_multiplier", 1.0)
-        val POINT_SCALING = BoolParam("point_scaling", false)
 
         val RENDER_TARGET: EnumParam<RenderTarget> =
             EnumParam(
@@ -43,6 +74,16 @@ class DevParams(private val devParams: Map<*, *>) {
             )
     }
 
+    enum class Easing(val function: EasingFunction) {
+        LINEAR({ x -> x }),
+        IN_QUAD({ x -> x * x }),
+        IN_QUBIC({ x -> x * x * x }),
+        IN_QUART({ x -> x * x * x * x }),
+        OUT_QUAD({ x -> 1 - (1 - x) * (1 - x) }),
+        OUT_QUBIC({ x -> 1 - (1 - x).pow(3) }),
+        OUT_QUART({ x -> 1 - (1 - x).pow(4) }),
+    }
+
     enum class MicroTaskExecutor {
         UI_THREAD,
         BACKGROUND,
@@ -52,8 +93,19 @@ class DevParams(private val devParams: Map<*, *>) {
     fun isSet(param: BoolParam): Boolean = param.isSet(this)
     fun read(param: IntParam): Int = param.read(this)
     fun read(param: DoubleParam): Double = param.read(this)
+    fun read(param: StringParam): String = param.read(this)
     fun <ValueT : Enum<*>> read(param: EnumParam<ValueT>): ValueT = param.read(this)
     private operator fun get(key: String): Any? = devParams[key]
+
+    class StringParam(val key: String, private val defaultValue: String) {
+
+        fun read(params: DevParams): String =
+            when(val v = params[key]) {
+                null -> defaultValue
+                is String -> v
+                else -> error("")
+            }
+    }
 
     class IntParam(val key: String, private val defaultValue: Int) {
 
@@ -79,7 +131,6 @@ class DevParams(private val devParams: Map<*, *>) {
         val key: String,
         private val defaultValue: Boolean
     ) {
-
         internal fun isSet(params: DevParams): Boolean =
             when(val v = params[key]) {
                 null -> defaultValue
@@ -112,6 +163,4 @@ class DevParams(private val devParams: Map<*, *>) {
                 else -> throw IllegalArgumentException()
             }
     }
-
-
 }

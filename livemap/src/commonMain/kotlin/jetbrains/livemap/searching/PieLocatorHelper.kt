@@ -7,11 +7,11 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.Client
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.PieSectorComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.rendering.PieSectorComponent
-import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import kotlin.math.PI
 
 class PieLocatorHelper : LocatorHelper {
@@ -32,7 +32,7 @@ class PieLocatorHelper : LocatorHelper {
     }
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor
+        return target.get<ChartElementComponent>().fillColor
     }
 
     private fun isCoordinateInPieSector(coord: Vec<Client>, origin: Vec<Client>, pieSector: PieSectorComponent): Boolean {

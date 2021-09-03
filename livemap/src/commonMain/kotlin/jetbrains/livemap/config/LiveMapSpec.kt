@@ -8,10 +8,10 @@ package jetbrains.livemap.config
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.basemap.BasemapTileSystemProvider
+import jetbrains.livemap.api.MapLocation
 import jetbrains.livemap.core.projections.GeoProjection
+import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.ui.CursorService
 
 class LiveMapSpec(

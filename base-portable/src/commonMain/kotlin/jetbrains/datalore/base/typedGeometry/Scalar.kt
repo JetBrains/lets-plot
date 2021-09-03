@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-data class Scalar<T>(
+import kotlin.jvm.JvmInline
+
+@JvmInline
+value class Scalar<T>(
     val value: Double
 )

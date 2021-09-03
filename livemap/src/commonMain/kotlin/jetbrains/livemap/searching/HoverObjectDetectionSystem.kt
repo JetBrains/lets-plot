@@ -7,13 +7,12 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.camera.isIntegerZoom
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.input.MouseInputComponent
-import jetbrains.livemap.projection.Client
+import jetbrains.livemap.mapengine.LiveMapContext
 
 
 class HoverObjectComponent : EcsComponent {
@@ -40,7 +39,7 @@ class HoverObjectDetectionSystem(componentManager: EcsComponentManager) : Abstra
 
             val hoverObjectComponent = hoverObject.get<HoverObjectComponent>()
 
-            if (context.camera.isZoomChanged && !context.camera.isIntegerZoom) {
+            if (context.camera.isZoomFractionChanged && !context.camera.isZoomLevelChanged) {
                 // on zoom do not search
                 hoverObjectComponent.apply {
                     cursotPosition = null
@@ -52,7 +51,7 @@ class HoverObjectDetectionSystem(componentManager: EcsComponentManager) : Abstra
 
             if (hoverObjectComponent.cursotPosition == mouseLocation && context.camera.zoom == hoverObjectComponent.zoom?.toDouble() ?: Double.NaN) {
                 // same mouse position - same result
-                return;
+                return
             }
 
             if (mouseInputComponent.dragDistance != null) {

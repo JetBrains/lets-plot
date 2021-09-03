@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.geoprotocol.Boundary
-import jetbrains.livemap.viewport.CellKey
+import jetbrains.livemap.mapengine.viewport.CellKey
 import java.util.*
 import java.util.function.Function
 import java.util.stream.Collectors.toList

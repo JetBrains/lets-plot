@@ -3,12 +3,12 @@ package jetbrains.datalore.maps.livemap.entities.regions
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.fragment.CachedFragmentsComponent
+import jetbrains.livemap.fragment.EmittedFragmentsComponent
+import jetbrains.livemap.fragment.EmptyFragmentsComponent
+import jetbrains.livemap.fragment.StreamingFragmentsComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
-import jetbrains.livemap.regions.CachedFragmentsComponent
-import jetbrains.livemap.regions.EmittedFragmentsComponent
-import jetbrains.livemap.regions.EmptyFragmentsComponent
-import jetbrains.livemap.regions.StreamingFragmentsComponent
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions.assertThat
 

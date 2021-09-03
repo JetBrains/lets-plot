@@ -11,27 +11,25 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
 import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
+import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathRenderer
+import jetbrains.livemap.chart.Renderers.PathRenderer
 import jetbrains.livemap.core.animation.Animation
-import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
-import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
+import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.placement.ScreenOriginComponent
-import jetbrains.livemap.placement.WorldDimensionComponent
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.rendering.RendererComponent
-import jetbrains.livemap.rendering.Renderers.PathRenderer
-import jetbrains.livemap.rendering.StyleComponent
-import jetbrains.livemap.rendering.setStrokeColor
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PathLocatorHelper
@@ -39,7 +37,8 @@ import jetbrains.livemap.searching.PathLocatorHelper
 @LiveMapDsl
 class Paths(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection
+    val mapProjection: MapProjection,
+    val zoomable: Boolean
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
@@ -52,20 +51,22 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
 
     Paths(
         MapEntityFactory(layerEntity),
-        mapProjection
+        mapProjection,
+        zoomable
     ).apply(block)
 }
 
 fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder(factory, mapProjection)
+    PathBuilder(factory, mapProjection, zoomable)
         .apply(block)
-        .build()
+        .build(nonInteractive = false)
 }
 
 @LiveMapDsl
 class PathBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myMapProjection: MapProjection,
+    private val zoomable: Boolean
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
@@ -81,7 +82,7 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
-    fun build(nonInteractive: Boolean = false): EcsEntity? {
+    fun build(nonInteractive: Boolean): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
         return bbox(coord)?.let { bbox ->
@@ -91,17 +92,18 @@ class PathBuilder(
                     if (layerIndex != null && index != null) {
                         +IndexComponent(layerIndex!!, index!!)
                     }
-                    +RendererComponent(PathRenderer())
+                    +ChartElementComponent().apply {
+                        renderer = PathRenderer()
+                        scalable = this@PathBuilder.zoomable
+                        strokeColor = this@PathBuilder.strokeColor
+                        strokeWidth = this@PathBuilder.strokeWidth
+                        lineDash = this@PathBuilder.lineDash.toDoubleArray()
+                    }
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = coord }
                     +WorldDimensionComponent(bbox.dimension)
                     +ScreenLoopComponent()
                     +ScreenOriginComponent()
-                    +StyleComponent().apply {
-                        setStrokeColor(this@PathBuilder.strokeColor)
-                        strokeWidth = this@PathBuilder.strokeWidth
-                        lineDash = this@PathBuilder.lineDash.toDoubleArray()
-                    }
                     +NeedLocationComponent
                     +NeedCalculateLocationComponent
                     if (!nonInteractive) {
@@ -114,13 +116,13 @@ class PathBuilder(
                     .createEntity("map_ent_path_animation")
                     .addAnimationComponent {
                         duration = 5_000.0
-                        easingFunction = Animations.LINEAR
+                        easingFunction = LINEAR
                         direction = Animation.Direction.FORWARD
                         loop = Animation.Loop.KEEP_DIRECTION
                     }
 
                 entity
-                    .setComponent(RendererComponent(GrowingPathRenderer()))
+                    .setComponent(ChartElementComponent().apply { renderer = GrowingPathRenderer() })
                     .addGrowingPathEffectComponent { animationId = animationEntity.id }
             }
 

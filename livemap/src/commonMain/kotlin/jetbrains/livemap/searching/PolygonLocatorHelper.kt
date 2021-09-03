@@ -7,17 +7,17 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.Client
+import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.fragment.RegionFragmentsComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.regions.RegionFragmentsComponent
-import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
 class PolygonLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor
+        return target.get<ChartElementComponent>().fillColor
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
@@ -36,7 +36,7 @@ class PolygonLocatorHelper : LocatorHelper {
 
     private fun isCoordinateOnEntity(coord: Vec<Client>, target: EcsEntity): Boolean {
         if (!target.contains(LOCATABLE_COMPONENTS)) {
-            return false;
+            return false
         }
 
         target.get<ScreenLoopComponent>().origins.forEach { origin ->

@@ -21,7 +21,12 @@ object Cities {
         id = "1686293227",
         centroid = Vec(37.3659, 55.4507),
         bbox = GeoRectangle(0.0 ,0.0, 0.0, 0.0),
-        position = GeoRectangle(0.0 ,0.0, 0.0, 0.0)
+        position = GeoRectangle(
+            startLongitude = 37.326228171587,
+            minLatitude = 55.4913076758385,
+            endLongitude = 37.9674276709557,
+            maxLatitude = 55.9577719867229
+        )
     )
 
     val BOSTON = GeoObject(

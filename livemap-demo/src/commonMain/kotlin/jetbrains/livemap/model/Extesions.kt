@@ -24,11 +24,11 @@ fun LineBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 
-fun ChartSource.coord(geoObj: GeoObject) {
+fun Symbol.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
-fun ChartSource.coord(lon: Double, lat: Double) {
+fun Symbol.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 

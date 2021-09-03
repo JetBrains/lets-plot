@@ -10,11 +10,13 @@ import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
+import jetbrains.livemap.config.DevParams
 
 class LinesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
+            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
             val points = listOf<LonLatPoint>(
                 explicitVec(-110.0, 55.0),
                 explicitVec(-100.0, 45.0),

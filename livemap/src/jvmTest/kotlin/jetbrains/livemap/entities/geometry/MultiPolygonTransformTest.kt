@@ -8,10 +8,10 @@ package jetbrains.datalore.jetbrains.livemap.entities.geometry
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.livemap.World
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.geometry.GeometryTransform
-import jetbrains.livemap.projection.World
 import org.junit.Test
 import kotlin.test.assertEquals
 

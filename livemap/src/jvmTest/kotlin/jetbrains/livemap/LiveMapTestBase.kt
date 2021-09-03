@@ -6,19 +6,19 @@
 package jetbrains.datalore.jetbrains.livemap
 
 import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
-import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.MapRenderContext
-import jetbrains.livemap.camera.MutableCamera
+import jetbrains.livemap.ClientPoint
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.WORLD_RECTANGLE
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.ClientPoint
-import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.viewport.Viewport
-import jetbrains.livemap.viewport.ViewportHelper
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.MapRenderContext
+import jetbrains.livemap.mapengine.camera.MutableCamera
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.mapengine.viewport.ViewportHelper
 import org.junit.Before
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock

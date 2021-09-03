@@ -8,9 +8,9 @@ package jetbrains.livemap.mapobjects
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.ChartSource
+import jetbrains.livemap.Client
+import jetbrains.livemap.api.Symbol
 import jetbrains.livemap.api.splitMapBarChart
-import jetbrains.livemap.projection.Client
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +22,7 @@ class UtilsTest {
         val actualOffsets = ArrayList<Vec<Client>>()
 
         splitMapBarChart(
-            ChartSource().apply {
+            Symbol().apply {
                 indices = listOf(3, 4, 5)
                 point = explicitVec(0.0, 0.0)
                 radius = 10.0

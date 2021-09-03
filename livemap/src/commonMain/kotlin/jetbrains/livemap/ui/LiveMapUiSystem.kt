@@ -8,20 +8,12 @@ package jetbrains.livemap.ui
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
-import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.CameraScale
-import jetbrains.livemap.viewport.Viewport
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.input.CursorStyle
-import jetbrains.livemap.core.input.CursorStyleComponent
-import jetbrains.livemap.core.input.EventListenerComponent
-import jetbrains.livemap.core.input.InputMouseEvent
-import jetbrains.livemap.core.input.MouseInputComponent
+import jetbrains.livemap.core.input.*
 import jetbrains.livemap.core.openLink
 import jetbrains.livemap.core.rendering.Alignment
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
@@ -32,7 +24,11 @@ import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
 import jetbrains.livemap.makegeometrywidget.createFormattedGeometryString
-import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.camera.CameraComponent
+import jetbrains.livemap.mapengine.camera.CameraScale
+import jetbrains.livemap.mapengine.viewport.Viewport
 
 class LiveMapUiSystem(
     private val myUiService: UiService,
@@ -248,7 +244,7 @@ class LiveMapUiSystem(
                 updateMakeGeometryButton(drawingGeometry)
             }
 
-            if (context.camera.isZoomChanged) {
+            if (context.camera.isZoomFractionChanged) {
                 updateZoomButtons(context.camera.zoom)
             }
         }
