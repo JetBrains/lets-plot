@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
@@ -57,6 +58,10 @@ object PlotUtil {
             rangeY = rangeY.span(yRangeAfterSizeExpand)
         }
 
+//        return when (FLIP_AXIS_COORD) {
+//            false -> Pair(rangeX, rangeY)
+//            true -> Pair(rangeY, rangeX)
+//        }
         return Pair(rangeX, rangeY)
     }
 
@@ -229,17 +234,33 @@ object PlotUtil {
         sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>
     ): Map<Aes<*>, (Double?) -> Any?> {
 
-        val mappers = HashMap<Aes<*>, (Double?) -> Any?>(sharedNumericMappers)
-        for (aes in layer.renderedAes()) {
-            var mapper: ((Double?) -> Any?)? = sharedNumericMappers[aes]
-            if (mapper == null) {
+        // ToDo: 'sharedNumericMappers' must contain X,Y and only X,Y.
+        val (aesX, aesY) = when (FLIP_AXIS) {
+            false -> Pair(Aes.X, Aes.Y)
+            true -> Pair(Aes.Y, Aes.X)
+        }
+
+//        val mappers = HashMap<Aes<*>, (Double?) -> Any?>(sharedNumericMappers)
+        val mappers = HashMap<Aes<*>, (Double?) -> Any?>()
+//        for (aes in layer.renderedAes()) {
+        val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
+        for (aes in renderedAes) {
+//            var mapper: ((Double?) -> Any?)? = sharedNumericMappers[aes]
+//            if (mapper == null) {
+//                // positional aes share their mappers
+//                if (Aes.isPositionalX(aes)) {
+//                    mapper = sharedNumericMappers[aesX]
+//                } else if (Aes.isPositionalY(aes)) {
+//                    mapper = sharedNumericMappers[aesY]
+//                }
+//            }
+            var mapper: ((Double?) -> Any?)? = when {
                 // positional aes share their mappers
-                if (Aes.isPositionalX(aes)) {
-                    mapper = sharedNumericMappers[Aes.X]
-                } else if (Aes.isPositionalY(aes)) {
-                    mapper = sharedNumericMappers[Aes.Y]
-                }
+                Aes.isPositionalX(aes) -> sharedNumericMappers[aesX]
+                Aes.isPositionalY(aes) -> sharedNumericMappers[aesY]
+                else -> sharedNumericMappers[aes]
             }
+
             if (mapper == null && layer.hasBinding(aes)) {
                 mapper = layer.scaleMap[aes].mapper
             }

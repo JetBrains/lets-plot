@@ -23,27 +23,18 @@ open class BarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper =
-            RectanglesHelper(aesthetics, pos, coord, ctx)
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(
-            rectangleByDataPoint(
-                ctx
-            )
+            rectangleByDataPoint(ctx)
         )
         rectangles.reverse()
         rectangles.forEach { root.add(it) }
 
-//        RectTargetCollectorHelper(
-//            helper,
-//            rectangleByDataPoint(ctx),
-//            { HintColorUtil.fromFill(it) })
-//            .collectTo(ctx.targetCollector)
         BarTooltipHelper.collectRectangleTargets(
             emptyList(),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx),
-            { HintColorUtil.fromFill(it) }
-        )
+            rectangleByDataPoint(ctx)
+        ) { HintColorUtil.fromFill(it) }
     }
 
     companion object {

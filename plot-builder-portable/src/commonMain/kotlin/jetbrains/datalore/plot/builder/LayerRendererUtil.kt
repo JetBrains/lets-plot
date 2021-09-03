@@ -12,13 +12,16 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 object LayerRendererUtil {
 
-    fun createLayerRendererData(layer: GeomLayer,
-                                sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-                                overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>
+    fun createLayerRendererData(
+        layer: GeomLayer,
+        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
+        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>
     ): LayerRendererData {
 
-        val aestheticMappers =
-            PlotUtil.prepareLayerAestheticMappers(layer, sharedNumericMappers)
+        val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(
+            layer,
+            sharedNumericMappers
+        )
         val aesthetics = PlotUtil.createLayerAesthetics(
             layer,
             aestheticMappers,

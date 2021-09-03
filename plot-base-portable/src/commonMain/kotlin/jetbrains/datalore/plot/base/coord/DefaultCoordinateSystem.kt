@@ -21,8 +21,7 @@ internal class DefaultCoordinateSystem(
     private val myFromClientOffsetY: (Double) -> Double,
     private val xLim: ClosedRange<Double>?,
     private val yLim: ClosedRange<Double>?
-) :
-    CoordinateSystem {
+) : CoordinateSystem {
 
     override fun toClient(p: DoubleVector): DoubleVector {
         return DoubleVector(myToClientOffsetX(p.x), myToClientOffsetY(p.y))
@@ -42,13 +41,13 @@ internal class DefaultCoordinateSystem(
         return (xLim?.encloses(r.xRange()) ?: true) && (yLim?.encloses(r.yRange()) ?: true)
     }
 
-    override fun isPathInLimits(path: List<DoubleVector>, isClient: Boolean): Boolean {
-        return path.any { point -> isPointInLimits(point, isClient) }
+    override fun isPathInLimits(path: List<DoubleVector>): Boolean {
+        return path.any { point -> isPointInLimits(point) }
     }
 
-    override fun isPolygonInLimits(polygon: List<DoubleVector>, isClient: Boolean): Boolean {
+    override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
         val bbox = DoubleRectangles.boundingBox(polygon)
-        return isRectInLimits(bbox, isClient)
+        return isRectInLimits(bbox)
     }
 
     override val xClientLimit: ClosedRange<Double>?

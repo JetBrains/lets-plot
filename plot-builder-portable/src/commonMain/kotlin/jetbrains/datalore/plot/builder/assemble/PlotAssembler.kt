@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -13,7 +14,6 @@ import jetbrains.datalore.plot.builder.PlotBuilder
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class PlotAssembler private constructor(
     private val scaleByAes: TypedScaleMap,
@@ -52,18 +52,14 @@ class PlotAssembler private constructor(
     fun createPlot(): Plot {
         require(hasLayers()) { "No layers in plot" }
 
-        val legendsBoxInfos = if (myLegendsEnabled)
-            PlotAssemblerUtil.createLegends(
+        val legendsBoxInfos = when {
+            myLegendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
                 myGuideOptionsMap,
                 myTheme.legend()
             )
-        else
-            emptyList()
-
-        // share first X/Y scale among all layers
-        var xScaleProto = scaleByAes[Aes.X]
-        var yScaleProto = scaleByAes[Aes.Y]
+            else -> emptyList()
+        }
 
         if (containsLiveMap) {
             // build 'live map' plot:
@@ -74,11 +70,21 @@ class PlotAssembler private constructor(
                 LiveMapTileLayout(),
                 facets
             )
-            return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos, hasLiveMap = true)
+            return createXYPlot(scaleByAes[Aes.X], scaleByAes[Aes.Y], plotLayout, legendsBoxInfos, hasLiveMap = true)
         }
 
         // train X/Y scales
         val (xDomain, yDomain) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+
+        // share X/Y scale among all layers
+
+        val (aesX, aesY) = when (FLIP_AXIS) {
+            false -> Pair(Aes.X, Aes.Y)
+            else -> Pair(Aes.Y, Aes.X)
+        }
+        val xScaleProto = scaleByAes[aesX]
+        val yScaleProto = scaleByAes[aesY]
+
 
         val xAxisLayout: AxisLayout
         val yAxisLayout: AxisLayout

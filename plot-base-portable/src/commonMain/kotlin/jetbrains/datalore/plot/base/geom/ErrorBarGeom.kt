@@ -14,12 +14,10 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
-import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 
@@ -28,10 +26,6 @@ class ErrorBarGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = MyLegendKeyElementFactory()
 
-    private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.with_X(aesthetics.dataPoints())
-    }
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -39,29 +33,23 @@ class ErrorBarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = LinesHelper(pos, coord, ctx)
-        val dataPoints = dataPoints(aesthetics)
         val geomHelper = GeomHelper(pos, coord, ctx)
 
-        for (p in dataPoints) {
-            val x = p.x()
-            val ymin = p.ymin()
-            val ymax = p.ymax()
-            if (!SeriesUtil.allFinite(x, ymin, ymax)) {
-                continue
-            }
+        for (p in GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.X,
+            Aes.YMIN,
+            Aes.YMAX
+        )) {
+            val x = p.x()!!
+            val ymin = p.ymin()!!
+            val ymax = p.ymax()!!
             var width = p.width()!!
             width *= ctx.getResolution(Aes.X)
-            val height = ymax!! - ymin!!
+            val height = ymax - ymin
 
-            val r = DoubleRectangle(x!! - width / 2, ymin, width, height)
-
-            val g = errorBarShape(
-                helper.toClient(
-                    r,
-                    p
-                ), p
-            )
+            val r = DoubleRectangle(x - width / 2, ymin, width, height)
+            val g = errorBarShape(r, p, geomHelper)
             root.add(g)
 
             buildHints(
@@ -104,21 +92,14 @@ class ErrorBarGeom : GeomBase() {
             val height = size.y - strokeWidth
             val x = (size.x - width) / 2
             val y = strokeWidth / 2
-            return errorBarShape(
-                DoubleRectangle(
-                    x,
-                    y,
-                    width,
-                    height
-                ), p
-            )
+            return errorBarLegendShape(DoubleRectangle(x, y, width, height), p)
         }
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun errorBarShape(r: DoubleRectangle, p: DataPointAesthetics): SvgGElement {
+        private fun errorBarLegendShape(r: DoubleRectangle, p: DataPointAesthetics): SvgGElement {
             val left = r.left
             val top = r.top
             val right = r.right
@@ -136,6 +117,23 @@ class ErrorBarGeom : GeomBase() {
             }
             return g
         }
-    }
 
+        private fun errorBarShape(r: DoubleRectangle, p: DataPointAesthetics, geomHelper: GeomHelper): SvgGElement {
+            val left = r.left
+            val top = r.top
+            val right = r.right
+            val bottom = r.bottom
+            val center = left + r.width / 2
+
+            val g = SvgGElement()
+            val elementHelper = geomHelper.createSvgElementHelper()
+            elementHelper.setStrokeAlphaEnabled(true)
+            with(g.children()) {
+                add(elementHelper.createLine(DoubleVector(left, top), DoubleVector(right, top), p))
+                add(elementHelper.createLine(DoubleVector(left, bottom), DoubleVector(right, bottom), p))
+                add(elementHelper.createLine(DoubleVector(center, top), DoubleVector(center, bottom), p))
+            }
+            return g
+        }
+    }
 }

@@ -7,11 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
@@ -23,9 +19,12 @@ import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgShape
 import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
-open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSystem, protected val ctx: GeomContext) {
-    private val myGeomCoord: GeomCoord =
-        GeomCoord(coord)
+open class GeomHelper(
+    private val myPos: PositionAdjustment,
+    coord: CoordinateSystem,
+    protected val ctx: GeomContext
+) {
+    private val myGeomCoord: GeomCoord = GeomCoord(coord)
 
     fun toClient(location: DoubleVector, p: DataPointAesthetics): DoubleVector {
         return myGeomCoord.toClient(adjust(location, p, myPos, ctx))
@@ -129,6 +128,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
         fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
+
             @Suppress("NAME_SHADOWING")
             val end = toClient(end, p)
             val line = SvgLineElement(

@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.Scale
@@ -261,10 +262,14 @@ internal object PlotAssemblerUtil {
         // validate XY ranges
         xRangeOverall = SeriesUtil.ensureApplicableRange(xRangeOverall)
         yRangeOverall = SeriesUtil.ensureApplicableRange(yRangeOverall)
-        return Pair(
-            xRangeOverall,
-            yRangeOverall
-        )
+        return when (FeatureSwitch.FLIP_AXIS) {
+            false -> Pair(xRangeOverall, yRangeOverall)
+            true -> Pair(yRangeOverall, xRangeOverall)
+        }
+//        return Pair(
+//            xRangeOverall,
+//            yRangeOverall
+//        )
     }
 
     private object RangeUtil {

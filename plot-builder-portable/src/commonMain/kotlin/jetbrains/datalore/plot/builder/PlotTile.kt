@@ -12,9 +12,11 @@ import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.coord.FlippedCoordinateSystem
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
@@ -223,13 +225,13 @@ internal class PlotTile(
     }
 
     private fun addAxis(geomBounds: DoubleRectangle) {
-        // X axis (below geom area)
+        // X-axis (below geom area)
         if (myLayoutInfo.xAxisShown) {
             val axis = buildAxis(myScaleX, myLayoutInfo.xAxisInfo!!, myCoord, myTheme.axisX())
             axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
             add(axis)
         }
-        // Y axis (to the left from geom area, axis elements have negative x-positions)
+        // Y-axis (to the left from geom area, axis elements have negative x-positions)
         if (myLayoutInfo.yAxisShown) {
             val axis = buildAxis(myScaleY, myLayoutInfo.yAxisInfo!!, myCoord, myTheme.axisY())
             axis.moveTo(geomBounds.origin)
@@ -275,6 +277,12 @@ internal class PlotTile(
 
             val aestheticMappers = rendererData.aestheticMappers
             val aesthetics = rendererData.aesthetics
+
+            @Suppress("NAME_SHADOWING")
+            val coord = when (FLIP_AXIS) {
+                false -> coord
+                true -> FlippedCoordinateSystem(myCoord)
+            }
 
             val targetCollector = LayerTargetCollectorWithLocator(
                 layer.geomKind,

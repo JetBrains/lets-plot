@@ -9,6 +9,8 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 
 object FeatureSwitch {
+    const val FLIP_AXIS = false
+
     const val PLOT_DEBUG_DRAWING = false
     const val LEGEND_DEBUG_DRAWING = false
     private const val PRINT_DEBUG_LOGS = false

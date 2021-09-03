@@ -27,11 +27,11 @@ internal class BogusCoordinateSystem : CoordinateSystem {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isPathInLimits(path: List<DoubleVector>, isClient: Boolean): Boolean {
+    override fun isPathInLimits(path: List<DoubleVector>): Boolean {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 
-    override fun isPolygonInLimits(polygon: List<DoubleVector>, isClient: Boolean): Boolean {
+    override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
         throw IllegalStateException("Bogus coordinate system is not supposed to be used.")
     }
 

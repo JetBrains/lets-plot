@@ -18,9 +18,9 @@ interface CoordinateSystem {
 
     fun isRectInLimits(rect: DoubleRectangle, isClient: Boolean = true): Boolean
 
-    fun isPathInLimits(path: List<DoubleVector>, isClient: Boolean = true): Boolean
+    fun isPathInLimits(path: List<DoubleVector>): Boolean
 
-    fun isPolygonInLimits(polygon: List<DoubleVector>, isClient: Boolean = true): Boolean
+    fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean
 
     val xClientLimit: ClosedRange<Double>?
 
