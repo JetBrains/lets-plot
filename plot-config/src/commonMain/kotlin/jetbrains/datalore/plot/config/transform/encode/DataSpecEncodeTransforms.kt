@@ -26,15 +26,4 @@ object DataSpecEncodeTransforms {
         addDataChanges(builder, ClientSideDecodeOldStyleChange(), isGGBunch)
         return builder.build()
     }
-
-    fun serverSideEncode(forRawSpec: Boolean): PlotSpecTransform {
-        val builder: PlotSpecTransform.Builder
-        if (forRawSpec) {
-            builder = PlotSpecTransform.builderForRawSpec()
-        } else {
-            builder = PlotSpecTransform.builderForCleanSpec()
-        }
-
-        return addDataChanges(builder, ServerSideEncodeChange(), false).build()
-    }
 }
