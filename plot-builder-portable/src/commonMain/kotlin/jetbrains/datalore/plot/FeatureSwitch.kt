@@ -17,8 +17,6 @@ object FeatureSwitch {
 
     private const val PRINT_ENCODED_DATA_SUMMARY = false
 
-    const val USE_DATA_FRAME_ENCODING = true
-
     fun printEncodedDataSummary(header: String, dataSpec: Map<String, Any>) {
         @Suppress("ConstantConditionIf")
         if (PRINT_ENCODED_DATA_SUMMARY) {

@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.config.transform.encode.DataSpecEncodeTransforms
 import jetbrains.datalore.plot.parsePlotSpec
 
 
@@ -35,10 +34,6 @@ object ServerSideTestUtil {
 
     fun serverTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
         return PlotConfigServerSide.processTransform(plotSpec)
-    }
-
-    fun serverTransformOnlyEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
-        return DataSpecEncodeTransforms.serverSideEncode(true).apply(plotSpec)
     }
 
     fun createLayerConfigsWithoutEncoding(plotSpec: MutableMap<String, Any>): List<LayerConfig> {
