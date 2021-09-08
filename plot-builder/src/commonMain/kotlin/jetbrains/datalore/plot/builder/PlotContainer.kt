@@ -47,8 +47,12 @@ class PlotContainer(
         val onMouseMoved = { e: MouseEvent ->
             val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
             val tooltipSpecs = plot.createTooltipSpecs(coord)
-            val geomBounds = plot.getGeomBounds(coord)
-            tooltipLayer.showTooltips(coord, tooltipSpecs, geomBounds)
+            val tooltipBounds = plot.getTooltipBounds(coord)
+            tooltipLayer.showTooltips(
+                coord,
+                tooltipSpecs,
+                tooltipBounds
+            )
         }
         reg(plot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
