@@ -18,7 +18,6 @@ kotlin {
                 api project(':base')
                 api project(':vis-svg-portable')
                 api project(':plot-base-portable')
-                api project(':plot-base')
                 api project(':plot-common-portable')
                 api project(':plot-common')
                 api project(':plot-builder-portable')

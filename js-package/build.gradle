@@ -14,7 +14,6 @@ dependencies {
     implementation project(':vis-canvas')
     implementation project(':vis-svg-mapper')
     implementation project(':plot-base-portable')
-    implementation project(':plot-base')
     implementation project(':plot-common-portable')
     implementation project(':plot-common')
     implementation project(':plot-builder-portable')

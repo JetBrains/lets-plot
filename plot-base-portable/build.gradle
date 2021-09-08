@@ -32,7 +32,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-//                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation project(':base-portable')
                 implementation project(':vis-svg-portable')
                 implementation project(':plot-common-portable')
