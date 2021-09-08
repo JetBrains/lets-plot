@@ -23,7 +23,6 @@ object DataSpecEncodeTransforms {
     fun clientSideDecode(isGGBunch: Boolean): PlotSpecTransform {
         val builder = PlotSpecTransform.builderForRawSpec()
         addDataChanges(builder, ClientSideDecodeChange(), isGGBunch)
-        addDataChanges(builder, ClientSideDecodeOldStyleChange(), isGGBunch)
         return builder.build()
     }
 }
