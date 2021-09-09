@@ -20,7 +20,6 @@ kotlin {
                 implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-common-portable')
-                implementation project(':plot-common')
                 implementation project(':plot-builder-portable')
             }
         }
