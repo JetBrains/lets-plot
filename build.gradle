@@ -24,7 +24,6 @@ def include_sources_letsPlotJvmCommon = [
         'vis-svg-portable',
         'plot-base-portable',
         'plot-common-portable',
-        'plot-common',
         'plot-builder-portable',
         'plot-builder',
         'plot-config-portable',
