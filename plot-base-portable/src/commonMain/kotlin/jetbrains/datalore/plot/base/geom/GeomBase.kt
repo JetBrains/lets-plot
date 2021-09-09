@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
@@ -13,7 +12,6 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
@@ -60,24 +58,18 @@ abstract class GeomBase : Geom {
             return wrap(slimGroup)
         }
 
-        fun aesViewPort(aesthetics: Aesthetics): DoubleRectangle {
-            return rect(
-                aesthetics.overallRange(Aes.X),
-                aesthetics.overallRange(Aes.Y)
-            )
+        fun overallAesBounds(ctx: GeomContext): DoubleRectangle {
+            return when {
+                ctx.flipped -> ctx.getAesBounds().flip()
+                else -> ctx.getAesBounds()
+            }
         }
 
-        fun aesBoundingBox(aesthetics: Aesthetics): DoubleRectangle {
-            return rect(
+        fun layerAesBounds(aesthetics: Aesthetics): DoubleRectangle {
+            // ToDo: flip?
+            return DoubleRectangle(
                 aesthetics.range(Aes.X)!!,
                 aesthetics.range(Aes.Y)!!
-            )
-        }
-
-        private fun rect(rangeX: ClosedRange<Double>, rangeY: ClosedRange<Double>): DoubleRectangle {
-            return DoubleRectangle(
-                rangeX.lowerEnd, rangeY.lowerEnd,
-                SeriesUtil.span(rangeX), SeriesUtil.span(rangeY)
             )
         }
 

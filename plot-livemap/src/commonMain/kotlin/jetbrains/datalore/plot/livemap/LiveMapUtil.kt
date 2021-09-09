@@ -23,13 +23,23 @@ import jetbrains.livemap.ui.CursorService
 
 object LiveMapUtil {
 
-    fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions, cursorServiceConfig: CursorServiceConfig) {
+    fun injectLiveMapProvider(
+        plotTiles: List<List<GeomLayer>>,
+        liveMapOptions: LiveMapOptions,
+        cursorServiceConfig: CursorServiceConfig
+    ) {
 
         plotTiles.forEach { tileLayers ->
             if (tileLayers.any(GeomLayer::isLiveMap)) {
                 require(tileLayers.count(GeomLayer::isLiveMap) == 1)
                 require(tileLayers.first().isLiveMap)
-                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions, cursorServiceConfig.cursorService))
+                tileLayers.first().setLiveMapProvider(
+                    MyLiveMapProvider(
+                        tileLayers,
+                        liveMapOptions,
+                        cursorServiceConfig.cursorService
+                    )
+                )
             }
         }
     }
@@ -91,17 +101,16 @@ object LiveMapUtil {
                 LayerRendererUtil.createLayerRendererData(
                     layer = layer,
                     sharedNumericMappers = emptyMap(),
-                    overallNumericDomains = emptyMap()
                 )
             }
 
             geomLayers
                 .map(newLiveMapRendererData)
-                .forEachIndexed {layerIndex, rendererData ->
+                .forEachIndexed { layerIndex, rendererData ->
                     rendererData.aesthetics.dataPoints().forEach {
                         myTargetSource[layerIndex to it.index()] = rendererData.contextualMapping
                     }
-            }
+                }
 
             // feature geom layers
             val layers = geomLayers
@@ -139,12 +148,14 @@ object LiveMapUtil {
                     LiveMapData(
                         LiveMapCanvasFigure(liveMapAsync)
                             .apply {
-                                setBounds(Rectangle(
-                                    bounds.origin.x.toInt(),
-                                    bounds.origin.y.toInt(),
-                                    bounds.dimension.x.toInt(),
-                                    bounds.dimension.y.toInt()
-                                ))
+                                setBounds(
+                                    Rectangle(
+                                        bounds.origin.x.toInt(),
+                                        bounds.origin.y.toInt(),
+                                        bounds.dimension.x.toInt(),
+                                        bounds.dimension.y.toInt()
+                                    )
+                                )
                             },
                         LiveMapTargetLocator(liveMapAsync, myTargetSource)
                     )

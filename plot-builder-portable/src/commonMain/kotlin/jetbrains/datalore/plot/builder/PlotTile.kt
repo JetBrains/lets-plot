@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.coord.FlippedCoordinateSystem
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
@@ -33,7 +32,6 @@ import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACE
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_V_PADDING
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColHeadHeight
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColLabelSize
-import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
@@ -139,10 +137,6 @@ internal class PlotTile(
         } else {
             // normal plot tile
             val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()
-            val overallNumericDomains = HashMap<Aes<Double>, ClosedRange<Double>>()
-
-            val xAxisInfo = myLayoutInfo.xAxisInfo
-            val yAxisInfo = myLayoutInfo.yAxisInfo
             val mapperX = myScaleX.mapper
             val mapperY = myScaleY.mapper
 
@@ -150,16 +144,31 @@ internal class PlotTile(
             sharedNumericMappers[Aes.Y] = mapperY
             sharedNumericMappers[Aes.SLOPE] = Mappers.mul(mapperY(1.0)!! / mapperX(1.0)!!)
 
-            overallNumericDomains[Aes.X] = xAxisInfo!!.axisDomain!!
-            overallNumericDomains[Aes.Y] = yAxisInfo!!.axisDomain!!
+            val xAxisInfo = myLayoutInfo.xAxisInfo!!
+            val yAxisInfo = myLayoutInfo.yAxisInfo!!
+            val xAxisDomain = xAxisInfo.axisDomain!!
+            val yAxisDomain = yAxisInfo.axisDomain!!
+            val aesBounds = DoubleRectangle(
+                xRange = ClosedRange(
+                    mapperX(xAxisDomain.lowerEnd) as Double,
+                    mapperX(xAxisDomain.upperEnd) as Double
+                ),
+                yRange = ClosedRange(
+                    mapperY(yAxisDomain.lowerEnd) as Double,
+                    mapperY(yAxisDomain.upperEnd) as Double
+                )
+            )
 
-            val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
+            val coord = when (FLIP_AXIS) {
+                false -> myCoord
+                true -> myCoord.flip()
+            }
+
+            val geomLayerComponents = buildGeoms(sharedNumericMappers, aesBounds, coord)
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
 
-                val xRange = myCoord.xClientLimit ?: ClosedRange(0.0, geomBounds.width)
-                val yRange = myCoord.yClientLimit ?: ClosedRange(0.0, geomBounds.height)
-                geomDrawingBounds = GeometryUtil.doubleRange(xRange, yRange)
+                geomDrawingBounds = coord.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
 
                 layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
@@ -268,7 +277,7 @@ internal class PlotTile(
 
     private fun buildGeoms(
         sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
+        aesBounds: DoubleRectangle,
         coord: CoordinateSystem
     ): List<SvgComponent> {
 
@@ -277,28 +286,23 @@ internal class PlotTile(
             val rendererData = LayerRendererUtil.createLayerRendererData(
                 layer,
                 sharedNumericMappers,
-                overallNumericDomains
             )
 
             val aestheticMappers = rendererData.aestheticMappers
             val aesthetics = rendererData.aesthetics
 
-            @Suppress("NAME_SHADOWING")
-            val coord = when (FLIP_AXIS) {
-                false -> coord
-                true -> FlippedCoordinateSystem(myCoord)
-            }
-
             val targetCollector = LayerTargetCollectorWithLocator(
                 layer.geomKind,
                 layer.locatorLookupSpec,
-                layer.contextualMapping
+                layer.contextualMapping,
             )
             myTargetLocators.add(targetCollector)
 
             val ctx = GeomContextBuilder()
+                .flipped(FLIP_AXIS)
                 .aesthetics(aesthetics)
                 .aestheticMappers(aestheticMappers)
+                .aesBounds(aesBounds)
                 .geomTargetCollector(targetCollector)
                 .build()
 

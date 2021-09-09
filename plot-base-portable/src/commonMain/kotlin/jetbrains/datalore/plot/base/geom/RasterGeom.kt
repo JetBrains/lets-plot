@@ -43,8 +43,7 @@ class RasterGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
 
         // Find size of image (row x col)
-        val boundsXY =
-            aesBoundingBox(aesthetics)
+        val boundsXY = layerAesBounds(aesthetics)
         val stepX = ctx.getResolution(Aes.X)
         val stepY = ctx.getResolution(Aes.Y)
         require(stepX > SeriesUtil.TINY) { "x-step is too small: $stepX" }

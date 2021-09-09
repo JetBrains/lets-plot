@@ -5,12 +5,21 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
-class FlippedCoordinateSystem(val actual: CoordinateSystem) : CoordinateSystem {
+internal class FlippedCoordinateSystem(
+    private val actual: DefaultCoordinateSystem
+) : DefaultCoordinateSystem(
+    actual.toClientOffsetX,
+    actual.toClientOffsetY,
+    actual.fromClientOffsetX,
+    actual.fromClientOffsetY,
+//    xLimits = actual.yLimits,
+//    yLimits = actual.xLimits,
+    xLimits = actual.xLimits,
+    yLimits = actual.yLimits,
+) {
     override fun toClient(p: DoubleVector): DoubleVector {
         return actual.toClient(p.flip())
     }
@@ -19,25 +28,23 @@ class FlippedCoordinateSystem(val actual: CoordinateSystem) : CoordinateSystem {
         return actual.fromClient(p).flip()
     }
 
-    override fun isPointInLimits(p: DoubleVector, isClient: Boolean): Boolean {
-        return actual.isPointInLimits(p, isClient)
+//    override fun isPointInLimits(p: DoubleVector, isClient: Boolean): Boolean {
+//        return actual.isPointInLimits(p, isClient)
+//    }
+
+//    override fun isRectInLimits(rect: DoubleRectangle, isClient: Boolean): Boolean {
+//        return actual.isRectInLimits(rect, isClient)
+//    }
+
+//    override fun isPathInLimits(path: List<DoubleVector>): Boolean {
+//        return actual.isPathInLimits(path)
+//    }
+
+//    override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
+//        return actual.isPolygonInLimits(polygon)
+//    }
+
+    override fun flip(): CoordinateSystem {
+        throw IllegalStateException("'flip()' is not applicable to FlippedCoordinateSystem")
     }
-
-    override fun isRectInLimits(rect: DoubleRectangle, isClient: Boolean): Boolean {
-        return actual.isRectInLimits(rect, isClient)
-    }
-
-    override fun isPathInLimits(path: List<DoubleVector>): Boolean {
-        return actual.isPathInLimits(path)
-    }
-
-    override fun isPolygonInLimits(polygon: List<DoubleVector>): Boolean {
-        return actual.isPolygonInLimits(polygon)
-    }
-
-    override val xClientLimit: ClosedRange<Double>?
-        get() = actual.yClientLimit
-
-    override val yClientLimit: ClosedRange<Double>?
-        get() = actual.xClientLimit
 }

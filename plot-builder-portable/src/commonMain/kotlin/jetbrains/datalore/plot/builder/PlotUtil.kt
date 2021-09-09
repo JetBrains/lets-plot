@@ -58,10 +58,6 @@ object PlotUtil {
             rangeY = rangeY.span(yRangeAfterSizeExpand)
         }
 
-//        return when (FLIP_AXIS_COORD) {
-//            false -> Pair(rangeX, rangeY)
-//            true -> Pair(rangeY, rangeX)
-//        }
         return Pair(rangeX, rangeY)
     }
 
@@ -226,7 +222,7 @@ object PlotUtil {
         }
 
         val mappers = prepareLayerAestheticMappers(layer, dryRunMapperByAes)
-        return createLayerAesthetics(layer, mappers, emptyMap())
+        return createLayerAesthetics(layer, mappers/*, emptyMap()*/)
     }
 
     internal fun prepareLayerAestheticMappers(
@@ -235,25 +231,14 @@ object PlotUtil {
     ): Map<Aes<*>, (Double?) -> Any?> {
 
         // ToDo: 'sharedNumericMappers' must contain X,Y and only X,Y.
-        val (aesX, aesY) = when (FLIP_AXIS) {
-            false -> Pair(Aes.X, Aes.Y)
-            true -> Pair(Aes.Y, Aes.X)
+        val (aesX, aesY) = when {
+            FLIP_AXIS -> Pair(Aes.Y, Aes.X)
+            else -> Pair(Aes.X, Aes.Y)
         }
 
-//        val mappers = HashMap<Aes<*>, (Double?) -> Any?>(sharedNumericMappers)
         val mappers = HashMap<Aes<*>, (Double?) -> Any?>()
-//        for (aes in layer.renderedAes()) {
         val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
         for (aes in renderedAes) {
-//            var mapper: ((Double?) -> Any?)? = sharedNumericMappers[aes]
-//            if (mapper == null) {
-//                // positional aes share their mappers
-//                if (Aes.isPositionalX(aes)) {
-//                    mapper = sharedNumericMappers[aesX]
-//                } else if (Aes.isPositionalY(aes)) {
-//                    mapper = sharedNumericMappers[aesY]
-//                }
-//            }
             var mapper: ((Double?) -> Any?)? = when {
                 // positional aes share their mappers
                 Aes.isPositionalX(aes) -> sharedNumericMappers[aesX]
@@ -275,20 +260,10 @@ object PlotUtil {
     internal fun createLayerAesthetics(
         layer: GeomLayer,
         sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
-        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>
     ): Aesthetics {
 
         val aesBuilder = AestheticsBuilder()
         aesBuilder.group(layer.group)
-        for ((aes, domain) in overallNumericDomains) {
-            sharedMappers[aes]?.let { mapper ->
-                val range = ClosedRange(
-                    mapper(domain.lowerEnd) as Double,
-                    mapper(domain.upperEnd) as Double
-                )
-                aesBuilder.overallRange(aes, range)
-            }
-        }
 
         var hasPositionalConstants = false
         for (aes in layer.renderedAes()) {

@@ -539,7 +539,7 @@ class GeoConfigTest {
             |}
             |""".trimMargin()
         )
-            //.assertBinding(Aes.X, "price") // was not rebind to gdf
+        //.assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
@@ -554,14 +554,14 @@ class GeoConfigTest {
     }
 
     private fun GeomLayer.assertGroups(expected: Collection<*>): GeomLayer {
-        val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
+        val actualGroups = createLayerRendererData(this, emptyMap())
             .aesthetics.dataPoints().map(DataPointAesthetics::group)
         assertEquals(expected, actualGroups, "Aes valeus didn't match")
         return this
     }
 
     private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
-        val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
+        val actualGroups = createLayerRendererData(this, emptyMap())
             .aesthetics.dataPoints().map { it.get(aes) }
         assertEquals(expected, actualGroups, "Aes valeus didn't match")
         return this

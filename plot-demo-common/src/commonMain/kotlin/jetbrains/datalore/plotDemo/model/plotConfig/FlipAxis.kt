@@ -12,7 +12,8 @@ class FlipAxis {
         return listOf(
             pointsAndSmooth(),
             pointsOnly(),
-            smoothOnly()
+            smoothOnly(),
+            pointsOnlyWithLimits(),
         )
     }
 
@@ -70,6 +71,12 @@ class FlipAxis {
         return map
     }
 
+    private fun pointsOnlyWithLimits(): MutableMap<String, Any> {
+        val map = pointsOnly()
+        map.putAll(cartesianWithLimits(xLim, yLim))
+        return map
+    }
+
     companion object {
         private val x = listOf(
             -0.85682293, -2.3911234, -2.42744314, -1.94456221, -3.08116168,
@@ -83,13 +90,40 @@ class FlipAxis {
             1.23440038, -2.64721071, 0.86629033, -1.01436946, -0.30687369,
             -1.23137015, -0.41737117, 0.54053481, -0.71151953, -1.37503288
         )
+
         private val data = mapOf(
             "x" to x.map { it - 5 },
             "y" to y.map { it / 3 }
         )
+        private val xLim = Pair(-7.5, -6.0)
+        private val yLim = Pair(-0.4, 0.2)
+
+
 //        private val data = mapOf(
+//            "x" to listOf(-7.0),
+//            "y" to listOf(0.0)
+//        )
+        //        private val data = mapOf(
 //            "x" to listOf(0.0, 0.0),
 //            "y" to listOf(0.0, 0.4)
 //        )
+
+
+        private fun cartesianWithLimits(
+            xLim: Pair<Double, Double>?,
+            yLim: Pair<Double, Double>?
+        ): MutableMap<String, Any> {
+            val spec =
+                """
+            |{
+            |   'coord': {
+            |       'name': 'cartesian',
+            |       'xlim': ${xLim?.let { "[${xLim.first}, ${xLim.second}]" } ?: "null"},
+            |       'ylim': ${yLim?.let { "[${yLim.first}, ${yLim.second}]" } ?: "null"}
+            |   }
+            |}   
+        """.trimMargin()
+            return parsePlotSpec(spec)
+        }
     }
 }

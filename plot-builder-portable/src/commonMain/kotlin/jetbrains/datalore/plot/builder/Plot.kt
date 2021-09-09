@@ -330,7 +330,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // build tiles
-        val tileTheme = if(plotInfo.tiles.size > 1) {
+        val tileTheme = if (plotInfo.tiles.size > 1) {
             theme.multiTile()
         } else {
             theme
@@ -338,8 +338,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         val tilesOrigin = geomAndAxis.origin
         for (tileLayoutInfo in plotInfo.tiles) {
-//        for (i in plotInfo.tiles.indices) {
-//            val tileLayoutInfo = plotInfo.tiles[i]
             val tileLayersIndex = tileLayoutInfo.trueIndex
 
 //            println("plot offset: " + tileInfo.plotOffset)
