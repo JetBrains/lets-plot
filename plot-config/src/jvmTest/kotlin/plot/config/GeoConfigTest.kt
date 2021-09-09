@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
@@ -506,7 +507,6 @@ class GeoConfigTest {
     }
 
 
-
     @Test
     fun `georeference with limit and oposition`() {
         singleGeomLayer(
@@ -554,14 +554,14 @@ class GeoConfigTest {
     }
 
     private fun GeomLayer.assertGroups(expected: Collection<*>): GeomLayer {
-        val actualGroups = createLayerRendererData(this, emptyMap())
+        val actualGroups = createLayerRendererData(this, Mappers.IDENTITY, Mappers.IDENTITY)
             .aesthetics.dataPoints().map(DataPointAesthetics::group)
         assertEquals(expected, actualGroups, "Aes valeus didn't match")
         return this
     }
 
     private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
-        val actualGroups = createLayerRendererData(this, emptyMap())
+        val actualGroups = createLayerRendererData(this, Mappers.IDENTITY, Mappers.IDENTITY)
             .aesthetics.dataPoints().map { it.get(aes) }
         assertEquals(expected, actualGroups, "Aes valeus didn't match")
         return this

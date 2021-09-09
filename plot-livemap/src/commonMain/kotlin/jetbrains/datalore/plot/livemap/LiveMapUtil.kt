@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
 import jetbrains.livemap.LiveMapLocation
@@ -100,7 +101,8 @@ object LiveMapUtil {
             val newLiveMapRendererData = { layer: GeomLayer ->
                 LayerRendererUtil.createLayerRendererData(
                     layer = layer,
-                    sharedNumericMappers = emptyMap(),
+                    Mappers.IDENTITY,   // Not used with "livemap".
+                    Mappers.IDENTITY,
                 )
             }
 

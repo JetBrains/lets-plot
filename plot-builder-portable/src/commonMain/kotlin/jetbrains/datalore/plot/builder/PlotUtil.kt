@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
@@ -212,46 +211,34 @@ object PlotUtil {
     }
 
     fun createLayerDryRunAesthetics(layer: GeomLayer): Aesthetics {
-        val dryRunMapperByAes = HashMap<Aes<Double>, (Double?) -> Double?>()
-        for (aes in layer.renderedAes()) {
-            if (aes.isNumeric) {
-                // safe cast: 'numeric' aes is always <Double>
-                @Suppress("UNCHECKED_CAST")
-                dryRunMapperByAes[aes as Aes<Double>] = Mappers.IDENTITY
-            }
-        }
-
-        val mappers = prepareLayerAestheticMappers(layer, dryRunMapperByAes)
-        return createLayerAesthetics(layer, mappers/*, emptyMap()*/)
+        val mappers = prepareLayerAestheticMappers(
+            layer,
+            xAesMapper = Mappers.IDENTITY,
+            yAesMapper = Mappers.IDENTITY
+        )
+        return createLayerAesthetics(layer, mappers)
     }
 
     internal fun prepareLayerAestheticMappers(
         layer: GeomLayer,
-        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>
+        xAesMapper: (Double?) -> Double?,
+        yAesMapper: (Double?) -> Double?,
     ): Map<Aes<*>, (Double?) -> Any?> {
-
-        // ToDo: 'sharedNumericMappers' must contain X,Y and only X,Y.
-        val (aesX, aesY) = when {
-            FLIP_AXIS -> Pair(Aes.Y, Aes.X)
-            else -> Pair(Aes.X, Aes.Y)
-        }
 
         val mappers = HashMap<Aes<*>, (Double?) -> Any?>()
         val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
         for (aes in renderedAes) {
             var mapper: ((Double?) -> Any?)? = when {
+                aes == Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
                 // positional aes share their mappers
-                Aes.isPositionalX(aes) -> sharedNumericMappers[aesX]
-                Aes.isPositionalY(aes) -> sharedNumericMappers[aesY]
-                else -> sharedNumericMappers[aes]
+                Aes.isPositionalX(aes) -> xAesMapper
+                Aes.isPositionalY(aes) -> yAesMapper
+                layer.hasBinding(aes) -> layer.scaleMap[aes].mapper
+                else -> null  // rendered but has no binding - just ignore.
             }
 
-            if (mapper == null && layer.hasBinding(aes)) {
-                mapper = layer.scaleMap[aes].mapper
-            }
-
-            if (mapper != null) {
-                mappers[aes] = mapper
+            mapper?.run {
+                mappers[aes] = this
             }
         }
         return mappers

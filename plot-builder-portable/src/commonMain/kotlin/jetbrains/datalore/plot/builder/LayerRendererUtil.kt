@@ -13,12 +13,13 @@ object LayerRendererUtil {
 
     fun createLayerRendererData(
         layer: GeomLayer,
-        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
+        xAesMapper: (Double?) -> Double?,
+        yAesMapper: (Double?) -> Double?,
     ): LayerRendererData {
 
         val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(
             layer,
-            sharedNumericMappers
+            xAesMapper, yAesMapper
         )
         val aesthetics = PlotUtil.createLayerAesthetics(
             layer,
