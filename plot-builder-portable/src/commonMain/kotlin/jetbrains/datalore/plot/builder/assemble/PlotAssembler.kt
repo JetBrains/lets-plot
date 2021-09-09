@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
@@ -74,17 +75,24 @@ class PlotAssembler private constructor(
         }
 
         // train X/Y scales
-        val (xDomain, yDomain) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+        val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
 
         // share X/Y scale among all layers
-
-        val (aesX, aesY) = when (FLIP_AXIS) {
-            false -> Pair(Aes.X, Aes.Y)
-            else -> Pair(Aes.Y, Aes.X)
+        val xScaleProto: Scale<Double>
+        val yScaleProto: Scale<Double>
+        val xDomain: ClosedRange<Double>
+        val yDomain: ClosedRange<Double>
+        if (FLIP_AXIS) {
+            xScaleProto = scaleByAes[Aes.Y]
+            yScaleProto = scaleByAes[Aes.X]
+            xDomain = yAesRange
+            yDomain = xAesRange
+        } else {
+            xScaleProto = scaleByAes[Aes.X]
+            yScaleProto = scaleByAes[Aes.Y]
+            xDomain = xAesRange
+            yDomain = yAesRange
         }
-        val xScaleProto = scaleByAes[aesX]
-        val yScaleProto = scaleByAes[aesY]
-
 
         val xAxisLayout: AxisLayout
         val yAxisLayout: AxisLayout
