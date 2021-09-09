@@ -3,22 +3,21 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.common.base64
+package jetbrains.datalore.base.encoding
 
-import java.util.*
 import kotlin.collections.ArrayList
 
 actual object BinaryUtil {
     actual fun encodeList(l: List<Double?>): String {
         val bytes = toBytes(l)
         //return BaseEncoding.base64().encode(bytes);
-        return Base64.getEncoder().encodeToString(bytes)
+        return java.util.Base64.getEncoder().encodeToString(bytes)
     }
 
     actual fun decodeList(s: String): List<Double> {
         //byte[] bytes = BaseEncoding.base64().decode(s);
         //byte[] bytes = Base64.getDecoder().decode(s); // not emulated by GWT
-        val bytes = JavaBase64.decode(s)
+        val bytes = Base64.decode(s)
         return fromBytes(bytes)
     }
 

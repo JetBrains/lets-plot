@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.common.base64
+package jetbrains.datalore.base.encoding
 
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import org.khronos.webgl.*
