@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
+import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
@@ -38,8 +39,7 @@ class GeomInteractionBuilderCreationTest {
         val mappedData = data + mapOf(
             Aes.FILL.name to listOf(4.0)
         )
-        val plotOpts = getPlotOptions(mappedData)
-        val builder = createGeomInteractionBuilder(plotOpts)
+        val builder = histogramInteractionBuilder(mappedData)
         val expectedAesList = listOf(Aes.X, Aes.Y, Aes.FILL)
         val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
         assertAesList(expectedAesList, aesListForTooltip)
@@ -48,7 +48,7 @@ class GeomInteractionBuilderCreationTest {
     @Test
     fun `should not duplicate var to axis and generic tooltip`() {
         fun checkDuplicatedWithAxis(mappedData: Map<String, Any>) {
-            val builder = createGeomInteractionBuilder(getPlotOptions(mappedData))
+            val builder = histogramInteractionBuilder(mappedData)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
             assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
             val expectedAesList = listOf(Aes.X, Aes.Y)
@@ -74,16 +74,14 @@ class GeomInteractionBuilderCreationTest {
     }
 
     @Test
-    fun `should skip discrete mappings`() {
+    fun `should skip discrete mappings (small number of factors)`() {
         val mappedData = data + mapOf(
             Aes.X.name to listOf(4.0),
             Aes.FILL.name to listOf('a'),
             Aes.COLOR.name to listOf('a'),
             Aes.SIZE.name to listOf(1.0)
         )
-        val plotOpts = getPlotOptions(mappedData)
-        val builder = createGeomInteractionBuilder(plotOpts)
-
+        val builder = histogramInteractionBuilder(mappedData)
         val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
         assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
         assertNoTooltipForAes(Aes.COLOR, aesListForTooltip)
@@ -109,7 +107,7 @@ class GeomInteractionBuilderCreationTest {
     }
 
     @Test
-    fun `discrete var should not be in tooltip`() {
+    fun `discrete var should not be in tooltip (small number of factors)`() {
         run {
             val builder = tileWithBrewerScale(useBrewerScale = true, useContinuousVars = false)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
@@ -124,53 +122,42 @@ class GeomInteractionBuilderCreationTest {
 
     @Test
     fun `tooltips depending on number of factors`() {
-        val tooltipsShouldBeShown = listOf('a', 'b', 'c', 'd', 'e')
-        val noTooltips = listOf('a', 'b', 'a', 'b', 'c')
+        run {
+            val builder = histogramInteractionBuilder(
+                mapOf(
+                    Aes.X.name to listOf('a', 'b', 'c', 'd', 'e'),
+                    Aes.FILL.name to listOf('a', 'b', 'c', 'd', 'e') // factors.size = 5 - enough to show in the tooltip
+                )
+            )
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertTooltipForAes(Aes.FILL, aesListForTooltip)
+        }
+        run {
+            val builder = histogramInteractionBuilder(
+                mapOf(
+                    Aes.X.name to listOf('a', 'b', 'c', 'd', 'e'),
+                    Aes.FILL.name to listOf('a', 'b', 'a', 'b', 'c') // factors.size = 3 - not enough
+                )
+            )
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
+        }
+    }
 
-        run {
-            val plotOpts = getPlotOptions(
-                mapOf(
-                    Aes.X.name to tooltipsShouldBeShown,
-                    Aes.FILL.name to tooltipsShouldBeShown
-                )
-            )
-            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
-            assertTooltipForAes(Aes.FILL, aesListForTooltip)
+    @Test
+    fun `X axis tooltip should be always shown (univariate function)`() {
+        fun assertAxisXHasTooltip(xMapping: Pair<String, List<Any>>) {
+            val builder = histogramInteractionBuilder(mapOf(xMapping))
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
             assertTooltipForAes(Aes.X, aesListForTooltip)
         }
-        run {
-            val plotOpts = getPlotOptions(
-                mapOf(
-                    Aes.X.name to tooltipsShouldBeShown,
-                    Aes.FILL.name to noTooltips
-                )
-            )
-            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
-            assertTooltipForAes(Aes.X, aesListForTooltip)
-            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
-        }
-        run {
-            val plotOpts = getPlotOptions(
-                mapOf(
-                    Aes.X.name to noTooltips,
-                    Aes.FILL.name to tooltipsShouldBeShown
-                )
-            )
-            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
-            assertNoTooltipForAes(Aes.X, aesListForTooltip)
-            assertTooltipForAes(Aes.FILL, aesListForTooltip)
-        }
-        run {
-            val plotOpts = getPlotOptions(
-                mapOf(
-                    Aes.X.name to noTooltips,
-                    Aes.FILL.name to noTooltips
-                )
-            )
-            val aesListForTooltip = getAesListInTooltip(createGeomInteractionBuilder(plotOpts).tooltipLines)
-            assertNoTooltipForAes(Aes.X, aesListForTooltip)
-            assertNoTooltipForAes(Aes.FILL, aesListForTooltip)
-        }
+
+        // discrete - not depend on factors
+        assertAxisXHasTooltip(Aes.X.name to listOf('a'))
+        assertAxisXHasTooltip(Aes.X.name to listOf('a', 'b', 'c', 'd', 'e'))
+
+        // continuous
+        assertAxisXHasTooltip(Aes.X.name to listOf(0.0))
     }
 
     private fun tileWithBrewerScale(useBrewerScale: Boolean, useContinuousVars: Boolean): GeomInteractionBuilder {
@@ -205,8 +192,8 @@ class GeomInteractionBuilderCreationTest {
         return createGeomInteractionBuilder(plotOpts)
     }
 
-    private fun getPlotOptions(mappedData: Map<String, Any>): MutableMap<String, Any> {
-        return mutableMapOf(
+    private fun histogramInteractionBuilder(mappedData: Map<String, Any>): GeomInteractionBuilder {
+        val plotOpts = mutableMapOf(
             Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
             LAYERS to listOf(
@@ -215,10 +202,12 @@ class GeomInteractionBuilderCreationTest {
                 )
             )
         )
+        return createGeomInteractionBuilder(plotOpts)
     }
 
     private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>): GeomInteractionBuilder {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
+        require(!PlotConfig.isFailure(plotSpec)) { PlotConfig.getErrorMessage(plotSpec) }
         val plotConfig = PlotConfigClientSide.create(plotSpec) {}
         val layerConfig = plotConfig.layerConfigs.first()
         return GeomInteractionUtil.createGeomInteractionBuilder(
