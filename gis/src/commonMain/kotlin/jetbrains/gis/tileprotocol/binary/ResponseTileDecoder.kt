@@ -66,7 +66,7 @@ class ResponseTileDecoder(data: ByteArray) {
         val len: Int = readVarUInt(::readByte)
 
         return when {
-            len > 0 -> TextDecoder().decode(byteArrayStream.read(len))
+            len > 0 -> TextDecoder.decode(byteArrayStream.read(len))
             len == 0 -> ""
             else -> throw IllegalStateException()
         }
