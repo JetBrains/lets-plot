@@ -48,7 +48,7 @@ def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=Non
     - 'Score: {.2f}' -> 'Score: 12.45',
     - 'Score: {}' -> 'Score: 12.454789'.
 
-    For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+    For more info see https://lets-plot.org/pages/formats.html.
 
     Examples
     --------
@@ -130,7 +130,7 @@ def facet_wrap(facets, ncol=None, nrow=None, order=None, format=None, dir="h"):
     - 'Score: {.2f}' -> 'Score: 12.45',
     - 'Score: {}' -> 'Score: 12.454789'.
 
-    For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+    For more info see https://lets-plot.org/pages/formats.html.
 
     Examples
     --------

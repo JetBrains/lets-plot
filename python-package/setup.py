@@ -52,7 +52,7 @@ version_locals = {}
 with open(os.path.join(this_dir, python_package, '_version.py')) as f:
     exec(f.read(), {}, version_locals)
 
-with open(os.path.join(root_dir, 'README_PYTHON.md'), encoding='utf-8') as f:
+with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 if this_system == 'Windows':
