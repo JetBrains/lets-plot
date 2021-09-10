@@ -27,7 +27,7 @@ import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
-import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
@@ -280,6 +280,6 @@ private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolea
     }
 
     // Frontend transforms
-    return PlotConfigClientSideJvmJs.processTransform(plotSpec)
+    return PlotConfigClientSide.processTransform(plotSpec)
 }
 

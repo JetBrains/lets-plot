@@ -10,6 +10,6 @@ import jetbrains.livemap.core.ecs.EcsEntity
 
 object ComponentManagerUtil {
     fun getEntity(name: String, componentManager: EcsComponentManager): EcsEntity? {
-        return componentManager.entities.filter { entity -> entity.name == name }[0]
+        return componentManager.entities.firstOrNull() { entity -> entity.name == name }
     }
 }

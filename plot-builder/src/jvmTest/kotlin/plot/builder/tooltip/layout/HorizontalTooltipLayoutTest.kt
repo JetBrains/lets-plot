@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.RIGHT
 import jetbrains.datalore.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
@@ -31,7 +30,7 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
                 expect()
-                        .tooltipX(expectedSideTipX(TOOLTIP_KEY, HorizontalAlignment.RIGHT))
+                        .tooltipX(expectedSideTipX(TOOLTIP_KEY, RIGHT))
                         .tooltipY(expectedSideTipY(TOOLTIP_KEY))
         )
     }
@@ -90,9 +89,9 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
         arrange(layoutManagerController)
 
         assertAllTooltips(
-                expect().tooltipX(expectedSideTipX(FIRST_TOOLTIP_KEY, HorizontalAlignment.RIGHT)),
-                expect().tooltipX(expectedSideTipX(SECOND_TOOLTIP_KEY, HorizontalAlignment.RIGHT)),
-                expect().tooltipX(expectedSideTipX(THIRD_TOOLTIP_KEY, HorizontalAlignment.RIGHT))
+                expect().tooltipX(expectedSideTipX(FIRST_TOOLTIP_KEY, RIGHT)),
+                expect().tooltipX(expectedSideTipX(SECOND_TOOLTIP_KEY, RIGHT)),
+                expect().tooltipX(expectedSideTipX(THIRD_TOOLTIP_KEY, RIGHT))
         )
     }
 
@@ -241,6 +240,23 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
                 .tooltipX(stemX - tipSize.x - NORMAL_STEM_LENGTH)
                 .stemCoord(DoubleVector(stemX, VIEWPORT.center.y))
         )
+    }
+
+    @Test
+    fun `tooltips are out of visibility`() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(DEFAULT_TOOLTIP_SIZE)
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(tooltipBuilder.horizontal(FIRST_TOOLTIP_KEY,  coord(10.0,  10.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(SECOND_TOOLTIP_KEY, coord(250.0, 350.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(THIRD_TOOLTIP_KEY,  coord(350.0, 250.0)).buildTooltip())
+            .geomBounds(LIMIT_RECT)
+            .build()
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
     }
 
     companion object {

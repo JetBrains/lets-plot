@@ -10,8 +10,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.geom.BarGeom
@@ -136,7 +136,7 @@ open class BinDemo : SimpleDemoBase() {
         run {
             val aes = AestheticsBuilder(count)
                 .x(AestheticsBuilder.listMapper(x, scaleX.mapper))
-                .y(collection(y))
+                .y(list(y))
                 .color(constant(Color.RED))
                 .shape(constant(NamedShape.STICK_CIRCLE))
                 .size(constant(3.0))

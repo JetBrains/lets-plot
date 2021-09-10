@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.interact.render
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import jetbrains.datalore.plot.builder.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
@@ -28,13 +29,9 @@ internal class TooltipLayer(
     fun showTooltips(
         cursor: DoubleVector,
         tooltipSpecs: List<TooltipSpec>,
-        geomBounds: DoubleRectangle?
+        tooltipBounds: PlotTooltipBounds?
     ) {
         clearTooltips()
-
-        if (geomBounds != null) {
-            showCrosshair(tooltipSpecs, geomBounds)
-        }
 
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
@@ -43,7 +40,8 @@ internal class TooltipLayer(
                 .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds = geomBounds) }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
+            .also { tooltips -> tooltipBounds?.let { showCrosshair(tooltips, it.handlingArea) } }
             .map { arranged ->
                 arranged.tooltipBox.apply {
                     setPosition(
@@ -68,20 +66,19 @@ internal class TooltipLayer(
         return CrosshairComponent().apply { myTooltipLayer.children().add(rootGroup) }
     }
 
-    private fun showCrosshair(tooltipSpecs: List<TooltipSpec>, geomBounds: DoubleRectangle) {
-        val showVertical = tooltipSpecs.any { it.layoutHint.kind == X_AXIS_TOOLTIP }
-        val showHorizontal = tooltipSpecs.any { it.layoutHint.kind == Y_AXIS_TOOLTIP }
+    private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
+        val showVertical = tooltips.any { it.hintKind == X_AXIS_TOOLTIP }
+        val showHorizontal = tooltips.any { it.hintKind == Y_AXIS_TOOLTIP }
         if (!showVertical && !showHorizontal) {
             return
         }
-        tooltipSpecs
-            .filter(TooltipSpec::isCrosshairEnabled)
-            .forEach { tooltipSpec ->
-                tooltipSpec.layoutHint.coord?.let { coord ->
-                    newCrosshairComponent().also { crosshair ->
-                        if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
-                        if (showVertical) crosshair.addVertical(coord, geomBounds)
-                    }
+        tooltips
+            .filter { tooltip -> tooltip.tooltipSpec.isCrosshairEnabled }
+            .mapNotNull{ tooltip -> tooltip.tooltipSpec.layoutHint.coord }
+            .forEach { coord ->
+                newCrosshairComponent().also { crosshair ->
+                    if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
+                    if (showVertical) crosshair.addVertical(coord, geomBounds)
                 }
             }
     }

@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
@@ -79,7 +78,7 @@ object PlotConfigUtil {
     }
 
     private fun getComputationMessages(accessor: OptionsAccessor): List<String> {
-        return Lists.transform(accessor.getList(PLOT_COMPUTATION_MESSAGES)) { it as String }
+        return accessor.getList(PLOT_COMPUTATION_MESSAGES).map { it as String }
     }
 
     private fun getVarBindings(
@@ -362,6 +361,11 @@ object PlotConfigUtil {
             scaleByAes[aes] = scale
         }
 
+//        if(FLIP_AXIS_COORD) {
+//            val xScale = scaleByAes.getValue(Aes.X)
+//            scaleByAes[Aes.X] = scaleByAes.getValue(Aes.Y)
+//            scaleByAes[Aes.Y] = xScale
+//        }
         return TypedScaleMap(scaleByAes)
     }
 

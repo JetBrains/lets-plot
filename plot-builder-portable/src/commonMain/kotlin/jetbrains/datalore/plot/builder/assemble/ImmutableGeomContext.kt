@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomContext
@@ -15,9 +16,13 @@ interface ImmutableGeomContext : GeomContext {
     fun with(): Builder
 
     interface Builder {
-        fun aesthetics(aesthetics: Aesthetics?): Builder
+        fun flipped(flipped:Boolean): Builder
 
-        fun aestheticMappers(aestheticMappers: Map<Aes<*>, (Double?) -> Any?>?): Builder
+        fun aesthetics(aesthetics: Aesthetics): Builder
+
+        fun aestheticMappers(aestheticMappers: Map<Aes<*>, (Double?) -> Any?>): Builder
+
+        fun aesBounds(aesBounds: DoubleRectangle): Builder
 
         fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): Builder
 

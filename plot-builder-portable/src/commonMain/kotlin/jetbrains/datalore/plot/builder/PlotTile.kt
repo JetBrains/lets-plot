@@ -8,19 +8,20 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
-import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
@@ -30,7 +31,6 @@ import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACE
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_V_PADDING
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColHeadHeight
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColLabelSize
-import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
@@ -48,7 +48,7 @@ internal class PlotTile(
 ) : SvgComponent() {
 
     private val myDebugDrawing = ValueProperty(false)
-    private val myLayers: List<GeomLayer>
+    private val myLayers: List<GeomLayer> = ArrayList(layers)
     private val myTargetLocators = ArrayList<GeomTargetLocator>()
     private var myShowAxis: Boolean = false
 
@@ -61,9 +61,10 @@ internal class PlotTile(
     private val isDebugDrawing: Boolean
         get() = myDebugDrawing.get()
 
-    init {
-        myLayers = ArrayList(layers)
+    lateinit var geomDrawingBounds: DoubleRectangle  // the area between axes or x/y limits
+        private set
 
+    init {
         moveTo(myLayoutInfo.getAbsoluteBounds(myTilesOrigin).origin)
     }
 
@@ -129,32 +130,59 @@ internal class PlotTile(
 
             liveMapFigure = liveMapData.canvasFigure
             myTargetLocators.add(liveMapData.targetLocator)
+            geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
         } else {
             // normal plot tile
-            val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()
-            val overallNumericDomains = HashMap<Aes<Double>, ClosedRange<Double>>()
 
-            val xAxisInfo = myLayoutInfo.xAxisInfo
-            val yAxisInfo = myLayoutInfo.yAxisInfo
+            val targetCollectors = createTargetCollectors(myLayers)
+            myTargetLocators.addAll(targetCollectors)
+
             val mapperX = myScaleX.mapper
             val mapperY = myScaleY.mapper
 
-            sharedNumericMappers[Aes.X] = mapperX
-            sharedNumericMappers[Aes.Y] = mapperY
-            sharedNumericMappers[Aes.SLOPE] = Mappers.mul(mapperY(1.0)!! / mapperX(1.0)!!)
+            val xAxisInfo = myLayoutInfo.xAxisInfo!!
+            val yAxisInfo = myLayoutInfo.yAxisInfo!!
+            val xAxisDomain = xAxisInfo.axisDomain!!
+            val yAxisDomain = yAxisInfo.axisDomain!!
+            val aesBounds = DoubleRectangle(
+                xRange = ClosedRange(
+                    mapperX(xAxisDomain.lowerEnd) as Double,
+                    mapperX(xAxisDomain.upperEnd) as Double
+                ),
+                yRange = ClosedRange(
+                    mapperY(yAxisDomain.lowerEnd) as Double,
+                    mapperY(yAxisDomain.upperEnd) as Double
+                )
+            )
 
-            overallNumericDomains[Aes.X] = xAxisInfo!!.axisDomain!!
-            overallNumericDomains[Aes.Y] = yAxisInfo!!.axisDomain!!
+            // flipping axis
+            val xAesMapper: (Double?) -> Double?
+            val yAesMapper: (Double?) -> Double?
+            val coord: CoordinateSystem
+            if (FLIP_AXIS) {
+                xAesMapper = mapperY
+                yAesMapper = mapperX
+                coord = myCoord.flip()
+            } else {
+                xAesMapper = mapperX
+                yAesMapper = mapperY
+                coord = myCoord
+            }
 
-            val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
+            val geomLayerComponents = buildGeoms(
+                myLayers,
+                xAesMapper,
+                yAesMapper,
+                aesBounds,
+                coord,
+                targetCollectors
+            )
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
 
-                val xRange = myCoord.xClientLimit ?: ClosedRange(0.0, geomBounds.width)
-                val yRange = myCoord.yClientLimit ?: ClosedRange(0.0, geomBounds.height)
-                val clipRect = GeometryUtil.doubleRange(xRange, yRange)
+                geomDrawingBounds = coord.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
 
-                layerComponent.clipBounds(clipRect)
+                layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }
         }
@@ -223,13 +251,13 @@ internal class PlotTile(
     }
 
     private fun addAxis(geomBounds: DoubleRectangle) {
-        // X axis (below geom area)
+        // X-axis (below geom area)
         if (myLayoutInfo.xAxisShown) {
             val axis = buildAxis(myScaleX, myLayoutInfo.xAxisInfo!!, myCoord, myTheme.axisX())
             axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
             add(axis)
         }
-        // Y axis (to the left from geom area, axis elements have negative x-positions)
+        // Y-axis (to the left from geom area, axis elements have negative x-positions)
         if (myLayoutInfo.yAxisShown) {
             val axis = buildAxis(myScaleY, myLayoutInfo.yAxisInfo!!, myCoord, myTheme.axisY())
             axis.moveTo(geomBounds.origin)
@@ -259,51 +287,63 @@ internal class PlotTile(
         return axis
     }
 
-    private fun buildGeoms(
-        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
-        coord: CoordinateSystem
-    ): List<SvgComponent> {
-
-        val layerRenderers = ArrayList<SvgComponent>()
-        for (layer in myLayers) {
-            val rendererData = LayerRendererUtil.createLayerRendererData(
-                layer,
-                sharedNumericMappers,
-                overallNumericDomains
-            )
-
-            val aestheticMappers = rendererData.aestheticMappers
-            val aesthetics = rendererData.aesthetics
-
-            val targetCollector = LayerTargetCollectorWithLocator(
-                layer.geomKind,
-                layer.locatorLookupSpec,
-                layer.contextualMapping,
-                coord
-            )
-            myTargetLocators.add(targetCollector)
-
-            val ctx = GeomContextBuilder()
-                .aesthetics(aesthetics)
-                .aestheticMappers(aestheticMappers)
-                .geomTargetCollector(targetCollector)
-                .build()
-
-            val pos = rendererData.pos
-            val geom = layer.geom
-
-            layerRenderers.add(SvgLayerRenderer(aesthetics, geom, pos, coord, ctx))
-        }
-        return layerRenderers
-    }
-
     fun setShowAxis(showAxis: Boolean) {
         myShowAxis = showAxis
     }
 
     fun debugDrawing(): Property<Boolean> {
         return myDebugDrawing
+    }
+
+
+    companion object {
+        private fun createTargetCollectors(
+            layers: List<GeomLayer>,
+        ): List<LayerTargetCollectorWithLocator> {
+            return layers.map {
+                LayerTargetCollectorWithLocator(
+                    it.geomKind,
+                    it.locatorLookupSpec,
+                    it.contextualMapping,
+                )
+            }
+        }
+
+        private fun buildGeoms(
+            layers: List<GeomLayer>,
+            xAesMapper: (Double?) -> Double?,
+            yAesMapper: (Double?) -> Double?,
+            aesBounds: DoubleRectangle,
+            coord: CoordinateSystem,
+            targetCollectors: List<GeomTargetCollector>
+        ): List<SvgComponent> {
+
+            val layerRenderers = ArrayList<SvgComponent>()
+            for ((layer, targetCollector) in layers.zip(targetCollectors)) {
+                val rendererData = LayerRendererUtil.createLayerRendererData(
+                    layer,
+                    xAesMapper, yAesMapper
+                )
+
+                val aestheticMappers = rendererData.aestheticMappers
+                val aesthetics = rendererData.aesthetics
+
+                val ctx = GeomContextBuilder()
+                    .flipped(FLIP_AXIS)
+                    .aesthetics(aesthetics)
+                    .aestheticMappers(aestheticMappers)
+                    .aesBounds(aesBounds)
+                    .geomTargetCollector(targetCollector)
+                    .build()
+
+                val pos = rendererData.pos
+                val geom = layer.geom
+
+                layerRenderers.add(SvgLayerRenderer(aesthetics, geom, pos, coord, ctx))
+            }
+            return layerRenderers
+        }
+
     }
 }
 

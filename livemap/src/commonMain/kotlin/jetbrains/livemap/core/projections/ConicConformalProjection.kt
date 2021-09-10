@@ -12,7 +12,7 @@ import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.newSpanRectangle
-import jetbrains.livemap.core.projections.ProjectionUtil.safePoint
+import jetbrains.datalore.base.typedGeometry.safePoint
 import kotlin.math.*
 
 internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection {

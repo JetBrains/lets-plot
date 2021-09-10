@@ -23,13 +23,6 @@ interface Aesthetics {
      */
     fun range(aes: Aes<Double>): ClosedRange<Double>?
 
-    /**
-     * Numeric aes only (x,y)
-     *
-     * @return The length of the entire axis
-     */
-    fun overallRange(aes: Aes<Double>): ClosedRange<Double>
-
     fun resolution(aes: Aes<Double>, naValue: Double): Double
 
     fun numericValues(aes: Aes<Double>): Iterable<Double?>

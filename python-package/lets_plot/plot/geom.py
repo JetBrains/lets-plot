@@ -326,6 +326,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
             scale_color_discrete()
 
     """
+
     return _geom('path',
                  mapping=mapping,
                  data=data,
@@ -2065,8 +2066,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         boundaries = geocode_cities(data['city']).get_boundaries(resolution=15)
         ggplot() + \\
         geom_livemap() + \\
-            geom_polygon(data=data, map=boundaries, map_join='city', \\
-                         color='black', fill='black', alpha=.1, \\
+            geom_polygon(aes(color='city', fill='city'), data=data, map=boundaries, \\
+                         map_join='city', alpha=.2, \\
                          tooltips=layer_tooltips().line('@city')\\
                                                   .line('population|@est_pop_2019'))
 
@@ -2202,8 +2203,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                 'est_pop_2019': [8_336_817, 1_584_064]}
         boundaries = geocode_cities(data['city']).get_boundaries()
         ggplot() + \\
-            geom_map(data=data, map=boundaries, map_join='city', \\
-                     color='#006d2c', fill='#edf8e9', size=.5, \\
+            geom_map(aes(color='city', fill='city'), data=data, map=boundaries, \\
+                     map_join='city', size=.5, alpha=.3, \\
                      tooltips=layer_tooltips().line('@city')\\
                                               .line('population|@est_pop_2019'))
 
@@ -2404,7 +2405,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                                  columns=['c', 'ymax'])
         ggplot() + \\
             geom_hline(aes(yintercept='ymax', color='c'), \\
-                       data=bounds_df, size=.2, linetype='longdash') + \\
+                       data=bounds_df, size=.7, linetype='longdash') + \\
             geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
@@ -3237,6 +3238,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                                    ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
                                j * 400, i * 400, 400, 400)
         bunch.show()
+
+    |
 
     .. jupyter-execute::
         :linenos:
@@ -4180,8 +4183,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         data = {'city': cities, 'state': states, 'title': titles}
         centroids = geocode_cities(data['city']).get_centroids()
         ggplot(data) + \\
-            geom_point(map=centroids, map_join='city', \\
-                       shape=21, color='black', fill='#f03b20') + \\
+            geom_point(aes(fill='city'), map=centroids, \\
+                       map_join='city', shape=21, color='black') + \\
             geom_text(aes(label='title'), map=centroids, \\
                       map_join='city', size=8, vjust=1, \\
                       family='Optima', fontface='bold')

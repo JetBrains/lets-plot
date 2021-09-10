@@ -60,6 +60,7 @@ object TestUtil {
 
     private fun createGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {
         val transformed = PlotConfigServerSide.processTransform(plotSpec)
+        require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigClientSide.create(transformed) {}
         return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single()
     }

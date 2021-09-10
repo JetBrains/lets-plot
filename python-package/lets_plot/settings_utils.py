@@ -111,19 +111,15 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 3-7
 
         from lets_plot import *
         LetsPlot.setup_html()
-        attribution = '''
-        Map tiles by
-        <a href="http://stamen.com">Stamen Design</a>, under
-        <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
-        Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under
-        <a href="http://www.openstreetmap.org/copyright">ODbL</a>
-        '''
-        tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
-                             attribution=attribution)
+        tiles = maptiles_zxy(
+            url="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_CityLights_2012/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",
+            attribution='<a href="https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">© NASA Global Imagery Browse Services (GIBS)</a>',
+            max_zoom=8
+        )
         ggplot() + geom_livemap(tiles=tiles)
 
     """
@@ -169,12 +165,14 @@ def maptiles_solid(color: str):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 5
 
         from lets_plot import *
+        from lets_plot.geo_data import *
         LetsPlot.setup_html()
+        nyc = geocode_cities('New York').get_boundaries()
         tiles = maptiles_solid(color='#d3d3d3')
-        ggplot() + geom_livemap(tiles=tiles)
+        ggplot() + geom_livemap(tiles=tiles) + geom_map(data=nyc)
 
     """
     return {
@@ -197,7 +195,7 @@ def maptiles_chessboard():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 3
 
         from lets_plot.settings_utils import maptiles_chessboard
         LetsPlot.setup_html()

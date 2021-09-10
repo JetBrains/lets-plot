@@ -15,12 +15,14 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.map
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldOriginComponent
+import jetbrains.livemap.projection.Client
+import jetbrains.livemap.projection.World
 import jetbrains.livemap.scaling.ScaleComponent
-import jetbrains.livemap.projection.WorldProjection
 
 
 class WorldGeometry2ScreenUpdateSystem(
@@ -36,7 +38,7 @@ class WorldGeometry2ScreenUpdateSystem(
         }
 
         val worldOrigin = entity.get<WorldOriginComponent>().origin
-        val zoomProjection = WorldProjection(zoom)
+        val zoomProjection = Projections.zoom<World, Client> { zoom }
         return GeometryTransform
             .simple(entity.get<WorldGeometryComponent>().geometry!!) {
                 zoomProjection.project(it - worldOrigin)

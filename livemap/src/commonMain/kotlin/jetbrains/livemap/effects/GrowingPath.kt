@@ -6,17 +6,17 @@
 package jetbrains.livemap.effects
 
 import jetbrains.datalore.base.typedGeometry.LineString
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.projection.Client
 import jetbrains.livemap.rendering.Renderer
 import jetbrains.livemap.rendering.StyleComponent
-import jetbrains.livemap.projection.Client
 import kotlin.math.sqrt
 
 
@@ -26,6 +26,10 @@ object GrowingPath {
         val x = p2.x - p1.x
         val y = p2.y - p1.y
         return sqrt(x * x + y * y)
+    }
+
+    private fun <TypeT> asLineString(geometry: MultiPolygon<TypeT>): LineString<TypeT> {
+        return LineString(geometry[0][0])
     }
 
     class GrowingPathEffectSystem(componentManager: EcsComponentManager) :

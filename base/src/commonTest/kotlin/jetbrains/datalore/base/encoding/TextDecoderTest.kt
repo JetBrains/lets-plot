@@ -18,7 +18,7 @@ class TextDecoderTest {
 
     @Test
     fun helloWorld() {
-        var str = TextDecoder().decode(privetMirUtf8)
+        val str = TextDecoder.decode(privetMirUtf8)
         assertEquals("Привет мир", str)
     }
 }

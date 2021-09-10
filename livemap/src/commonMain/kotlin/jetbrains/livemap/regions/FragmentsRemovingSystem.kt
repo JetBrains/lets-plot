@@ -6,10 +6,9 @@
 package jetbrains.livemap.regions
 
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.viewport.ViewportGridStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.regions.Utils.zoom
+import jetbrains.livemap.viewport.ViewportGridStateComponent
 
 class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
@@ -27,9 +26,9 @@ class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: Ec
             val streamingFragments = getSingleton<StreamingFragmentsComponent>()
             val dropStreaming = HashSet<FragmentKey>()
             if (requestedFragments.isNotEmpty()) {
-                val requestedZoom = zoom(requestedFragments.first())
+                val requestedZoom = requestedFragments.first().zoom()
                 for (fragmentKey in streamingFragments.keys()) {
-                    if (zoom(fragmentKey) == requestedZoom) {
+                    if (fragmentKey.zoom() == requestedZoom) {
                         keepStreaming.add(fragmentKey) // not visible, but soon will be
                     } else {
                         dropStreaming.add(fragmentKey) // wrong zoom - remove fragments and stop microthreads

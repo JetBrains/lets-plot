@@ -10,7 +10,6 @@ import jetbrains.livemap.camera.isIntegerZoom
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.regions.Utils.zoom
 
 class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -56,7 +55,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<L
     }
 
     private fun wait(fragmentKey: FragmentKey) {
-        if (myPendingZoom != zoom(fragmentKey)) {
+        if (myPendingZoom != fragmentKey.zoom()) {
             return
         }
 
@@ -64,7 +63,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<L
     }
 
     private fun accept(fragmentKey: FragmentKey) {
-        if (myPendingZoom != zoom(fragmentKey)) {
+        if (myPendingZoom != fragmentKey.zoom()) {
             return
         }
 
@@ -72,7 +71,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<L
     }
 
     private fun remove(fragmentKey: FragmentKey) {
-        if (myPendingZoom != zoom(fragmentKey)) {
+        if (myPendingZoom != fragmentKey.zoom()) {
             return
         }
 

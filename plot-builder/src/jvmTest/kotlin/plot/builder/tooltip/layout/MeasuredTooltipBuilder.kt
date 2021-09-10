@@ -20,6 +20,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
     private var myObjectRadius: Double? = null
     private var myText: String? = null
     private var myFill: Color? = null
+    private var myAnchor: TooltipAnchor? = null
 
     fun size(v: DoubleVector): MeasuredTooltipBuilder {
         mySize = v
@@ -45,7 +46,12 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
         return this
     }
 
-    fun buildTooltip(anchor: TooltipAnchor? = null): MeasuredTooltip {
+    fun anchor(v: TooltipAnchor): MeasuredTooltipBuilder {
+        myAnchor = v
+        return this
+    }
+
+    fun buildTooltip(): MeasuredTooltip {
         val hint = createHint()
         return MeasuredTooltip(
             TooltipSpec(
@@ -53,7 +59,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
             lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
             fill = myFill!!,
             isOutlier = true,
-            anchor = anchor
+            anchor = myAnchor
         ), mySize!!, TooltipBox())
     }
 

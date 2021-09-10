@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aesthetics
@@ -34,8 +33,8 @@ class ABLineGeom : GeomBase() {
             .createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
 
-        val viewPort = aesViewPort(aesthetics)
-        val boundaries = Iterables.toList(viewPort.parts)
+        val viewPort = overallAesBounds(ctx)
+        val boundaries = viewPort.parts.toList()
 
         val lines = ArrayList<SvgLineElement>()
         for (p in aesthetics.dataPoints()) {

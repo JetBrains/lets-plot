@@ -5,17 +5,16 @@
 
 package jetbrains.livemap.core.ecs
 
-import jetbrains.livemap.core.animation.Animation.Direction.FORWARD
-import jetbrains.livemap.core.animation.Animation.Direction.values
+import jetbrains.livemap.core.animation.Animation.Direction.*
 import jetbrains.livemap.core.animation.Animation.Loop
 
 class AnimationSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
 
     private fun updateProgress(animation: AnimationComponent) {
         with(animation) {
-            progress = when {
-                direction === FORWARD -> progress()
-                else -> 1 - progress()
+            progress = when(direction) {
+                FORWARD -> progress()
+                BACK -> 1 - progress()
             }
         }
     }
@@ -51,6 +50,10 @@ class AnimationSystem(componentManager: EcsComponentManager) : AbstractSystem<Ec
             val animationComponent = entity.get<AnimationComponent>()
             updateTime(animationComponent, dt)
             updateProgress(animationComponent)
+
+            if (animationComponent.finished) {
+                runLaterBySystem(entity){ it.remove()}
+            }
         }
     }
 

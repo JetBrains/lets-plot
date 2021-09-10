@@ -55,6 +55,10 @@ class DoubleVector(val x: Double, val y: Double) {
         return DoubleVector(x, y)
     }
 
+    fun flip(): DoubleVector {
+        return DoubleVector(y, x)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is DoubleVector) {
             return false

@@ -14,7 +14,7 @@ import jetbrains.datalore.base.typedGeometry.Polygon
 
 class Fragment(
     val key: QuadKey<LonLat>,
-    val boundaries: List<Boundary<Generic>>
+    boundaries: List<Boundary<Generic>>
 ) {
     val multiPolygon: MultiPolygon<Generic>
 

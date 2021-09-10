@@ -13,10 +13,10 @@ import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.Services
 import jetbrains.livemap.api.liveMapConfig
 import jetbrains.livemap.api.projection
+import jetbrains.livemap.basemap.Tilesets
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.config.LiveMapFactory
-import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.basemap.Tilesets
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
@@ -46,7 +46,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
             mapLocationConsumer = { Clipboard.copy(LiveMapLocation.getLocationString(it)) }
 
             projection {
-                kind = ProjectionType.MERCATOR
+                geoProjection = Projections.mercator()
             }
 
 //            params(

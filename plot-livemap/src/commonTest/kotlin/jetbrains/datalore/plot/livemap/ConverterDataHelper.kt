@@ -9,20 +9,10 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
-import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.projection.Coordinates.ZERO_WORLD_POINT
-import jetbrains.livemap.projection.createMapProjection
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 
 
 internal object ConverterDataHelper {
-    val MAP_PROJECTION =
-        createMapProjection(
-            ProjectionType.MERCATOR,
-            Rect(ZERO_WORLD_POINT, explicitVec(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
-        )
-
     val GENERIC_POINTS: List<Vec<LonLat>> = listOf(
         explicitVec(0.0, 5.0),
         explicitVec(5.0, 5.0)
@@ -114,9 +104,9 @@ internal object ConverterDataHelper {
             }
 
             myAes = builder()
-                .group(collection(groups))
-                .x(collection(x))
-                .y(collection(y))
+                .group(list(groups))
+                .x(list(x))
+                .y(list(y))
                 .dataPointCount(x.size)
                 .build()
 

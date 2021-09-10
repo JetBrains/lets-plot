@@ -5,6 +5,6 @@
 
 package jetbrains.datalore.base.encoding
 
-expect class TextDecoder() {
-    fun decode(bytes: ByteArray): String
+object TextDecoder {
+    fun decode(bytes: ByteArray) = bytes.decodeToString()
 }

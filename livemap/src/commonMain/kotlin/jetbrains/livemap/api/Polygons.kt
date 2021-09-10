@@ -8,12 +8,11 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
@@ -25,7 +24,6 @@ import jetbrains.livemap.placement.WorldDimensionComponent
 import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
 import jetbrains.livemap.regions.RegionBBoxComponent
 import jetbrains.livemap.regions.RegionFragmentsComponent
 import jetbrains.livemap.regions.RegionRenderer
@@ -39,8 +37,7 @@ import jetbrains.livemap.searching.PolygonLocatorHelper
 @LiveMapDsl
 class Polygons(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection,
-    val mapRuler: MapRuler<World>
+    val mapProjection: MapProjection
 )
 
 fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
@@ -54,13 +51,12 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
     Polygons(
         MapEntityFactory(layerEntity),
-        mapProjection,
-        mapRuler
+        mapProjection
     ).apply(block)
 }
 
 fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    PolygonsBuilder(factory, mapProjection, mapRuler)
+    PolygonsBuilder(factory, mapProjection)
         .apply(block)
         .build()
 }
@@ -68,8 +64,7 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
 @LiveMapDsl
 class PolygonsBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection,
-    private val myMapRuler: MapRuler<World>
+    private val myMapProjection: MapProjection
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
@@ -94,9 +89,9 @@ class PolygonsBuilder(
 
     private fun createStaticEntity(): EcsEntity {
         val geometry = multiPolygon!!
-            .run { ProjectionUtil.transformMultiPolygon(this, myMapProjection::project) }
+            .run { transformMultiPolygon(this, myMapProjection::project) }
 
-        val bbox = GeometryUtil.bbox(geometry) ?: error("Polygon bbox can't be null")
+        val bbox = bbox(geometry) ?: error("Polygon bbox can't be null")
 
         return myFactory
             .createMapEntity("map_ent_s_polygon")

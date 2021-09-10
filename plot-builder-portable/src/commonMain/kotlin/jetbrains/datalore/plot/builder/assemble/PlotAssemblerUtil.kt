@@ -218,7 +218,6 @@ internal object PlotAssemblerUtil {
         )
     }
 
-
     fun computePlotDryRunXYRanges(layersByTile: List<List<GeomLayer>>): Pair<ClosedRange<Double>, ClosedRange<Double>> {
         // 'dry run' aesthetics use 'identity' mappers for positional aes (because the plot size is not yet determined)
         val dryRunAestheticsByTileLayer = HashMap<GeomLayer, Aesthetics>()
@@ -284,7 +283,6 @@ internal object PlotAssemblerUtil {
             if (scale.hasBreaks()) {
                 val scaleBreaks = scale.getScaleBreaks()
                 initialRange = updateRange(
-//                    ScaleUtil.breaksTransformed(scale),
                     scaleBreaks.transformedValues,
                     initialRange
                 )

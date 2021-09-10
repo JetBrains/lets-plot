@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.gcommon.collect.Lists.transform
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
@@ -60,33 +59,35 @@ internal class DataPointLiveMapAesthetics {
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
     val speed get() = myP.speed()!!
-    val geoObject get(): GeoObject? {
-        if (myP.mapId() != DefaultNaValue.get(MAP_ID)) {
-            fun List<*>.toVec() = explicitVec<LonLat>(get(0) as Double, get(1) as Double)
+    val geoObject
+        get(): GeoObject? {
+            if (myP.mapId() != DefaultNaValue.get(MAP_ID)) {
+                fun List<*>.toVec() = explicitVec<LonLat>(get(0) as Double, get(1) as Double)
 
-            fun List<*>.toGeoRect() =
-                GeoRectangle(
-                    startLongitude = get(0) as Double,
-                    minLatitude = get(1) as Double,
-                    endLongitude = get(2) as Double,
-                    maxLatitude = get(3) as Double
-                )
+                fun List<*>.toGeoRect() =
+                    GeoRectangle(
+                        startLongitude = get(0) as Double,
+                        minLatitude = get(1) as Double,
+                        endLongitude = get(2) as Double,
+                        maxLatitude = get(3) as Double
+                    )
 
-            val geoReference = JsonSupport.parseJson(myP.mapId().toString())
-            val id = geoReference.get("id") as String
-            val lim = (geoReference.get("lim") as? List<*>)?.toGeoRect() ?: error("Limit have to be provided")
-            val pos = (geoReference.get("pos") as? List<*>)?.toGeoRect() ?: error("Position have to be provided")
-            val cen = (geoReference.get("cen") as? List<*>)?.toVec() ?: error("Centroid have to be provided")
+                val geoReference = JsonSupport.parseJson(myP.mapId().toString())
+                val id = geoReference.get("id") as String
+                val lim = (geoReference.get("lim") as? List<*>)?.toGeoRect() ?: error("Limit have to be provided")
+                val pos = (geoReference.get("pos") as? List<*>)?.toGeoRect() ?: error("Position have to be provided")
+                val cen = (geoReference.get("cen") as? List<*>)?.toVec() ?: error("Centroid have to be provided")
 
-            return GeoObject(id, cen, lim, pos)
+                return GeoObject(id, cen, lim, pos)
+            }
+
+            return null
         }
-
-        return null
-    }
 
     val flow get() = myP.flow()!!
     val fillColor get() = colorWithAlpha(myP.fill()!!)
-    val strokeColor get() = when (myLayerKind) {
+    val strokeColor
+        get() = when (myLayerKind) {
             POLYGON -> myP.color()!!
             else -> colorWithAlpha(myP.color()!!)
         }
@@ -97,18 +98,21 @@ internal class DataPointLiveMapAesthetics {
     val vjust get() = vjust(myP.vjust())
     val angle get() = myP.angle()!!
 
-    val fontface get() = when (val fontface = myP.fontface()) {
+    val fontface
+        get() = when (val fontface = myP.fontface()) {
             AesInitValue[Aes.FONTFACE] -> ""
             else -> fontface
         }
 
-    val radius: Double get() = when (myLayerKind) {
+    val radius: Double
+        get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
             HEATMAP -> myP.size()!!
             TEXT -> 0.0
         }
 
-    val strokeWidth get() = when (myLayerKind) {
+    val strokeWidth
+        get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
             POINT, PIE, BAR -> 1.0
             TEXT, HEATMAP -> 0.0
@@ -123,7 +127,7 @@ internal class DataPointLiveMapAesthetics {
             }
 
             val width = AestheticsUtil.strokeWidth(myP)
-            return ArrayList(transform(lineType.dashArray) { it * width })
+            return lineType.dashArray.map { it * width }
         }
 
     private val colorArray: List<Color>

@@ -7,13 +7,12 @@ package jetbrains.datalore.jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.core.projections.ProjectionUtil.transformMultiPolygon
+import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.livemap.config.createMapProjection
+import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.geometry.GeometryTransform
 import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.createMapProjection
 import org.junit.Test
-import java.util.*
 import kotlin.test.assertEquals
 
 class MultiPolygonTransformTest {
@@ -147,10 +146,7 @@ class MultiPolygonTransformTest {
             )
         )
 
-        val mapProjection = createMapProjection(
-            ProjectionType.MERCATOR,
-            Rect(0.0, 0.0, 800.0, 600.0)
-        )
+        val mapProjection = createMapProjection(Projections.mercator())
         val transform = GeometryTransform.resampling(input, mapProjection::project)
 
         while (transform.alive()) {

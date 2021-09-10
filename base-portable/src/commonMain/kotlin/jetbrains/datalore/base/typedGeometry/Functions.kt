@@ -98,3 +98,11 @@ fun Rect<*>.yRange() = ClosedRange(origin.y, origin.y + dimension.y)
 fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> {
     return map { polygon -> polygon.limit() }
 }
+
+fun <TypeT> safePoint(x: Double, y: Double): Vec<TypeT> {
+    return if (x.isNaN() || y.isNaN()) {
+        error("Value for DoubleVector isNaN x = $x and y = $y")
+    } else {
+        explicitVec(x, y)
+    }
+}
