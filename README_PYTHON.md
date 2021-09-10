@@ -1,8 +1,10 @@
 # Lets-Plot for Python [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
-> The content of this page has been moved to
+>
+> **Note:** The content of this page has been moved to
 > our new documentation website: https://lets-plot.org/
-
+>
+ 
 ### What is new in 2.1.0
 
 - Upgraded dependencies:
