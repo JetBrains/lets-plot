@@ -57,6 +57,7 @@ with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
 
 if this_system == 'Windows':
     import distutils.cygwinccompiler
+
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 if this_system == 'Darwin':
@@ -74,8 +75,11 @@ setup(name='lets-plot',
       maintainer_email='lets-plot@jetbrains.com',
       author='JetBrains',
       author_email='lets-plot@jetbrains.com',
-      project_urls={"Github": "https://github.com/JetBrains/lets-plot"},
-      url='https://github.com/JetBrains/lets-plot',
+      project_urls={
+          "Github": "https://github.com/JetBrains/lets-plot",
+          "Documentation": 'https://lets-plot.org',
+      },
+      url='https://lets-plot.org',
       description='An open source library for statistical plotting',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -121,6 +125,6 @@ setup(name='lets-plot',
       ),
 
       install_requires=[
-          'pypng',                        # needed for geom_image
+          'pypng',  # needed for geom_image
       ],
       )
