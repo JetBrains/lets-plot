@@ -2503,7 +2503,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                                  columns=['c', 'xmax'])
         ggplot() + \\
             geom_vline(aes(xintercept='xmax', color='c'), \\
-                       data=bounds_df, size=.2, linetype='longdash') + \\
+                       data=bounds_df, size=.7, linetype='longdash') + \\
             geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
