@@ -97,6 +97,9 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 
   See: [Configuring basemap tiles](https://github.com/JetBrains/lets-plot/blob/master/docs/basemap_tiles.md).
 
+## Change Log
+
+See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
 
 ## License
 
