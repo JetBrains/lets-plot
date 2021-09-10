@@ -4,16 +4,16 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="Couldn't load MIT license svg"/>
 </a>
 
-###
+##
 
-**Lets-Plot** is an open-source plotting library for statistical data. It is implemented using the [Kotlin programming language](https://kotlinlang.org).
+**Lets-Plot** is an open-source plotting library for statistical data. 
 
 The design of Lets-Plot library is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
 > This grammar [...] is made up of a set of independent components that can be composed in many different ways. This makes [it] very powerful because you are not limited to a set of pre-specified graphics, but you can create new graphics that are precisely tailored for your problem.
-> - Hadley Wickham, "ggplot2: [Elegant Graphics for Data Analysis](https://www.goodreads.com/book/show/6829192-ggplot2)"
+> - Hadley Wickham, "[ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html)"
 
-Due to the unique multi-platform nature of Kotlin programming language, you can obtain the plotting functionality that is packaged as a JavaScript library, JVM library, and a native Python extension.
+We provide ggplot2-like plotting API for Python and Kotlin users. 
 
 
 ## Lets-Plot for Python
@@ -21,57 +21,42 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 <a href="https://pypi.org/project/lets-plot/">
   <img src="https://badge.fury.io/py/lets-plot.svg"/>
 </a>
-<br>
-<br>
 
-The `Lets-Plot for Python` package offers a ggplot-like API for data visualization in [Jupyter](https://jupyter-notebook.readthedocs.io/en/stable) notebooks 
-as well as in other notebooks like [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP), 
-[Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart) or [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-).
-  
-You can even create plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
-   
-Read the [documentation](https://lets-plot.org/index.html#installation) to learn more about the package installation and usage.
+A bridge between R (ggplot2) and Python data visualization.
 
-Check out documentation on-line at https://lets-plot.org.
-                                 
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+Learn more about *Lets-Plot for Python* installation and usage at the documentation website: https://lets-plot.org.          
 
 
-## JVM, Kotlin/JS artifacts and Kotlin API
+## Lets-Plot for Kotlin
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.lets-plot/lets-plot-common?color=blue&label=Maven%20Central)](https://search.maven.org/search?q=lets-plot)
+<a href="https://github.com/JetBrains/lets-plot-kotlin/releases/latest">
+  <img src="https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin"/>
+</a>
 
-[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
+*Lets-Plot for Kotlin* adds plotting capabilities to scientific notebooks built on the Jupyter [Kotlin Kermel](https://github.com/Kotlin/kotlin-jupyter).
 
-Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into JVM and Kotlin/JS applications.
+You can use this API to embed charts into Kotlin/JVM and Kotlin/JS applications as well.
 
-To learn more about embedding plots into JVM and Kotlin/JS apps see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
+*Lets-Plot for Kotlin* at GitHub: https://github.com/JetBrains/lets-plot-kotlin.
 
-
-<a id="pycharm_plugin"></a>
-## "Lets-Plot in SciView" plugin for IntelliJ IDEA and PyCharm
+## "Lets-Plot in SciView" plugin
 
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 [![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 
-The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled *Scientific mode*.
+*Scientific mode* in PyCharm and in IntelliJ IDEA provides support for interactive scientific computing and data visualization.
 
-The *Scientific mode* in PyCharm and in IntelliJ IDEA Python plugin provides support for interactive scientific computing and data visualization.
+[*Lets-Plot in SciView*](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview) plugin adds 
+support for interactive plotting to IntelliJ-based IDEs with the *Scientific mode* enabled.
+ 
+>
+> **Note:** The *Scientific mode* is NOT available in communinty editions of JetBrains IDEs. 
+>
 
-To learn more about *Scientific mode* check these help pages:
+Also read:
 
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
-
-To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview). 
-
-<div>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
-</div>
-<div>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
-</div>
 
 
 ## What is new in 2.1.0
