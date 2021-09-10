@@ -1,11 +1,12 @@
 # Lets-Plot  [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
 <a href="https://opensource.org/licenses/MIT">
-<img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="Couldn't load MIT license svg"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="Couldn't load MIT license svg"/>
 </a>
 
 ###
-**Lets-Plot** is an open-source plotting library for statistical data. It is implemented using the [Kotlin programming language](https://kotlinlang.org/).
+
+**Lets-Plot** is an open-source plotting library for statistical data. It is implemented using the [Kotlin programming language](https://kotlinlang.org).
 
 The design of Lets-Plot library is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
@@ -14,25 +15,27 @@ The design of Lets-Plot library is heavily influenced by Leland Wilkinson work [
 
 Due to the unique multi-platform nature of Kotlin programming language, you can obtain the plotting functionality that is packaged as a JavaScript library, JVM library, and a native Python extension.
 
-## Lets-Plot for Python 
+
+## Lets-Plot for Python
+
 <a href="https://pypi.org/project/lets-plot/">
-<img src="https://badge.fury.io/py/lets-plot.svg"/></a>
+  <img src="https://badge.fury.io/py/lets-plot.svg"/>
+</a>
 <br>
 <br>
 
-
-The `Lets-Plot for Python` package offers a ggplot-like API for data visualization in [Jupyter](https://jupyter-notebook.readthedocs.io/en/stable/) notebooks 
+The `Lets-Plot for Python` package offers a ggplot-like API for data visualization in [Jupyter](https://jupyter-notebook.readthedocs.io/en/stable) notebooks 
 as well as in other notebooks like [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP), 
 [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart) or [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-).
   
 You can even create plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
    
-Read [README_PYTHON.md](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md) to learn more about the package installation and usage.
+Read the [documentation](https://lets-plot.org/index.html#installation) to learn more about the package installation and usage.
 
 Check out documentation on-line at https://lets-plot.org.
                                  
-
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+
 
 ## JVM, Kotlin/JS artifacts and Kotlin API
 
@@ -42,8 +45,8 @@ Check out documentation on-line at https://lets-plot.org.
 
 Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into JVM and Kotlin/JS applications.
 
-To learn more about embedding plots into JVM and Kotlin/JS apps see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) 
-in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
+To learn more about embedding plots into JVM and Kotlin/JS apps see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
+
 
 <a id="pycharm_plugin"></a>
 ## "Lets-Plot in SciView" plugin for IntelliJ IDEA and PyCharm
@@ -51,23 +54,48 @@ in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 [![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 
-The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled _Scientific mode_.
+The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled *Scientific mode*.
 
-The _Scientific mode_ in PyCharm and in IntelliJ IDEA Python plugin provides support for interactive scientific computing and data visualization.
+The *Scientific mode* in PyCharm and in IntelliJ IDEA Python plugin provides support for interactive scientific computing and data visualization.
 
-To learn more about _Scientific mode_ check these help pages:
-* [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
-* [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
+To learn more about *Scientific mode* check these help pages:
+
+- [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
+- [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
 To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview). 
 
 <div>
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
 </div>
 <div>
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_map_fr_low_65.gif" alt="Couldn't load pycharm_map_fr_low_65.png" width="537" height="220"/>
 </div>
+
+
+## What is new in 2.1.0
+                      
+- Upgraded dependencies:
+
+  - Kotlin: 1.5.21
+  - Apache Batik: 1.14 [[#398](https://github.com/JetBrains/lets-plot/issues/398)]
+
+- Ordering categories:
+ 
+  New parameters added to the `as_discrete` function:
+
+  - `order_by` (string) - the name of the variable by which the ordering will be performed;
+  - `order` (int) - the ordering direction: 1 for ascending direction and -1 for descending (default).
+
+  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/master/docs/as_discrete.md).
+
+- Interactive maps:
+
+  - Pre-configured raster tilesets in new `lets_plot.tilesets` module.
+  - Builtin blank maptiles.
+
+  See: [Configuring basemap tiles](https://github.com/JetBrains/lets-plot/blob/master/docs/basemap_tiles.md).
 
 
 ## License
