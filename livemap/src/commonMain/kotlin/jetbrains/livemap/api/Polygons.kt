@@ -11,25 +11,26 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
 import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.Coordinates
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.Renderers.PolygonRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.fragment.RegionBBoxComponent
+import jetbrains.livemap.fragment.RegionFragmentsComponent
+import jetbrains.livemap.fragment.RegionRenderer
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geocoding.RegionIdComponent
+import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.placement.ScreenOriginComponent
-import jetbrains.livemap.placement.WorldDimensionComponent
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.Coordinates
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.regions.RegionBBoxComponent
-import jetbrains.livemap.regions.RegionFragmentsComponent
-import jetbrains.livemap.regions.RegionRenderer
-import jetbrains.livemap.rendering.*
-import jetbrains.livemap.rendering.Renderers.PolygonRenderer
-import jetbrains.livemap.scaling.ScaleComponent
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PolygonLocatorHelper
@@ -37,7 +38,8 @@ import jetbrains.livemap.searching.PolygonLocatorHelper
 @LiveMapDsl
 class Polygons(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection
+    val mapProjection: MapProjection,
+    val zoomable: Boolean
 )
 
 fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
@@ -51,12 +53,13 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
     Polygons(
         MapEntityFactory(layerEntity),
-        mapProjection
+        mapProjection,
+        zoomable
     ).apply(block)
 }
 
 fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    PolygonsBuilder(factory, mapProjection)
+    PolygonsBuilder(factory, mapProjection, zoomable)
         .apply(block)
         .build()
 }
@@ -64,7 +67,8 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
 @LiveMapDsl
 class PolygonsBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myMapProjection: MapProjection,
+    private val zoomable: Boolean
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
@@ -99,18 +103,19 @@ class PolygonsBuilder(
                 if (layerIndex != null && index != null) {
                     + IndexComponent(layerIndex!!, index!!)
                 }
-                + RendererComponent(PolygonRenderer())
+                + ChartElementComponent().apply {
+                    renderer = PolygonRenderer()
+                    scalable = this@PolygonsBuilder.zoomable
+                    fillColor = this@PolygonsBuilder.fillColor
+                    strokeColor = this@PolygonsBuilder.strokeColor
+                    strokeWidth = this@PolygonsBuilder.strokeWidth
+                }
                 + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { this.geometry = geometry }
                 + WorldDimensionComponent(bbox.dimension)
                 + ScreenLoopComponent()
                 + ScreenOriginComponent()
                 + ScaleComponent()
-                + StyleComponent().apply {
-                    setFillColor(this@PolygonsBuilder.fillColor)
-                    setStrokeColor(this@PolygonsBuilder.strokeColor)
-                    setStrokeWidth(this@PolygonsBuilder.strokeWidth)
-                }
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
                 + LocatorComponent(PolygonLocatorHelper())
@@ -123,16 +128,17 @@ class PolygonsBuilder(
         return myFactory
             .createMapEntity("map_ent_geo_object_polygon_" + geoObject.id)
             .addComponents {
+                + ChartElementComponent().apply {
+                    renderer = RegionRenderer()
+                    scalable = this@PolygonsBuilder.zoomable
+                    fillColor = this@PolygonsBuilder.fillColor
+                    strokeColor = this@PolygonsBuilder.strokeColor
+                    strokeWidth = this@PolygonsBuilder.strokeWidth
+                }
                 + RegionIdComponent(geoObject.id)
                 + RegionFragmentsComponent()
                 + RegionBBoxComponent(geoObject.bbox)
-                + RendererComponent(RegionRenderer())
                 + ScreenLoopComponent()
-                + StyleComponent().apply {
-                    setFillColor(this@PolygonsBuilder.fillColor)
-                    setStrokeColor(this@PolygonsBuilder.strokeColor)
-                    setStrokeWidth(this@PolygonsBuilder.strokeWidth)
-                }
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
             }.apply {

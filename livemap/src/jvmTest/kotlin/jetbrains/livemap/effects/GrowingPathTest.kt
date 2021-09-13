@@ -14,22 +14,20 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.Client
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
+import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectSystem
+import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathRenderer
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
-import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
-import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
-import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
+import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geometry.ScreenGeometryComponent
-import jetbrains.livemap.rendering.StyleComponent
-import jetbrains.livemap.rendering.setFillColor
-import jetbrains.livemap.rendering.setStrokeColor
-import jetbrains.livemap.projection.Client
 import org.mockito.Mockito
 import kotlin.math.pow
 import kotlin.math.round
@@ -79,7 +77,7 @@ class GrowingPathTest {
         myAnimationComponent = AnimationComponent().apply {
             loop = Loop.KEEP_DIRECTION
             direction = Direction.FORWARD
-            easingFunction = Animations.LINEAR
+            easingFunction = LINEAR
         }
 
         myGrowingPathEffectComponent = GrowingPathEffectComponent().apply {
@@ -145,7 +143,7 @@ class GrowingPathTest {
 
     @Test
     fun rendererTest() {
-        val renderer = GrowingPathRenderer()
+        val render = GrowingPathRenderer()
         val pathEntity = myComponentManager.createEntity("path_entity")
             .addComponents {
                 + GrowingPathEffectComponent().apply {
@@ -155,16 +153,17 @@ class GrowingPathTest {
                 + ScreenGeometryComponent().apply {
                     geometry = createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0))
                 }
-                + StyleComponent().apply {
-                    setFillColor(Color.BLACK)
-                    setStrokeColor(Color.BLACK)
+                + ChartElementComponent().apply {
+                    renderer = render
+                    fillColor = Color.BLACK
+                    strokeColor = Color.BLACK
                     strokeWidth = 1.0
                 }
             }
 
         val context2d = Mockito.mock(Context2d::class.java)
 
-        renderer.render(pathEntity, context2d)
+        render.render(pathEntity, context2d)
 
         Mockito.verify(context2d).moveTo(0.0, 0.0)
         Mockito.verify(context2d).lineTo(1.0, 1.0)

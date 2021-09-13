@@ -8,7 +8,7 @@ package jetbrains.datalore.jetbrains.livemap.tile
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
-import jetbrains.livemap.viewport.ViewportGridStateComponent
+import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set

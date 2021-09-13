@@ -6,8 +6,8 @@
 package jetbrains.livemap.geometry
 
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.projection.Client
 
 
 class ScreenGeometryComponent : EcsComponent {

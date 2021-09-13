@@ -217,6 +217,57 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
         )
     }
 
+    @Test
+    fun `x axis tooltip is out of visibility`() {
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(
+                xAxisTip(10.0)
+                    .size(DEFAULT_FIT_TOOLTIP_SIZE)
+                    .buildTooltip()
+            )
+            .geomBounds(LIMIT_RECT)
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
+    }
+
+    @Test
+    fun `y axis tooltip is out of visibility`() {
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(
+                yAxisTip(10.0)
+                    .size(DEFAULT_FIT_TOOLTIP_SIZE)
+                    .buildTooltip()
+            )
+            .geomBounds(LIMIT_RECT)
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
+    }
+
+    @Test
+    fun `general tooltip is out of visibility, then axis tooltip will also be hidden`() {
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(
+                defaultHorizontalTip(coord(10.0, 10.0)).buildTooltip()
+            )
+            .addTooltip(
+                xAxisTip(VIEWPORT.center.x)
+                    .size(DEFAULT_FIT_TOOLTIP_SIZE)
+                    .buildTooltip()
+            )
+            .geomBounds(LIMIT_RECT)
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertNoTooltips()
+    }
+
     private fun defaultHorizontalTip(targetCoord: DoubleVector): MeasuredTooltipBuilder {
         return factory!!.horizontal(HORIZONTAL_TOOLTIP_KEY, targetCoord)
                 .size(DEFAULT_TOOLTIP_SIZE)

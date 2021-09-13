@@ -118,7 +118,7 @@ class HVLine {
     private fun vhLinesByConst(): MutableMap<String, Any> {
         val spec = """
             {
-                'kind': 'plot',            
+                'kind': 'plot',
                 'ggtitle': {'text': 'VLine, HLine by const'},
                 'layers': [
                             {
@@ -129,7 +129,7 @@ class HVLine {
                             {
                                 'geom': 'hline',
                                 'yintercept': 5,
-                                'color': 'red'
+                                'color': 'blue'
                             }
                           ]
             }

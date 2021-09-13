@@ -137,7 +137,6 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             val points = ArrayList(project(groupDataPoints!!) { toLocationUpper(it) })
 
             // lower margin point in reversed order
-//            val lowerPoints = ImmutableList.reverse(groupDataPoints)
             val lowerPoints = groupDataPoints.reversed()
             points.addAll(project(lowerPoints) { toLocationLower(it) })
 

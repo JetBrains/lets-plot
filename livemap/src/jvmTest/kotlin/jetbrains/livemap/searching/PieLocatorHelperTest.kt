@@ -10,13 +10,13 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.UNDEFINED_SECTOR
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.getTargetUnderCoord
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
+import jetbrains.livemap.Client
 import jetbrains.livemap.api.transformValues2Angles
+import jetbrains.livemap.chart.PieSectorComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.rendering.PieSectorComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.PieLocatorHelper
 import org.junit.Test
 import java.util.*

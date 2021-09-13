@@ -7,8 +7,8 @@ package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.projection.Client
 import jetbrains.livemap.searching.LocatorHelper
 
 object SearchTestHelper {

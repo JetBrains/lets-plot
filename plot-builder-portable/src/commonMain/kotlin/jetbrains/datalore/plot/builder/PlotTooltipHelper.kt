@@ -21,9 +21,14 @@ internal class PlotTooltipHelper {
         myTileInfos.clear()
     }
 
-    fun addTileInfo(geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
+    fun addTileInfo(
+        geomBounds: DoubleRectangle,
+        tooltipBounds: PlotTooltipBounds,
+        targetLocators: List<GeomTargetLocator>
+    ) {
         val tileInfo = TileInfo(
             geomBounds,
+            tooltipBounds,
             targetLocators
         )
         myTileInfos.add(tileInfo)
@@ -36,9 +41,9 @@ internal class PlotTooltipHelper {
         return createTooltipSpecs(lookupResults, tileInfo.axisOrigin)
     }
 
-    fun getGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
+    fun getTooltipBounds(plotCoord: DoubleVector): PlotTooltipBounds? {
         val tileInfo = findTileInfo(plotCoord) ?: return null
-        return tileInfo.geomBounds
+        return tileInfo.tooltipBounds
     }
 
     private fun findTileInfo(plotCoord: DoubleVector): TileInfo? {
@@ -47,7 +52,6 @@ internal class PlotTooltipHelper {
                 return tileInfo
             }
         }
-
         return null
     }
 
@@ -62,9 +66,9 @@ internal class PlotTooltipHelper {
         return tooltipSpecs
     }
 
-
     private class TileInfo(
-        internal val geomBounds: DoubleRectangle,
+        val geomBounds: DoubleRectangle,
+        val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>
     ) {
 
@@ -104,5 +108,4 @@ internal class PlotTooltipHelper {
             }
         }
     }
-
 }

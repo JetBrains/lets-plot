@@ -7,8 +7,8 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.projection.Client
 
 interface LocatorHelper {
     fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean

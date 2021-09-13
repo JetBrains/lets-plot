@@ -13,10 +13,10 @@ import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.ViewportGridSpec
 import jetbrains.gis.geoprotocol.Fragment
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.regions.*
+import jetbrains.livemap.fragment.*
 import java.util.*
 
 

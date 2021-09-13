@@ -9,6 +9,7 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.builder.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
@@ -119,6 +120,10 @@ internal open class TooltipLayoutTestBase {
         return v != null
     }
 
+    fun assertNoTooltips() {
+        assertTrue(myArrangedTooltips.isEmpty(), "The tooltip list is not empty as expected.")
+    }
+
     fun assertAllTooltips(vararg expectations: ExpectedTooltip) {
         assertEquals(expectations.size, myArrangedTooltips.size)
 
@@ -196,6 +201,7 @@ internal open class TooltipLayoutTestBase {
         private val myTooltipData = ArrayList<MeasuredTooltip>()
         private var myHorizontalAlignment: HorizontalAlignment = LEFT
         private var myCursor = DoubleVector.ZERO
+        private var myTooltipBounds: DoubleRectangle = myViewport
 
         fun cursor(cursor: DoubleVector): TipLayoutManagerBuilder {
             myCursor = cursor
@@ -212,11 +218,16 @@ internal open class TooltipLayoutTestBase {
             return this
         }
 
+        fun geomBounds(geomBounds: DoubleRectangle): TipLayoutManagerBuilder {
+            myTooltipBounds = geomBounds
+            return this
+        }
+
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
                     LayoutManager(myViewport, myHorizontalAlignment)
-                        .arrange(myTooltipData, myCursor, geomBounds = null)
+                        .arrange(myTooltipData, myCursor, tooltipBounds = PlotTooltipBounds(VIEWPORT, myTooltipBounds))
             }
         }
 
@@ -302,6 +313,7 @@ internal open class TooltipLayoutTestBase {
     companion object {
         val VIEWPORT = DoubleRectangle(0.0, 0.0, 500.0, 500.0)
         val DEFAULT_TOOLTIP_SIZE = DoubleVector(80.0, 40.0)
+        val LIMIT_RECT = DoubleRectangle(100.0, 100.0, 200.0, 200.0)
 
         const val DEFAULT_OBJECT_RADIUS = 40.0
         private const val DOUBLE_COMPARE_EPSILON = 0.01

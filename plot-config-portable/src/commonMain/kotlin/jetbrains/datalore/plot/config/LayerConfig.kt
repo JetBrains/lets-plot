@@ -134,7 +134,8 @@ class LayerConfig(
                 // ToDo: Remove CorrelationStat
                 statKind != StatKind.CORR &&
                 // Do not touch GeoDataframe - empty mapping is OK in this case.
-                !GeoConfig.isGeoDataframe(layerOptions, DATA)
+                !GeoConfig.isGeoDataframe(layerOptions, DATA) &&
+                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions)
                 )
 
         var combinedData =

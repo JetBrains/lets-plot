@@ -5,24 +5,25 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 object LayerRendererUtil {
 
-    fun createLayerRendererData(layer: GeomLayer,
-                                sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-                                overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>
+    fun createLayerRendererData(
+        layer: GeomLayer,
+        xAesMapper: (Double?) -> Double?,
+        yAesMapper: (Double?) -> Double?,
     ): LayerRendererData {
 
-        val aestheticMappers =
-            PlotUtil.prepareLayerAestheticMappers(layer, sharedNumericMappers)
+        val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(
+            layer,
+            xAesMapper, yAesMapper
+        )
         val aesthetics = PlotUtil.createLayerAesthetics(
             layer,
             aestheticMappers,
-            overallNumericDomains
         )
         val pos = PlotUtil.createLayerPos(layer, aesthetics)
         return LayerRendererData(

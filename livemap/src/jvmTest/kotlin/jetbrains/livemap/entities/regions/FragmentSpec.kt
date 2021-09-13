@@ -11,8 +11,8 @@ import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.regions.FragmentKey
-import jetbrains.livemap.regions.Utils.entityName
+import jetbrains.livemap.fragment.FragmentKey
+import jetbrains.livemap.fragment.Utils.entityName
 
 class FragmentSpec (private var myKey: FragmentKey) {
     private lateinit var myGeometries: Boundary<Generic>

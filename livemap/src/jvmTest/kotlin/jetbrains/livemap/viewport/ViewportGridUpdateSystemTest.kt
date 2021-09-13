@@ -9,14 +9,14 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.datalore.jetbrains.livemap.Mocks
-import jetbrains.livemap.camera.CameraUpdateDetectionSystem
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.viewport.CellKey
-import jetbrains.livemap.viewport.ViewportGridStateComponent
-import jetbrains.livemap.viewport.ViewportGridUpdateSystem
-import jetbrains.livemap.viewport.ViewportPositionUpdateSystem
+import jetbrains.livemap.mapengine.camera.CameraInputSystem
+import jetbrains.livemap.mapengine.viewport.CellKey
+import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
+import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem
+import jetbrains.livemap.mapengine.viewport.ViewportPositionUpdateSystem
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 
 class ViewportGridUpdateSystemTest : LiveMapTestBase() {
     override val systemsOrder = listOf(
-        CameraUpdateDetectionSystem::class,
+        CameraInputSystem::class,
         ViewportPositionUpdateSystem::class,
         ViewportGridUpdateSystem::class
     )
@@ -38,7 +38,7 @@ class ViewportGridUpdateSystemTest : LiveMapTestBase() {
 
         Mockito.`when`(liveMapContext.mapProjection).thenReturn(mapProjection)
 
-        addSystem(CameraUpdateDetectionSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager))
         addSystem(ViewportPositionUpdateSystem(componentManager))
         addSystem(ViewportGridUpdateSystem(componentManager))
     }

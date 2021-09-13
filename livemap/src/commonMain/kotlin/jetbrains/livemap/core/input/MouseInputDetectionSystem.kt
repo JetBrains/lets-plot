@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.core.input
 
-import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
@@ -14,6 +13,7 @@ import jetbrains.livemap.core.rendering.layers.CanvasLayer
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.mapengine.camera.CameraComponent
 
 class MouseInputDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
 

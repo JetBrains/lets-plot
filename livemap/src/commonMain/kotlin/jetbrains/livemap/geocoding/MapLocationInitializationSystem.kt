@@ -9,16 +9,16 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.center
-import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.camera.CameraComponent
+import jetbrains.livemap.Client
+import jetbrains.livemap.World
+import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.config.DEFAULT_LOCATION
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.services.MapLocationGeocoder.Companion.convertToWorldRects
-import jetbrains.livemap.viewport.Viewport
+import jetbrains.livemap.core.ecs.onEachEntity
+import jetbrains.livemap.geocoding.MapLocationGeocoder.Companion.convertToWorldRects
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.floor
 import kotlin.math.ln
 import kotlin.math.max
@@ -30,14 +30,12 @@ class MapLocationInitializationSystem(
     private val myLocationRect: Async<Rect<World>>?
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLocation: LocationComponent
-    private lateinit var myCamera: EcsEntity
     private lateinit var myViewport: Viewport
     private lateinit var myDefaultLocation: List<Rect<World>>
     private var myNeedLocation = true
 
     override fun initImpl(context: LiveMapContext) {
         myLocation = getSingleton()
-        myCamera = getSingletonEntity(CameraComponent::class)
         myViewport = context.mapRenderContext.viewport
         myDefaultLocation = DEFAULT_LOCATION.convertToWorldRects(context.mapProjection)
     }
@@ -50,7 +48,7 @@ class MapLocationInitializationSystem(
                 myNeedLocation = false
                 listOf(it).run(myViewport::calculateBoundingBox)
                     .calculatePosition { zoom, coordinates ->
-                        context.setCameraPosition(zoom, coordinates)
+                        initMapPoisition(context, zoom, coordinates)
                     }
             }
         } else {
@@ -61,14 +59,13 @@ class MapLocationInitializationSystem(
 
                 .run(myViewport::calculateBoundingBox)
                     .calculatePosition { zoom, coordinates ->
-                        context.setCameraPosition(zoom, coordinates)
+                        initMapPoisition(context, zoom, coordinates)
                     }
             }
         }
     }
 
     private fun Rect<World>.calculatePosition(positionConsumer: (zoom: Double, coordinates: Vec<World>) -> Unit) {
-
         val zoom: Double = myZoom
             ?: if (dimension.x != 0.0 && dimension.y != 0.0) {
                 calculateMaxZoom(dimension, myViewport.size)
@@ -82,9 +79,17 @@ class MapLocationInitializationSystem(
         positionConsumer(zoom, center)
     }
 
-    private fun LiveMapContext.setCameraPosition(zoom: Double, coordinates: Vec<World>) {
-        camera.requestZoom(floor(zoom))
-        camera.requestPosition(coordinates)
+    private fun initMapPoisition(ctx: LiveMapContext, zoom: Double, coordinates: Vec<World>) {
+        val integerZoom = floor(zoom)
+        ctx.camera.requestZoom(integerZoom)
+        ctx.camera.requestPosition(coordinates)
+
+        println("baseZoom: " + integerZoom)
+        onEachEntity<ChartElementComponent> { _, chartElement ->
+            if (chartElement.scalable) {
+                chartElement.baseZoom = integerZoom.toInt()
+            }
+        }
     }
 
     private fun calculateMaxZoom(rectSize: Vec<World>, containerSize: Vec<Client>): Double {

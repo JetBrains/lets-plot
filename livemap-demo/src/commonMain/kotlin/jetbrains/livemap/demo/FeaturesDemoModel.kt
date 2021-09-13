@@ -10,6 +10,7 @@ import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
+import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.model.Cities.BOSTON
 import jetbrains.livemap.model.Cities.FRISCO
 import jetbrains.livemap.model.Cities.MOSCOW
@@ -20,6 +21,7 @@ import jetbrains.livemap.model.coord
 class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
+            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
             geocodingService = Services.devGeocodingService()
             layers {
 
@@ -132,7 +134,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         indices = listOf(0, 1, 2)
                         coord(BOSTON)
 
-                        radius = 50.0
+                        radius = 30.0
                         values = listOf(3.0, 0.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
@@ -142,7 +144,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                         indices = listOf(3, 4, 5)
 
-                        radius = 50.0
+                        radius = 30.0
                         values = listOf(-2.0, -1.0, 4.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }

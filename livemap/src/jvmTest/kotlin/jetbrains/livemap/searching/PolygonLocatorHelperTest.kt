@@ -10,7 +10,7 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.geometry.ScreenGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.PolygonLocatorHelper
 import org.junit.Test
 import kotlin.test.assertFalse

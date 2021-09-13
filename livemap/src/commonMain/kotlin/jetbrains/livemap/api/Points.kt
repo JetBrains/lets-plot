@@ -9,19 +9,18 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.core.animation.Animation
-import jetbrains.livemap.core.animation.Animations
-import jetbrains.livemap.core.animation.Animations.AnimationBuilder
-import jetbrains.livemap.core.ecs.AnimationObjectComponent
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.Renderers
+import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.placement.*
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.rendering.*
-import jetbrains.livemap.rendering.Renderers.PointRenderer
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PointLocatorHelper
@@ -30,8 +29,7 @@ import jetbrains.livemap.searching.PointLocatorHelper
 class Points(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection,
-    val pointScaling: Boolean,
-    val animationBuilder: AnimationBuilder
+    val zoomable: Boolean
 )
 
 fun LayersBuilder.points(block: Points.() -> Unit) {
@@ -42,104 +40,89 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    val animationBuilder = AnimationBuilder(500.0)
-        .setDirection(Animation.Direction.FORWARD)
-        .setLoop(Animation.Loop.SWITCH_DIRECTION)
-
     Points(
         MapEntityFactory(layerEntity),
         mapProjection,
-        pointScaling,
-        animationBuilder
+        zoomable
     ).apply(block)
-
-    myComponentManager
-        .createEntity("map_ent_point_animation")
-        .setComponent(
-            AnimationObjectComponent(animationBuilder.build())
-        )
 }
 
 fun Points.point(block: PointBuilder.() -> Unit) {
-    PointBuilder(factory)
+    PointBuilder(factory, zoomable)
         .apply(block)
-        .build(pointScaling, animationBuilder)
+        .build()
 }
 
 @LiveMapDsl
 class PointBuilder(
-    private val myFactory: MapEntityFactory
+    private val myFactory: MapEntityFactory,
+    private val zoomable: Boolean
 ) {
     var layerIndex: Int? = null
-    var index: Int? = null
+    var radius: Double = 4.0
     var point: Vec<LonLat>? = null
 
-    var radius: Double = 4.0
-    var fillColor: Color = Color.WHITE
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0
 
+    var index: Int? = null
+    var fillColor: Color = Color.WHITE
     var animation: Int = 0
     var label: String = ""
     var shape: Int = 1
 
-    fun build(
-        pointScaling: Boolean,
-        animationBuilder: AnimationBuilder,
-        nonInteractive: Boolean = false
-    ): EcsEntity {
+    fun build(nonInteractive: Boolean = false): EcsEntity {
 
-        val size = radius * 2.0
-
+        val d = radius * 2.0
         return when {
-                point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
-                else -> error("Can't create point entity. Coord is null.")
-            }.run {
-                setInitializer { worldPoint ->
-                    if (layerIndex != null && index != null) {
-                        + IndexComponent(layerIndex!!, index!!)
-                    }
-
-                    + ShapeComponent().apply { shape = this@PointBuilder.shape }
-                    + createStyle()
-                    + if (pointScaling) {
-                        WorldDimensionComponent(explicitVec(size, size))
-                    } else {
-                        ScreenDimensionComponent().apply {
-                            dimension = explicitVec(size, size)
+            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
+            else -> error("Can't create point entity. Coord is null.")
+        }.run {
+            setInitializer { worldPoint ->
+                if (layerIndex != null && index != null) {
+                    +IndexComponent(layerIndex!!, index!!)
+                }
+                +ChartElementComponent().apply {
+                    renderer = Renderers.PointRenderer(shape)
+                    scalable = this@PointBuilder.zoomable
+                    when (shape) {
+                        in 1..14 -> {
+                            strokeColor = this@PointBuilder.strokeColor
+                            strokeWidth = this@PointBuilder.strokeWidth
                         }
-                    }
-                    + WorldOriginComponent(worldPoint)
-                    + RendererComponent(PointRenderer())
-                    + ScreenLoopComponent()
-                    + ScreenOriginComponent()
-
-                    if (!nonInteractive) {
-                        + LocatorComponent(PointLocatorHelper())
-                    }
-
-                    if (animation == 2) {
-                        val transformComponent = TransformComponent()
-                        val scaleAnimator = Animations.DoubleAnimator(0.0, 1.0) {
-                            transformComponent.scale = it
-                            ParentLayerComponent.tagDirtyParentLayer(this@run)
+                        in 15..18, 20 -> {
+                            fillColor = this@PointBuilder.strokeColor
+                            strokeWidth = Double.NaN
                         }
-
-                        animationBuilder.addAnimator(scaleAnimator)
-
-                        + transformComponent
+                        19 -> {
+                            fillColor = this@PointBuilder.strokeColor
+                            strokeColor = this@PointBuilder.strokeColor
+                            strokeWidth = this@PointBuilder.strokeWidth
+                        }
+                        in 21..25 -> {
+                            fillColor = this@PointBuilder.fillColor
+                            strokeColor = this@PointBuilder.strokeColor
+                            strokeWidth = this@PointBuilder.strokeWidth
+                        }
+                        else -> error("Not supported shape: ${this@PointBuilder.shape}")
                     }
                 }
-        }
-    }
+                +SymbolComponent().apply {
+                    size = explicitVec(d, d)
+                    indices = index?.let { listOf(it) } ?: emptyList()
+                    values = emptyList()
+                    colors = emptyList()
+                }
 
-    private fun createStyle(): StyleComponent {
-        return when(shape) {
-            in 1..14 -> StyleComponent().apply { setStrokeColor(this@PointBuilder.strokeColor); strokeWidth = this@PointBuilder.strokeWidth }
-            in 15..18, 20 -> StyleComponent().apply { setFillColor(this@PointBuilder.strokeColor); strokeWidth = Double.NaN }
-            19 -> StyleComponent().apply { setFillColor(this@PointBuilder.strokeColor); setStrokeColor(this@PointBuilder.strokeColor); strokeWidth = this@PointBuilder.strokeWidth }
-            in 21..25 -> StyleComponent().apply { setFillColor(this@PointBuilder.fillColor); setStrokeColor(this@PointBuilder.strokeColor); strokeWidth = this@PointBuilder.strokeWidth }
-            else -> error("Not supported shape: ${this@PointBuilder.shape}")
+                +WorldOriginComponent(worldPoint)
+                +ScreenDimensionComponent()
+                +ScreenLoopComponent()
+                +ScreenOriginComponent()
+
+                if (!nonInteractive) {
+                    +LocatorComponent(PointLocatorHelper())
+                }
+            }
         }
     }
 }

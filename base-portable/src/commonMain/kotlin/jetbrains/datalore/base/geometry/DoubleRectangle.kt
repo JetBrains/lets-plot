@@ -42,6 +42,11 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     constructor(x: Double, y: Double, w: Double, h: Double) : this(DoubleVector(x, y), DoubleVector(w, h))
 
+    constructor(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>) : this(
+        xRange.lowerEnd, yRange.lowerEnd,
+        xRange.upperEnd - xRange.lowerEnd, yRange.upperEnd - yRange.lowerEnd
+    )
+
     fun xRange(): ClosedRange<Double> {
         return ClosedRange(origin.x, origin.x + dimension.x)
     }
@@ -52,6 +57,13 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     operator fun contains(v: DoubleVector): Boolean {
         return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
+    }
+
+    fun flip(): DoubleRectangle {
+        return DoubleRectangle(
+            origin.flip(),
+            dimension.flip()
+        )
     }
 
     fun union(rect: DoubleRectangle): DoubleRectangle {

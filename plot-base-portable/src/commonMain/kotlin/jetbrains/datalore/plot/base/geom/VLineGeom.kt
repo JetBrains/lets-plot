@@ -7,18 +7,15 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgLineElement
 import kotlin.math.max
 
@@ -38,29 +35,30 @@ class VLineGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
 
-        val viewPort = aesViewPort(aesthetics)
+        val viewPort = when {
+            ctx.flipped -> ctx.getAesBounds().flip()
+            else -> ctx.getAesBounds()
+        }
 
         val lines = ArrayList<SvgLineElement>()
-        for (p in aesthetics.dataPoints()) {
-            val intercept = p.interceptX()
-            if (SeriesUtil.isFinite(intercept)) {
-                if (viewPort.xRange().contains(intercept!!)) {
-                    val start = DoubleVector(intercept, viewPort.top)
-                    val end = DoubleVector(intercept, viewPort.bottom)
-                    val line = helper.createLine(start, end, p)
-                    lines.add(line)
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.XINTERCEPT)) {
+            val intercept = p.interceptX()!!
+            if (viewPort.xRange().contains(intercept)) {
+                val start = DoubleVector(intercept, viewPort.top)
+                val end = DoubleVector(intercept, viewPort.bottom)
+                val line = helper.createLine(start, end, p)
+                lines.add(line)
 
-                    val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
-                    val origin = DoubleVector(intercept - width / 2, end.y)
-                    val dimensions = DoubleVector(width, 0.0)
-                    val rect = DoubleRectangle(origin, dimensions)
-                    ctx.targetCollector.addRectangle(
-                        p.index(),
-                        geomHelper.toClient(rect, p),
-                        GeomTargetCollector.TooltipParams.params()
-                            .setColor(HintColorUtil.fromColor(p))
-                    )
-                }
+                val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
+                val origin = DoubleVector(intercept - width / 2, end.y)
+                val dimensions = DoubleVector(width, 0.0)
+                val rect = DoubleRectangle(origin, dimensions)
+                ctx.targetCollector.addRectangle(
+                    p.index(),
+                    geomHelper.toClient(rect, p),
+                    GeomTargetCollector.TooltipParams.params()
+                        .setColor(HintColorUtil.fromColor(p))
+                )
             }
         }
 

@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
@@ -204,7 +204,7 @@ internal object AwtPlotFactoryUtil {
         }
 
         // Frontend transforms
-        return PlotConfigClientSideJvmJs.processTransform(plotSpec)
+        return PlotConfigClientSide.processTransform(plotSpec)
     }
 
 

@@ -75,7 +75,7 @@ internal class PointDataAccess(
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)
-            return { value -> value?.let { labelsMap.getValue(it) } ?: "n/a" }
+            return { value -> value?.let { labelsMap[it] } ?: "n/a" }
         }
     }
 }
