@@ -195,7 +195,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
 
     Note
     ----
-    Input data expected: numetic codes of shapes.
+    Input data expected: numeric codes of shapes.
 
     Examples
     --------
@@ -265,7 +265,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
 
     Note
     ----
-    Input data expected: numetic codes or names of line types (e.g. 'dotdash').
+    Input data expected: numeric codes or names of line types (e.g. 'dotdash').
     The codes are: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash',
     5 = 'longdash', 6 = 'twodash'.
 
@@ -338,7 +338,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
 
     Note
     ----
-    Input data expected: numetic values in range [0, 1].
+    Input data expected: numeric values in range [0, 1].
 
     Examples
     --------
@@ -407,7 +407,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
 
     Note
     ----
-    Input data expected: positive numetic values.
+    Input data expected: positive numeric values.
 
     Examples
     --------
