@@ -23,11 +23,9 @@ import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.basemap.*
-import jetbrains.livemap.basemap.raster.RasterTileLayerComponent
-import jetbrains.livemap.basemap.vector.debug.DebugDataSystem
-import jetbrains.livemap.camera.*
-import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
+import jetbrains.livemap.chart.ChartElementRenderingSystem
+import jetbrains.livemap.chart.ChartElementScaleSystem
+import jetbrains.livemap.chart.GrowingPathEffect
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
@@ -37,6 +35,10 @@ import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
+import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_MAX_FACTOR
+import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_MIN_FACTOR
+import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOL_ZOOM_IN_EASING
+import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOL_ZOOM_OUT_EASING
 import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
@@ -56,29 +58,36 @@ import jetbrains.livemap.core.rendering.layers.LayerManagers.createLayerManager
 import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
-import jetbrains.livemap.effects.GrowingPath
+import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.ApplyPointSystem
 import jetbrains.livemap.geocoding.LocationCalculateSystem
 import jetbrains.livemap.geocoding.LocationCounterSystem
 import jetbrains.livemap.geocoding.MapLocationInitializationSystem
+import jetbrains.livemap.geometry.ScaleUpdateSystem
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
-import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
-import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
-import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
-import jetbrains.livemap.projection.*
-import jetbrains.livemap.regions.*
-import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
-import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.scaling.ScaleUpdateSystem
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.MapRenderContext
+import jetbrains.livemap.mapengine.basemap.*
+import jetbrains.livemap.mapengine.basemap.raster.RasterTileLayerComponent
+import jetbrains.livemap.mapengine.basemap.vector.debug.DebugDataSystem
+import jetbrains.livemap.mapengine.camera.CameraComponent
+import jetbrains.livemap.mapengine.camera.CameraInputSystem
+import jetbrains.livemap.mapengine.camera.CameraScale
+import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
+import jetbrains.livemap.mapengine.camera.MutableCamera
+import jetbrains.livemap.mapengine.placement.ScreenLoopsUpdateSystem
+import jetbrains.livemap.mapengine.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
+import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem
+import jetbrains.livemap.mapengine.viewport.ViewportPositionUpdateSystem
 import jetbrains.livemap.searching.HoverObjectComponent
 import jetbrains.livemap.searching.HoverObjectDetectionSystem
 import jetbrains.livemap.searching.SearchResult
-import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.ui.*
-import jetbrains.livemap.viewport.Viewport
-import jetbrains.livemap.viewport.ViewportGridUpdateSystem
-import jetbrains.livemap.viewport.ViewportPositionUpdateSystem
 
 class LiveMap(
     private val myMapRuler: MapRuler<World>,
@@ -111,9 +120,7 @@ class LiveMap(
     fun addErrorHandler(handler: (Throwable) -> Unit): Registration {
         return errorEvent.addHandler(
             object : EventHandler<Throwable> {
-                override fun onEvent(event: Throwable) {
-                    handler(event)
-                }
+                override fun onEvent(event: Throwable) = handler(event)
             }
         )
     }
@@ -206,7 +213,6 @@ class LiveMap(
                 MouseInputSystem(componentManager),
                 MouseInputDetectionSystem(componentManager),
                 CameraInputSystem(componentManager),
-                CameraUpdateDetectionSystem(componentManager),
                 CursorStyleSystem(componentManager, myCursorService),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
@@ -256,8 +262,17 @@ class LiveMap(
                 ScreenLoopsUpdateSystem(componentManager),
                 HoverObjectDetectionSystem(componentManager),
 
-                // Geoms
-                EntitiesRenderingTaskSystem(componentManager),
+                // Charts
+                ChartElementScaleSystem(
+                    minScale = myDevParams.read(SCALABLE_SYMBOLS_MIN_FACTOR),
+                    maxScale = myDevParams.read(SCALABLE_SYMBOLS_MAX_FACTOR),
+                    zoomInEasing = myDevParams.read(SCALABLE_SYMBOL_ZOOM_IN_EASING).function,
+                    zoomOutEasing = myDevParams.read(SCALABLE_SYMBOL_ZOOM_OUT_EASING).function,
+                    minZoom = viewport.minZoom,
+                    maxZoom = viewport.maxZoom,
+                    componentManager
+                ),
+                ChartElementRenderingSystem(componentManager),
 
                 BusyStateSystem(componentManager, myUiService),
 
@@ -266,7 +281,7 @@ class LiveMap(
                 mySchedulerSystem,
 
                 // Effects
-                GrowingPath.GrowingPathEffectSystem(componentManager),
+                GrowingPathEffect.GrowingPathEffectSystem(componentManager),
                 CameraScale.CameraScaleEffectSystem(componentManager)
 
                 //LoadingStateSystem(componentManager, isLoading())
@@ -278,9 +293,8 @@ class LiveMap(
         // Camera
         val listeners = EventListenerComponent()
 
-        val camera = componentManager.getSingletonEntity(CameraComponent::class)
+        val camera = componentManager.getSingletonEntity<CameraComponent>()
             .addComponents {
-                + MouseInputComponent()
                 + ClickableComponent(
                     Rectangle().apply {
                         rect = newDoubleRectangle(
@@ -332,7 +346,7 @@ class LiveMap(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myDevParams.isSet(DevParams.POINT_SCALING),
+            myDevParams.isSet(DevParams.SCALABLE_SYMBOLS),
             TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         )
 

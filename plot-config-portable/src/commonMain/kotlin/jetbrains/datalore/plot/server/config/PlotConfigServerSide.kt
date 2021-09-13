@@ -193,6 +193,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                             .map(DataFrameValue::getVariableName) +
                                 orderOptions.mapNotNull(OrderOption::byVariable)
                     }
+
                     val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
                         tileLayerInputData,
                         stat,

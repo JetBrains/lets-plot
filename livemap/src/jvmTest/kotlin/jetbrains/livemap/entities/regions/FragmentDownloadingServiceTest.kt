@@ -9,11 +9,10 @@ import jetbrains.datalore.jetbrains.livemap.Mocks.FragmentsResponseAsync
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.maps.Utils.square
 import jetbrains.gis.geoprotocol.Fragment
-import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.core.ecs.EcsSystem
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.regions.*
-import jetbrains.livemap.services.FragmentProvider
+import jetbrains.livemap.fragment.*
+import jetbrains.livemap.mapengine.camera.CameraComponent
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito

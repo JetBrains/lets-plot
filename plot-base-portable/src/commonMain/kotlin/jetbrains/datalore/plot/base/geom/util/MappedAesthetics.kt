@@ -35,10 +35,6 @@ class MappedAesthetics(
         throw IllegalStateException("MappedAesthetics.range: not implemented $aes")
     }
 
-    override fun overallRange(aes: Aes<Double>): ClosedRange<Double> {
-        throw IllegalStateException("MappedAesthetics.overallRange: not implemented $aes")
-    }
-
     override fun resolution(aes: Aes<Double>, naValue: Double): Double {
         throw IllegalStateException("MappedAesthetics.resolution: not implemented $aes")
     }

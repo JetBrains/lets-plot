@@ -10,7 +10,7 @@ import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksUtil
+import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.plot.config.Option.Scale.DATE_TIME
@@ -233,8 +233,9 @@ class ScaleConfigLabelsTest {
             closeRange = ClosedRange(instants.first(), instants.last())
         )
         assertEquals(
-            expected = listOf("01-01-2021","02-01-2021","03-01-2021"),
-            xLabels)
+            expected = listOf("01-01-2021", "02-01-2021", "03-01-2021"),
+            xLabels
+        )
     }
 
     @Test
@@ -270,7 +271,7 @@ class ScaleConfigLabelsTest {
             targetCount: Int = 5,
             closeRange: ClosedRange<Double> = ClosedRange(-0.5, 0.5),
         ): List<String> {
-            val breaksProvider = AxisBreaksUtil.createAxisBreaksProvider(scale, closeRange)
+            val breaksProvider = AxisBreaksProviderFactory.forScale(scale).createAxisBreaksProvider(closeRange)
             return breaksProvider.getBreaks(
                 targetCount,
                 axisLength = 0.0  // actually the axisLength parameter is not used to get breaks

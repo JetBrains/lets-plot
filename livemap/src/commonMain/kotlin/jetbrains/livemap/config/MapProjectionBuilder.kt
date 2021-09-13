@@ -8,14 +8,14 @@ package jetbrains.livemap.config
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.core.projections.Geographic
 import jetbrains.livemap.core.projections.Projection
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.projection.WorldRectangle
+import jetbrains.livemap.mapengine.MapProjection
 import kotlin.math.min
 
 internal class MapProjectionBuilder(

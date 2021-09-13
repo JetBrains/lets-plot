@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config.transform.migration
 
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -49,11 +49,11 @@ class MoveGeomPropertiesToLayerMigrationTest {
         val inputSpec = parsePlotSpec(input)
         val expectedSpec = parsePlotSpec(expected)
 
-        val transformed = PlotConfigClientSideJvmJs.processTransform(inputSpec)
+        val transformed = PlotConfigClientSide.processTransform(inputSpec)
         assertEquals(expectedSpec, transformed)
 
         // if specs are in new form - nothing should happen
-        val transformed2 = PlotConfigClientSideJvmJs.processTransform(transformed)
+        val transformed2 = PlotConfigClientSide.processTransform(transformed)
         assertEquals(expectedSpec, transformed2)
     }
 }

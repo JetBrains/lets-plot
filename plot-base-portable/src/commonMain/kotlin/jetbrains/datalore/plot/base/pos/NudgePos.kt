@@ -22,7 +22,6 @@ internal class NudgePos(width: Double?, height: Double?) : PositionAdjustment {
     }
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
-        //ToDo: getResolution needs to be changed later. In R, the points move in another way when data is continuous.
         val x = myWidth * ctx.getUnitResolution(Aes.X)
         val y = myHeight * ctx.getUnitResolution(Aes.Y)
         return v.add(DoubleVector(x, y))

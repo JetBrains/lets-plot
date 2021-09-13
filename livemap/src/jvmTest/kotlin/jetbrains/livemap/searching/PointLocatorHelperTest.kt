@@ -8,8 +8,8 @@ package jetbrains.datalore.jetbrains.livemap.searching
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.placement.ScreenDimensionComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.PointLocatorHelper
 import org.junit.Test
 import kotlin.test.assertFalse

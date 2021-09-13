@@ -139,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
        geom_xxx(tooltips=layer_tooltips().color('red'))
        ```
 
-  See: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html). 
+  See: [Tooltip Customization](https://lets-plot.org/pages/tooltips.html). 
 
 
 - Crosshair cursor when tooltip is in fixed position specified by the `anchor` option.
@@ -153,7 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
    Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
        
-   See also: [Formatting](https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html)
+   See also: [Formatting](https://lets-plot.org/pages/formats.html)
 
 ### Changed
                 
@@ -164,7 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The old version of the Geocoding backend remains on-line for a couple of release cycles
   to continue support of prior versions of Lets-Plot.
   
-  To learn more about Geocoding API see: [Geocoding](https://jetbrains.github.io/lets-plot-docs/pages/features/geocoding.html).
+  To learn more about Geocoding API see: [Geocoding](https://lets-plot.org/pages/geocoding.html).
                                     
 
 - The project upgraded to Kotlin v1.4.21 (was v1.4.10).
@@ -195,19 +195,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Correlation plot.
    
-   See: [The 'bistro' Package](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#the-bistro-package).
+   See: [Charts](https://lets-plot.org/pages/charts.html).
 
 - 'No Javascript' mode.
 
   Support for notebook renderers that don't execute Javascript.
   
-  See: ['No Javascript' mode](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#no-javascript-mode)
+  See: ['No Javascript' mode](https://lets-plot.org/pages/no_js_and_offline_mode.html#no-javascript-mode)
 
 - In tooltip customization API:
    - options: `center` and `middle` (anchor).
    - option 'minWidth'.
    
-   See: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
+   See: [Tooltip Customization](https://lets-plot.org/pages/tooltips.html).
    
 - 'na_text' parameter in 'geom_text'
 
@@ -220,7 +220,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         where `anchor_value`: 
         `['top_right'|'top_center'|'top_left'|'bottom_right'|'bottom_center'|'bottom_left'|'middle_right'|'middle_center'|'middle_left']`.
 
-   See: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html).
+   See: [Tooltip Customization](https://lets-plot.org/pages/tooltips.html).
  
 ### Fixed
 - Tooltip should appear when the mapped data is continuous [[#241](https://github.com/JetBrains/lets-plot/issues/241)]
@@ -232,7 +232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [**breaking change**] In functions `format(field, format)` and `line(template)` in 
 tooltip builder, the '$' symbol is no longer used in aesthetic reference. It was replaced by the '^' (hat) symbol 
-(see the udated doc: [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html)).
+(see the udated doc: [Tooltip Customization](https://lets-plot.org/pages/tooltips.html)).
 - The project upgraded to Kotlin v1.4.10 (was v1.3.72).
  
 ### Fixed
@@ -240,7 +240,7 @@ tooltip builder, the '$' symbol is no longer used in aesthetic reference. It was
 
 ## [1.5.3] - 2020-11-05
 ### Added
-- Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://jetbrains.github.io/lets-plot-docs/pages/features/tooltips.html)).
+- Facilities for customization of tooltip contents and its position (see [Tooltip Customization](https://lets-plot.org/pages/tooltips.html)).
 - `attribution` and other new parameters in the `maptiles_zxy()` function. 
 - `label_format` parameter in the `geom_text()` function.
 - `scale_x_discrete_reversed()` / `scale_y_discrete_reversed()`

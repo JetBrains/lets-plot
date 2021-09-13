@@ -286,7 +286,7 @@ class DataFrame private constructor(builder: Builder) {
             myVectorByVar[variable] = ArrayList(v)
         }
 
-        fun remove(variable: Variable): Builder {
+        fun  remove(variable: Variable): Builder {
             myVectorByVar.remove(variable)
             myIsNumeric.remove(variable)
             return this

@@ -43,7 +43,6 @@ object GeomInteractionUtil {
             layerConfig.geomProto.geomKind,
             layerConfig.statKind,
             multilayer,
-            isTooltipForAesEnabled(Aes.X, layerConfig, scaleMap),
             isCrosshairEnabled
         )
         val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
@@ -65,11 +64,10 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         multilayer: Boolean,
-        showXTooltip: Boolean,
         isCrosshairEnabled: Boolean
     ): GeomInteractionBuilder {
 
-        val builder = initGeomInteractionBuilder(renders, geomKind, statKind, showXTooltip, isCrosshairEnabled)
+        val builder = initGeomInteractionBuilder(renders, geomKind, statKind, isCrosshairEnabled)
 
         if (multilayer && !isCrosshairEnabled) {
             // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot.
@@ -226,7 +224,6 @@ object GeomInteractionUtil {
         renders: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind,
-        showXTooltip: Boolean,
         isCrosshairEnabled: Boolean
     ): GeomInteractionBuilder {
         val builder = GeomInteractionBuilder(renders)
@@ -263,7 +260,7 @@ object GeomInteractionUtil {
             GeomKind.BOX_PLOT,
             GeomKind.SEGMENT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
-                .showAxisTooltip(showXTooltip)
+                .showAxisTooltip(true)
             GeomKind.RIBBON -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
                 builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)

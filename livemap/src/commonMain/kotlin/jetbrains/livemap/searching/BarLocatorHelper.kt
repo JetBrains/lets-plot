@@ -9,17 +9,16 @@ import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.contains
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.parseRGB
+import jetbrains.livemap.Client
+import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.placement.ScreenDimensionComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
 class BarLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor
+        return target.get<ChartElementComponent>().fillColor
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {

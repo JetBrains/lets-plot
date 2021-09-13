@@ -10,15 +10,15 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.Client
+import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScreenGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
 class PathLocatorHelper : LocatorHelper {
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().strokeColor
+        return target.get<ChartElementComponent>().strokeColor
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
@@ -27,7 +27,7 @@ class PathLocatorHelper : LocatorHelper {
             return false
         }
 
-        val strokeRadius: Double = target.get<StyleComponent>().strokeWidth / 2
+        val strokeRadius: Double = target.get<ChartElementComponent>().strokeWidth / 2
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
             if (isCoordinateInPath(coord - origin, strokeRadius, target.get<ScreenGeometryComponent>().geometry)) {
                 return true

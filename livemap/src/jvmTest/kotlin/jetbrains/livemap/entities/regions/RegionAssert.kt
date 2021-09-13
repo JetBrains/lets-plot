@@ -3,7 +3,7 @@ package jetbrains.datalore.maps.livemap.entities.regions
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.regions.RegionFragmentsComponent
+import jetbrains.livemap.fragment.RegionFragmentsComponent
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*

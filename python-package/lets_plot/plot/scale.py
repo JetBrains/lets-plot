@@ -54,7 +54,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -129,7 +129,7 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -193,7 +193,7 @@ def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -255,7 +255,7 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -306,7 +306,7 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -357,7 +357,7 @@ def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -408,7 +408,7 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -465,7 +465,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -530,7 +530,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -586,7 +586,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -651,7 +651,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -717,7 +717,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -791,7 +791,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -863,7 +863,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -937,7 +937,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1011,7 +1011,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1086,7 +1086,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1166,7 +1166,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1227,7 +1227,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1302,7 +1302,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1364,7 +1364,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1438,7 +1438,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1515,7 +1515,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1595,7 +1595,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1674,7 +1674,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1747,7 +1747,7 @@ def scale_fill_discrete(direction=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1822,7 +1822,7 @@ def scale_color_discrete(direction=None,
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1901,7 +1901,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -1980,7 +1980,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2084,7 +2084,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2178,7 +2178,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2264,7 +2264,7 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2333,7 +2333,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2411,7 +2411,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2480,7 +2480,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------
@@ -2550,7 +2550,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
     -------

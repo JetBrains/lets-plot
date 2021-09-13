@@ -13,3 +13,6 @@
 ### Fixed
 
 - Tooltips for discrete variables: add the dependence of the tooltip on the number of factors.
+  The X-axis tooltip is always shown for discrete data.
+- map_join doesn't work when join variables with same names without mappings [[#428](https://github.com/JetBrains/lets-plot/issues/428)]
+- Zoom without clipping breaks tooltips [[#373](https://github.com/JetBrains/lets-plot/issues/373)].

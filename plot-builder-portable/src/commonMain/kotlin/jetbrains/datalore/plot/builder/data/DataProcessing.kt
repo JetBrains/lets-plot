@@ -69,47 +69,65 @@ object DataProcessing {
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
-            val sd = applyStat(data, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
-            groupSizeListAfterStat = listOf(sd.rowCount())
-            resultSeries = sd.variables().associateWith { variable -> sd[variable] }
+            val statData = applyStat(
+                data,
+                stat,
+                bindings,
+                scaleMap,
+                facets,
+                statCtx,
+                varsWithoutBinding,
+                messageConsumer
+            )
+            groupSizeListAfterStat = listOf(statData.rowCount())
+            resultSeries = statData.variables().associateWith { variable -> statData[variable] }
         } else { // add offset to each group
             val groupMerger = GroupMerger()
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
-                var sd = applyStat(d, stat, bindings, scaleMap, facets, statCtx, varsWithoutBinding, messageConsumer)
-                if (sd.isEmpty) {
+                var statData = applyStat(
+                    d,
+                    stat,
+                    bindings,
+                    scaleMap,
+                    facets,
+                    statCtx,
+                    varsWithoutBinding,
+                    messageConsumer
+                )
+                if (statData.isEmpty) {
                     continue
                 }
-                groupMerger.initOrderSpecs(orderOptions, sd.variables(), bindings, aggregateOperation)
+                groupMerger.initOrderSpecs(orderOptions, statData.variables(), bindings, aggregateOperation)
 
-                val curGroupSizeAfterStat = sd.rowCount()
+                val curGroupSizeAfterStat = statData.rowCount()
 
                 // update 'stat group' to avoid collisions as stat is applied independently to each original data group
-                if (sd.has(Stats.GROUP)) {
-                    val range = sd.range(Stats.GROUP)
+                if (statData.has(Stats.GROUP)) {
+                    val range = statData.range(Stats.GROUP)
                     if (range != null) {
                         val start = lastStatGroupEnd + 1
                         val offset = start - range.lowerEnd.toInt()
                         lastStatGroupEnd = range.upperEnd.toInt() + offset
                         if (offset != 0) {
                             val newG = ArrayList<Double>()
-                            for (g in sd.getNumeric(Stats.GROUP)) {
+                            for (g in statData.getNumeric(Stats.GROUP)) {
                                 newG.add(g!! + offset)
                             }
-                            sd = sd.builder().putNumeric(Stats.GROUP, newG).build()
+                            statData = statData.builder().putNumeric(Stats.GROUP, newG).build()
                         }
                     }
                 } else { // if stat has ..group.. then groupingVar won't be checked, so no need to update
                     val groupingVar = groupingContext.optionalGroupingVar
                     if (groupingVar != null) {
-                        val size = sd[sd.variables().first()].size
+                        val size = statData[statData.variables().first()].size
                         val v = d[groupingVar][0]
-                        sd = sd.builder().put(groupingVar, List(size) { v }).build()
+                        statData = statData.builder().put(groupingVar, List(size) { v }).build()
                     }
                 }
 
                 // Add group's data
-                groupMerger.addGroup(sd, curGroupSizeAfterStat)
+                groupMerger.addGroup(statData, curGroupSizeAfterStat)
             }
             // Get merged series
             resultSeries = groupMerger.getResultSeries()
@@ -424,6 +442,9 @@ object DataProcessing {
         variable: Variable
     ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
 
-    class DataAndGroupingContext internal constructor(val data: DataFrame, val groupingContext: GroupingContext)
 
+    class DataAndGroupingContext internal constructor(
+        val data: DataFrame,
+        val groupingContext: GroupingContext
+    )
 }

@@ -6,9 +6,8 @@
 package jetbrains.livemap.geometry
 
 import jetbrains.datalore.base.typedGeometry.minus
-import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.camera.ZoomChangedComponent
-import jetbrains.livemap.camera.isIntegerZoom
+import jetbrains.livemap.Client
+import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -18,11 +17,10 @@ import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
-import jetbrains.livemap.placement.ScreenOriginComponent
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.scaling.ScaleComponent
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 
 class WorldGeometry2ScreenUpdateSystem(
@@ -62,7 +60,7 @@ class WorldGeometry2ScreenUpdateSystem(
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val viewport = context.mapRenderContext.viewport
 
-        if (context.camera.isIntegerZoom) {
+        if (context.camera.isZoomLevelChanged) {
             getEntities(COMPONENT_TYPES).forEach {
                 it.setComponent(
                     MicroThreadComponent(
@@ -76,7 +74,7 @@ class WorldGeometry2ScreenUpdateSystem(
 
     companion object {
         private val COMPONENT_TYPES = listOf(
-            ZoomChangedComponent::class,
+            ZoomFractionChangedComponent::class,
             WorldOriginComponent::class,
             WorldGeometryComponent::class,
             ScreenOriginComponent::class,

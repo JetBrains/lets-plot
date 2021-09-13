@@ -12,13 +12,13 @@ import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksUtil
+import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 class PlotAxisLayout private constructor(
-    private val scale: Scale<Double>,
+    private val breaksProviderFactory: AxisBreaksProviderFactory,
     private val domainX: ClosedRange<Double>,
     private val domainY: ClosedRange<Double>,
     private val coordProvider: CoordProvider,
@@ -48,12 +48,9 @@ class PlotAxisLayout private constructor(
 
     private fun createLayouter(displaySize: DoubleVector): AxisLayouter {
         val domains = coordProvider.adjustDomains(domainX, domainY, displaySize)
-        val axisDomain = axisDomain(
-            domains,
-            orientation
-        )
+        val axisDomain = axisDomain(domains, orientation)
 
-        val breaksProvider = AxisBreaksUtil.createAxisBreaksProvider(scale, axisDomain)
+        val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
         return AxisLayouter.create(orientation, axisDomain, breaksProvider, theme)
     }
 
@@ -68,7 +65,8 @@ class PlotAxisLayout private constructor(
             theme: AxisTheme
         ): AxisLayout {
             return PlotAxisLayout(
-                scale, xDomain, yDomain, coordProvider,
+                AxisBreaksProviderFactory.forScale(scale),
+                xDomain, yDomain, coordProvider,
                 theme,
                 Orientation.BOTTOM
             )
@@ -82,7 +80,8 @@ class PlotAxisLayout private constructor(
             theme: AxisTheme
         ): AxisLayout {
             return PlotAxisLayout(
-                scale, xDomain, yDomain, coordProvider,
+                AxisBreaksProviderFactory.forScale(scale),
+                xDomain, yDomain, coordProvider,
                 theme,
                 Orientation.LEFT
             )

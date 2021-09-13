@@ -361,6 +361,11 @@ object PlotConfigUtil {
             scaleByAes[aes] = scale
         }
 
+//        if(FLIP_AXIS_COORD) {
+//            val xScale = scaleByAes.getValue(Aes.X)
+//            scaleByAes[Aes.X] = scaleByAes.getValue(Aes.Y)
+//            scaleByAes[Aes.Y] = xScale
+//        }
         return TypedScaleMap(scaleByAes)
     }
 

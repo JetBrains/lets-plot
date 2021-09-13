@@ -2,11 +2,15 @@
 
 ### Documentation on-line:
 
-https://jetbrains.github.io/lets-plot-docs
+https://lets-plot.org
      
-### The "Example Notebooks" page:
+### Examples:
 
-https://jetbrains.github.io/lets-plot-docs/pages/features/examples.html
+https://lets-plot.org/pages/charts.html#examples
+
+https://lets-plot.org/pages/maps.html#examples
+
+https://lets-plot.org/pages/geocoding.html#examples
 
 
 ### Explore example notebooks in Binder:

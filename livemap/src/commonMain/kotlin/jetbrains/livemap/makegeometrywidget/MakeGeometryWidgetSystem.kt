@@ -7,21 +7,20 @@ package jetbrains.livemap.makegeometrywidget
 
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.values.Color.Companion.parseHex
-import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.api.MapEntityFactory
 import jetbrains.livemap.api.PathBuilder
 import jetbrains.livemap.api.PointBuilder
 import jetbrains.livemap.api.geometry
-import jetbrains.livemap.viewport.Viewport
-import jetbrains.livemap.core.animation.Animations.AnimationBuilder
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.toClientPoint
-import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.toClientPoint
 
 class MakeGeometryWidgetSystem(
     private val myComponentManager: EcsComponentManager,
@@ -51,20 +50,16 @@ class MakeGeometryWidgetSystem(
     private fun createVisualEntities(lonlat: LonLatPoint, widgetLayer: EcsEntity) {
         val factory = MapEntityFactory(widgetLayer)
 
-        PointBuilder(factory)
+        PointBuilder(factory, zoomable = false)
             .apply {
                 point = lonlat
                 strokeColor = DARK_ORANGE
                 shape = 20
             }
-            .build(
-                pointScaling = false,
-                animationBuilder = AnimationBuilder(500.0),
-                nonInteractive = true
-            )
+            .build(nonInteractive = true)
 
         if (widgetLayer.count() > 0) {
-            PathBuilder(factory, myMapProjection)
+            PathBuilder(factory, myMapProjection, zoomable = false)
                 .apply {
                     geometry(listOf(widgetLayer.last(), lonlat), false)
                     strokeColor = DARK_ORANGE
@@ -74,20 +69,11 @@ class MakeGeometryWidgetSystem(
         }
     }
 
-    private fun getWidgetLayer(): EcsEntity? =
-        myComponentManager.tryGetSingletonEntity(WIDGET_COMPONENTS)
-
-    private fun EcsEntity.click(): InputMouseEvent? =
-        get<MouseInputComponent>().click
-
-    private fun EcsEntity.count(): Int =
-        get<MakeGeometryWidgetComponent>().points.count()
-
-    private fun EcsEntity.last(): LonLatPoint =
-        get<MakeGeometryWidgetComponent>().points.last()
-
-    private fun EcsEntity.add(point: LonLatPoint) =
-        get<MakeGeometryWidgetComponent>().points.add(point)
+    private fun getWidgetLayer(): EcsEntity? = myComponentManager.tryGetSingletonEntity(WIDGET_COMPONENTS)
+    private fun EcsEntity.click(): InputMouseEvent? = get<MouseInputComponent>().click
+    private fun EcsEntity.count(): Int = get<MakeGeometryWidgetComponent>().points.count()
+    private fun EcsEntity.last(): LonLatPoint = get<MakeGeometryWidgetComponent>().points.last()
+    private fun EcsEntity.add(point: LonLatPoint) = get<MakeGeometryWidgetComponent>().points.add(point)
 
     companion object {
         val WIDGET_COMPONENTS = listOf(

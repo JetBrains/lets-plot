@@ -8,6 +8,8 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.Renderers.PathRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
@@ -15,20 +17,20 @@ import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedGeocodeLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.placement.ScreenOriginComponent
-import jetbrains.livemap.placement.WorldDimensionComponent
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.rendering.*
-import jetbrains.livemap.rendering.Renderers.PathRenderer
-import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class Lines(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection,
-    val horizontal: Boolean
-)
+    val horizontal: Boolean,
+    val zoomable: Boolean
+    )
 
 private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
     val layerEntity = myComponentManager
@@ -41,7 +43,8 @@ private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
     Lines(
         MapEntityFactory(layerEntity),
         mapProjection,
-        horizontal
+        horizontal,
+        zoomable
     ).apply(block)
 }
 
@@ -54,15 +57,16 @@ fun LayersBuilder.vLines(block: Lines.() -> Unit) {
 }
 
 fun Lines.line(block: LineBuilder.() -> Unit) {
-    LineBuilder(factory, mapProjection)
+    LineBuilder(factory, mapProjection, zoomable)
         .apply(block)
         .build(horizontal)
 }
 
 @LiveMapDsl
 class LineBuilder(
-    private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val factory: MapEntityFactory,
+    private val mapProjection: MapProjection,
+    private val zoomable: Boolean
 ) {
     var point: Vec<LonLat>? = null
 
@@ -75,24 +79,25 @@ class LineBuilder(
     ): EcsEntity {
 
         return when {
-            point != null -> myFactory.createStaticEntity("map_ent_s_line", point!!)
+            point != null -> factory.createStaticEntity("map_ent_s_line", point!!)
             else -> error("Can't create line entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
-                val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
-                val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
+                val line = createLineGeometry(worldPoint, horizontal, mapProjection.mapRect)
+                val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, mapProjection.mapRect)
 
-                + RendererComponent(PathRenderer())
+                + ChartElementComponent().apply {
+                    renderer = PathRenderer()
+                    scalable = this@LineBuilder.zoomable
+                    strokeColor = this@LineBuilder.strokeColor
+                    strokeWidth = this@LineBuilder.strokeWidth
+                    lineDash = this@LineBuilder.lineDash.toDoubleArray()
+                }
                 + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { geometry = line }
                 + WorldDimensionComponent(bbox.dimension)
                 + ScreenLoopComponent()
                 + ScreenOriginComponent()
-                + StyleComponent().apply {
-                    setStrokeColor(this@LineBuilder.strokeColor)
-                    setStrokeWidth(this@LineBuilder.strokeWidth)
-                    setLineDash(this@LineBuilder.lineDash)
-                }
             }
             .remove<NeedLocationComponent>()
             .remove<NeedCalculateLocationComponent>()
