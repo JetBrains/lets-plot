@@ -18,8 +18,8 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
-import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -145,34 +145,41 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         tilesOrigin: DoubleVector,
         tileInfo: TileLayoutInfo,
         tileLayers: List<GeomLayer>,
-        theme: Theme
+        theme: Theme,
     ): PlotTile {
 
-        val xScale: Scale<Double>
-        val yScale: Scale<Double>
-        val coord: CoordinateSystem
-        if (tileInfo.xAxisInfo != null && tileInfo.yAxisInfo != null) {
-            val xDomain = tileInfo.xAxisInfo.axisDomain!!
+        val frameOfReference: TileFrameOfReference
+        if (hasLiveMap()) {
+            // Livemap usues its own.
+            frameOfReference = BogusFrameOfReference()
+        } else {
+
+            val xDomain = tileInfo.xAxisInfo!!.axisDomain!!
             val xAxisLength = tileInfo.xAxisInfo.axisLength
 
-            val yDomain = tileInfo.yAxisInfo.axisDomain!!
+            val yDomain = tileInfo.yAxisInfo!!.axisDomain!!
             val yAxisLength = tileInfo.yAxisInfo.axisLength
 
             // set-up scales and coordinate system
-            xScale = coordProvider.buildAxisScaleX(scaleXProto, xDomain, xAxisLength, tileInfo.xAxisInfo.axisBreaks!!)
-            yScale = coordProvider.buildAxisScaleY(scaleYProto, yDomain, yAxisLength, tileInfo.yAxisInfo.axisBreaks!!)
-            coord = coordProvider.createCoordinateSystem(xDomain, xAxisLength, yDomain, yAxisLength)
-        } else {
-            // bogus scales and coordinate system (live map doesn't need them)
-            xScale = BogusScale()
-            yScale = BogusScale()
-            coord = BogusCoordinateSystem()
+            val xScale =
+                coordProvider.buildAxisScaleX(scaleXProto, xDomain, xAxisLength, tileInfo.xAxisInfo.axisBreaks!!)
+            val yScale =
+                coordProvider.buildAxisScaleY(scaleYProto, yDomain, yAxisLength, tileInfo.yAxisInfo.axisBreaks!!)
+            val coord = coordProvider.createCoordinateSystem(xDomain, xAxisLength, yDomain, yAxisLength)
+
+            frameOfReference = SquareFrameOfReference(
+                xScale, yScale,
+                coord,
+                tileInfo,
+                theme,
+                isAxisEnabled,
+                FLIP_AXIS,
+            )
+            frameOfReference.isDebugDrawing = DEBUG_DRAWING
         }
 
-        val tile = PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
-        tile.setShowAxis(isAxisEnabled)
-        tile.debugDrawing().set(DEBUG_DRAWING)
-
+        val tile = PlotTile(tileLayers, tilesOrigin, tileInfo, theme, frameOfReference)
+        tile.isDebugDrawing = DEBUG_DRAWING
         return tile
     }
 
