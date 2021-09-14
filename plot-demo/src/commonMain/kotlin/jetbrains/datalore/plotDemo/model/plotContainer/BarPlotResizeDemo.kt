@@ -6,7 +6,6 @@
 package jetbrains.datalore.plotDemo.model.plotContainer
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
@@ -30,8 +29,8 @@ class BarPlotResizeDemo private constructor(
     private val xScale: Scale<*>
 ) {
 
-    fun createPlotContainer(plotSizeProp: ReadableProperty<DoubleVector>): PlotContainer {
-        return PlotContainer(createPlot(), plotSizeProp)
+    fun createPlotContainer(plotSize: DoubleVector): PlotContainer {
+        return PlotContainer(createPlot(), plotSize)
     }
 
     fun createPlot(): Plot {
@@ -99,7 +98,6 @@ class BarPlotResizeDemo private constructor(
             scaleByAes,
             listOf(layer), CoordProviders.cartesian(), DefaultTheme()
         )
-//        assembler.disableInteractions()
         return assembler.createPlot()
     }
 
@@ -113,8 +111,7 @@ class BarPlotResizeDemo private constructor(
         }
 
         fun discreteX(): BarPlotResizeDemo {
-            val sclData =
-                SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
+            val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
             return BarPlotResizeDemo(
                 sclData,
                 Scales.discreteDomain<String>("", sclData.distinctXValues())

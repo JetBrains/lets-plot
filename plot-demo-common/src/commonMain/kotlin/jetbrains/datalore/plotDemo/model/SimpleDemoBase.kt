@@ -7,7 +7,6 @@ package jetbrains.datalore.plotDemo.model
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.builder.Plot
@@ -35,7 +34,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
 
     protected fun createSvgRootsFromPlots(plots: List<Plot>): List<SvgSvgElement> {
         val plotContainers = plots.map {
-            PlotContainer(it, ValueProperty(demoInnerSize))
+            PlotContainer(it, demoInnerSize)
         }
 
         return plotContainers.map {

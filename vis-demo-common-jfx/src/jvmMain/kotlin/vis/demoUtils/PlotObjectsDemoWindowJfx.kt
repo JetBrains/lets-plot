@@ -6,7 +6,6 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -29,12 +28,8 @@ class PlotObjectsDemoWindowJfx(
 ) {
     override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
         val plotContainer = PlotContainer(
-            plot, ValueProperty(
-                DoubleVector(
-                    plotSize.getWidth(),
-                    plotSize.getHeight(),
-                )
-            )
+            plot,
+            DoubleVector(plotSize.getWidth(), plotSize.getHeight())
         )
 
         plotContainer.ensureContentBuilt()

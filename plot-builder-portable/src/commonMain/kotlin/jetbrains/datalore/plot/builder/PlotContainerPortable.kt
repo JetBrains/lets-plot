@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
@@ -24,7 +23,7 @@ import kotlin.math.max
  */
 open class PlotContainerPortable(
     protected val plot: Plot,
-    private val preferredSize: ReadableProperty<DoubleVector>
+    private var preferredSize: DoubleVector
 ) {
 
     val svg: SvgSvgElement = SvgSvgElement()
@@ -35,31 +34,25 @@ open class PlotContainerPortable(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
+
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()
 
     init {
         svg.addClass(Style.PLOT_CONTAINER)
-        setSvgSize(preferredSize.get())
-
-        plot.laidOutSize().addHandler(sizePropHandler { laidOutSize ->
-            val newSvgSize = DoubleVector(
-                max(preferredSize.get().x, laidOutSize.x),
-                max(preferredSize.get().y, laidOutSize.y)
-            )
-            setSvgSize(newSvgSize)
-        })
-
-        preferredSize.addHandler(sizePropHandler { newPreferredSize ->
-            if (newPreferredSize.x > 0 && newPreferredSize.y > 0) {
-                revalidateContent()
-            }
-        })
+        setSvgSize(preferredSize)
     }
 
     fun ensureContentBuilt() {
         if (!myContentBuilt) {
             buildContent()
+        }
+    }
+
+    fun revalidateContent(preferredSize: DoubleVector) {
+        if (preferredSize.x > 0 && preferredSize.y > 0) {
+            this.preferredSize = preferredSize
+            revalidateContent()
         }
     }
 
@@ -102,8 +95,14 @@ open class PlotContainerPortable(
 
         svg.children().add(backdrop)
 
-        plot.preferredSize().set(preferredSize.get())
+        plot.preferredSize().set(preferredSize)
         svg.children().add(plot.rootGroup)
+
+        val newSvgSize = DoubleVector(
+            max(preferredSize.x, plot.laidOutSize().get().x),
+            max(preferredSize.y, plot.laidOutSize().get().y)
+        )
+        setSvgSize(newSvgSize)
     }
 
     open fun clearContent() {

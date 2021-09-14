@@ -61,15 +61,22 @@ internal class SquareFrameOfReference(
         val geomBounds: DoubleRectangle = layoutInfo.geomBounds
 
         if (axisEnabled) {
+            // Flip theme
+//            val (xAxisTheme, yAxisTheme) = when {
+//                flipAxis -> Pair(theme.axisY(), theme.axisX())
+//                else -> Pair(theme.axisX(), theme.axisY())
+//            }
+            val (xAxisTheme, yAxisTheme) = Pair(theme.axisX(), theme.axisY())
+
             // X-axis (below geom area)
             if (layoutInfo.xAxisShown) {
-                val axis = buildAxis(xScale, layoutInfo.xAxisInfo!!, coord, theme.axisX(), isDebugDrawing)
+                val axis = buildAxis(xScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
                 axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
                 parent.add(axis)
             }
             // Y-axis (to the left from geom area, axis elements have negative x-positions)
             if (layoutInfo.yAxisShown) {
-                val axis = buildAxis(yScale, layoutInfo.yAxisInfo!!, coord, theme.axisY(), isDebugDrawing)
+                val axis = buildAxis(yScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
                 axis.moveTo(geomBounds.origin)
                 parent.add(axis)
             }

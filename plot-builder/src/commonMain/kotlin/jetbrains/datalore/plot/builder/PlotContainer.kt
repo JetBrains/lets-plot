@@ -10,13 +10,12 @@ import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.vis.svg.SvgGElement
 
 class PlotContainer(
     plot: Plot,
-    preferredSize: ReadableProperty<DoubleVector>
+    preferredSize: DoubleVector
 ) : PlotContainerPortable(plot, preferredSize) {
 
     private val myDecorationLayer = SvgGElement()
