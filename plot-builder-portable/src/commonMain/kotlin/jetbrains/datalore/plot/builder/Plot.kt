@@ -10,10 +10,6 @@ import jetbrains.datalore.base.gcommon.base.Throwables
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
@@ -41,7 +37,6 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 
 abstract class Plot(private val theme: Theme) : SvgComponent() {
 
-    private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
     private val myTooltipHelper = PlotTooltipHelper()
     private val myLiveMapFigures = ArrayList<SomeFig>()
 
@@ -68,13 +63,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     internal val liveMapFigures: List<SomeFig>
         get() = myLiveMapFigures
 
-    internal fun preferredSize(): WritableProperty<DoubleVector> {
-        return myPreferredSize
-    }
-
-    fun laidOutSize(): DoubleVector {
-        return myPreferredSize.get()
-    }
+    var plotSize: DoubleVector = DEF_PLOT_SIZE
+        private set
 
     protected abstract fun hasTitle(): Boolean
 
@@ -101,12 +91,12 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
                 else
                     "<no message>"
             )
-            var y = myPreferredSize.get().y / 2 - 8
+            var y = plotSize.y / 2 - 8
             for (s in messages) {
                 val errorLabel = TextLabel(s)
                 errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
                 errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-                errorLabel.moveTo(myPreferredSize.get().x / 2, y)
+                errorLabel.moveTo(plotSize.x / 2, y)
                 rootGroup.children().add(errorLabel.rootGroup)
                 y += 16.0
             }
@@ -116,14 +106,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private fun buildPlot() {
         rootGroup.addClass(Style.PLOT)
         buildPlotComponents()
-        reg(myPreferredSize.addHandler(object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
-            override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
-                val newValue = event.newValue
-                if (newValue!!.x > 0 && newValue.y > 0) {
-                    rebuildPlot()
-                }
-            }
-        }))
 
         reg(object : Registration() {
             override fun doRemove() {
@@ -133,10 +115,21 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         })
     }
 
-    private fun rebuildPlot() {
+    fun resize(plotSize: DoubleVector) {
+        if (plotSize.x <= 0 || plotSize.y <= 0) return
+        if (plotSize == this.plotSize) return
+
+        this.plotSize = plotSize
+
+        // just invalidate
         clear()
-        buildPlot()
     }
+
+
+//    private fun rebuildPlot() {
+//        clear()
+//        buildPlot()
+//    }
 
 
     private fun createTile(
@@ -240,8 +233,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     }
 
     private fun buildPlotComponents() {
-        val preferredSize = myPreferredSize.get()
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, preferredSize)
+        val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {

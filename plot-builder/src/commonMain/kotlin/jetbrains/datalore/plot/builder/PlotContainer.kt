@@ -15,8 +15,8 @@ import jetbrains.datalore.vis.svg.SvgGElement
 
 class PlotContainer(
     plot: Plot,
-    preferredSize: DoubleVector
-) : PlotContainerPortable(plot, preferredSize) {
+    plotSize: DoubleVector
+) : PlotContainerPortable(plot, plotSize) {
 
     private val myDecorationLayer = SvgGElement()
 
@@ -31,7 +31,6 @@ class PlotContainer(
         }
     }
 
-
     override fun clearContent() {
         myDecorationLayer.children().clear()
         super.clearContent()
@@ -40,7 +39,7 @@ class PlotContainer(
     private fun hookupInteractions() {
         check(plot.isInteractionsEnabled)
 
-        val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize())
+        val viewport = DoubleRectangle(DoubleVector.ZERO, plot.plotSize)
         val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)
 
         val onMouseMoved = { e: MouseEvent ->

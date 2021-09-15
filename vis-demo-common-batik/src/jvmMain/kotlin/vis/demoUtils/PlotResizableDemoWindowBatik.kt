@@ -52,7 +52,7 @@ class PlotResizableDemoWindowBatik(
         override fun createComponent(containerSize: Dimension?): JComponent {
             plotContainer.clearContent()
             containerSize?.run {
-                plotContainer.revalidateContent(DoubleVector(getWidth(), getHeight()))
+                plotContainer.resize(DoubleVector(getWidth(), getHeight()))
             }
             plotContainer.ensureContentBuilt()
             return BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)

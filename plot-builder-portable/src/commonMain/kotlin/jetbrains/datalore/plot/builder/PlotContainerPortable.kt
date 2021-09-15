@@ -20,7 +20,7 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
  */
 open class PlotContainerPortable(
     protected val plot: Plot,
-    private var preferredSize: DoubleVector
+    plotSize: DoubleVector
 ) {
 
     val svg: SvgSvgElement = SvgSvgElement()
@@ -37,7 +37,8 @@ open class PlotContainerPortable(
 
     init {
         svg.addClass(Style.PLOT_CONTAINER)
-        setSvgSize(preferredSize)
+        setSvgSize(plotSize)
+        plot.resize(plotSize)
     }
 
     fun ensureContentBuilt() {
@@ -46,19 +47,22 @@ open class PlotContainerPortable(
         }
     }
 
-    fun revalidateContent(preferredSize: DoubleVector) {
-        if (preferredSize.x > 0 && preferredSize.y > 0) {
-            this.preferredSize = preferredSize
-            revalidateContent()
-        }
+    fun resize(plotSize: DoubleVector) {
+        if (plotSize.x <= 0 || plotSize.y <= 0) return
+        if (plotSize == plot.plotSize) return
+
+        // Invalidate
+        clearContent()
+        setSvgSize(plotSize)
+        plot.resize(plotSize)
     }
 
-    private fun revalidateContent() {
-        if (myContentBuilt) {
-            clearContent()
-            buildContent()
-        }
-    }
+//    private fun revalidateContent() {
+//        if (myContentBuilt) {
+//            clearContent()
+//            buildContent()
+//        }
+//    }
 
     protected open fun buildContent() {
         check(!myContentBuilt)
@@ -91,15 +95,7 @@ open class PlotContainerPortable(
 //        backdrop.setAttribute(SVG_STYLE_ATTRIBUTE, "width: 100%; height: 100%")
 
         svg.children().add(backdrop)
-
-        plot.preferredSize().set(preferredSize)
         svg.children().add(plot.rootGroup)
-
-//        val newSvgSize = DoubleVector(
-//            max(preferredSize.x, plot.laidOutSize().get().x),
-//            max(preferredSize.y, plot.laidOutSize().get().y)
-//        )
-        setSvgSize(preferredSize)
     }
 
     open fun clearContent() {

@@ -55,7 +55,7 @@ class PlotResizableDemoWindowJfx(
         override fun createComponent(containerSize: Dimension?): JComponent {
             plotContainer.clearContent()
             containerSize?.run {
-                plotContainer.revalidateContent(DoubleVector(getWidth(), getHeight()))
+                plotContainer.resize(DoubleVector(getWidth(), getHeight()))
             }
             plotContainer.ensureContentBuilt()
             return SceneMapperJfxPanel(
