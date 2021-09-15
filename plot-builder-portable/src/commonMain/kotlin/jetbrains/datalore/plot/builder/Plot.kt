@@ -12,7 +12,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
@@ -43,7 +42,6 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
-    private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
     private val myTooltipHelper = PlotTooltipHelper()
     private val myLiveMapFigures = ArrayList<SomeFig>()
 
@@ -74,8 +72,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         return myPreferredSize
     }
 
-    fun laidOutSize(): ReadableProperty<DoubleVector> {
-        return myLaidOutSize
+    fun laidOutSize(): DoubleVector {
+        return myPreferredSize.get()
     }
 
     protected abstract fun hasTitle(): Boolean
@@ -323,7 +321,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         // Layout plot inners
         val plotLayout = plotLayout()
         val plotInfo = plotLayout.doLayout(geomAndAxis.dimension)
-        this.myLaidOutSize.set(preferredSize)
 
         if (plotInfo.tiles.isEmpty()) {
             return

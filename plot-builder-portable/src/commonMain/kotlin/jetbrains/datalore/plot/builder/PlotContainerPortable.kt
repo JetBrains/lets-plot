@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
@@ -16,7 +14,6 @@ import jetbrains.datalore.plot.builder.presentation.Style.PLOT_BACKDROP
 import jetbrains.datalore.vis.svg.SvgCssResource
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import kotlin.math.max
 
 /**
  *  This class only handles static SVG. (no interactions)
@@ -98,11 +95,11 @@ open class PlotContainerPortable(
         plot.preferredSize().set(preferredSize)
         svg.children().add(plot.rootGroup)
 
-        val newSvgSize = DoubleVector(
-            max(preferredSize.x, plot.laidOutSize().get().x),
-            max(preferredSize.y, plot.laidOutSize().get().y)
-        )
-        setSvgSize(newSvgSize)
+//        val newSvgSize = DoubleVector(
+//            max(preferredSize.x, plot.laidOutSize().get().x),
+//            max(preferredSize.y, plot.laidOutSize().get().y)
+//        )
+        setSvgSize(preferredSize)
     }
 
     open fun clearContent() {
@@ -123,18 +120,5 @@ open class PlotContainerPortable(
     private fun setSvgSize(size: DoubleVector) {
         svg.width().set(size.x)
         svg.height().set(size.y)
-    }
-
-    companion object {
-        private fun sizePropHandler(block: (newValue: DoubleVector) -> Unit): EventHandler<PropertyChangeEvent<out DoubleVector>> {
-            return object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
-                override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
-                    val newValue = event.newValue
-                    if (newValue != null) {
-                        block.invoke(newValue)
-                    }
-                }
-            }
-        }
     }
 }
