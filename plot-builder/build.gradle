@@ -13,9 +13,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-//                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation project(':base-portable')
-                implementation project(':base')
                 implementation project(':vis-svg-portable')
                 implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')
