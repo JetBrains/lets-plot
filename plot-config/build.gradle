@@ -39,6 +39,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+                implementation project(':base')
                 implementation project(':vis-svg-mapper')
                 compileOnly project(':vis-canvas')
                 compileOnly project(':plot-livemap')
