@@ -31,6 +31,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
@@ -42,6 +43,7 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
+//                implementation project(':plot-image-export')
                 implementation project(':plot-demo-common')
                 implementation project(':vis-demo-common')
             }
@@ -50,7 +52,6 @@ kotlin {
         allJvm {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation project(':plot-image-export')
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
             }
