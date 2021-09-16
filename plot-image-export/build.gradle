@@ -86,11 +86,11 @@ def artifactGroupId = project.group
 def artifactVersion = project.version
 
 jvmJar {
-    archiveName "$artifactBaseName-${artifactVersion}.jar"
+    archiveFileName = "$artifactBaseName-${artifactVersion}.jar"
 }
 
 jvmSourcesJar {
-    archiveName "$artifactBaseName-$artifactVersion-sources.jar"
+    archiveFileName = "$artifactBaseName-$artifactVersion-sources.jar"
 }
 
 publishing {
