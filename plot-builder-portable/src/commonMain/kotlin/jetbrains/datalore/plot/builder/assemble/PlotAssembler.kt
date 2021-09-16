@@ -5,15 +5,13 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.Plot
-import jetbrains.datalore.plot.builder.PlotBuilder
+import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.layout.LiveMapTileLayout
+import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class PlotAssembler private constructor(
@@ -71,54 +69,39 @@ class PlotAssembler private constructor(
                 LiveMapTileLayout(),
                 facets
             )
-            return createXYPlot(scaleByAes[Aes.X], scaleByAes[Aes.Y], plotLayout, legendsBoxInfos, hasLiveMap = true)
+
+            val fOrProvider = BogusFrameOfReferenceProvider()
+            return createPlot(fOrProvider, plotLayout, legendsBoxInfos, hasLiveMap = true)
         }
 
         // train X/Y scales
         val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
 
-        // share X/Y scale among all layers
-        val xScaleProto: Scale<Double>
-        val yScaleProto: Scale<Double>
-        val xDomain: ClosedRange<Double>
-        val yDomain: ClosedRange<Double>
-        if (FLIP_AXIS) {
-            xScaleProto = scaleByAes[Aes.Y]
-            yScaleProto = scaleByAes[Aes.X]
-            xDomain = yAesRange
-            yDomain = xAesRange
-        } else {
-            xScaleProto = scaleByAes[Aes.X]
-            yScaleProto = scaleByAes[Aes.Y]
-            xDomain = xAesRange
-            yDomain = yAesRange
-        }
-
-        val xAxisLayout: AxisLayout
-        val yAxisLayout: AxisLayout
-        if (myAxisEnabled) {
-            xAxisLayout = PlotAxisLayout.bottom(xScaleProto, xDomain, yDomain, myCoordProvider, myTheme.axisX())
-            yAxisLayout = PlotAxisLayout.left(yScaleProto, xDomain, yDomain, myCoordProvider, myTheme.axisY())
-        } else {
-            xAxisLayout = EmptyAxisLayout.bottom(xDomain, yDomain)
-            yAxisLayout = EmptyAxisLayout.left(xDomain, yDomain)
-        }
-
+        val fOrProvider = SquareFrameOfReferenceProvider(
+            scaleByAes[Aes.X],
+            scaleByAes[Aes.Y],
+            xAesRange,
+            yAesRange,
+            myCoordProvider,
+            myTheme,
+            FLIP_AXIS
+        )
         val plotLayout = PlotAssemblerUtil.createPlotLayout(
-            XYPlotTileLayout(xAxisLayout, yAxisLayout),
+            fOrProvider.createTileLayout(),
             facets
         )
+
+
         if (!myAxisEnabled) {
+            // ToDo: we never arrive here
             plotLayout.setPadding(0.0, 0.0, 0.0, 0.0)
         }
 
-        return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos)
+        return createPlot(fOrProvider, plotLayout, legendsBoxInfos)
     }
 
-
-    private fun createXYPlot(
-        xScaleProto: Scale<Double>,
-        yScaleProto: Scale<Double>,
+    private fun createPlot(
+        fOrProvider: TileFrameOfReferenceProvider,
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>,
         hasLiveMap: Boolean = false
@@ -126,11 +109,8 @@ class PlotAssembler private constructor(
 
         val plotBuilder = PlotBuilder(myTheme)
         plotBuilder.setTitle(myTitle)
-        plotBuilder.scaleXProto(xScaleProto)
-        plotBuilder.scaleYProto(yScaleProto)
-        plotBuilder.setAxisTitleBottom(xScaleProto.name)
-        plotBuilder.setAxisTitleLeft(yScaleProto.name)
-        plotBuilder.setCoordProvider(myCoordProvider)
+        plotBuilder.tileFrameOfReferenceProvider(fOrProvider)
+
         for (legendBoxInfo in legendBoxInfos) {
             plotBuilder.addLegendBoxInfo(legendBoxInfo)
         }
@@ -138,7 +118,7 @@ class PlotAssembler private constructor(
             plotBuilder.addTileLayers(panelLayers)
         }
 
-        plotBuilder.setPlotLayout(plotLayout)
+        plotBuilder.plotLayout(plotLayout)
         plotBuilder.axisEnabled(myAxisEnabled)
         plotBuilder.interactionsEnabled(myInteractionsEnabled)
         plotBuilder.setLiveMap(hasLiveMap)
@@ -147,10 +127,6 @@ class PlotAssembler private constructor(
 
     fun setGuideOptionsMap(guideOptionsMap: Map<Aes<*>, GuideOptions>) {
         myGuideOptionsMap = guideOptionsMap
-    }
-
-    fun disableAxis() {
-        myAxisEnabled = false
     }
 
     fun disableLegends() {
@@ -184,7 +160,19 @@ class PlotAssembler private constructor(
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
-            return PlotAssembler(scaleByAes, layersByTile, coordProvider, theme)
+            @Suppress("NAME_SHADOWING")
+            val theme = if (layersByTile.size > 1) {
+                theme.multiTile()
+            } else {
+                theme
+            }
+
+            return PlotAssembler(
+                scaleByAes,
+                layersByTile,
+                coordProvider,
+                theme
+            )
         }
     }
 }

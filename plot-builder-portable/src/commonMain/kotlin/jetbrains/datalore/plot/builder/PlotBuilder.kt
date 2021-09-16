@@ -5,22 +5,20 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.theme.Theme
 
-class PlotBuilder(private val myTheme: Theme) {
+class PlotBuilder(
+    private val myTheme: Theme
+) {
     private val myLayersByTile = ArrayList<List<GeomLayer>>()
     private var myTitle: String? = null
-    private lateinit var myCoordProvider: CoordProvider
-    private var myLayout: PlotLayout? = null
-    private var myAxisTitleLeft: String? = null
-    private var myAxisTitleBottom: String? = null
+    private lateinit var frameOfReferenceProvider: TileFrameOfReferenceProvider
+    private lateinit var plotLayout: PlotLayout
+
     private val myLegendBoxInfos = ArrayList<LegendBoxInfo>()
-    private lateinit var myScaleXProto: Scale<Double>
-    private lateinit var myScaleYProto: Scale<Double>
+
     private var myAxisEnabled = true
     private var myInteractionsEnabled = true
     private var hasLiveMap = false
@@ -29,16 +27,8 @@ class PlotBuilder(private val myTheme: Theme) {
         myTitle = title
     }
 
-    fun setAxisTitleLeft(v: String) {
-        myAxisTitleLeft = v
-    }
-
-    fun setAxisTitleBottom(v: String) {
-        myAxisTitleBottom = v
-    }
-
-    fun setCoordProvider(coordProvider: CoordProvider): PlotBuilder {
-        myCoordProvider = coordProvider
+    fun tileFrameOfReferenceProvider(v: TileFrameOfReferenceProvider): PlotBuilder {
+        frameOfReferenceProvider = v
         return this
     }
 
@@ -47,23 +37,13 @@ class PlotBuilder(private val myTheme: Theme) {
         return this
     }
 
-    fun setPlotLayout(layout: PlotLayout): PlotBuilder {
-        myLayout = layout
+    fun plotLayout(v: PlotLayout): PlotBuilder {
+        plotLayout = v
         return this
     }
 
     fun addLegendBoxInfo(v: LegendBoxInfo): PlotBuilder {
         myLegendBoxInfos.add(v)
-        return this
-    }
-
-    fun scaleXProto(scaleXProto: Scale<Double>): PlotBuilder {
-        myScaleXProto = scaleXProto
-        return this
-    }
-
-    fun scaleYProto(scaleYProto: Scale<Double>): PlotBuilder {
-        myScaleYProto = scaleYProto
         return this
     }
 
@@ -87,16 +67,13 @@ class PlotBuilder(private val myTheme: Theme) {
     }
 
     private class MyPlot(b: PlotBuilder) : Plot(b.myTheme) {
-        override val scaleXProto: Scale<Double> = b.myScaleXProto
-        override val scaleYProto: Scale<Double> = b.myScaleYProto
 
         private val myTitle: String? = b.myTitle
-        private val myAxisTitleLeft: String? = b.myAxisTitleLeft
-        private val myAxisTitleBottom: String? = b.myAxisTitleBottom
+
         private val myAxisXTitleEnabled: Boolean = b.myTheme.axisX().showTitle()
         private val myAxisYTitleEnabled: Boolean = b.myTheme.axisY().showTitle()
 
-        override val coordProvider: CoordProvider = b.myCoordProvider
+        override val frameOfReferenceProvider: TileFrameOfReferenceProvider = b.frameOfReferenceProvider
 
         private val myLayersByTile: List<List<GeomLayer>>
         private val myLayout: PlotLayout?
@@ -115,13 +92,13 @@ class PlotBuilder(private val myTheme: Theme) {
         override val axisTitleLeft: String
             get() {
                 require(hasAxisTitleLeft()) { "No left axis title" }
-                return myAxisTitleLeft!!
+                return frameOfReferenceProvider.vAxisLabel!!
             }
 
         override val axisTitleBottom: String
             get() {
                 require(hasAxisTitleBottom()) { "No bottom axis title" }
-                return myAxisTitleBottom!!
+                return frameOfReferenceProvider.hAxisLabel!!
             }
 
         override val legendBoxInfos: List<LegendBoxInfo>
@@ -129,7 +106,7 @@ class PlotBuilder(private val myTheme: Theme) {
 
         init {
             myLayersByTile = ArrayList(b.myLayersByTile)
-            myLayout = b.myLayout
+            myLayout = b.plotLayout
             myLegendBoxInfos = ArrayList(b.myLegendBoxInfos)
 
             hasLiveMap = b.hasLiveMap
@@ -143,11 +120,11 @@ class PlotBuilder(private val myTheme: Theme) {
         }
 
         override fun hasAxisTitleLeft(): Boolean {
-            return myAxisYTitleEnabled && !myAxisTitleLeft.isNullOrEmpty()
+            return !frameOfReferenceProvider.vAxisLabel.isNullOrEmpty()
         }
 
         override fun hasAxisTitleBottom(): Boolean {
-            return myAxisXTitleEnabled && !myAxisTitleBottom.isNullOrEmpty()
+            return !frameOfReferenceProvider.hAxisLabel.isNullOrEmpty()
         }
 
         override fun hasLiveMap(): Boolean {

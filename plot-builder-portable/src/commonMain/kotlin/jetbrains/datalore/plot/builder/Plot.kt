@@ -13,14 +13,11 @@ import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
-import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -42,17 +39,13 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     val mouseEventPeer = MouseEventPeer()
 
-    protected abstract val scaleXProto: Scale<Double>
-
-    protected abstract val scaleYProto: Scale<Double>
-
     protected abstract val title: String
 
     protected abstract val axisTitleLeft: String
 
     protected abstract val axisTitleBottom: String
 
-    protected abstract val coordProvider: CoordProvider
+    protected abstract val frameOfReferenceProvider: TileFrameOfReferenceProvider
 
     protected abstract val legendBoxInfos: List<LegendBoxInfo>
 
@@ -139,36 +132,16 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         theme: Theme,
     ): PlotTile {
 
-        val frameOfReference: TileFrameOfReference
-        if (hasLiveMap()) {
-            // Livemap usues its own.
-            frameOfReference = BogusFrameOfReference()
-        } else {
-
-            val xDomain = tileInfo.xAxisInfo!!.axisDomain!!
-            val xAxisLength = tileInfo.xAxisInfo.axisLength
-
-            val yDomain = tileInfo.yAxisInfo!!.axisDomain!!
-            val yAxisLength = tileInfo.yAxisInfo.axisLength
-
-            // set-up scales and coordinate system
-            val xScale =
-                coordProvider.buildAxisScaleX(scaleXProto, xDomain, xAxisLength, tileInfo.xAxisInfo.axisBreaks!!)
-            val yScale =
-                coordProvider.buildAxisScaleY(scaleYProto, yDomain, yAxisLength, tileInfo.yAxisInfo.axisBreaks!!)
-            val coord = coordProvider.createCoordinateSystem(xDomain, xAxisLength, yDomain, yAxisLength)
-
-            frameOfReference = SquareFrameOfReference(
-                xScale, yScale,
-                coord,
-                tileInfo,
-                theme,
-                isAxisEnabled,
-                FLIP_AXIS,
-            )
-            frameOfReference.isDebugDrawing = DEBUG_DRAWING
-        }
-
+//        val frameOfReference: TileFrameOfReference = if (hasLiveMap()) {
+//            // Livemap usues its own.
+//            BogusFrameOfReference()
+//        } else {
+//            frameOfReferenceProvider.createFrameOfReference(tileInfo, DEBUG_DRAWING)
+//        }
+        val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
+            tileInfo,
+            DEBUG_DRAWING
+        )
         val tile = PlotTile(tileLayers, tilesOrigin, tileInfo, theme, frameOfReference)
         tile.isDebugDrawing = DEBUG_DRAWING
         return tile
@@ -326,12 +299,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // build tiles
-        val tileTheme = if (plotInfo.tiles.size > 1) {
-            theme.multiTile()
-        } else {
-            theme
-        }
-
         val tilesOrigin = geomAndAxis.origin
         for (tileLayoutInfo in plotInfo.tiles) {
             val tileLayersIndex = tileLayoutInfo.trueIndex
@@ -340,7 +307,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 //            println("     bounds: " + tileInfo.bounds)
 //            println("geom bounds: " + tileInfo.geomBounds)
 //            println("clip bounds: " + tileInfo.clipBounds)
-            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), tileTheme)
+            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), theme)
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
             tile.moveTo(plotOriginAbsolute)

@@ -22,8 +22,8 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class SquareFrameOfReference(
-    private val xScale: Scale<Double>,
-    private val yScale: Scale<Double>,
+    private val hScale: Scale<Double>,
+    private val vScale: Scale<Double>,
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val theme: Theme,
@@ -33,20 +33,18 @@ internal class SquareFrameOfReference(
 
     var isDebugDrawing: Boolean = false
 
-    private val geomXAesMapper: (Double?) -> Double?
-    private val geomYAesMapper: (Double?) -> Double?
+    private val geomMapperX: (Double?) -> Double?
+    private val geomMapperY: (Double?) -> Double?
     private val geomCoord: CoordinateSystem
 
     init {
-        val mapperX = xScale.mapper
-        val mapperY = yScale.mapper
-        // flipping axis
         if (flipAxis) {
-            geomXAesMapper = mapperY
-            geomYAesMapper = mapperX
+            // flip mappers to 'fool' geom.
+            geomMapperX = vScale.mapper
+            geomMapperY = hScale.mapper
         } else {
-            geomXAesMapper = mapperX
-            geomYAesMapper = mapperY
+            geomMapperX = hScale.mapper
+            geomMapperY = vScale.mapper
         }
         geomCoord = if (flipAxis) {
             coord.flip()
@@ -70,13 +68,13 @@ internal class SquareFrameOfReference(
 
             // X-axis (below geom area)
             if (layoutInfo.xAxisShown) {
-                val axis = buildAxis(xScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
+                val axis = buildAxis(hScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
                 axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
                 parent.add(axis)
             }
             // Y-axis (to the left from geom area, axis elements have negative x-positions)
             if (layoutInfo.yAxisShown) {
-                val axis = buildAxis(yScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
+                val axis = buildAxis(vScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
                 axis.moveTo(geomBounds.origin)
                 parent.add(axis)
             }
@@ -116,27 +114,25 @@ internal class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val mapperX = xScale.mapper
-        val mapperY = yScale.mapper
+        val hAxisMapper = hScale.mapper
+        val vAxisMapper = vScale.mapper
 
-        val xAxisInfo = layoutInfo.xAxisInfo!!
-        val yAxisInfo = layoutInfo.yAxisInfo!!
-        val xAxisDomain = xAxisInfo.axisDomain!!
-        val yAxisDomain = yAxisInfo.axisDomain!!
+        val hAxisDomain = layoutInfo.xAxisInfo!!.axisDomain!!
+        val vAxisDomain = layoutInfo.yAxisInfo!!.axisDomain!!
         val aesBounds = DoubleRectangle(
             xRange = ClosedRange(
-                mapperX(xAxisDomain.lowerEnd) as Double,
-                mapperX(xAxisDomain.upperEnd) as Double
+                hAxisMapper(hAxisDomain.lowerEnd) as Double,
+                hAxisMapper(hAxisDomain.upperEnd) as Double
             ),
             yRange = ClosedRange(
-                mapperY(yAxisDomain.lowerEnd) as Double,
-                mapperY(yAxisDomain.upperEnd) as Double
+                vAxisMapper(vAxisDomain.lowerEnd) as Double,
+                vAxisMapper(vAxisDomain.upperEnd) as Double
             )
         )
 
         return buildGeom(
             layer,
-            geomXAesMapper, geomYAesMapper,
+            geomMapperX, geomMapperY,
             xyAesBounds = aesBounds,
             geomCoord,
             flipAxis,
