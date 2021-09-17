@@ -41,8 +41,6 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
     }
 
     private fun createPlot(): Plot {
-        // Plot
-
         val (scaleByAes, layers) = getLayersMpg()
 
         val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), DefaultTheme())

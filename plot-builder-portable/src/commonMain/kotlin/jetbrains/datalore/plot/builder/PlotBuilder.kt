@@ -18,10 +18,7 @@ class PlotBuilder(
     private lateinit var plotLayout: PlotLayout
 
     private val legendBoxInfos = ArrayList<LegendBoxInfo>()
-
-    private var axisEnabled = true
     private var interactionsEnabled = true
-    private var hasLiveMap = false
 
     fun title(v: String?): PlotBuilder {
         title = v
@@ -48,20 +45,11 @@ class PlotBuilder(
         return this
     }
 
-    fun axisEnabled(b: Boolean): PlotBuilder {
-        axisEnabled = b
-        return this
-    }
-
     fun interactionsEnabled(b: Boolean): PlotBuilder {
         interactionsEnabled = b
         return this
     }
 
-    fun setLiveMap(b: Boolean): PlotBuilder {
-        hasLiveMap = b
-        return this
-    }
 
     fun build(): Plot {
         return PlotImpl(this)
@@ -71,14 +59,15 @@ class PlotBuilder(
 
         private val myTitle: String? = b.title
         private val myLayersByTile: List<List<GeomLayer>> = ArrayList(b.layersByTile)
-
         private val plotLayout: PlotLayout = b.plotLayout
-        private val hasLiveMap: Boolean = b.hasLiveMap
 
         override val frameOfReferenceProvider: TileFrameOfReferenceProvider = b.frameOfReferenceProvider
 
-        override val axisEnabled: Boolean = b.axisEnabled
         override val interactionsEnabled: Boolean = b.interactionsEnabled
+
+        override val legendBoxInfos: List<LegendBoxInfo> = ArrayList(b.legendBoxInfos)
+
+        override val containsLiveMap: Boolean = myLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
         override val title: String
             get() {
@@ -98,8 +87,6 @@ class PlotBuilder(
                 return frameOfReferenceProvider.hAxisLabel!!
             }
 
-        override val legendBoxInfos: List<LegendBoxInfo> = ArrayList(b.legendBoxInfos)
-
         override fun hasTitle(): Boolean {
             return !myTitle.isNullOrEmpty()
         }
@@ -110,10 +97,6 @@ class PlotBuilder(
 
         override fun hasAxisTitleBottom(): Boolean {
             return !frameOfReferenceProvider.hAxisLabel.isNullOrEmpty()
-        }
-
-        override fun hasLiveMap(): Boolean {
-            return hasLiveMap
         }
 
         override fun tileLayers(tileIndex: Int): List<GeomLayer> {

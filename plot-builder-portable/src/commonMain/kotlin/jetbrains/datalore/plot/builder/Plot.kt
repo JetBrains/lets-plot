@@ -48,7 +48,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     protected abstract val legendBoxInfos: List<LegendBoxInfo>
 
-    protected abstract val axisEnabled: Boolean
+    protected abstract val containsLiveMap: Boolean
 
     abstract val interactionsEnabled: Boolean
 
@@ -63,8 +63,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     protected abstract fun hasAxisTitleLeft(): Boolean
 
     protected abstract fun hasAxisTitleBottom(): Boolean
-
-    protected abstract fun hasLiveMap(): Boolean
 
     protected abstract fun tileLayers(tileIndex: Int): List<GeomLayer>
 
@@ -212,7 +210,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // compute geom bounds
-        val entirePlot = if (hasLiveMap()) {
+        val entirePlot = if (containsLiveMap) {
             liveMapBounds(overallRect)
         } else {
             overallRect
@@ -253,6 +251,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         // subtract left axis title width
         var geomAndAxis = withoutTitleAndLegends
+        val axisEnabled = !containsLiveMap
         if (axisEnabled) {
             if (hasAxisTitleLeft()) {
                 val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleLeft)

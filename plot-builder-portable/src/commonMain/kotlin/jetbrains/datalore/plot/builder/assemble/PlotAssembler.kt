@@ -21,20 +21,15 @@ class PlotAssembler private constructor(
     private val theme: Theme
 ) {
 
-    val containsLiveMap: Boolean
+    val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
     var facets: PlotFacets = PlotFacets.undefined()
     var title: String? = null
     var guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
 
-    private var myAxisEnabled: Boolean
     private var legendsEnabled = true
     private var interactionsEnabled = true
 
-    init {
-        containsLiveMap = layersByTile.flatten().any(GeomLayer::isLiveMap)
-        myAxisEnabled = !containsLiveMap  // no axis on livemap
-    }
 
     private fun hasLayers(): Boolean {
         for (tileLayers in layersByTile) {
@@ -57,56 +52,39 @@ class PlotAssembler private constructor(
             else -> emptyList()
         }
 
-        if (containsLiveMap) {
+        return if (containsLiveMap) {
             // build 'live map' plot:
             //  - skip X/Y scale training
             //  - ignore coord provider
             //  - plot layout without axes
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(
-                LiveMapTileLayout(),
-                facets
-            )
-
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(LiveMapTileLayout(), facets)
             val fOrProvider = BogusFrameOfReferenceProvider()
-            return createPlot(fOrProvider, plotLayout, legendsBoxInfos, hasLiveMap = true)
+            createPlot(fOrProvider, plotLayout, legendsBoxInfos)
+        } else {
+            val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+            val fOrProvider = SquareFrameOfReferenceProvider(
+                scaleByAes[Aes.X],
+                scaleByAes[Aes.Y],
+                xAesRange,
+                yAesRange,
+                coordProvider,
+                theme,
+                FLIP_AXIS
+            )
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets)
+            createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         }
-
-        // train X/Y scales
-        val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
-
-        val fOrProvider = SquareFrameOfReferenceProvider(
-            scaleByAes[Aes.X],
-            scaleByAes[Aes.Y],
-            xAesRange,
-            yAesRange,
-            coordProvider,
-            theme,
-            FLIP_AXIS
-        )
-        val plotLayout = PlotAssemblerUtil.createPlotLayout(
-            fOrProvider.createTileLayout(),
-            facets
-        )
-
-
-        if (!myAxisEnabled) {
-            // ToDo: we never arrive here
-            plotLayout.setPadding(0.0, 0.0, 0.0, 0.0)
-        }
-
-        return createPlot(fOrProvider, plotLayout, legendsBoxInfos)
     }
 
     private fun createPlot(
         fOrProvider: TileFrameOfReferenceProvider,
         plotLayout: PlotLayout,
-        legendBoxInfos: List<LegendBoxInfo>,
-        hasLiveMap: Boolean = false
+        legendBoxInfos: List<LegendBoxInfo>
     ): Plot {
 
         val plotBuilder = PlotBuilder(theme)
-        plotBuilder.title(title)
-        plotBuilder.tileFrameOfReferenceProvider(fOrProvider)
+            .title(title)
+            .tileFrameOfReferenceProvider(fOrProvider)
 
         for (legendBoxInfo in legendBoxInfos) {
             plotBuilder.addLegendBoxInfo(legendBoxInfo)
@@ -115,11 +93,9 @@ class PlotAssembler private constructor(
             plotBuilder.addTileLayers(panelLayers)
         }
 
-        plotBuilder.plotLayout(plotLayout)
-        plotBuilder.axisEnabled(myAxisEnabled)
-        plotBuilder.interactionsEnabled(interactionsEnabled)
-        plotBuilder.setLiveMap(hasLiveMap)
-        return plotBuilder.build()
+        return plotBuilder.plotLayout(plotLayout)
+            .interactionsEnabled(interactionsEnabled)
+            .build()
     }
 
     fun disableLegends() {
