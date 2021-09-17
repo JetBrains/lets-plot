@@ -10,21 +10,22 @@ import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class PlotBuilder(
-    private val myTheme: Theme
+    private val theme: Theme
 ) {
-    private val myLayersByTile = ArrayList<List<GeomLayer>>()
-    private var myTitle: String? = null
+    private var title: String? = null
+    private val layersByTile = ArrayList<List<GeomLayer>>()
     private lateinit var frameOfReferenceProvider: TileFrameOfReferenceProvider
     private lateinit var plotLayout: PlotLayout
 
-    private val myLegendBoxInfos = ArrayList<LegendBoxInfo>()
+    private val legendBoxInfos = ArrayList<LegendBoxInfo>()
 
-    private var myAxisEnabled = true
-    private var myInteractionsEnabled = true
+    private var axisEnabled = true
+    private var interactionsEnabled = true
     private var hasLiveMap = false
 
-    fun setTitle(title: String?) {
-        myTitle = title
+    fun title(v: String?): PlotBuilder {
+        title = v
+        return this
     }
 
     fun tileFrameOfReferenceProvider(v: TileFrameOfReferenceProvider): PlotBuilder {
@@ -33,7 +34,7 @@ class PlotBuilder(
     }
 
     fun addTileLayers(tileLayers: List<GeomLayer>): PlotBuilder {
-        myLayersByTile.add(ArrayList(tileLayers))
+        layersByTile.add(ArrayList(tileLayers))
         return this
     }
 
@@ -43,17 +44,17 @@ class PlotBuilder(
     }
 
     fun addLegendBoxInfo(v: LegendBoxInfo): PlotBuilder {
-        myLegendBoxInfos.add(v)
+        legendBoxInfos.add(v)
         return this
     }
 
     fun axisEnabled(b: Boolean): PlotBuilder {
-        myAxisEnabled = b
+        axisEnabled = b
         return this
     }
 
     fun interactionsEnabled(b: Boolean): PlotBuilder {
-        myInteractionsEnabled = b
+        interactionsEnabled = b
         return this
     }
 
@@ -63,25 +64,21 @@ class PlotBuilder(
     }
 
     fun build(): Plot {
-        return MyPlot(this)
+        return PlotImpl(this)
     }
 
-    private class MyPlot(b: PlotBuilder) : Plot(b.myTheme) {
+    private class PlotImpl(b: PlotBuilder) : Plot(b.theme) {
 
-        private val myTitle: String? = b.myTitle
+        private val myTitle: String? = b.title
+        private val myLayersByTile: List<List<GeomLayer>> = ArrayList(b.layersByTile)
 
-        private val myAxisXTitleEnabled: Boolean = b.myTheme.axisX().showTitle()
-        private val myAxisYTitleEnabled: Boolean = b.myTheme.axisY().showTitle()
+        private val plotLayout: PlotLayout = b.plotLayout
+        private val hasLiveMap: Boolean = b.hasLiveMap
 
         override val frameOfReferenceProvider: TileFrameOfReferenceProvider = b.frameOfReferenceProvider
 
-        private val myLayersByTile: List<List<GeomLayer>>
-        private val myLayout: PlotLayout?
-        private val myLegendBoxInfos: List<LegendBoxInfo>
-        private val hasLiveMap: Boolean
-
-        override val isAxisEnabled: Boolean
-        override val isInteractionsEnabled: Boolean
+        override val axisEnabled: Boolean = b.axisEnabled
+        override val interactionsEnabled: Boolean = b.interactionsEnabled
 
         override val title: String
             get() {
@@ -101,19 +98,7 @@ class PlotBuilder(
                 return frameOfReferenceProvider.hAxisLabel!!
             }
 
-        override val legendBoxInfos: List<LegendBoxInfo>
-            get() = myLegendBoxInfos
-
-        init {
-            myLayersByTile = ArrayList(b.myLayersByTile)
-            myLayout = b.plotLayout
-            myLegendBoxInfos = ArrayList(b.myLegendBoxInfos)
-
-            hasLiveMap = b.hasLiveMap
-
-            isAxisEnabled = b.myAxisEnabled
-            isInteractionsEnabled = b.myInteractionsEnabled
-        }
+        override val legendBoxInfos: List<LegendBoxInfo> = ArrayList(b.legendBoxInfos)
 
         override fun hasTitle(): Boolean {
             return !myTitle.isNullOrEmpty()
@@ -136,7 +121,7 @@ class PlotBuilder(
         }
 
         override fun plotLayout(): PlotLayout {
-            return myLayout!!
+            return plotLayout
         }
     }
 }

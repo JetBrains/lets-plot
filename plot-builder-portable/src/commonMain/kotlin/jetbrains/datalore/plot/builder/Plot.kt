@@ -35,7 +35,6 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     private val myTooltipHelper = PlotTooltipHelper()
-    private val myLiveMapFigures = ArrayList<SomeFig>()
 
     val mouseEventPeer = MouseEventPeer()
 
@@ -49,12 +48,12 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     protected abstract val legendBoxInfos: List<LegendBoxInfo>
 
-    protected abstract val isAxisEnabled: Boolean
+    protected abstract val axisEnabled: Boolean
 
-    abstract val isInteractionsEnabled: Boolean
+    abstract val interactionsEnabled: Boolean
 
-    internal val liveMapFigures: List<SomeFig>
-        get() = myLiveMapFigures
+    internal var liveMapFigures: List<SomeFig> = emptyList()
+        private set
 
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
@@ -103,7 +102,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         reg(object : Registration() {
             override fun doRemove() {
                 myTooltipHelper.removeAllTileInfos()
-                myLiveMapFigures.clear()
+                liveMapFigures = emptyList()
             }
         })
     }
@@ -132,12 +131,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         theme: Theme,
     ): PlotTile {
 
-//        val frameOfReference: TileFrameOfReference = if (hasLiveMap()) {
-//            // Livemap usues its own.
-//            BogusFrameOfReference()
-//        } else {
-//            frameOfReferenceProvider.createFrameOfReference(tileInfo, DEBUG_DRAWING)
-//        }
         val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
             tileInfo,
             DEBUG_DRAWING
@@ -260,7 +253,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         // subtract left axis title width
         var geomAndAxis = withoutTitleAndLegends
-        if (isAxisEnabled) {
+        if (axisEnabled) {
             if (hasAxisTitleLeft()) {
                 val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleLeft)
                 val thickness =
@@ -314,7 +307,9 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
             add(tile)
 
-            tile.liveMapFigure?.let(myLiveMapFigures::add)
+            tile.liveMapFigure?.run {
+                liveMapFigures = liveMapFigures + listOf(this)
+            }
 
             val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
@@ -365,7 +360,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // add axis titles
-        if (isAxisEnabled) {
+        if (axisEnabled) {
             if (hasAxisTitleLeft()) {
                 createAxisTitle(
                     axisTitleLeft,

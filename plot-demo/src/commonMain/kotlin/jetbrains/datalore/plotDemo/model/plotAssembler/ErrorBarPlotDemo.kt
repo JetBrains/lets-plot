@@ -206,7 +206,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                     pointsLayer
                 ), CoordProviders.cartesian(), DefaultTheme()
             )
-            assembler.setTitle("Error Bars")
+            assembler.title = "Error Bars"
             assembler.disableInteractions()
             return assembler.createPlot()
         }

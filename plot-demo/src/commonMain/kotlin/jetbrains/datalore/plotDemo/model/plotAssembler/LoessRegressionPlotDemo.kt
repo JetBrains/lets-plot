@@ -46,7 +46,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         val (scaleByAes, layers) = getLayersMpg()
 
         val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), DefaultTheme())
-        assembler.setTitle("Loess Regression")
+        assembler.title = "Loess Regression"
         assembler.disableInteractions()
         return assembler.createPlot()
     }
@@ -347,7 +347,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val layers = listOf(scatterLayer, defaultLoessLayer, accurateLoessLayer)
         val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), DefaultTheme())
-        assembler.setTitle("loess span=0.5(blue) and span=0.3(green)")
+        assembler.title = "loess span=0.5(blue) and span=0.3(green)"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

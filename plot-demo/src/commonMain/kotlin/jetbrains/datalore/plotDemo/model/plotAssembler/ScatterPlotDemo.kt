@@ -74,7 +74,7 @@ open class ScatterPlotDemo : SimpleDemoBase() {
             listOf(layer),
             CoordProviders.cartesian(), DefaultTheme()
         )
-        assembler.setTitle("Scatter plot")
+        assembler.title = "Scatter plot"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

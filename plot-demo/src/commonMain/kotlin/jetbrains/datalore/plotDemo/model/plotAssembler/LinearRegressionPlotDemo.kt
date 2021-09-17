@@ -167,7 +167,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                 seLineLayer
             ), CoordProviders.cartesian(), DefaultTheme()
         )
-        assembler.setTitle("Linear Regression")
+        assembler.title = "Linear Regression"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

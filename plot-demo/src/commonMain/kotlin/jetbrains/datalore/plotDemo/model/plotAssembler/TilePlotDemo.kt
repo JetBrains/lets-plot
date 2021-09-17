@@ -85,7 +85,7 @@ open class TilePlotDemo : SimpleDemoBase() {
             listOf(tilesLayer),
             CoordProviders.cartesian(), DefaultTheme()
         )
-        assembler.setTitle("Tile geometry")
+        assembler.title = "Tile geometry"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

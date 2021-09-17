@@ -76,7 +76,7 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             DefaultTheme()
         )
         assembler.disableInteractions()
-        assembler.setTitle("Raster image geometry")
+        assembler.title = "Raster image geometry"
         return assembler.createPlot()
     }
 }

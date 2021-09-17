@@ -25,7 +25,7 @@ class PlotContainer(
 
     override fun buildContent() {
         super.buildContent()
-        if (plot.isInteractionsEnabled) {
+        if (plot.interactionsEnabled) {
             svg.children().add(myDecorationLayer)
             hookupInteractions()
         }
@@ -37,7 +37,7 @@ class PlotContainer(
     }
 
     private fun hookupInteractions() {
-        check(plot.isInteractionsEnabled)
+        check(plot.interactionsEnabled)
 
         val viewport = DoubleRectangle(DoubleVector.ZERO, plot.plotSize)
         val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)

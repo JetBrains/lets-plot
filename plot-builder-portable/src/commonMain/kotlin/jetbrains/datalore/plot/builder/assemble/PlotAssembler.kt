@@ -17,26 +17,23 @@ import jetbrains.datalore.plot.builder.theme.Theme
 class PlotAssembler private constructor(
     private val scaleByAes: TypedScaleMap,
     val layersByTile: List<List<GeomLayer>>,
-    private val myCoordProvider: CoordProvider,
-    private val myTheme: Theme
+    private val coordProvider: CoordProvider,
+    private val theme: Theme
 ) {
 
     val containsLiveMap: Boolean
 
     var facets: PlotFacets = PlotFacets.undefined()
-    private var myTitle: String? = null
-    private var myGuideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
+    var title: String? = null
+    var guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
+
     private var myAxisEnabled: Boolean
-    private var myLegendsEnabled = true
-    private var myInteractionsEnabled = true
+    private var legendsEnabled = true
+    private var interactionsEnabled = true
 
     init {
         containsLiveMap = layersByTile.flatten().any(GeomLayer::isLiveMap)
         myAxisEnabled = !containsLiveMap  // no axis on livemap
-    }
-
-    fun setTitle(title: String?) {
-        myTitle = title
     }
 
     private fun hasLayers(): Boolean {
@@ -52,10 +49,10 @@ class PlotAssembler private constructor(
         require(hasLayers()) { "No layers in plot" }
 
         val legendsBoxInfos = when {
-            myLegendsEnabled -> PlotAssemblerUtil.createLegends(
+            legendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
-                myGuideOptionsMap,
-                myTheme.legend()
+                guideOptionsMap,
+                theme.legend()
             )
             else -> emptyList()
         }
@@ -82,8 +79,8 @@ class PlotAssembler private constructor(
             scaleByAes[Aes.Y],
             xAesRange,
             yAesRange,
-            myCoordProvider,
-            myTheme,
+            coordProvider,
+            theme,
             FLIP_AXIS
         )
         val plotLayout = PlotAssemblerUtil.createPlotLayout(
@@ -107,8 +104,8 @@ class PlotAssembler private constructor(
         hasLiveMap: Boolean = false
     ): Plot {
 
-        val plotBuilder = PlotBuilder(myTheme)
-        plotBuilder.setTitle(myTitle)
+        val plotBuilder = PlotBuilder(theme)
+        plotBuilder.title(title)
         plotBuilder.tileFrameOfReferenceProvider(fOrProvider)
 
         for (legendBoxInfo in legendBoxInfos) {
@@ -120,21 +117,17 @@ class PlotAssembler private constructor(
 
         plotBuilder.plotLayout(plotLayout)
         plotBuilder.axisEnabled(myAxisEnabled)
-        plotBuilder.interactionsEnabled(myInteractionsEnabled)
+        plotBuilder.interactionsEnabled(interactionsEnabled)
         plotBuilder.setLiveMap(hasLiveMap)
         return plotBuilder.build()
     }
 
-    fun setGuideOptionsMap(guideOptionsMap: Map<Aes<*>, GuideOptions>) {
-        myGuideOptionsMap = guideOptionsMap
-    }
-
     fun disableLegends() {
-        myLegendsEnabled = false
+        legendsEnabled = false
     }
 
     fun disableInteractions() {
-        myInteractionsEnabled = false
+        interactionsEnabled = false
     }
 
     companion object {
