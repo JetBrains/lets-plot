@@ -27,7 +27,6 @@ internal class SquareFrameOfReference(
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val theme: Theme,
-    private val axisEnabled: Boolean,
     private val flipAxis: Boolean,
 ) : TileFrameOfReference {
 
@@ -42,14 +41,11 @@ internal class SquareFrameOfReference(
             // flip mappers to 'fool' geom.
             geomMapperX = vScale.mapper
             geomMapperY = hScale.mapper
+            geomCoord = coord.flip()
         } else {
             geomMapperX = hScale.mapper
             geomMapperY = vScale.mapper
-        }
-        geomCoord = if (flipAxis) {
-            coord.flip()
-        } else {
-            coord
+            geomCoord = coord
         }
     }
 
@@ -58,26 +54,23 @@ internal class SquareFrameOfReference(
     override fun drawAxis(parent: SvgComponent) {
         val geomBounds: DoubleRectangle = layoutInfo.geomBounds
 
-        if (axisEnabled) {
-            // Flip theme
-//            val (xAxisTheme, yAxisTheme) = when {
-//                flipAxis -> Pair(theme.axisY(), theme.axisX())
-//                else -> Pair(theme.axisX(), theme.axisY())
-//            }
-            val (xAxisTheme, yAxisTheme) = Pair(theme.axisX(), theme.axisY())
+        // Flip theme
+        val (xAxisTheme, yAxisTheme) = when {
+            flipAxis -> Pair(theme.axisY(), theme.axisX())
+            else -> Pair(theme.axisX(), theme.axisY())
+        }
 
-            // X-axis (below geom area)
-            if (layoutInfo.xAxisShown) {
-                val axis = buildAxis(hScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
-                axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
-                parent.add(axis)
-            }
-            // Y-axis (to the left from geom area, axis elements have negative x-positions)
-            if (layoutInfo.yAxisShown) {
-                val axis = buildAxis(vScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
-                axis.moveTo(geomBounds.origin)
-                parent.add(axis)
-            }
+        // X-axis (below geom area)
+        if (layoutInfo.xAxisShown) {
+            val axis = buildAxis(hScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
+            axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
+            parent.add(axis)
+        }
+        // Y-axis (to the left from geom area, axis elements have negative x-positions)
+        if (layoutInfo.yAxisShown) {
+            val axis = buildAxis(vScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
+            axis.moveTo(geomBounds.origin)
+            parent.add(axis)
         }
 
         if (isDebugDrawing) {

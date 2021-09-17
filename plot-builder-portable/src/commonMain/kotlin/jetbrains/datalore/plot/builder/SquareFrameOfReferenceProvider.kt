@@ -107,7 +107,6 @@ class SquareFrameOfReferenceProvider(
             coord,
             layoutInfo,
             theme,
-            axisEnabled = true,
             flipAxis,
         )
         tileFrameOfReference.isDebugDrawing = debugDrawing
