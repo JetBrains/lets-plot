@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.vis.svg.SvgGElement
 
 class PlotContainer(
-    plot: Plot,
+    plot: PlotSvgComponent,
     plotSize: DoubleVector
 ) : PlotContainerPortable(plot, plotSize) {
 

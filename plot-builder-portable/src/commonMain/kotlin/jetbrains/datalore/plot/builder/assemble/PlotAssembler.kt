@@ -40,7 +40,7 @@ class PlotAssembler private constructor(
         return false
     }
 
-    fun createPlot(): Plot {
+    fun createPlot(): PlotSvgComponent {
         require(hasLayers()) { "No layers in plot" }
 
         val legendsBoxInfos = when {
@@ -80,22 +80,27 @@ class PlotAssembler private constructor(
         fOrProvider: TileFrameOfReferenceProvider,
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>
-    ): Plot {
+    ): PlotSvgComponent {
 
-        val plotBuilder = PlotBuilder(theme)
-            .title(title)
-            .tileFrameOfReferenceProvider(fOrProvider)
+        val plot = PlotSvgComponent(
+            title = title,
+            layersByTile = layersByTile,
+            plotLayout = plotLayout,
+            frameOfReferenceProvider = fOrProvider,
+            legendBoxInfos = legendBoxInfos,
+            interactionsEnabled = interactionsEnabled,
+            theme = theme
+        )
 
-        for (legendBoxInfo in legendBoxInfos) {
-            plotBuilder.addLegendBoxInfo(legendBoxInfo)
-        }
-        for (panelLayers in layersByTile) {
-            plotBuilder.addTileLayers(panelLayers)
-        }
-
-        return plotBuilder.plotLayout(plotLayout)
-            .interactionsEnabled(interactionsEnabled)
-            .build()
+//        val plotBuilder = PlotBuilder(theme)
+//            .title(title)
+//            .tileFrameOfReferenceProvider(fOrProvider)
+//            .legendBoxInfos(legendBoxInfos)
+//            .tileLayers(layersByTile)
+//            .plotLayout(plotLayout)
+//            .interactionsEnabled(interactionsEnabled)
+//        return plotBuilder.build()
+        return plot
     }
 
     fun disableLegends() {

@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
@@ -33,7 +33,7 @@ class BarPlotResizeDemo private constructor(
         return PlotContainer(createPlot(), plotSize)
     }
 
-    fun createPlot(): Plot {
+    fun createPlot(): PlotSvgComponent {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat

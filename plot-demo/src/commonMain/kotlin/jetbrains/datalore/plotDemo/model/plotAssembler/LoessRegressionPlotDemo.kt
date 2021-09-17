@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.SmoothStat.Method
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -33,14 +33,14 @@ import kotlin.random.Random
 
 open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<PlotSvgComponent> {
         return listOf(
             createPlot(),
             sinPlot()
         )
     }
 
-    private fun createPlot(): Plot {
+    private fun createPlot(): PlotSvgComponent {
         val (scaleByAes, layers) = getLayersMpg()
 
         val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), DefaultTheme())
@@ -272,7 +272,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
 
-    private fun sinPlot(): Plot {
+    private fun sinPlot(): PlotSvgComponent {
         val dx = 0.01
 
         val valuesX = generateSequence(0.0) { it + dx }.takeWhile { it < 3 * PI }.toList()

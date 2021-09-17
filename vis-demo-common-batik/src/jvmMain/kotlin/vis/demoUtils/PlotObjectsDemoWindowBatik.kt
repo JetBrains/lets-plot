@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.demoUtils.swing.PlotObjectsDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
@@ -15,7 +15,7 @@ import javax.swing.JComponent
 
 class PlotObjectsDemoWindowBatik(
     title: String,
-    plotList: List<Plot>,
+    plotList: List<PlotSvgComponent>,
     maxCol: Int = 2,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotObjectsDemoWindowBase(
@@ -25,7 +25,7 @@ class PlotObjectsDemoWindowBatik(
     plotSize = plotSize
 ) {
 
-    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
+    override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
         val plotContainer = PlotContainer(
             plot, DoubleVector(
                 plotSize.getWidth(),

@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
@@ -19,7 +19,7 @@ import javax.swing.JComponent
 
 class PlotResizableDemoWindowJfx(
     title: String,
-    plot: Plot,
+    plot: PlotSvgComponent,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotResizableDemoWindowBase(
     title,
@@ -27,7 +27,7 @@ class PlotResizableDemoWindowJfx(
     plotSize = plotSize
 ) {
 
-    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
+    override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
         @Suppress("NAME_SHADOWING")
         val plotSize = DoubleVector(
             plotSize.getWidth(),

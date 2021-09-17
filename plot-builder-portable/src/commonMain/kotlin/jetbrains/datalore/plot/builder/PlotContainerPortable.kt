@@ -19,7 +19,7 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
  *  This class only handles static SVG. (no interactions)
  */
 open class PlotContainerPortable(
-    protected val plot: Plot,
+    protected val plot: PlotSvgComponent,
     plotSize: DoubleVector
 ) {
 

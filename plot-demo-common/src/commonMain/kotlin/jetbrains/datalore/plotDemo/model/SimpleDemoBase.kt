@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
@@ -32,7 +32,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
         return innerSize.add(padding.mul(2.0))
     }
 
-    protected fun createSvgRootsFromPlots(plots: List<Plot>): List<SvgSvgElement> {
+    protected fun createSvgRootsFromPlots(plots: List<PlotSvgComponent>): List<SvgSvgElement> {
         val plotContainers = plots.map {
             PlotContainer(it, demoInnerSize)
         }

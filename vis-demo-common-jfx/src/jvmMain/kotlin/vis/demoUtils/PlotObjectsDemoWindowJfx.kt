@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.swing.PlotObjectsDemoWindowBase
@@ -16,7 +16,7 @@ import javax.swing.JComponent
 
 class PlotObjectsDemoWindowJfx(
     title: String,
-    plotList: List<Plot>,
+    plotList: List<PlotSvgComponent>,
     private val stylesheets: List<String> = listOf(Style.JFX_PLOT_STYLESHEET),
     maxCol: Int = 2,
     plotSize: Dimension = Dimension(500, 350)
@@ -26,7 +26,7 @@ class PlotObjectsDemoWindowJfx(
     maxCol = maxCol,
     plotSize = plotSize
 ) {
-    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
+    override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
         val plotContainer = PlotContainer(
             plot,
             DoubleVector(plotSize.getWidth(), plotSize.getHeight())

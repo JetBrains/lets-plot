@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
@@ -18,14 +18,14 @@ import javax.swing.JComponent
 
 class PlotResizableDemoWindowBatik(
     title: String,
-    plot: Plot,
+    plot: PlotSvgComponent,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotResizableDemoWindowBase(
     title,
     plot = plot,
     plotSize = plotSize
 ) {
-    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
+    override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
         @Suppress("NAME_SHADOWING")
         val plotSize = DoubleVector(
             plotSize.getWidth(),

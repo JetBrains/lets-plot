@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
 
 abstract class PlotResizableDemoWindowBase(
     title: String,
-    private val plot: Plot,
+    private val plot: PlotSvgComponent,
     private val plotSize: Dimension
 ) : JFrame(title) {
 
@@ -39,5 +39,5 @@ abstract class PlotResizableDemoWindowBase(
         }
     }
 
-    protected abstract fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent
+    protected abstract fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent
 }

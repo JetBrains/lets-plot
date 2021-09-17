@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
@@ -26,13 +26,13 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<PlotSvgComponent> {
         return listOf(
             createPlot(SharedPieces.rasterData_Blue())
         )
     }
 
-    private fun createPlot(data: Map<String, List<*>>): Plot {
+    private fun createPlot(data: Map<String, List<*>>): PlotSvgComponent {
         val varX = DataFrame.Variable("x")
         val varY = DataFrame.Variable("y")
         val varFill = DataFrame.Variable("fill")
