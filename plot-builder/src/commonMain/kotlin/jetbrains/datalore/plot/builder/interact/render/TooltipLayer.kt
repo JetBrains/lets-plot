@@ -63,7 +63,7 @@ internal class TooltipLayer(
     }
 
     private fun newCrosshairComponent(): CrosshairComponent {
-        return CrosshairComponent().apply { myTooltipLayer.children().add(rootGroup) }
+        return CrosshairComponent().apply { myTooltipLayer.children().add(0, rootGroup) }
     }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
