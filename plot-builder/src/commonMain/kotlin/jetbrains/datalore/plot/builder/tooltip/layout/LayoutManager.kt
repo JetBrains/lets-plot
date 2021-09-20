@@ -106,7 +106,7 @@ class LayoutManager(
         return when (tooltip.hintKind) {
             X_AXIS_TOOLTIP -> bounds.xRange().contains(tooltip.stemCoord.x)
             Y_AXIS_TOOLTIP -> bounds.yRange().contains(tooltip.stemCoord.y)
-            VERTICAL_TOOLTIP, HORIZONTAL_TOOLTIP, CURSOR_TOOLTIP -> bounds.contains(tooltip.stemCoord)
+            VERTICAL_TOOLTIP, HORIZONTAL_TOOLTIP, CURSOR_TOOLTIP, ROTATED_TOOLTIP -> bounds.contains(tooltip.stemCoord)
         }
     }
 
@@ -126,6 +126,14 @@ class LayoutManager(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
                         TOP,
+                        false
+                    )
+                )
+
+                ROTATED_TOOLTIP -> placementList.add(
+                    calculateVerticalTooltipPosition(
+                        measuredTooltip,
+                        BOTTOM,
                         false
                     )
                 )
@@ -228,7 +236,7 @@ class LayoutManager(
         // Add corner tooltips
         (tooltips.selectCorner() - horizontalsWithOverlappedCorners).forEach(::fixate)
 
-        (tooltips.select(VERTICAL_TOOLTIP) - tooltips.selectCorner())
+        (tooltips.select(VERTICAL_TOOLTIP, ROTATED_TOOLTIP) - tooltips.selectCorner())
             .let { verticalTooltips ->
                 VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
                     verticalTooltips,

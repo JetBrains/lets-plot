@@ -57,6 +57,8 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
 
             Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(coord, color)
 
+            Kind.ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(coord, objectRadius, color)
+
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.kind)
         }
     }
