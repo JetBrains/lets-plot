@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -60,7 +61,7 @@ internal class PlotTooltipHelper {
 
         lookupResults.forEach { result ->
             val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, FLIP_AXIS)) }
         }
 
         return tooltipSpecs

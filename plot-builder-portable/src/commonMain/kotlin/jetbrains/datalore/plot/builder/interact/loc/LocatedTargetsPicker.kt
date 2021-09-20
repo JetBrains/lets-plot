@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.MathUtil
@@ -120,16 +121,22 @@ internal class LocatedTargetsPicker {
                 return lookupResult
             }
 
+            val getCoord = if (FLIP_AXIS) {
+                { point: DoubleVector -> point.y }
+            } else {
+                { point: DoubleVector -> point.x }
+            }
+
             // Get closest targets and remove duplicates
             val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
 
             val minXToTarget = geomTargets
-                .map { target -> target.tipLayoutHint.coord!!.subtract(coord).x }
+                .map { target -> getCoord(target.tipLayoutHint.coord!!.subtract(coord)) }
                 .minByOrNull { abs(it) }
 
             val newTargets = geomTargets
                 .filter { target ->
-                    target.tipLayoutHint.coord!!.subtract(coord).x == minXToTarget
+                    getCoord(target.tipLayoutHint.coord!!.subtract(coord)) == minXToTarget
                 }
                 .distinctBy { it.hitIndex }
 

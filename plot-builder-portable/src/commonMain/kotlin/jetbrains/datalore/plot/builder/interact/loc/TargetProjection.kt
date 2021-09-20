@@ -10,6 +10,7 @@ import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
@@ -31,10 +32,15 @@ internal class PointTargetProjection private constructor(val data: Any) : Target
     }
 
     companion object {
-        fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection {
+        fun create(p: DoubleVector, lookupSpace: LookupSpace, flippedAxis: Boolean): PointTargetProjection {
+            val coord = if (flippedAxis) {
+                p.flip()
+            } else {
+                p
+            }
             return when (lookupSpace) {
-                X -> PointTargetProjection(p.x)
-                XY -> PointTargetProjection(p)
+                X -> PointTargetProjection(coord.x)
+                XY -> PointTargetProjection(coord)
                 NONE -> undefinedLookupSpaceError()
             }
         }
@@ -52,7 +58,12 @@ internal class RectTargetProjection private constructor(val data: Any) : TargetP
     }
 
     companion object {
-        fun create(rect: DoubleRectangle, lookupSpace: LookupSpace): RectTargetProjection {
+        fun create(r: DoubleRectangle, lookupSpace: LookupSpace, flippedAxis: Boolean): RectTargetProjection {
+            val rect = if (flippedAxis) {
+                r.flip()
+            } else {
+                r
+            }
             return when (lookupSpace) {
                 X -> RectTargetProjection(DoubleRange.withStartAndEnd(rect.left, rect.right))
                 XY -> RectTargetProjection(rect)
@@ -79,8 +90,16 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
         private const val AREA_TOLERANCE_RATIO = 0.1
         private const val MAX_TOLERANCE = 40.0
 
-        fun create(points: List<DoubleVector>, lookupSpace: LookupSpace): PolygonTargetProjection {
-            val rings = splitRings(points)
+        fun create(points: List<DoubleVector>, lookupSpace: LookupSpace, flippedAxis: Boolean): PolygonTargetProjection {
+            val rings = splitRings(
+                points.map { p ->
+                    if (flippedAxis) {
+                        p.flip()
+                    } else {
+                        p
+                    }
+                }
+            )
 
             return when (lookupSpace) {
                 X -> PolygonTargetProjection(mapToX(rings))
@@ -172,10 +191,18 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
         }
 
         companion object {
-            fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
+            fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace, flippedAxis: Boolean): PathPoint {
                 return when (lookupSpace) {
-                    X -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
-                    XY -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
+                    X -> PathPoint(
+                        PointTargetProjection.create(p, lookupSpace, flippedAxis),
+                        originalCoord = p,
+                        index
+                    )
+                    XY -> PathPoint(
+                        PointTargetProjection.create(p, lookupSpace, flippedAxis),
+                        originalCoord = p,
+                        index
+                    )
                     NONE -> undefinedLookupSpaceError()
                 }
             }
@@ -183,12 +210,17 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
     }
 
     companion object {
-        fun create(points: List<DoubleVector>, indexMapper: (Int) -> Int, lookupSpace: LookupSpace): PathTargetProjection {
+        fun create(
+            points: List<DoubleVector>,
+            indexMapper: (Int) -> Int,
+            lookupSpace: LookupSpace,
+            flippedAxis: Boolean
+        ): PathTargetProjection {
             val pointsLocation = ArrayList<PathPoint>()
-            for ((i, point) in points.withIndex()) {
-                pointsLocation.add(PathPoint.create(point, indexMapper(i), lookupSpace))
+            val pointsWithIndex = if (flippedAxis) { points.withIndex().reversed() } else { points.withIndex() }
+            for ((i, point) in pointsWithIndex) {
+                pointsLocation.add(PathPoint.create(point, indexMapper(i), lookupSpace, flippedAxis))
             }
-
             return PathTargetProjection(pointsLocation)
         }
     }
