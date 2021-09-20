@@ -20,10 +20,10 @@ object Defaults {
 
     const val TEXT_COLOR = DARK_GRAY
 
-    const val FONT_LARGE = 16
-    const val FONT_MEDIUM = 12
-    const val FONT_SMALL = 10
-    const val FONT_X_SMALL = 8
+    const val FONT_LARGE = 21
+    const val FONT_MEDIUM = 16
+    const val FONT_SMALL = 14
+    const val FONT_X_SMALL = 11
 
     const val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
     const val FONT_FAMILY_MONOSPACED = "\"Courier New\", Courier, monospace"
@@ -58,7 +58,7 @@ object Defaults {
             val DARK_TEXT_COLOR = Color.BLACK
             val LIGHT_TEXT_COLOR = Color.WHITE
 
-            const val AXIS_TOOLTIP_FONT_SIZE = DATA_TOOLTIP_FONT_SIZE
+            const val AXIS_TOOLTIP_FONT_SIZE = FONT_SMALL
             val AXIS_TOOLTIP_COLOR = Axis.LINE_COLOR
             const val AXIS_RADIUS = 1.5 // fix a tooltip border overlapping an axis
         }
