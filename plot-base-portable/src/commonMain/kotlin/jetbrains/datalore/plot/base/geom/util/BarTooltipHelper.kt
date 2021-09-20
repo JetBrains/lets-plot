@@ -27,13 +27,22 @@ object BarTooltipHelper {
             val rect = rectFactory(p) ?: continue
 
             val clientRect = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p)
-            val objectRadius = clientRect.width / 2.0
+            var objectRadius = clientRect.width / 2.0
+
+            var kindForOutliers = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            var kindForGeneralTooltip = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+
+            if (ctx.flipped) {
+                objectRadius = clientRect.height / 2.0
+                kindForOutliers = TipLayoutHint.Kind.ROTATED_TOOLTIP
+                kindForGeneralTooltip = TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            }
 
             val xCoord = rect.center.x
             val hintFactory = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
                 .defaultX(xCoord)
-                .defaultKind(TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+                .defaultKind(kindForOutliers)
 
             val hintConfigs = hintAesList
                 .fold(HintsCollection(p, helper)) { acc, aes ->
@@ -46,7 +55,8 @@ object BarTooltipHelper {
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))
-                    .setColor(colorFactory(p))
+                    .setColor(colorFactory(p)),
+                tooltipKind = kindForGeneralTooltip
             )
         }
     }

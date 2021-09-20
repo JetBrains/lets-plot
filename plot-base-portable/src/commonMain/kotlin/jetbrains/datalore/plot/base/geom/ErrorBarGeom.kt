@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -64,10 +65,16 @@ class ErrorBarGeom : GeomBase() {
     private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
         val clientRect = geomHelper.toClient(rect, p)
 
+        val defaultKind = if (ctx.flipped) {
+            TipLayoutHint.Kind.ROTATED_TOOLTIP
+        } else {
+            HORIZONTAL_TOOLTIP
+        }
+
         val hint = HintConfigFactory()
             .defaultObjectRadius(clientRect.width / 2.0)
             .defaultX(p.x()!!)
-            .defaultKind(HORIZONTAL_TOOLTIP)
+            .defaultKind(defaultKind)
 
         val hints = HintsCollection(p, geomHelper)
             .addHint(hint.create(Aes.YMAX))
