@@ -113,5 +113,5 @@ p + geom_bar(aes(x=as_discrete('manufacturer', order_by='..count..'), fill=as_di
 <a id="example-notebooks"></a>
 ## Example Notebooks
 
-* [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
-* [ordering_examples.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/ordering_examples.ipynb)
+* [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/cookbook/geom_smooth.ipynb)
+* [ordering_examples.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/cookbook/ordering_examples.ipynb)
