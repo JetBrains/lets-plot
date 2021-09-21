@@ -14,8 +14,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 actual class TileWebSocketBuilder actual constructor(
     private val myUrl: String
 ) : SocketBuilder {
-    @ObsoleteCoroutinesApi
-    @KtorExperimentalAPI
     override fun build(handler: SocketHandler): Socket {
         val client = HttpClient(CIO) {
             install(WebSockets)
