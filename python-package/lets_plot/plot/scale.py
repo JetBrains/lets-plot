@@ -2422,7 +2422,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
