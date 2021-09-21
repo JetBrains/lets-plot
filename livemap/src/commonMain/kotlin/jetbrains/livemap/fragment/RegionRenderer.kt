@@ -9,12 +9,12 @@ import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.drawLines
-import jetbrains.livemap.chart.translate
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.translate
 
 class RegionRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d) {

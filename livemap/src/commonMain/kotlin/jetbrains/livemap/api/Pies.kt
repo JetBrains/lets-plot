@@ -7,19 +7,19 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers
+import jetbrains.livemap.chart.DonutChart
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PieLocatorHelper
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -72,8 +72,11 @@ class PiesFactory(
             if (symbol.layerIndex != null) {
                 + IndexComponent(symbol.layerIndex!!, 0)
             }
+            + LocatorComponent(DonutChart.Locator())
+            + RenderableComponent().apply {
+                renderer = DonutChart.Renderer()
+            }
             + ChartElementComponent().apply {
-                renderer = Renderers.DonutRenderer()
                 scalable = this@PiesFactory.zoomable
                 strokeColor = symbol.strokeColor
                 strokeWidth = symbol.strokeWidth
@@ -88,7 +91,6 @@ class PiesFactory(
             + ScreenDimensionComponent()
             + ScreenLoopComponent()
             + ScreenOriginComponent()
-            + LocatorComponent(PieLocatorHelper())
         }
     }
 }

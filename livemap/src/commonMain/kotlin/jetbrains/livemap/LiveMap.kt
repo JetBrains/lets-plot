@@ -23,7 +23,6 @@ import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.chart.ChartElementRenderingSystem
 import jetbrains.livemap.chart.ChartElementScaleSystem
 import jetbrains.livemap.chart.GrowingPathEffect
 import jetbrains.livemap.config.DevParams
@@ -66,10 +65,7 @@ import jetbrains.livemap.geocoding.MapLocationInitializationSystem
 import jetbrains.livemap.geometry.ScaleUpdateSystem
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
-import jetbrains.livemap.mapengine.LayerEntitiesComponent
-import jetbrains.livemap.mapengine.LiveMapContext
-import jetbrains.livemap.mapengine.MapProjection
-import jetbrains.livemap.mapengine.MapRenderContext
+import jetbrains.livemap.mapengine.*
 import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.basemap.raster.RasterTileLayerComponent
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugDataSystem
@@ -272,7 +268,7 @@ class LiveMap(
                     maxZoom = viewport.maxZoom,
                     componentManager
                 ),
-                ChartElementRenderingSystem(componentManager),
+                RenderingSystem(componentManager),
 
                 BusyStateSystem(componentManager, myUiService),
 

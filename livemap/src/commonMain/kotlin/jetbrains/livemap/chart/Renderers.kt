@@ -7,8 +7,6 @@ package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.times
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.Client
@@ -17,10 +15,8 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.floor
-import kotlin.math.max
+import jetbrains.livemap.mapengine.lineTo
+import jetbrains.livemap.mapengine.moveTo
 
 object Renderers {
 
@@ -42,6 +38,7 @@ object Renderers {
             val chartElement = entity.get<ChartElementComponent>()
             val symbolData = entity.get<SymbolComponent>()
             val radius = symbolData.size.x * chartElement.scaleFactor / 2.0
+            println("PointRenderer.render() - radius: $radius")
 
             ctx.translate(-radius, -radius)
 
@@ -134,93 +131,7 @@ object Renderers {
         }
     }
 
-    class DonutRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d) {
-            val chartElement = entity.get<ChartElementComponent>()
-            val symbol = entity.get<SymbolComponent>()
-            val radius = symbol.size.x * chartElement.scaleFactor / 2.0
 
-            var currentAngle = - PI / 2
-            symbol.values.zip(symbol.colors).forEach { (angle, color) ->
-                val startAngle = currentAngle
-                val endAngle = currentAngle + angle
-
-                renderSector(chartElement, ctx, radius, startAngle, endAngle, color)
-
-                currentAngle = endAngle
-            }
-        }
-
-        private fun renderSector(
-            chartElement: ChartElementComponent,
-            ctx: Context2d,
-            sectorRadius: Double,
-            sectorStartAngle: Double,
-            sectorEndAngle: Double,
-            sectorColor: Color
-        ) {
-            val holeRadius = floor(sectorRadius * 0.55)
-
-            if (chartElement.strokeColor != null && chartElement.strokeWidth > 0.0) {
-
-                ctx.setStrokeStyle(chartElement.strokeColor)
-                ctx.setLineWidth(chartElement.strokeWidth)
-
-                // draw inner arc
-                ctx.beginPath()
-                ctx.arc(
-                    x = 0.0, y = 0.0,
-                    radius = max(0.0, holeRadius - chartElement.strokeWidth / 2),
-                    startAngle = sectorStartAngle,
-                    endAngle = sectorEndAngle
-                )
-                ctx.stroke()
-
-                // draw outer arc
-                ctx.beginPath()
-                ctx.arc(
-                    x = 0.0, y = 0.0,
-                    radius = sectorRadius + chartElement.strokeWidth / 2,
-                    startAngle = sectorStartAngle,
-                    endAngle = sectorEndAngle
-                )
-                ctx.stroke()
-            }
-
-            // fill sector
-            ctx.setFillStyle(sectorColor)
-            ctx.beginPath()
-            ctx.arc(0.0, 0.0, holeRadius, sectorStartAngle, sectorEndAngle)
-            ctx.arc(0.0, 0.0, sectorRadius, sectorEndAngle, sectorStartAngle, anticlockwise = true)
-            ctx.fill()
-        }
-    }
-
-    class BarRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d) {
-            val chartElement = entity.get<ChartElementComponent>()
-            val symbol = entity.get<SymbolComponent>()
-
-            val chartDimension = symbol.size * chartElement.scaleFactor
-            val centerOffset = chartDimension.x / 2
-
-            val columnWidth = chartDimension.x / symbol.values.size
-            symbol.values.zip(symbol.colors).forEachIndexed { index, (height, color) ->
-                ctx.setFillStyle(color)
-
-                val columnHeight = chartDimension.y * abs(height)
-                val columnX = columnWidth * index - centerOffset
-                val columnY = if (height > 0) -columnHeight else 0.0
-                ctx.fillRect(columnX, columnY, columnWidth, columnHeight)
-
-                if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-                    ctx.setStrokeStyle(chartElement.strokeColor)
-                    ctx.setLineWidth(chartElement.strokeWidth)
-                    ctx.strokeRect(columnX, columnY, columnWidth, columnHeight)
-                }
-            }
-        }
-    }
 
 }
 

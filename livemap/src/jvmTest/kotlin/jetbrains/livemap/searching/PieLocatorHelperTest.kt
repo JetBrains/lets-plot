@@ -7,50 +7,47 @@ package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.UNDEFINED_SECTOR
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.getTargetUnderCoord
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
 import jetbrains.livemap.Client
 import jetbrains.livemap.api.transformValues2Angles
-import jetbrains.livemap.chart.PieSectorComponent
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.DonutChart
+import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
-import jetbrains.livemap.searching.PieLocatorHelper
+import jetbrains.livemap.searching.IndexComponent
 import org.junit.Test
 import java.util.*
-import kotlin.math.PI
 import kotlin.test.assertEquals
 
 class PieLocatorHelperTest {
     private val manager = EcsComponentManager()
-    private val helper = PieLocatorHelper()
+    private val helper = DonutChart.Locator()
     private val r = 10.0
     private val entities = createPie(listOf(2.0, 2.0, 2.0, 2.0))
 
-    private fun createPie(values: List<Double>): List<EcsEntity> {
-        val angles = transformValues2Angles(values)
-        var currentAngle = - PI / 2
+    private fun createPie(vals: List<Double>): List<EcsEntity> {
         val pies = ArrayList<EcsEntity>()
 
-        for (i in angles.indices) {
-            val startAngle = currentAngle
-            val endAngle = currentAngle + angles[i]
-
-            manager
-                .createEntity("")
-                .addComponents {
-                    + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
-                    + PieSectorComponent().apply {
-                        this.radius = r
-                        this.startAngle = startAngle
-                        this.endAngle = endAngle
-                    }
+        manager
+            .createEntity("")
+            .addComponents {
+                + IndexComponent(1, 1)
+                + ChartElementComponent()
+                + SymbolComponent().apply {
+                    size = explicitVec(r * 2, r * 2)
+                    indices = vals.indices.toList()
+                    values = transformValues2Angles(vals)
+                    colors = vals.indices.map { Color.BLACK }
                 }
-                .let(pies::add)
-            currentAngle = endAngle
-        }
+                + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
+            }
+            .let(pies::add)
 
         return pies
     }

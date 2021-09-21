@@ -12,7 +12,7 @@ import kotlin.math.pow
 class DevParams(private val devParams: Map<*, *>) {
 
     companion object {
-        val SCALABLE_SYMBOLS = BoolParam("scalable_symbols", true)
+        val SCALABLE_SYMBOLS = BoolParam("scalable_symbols", false)
         val SCALABLE_SYMBOLS_MIN_FACTOR = DoubleParam("scalable_symbols_min_factor", 0.5)
         val SCALABLE_SYMBOLS_MAX_FACTOR = DoubleParam("scalable_symbols_max_factor", 2.5)
         val SCALABLE_SYMBOL_ZOOM_IN_EASING = EnumParam<Easing>(

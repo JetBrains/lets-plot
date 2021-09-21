@@ -6,9 +6,9 @@
 package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.PointLocatorHelper
 import org.junit.Test
@@ -21,7 +21,7 @@ class PointLocatorHelperTest {
     private val radius = 10.0
     private val entity = manager.createEntity("")
         .addComponents {
-            + ScreenDimensionComponent().apply { dimension = explicitVec(radius * 2, radius * 2) }
+            + SymbolComponent().apply { size = explicitVec(radius * 2, radius * 2) }
             + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
         }
 

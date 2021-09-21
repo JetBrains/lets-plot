@@ -32,8 +32,8 @@ class ChartElementScaleSystem(
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         onEachEntity2<ZoomLevelChangedComponent, ChartElementComponent> { entity, _, chartElementComponent ->
             with(chartElementComponent) {
-                if (scalable && baseZoom != null) {
-                    scaleFactor = computeScaleFactor(context.camera.zoom.toInt(), baseZoom!!)
+                if (scalable && context.initialZoom != null) {
+                    scaleFactor = computeScaleFactor(context.camera.zoom.toInt(), context.initialZoom!!)
 
                     entity.tryGet<SymbolComponent>()?.let {
                         entity.provide(::ScreenDimensionComponent).dimension = it.size * scaleFactor

@@ -64,16 +64,10 @@ class HoverObjectDetectionSystem(componentManager: EcsComponentManager) : Abstra
                 cursotPosition = mouseLocation
                 zoom = context.camera.zoom.toInt()
                 searchResult = getEntities(SEARCH_COMPONENTS)
-                    .filter { it.get<LocatorComponent>().locatorHelper.isCoordinateInTarget(mouseLocation, it) }
-                    .sortedByDescending { it.get<IndexComponent>().layerIndex }
+                    .map { it.get<LocatorComponent>().locatorHelper.search(mouseLocation, it) }
+                    .filterNotNull()
+                    .sortedByDescending { it.layerIndex }
                     .firstOrNull()
-                    ?.let {
-                        SearchResult(
-                            layerIndex = it.get<IndexComponent>().layerIndex,
-                            index = it.get<IndexComponent>().index,
-                            color = it.get<LocatorComponent>().locatorHelper.getColor(it)
-                        )
-                    }
             }
         }
     }

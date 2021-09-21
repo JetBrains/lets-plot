@@ -11,11 +11,9 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
-import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.config.DEFAULT_LOCATION
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.onEachEntity
 import jetbrains.livemap.geocoding.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.viewport.Viewport
@@ -84,12 +82,8 @@ class MapLocationInitializationSystem(
         ctx.camera.requestZoom(integerZoom)
         ctx.camera.requestPosition(coordinates)
 
-        println("baseZoom: " + integerZoom)
-        onEachEntity<ChartElementComponent> { _, chartElement ->
-            if (chartElement.scalable) {
-                chartElement.baseZoom = integerZoom.toInt()
-            }
-        }
+        ctx.initialPosition = coordinates
+        ctx.initialZoom = integerZoom.toInt()
     }
 
     private fun calculateMaxZoom(rectSize: Vec<World>, containerSize: Vec<Client>): Double {

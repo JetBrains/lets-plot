@@ -3,23 +3,27 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.chart
+package jetbrains.livemap.mapengine
 
 import jetbrains.datalore.base.typedGeometry.unaryMinus
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.AbstractSystem
+import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.core.rendering.primitives.RenderObject
-import jetbrains.livemap.mapengine.LayerEntitiesComponent
-import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.CameraComponent
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
-internal class ChartElementRenderingSystem(componentManager: EcsComponentManager) :
+// Common rendering data - used for lines, polygons, pies, bars, points.
+class RenderableComponent : EcsComponent {
+    lateinit var renderer: Renderer
+}
+
+internal class RenderingSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -37,7 +41,7 @@ internal class ChartElementRenderingSystem(componentManager: EcsComponentManager
                     ?: layerCtx.scale(1.0, 1.0)
 
                 for (chartElementEntity in getLayerEntities(layer).filter { it.tryGet<ScreenLoopComponent>() != null }) {
-                    val renderer = chartElementEntity.get<ChartElementComponent>().renderer
+                    val renderer = chartElementEntity.get<RenderableComponent>().renderer
                     chartElementEntity.get<ScreenLoopComponent>().origins.forEach { origin ->
                         context.mapRenderContext.draw(
                             layerCtx,
