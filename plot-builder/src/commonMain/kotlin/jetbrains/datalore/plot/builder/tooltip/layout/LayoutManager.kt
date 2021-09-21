@@ -134,7 +134,7 @@ class LayoutManager(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
                         BOTTOM,
-                        false
+                        ignoreCursor = true
                     )
                 )
 
