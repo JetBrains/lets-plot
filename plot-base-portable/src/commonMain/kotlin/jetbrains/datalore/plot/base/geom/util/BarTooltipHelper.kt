@@ -19,7 +19,8 @@ object BarTooltipHelper {
         coord: CoordinateSystem,
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
-        colorFactory: (DataPointAesthetics) -> Color
+        colorFactory: (DataPointAesthetics) -> Color,
+        tooltipKind: TipLayoutHint.Kind? = null
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
@@ -30,12 +31,12 @@ object BarTooltipHelper {
             var objectRadius = clientRect.width / 2.0
 
             var kindForOutliers = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-            var kindForGeneralTooltip = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            var kindForGeneralTooltip = tooltipKind ?: TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 
             if (ctx.flipped) {
                 objectRadius = clientRect.height / 2.0
                 kindForOutliers = TipLayoutHint.Kind.ROTATED_TOOLTIP
-                kindForGeneralTooltip = TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                kindForGeneralTooltip = tooltipKind ?: TipLayoutHint.Kind.VERTICAL_TOOLTIP
             }
 
             val xCoord = rect.center.x
@@ -56,7 +57,7 @@ object BarTooltipHelper {
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))
                     .setColor(colorFactory(p)),
-                tooltipKind = kindForGeneralTooltip
+                kindForGeneralTooltip
             )
         }
     }
