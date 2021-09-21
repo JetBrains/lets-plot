@@ -186,8 +186,9 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
-            val yOffset = when (target.prototype.tooltipKind) {
-                CURSOR_TOOLTIP -> rect.height / 2.0
+            val yOffset = when {
+                target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
+                flippedAxis -> rect.height / 2.0
                 else -> 0.0
             }
 

@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -65,16 +64,20 @@ class ErrorBarGeom : GeomBase() {
     private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
         val clientRect = geomHelper.toClient(rect, p)
 
-        val defaultKind = if (ctx.flipped) {
-            TipLayoutHint.Kind.ROTATED_TOOLTIP
-        } else {
-            HORIZONTAL_TOOLTIP
+        var objectRadius = clientRect.width / 2.0
+        var kindForOutliers = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+        var kindForGeneralTooltip = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+
+        if (ctx.flipped) {
+            objectRadius = clientRect.height / 2.0
+            kindForOutliers = TipLayoutHint.Kind.ROTATED_TOOLTIP
+            kindForGeneralTooltip = TipLayoutHint.Kind.VERTICAL_TOOLTIP
         }
 
         val hint = HintConfigFactory()
-            .defaultObjectRadius(clientRect.width / 2.0)
+            .defaultObjectRadius(objectRadius)
             .defaultX(p.x()!!)
-            .defaultKind(defaultKind)
+            .defaultKind(kindForOutliers)
 
         val hints = HintsCollection(p, geomHelper)
             .addHint(hint.create(Aes.YMAX))
@@ -84,8 +87,9 @@ class ErrorBarGeom : GeomBase() {
         ctx.targetCollector.addRectangle(
             p.index(), clientRect,
             params()
-                .setTipLayoutHints(hints)
-                .setColor(fromColor(p))
+              .setTipLayoutHints(hints)
+                .setColor(fromColor(p)),
+            kindForGeneralTooltip
         )
     }
 

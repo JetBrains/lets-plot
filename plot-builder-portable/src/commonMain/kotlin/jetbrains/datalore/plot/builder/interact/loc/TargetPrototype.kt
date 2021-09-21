@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.HitShape
@@ -46,10 +47,15 @@ class TargetPrototype(
                 }
 
                 RECT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill, stemLength)
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(
+                        hitCoord,
+                        if (FLIP_AXIS) hitShape.rect.height / 2 else 0.0,
+                        fill,
+                        stemLength
+                    )
                     HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill, stemLength)
                     CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill, stemLength)
-                    ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(hitCoord, hitShape.rect.width / 2, fill, stemLength)
+                    ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(hitCoord, 0.0, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
                 }
 
