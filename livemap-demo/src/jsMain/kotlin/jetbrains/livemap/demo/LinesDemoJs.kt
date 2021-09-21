@@ -5,7 +5,9 @@
 
 package jetbrains.livemap.demo
 
+@OptIn(ExperimentalJsExport::class)
 @JsName("linesDemo")
+@JsExport
 fun linesDemo() {
     DemoBaseJs(::LinesDemoModel).show()
 }

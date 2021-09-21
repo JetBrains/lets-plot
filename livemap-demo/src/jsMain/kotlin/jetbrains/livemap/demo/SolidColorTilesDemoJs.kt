@@ -5,7 +5,9 @@
 
 package jetbrains.livemap.demo
 
+@OptIn(ExperimentalJsExport::class)
 @JsName("solidColorTilesDemo")
+@JsExport
 fun solidColorTilesDemo() {
     DemoBaseJs(::SolidColorTilesDemoModel).show()
 }

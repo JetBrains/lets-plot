@@ -4,18 +4,18 @@ plugins {
 }
 
 kotlin {
+    sourceSets.all {
+        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+    }
+
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")   // generates index.html and opens it in browser
     js {
         browser {
-            dceTask {
-                keep.addAll(
-                        "lets-plot-vis-demo-svg-mapper.jetbrains.datalore.vis.svgMapperDemo.svgElementsDemoA",
-                        "lets-plot-vis-demo-svg-mapper.jetbrains.datalore.vis.svgMapperDemo.svgElementsDemo",
-                )
-            }
         }
+
+        binaries.executable()
     }
 
     sourceSets {

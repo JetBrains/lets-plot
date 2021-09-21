@@ -5,8 +5,10 @@
 
 package jetbrains.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("fillRectStrokeRectDemo")
+@JsExport
 fun fillRectStrokeRectDemo() {
     baseCanvasDemo { canvas, _ ->
         FillRectStrokeRectDemoModel(canvas)

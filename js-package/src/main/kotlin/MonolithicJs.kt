@@ -45,8 +45,10 @@ private val LOG = KotlinLogging.logger {}
  * The entry point to call in JS
  * `raw specs` are plot specs not processed by datalore plot backend
  */
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("buildPlotFromRawSpecs")
+@JsExport
 fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
@@ -62,8 +64,10 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
  * The entry point to call in JS
  * `processed specs` are plot specs processed by datalore plot backend
  */
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("buildPlotFromProcessedSpecs")
+@JsExport
 fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)

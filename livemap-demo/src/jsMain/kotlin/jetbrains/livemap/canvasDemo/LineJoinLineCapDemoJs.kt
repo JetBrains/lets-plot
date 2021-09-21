@@ -5,8 +5,10 @@
 
 package jetbrains.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("lineJoinLineCapDemo")
+@JsExport
 fun lineJoinLineCapDemo() {
     baseCanvasDemo { canvas, _ ->
         LineJoinLineCapDemoModel(canvas)

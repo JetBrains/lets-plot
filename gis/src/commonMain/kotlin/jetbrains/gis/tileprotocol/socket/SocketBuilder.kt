@@ -5,7 +5,10 @@
 
 package jetbrains.gis.tileprotocol.socket
 
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+
 interface SocketBuilder {
+    @ObsoleteCoroutinesApi
     fun build(handler: SocketHandler): Socket
 
     abstract class BaseSocketBuilder protected constructor(val url: String) : SocketBuilder
