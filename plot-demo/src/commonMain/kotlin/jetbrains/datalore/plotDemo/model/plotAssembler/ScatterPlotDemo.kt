@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -26,13 +26,13 @@ open class ScatterPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<PlotSvgComponent> {
         return listOf(
             createPlot()
         )
     }
 
-    private fun createPlot(): Plot {
+    private fun createPlot(): PlotSvgComponent {
         val count = 200
         val a = DemoUtil.gauss(count, 32, 0.0, 100.0)  // X
         val b = DemoUtil.gauss(count, 64, 0.0, 50.0)   // Y
@@ -74,7 +74,7 @@ open class ScatterPlotDemo : SimpleDemoBase() {
             listOf(layer),
             CoordProviders.cartesian(), DefaultTheme()
         )
-        assembler.setTitle("Scatter plot")
+        assembler.title = "Scatter plot"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

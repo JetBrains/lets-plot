@@ -36,29 +36,20 @@ class MappingValue(
         val dataLabel = myDataAccess.getMappedDataLabel(aes)
         myDataLabel = when {
             isAxis -> null
+            isOutlier -> null
             dataLabel.isEmpty() -> ""
             dataLabel in axisLabels -> ""
             else -> dataLabel
         }
     }
 
-    override fun getDataPoint(index: Int): DataPoint? {
+    override fun getDataPoint(index: Int): DataPoint {
         val originalValue = myDataAccess.getOriginalValue(aes, index)
         val formattedValue =
             originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
-
-        // for outliers: myDataLabel is a part of the value, but pattern format removes this part
-        val value = if (isOutlier && !myDataLabel.isNullOrEmpty() &&
-            myFormatter?.formatType != StringFormat.FormatType.STRING_FORMAT
-        ) {
-            "$myDataLabel: $formattedValue"
-        } else {
-            formattedValue
-        }
-
         return DataPoint(
-            label = if (isOutlier) null else myDataLabel,
-            value = value,
+            label = myDataLabel,
+            value = formattedValue,
             aes = aes,
             isAxis = isAxis,
             isOutlier = isOutlier

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.DemoAndTest
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -20,7 +21,7 @@ import kotlin.test.assertEquals
 
 object TestUtil {
     fun contourData(): Map<String, List<*>> {
-        return jetbrains.datalore.plot.DemoAndTest.contourDemoData()
+        return DemoAndTest.contourDemoData()
     }
 
     fun assertClientWontFail(opts: Map<String, Any>): PlotConfigClientSide {

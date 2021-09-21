@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -27,7 +27,7 @@ open class LinePlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<PlotSvgComponent> {
         return listOf(
             simple(),
             grouped(),
@@ -35,13 +35,13 @@ open class LinePlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): Plot = createSimplePlot()
+    private fun simple(): PlotSvgComponent = createSimplePlot()
 
-    private fun grouped(): Plot = createGroupedLinePlot(true)
+    private fun grouped(): PlotSvgComponent = createGroupedLinePlot(true)
 
-    private fun notGrouped(): Plot = createGroupedLinePlot(false)
+    private fun notGrouped(): PlotSvgComponent = createGroupedLinePlot(false)
 
-    private fun createSimplePlot(): Plot {
+    private fun createSimplePlot(): PlotSvgComponent {
         val count = 100
         val a = xValues(count)
         val b = yValues(count, 32)
@@ -85,7 +85,7 @@ open class LinePlotDemo : SimpleDemoBase() {
         return assembler.createPlot()
     }
 
-    private fun createGroupedLinePlot(grouped: Boolean): Plot {
+    private fun createGroupedLinePlot(grouped: Boolean): PlotSvgComponent {
         //    boolean grouped = false;
         val count = 100 / 2
         val a = DemoUtil.zip(

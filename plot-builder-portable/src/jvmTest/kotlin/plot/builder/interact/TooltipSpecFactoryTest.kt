@@ -39,7 +39,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     ))
                 .build())
 
-        assertLines(0, widthMapping.longTooltipText())
+        assertLines(0, widthMapping.shortTooltipText())
         assertLines(1, colorMapping.longTooltipText())
     }
 
@@ -77,7 +77,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                 .withFill(Color.RED)
                 .build())
 
-        assertLines(0, widthMapping.longTooltipText())
+        assertLines(0, widthMapping.shortTooltipText())
         assertFill(hintFill)
     }
 
@@ -95,7 +95,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                 )
                 .build()
         )
-        assertLines(listOf(widthMapping.longTooltipText()), isOutlier = true)
+        assertLines(listOf(widthMapping.shortTooltipText()), isOutlier = true)
     }
 
     @Test

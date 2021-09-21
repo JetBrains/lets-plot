@@ -7,8 +7,6 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.PlotContainerPortable
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.BunchConfig
@@ -128,14 +126,12 @@ object MonolithicCommon {
             computationMessages.addAll(it)
         }
 
-        val preferredSize = ValueProperty(
-            PlotSizeHelper.singlePlotSize(
-                plotSpec,
-                plotSize,
-                plotMaxWidth,
-                config.facets,
-                config.containsLiveMap
-            )
+        val preferredSize = PlotSizeHelper.singlePlotSize(
+            plotSpec,
+            plotSize,
+            plotMaxWidth,
+            config.facets,
+            config.containsLiveMap
         )
 
         val assembler = createPlotAssembler(config)
@@ -148,7 +144,7 @@ object MonolithicCommon {
         )
     }
 
-    internal fun createPlotAssembler(
+    private fun createPlotAssembler(
         config: PlotConfigClientSide
     ): PlotAssembler {
         return PlotConfigClientSideUtil.createPlotAssembler(config)
@@ -204,15 +200,15 @@ object MonolithicCommon {
         ) : PlotsBuildResult()
     }
 
-    class PlotBuildInfo(
+    class PlotBuildInfo constructor(
         val plotAssembler: PlotAssembler,
         val processedPlotSpec: MutableMap<String, Any>,
         val origin: DoubleVector,
-        val size: ReadableProperty<DoubleVector>,     // TODO: ReadableProperty or just DoubleVector?
+        val size: DoubleVector,
         val computationMessages: List<String>
     ) {
         fun bounds(): DoubleRectangle {
-            return DoubleRectangle(origin, size.get())
+            return DoubleRectangle(origin, size)
         }
     }
 }

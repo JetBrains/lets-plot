@@ -6,9 +6,7 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.observable.property.WritableProperty
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
@@ -21,7 +19,7 @@ import javax.swing.JComponent
 
 class PlotResizableDemoWindowJfx(
     title: String,
-    plot: Plot,
+    plot: PlotSvgComponent,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotResizableDemoWindowBase(
     title,
@@ -29,18 +27,17 @@ class PlotResizableDemoWindowJfx(
     plotSize = plotSize
 ) {
 
-    override fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent {
-        val plotSizeProperty = ValueProperty(
-            DoubleVector(
-                plotSize.getWidth(),
-                plotSize.getHeight(),
-            )
+    override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
+        @Suppress("NAME_SHADOWING")
+        val plotSize = DoubleVector(
+            plotSize.getWidth(),
+            plotSize.getHeight(),
         )
 
-        val plotContainer = PlotContainer(plot, plotSizeProperty)
+        val plotContainer = PlotContainer(plot, plotSize)
 
         return PlotPanel(
-            plotComponentProvider = MyPlotComponentProvider(plotContainer, plotSizeProperty),
+            plotComponentProvider = MyPlotComponentProvider(plotContainer, plotSize),
             preferredSizeFromPlot = true,
             repaintDelay = 100,
             applicationContext = DefaultSwingContextJfx()
@@ -49,7 +46,7 @@ class PlotResizableDemoWindowJfx(
 
     private class MyPlotComponentProvider(
         private val plotContainer: PlotContainer,
-        private val plotSizeProperty: WritableProperty<DoubleVector>,
+        private val plotSize: DoubleVector,
     ) : PlotComponentProvider {
         override fun getPreferredSize(containerSize: Dimension): Dimension {
             return containerSize
@@ -58,9 +55,7 @@ class PlotResizableDemoWindowJfx(
         override fun createComponent(containerSize: Dimension?): JComponent {
             plotContainer.clearContent()
             containerSize?.run {
-                plotSizeProperty.set(
-                    DoubleVector(getWidth(), getHeight())
-                )
+                plotContainer.resize(DoubleVector(getWidth(), getHeight()))
             }
             plotContainer.ensureContentBuilt()
             return SceneMapperJfxPanel(
