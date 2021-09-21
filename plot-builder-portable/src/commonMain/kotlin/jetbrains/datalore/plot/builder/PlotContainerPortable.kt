@@ -6,9 +6,6 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
@@ -17,14 +14,13 @@ import jetbrains.datalore.plot.builder.presentation.Style.PLOT_BACKDROP
 import jetbrains.datalore.vis.svg.SvgCssResource
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import kotlin.math.max
 
 /**
  *  This class only handles static SVG. (no interactions)
  */
 open class PlotContainerPortable(
-    protected val plot: Plot,
-    private val preferredSize: ReadableProperty<DoubleVector>
+    protected val plot: PlotSvgComponent,
+    plotSize: DoubleVector
 ) {
 
     val svg: SvgSvgElement = SvgSvgElement()
@@ -35,26 +31,14 @@ open class PlotContainerPortable(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
+
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()
 
     init {
         svg.addClass(Style.PLOT_CONTAINER)
-        setSvgSize(preferredSize.get())
-
-        plot.laidOutSize().addHandler(sizePropHandler { laidOutSize ->
-            val newSvgSize = DoubleVector(
-                max(preferredSize.get().x, laidOutSize.x),
-                max(preferredSize.get().y, laidOutSize.y)
-            )
-            setSvgSize(newSvgSize)
-        })
-
-        preferredSize.addHandler(sizePropHandler { newPreferredSize ->
-            if (newPreferredSize.x > 0 && newPreferredSize.y > 0) {
-                revalidateContent()
-            }
-        })
+        setSvgSize(plotSize)
+        plot.resize(plotSize)
     }
 
     fun ensureContentBuilt() {
@@ -63,12 +47,22 @@ open class PlotContainerPortable(
         }
     }
 
-    private fun revalidateContent() {
-        if (myContentBuilt) {
-            clearContent()
-            buildContent()
-        }
+    fun resize(plotSize: DoubleVector) {
+        if (plotSize.x <= 0 || plotSize.y <= 0) return
+        if (plotSize == plot.plotSize) return
+
+        // Invalidate
+        clearContent()
+        setSvgSize(plotSize)
+        plot.resize(plotSize)
     }
+
+//    private fun revalidateContent() {
+//        if (myContentBuilt) {
+//            clearContent()
+//            buildContent()
+//        }
+//    }
 
     protected open fun buildContent() {
         check(!myContentBuilt)
@@ -101,8 +95,6 @@ open class PlotContainerPortable(
 //        backdrop.setAttribute(SVG_STYLE_ATTRIBUTE, "width: 100%; height: 100%")
 
         svg.children().add(backdrop)
-
-        plot.preferredSize().set(preferredSize.get())
         svg.children().add(plot.rootGroup)
     }
 
@@ -124,18 +116,5 @@ open class PlotContainerPortable(
     private fun setSvgSize(size: DoubleVector) {
         svg.width().set(size.x)
         svg.height().set(size.y)
-    }
-
-    companion object {
-        private fun sizePropHandler(block: (newValue: DoubleVector) -> Unit): EventHandler<PropertyChangeEvent<out DoubleVector>> {
-            return object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
-                override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
-                    val newValue = event.newValue
-                    if (newValue != null) {
-                        block.invoke(newValue)
-                    }
-                }
-            }
-        }
     }
 }

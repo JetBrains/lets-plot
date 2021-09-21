@@ -20,10 +20,10 @@ object Defaults {
 
     const val TEXT_COLOR = DARK_GRAY
 
-    const val FONT_LARGE = 16
-    const val FONT_MEDIUM = 12
-    const val FONT_SMALL = 10
-    const val FONT_X_SMALL = 8
+    const val FONT_LARGE = 19
+    const val FONT_MEDIUM = 15
+    const val FONT_SMALL = 13
+    const val FONT_X_SMALL = 11
 
     const val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
     const val FONT_FAMILY_MONOSPACED = "\"Courier New\", Courier, monospace"

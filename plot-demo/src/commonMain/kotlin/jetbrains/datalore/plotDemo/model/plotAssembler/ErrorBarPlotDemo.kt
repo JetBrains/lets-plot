@@ -27,7 +27,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
         return listOf(
             simple(),
             withDodgePos(),
@@ -35,19 +35,19 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): jetbrains.datalore.plot.builder.Plot =
+    private fun simple(): jetbrains.datalore.plot.builder.PlotSvgComponent =
         createPlot(SIMPLE)
 
-    private fun withDodgePos(): jetbrains.datalore.plot.builder.Plot =
+    private fun withDodgePos(): jetbrains.datalore.plot.builder.PlotSvgComponent =
         createPlot(WITH_DODGE_POS)
 
-    private fun blackWithGroup(): jetbrains.datalore.plot.builder.Plot =
+    private fun blackWithGroup(): jetbrains.datalore.plot.builder.PlotSvgComponent =
         createPlot(BLACK_WITH_GROUP)
 
 
     companion object {
 
-        private fun createPlot(demoVariant: DemoVariant): jetbrains.datalore.plot.builder.Plot {
+        private fun createPlot(demoVariant: DemoVariant): jetbrains.datalore.plot.builder.PlotSvgComponent {
             // sample see: Cookbook for R: www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
             /*
 
@@ -206,7 +206,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                     pointsLayer
                 ), CoordProviders.cartesian(), DefaultTheme()
             )
-            assembler.setTitle("Error Bars")
+            assembler.title = "Error Bars"
             assembler.disableInteractions()
             return assembler.createPlot()
         }

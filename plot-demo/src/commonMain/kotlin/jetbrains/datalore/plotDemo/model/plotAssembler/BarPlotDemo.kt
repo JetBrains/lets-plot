@@ -26,7 +26,7 @@ open class BarPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
         return listOf(
             simple(),
             grouped(false),         // grouped, dodged
@@ -34,7 +34,7 @@ open class BarPlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): jetbrains.datalore.plot.builder.Plot {
+    private fun simple(): jetbrains.datalore.plot.builder.PlotSvgComponent {
         val count = 10
         val a = xValues(count)
         val b = DemoUtil.gauss(count, 12, 0.0, 1.0)
@@ -78,7 +78,7 @@ open class BarPlotDemo : SimpleDemoBase() {
         return assembler.createPlot()
     }
 
-    private fun grouped(stacked: Boolean): jetbrains.datalore.plot.builder.Plot {
+    private fun grouped(stacked: Boolean): jetbrains.datalore.plot.builder.PlotSvgComponent {
         //    boolean stacked = false;
         val count = 10
         //    int groupCount = 2;

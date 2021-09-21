@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -257,11 +257,11 @@ class TooltipConfigTest {
             tooltips = null
         )
         val expectedLines = mapOf(
-            Aes.YMAX to "y max: 11.50",
-            Aes.UPPER to "upper: 8.65",
-            Aes.MIDDLE to "middle: 6.85",
-            Aes.LOWER to "lower: 6.10",
-            Aes.YMIN to "y min: 4.20"
+            Aes.YMAX to "11.50",
+            Aes.UPPER to "8.65",
+            Aes.MIDDLE to "6.85",
+            Aes.LOWER to "6.10",
+            Aes.YMIN to "4.20"
         )
         val lines = getOutlierLines(geomLayer)
 
@@ -298,10 +298,11 @@ class TooltipConfigTest {
         )
 
         // upper, lower will be in the general tooltip and will be removed from outliers
+        // outliers - without label
         val expectedLines = mapOf(
             Aes.YMAX to "11.5",
-            Aes.MIDDLE to "middle: 6.850",
-            Aes.YMIN to "y min: 4.2"
+            Aes.MIDDLE to "6.850",
+            Aes.YMIN to "4.2"
         )
         val generalExpectedLine = "lower/upper: 6.1, 8.7"
 

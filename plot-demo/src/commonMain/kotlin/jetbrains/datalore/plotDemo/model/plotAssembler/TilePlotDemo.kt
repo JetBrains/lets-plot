@@ -24,13 +24,13 @@ open class TilePlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
         return listOf(
             createPlot()
         )
     }
 
-    private fun createPlot(): jetbrains.datalore.plot.builder.Plot {
+    private fun createPlot(): jetbrains.datalore.plot.builder.PlotSvgComponent {
         val valuesX = ArrayList<Double>()
         val valuesY = ArrayList<Double>()
         val valuesV = ArrayList<Double>()
@@ -85,7 +85,7 @@ open class TilePlotDemo : SimpleDemoBase() {
             listOf(tilesLayer),
             CoordProviders.cartesian(), DefaultTheme()
         )
-        assembler.setTitle("Tile geometry")
+        assembler.title = "Tile geometry"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

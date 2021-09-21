@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-class PlotAxisLayout private constructor(
+class PlotAxisLayout internal constructor(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
     private val domainX: ClosedRange<Double>,
     private val domainY: ClosedRange<Double>,

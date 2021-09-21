@@ -5,26 +5,20 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import java.awt.Cursor
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 internal object AwtLiveMapFactoryUtil {
     fun buildLiveMapComponent(
         assembler: PlotAssembler,
         processedSpec: MutableMap<String, Any>,
-        preferredSize: ReadableProperty<DoubleVector>,
+        preferredSize: DoubleVector,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {

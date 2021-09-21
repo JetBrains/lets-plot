@@ -65,6 +65,18 @@ allprojects {
     version = "2.1.1-alpha1"
     project.ext.js_artifact_version = "2.1.1.dev1"
     // see also: python-package/lets_plot/_version.py
+    project.ext.jfx_platform = { -> //getJfxPlatform()
+        OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+        if ( os.isWindows() ) {
+            return "win"
+        } else if ( os.isLinux() ) {
+            return "linux"
+        } else if ( os.isMacOsX() ) {
+            return "mac"
+        } else {
+            return "unknown"
+        }
+    }
 
     repositories {
         mavenCentral()

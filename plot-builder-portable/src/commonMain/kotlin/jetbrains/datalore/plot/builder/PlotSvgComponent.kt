@@ -10,22 +10,14 @@ import jetbrains.datalore.base.gcommon.base.Throwables
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -40,55 +32,59 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
 
-abstract class Plot(private val theme: Theme) : SvgComponent() {
+class PlotSvgComponent(
+    private val title: String?,
+    private val layersByTile: List<List<GeomLayer>>,
+    private var plotLayout: PlotLayout,
+    private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
+    private val legendBoxInfos: List<LegendBoxInfo>,
+    val interactionsEnabled: Boolean,
+    private val theme: Theme
+) : SvgComponent() {
 
-    private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
-    private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
-    private val myTooltipHelper = PlotTooltipHelper()
-    private val myLiveMapFigures = ArrayList<SomeFig>()
+    private val tooltipHelper = PlotTooltipHelper()
 
     val mouseEventPeer = MouseEventPeer()
 
-    protected abstract val scaleXProto: Scale<Double>
+    internal var liveMapFigures: List<SomeFig> = emptyList()
+        private set
 
-    protected abstract val scaleYProto: Scale<Double>
+    var plotSize: DoubleVector = DEF_PLOT_SIZE
+        private set
 
-    protected abstract val title: String
-
-    protected abstract val axisTitleLeft: String
-
-    protected abstract val axisTitleBottom: String
-
-    protected abstract val coordProvider: CoordProvider
-
-    protected abstract val legendBoxInfos: List<LegendBoxInfo>
-
-    protected abstract val isAxisEnabled: Boolean
-
-    abstract val isInteractionsEnabled: Boolean
-
-    internal val liveMapFigures: List<SomeFig>
-        get() = myLiveMapFigures
-
-    internal fun preferredSize(): WritableProperty<DoubleVector> {
-        return myPreferredSize
+    private fun hasTitle(): Boolean {
+        return !title.isNullOrBlank()
     }
 
-    fun laidOutSize(): ReadableProperty<DoubleVector> {
-        return myLaidOutSize
+    // ToDo: remove
+    private val axisTitleLeft: String
+        get() {
+            require(hasAxisTitleLeft()) { "No left axis title" }
+            return frameOfReferenceProvider.vAxisLabel!!
+        }
+
+    // ToDo: remove
+    private val axisTitleBottom: String
+        get() {
+            require(hasAxisTitleBottom()) { "No bottom axis title" }
+            return frameOfReferenceProvider.hAxisLabel!!
+        }
+
+    // ToDo: remove
+    private fun hasAxisTitleLeft(): Boolean {
+        return !frameOfReferenceProvider.vAxisLabel.isNullOrEmpty()
     }
 
-    protected abstract fun hasTitle(): Boolean
+    // ToDo: remove
+    private fun hasAxisTitleBottom(): Boolean {
+        return !frameOfReferenceProvider.hAxisLabel.isNullOrEmpty()
+    }
 
-    protected abstract fun hasAxisTitleLeft(): Boolean
+    private fun tileLayers(tileIndex: Int): List<GeomLayer> {
+        return layersByTile[tileIndex]
+    }
 
-    protected abstract fun hasAxisTitleBottom(): Boolean
-
-    protected abstract fun hasLiveMap(): Boolean
-
-    protected abstract fun tileLayers(tileIndex: Int): List<GeomLayer>
-
-    protected abstract fun plotLayout(): PlotLayout
+    private val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
     override fun buildComponent() {
         try {
@@ -103,12 +99,12 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
                 else
                     "<no message>"
             )
-            var y = myPreferredSize.get().y / 2 - 8
+            var y = plotSize.y / 2 - 8
             for (s in messages) {
                 val errorLabel = TextLabel(s)
                 errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
                 errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-                errorLabel.moveTo(myPreferredSize.get().x / 2, y)
+                errorLabel.moveTo(plotSize.x / 2, y)
                 rootGroup.children().add(errorLabel.rootGroup)
                 y += 16.0
             }
@@ -118,61 +114,45 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private fun buildPlot() {
         rootGroup.addClass(Style.PLOT)
         buildPlotComponents()
-        reg(myPreferredSize.addHandler(object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
-            override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
-                val newValue = event.newValue
-                if (newValue!!.x > 0 && newValue.y > 0) {
-                    rebuildPlot()
-                }
-            }
-        }))
 
         reg(object : Registration() {
             override fun doRemove() {
-                myTooltipHelper.removeAllTileInfos()
-                myLiveMapFigures.clear()
+                tooltipHelper.removeAllTileInfos()
+                liveMapFigures = emptyList()
             }
         })
     }
 
-    private fun rebuildPlot() {
+    fun resize(plotSize: DoubleVector) {
+        if (plotSize.x <= 0 || plotSize.y <= 0) return
+        if (plotSize == this.plotSize) return
+
+        this.plotSize = plotSize
+
+        // just invalidate
         clear()
-        buildPlot()
     }
+
+
+//    private fun rebuildPlot() {
+//        clear()
+//        buildPlot()
+//    }
 
 
     private fun createTile(
         tilesOrigin: DoubleVector,
         tileInfo: TileLayoutInfo,
         tileLayers: List<GeomLayer>,
-        theme: Theme
+        theme: Theme,
     ): PlotTile {
 
-        val xScale: Scale<Double>
-        val yScale: Scale<Double>
-        val coord: CoordinateSystem
-        if (tileInfo.xAxisInfo != null && tileInfo.yAxisInfo != null) {
-            val xDomain = tileInfo.xAxisInfo.axisDomain!!
-            val xAxisLength = tileInfo.xAxisInfo.axisLength
-
-            val yDomain = tileInfo.yAxisInfo.axisDomain!!
-            val yAxisLength = tileInfo.yAxisInfo.axisLength
-
-            // set-up scales and coordinate system
-            xScale = coordProvider.buildAxisScaleX(scaleXProto, xDomain, xAxisLength, tileInfo.xAxisInfo.axisBreaks!!)
-            yScale = coordProvider.buildAxisScaleY(scaleYProto, yDomain, yAxisLength, tileInfo.yAxisInfo.axisBreaks!!)
-            coord = coordProvider.createCoordinateSystem(xDomain, xAxisLength, yDomain, yAxisLength)
-        } else {
-            // bogus scales and coordinate system (live map doesn't need them)
-            xScale = BogusScale()
-            yScale = BogusScale()
-            coord = BogusCoordinateSystem()
-        }
-
-        val tile = PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
-        tile.setShowAxis(isAxisEnabled)
-        tile.debugDrawing().set(DEBUG_DRAWING)
-
+        val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
+            tileInfo,
+            DEBUG_DRAWING
+        )
+        val tile = PlotTile(tileLayers, tilesOrigin, tileInfo, theme, frameOfReference)
+        tile.isDebugDrawing = DEBUG_DRAWING
         return tile
     }
 
@@ -235,8 +215,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     }
 
     private fun buildPlotComponents() {
-        val preferredSize = myPreferredSize.get()
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, preferredSize)
+        val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
@@ -249,7 +228,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // compute geom bounds
-        val entirePlot = if (hasLiveMap()) {
+        val entirePlot = if (containsLiveMap) {
             liveMapBounds(overallRect)
         } else {
             overallRect
@@ -257,7 +236,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         // subtract title size
         val withoutTitle = if (hasTitle()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(title)
+            val titleSize = PlotLayoutUtil.titleDimensions(title!!)
             DoubleRectangle(
                 entirePlot.origin.add(DoubleVector(0.0, titleSize.y)),
                 entirePlot.dimension.subtract(DoubleVector(0.0, titleSize.y))
@@ -290,7 +269,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         // subtract left axis title width
         var geomAndAxis = withoutTitleAndLegends
-        if (isAxisEnabled) {
+        val axisEnabled = !containsLiveMap
+        if (axisEnabled) {
             if (hasAxisTitleLeft()) {
                 val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleLeft)
                 val thickness =
@@ -314,9 +294,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // Layout plot inners
-        val plotLayout = plotLayout()
         val plotInfo = plotLayout.doLayout(geomAndAxis.dimension)
-        this.myLaidOutSize.set(preferredSize)
 
         if (plotInfo.tiles.isEmpty()) {
             return
@@ -330,12 +308,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // build tiles
-        val tileTheme = if (plotInfo.tiles.size > 1) {
-            theme.multiTile()
-        } else {
-            theme
-        }
-
         val tilesOrigin = geomAndAxis.origin
         for (tileLayoutInfo in plotInfo.tiles) {
             val tileLayersIndex = tileLayoutInfo.trueIndex
@@ -344,21 +316,23 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 //            println("     bounds: " + tileInfo.bounds)
 //            println("geom bounds: " + tileInfo.geomBounds)
 //            println("clip bounds: " + tileInfo.clipBounds)
-            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), tileTheme)
+            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), theme)
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
             tile.moveTo(plotOriginAbsolute)
 
             add(tile)
 
-            tile.liveMapFigure?.let(myLiveMapFigures::add)
+            tile.liveMapFigure?.run {
+                liveMapFigures = liveMapFigures + listOf(this)
+            }
 
             val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
                 placementArea = geomBoundsAbsolute,
                 handlingArea = tile.geomDrawingBounds.add(geomBoundsAbsolute.origin)
             )
-            myTooltipHelper.addTileInfo(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
+            tooltipHelper.addTileInfo(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
@@ -381,7 +355,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         // add plot title
         if (hasTitle()) {
-            val titleLabel = TextLabel(title)
+            val titleLabel = TextLabel(title!!)
             titleLabel.addClassName(Style.PLOT_TITLE)
             titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
             titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
@@ -402,7 +376,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         // add axis titles
-        if (isAxisEnabled) {
+        if (axisEnabled) {
             if (hasAxisTitleLeft()) {
                 createAxisTitle(
                     axisTitleLeft,
@@ -432,15 +406,15 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     }
 
     fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
-        return myTooltipHelper.createTooltipSpecs(plotCoord)
+        return tooltipHelper.createTooltipSpecs(plotCoord)
     }
 
     fun getTooltipBounds(plotCoord: DoubleVector): PlotTooltipBounds? {
-        return myTooltipHelper.getTooltipBounds(plotCoord)
+        return tooltipHelper.getTooltipBounds(plotCoord)
     }
 
     companion object {
-        private val LOG = PortableLogging.logger(Plot::class)
+        private val LOG = PortableLogging.logger(PlotSvgComponent::class)
 
         private val DEF_PLOT_SIZE = DoubleVector(600.0, 400.0)
         private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING

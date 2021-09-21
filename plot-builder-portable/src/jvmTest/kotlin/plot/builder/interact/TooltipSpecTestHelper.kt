@@ -89,7 +89,7 @@ open class TooltipSpecTestHelper {
             GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                geomTarget.aesTipLayoutHints.map { it.key },
+                outliers = geomTarget.aesTipLayoutHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
             ),

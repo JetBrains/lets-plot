@@ -5,41 +5,31 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.Plot
-import jetbrains.datalore.plot.builder.PlotBuilder
+import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.layout.LiveMapTileLayout
+import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class PlotAssembler private constructor(
     private val scaleByAes: TypedScaleMap,
     val layersByTile: List<List<GeomLayer>>,
-    private val myCoordProvider: CoordProvider,
-    private val myTheme: Theme
+    private val coordProvider: CoordProvider,
+    private val theme: Theme
 ) {
 
-    val containsLiveMap: Boolean
+    val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
     var facets: PlotFacets = PlotFacets.undefined()
-    private var myTitle: String? = null
-    private var myGuideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
-    private var myAxisEnabled: Boolean
-    private var myLegendsEnabled = true
-    private var myInteractionsEnabled = true
+    var title: String? = null
+    var guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
 
-    init {
-        containsLiveMap = layersByTile.flatten().any(GeomLayer::isLiveMap)
-        myAxisEnabled = !containsLiveMap  // no axis on livemap
-    }
+    private var legendsEnabled = true
+    private var interactionsEnabled = true
 
-    fun setTitle(title: String?) {
-        myTitle = title
-    }
 
     private fun hasLayers(): Boolean {
         for (tileLayers in layersByTile) {
@@ -50,115 +40,75 @@ class PlotAssembler private constructor(
         return false
     }
 
-    fun createPlot(): Plot {
+    fun createPlot(): PlotSvgComponent {
         require(hasLayers()) { "No layers in plot" }
 
         val legendsBoxInfos = when {
-            myLegendsEnabled -> PlotAssemblerUtil.createLegends(
+            legendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
-                myGuideOptionsMap,
-                myTheme.legend()
+                guideOptionsMap,
+                theme.legend()
             )
             else -> emptyList()
         }
 
-        if (containsLiveMap) {
+        return if (containsLiveMap) {
             // build 'live map' plot:
             //  - skip X/Y scale training
             //  - ignore coord provider
             //  - plot layout without axes
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(
-                LiveMapTileLayout(),
-                facets
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(LiveMapTileLayout(), facets)
+            val fOrProvider = BogusFrameOfReferenceProvider()
+            createPlot(fOrProvider, plotLayout, legendsBoxInfos)
+        } else {
+            val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+            val fOrProvider = SquareFrameOfReferenceProvider(
+                scaleByAes[Aes.X],
+                scaleByAes[Aes.Y],
+                xAesRange,
+                yAesRange,
+                coordProvider,
+                theme,
+                FLIP_AXIS
             )
-            return createXYPlot(scaleByAes[Aes.X], scaleByAes[Aes.Y], plotLayout, legendsBoxInfos, hasLiveMap = true)
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets)
+            createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         }
-
-        // train X/Y scales
-        val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
-
-        // share X/Y scale among all layers
-        val xScaleProto: Scale<Double>
-        val yScaleProto: Scale<Double>
-        val xDomain: ClosedRange<Double>
-        val yDomain: ClosedRange<Double>
-        if (FLIP_AXIS) {
-            xScaleProto = scaleByAes[Aes.Y]
-            yScaleProto = scaleByAes[Aes.X]
-            xDomain = yAesRange
-            yDomain = xAesRange
-        } else {
-            xScaleProto = scaleByAes[Aes.X]
-            yScaleProto = scaleByAes[Aes.Y]
-            xDomain = xAesRange
-            yDomain = yAesRange
-        }
-
-        val xAxisLayout: AxisLayout
-        val yAxisLayout: AxisLayout
-        if (myAxisEnabled) {
-            xAxisLayout = PlotAxisLayout.bottom(xScaleProto, xDomain, yDomain, myCoordProvider, myTheme.axisX())
-            yAxisLayout = PlotAxisLayout.left(yScaleProto, xDomain, yDomain, myCoordProvider, myTheme.axisY())
-        } else {
-            xAxisLayout = EmptyAxisLayout.bottom(xDomain, yDomain)
-            yAxisLayout = EmptyAxisLayout.left(xDomain, yDomain)
-        }
-
-        val plotLayout = PlotAssemblerUtil.createPlotLayout(
-            XYPlotTileLayout(xAxisLayout, yAxisLayout),
-            facets
-        )
-        if (!myAxisEnabled) {
-            plotLayout.setPadding(0.0, 0.0, 0.0, 0.0)
-        }
-
-        return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos)
     }
 
-
-    private fun createXYPlot(
-        xScaleProto: Scale<Double>,
-        yScaleProto: Scale<Double>,
+    private fun createPlot(
+        fOrProvider: TileFrameOfReferenceProvider,
         plotLayout: PlotLayout,
-        legendBoxInfos: List<LegendBoxInfo>,
-        hasLiveMap: Boolean = false
-    ): Plot {
+        legendBoxInfos: List<LegendBoxInfo>
+    ): PlotSvgComponent {
 
-        val plotBuilder = PlotBuilder(myTheme)
-        plotBuilder.setTitle(myTitle)
-        plotBuilder.scaleXProto(xScaleProto)
-        plotBuilder.scaleYProto(yScaleProto)
-        plotBuilder.setAxisTitleBottom(xScaleProto.name)
-        plotBuilder.setAxisTitleLeft(yScaleProto.name)
-        plotBuilder.setCoordProvider(myCoordProvider)
-        for (legendBoxInfo in legendBoxInfos) {
-            plotBuilder.addLegendBoxInfo(legendBoxInfo)
-        }
-        for (panelLayers in layersByTile) {
-            plotBuilder.addTileLayers(panelLayers)
-        }
+        val plot = PlotSvgComponent(
+            title = title,
+            layersByTile = layersByTile,
+            plotLayout = plotLayout,
+            frameOfReferenceProvider = fOrProvider,
+            legendBoxInfos = legendBoxInfos,
+            interactionsEnabled = interactionsEnabled,
+            theme = theme
+        )
 
-        plotBuilder.setPlotLayout(plotLayout)
-        plotBuilder.axisEnabled(myAxisEnabled)
-        plotBuilder.interactionsEnabled(myInteractionsEnabled)
-        plotBuilder.setLiveMap(hasLiveMap)
-        return plotBuilder.build()
-    }
-
-    fun setGuideOptionsMap(guideOptionsMap: Map<Aes<*>, GuideOptions>) {
-        myGuideOptionsMap = guideOptionsMap
-    }
-
-    fun disableAxis() {
-        myAxisEnabled = false
+//        val plotBuilder = PlotBuilder(theme)
+//            .title(title)
+//            .tileFrameOfReferenceProvider(fOrProvider)
+//            .legendBoxInfos(legendBoxInfos)
+//            .tileLayers(layersByTile)
+//            .plotLayout(plotLayout)
+//            .interactionsEnabled(interactionsEnabled)
+//        return plotBuilder.build()
+        return plot
     }
 
     fun disableLegends() {
-        myLegendsEnabled = false
+        legendsEnabled = false
     }
 
     fun disableInteractions() {
-        myInteractionsEnabled = false
+        interactionsEnabled = false
     }
 
     companion object {
@@ -184,7 +134,19 @@ class PlotAssembler private constructor(
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
-            return PlotAssembler(scaleByAes, layersByTile, coordProvider, theme)
+            @Suppress("NAME_SHADOWING")
+            val theme = if (layersByTile.size > 1) {
+                theme.multiTile()
+            } else {
+                theme
+            }
+
+            return PlotAssembler(
+                scaleByAes,
+                layersByTile,
+                coordProvider,
+                theme
+            )
         }
     }
 }

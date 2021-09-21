@@ -6,14 +6,13 @@
 package jetbrains.datalore.plotDemo.model.plotContainer
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
@@ -30,11 +29,11 @@ class BarPlotResizeDemo private constructor(
     private val xScale: Scale<*>
 ) {
 
-    fun createPlotContainer(plotSizeProp: ReadableProperty<DoubleVector>): PlotContainer {
-        return PlotContainer(createPlot(), plotSizeProp)
+    fun createPlotContainer(plotSize: DoubleVector): PlotContainer {
+        return PlotContainer(createPlot(), plotSize)
     }
 
-    fun createPlot(): Plot {
+    fun createPlot(): PlotSvgComponent {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat
@@ -99,7 +98,6 @@ class BarPlotResizeDemo private constructor(
             scaleByAes,
             listOf(layer), CoordProviders.cartesian(), DefaultTheme()
         )
-//        assembler.disableInteractions()
         return assembler.createPlot()
     }
 
@@ -113,8 +111,7 @@ class BarPlotResizeDemo private constructor(
         }
 
         fun discreteX(): BarPlotResizeDemo {
-            val sclData =
-                SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
+            val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
             return BarPlotResizeDemo(
                 sclData,
                 Scales.discreteDomain<String>("", sclData.distinctXValues())
