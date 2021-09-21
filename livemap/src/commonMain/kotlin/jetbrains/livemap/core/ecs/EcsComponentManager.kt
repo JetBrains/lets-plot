@@ -119,6 +119,9 @@ class EcsComponentManager {
     fun getSingletonEntity(componentType: KClass<out EcsComponent>): EcsEntity =
         getSingletonEntity(singletonCollection(componentType))
 
+    inline fun <reified ComponentT : EcsComponent> getSingletonEntity(): EcsEntity =
+        getSingletonEntity(ComponentT::class)
+
 
     /**
      * Returns first entity, containing [componentType].

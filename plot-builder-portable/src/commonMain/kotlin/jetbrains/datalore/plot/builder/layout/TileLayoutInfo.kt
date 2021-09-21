@@ -15,7 +15,7 @@ class TileLayoutInfo private constructor(
     // relative to plot tile
     val bounds: DoubleRectangle,      // plotting area + optional elements (axis, axis tick labels)
     val geomBounds: DoubleRectangle,  // actual plotting area
-    val clipBounds: DoubleRectangle,  // geom shapes outside this bounds will be cut-off
+    val clipBounds: DoubleRectangle,  // geom shapes outside these bounds will be cut-off
 
     // Params xAxisInfo/yAxisInfo can be NULL.
     // In this case any mapping of positional Aes should be dropped (live map plot).

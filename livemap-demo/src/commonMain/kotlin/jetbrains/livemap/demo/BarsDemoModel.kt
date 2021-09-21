@@ -11,6 +11,7 @@ import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.bar
 import jetbrains.livemap.api.bars
 import jetbrains.livemap.api.layers
+import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.model.Cities
 import jetbrains.livemap.model.coord
 
@@ -18,11 +19,13 @@ class BarsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
+            zoom = 9
+            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
             layers {
                 bars {
                     bar {
                         indices = listOf(0, 1, 2)
-                        coord(Cities.FRISCO)
+                        coord(Cities.MOSCOW)
 
 
                         radius = 50.0
@@ -30,6 +33,7 @@ class BarsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         colors = listOf(Color.RED, Color.ORANGE, Color.YELLOW)
                     }
 
+                    /*
                     bar {
                         coord(Cities.NEW_YORK)
 
@@ -39,6 +43,8 @@ class BarsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         values = listOf(1500.0, 1000.0, 2500.0)
                         colors = listOf(Color.RED, Color.ORANGE, Color.YELLOW)
                     }
+
+                     */
                 }
             }
         }

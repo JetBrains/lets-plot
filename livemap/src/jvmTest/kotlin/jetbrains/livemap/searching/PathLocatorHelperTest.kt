@@ -8,11 +8,11 @@ package jetbrains.datalore.jetbrains.livemap.searching
 import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
+import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.geometry.ScreenGeometryComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.PathLocatorHelper
 import org.junit.Test
 import kotlin.test.assertFalse
@@ -23,8 +23,10 @@ class PathLocatorHelperTest {
     private val helper = PathLocatorHelper()
     private val entity = manager.createEntity("")
         .addComponents {
+            + ChartElementComponent().apply {
+                strokeWidth = 5.0
+            }
             + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
-            + StyleComponent().apply { strokeWidth = 5.0 }
             + ScreenGeometryComponent().apply {
                 geometry = createMultiPolygon(
                     listOf(

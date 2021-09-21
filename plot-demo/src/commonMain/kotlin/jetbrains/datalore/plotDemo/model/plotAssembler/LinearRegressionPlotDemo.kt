@@ -31,13 +31,13 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         get() = DoubleVector.ZERO
 
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
         return listOf(
             createPlot()
         )
     }
 
-    private fun createPlot(): jetbrains.datalore.plot.builder.Plot {
+    private fun createPlot(): jetbrains.datalore.plot.builder.PlotSvgComponent {
         val count = 10
 
         //
@@ -167,7 +167,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                 seLineLayer
             ), CoordProviders.cartesian(), DefaultTheme()
         )
-        assembler.setTitle("Linear Regression")
+        assembler.title = "Linear Regression"
         assembler.disableInteractions()
         return assembler.createPlot()
     }

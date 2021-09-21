@@ -5,25 +5,30 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.Renderers
+import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.placement.ScreenDimensionComponent
-import jetbrains.livemap.placement.ScreenLoopComponent
-import jetbrains.livemap.placement.ScreenOriginComponent
-import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.rendering.*
-import jetbrains.livemap.rendering.Renderers.DonutSectorRenderer
+import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PieLocatorHelper
 import kotlin.math.PI
+import kotlin.math.abs
 
 @LiveMapDsl
 class Pies(
+    zoomable: Boolean,
     factory: MapEntityFactory
 ) {
-    val piesFactory = PiesFactory(factory)
+    val piesFactory = PiesFactory(zoomable, factory)
 }
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
@@ -34,70 +39,66 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Pies(
-        MapEntityFactory(layerEntity)
-    ).apply {
+    Pies(zoomable, MapEntityFactory(layerEntity)).apply {
         block()
         piesFactory.produce()
     }
 }
 
-fun Pies.pie(block: ChartSource.() -> Unit) {
-    piesFactory.add(ChartSource().apply(block))
+fun Pies.pie(block: Symbol.() -> Unit) {
+    piesFactory.add(Symbol().apply(block))
 }
 
 @LiveMapDsl
 class PiesFactory(
+    private val zoomable: Boolean,
     private val myFactory: MapEntityFactory
 ) {
-    private val myItems = ArrayList<ChartSource>()
+    private val mySymbols = ArrayList<Symbol>()
 
-    fun add(source: ChartSource) {
-        myItems.add(source)
+    fun add(source: Symbol) {
+        mySymbols.add(source)
     }
 
     fun produce(): List<EcsEntity> {
-        return myItems.flatMap { splitMapPieChart(it) }
+        return mySymbols.map(this::symbolToEntity)
     }
 
-    private fun splitMapPieChart(source: ChartSource): List<EcsEntity> {
-        val result = ArrayList<EcsEntity>()
-        val angles = transformValues2Angles(source.values)
-        var currentAngle = - PI / 2
-
-        for (i in angles.indices) {
-            // Do not inline - copy for closure.
-            val startAngle = currentAngle
-            val endAngle = currentAngle + angles[i]
-            result.add(
-                when {
-                    source.point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", source.point!!)
-                    else -> error("Can't create pieSector entity. Coord is null.")
-                }.setInitializer { worldPoint ->
-                    if (source.layerIndex != null) {
-                        + IndexComponent(source.layerIndex!!, source.indices[i])
-                    }
-                    + RendererComponent(DonutSectorRenderer())
-                    + WorldOriginComponent(worldPoint)
-                    + PieSectorComponent().apply {
-                        this.radius = source.radius
-                        this.startAngle = startAngle
-                        this.endAngle = endAngle
-                    }
-                    + StyleComponent().apply {
-                        setFillColor(source.colors[i])
-                        setStrokeColor(source.strokeColor)
-                        setStrokeWidth(source.strokeWidth)
-                    }
-                    + ScreenDimensionComponent()
-                    + ScreenLoopComponent()
-                    + ScreenOriginComponent()
-                    + LocatorComponent(PieLocatorHelper())
-                }
-            )
-            currentAngle = endAngle
+    private fun symbolToEntity(symbol: Symbol): EcsEntity {
+        return when {
+            symbol.point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", symbol.point!!)
+            else -> error("Can't create pieSector entity. Coord is null.")
+        }.setInitializer { worldPoint ->
+            if (symbol.layerIndex != null) {
+                + IndexComponent(symbol.layerIndex!!, 0)
+            }
+            + ChartElementComponent().apply {
+                renderer = Renderers.DonutRenderer()
+                scalable = this@PiesFactory.zoomable
+                strokeColor = symbol.strokeColor
+                strokeWidth = symbol.strokeWidth
+            }
+            + SymbolComponent().apply {
+                size = explicitVec(symbol.radius * 2, symbol.radius * 2)
+                values = transformValues2Angles(symbol.values)
+                colors = symbol.colors
+                indices = symbol.indices
+            }
+            + WorldOriginComponent(worldPoint)
+            + ScreenDimensionComponent()
+            + ScreenLoopComponent()
+            + ScreenOriginComponent()
+            + LocatorComponent(PieLocatorHelper())
         }
+    }
+}
 
-        return result
+internal fun transformValues2Angles(values: List<Double>): List<Double> {
+    val sum = values.sumOf(::abs)
+
+    return if (sum == 0.0) {
+        MutableList(values.size) { 2 * PI / values.size }
+    } else {
+        values.map { 2 * PI * abs(it) / sum }
     }
 }

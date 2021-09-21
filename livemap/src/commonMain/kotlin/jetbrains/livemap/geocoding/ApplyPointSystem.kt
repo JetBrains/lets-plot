@@ -5,13 +5,13 @@
 
 package jetbrains.livemap.geocoding
 
-import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
-import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.MapProjection
 
 class ApplyPointSystem(
     componentManager: EcsComponentManager

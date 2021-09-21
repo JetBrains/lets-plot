@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,10 +10,8 @@ import jetbrains.datalore.base.spatial.FULL_LONGITUDE
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.livemap.viewport.Viewport
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.pow
 import kotlin.math.round
 

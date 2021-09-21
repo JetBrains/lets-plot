@@ -402,6 +402,7 @@ class ReverseGeocoder(Geocoder):
 
         self._geocodes: Optional[Geocodes] = None
         self._request: ReverseGeocodingRequest = RequestBuilder() \
+            .set_requested_payload([PayloadKind.centroids, PayloadKind.poisitions, PayloadKind.limits]) \
             .set_request_kind(RequestKind.reverse) \
             .set_reverse_coordinates(_to_coords(lon, lat)) \
             .set_level(_to_level_kind(level)) \

@@ -7,7 +7,7 @@ package jetbrains.livemap.core.ecs
 
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
-import jetbrains.livemap.core.animation.EasingFunction
+import jetbrains.livemap.core.util.EasingFunction
 
 
 class AnimationComponent : EcsComponent {

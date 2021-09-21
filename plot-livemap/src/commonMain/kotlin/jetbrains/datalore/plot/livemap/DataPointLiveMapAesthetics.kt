@@ -197,7 +197,7 @@ internal class DataPointLiveMapAesthetics {
         }
     }
 
-    fun toChartBuilder(): ChartSource.() -> Unit {
+    fun toChartBuilder(): Symbol.() -> Unit {
         return {
             layerIndex = this@DataPointLiveMapAesthetics.layerIndex
             point = this@DataPointLiveMapAesthetics.point

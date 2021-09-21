@@ -10,14 +10,13 @@ import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.vis.svg.SvgGElement
 
 class PlotContainer(
-    plot: Plot,
-    preferredSize: ReadableProperty<DoubleVector>
-) : PlotContainerPortable(plot, preferredSize) {
+    plot: PlotSvgComponent,
+    plotSize: DoubleVector
+) : PlotContainerPortable(plot, plotSize) {
 
     private val myDecorationLayer = SvgGElement()
 
@@ -26,12 +25,11 @@ class PlotContainer(
 
     override fun buildContent() {
         super.buildContent()
-        if (plot.isInteractionsEnabled) {
+        if (plot.interactionsEnabled) {
             svg.children().add(myDecorationLayer)
             hookupInteractions()
         }
     }
-
 
     override fun clearContent() {
         myDecorationLayer.children().clear()
@@ -39,9 +37,9 @@ class PlotContainer(
     }
 
     private fun hookupInteractions() {
-        check(plot.isInteractionsEnabled)
+        check(plot.interactionsEnabled)
 
-        val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize().get())
+        val viewport = DoubleRectangle(DoubleVector.ZERO, plot.plotSize)
         val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)
 
         val onMouseMoved = { e: MouseEvent ->

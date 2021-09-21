@@ -10,16 +10,16 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMap
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldRectangle
-import jetbrains.livemap.projection.toClientPoint
-import jetbrains.livemap.services.MapLocationGeocoder
-import jetbrains.livemap.services.newFragmentProvider
-import jetbrains.livemap.viewport.Viewport
-import jetbrains.livemap.viewport.ViewportHelper
+import jetbrains.livemap.fragment.newFragmentProvider
+import jetbrains.livemap.geocoding.MapLocationGeocoder
+import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.mapengine.viewport.ViewportHelper
+import jetbrains.livemap.toClientPoint
 
 const val MIN_ZOOM = 1
 const val MAX_ZOOM = 15

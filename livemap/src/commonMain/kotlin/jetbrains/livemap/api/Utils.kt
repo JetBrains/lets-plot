@@ -7,6 +7,9 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -14,22 +17,7 @@ import jetbrains.livemap.geocoding.LonLatComponent
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geocoding.PointInitializerComponent
-import jetbrains.livemap.projection.World
-import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.projection.WorldRectangle
-import kotlin.math.PI
-import kotlin.math.abs
 
-
-fun transformValues2Angles(values: List<Double>): List<Double> {
-    val sum = values.map { abs(it) }.sum()
-
-    return if (sum == 0.0) {
-        MutableList(values.size) { 2 * PI / values.size }
-    } else {
-        values.map { 2 * PI * abs(it) / sum }
-    }
-}
 
 fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): MultiPolygon<World> {
     return if (horizontal) {

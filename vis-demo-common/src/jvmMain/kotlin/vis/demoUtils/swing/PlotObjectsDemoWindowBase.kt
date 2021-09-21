@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
@@ -13,7 +13,7 @@ import kotlin.math.min
 
 abstract class PlotObjectsDemoWindowBase(
     title: String,
-    private val plotList: List<Plot>,
+    private val plotList: List<PlotSvgComponent>,
     private val maxCol: Int,
     private val plotSize: Dimension
 ) : JFrame(title) {
@@ -53,5 +53,5 @@ abstract class PlotObjectsDemoWindowBase(
         }
     }
 
-    protected abstract fun createPlotComponent(plot: Plot, plotSize: Dimension): JComponent
+    protected abstract fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent
 }

@@ -44,8 +44,8 @@ object PlotConfigClientSideUtil {
             config.coordProvider,
             config.theme
         )
-        assembler.setTitle(config.title)
-        assembler.setGuideOptionsMap(config.guideOptionsMap)
+        assembler.title = config.title
+        assembler.guideOptionsMap = config.guideOptionsMap
         assembler.facets = config.facets
         return assembler
     }

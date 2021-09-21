@@ -5,13 +5,12 @@ import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.Mocks
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.maps.Utils.quad
-import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
-import jetbrains.livemap.regions.*
+import jetbrains.livemap.mapengine.camera.CameraInputSystem
 import org.junit.Test
 
 class RegionEmitSystemTest : RegionsTestBase() {
@@ -22,13 +21,12 @@ class RegionEmitSystemTest : RegionsTestBase() {
     private lateinit var emptyFragmentFoo3: FragmentSpec
     override fun setUp() {
         super.setUp()
-        addSystem(CameraUpdateDetectionSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager))
         addSystem(RegionEmitSystem(componentManager))
         createEntity("FragmentsChange", ChangedFragmentsComponent())
         createEntity("FragmentsResponse", EmittedFragmentsComponent())
         createEntity("EmptyFragments", EmptyFragmentsComponent())
         createEntity("FragmentsState", CachedFragmentsComponent())
-        createEntity("Camera", CameraComponent(myCamera))
         val parentLayerEntity: EcsEntity = createEntity("layer")
         fragmentFoo1 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_1)
         fragmentFoo2 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_2)
@@ -46,7 +44,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
     }
 
     protected override val systemsOrder
-        get() = listOf(CameraUpdateDetectionSystem::class, RegionEmitSystem::class, SchedulerSystem::class)
+        get() = listOf(CameraInputSystem::class, RegionEmitSystem::class, SchedulerSystem::class)
 
     protected override fun afterUpdateCleanup(): List<MockSpec> {
         return listOf(

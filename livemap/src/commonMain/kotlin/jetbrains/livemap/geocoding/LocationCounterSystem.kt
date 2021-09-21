@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.geocoding
 
-import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.mapengine.LiveMapContext
 
 class LocationCounterSystem(
     componentManager: EcsComponentManager,

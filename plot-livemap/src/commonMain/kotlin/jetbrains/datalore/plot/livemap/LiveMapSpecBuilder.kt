@@ -23,13 +23,7 @@ import jetbrains.datalore.plot.config.getString
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.livemap.MapLocation
-import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.api.Services
-import jetbrains.livemap.api.liveMapGeocoding
-import jetbrains.livemap.api.liveMapVectorTiles
-import jetbrains.livemap.basemap.BasemapTileSystemProvider
-import jetbrains.livemap.basemap.Tilesets
+import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
@@ -37,6 +31,8 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.config.MAX_ZOOM
 import jetbrains.livemap.config.MIN_ZOOM
 import jetbrains.livemap.core.projections.Projections
+import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
+import jetbrains.livemap.mapengine.basemap.Tilesets
 import jetbrains.livemap.ui.CursorService
 
 

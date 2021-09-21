@@ -9,11 +9,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
 import jetbrains.livemap.core.animation.Animation.Loop.DISABLED
+import jetbrains.livemap.core.util.EasingFunction
+import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 
 object Animations {
-    val LINEAR: EasingFunction = { t -> t }
-    val EASE_IN_QUAD: EasingFunction = { t -> t * t }
-    val EASE_OUT_QUAD: EasingFunction = { t -> t * (2 - t) }
 
     class DoubleAnimator(
         private val start: Double,

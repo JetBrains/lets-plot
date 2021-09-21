@@ -22,11 +22,11 @@ import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class AreaPlotDemo : SimpleDemoBase() {
-    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
         return listOf(sepalLength())
     }
 
-    fun sepalLength(): jetbrains.datalore.plot.builder.Plot {
+    fun sepalLength(): jetbrains.datalore.plot.builder.PlotSvgComponent {
         val xColumn = Iris.sepalLength
         val targetColumn = Iris.target
 

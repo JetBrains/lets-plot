@@ -2503,7 +2503,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                                  columns=['c', 'xmax'])
         ggplot() + \\
             geom_vline(aes(xintercept='xmax', color='c'), \\
-                       data=bounds_df, size=.2, linetype='longdash') + \\
+                       data=bounds_df, size=.7, linetype='longdash') + \\
             geom_point(aes(x='x', y='y', color='c'), data=df)
 
     """
@@ -4077,7 +4077,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         '.2f' -> '12.45',
         'Num {}' -> 'Num 12.456789',
         'TTL: {.2f}$' -> 'TTL: 12.45$'.
-        For more info see the `formatting reference <https://jetbrains.github.io/lets-plot-docs/pages/features/formats.html>`_.
+        For more info see https://lets-plot.org/pages/formats.html.
     na_text : str, default='n/a'
         Text to show for missing values.
     other_args

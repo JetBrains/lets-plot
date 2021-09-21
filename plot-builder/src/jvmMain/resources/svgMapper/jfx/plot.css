@@ -34,7 +34,7 @@ None JavaFX platforms use SVG embedded stylesheet defined in Style.kt
 }
 
 Text {
-    -fx-font-size: 12px;
+    -fx-font-size: 15px;
     -fx-fill: #3d3d3d;
 }
 
@@ -43,11 +43,11 @@ Text {
 }
 
 .plt-data-tooltip Text {
-    -fx-font-size: 12px;
+    -fx-font-size: 15px;
 }
 
 .plt-axis-tooltip Text {
-    -fx-font-size: 12px;
+    -fx-font-size: 15px;
 }
 
 .plt-axis Line {
@@ -55,27 +55,27 @@ Text {
 }
 
 .plt-plot-title {
-    -fx-font-size: 16.0px;
+    -fx-font-size: 19.0px;
     -fx-font-weight: bold;
 }
 
 .plt-axis .tick Text {
-    -fx-font-size: 10.0px;
+    -fx-font-size: 13.0px;
 }
 
 .plt-axis.small-tick-font .tick Text {
-    -fx-font-size: 8.0px;
+    -fx-font-size: 11.0px;
 }
 
 .plt-axis-title Text {
-    -fx-font-size: 12.0px;
+    -fx-font-size: 15.0px;
 }
 
 .plt_legend .legend-title Text {
-    -fx-font-size: 12.0px;
+    -fx-font-size: 15.0px;
     -fx-font-weight: bold;
 }
 
 .plt_legend Text {
-    -fx-font-size: 10.0px;
+    -fx-font-size: 13.0px;
 }
