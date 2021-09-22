@@ -39,10 +39,10 @@ object BarTooltipHelper {
                 .defaultObjectRadius(objectRadius)
                 .defaultX(xCoord)
                 .defaultKind(
-                    if (!ctx.flipped) {
-                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                    } else {
+                    if (ctx.flipped) {
                         TipLayoutHint.Kind.ROTATED_TOOLTIP
+                    } else {
+                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                     }
                 )
 
@@ -60,10 +60,10 @@ object BarTooltipHelper {
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))
                     .setColor(colorFactory(p)),
-                tooltipKind = defaultTooltipKind ?: if (!ctx.flipped) {
-                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                } else {
+                tooltipKind = defaultTooltipKind ?: if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                 }
             )
         }

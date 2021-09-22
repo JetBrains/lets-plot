@@ -70,10 +70,10 @@ class ErrorBarGeom : GeomBase() {
             .defaultObjectRadius(clientRect.width / 2.0)
             .defaultX(p.x()!!)
             .defaultKind(
-                if (!ctx.flipped) {
-                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                } else {
+                if (ctx.flipped) {
                     TipLayoutHint.Kind.ROTATED_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                 }
             )
 
@@ -88,10 +88,10 @@ class ErrorBarGeom : GeomBase() {
             params()
                 .setTipLayoutHints(hints)
                 .setColor(fromColor(p)),
-            tooltipKind = if (!ctx.flipped) {
-                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-            } else {
+            tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            } else {
+                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
             }
         )
     }

@@ -20,10 +20,15 @@ class RectTargetCollectorHelper(
     private val tooltipKind: TipLayoutHint.Kind
 ) {
 
-    fun collectTo(targetCollector: GeomTargetCollector) {
+    fun collectTo(targetCollector: GeomTargetCollector, flippedAxis: Boolean) {
         rectanglesHelper.iterateRectangleGeometry(rectangleByDataPoint)
         { p, rectangle ->
-            targetCollector.addRectangle(p.index(), rectangle, tooltipParams(p), tooltipKind)
+            targetCollector.addRectangle(
+                p.index(),
+                rectangle.let { if (flippedAxis) it.flip() else it },
+                tooltipParams(p),
+                tooltipKind
+            )
         }
     }
 

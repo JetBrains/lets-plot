@@ -175,16 +175,8 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
         companion object {
             fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
                 return when (lookupSpace) {
-                    X -> PathPoint(
-                        PointTargetProjection.create(p, lookupSpace),
-                        p,
-                        index
-                    )
-                    XY -> PathPoint(
-                        PointTargetProjection.create(p, lookupSpace),
-                        p,
-                        index
-                    )
+                    X -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
+                    XY -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
                     NONE -> undefinedLookupSpaceError()
                 }
             }
@@ -192,11 +184,7 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
     }
 
     companion object {
-        fun create(
-            points: List<DoubleVector>,
-            indexMapper: (Int) -> Int,
-            lookupSpace: LookupSpace
-        ): PathTargetProjection {
+        fun create(points: List<DoubleVector>, indexMapper: (Int) -> Int, lookupSpace: LookupSpace): PathTargetProjection {
             val pointsLocation = ArrayList<PathPoint>()
             for ((i, point) in points.withIndex()) {
                 pointsLocation.add(PathPoint.create(point, indexMapper(i), lookupSpace))

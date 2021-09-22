@@ -54,7 +54,7 @@ class TextGeom : GeomBase() {
                 // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
                 targetCollector.addPoint(
                     p.index(),
-                    loc,
+                    loc.let { if (ctx.flipped) it.flip() else it },
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p)),

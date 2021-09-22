@@ -171,7 +171,7 @@ class TooltipSpecFactory(
                         axisRadius = AXIS_RADIUS
                     )
                 }
-                else -> error("Not an axis aes: $aes")
+                else -> error("Not an axis aes: $axis")
             }
         }
     }

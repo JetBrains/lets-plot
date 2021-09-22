@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -40,25 +39,31 @@ class RibbonGeom : GeomBase() {
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-        val targetCollector = ctx.targetCollector
         val helper = GeomHelper(pos, coord, ctx)
         for (p in aesthetics.dataPoints()) {
-            addTarget(p, targetCollector, GeomUtil.TO_LOCATION_X_YMAX, helper)
+            addTarget(p, ctx, GeomUtil.TO_LOCATION_X_YMAX, helper)
         }
     }
 
     private fun addTarget(
         p: DataPointAesthetics,
-        collector: GeomTargetCollector,
+        ctx: GeomContext,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
         helper: GeomHelper
     ) {
+        val targetCollector = ctx.targetCollector
         val coord = toLocation(p)
         if (coord != null) {
             val hint = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(0.0)
                 .defaultX(p.x()!!)
-                .defaultKind(TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+                .defaultKind(
+                    if (ctx.flipped) {
+                        TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                    } else {
+                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                    }
+                )
                 .defaultColor(
                     p.fill()!!,
                     alpha = null
@@ -68,9 +73,9 @@ class RibbonGeom : GeomBase() {
                 .addHint(hint.create(Aes.YMAX))
                 .addHint(hint.create(Aes.YMIN))
 
-            collector.addPoint(
+            targetCollector.addPoint(
                 p.index(),
-                helper.toClient(coord, p),
+                helper.toClient(coord, p).let { if (ctx.flipped) it.flip() else it },
                 0.0,
                 params().setTipLayoutHints(hintsCollection.hints)
             )
