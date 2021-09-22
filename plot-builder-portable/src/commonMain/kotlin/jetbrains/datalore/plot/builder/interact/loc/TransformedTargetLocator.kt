@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
@@ -15,7 +16,7 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
     GeomTargetLocator {
 
     override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
-        val targetCoord = convertToTargetCoord(coord)
+        val targetCoord = convertToTargetCoord(coord, FLIP_AXIS)
         val result = targetLocator.search(targetCoord) ?: return null
         return convertLookupResult(result)
     }
@@ -34,16 +35,16 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
         return geomTargets.map { geomTarget ->
             GeomTarget(
                 geomTarget.hitIndex,
-                convertTipLayoutHint(geomTarget.tipLayoutHint),
+                convertTipLayoutHint(geomTarget.tipLayoutHint, FLIP_AXIS),
                 convertTipLayoutHints(geomTarget.aesTipLayoutHints)
             )
         }
     }
 
-    private fun convertTipLayoutHint(hint: TipLayoutHint): TipLayoutHint {
+    private fun convertTipLayoutHint(hint: TipLayoutHint, flipCoord: Boolean): TipLayoutHint {
         return TipLayoutHint(
             hint.kind,
-            safeConvertToPlotCoord(hint.coord)!!,
+            safeConvertToPlotCoord(hint.coord, flipCoord)!!,
             convertToPlotDistance(hint.objectRadius),
             hint.color,
             hint.stemLength
@@ -52,17 +53,17 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
 
     private fun convertTipLayoutHints(tipLayoutHints: Map<Aes<*>, TipLayoutHint>): Map<Aes<*>, TipLayoutHint> {
         val result = HashMap<Aes<*>, TipLayoutHint>()
-        tipLayoutHints.forEach { (aes, hint) -> result[aes] = convertTipLayoutHint(hint) }
+        tipLayoutHints.forEach { (aes, hint) -> result[aes] = convertTipLayoutHint(hint, flipCoord = false) }
         return result
     }
 
-    private fun safeConvertToPlotCoord(coord: DoubleVector?): DoubleVector? {
-        return if (coord == null) null else convertToPlotCoord(coord)
+    private fun safeConvertToPlotCoord(coord: DoubleVector?, flipCoord: Boolean): DoubleVector? {
+        return if (coord == null) null else convertToPlotCoord(coord, flipCoord)
     }
 
-    protected abstract fun convertToTargetCoord(coord: DoubleVector): DoubleVector
+    protected abstract fun convertToTargetCoord(coord: DoubleVector, flipCoord: Boolean): DoubleVector
 
-    protected abstract fun convertToPlotCoord(coord: DoubleVector): DoubleVector
+    protected abstract fun convertToPlotCoord(coord: DoubleVector, flipCoord: Boolean): DoubleVector
 
     protected abstract fun convertToPlotDistance(distance: Double): Double
 }

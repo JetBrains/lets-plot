@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -61,7 +60,7 @@ internal class PlotTooltipHelper {
 
         lookupResults.forEach { result ->
             val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, FLIP_AXIS)) } // todo
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
         }
 
         return tooltipSpecs
@@ -96,16 +95,22 @@ internal class PlotTooltipHelper {
 
         private inner class TileTargetLocator(locator: GeomTargetLocator) : TransformedTargetLocator(locator) {
 
-            override fun convertToTargetCoord(coord: DoubleVector): DoubleVector {
-                return coord.subtract(geomBounds.origin)
+            override fun convertToTargetCoord(coord: DoubleVector, flipCoord: Boolean): DoubleVector {
+                return getCoord(coord.subtract(geomBounds.origin), flipCoord)
             }
 
-            override fun convertToPlotCoord(coord: DoubleVector): DoubleVector {
-                return coord.add(geomBounds.origin)
+            override fun convertToPlotCoord(coord: DoubleVector, flipCoord: Boolean): DoubleVector {
+                return getCoord(coord, flipCoord).add(geomBounds.origin)
             }
 
             override fun convertToPlotDistance(distance: Double): Double {
                 return distance
+            }
+
+            private fun getCoord(coord: DoubleVector, flipCoord: Boolean) = if (flipCoord) {
+                coord.flip()
+            } else {
+                coord
             }
         }
     }

@@ -121,7 +121,7 @@ internal class LocatedTargetsPicker {
                 return lookupResult
             }
 
-            val getCoord = if (FLIP_AXIS) {
+            val getCoord = if (FLIP_AXIS) { // todo ?
                 { point: DoubleVector -> point.y }
             } else {
                 { point: DoubleVector -> point.x }

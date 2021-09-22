@@ -23,14 +23,9 @@ class TargetPrototype(
 ) {
 
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
-        val coord = if (FLIP_AXIS) { // todo
-            hitCoord.flip()
-        } else {
-            hitCoord
-        }
         return GeomTarget(
             hitIndex,
-            createTipLayoutHint(coord, hitShape, tooltipParams.getColor(), tooltipKind, tooltipParams.getStemLength()),
+            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor(), tooltipKind, tooltipParams.getStemLength()),
             tooltipParams.getTipLayoutHints()
         )
     }

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
@@ -19,11 +20,11 @@ class TooltipSpecFactory(
     private val contextualMapping: ContextualMapping,
     private val axisOrigin: DoubleVector
 ) {
-    fun create(geomTarget: GeomTarget, flippedAxis: Boolean = false): List<TooltipSpec> {
-        return ArrayList(Helper(geomTarget, flippedAxis).createTooltipSpecs())
+    fun create(geomTarget: GeomTarget): List<TooltipSpec> {
+        return ArrayList(Helper(geomTarget).createTooltipSpecs())
     }
 
-    private inner class Helper(private val myGeomTarget: GeomTarget, private val flippedAxis: Boolean) {
+    private inner class Helper(private val myGeomTarget: GeomTarget) {
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
@@ -85,7 +86,7 @@ class TooltipSpecFactory(
             )
             axis.forEach { (aes, lines) ->
                 if (lines.isNotEmpty()) {
-                    val layoutHint = createHintForAxis(aes, flippedAxis)
+                    val layoutHint = createHintForAxis(aes)
                     tooltipSpecs.add(
                         TooltipSpec(
                             layoutHint = layoutHint,
@@ -148,11 +149,12 @@ class TooltipSpecFactory(
             }
         }
 
-        private fun createHintForAxis(aes: Aes<*>, flippedAxis: Boolean): TipLayoutHint {
+        private fun createHintForAxis(aes: Aes<*>): TipLayoutHint {
             val axis = aes.let {
+                // todo
                 when {
-                    flippedAxis && it == Aes.X -> Aes.Y
-                    flippedAxis && it == Aes.Y -> Aes.X
+                    FLIP_AXIS && it == Aes.X -> Aes.Y
+                    FLIP_AXIS && it == Aes.Y -> Aes.X
                     else -> it
                 }
             }
