@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -68,8 +67,7 @@ class PlotAssembler private constructor(
                 xAesRange,
                 yAesRange,
                 coordProvider,
-                theme,
-                FLIP_AXIS
+                theme
             )
             val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets)
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
@@ -82,7 +80,7 @@ class PlotAssembler private constructor(
         legendBoxInfos: List<LegendBoxInfo>
     ): PlotSvgComponent {
 
-        val plot = PlotSvgComponent(
+        return PlotSvgComponent(
             title = title,
             layersByTile = layersByTile,
             plotLayout = plotLayout,
@@ -91,16 +89,6 @@ class PlotAssembler private constructor(
             interactionsEnabled = interactionsEnabled,
             theme = theme
         )
-
-//        val plotBuilder = PlotBuilder(theme)
-//            .title(title)
-//            .tileFrameOfReferenceProvider(fOrProvider)
-//            .legendBoxInfos(legendBoxInfos)
-//            .tileLayers(layersByTile)
-//            .plotLayout(plotLayout)
-//            .interactionsEnabled(interactionsEnabled)
-//        return plotBuilder.build()
-        return plot
     }
 
     fun disableLegends() {

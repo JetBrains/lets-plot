@@ -13,6 +13,14 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
+    val flipAxis: Boolean
+
+    fun with(
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        flipped: Boolean
+    ): CoordProvider
+
     fun createCoordinateSystem(
         xDomain: ClosedRange<Double>,
         xAxisLength: Double,

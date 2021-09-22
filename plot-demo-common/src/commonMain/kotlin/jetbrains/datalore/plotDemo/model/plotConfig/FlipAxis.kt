@@ -10,43 +10,30 @@ import jetbrains.datalore.plot.parsePlotSpec
 class FlipAxis {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            pointsAndSmooth(),
-            pointsOnly(),
-            smoothOnly(),
-            pointsOnlyWithLimits(),
+            pointsAndSmooth(false),
+            pointsAndSmooth(true),
         )
     }
 
-    private fun pointsAndSmooth(): MutableMap<String, Any> {
+    private fun pointsAndSmooth(flip: Boolean): MutableMap<String, Any> {
+        val coordSpec = when {
+            flip -> "'coord': {'name': 'flip', 'flip': true},"
+            else -> ""
+        }
+
         val spec = """
 {
  'mapping': {'x': 'x', 'y': 'y'},
  'kind': 'plot',
+ $coordSpec
  'layers': [{
    'geom': 'point',
    'color': 'black',
    'alpha': 0.6,
    'size': 5},
   {'geom': 'smooth'
-   }]
- }
-         """.trimIndent()
-        val map = parsePlotSpec(spec)
-        map["data"] = data
-        return map
-    }
-
-    private fun pointsOnly(): MutableMap<String, Any> {
-        val spec = """
-{
- 'mapping': {'x': 'x', 'y': 'y'},
- 'kind': 'plot',
- 'layers': [{
-   'geom': 'point',
-   'color': 'black',
-   'alpha': 0.6,
-   'size': 5}
-   ]
+   }],
+   'ggtitle': {'text': 'Flipped: $flip'}
  }
          """.trimIndent()
 
@@ -55,27 +42,6 @@ class FlipAxis {
         return map
     }
 
-    private fun smoothOnly(): MutableMap<String, Any> {
-        val spec = """
-{
- 'mapping': {'x': 'x', 'y': 'y'},
- 'kind': 'plot',
- 'layers': [
-  {'geom': 'smooth'
-   }]
- }
-         """.trimIndent()
-
-        val map = parsePlotSpec(spec)
-        map["data"] = data
-        return map
-    }
-
-    private fun pointsOnlyWithLimits(): MutableMap<String, Any> {
-        val map = pointsOnly()
-        map.putAll(cartesianWithLimits(xLim, yLim))
-        return map
-    }
 
     companion object {
         private val x = listOf(

@@ -16,9 +16,20 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal abstract class CoordProviderBase(
-    private val xLim: ClosedRange<Double>?,
-    private val yLim: ClosedRange<Double>?
+    _xLim: ClosedRange<Double>?,
+    _yLim: ClosedRange<Double>?,
+    override val flipAxis: Boolean,
 ) : CoordProvider {
+
+    private val xLim: ClosedRange<Double>? = when {
+        flipAxis -> _yLim
+        else -> _xLim
+    }
+
+    private val yLim: ClosedRange<Double>? = when {
+        flipAxis -> _xLim
+        else -> _yLim
+    }
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,

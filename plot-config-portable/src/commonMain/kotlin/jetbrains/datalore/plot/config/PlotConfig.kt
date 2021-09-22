@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
-import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.FACET
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
@@ -149,9 +148,7 @@ abstract class PlotConfig(
 
     companion object {
         private const val ERROR_MESSAGE = "__error_message"
-        private val DEF_OPTIONS = mapOf(
-            COORD to Option.CoordName.CARTESIAN
-        )
+        private val DEF_OPTIONS: Map<String, Any> = emptyMap()
         internal const val PLOT_COMPUTATION_MESSAGES = "computation_messages"
 
         fun failure(message: String): Map<String, Any> {

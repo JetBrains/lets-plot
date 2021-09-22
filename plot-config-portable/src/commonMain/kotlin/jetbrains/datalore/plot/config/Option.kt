@@ -515,6 +515,11 @@ object Option {
         }
     }
 
+    object Coord {
+        // coord parameters
+        const val FLIPPED = "flip"
+    }
+
     object CoordName {
         // coordinate systems
         const val CARTESIAN = "cartesian"
