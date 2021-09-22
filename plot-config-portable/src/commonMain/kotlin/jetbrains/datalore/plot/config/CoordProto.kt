@@ -7,22 +7,15 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.config.Option.Coord.RATIO
+import jetbrains.datalore.plot.config.Option.Coord.X_LIM
+import jetbrains.datalore.plot.config.Option.Coord.Y_LIM
 import jetbrains.datalore.plot.config.Option.CoordName.CARTESIAN
 import jetbrains.datalore.plot.config.Option.CoordName.FIXED
 import jetbrains.datalore.plot.config.Option.CoordName.FLIP
 import jetbrains.datalore.plot.config.Option.CoordName.MAP
 
 internal object CoordProto {
-
-    // option names
-    private const val X_LIM = "xlim"
-    private const val Y_LIM = "ylim"
-    private const val RATIO = "ratio"
-
-    //    private const val FLIP = "flip"
-    private const val EXPAND = "expand"  // todo
-    private const val ORIENTATION = "orientation" // Todo: see 'coord_map'
-    private const val PROJECTION = "projection"   // todo
 
     fun createCoordProvider(coordName: String, options: OptionsAccessor): CoordProvider {
         val xLim = options.getRangeOrNull(X_LIM)

@@ -517,7 +517,13 @@ object Option {
 
     object Coord {
         // coord parameters
+        const val X_LIM = "xlim"
+        const val Y_LIM = "ylim"
+        const val RATIO = "ratio"
         const val FLIPPED = "flip"
+        const val EXPAND = "expand"  // todo
+        const val ORIENTATION = "orientation" // Todo: see 'coord_map'
+        const val PROJECTION = "projection"   // todo
     }
 
     object CoordName {
@@ -525,8 +531,8 @@ object Option {
         const val CARTESIAN = "cartesian"
         const val FIXED = "fixed"
         const val MAP = "map"
+        const val FLIP = "flip"
         const val QUICK_MAP = "quickmap"  // todo
-        const val FLIP = "flip"      // todo
         const val EQUAL = "equal"    // todo
         const val POLAR = "polar"    // todo
         const val TRANS = "trans"    // todo
