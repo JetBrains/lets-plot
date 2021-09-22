@@ -19,8 +19,7 @@ internal class LayerTargetLocator(
     private val geomKind: GeomKind,
     private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
-    targetPrototypes: List<TargetPrototype>,
-    private val flippedAxis: Boolean = false // todo use FLIP_AXIS?
+    targetPrototypes: List<TargetPrototype>
 ) :
     GeomTargetLocator {
 
@@ -59,27 +58,23 @@ internal class LayerTargetLocator(
             return when (prototype.hitShape.kind) {
                 POINT -> PointTargetProjection.create(
                     prototype.hitShape.point.center,
-                    lookupSpec.lookupSpace,
-                    flippedAxis
+                    lookupSpec.lookupSpace
                 )
 
                 RECT -> RectTargetProjection.create(
                     prototype.hitShape.rect,
-                    lookupSpec.lookupSpace,
-                    flippedAxis
+                    lookupSpec.lookupSpace
                 )
 
                 POLYGON -> PolygonTargetProjection.create(
                     prototype.hitShape.points,
-                    lookupSpec.lookupSpace,
-                    flippedAxis
+                    lookupSpec.lookupSpace
                 )
 
                 PATH -> PathTargetProjection.create(
                     prototype.hitShape.points,
                     prototype.indexMapper,
-                    lookupSpec.lookupSpace,
-                    flippedAxis
+                    lookupSpec.lookupSpace
                 )
             }
         }
@@ -120,39 +115,38 @@ internal class LayerTargetLocator(
             return null
         }
 
-        val point = if (flippedAxis) { coord.flip() } else { coord }
         val rectCollector = Collector<GeomTarget>(
-            point,
+            coord,
             myCollectingStrategy,
             lookupSpec.lookupSpace
         )
         val pointCollector = Collector<GeomTarget>(
-            point,
+            coord,
             myCollectingStrategy,
             lookupSpec.lookupSpace
         )
         val pathCollector = Collector<GeomTarget>(
-            point,
+            coord,
             myCollectingStrategy,
             lookupSpec.lookupSpace
         )
 
         // Should always replace because of polygon with holes - only top should have tooltip.
         val polygonCollector = Collector<GeomTarget>(
-            point,
+            coord,
             Collector.CollectingStrategy.REPLACE,
             lookupSpec.lookupSpace
         )
 
         for (target in myTargets) {
             when (target.prototype.hitShape.kind) {
-                RECT -> processRect(point, target, rectCollector)
+                RECT -> processRect(coord, target, rectCollector)
 
-                POINT -> processPoint(point, target, pointCollector)
+                POINT -> processPoint(coord, target, pointCollector)
 
-                PATH -> processPath(point, target, pathCollector)
+                PATH -> processPath(coord, target, pathCollector)
 
-                POLYGON -> processPolygon(point, target, polygonCollector)
+                POLYGON -> processPolygon(coord, target, polygonCollector)
             }
         }
 
@@ -186,9 +180,8 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
-            val yOffset = when {
-                target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
-                flippedAxis -> rect.height / 2.0
+            val yOffset = when (target.prototype.tooltipKind) {
+                CURSOR_TOOLTIP -> rect.height / 2.0
                 else -> 0.0
             }
 

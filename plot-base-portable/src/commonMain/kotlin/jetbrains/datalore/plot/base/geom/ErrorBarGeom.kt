@@ -62,22 +62,20 @@ class ErrorBarGeom : GeomBase() {
     }
 
     private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
-        val clientRect = geomHelper.toClient(rect, p)
-
-        var objectRadius = clientRect.width / 2.0
-        var kindForOutliers = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-        var kindForGeneralTooltip = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-
-        if (ctx.flipped) {
-            objectRadius = clientRect.height / 2.0
-            kindForOutliers = TipLayoutHint.Kind.ROTATED_TOOLTIP
-            kindForGeneralTooltip = TipLayoutHint.Kind.VERTICAL_TOOLTIP
+        val clientRect = geomHelper.toClient(rect, p).let {
+            if (ctx.flipped) it.flip() else it
         }
 
         val hint = HintConfigFactory()
-            .defaultObjectRadius(objectRadius)
+            .defaultObjectRadius(clientRect.width / 2.0)
             .defaultX(p.x()!!)
-            .defaultKind(kindForOutliers)
+            .defaultKind(
+                if (!ctx.flipped) {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.ROTATED_TOOLTIP
+                }
+            )
 
         val hints = HintsCollection(p, geomHelper)
             .addHint(hint.create(Aes.YMAX))
@@ -85,11 +83,16 @@ class ErrorBarGeom : GeomBase() {
             .hints
 
         ctx.targetCollector.addRectangle(
-            p.index(), clientRect,
+            p.index(),
+            clientRect,
             params()
-              .setTipLayoutHints(hints)
+                .setTipLayoutHints(hints)
                 .setColor(fromColor(p)),
-            kindForGeneralTooltip
+            tooltipKind = if (!ctx.flipped) {
+                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            } else {
+                TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            }
         )
     }
 

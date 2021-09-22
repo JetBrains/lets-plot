@@ -149,15 +149,22 @@ class TooltipSpecFactory(
         }
 
         private fun createHintForAxis(aes: Aes<*>, flippedAxis: Boolean): TipLayoutHint {
-            return when {
-                (aes == Aes.X && !flippedAxis) || (aes == Aes.Y && flippedAxis) -> {
+            val axis = aes.let {
+                when {
+                    flippedAxis && it == Aes.X -> Aes.Y
+                    flippedAxis && it == Aes.Y -> Aes.X
+                    else -> it
+                }
+            }
+            return when(axis) {
+                Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
                         coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
                         color = AXIS_TOOLTIP_COLOR,
                         axisRadius = AXIS_RADIUS
                     )
                 }
-                (aes == Aes.Y  && !flippedAxis) || (aes == Aes.X && flippedAxis) -> {
+                Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
                         color = AXIS_TOOLTIP_COLOR,

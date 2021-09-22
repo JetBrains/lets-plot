@@ -20,30 +20,31 @@ object BarTooltipHelper {
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         colorFactory: (DataPointAesthetics) -> Color,
-        tooltipKind: TipLayoutHint.Kind? = null
+        defaultTooltipKind: TipLayoutHint.Kind? = null
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
             val rect = rectFactory(p) ?: continue
 
-            val clientRect = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p)
-            var objectRadius = clientRect.width / 2.0
-
-            var kindForOutliers = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-            var kindForGeneralTooltip = tooltipKind ?: TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-
-            if (ctx.flipped) {
-                objectRadius = clientRect.height / 2.0
-                kindForOutliers = TipLayoutHint.Kind.ROTATED_TOOLTIP
-                kindForGeneralTooltip = tooltipKind ?: TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            val objectRadius = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p).run {
+                if (ctx.flipped) {
+                    height / 2.0
+                } else {
+                    width / 2.0
+                }
             }
-
             val xCoord = rect.center.x
             val hintFactory = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
                 .defaultX(xCoord)
-                .defaultKind(kindForOutliers)
+                .defaultKind(
+                    if (!ctx.flipped) {
+                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                    } else {
+                        TipLayoutHint.Kind.ROTATED_TOOLTIP
+                    }
+                )
 
             val hintConfigs = hintAesList
                 .fold(HintsCollection(p, helper)) { acc, aes ->
@@ -52,12 +53,18 @@ object BarTooltipHelper {
 
             ctx.targetCollector.addRectangle(
                 p.index(),
-                helper.toClient(rect, p),
+                helper.toClient(rect, p).let {
+                    if (ctx.flipped) it.flip() else it
+                },
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))
                     .setColor(colorFactory(p)),
-                kindForGeneralTooltip
+                tooltipKind = defaultTooltipKind ?: if (!ctx.flipped) {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                }
             )
         }
     }

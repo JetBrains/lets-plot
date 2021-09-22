@@ -106,10 +106,11 @@ class LayerTargetCollectorWithLocator(
                 geomKind,
                 lookupSpec,
                 contextualMapping,
-                myTargets,
-                FLIP_AXIS // todo
+                myTargets
             )
         }
-        return myLocator!!.search(coord)
+        return myLocator!!.search(
+            if (FLIP_AXIS) coord.flip() else coord // todo
+        )
     }
 }
