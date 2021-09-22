@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.Scale

@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import kotlin.math.abs
 

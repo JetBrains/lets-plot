@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.common.geometry
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 
 class PolylineSimplifier private constructor(private val myPoints: List<DoubleVector>, strategy: RankingStrategy) {
     private val myWeights: List<Double>
