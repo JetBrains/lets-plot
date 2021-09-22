@@ -75,9 +75,7 @@ class SmoothGeom : GeomBase() {
 
             val clientCoord = helper.toClient(p.x(), p.y(), p)
             ctx.targetCollector.addPoint(
-                p.index(),
-                clientCoord,
-                objectRadius,
+                p.index(), clientCoord, objectRadius,
                 params()
                     .setTipLayoutHints(hintsCollection.hints)
             )

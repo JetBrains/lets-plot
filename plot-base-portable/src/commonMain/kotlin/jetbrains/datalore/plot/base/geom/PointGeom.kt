@@ -59,9 +59,7 @@ open class PointGeom : GeomBase() {
                 val shape = p.shape()!!
 
                 targetCollector.addPoint(
-                    i,
-                    location,
-                    sizeUnitRatio * shape.size(p) / 2,
+                    i, location, sizeUnitRatio * shape.size(p) / 2,
                     tooltipParams(p)
                 )
                 val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)

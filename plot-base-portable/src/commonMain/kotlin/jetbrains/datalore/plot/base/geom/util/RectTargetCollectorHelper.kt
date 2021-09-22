@@ -23,12 +23,7 @@ class RectTargetCollectorHelper(
     fun collectTo(targetCollector: GeomTargetCollector) {
         rectanglesHelper.iterateRectangleGeometry(rectangleByDataPoint)
         { p, rectangle ->
-            targetCollector.addRectangle(
-                p.index(),
-                rectangle,
-                tooltipParams(p),
-                tooltipKind
-            )
+            targetCollector.addRectangle(p.index(), rectangle, tooltipParams(p), tooltipKind)
         }
     }
 

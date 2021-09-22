@@ -61,7 +61,7 @@ internal class PlotTooltipHelper {
 
         lookupResults.forEach { result ->
             val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, FLIP_AXIS)) }
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, FLIP_AXIS)) } // todo
         }
 
         return tooltipSpecs

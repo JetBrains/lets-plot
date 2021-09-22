@@ -51,7 +51,6 @@ class RibbonGeom : GeomBase() {
         toLocation: (DataPointAesthetics) -> DoubleVector?,
         helper: GeomHelper
     ) {
-        val targetCollector = ctx.targetCollector
         val coord = toLocation(p)
         if (coord != null) {
             val hint = HintsCollection.HintConfigFactory()
@@ -73,7 +72,7 @@ class RibbonGeom : GeomBase() {
                 .addHint(hint.create(Aes.YMAX))
                 .addHint(hint.create(Aes.YMIN))
 
-            targetCollector.addPoint(
+            ctx.targetCollector.addPoint(
                 p.index(),
                 helper.toClient(coord, p),
                 0.0,
