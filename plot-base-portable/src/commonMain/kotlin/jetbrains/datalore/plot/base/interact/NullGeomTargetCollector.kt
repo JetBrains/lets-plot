@@ -42,4 +42,8 @@ class NullGeomTargetCollector : GeomTargetCollector {
         tooltipKind: TipLayoutHint.Kind
     ) {
     }
+
+    override fun flip(): GeomTargetCollector {
+        return this
+    }
 }

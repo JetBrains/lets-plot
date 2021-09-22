@@ -53,9 +53,7 @@ object BarTooltipHelper {
 
             ctx.targetCollector.addRectangle(
                 p.index(),
-                helper.toClient(rect, p).let {
-                    if (ctx.flipped) it.flip() else it
-                },
+                helper.toClient(rect, p),
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))

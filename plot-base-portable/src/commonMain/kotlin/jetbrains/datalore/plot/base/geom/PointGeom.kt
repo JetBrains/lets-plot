@@ -60,7 +60,7 @@ open class PointGeom : GeomBase() {
 
                 targetCollector.addPoint(
                     i,
-                    location.let { if (ctx.flipped) it.flip() else it },
+                    location,
                     sizeUnitRatio * shape.size(p) / 2,
                     tooltipParams(p)
                 )

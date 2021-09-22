@@ -42,6 +42,8 @@ interface GeomTargetCollector {
         tooltipKind: Kind = Kind.CURSOR_TOOLTIP
     )
 
+    fun flip(): GeomTargetCollector
+
     class TooltipParams {
 
         private var myTipLayoutHints = emptyMap<Aes<*>, TipLayoutHint>()

@@ -26,7 +26,7 @@ class RectGeom : GeomBase() {
             rectangleByDataPoint = Companion::rectangleByDataPoint,
             fillByDataPoint = HintColorUtil::fromFill,
             tooltipKind = CURSOR_TOOLTIP
-        ).collectTo(ctx.targetCollector, ctx.flipped)
+        ).collectTo(ctx.targetCollector)
     }
 
     companion object {

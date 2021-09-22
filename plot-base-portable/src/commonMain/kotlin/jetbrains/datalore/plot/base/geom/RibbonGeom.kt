@@ -75,7 +75,7 @@ class RibbonGeom : GeomBase() {
 
             targetCollector.addPoint(
                 p.index(),
-                helper.toClient(coord, p).let { if (ctx.flipped) it.flip() else it },
+                helper.toClient(coord, p),
                 0.0,
                 params().setTipLayoutHints(hintsCollection.hints)
             )

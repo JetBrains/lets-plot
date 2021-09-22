@@ -55,9 +55,7 @@ class VLineGeom : GeomBase() {
                 val rect = DoubleRectangle(origin, dimensions)
                 ctx.targetCollector.addRectangle(
                     p.index(),
-                    geomHelper.toClient(rect, p).let {
-                        if (ctx.flipped) it.flip() else it
-                    },
+                    geomHelper.toClient(rect, p),
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p))
                 )
