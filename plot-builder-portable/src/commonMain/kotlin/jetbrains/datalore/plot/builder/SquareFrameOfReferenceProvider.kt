@@ -26,7 +26,7 @@ class SquareFrameOfReferenceProvider(
     private val theme: Theme
 ) : TileFrameOfReferenceProvider {
 
-    private val flipAxis: Boolean = coordProvider.flipAxis
+    override val flipAxis: Boolean = coordProvider.flipAxis
     private val vAxisSpec: AxisSpec
     private val hAxisSpec: AxisSpec
 

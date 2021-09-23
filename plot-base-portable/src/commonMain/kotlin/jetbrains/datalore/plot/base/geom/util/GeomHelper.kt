@@ -22,7 +22,7 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 open class GeomHelper(
     private val myPos: PositionAdjustment,
     coord: CoordinateSystem,
-    protected val ctx: GeomContext
+    internal val ctx: GeomContext
 ) {
     private val myGeomCoord: GeomCoord = GeomCoord(coord)
 

@@ -37,7 +37,7 @@ internal class TooltipLayer(
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec -> spec
                 .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
-                .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
+                .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier, spec.layoutHint.kind == ROTATED_TOOLTIP) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }

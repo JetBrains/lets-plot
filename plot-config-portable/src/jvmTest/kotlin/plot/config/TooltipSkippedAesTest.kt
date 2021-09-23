@@ -184,7 +184,8 @@ class TooltipSkippedAesTest {
                     hitIndex = 0,
                     tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, Color.BLACK),
                     aesTipLayoutHints = emptyMap()
-                )
+                ),
+                flippedAxis = false
             )
         }
 

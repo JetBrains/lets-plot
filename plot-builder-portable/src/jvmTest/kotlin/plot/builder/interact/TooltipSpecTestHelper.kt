@@ -94,7 +94,7 @@ open class TooltipSpecTestHelper {
                 DataFrame.Builder().build()
             ),
             DoubleVector.ZERO
-        ).create(geomTarget)
+        ).create(geomTarget, flippedAxis = false)
     }
 
     internal fun createTooltipSpecWithValueSources(
@@ -111,7 +111,7 @@ open class TooltipSpecTestHelper {
                 valueSources
             ),
             DoubleVector.ZERO
-        ).create(geomTarget)
+        ).create(geomTarget, flippedAxis = false)
     }
 
     internal fun buildTooltipSpecs() {

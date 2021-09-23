@@ -64,7 +64,13 @@ class TooltipBox(
         add(myTextBox)
     }
 
-    internal fun setContent(color: Color, lines: List<TooltipSpec.Line>, style: String, isOutlier: Boolean) {
+    internal fun setContent(
+        color: Color,
+        lines: List<TooltipSpec.Line>,
+        style: String,
+        isOutlier: Boolean,
+        rotate: Boolean = false
+    ) {
         addClassName(style)
         if (isOutlier) {
             fillColor = Colors.mimicTransparency(color, color.alpha / 255.0, Color.WHITE)
@@ -77,7 +83,8 @@ class TooltipBox(
             lines,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
-            tooltipMinWidth = tooltipMinWidth
+            tooltipMinWidth,
+            rotate
         )
     }
 
@@ -187,7 +194,8 @@ class TooltipBox(
             lines: List<TooltipSpec.Line>,
             labelTextColor: Color,
             valueTextColor: Color,
-            tooltipMinWidth: Double?
+            tooltipMinWidth: Double?,
+            rotate: Boolean
         ) {
             val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
                 Triple(
@@ -274,13 +282,28 @@ class TooltipBox(
                             labelBBox.height + labelBBox.top
                         ) + LINE_INTERVAL
                     )
-                })
-                .subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                }).let {  textSize ->
+                    if (rotate) {
+                        linesInfo
+                            .onEach { (_, labelComponent, valueComponent) ->
+                                labelComponent?.rotate(90.0)
+                                labelComponent?.y()?.set(-labelComponent.y().get()!!)
+                                labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+
+                                valueComponent.y().set(-valueComponent.y().get()!!)
+                                valueComponent.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                valueComponent.rotate(90.0)
+                            }
+                        textSize.flip()
+                    } else {
+                        textSize.subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                    }
+                }
 
             myLines.apply {
-                x().set(H_CONTENT_PADDING)
+                x().set(if (rotate) 0.0 else H_CONTENT_PADDING)
                 y().set(V_CONTENT_PADDING)
-                width().set(textSize.x)
+                width().set(textSize.x + H_CONTENT_PADDING * 2)
                 height().set(textSize.y)
             }
 

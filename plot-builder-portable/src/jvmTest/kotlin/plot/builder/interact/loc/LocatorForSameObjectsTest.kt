@@ -57,7 +57,7 @@ class LocatorForSameObjectsTest {
             val targetsPicker = LocatedTargetsPicker()
             targetLocators.forEach { locator ->
                 val lookupResult = locator.search(POINT_COORD)
-                lookupResult?.let { targetsPicker.addLookupResult(it) }
+                lookupResult?.let { targetsPicker.addLookupResult(it, flippedAxis = false) }
             }
             return targetsPicker.picked
         }

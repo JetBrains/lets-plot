@@ -19,21 +19,32 @@ object BarTooltipHelper {
         coord: CoordinateSystem,
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
-        colorFactory: (DataPointAesthetics) -> Color
+        colorFactory: (DataPointAesthetics) -> Color,
+        defaultTooltipKind: TipLayoutHint.Kind? = null
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
             val rect = rectFactory(p) ?: continue
 
-            val clientRect = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p)
-            val objectRadius = clientRect.width / 2.0
-
+            val objectRadius = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p).run {
+                if (ctx.flipped) {
+                    height / 2.0
+                } else {
+                    width / 2.0
+                }
+            }
             val xCoord = rect.center.x
             val hintFactory = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
                 .defaultX(xCoord)
-                .defaultKind(TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+                .defaultKind(
+                    if (ctx.flipped) {
+                        TipLayoutHint.Kind.ROTATED_TOOLTIP
+                    } else {
+                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                    }
+                )
 
             val hintConfigs = hintAesList
                 .fold(HintsCollection(p, helper)) { acc, aes ->
@@ -46,7 +57,12 @@ object BarTooltipHelper {
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
 //                    .setColor(HintColorUtil.fromColor(p))
-                    .setColor(colorFactory(p))
+                    .setColor(colorFactory(p)),
+                tooltipKind = defaultTooltipKind ?: if (ctx.flipped) {
+                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                }
             )
         }
     }

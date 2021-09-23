@@ -75,6 +75,9 @@ class LayoutManager(
                 }
             }
 
+        // add rotated tooltips
+        desiredPosition += calculateRotatedTooltipPosition(tooltips)
+
         // add corner tooltips - if the cursor is located within the visible boundaries
         if (tooltipBounds?.handlingArea?.contains(cursorCoord) != false) {
             desiredPosition += calculateCornerTooltipsPosition(tooltips)
@@ -106,7 +109,7 @@ class LayoutManager(
         return when (tooltip.hintKind) {
             X_AXIS_TOOLTIP -> bounds.xRange().contains(tooltip.stemCoord.x)
             Y_AXIS_TOOLTIP -> bounds.yRange().contains(tooltip.stemCoord.y)
-            VERTICAL_TOOLTIP, HORIZONTAL_TOOLTIP, CURSOR_TOOLTIP -> bounds.contains(tooltip.stemCoord)
+            VERTICAL_TOOLTIP, HORIZONTAL_TOOLTIP, CURSOR_TOOLTIP, ROTATED_TOOLTIP -> bounds.contains(tooltip.stemCoord)
         }
     }
 
@@ -138,6 +141,9 @@ class LayoutManager(
                 )
 
                 CURSOR_TOOLTIP -> placementList.add(calculateCursorTooltipPosition(measuredTooltip))
+
+                ROTATED_TOOLTIP ->
+                    Unit
 
                 X_AXIS_TOOLTIP ->
                     // X_AXIS should be processed separately to configure vertical space. If process axis tooltip with narrowed space
@@ -188,6 +194,34 @@ class LayoutManager(
         return placementList
     }
 
+    private fun calculateRotatedTooltipPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
+        val placementList = ArrayList<PositionedTooltip>()
+        tooltips
+            .filter { it.hintKind == ROTATED_TOOLTIP }
+            .sortedWith(compareBy { it.hintCoord.x })
+            .forEach {  measuredTooltip ->
+                var tooltip = calculateVerticalTooltipPosition(
+                    measuredTooltip,
+                    BOTTOM,
+                    ignoreCursor = true
+                )
+               val overlapped = placementList.findLast { it.rect().intersects(tooltip.rect()) }
+               if (overlapped != null) {
+                   val tooltipCoord = DoubleVector(
+                       overlapped.rect().right + MARGIN_BETWEEN_TOOLTIPS,
+                       tooltip.tooltipCoord.y
+                   )
+                   tooltip = PositionedTooltip(
+                       measuredTooltip,
+                       tooltipCoord = tooltipCoord,
+                       stemCoord = tooltip.stemCoord
+                   )
+               }
+               placementList.add(tooltip)
+           }
+        return placementList
+    }
+
     private fun rearrangeWithoutOverlapping(
         tooltips: List<PositionedTooltip>
     ): List<PositionedTooltip> {
@@ -204,7 +238,7 @@ class LayoutManager(
         }
 
         // First add tooltips with pre-arranged position
-        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
+        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP, ROTATED_TOOLTIP).forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.

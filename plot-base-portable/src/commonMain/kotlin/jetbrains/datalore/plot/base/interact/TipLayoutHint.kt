@@ -33,7 +33,8 @@ open class TipLayoutHint(
         HORIZONTAL_TOOLTIP,
         CURSOR_TOOLTIP,
         X_AXIS_TOOLTIP,
-        Y_AXIS_TOOLTIP
+        Y_AXIS_TOOLTIP,
+        ROTATED_TOOLTIP
     }
 
 
@@ -86,6 +87,16 @@ open class TipLayoutHint(
                 objectRadius = axisRadius,
                 color = color,
                 stemLength = stemLength
+            )
+        }
+
+        fun rotatedTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.SHORT): TipLayoutHint {
+            return TipLayoutHint(
+                Kind.ROTATED_TOOLTIP,
+                coord,
+                objectRadius,
+                color,
+                stemLength
             )
         }
     }

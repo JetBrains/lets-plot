@@ -38,7 +38,15 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         val aes = hintConfig.aes
         return if (!myPoint.defined(aes)) {
             null
-        } else myHelper.toClient(DoubleVector(hintConfig.x!!, myPoint.get<Double>(aes)!!), myPoint)
+        } else {
+            myHelper.toClient(DoubleVector(hintConfig.x!!, myPoint.get(aes)!!), myPoint).let {
+                if (myHelper.ctx.flipped) {
+                    it.flip()
+                } else {
+                    it
+                }
+            }
+        }
 
     }
 
@@ -56,6 +64,8 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(coord, objectRadius, color)
 
             Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(coord, color)
+
+            Kind.ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(coord, objectRadius, color)
 
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.kind)
         }

@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -63,11 +63,24 @@ class ErrorBarGeom : GeomBase() {
 
     private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
         val clientRect = geomHelper.toClient(rect, p)
+        val objectRadius = clientRect.run {
+            if (ctx.flipped) {
+                height / 2.0
+            } else {
+                width / 2.0
+            }
+        }
 
         val hint = HintConfigFactory()
-            .defaultObjectRadius(clientRect.width / 2.0)
+            .defaultObjectRadius(objectRadius)
             .defaultX(p.x()!!)
-            .defaultKind(HORIZONTAL_TOOLTIP)
+            .defaultKind(
+                if (ctx.flipped) {
+                    TipLayoutHint.Kind.ROTATED_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                }
+            )
 
         val hints = HintsCollection(p, geomHelper)
             .addHint(hint.create(Aes.YMAX))
@@ -75,10 +88,16 @@ class ErrorBarGeom : GeomBase() {
             .hints
 
         ctx.targetCollector.addRectangle(
-            p.index(), clientRect,
+            p.index(),
+            clientRect,
             params()
                 .setTipLayoutHints(hints)
-                .setColor(fromColor(p))
+                .setColor(fromColor(p)),
+            tooltipKind = if (ctx.flipped) {
+                TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            } else {
+                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            }
         )
     }
 

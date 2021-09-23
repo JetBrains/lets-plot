@@ -42,7 +42,7 @@ class PlotSvgComponent(
     private val theme: Theme
 ) : SvgComponent() {
 
-    private val tooltipHelper = PlotTooltipHelper()
+    private val tooltipHelper = PlotTooltipHelper(frameOfReferenceProvider.flipAxis)
 
     val mouseEventPeer = MouseEventPeer()
 
