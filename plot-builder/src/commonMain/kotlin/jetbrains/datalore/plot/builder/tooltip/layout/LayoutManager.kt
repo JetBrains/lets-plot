@@ -208,7 +208,7 @@ class LayoutManager(
                val overlapped = placementList.findLast { it.rect().intersects(tooltip.rect()) }
                if (overlapped != null) {
                    val tooltipCoord = DoubleVector(
-                       overlapped.rect().right,
+                       overlapped.rect().right + MARGIN_BETWEEN_TOOLTIPS,
                        tooltip.tooltipCoord.y
                    )
                    tooltip = PositionedTooltip(
