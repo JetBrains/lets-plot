@@ -38,7 +38,15 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         val aes = hintConfig.aes
         return if (!myPoint.defined(aes)) {
             null
-        } else myHelper.toClient(DoubleVector(hintConfig.x!!, myPoint.get<Double>(aes)!!), myPoint)
+        } else {
+            myHelper.toClient(DoubleVector(hintConfig.x!!, myPoint.get(aes)!!), myPoint).let {
+                if (myHelper.ctx.flipped) {
+                    it.flip()
+                } else {
+                    it
+                }
+            }
+        }
 
     }
 

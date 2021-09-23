@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
 
-internal class PlotTooltipHelper {
+internal class PlotTooltipHelper(private val flippedAxis: Boolean) {
     private val myTileInfos = ArrayList<TileInfo>()
 
     fun removeAllTileInfos() {
@@ -29,7 +29,8 @@ internal class PlotTooltipHelper {
         val tileInfo = TileInfo(
             geomBounds,
             tooltipBounds,
-            targetLocators
+            targetLocators,
+            flippedAxis
         )
         myTileInfos.add(tileInfo)
     }
@@ -60,7 +61,9 @@ internal class PlotTooltipHelper {
 
         lookupResults.forEach { result ->
             val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
+            result.targets.forEach { geomTarget ->
+                tooltipSpecs.addAll(factory.create(geomTarget, flippedAxis))
+            }
         }
 
         return tooltipSpecs
@@ -69,10 +72,13 @@ internal class PlotTooltipHelper {
     private class TileInfo(
         val geomBounds: DoubleRectangle,
         val tooltipBounds: PlotTooltipBounds,
-        targetLocators: List<GeomTargetLocator>
+        targetLocators: List<GeomTargetLocator>,
+        flippedAxis: Boolean
     ) {
 
-        private val myTargetLocators = targetLocators.map { TileTargetLocator(it) }
+        private val myTargetLocators = targetLocators.map {
+            if (flippedAxis) FlippedTileTargetLocator(it) else TileTargetLocator(it)
+        }
 
         internal val axisOrigin: DoubleVector
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
@@ -82,7 +88,7 @@ internal class PlotTooltipHelper {
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
-                        addLookupResult(result, plotCoord)
+                        addLookupResult(result, plotCoord, locator is FlippedTileTargetLocator)
                     }
                 }
             }
@@ -95,22 +101,30 @@ internal class PlotTooltipHelper {
 
         private inner class TileTargetLocator(locator: GeomTargetLocator) : TransformedTargetLocator(locator) {
 
-            override fun convertToTargetCoord(coord: DoubleVector, flipCoord: Boolean): DoubleVector {
-                return getCoord(coord.subtract(geomBounds.origin), flipCoord)
+            override fun convertToTargetCoord(coord: DoubleVector): DoubleVector {
+                return coord.subtract(geomBounds.origin)
             }
 
-            override fun convertToPlotCoord(coord: DoubleVector, flipCoord: Boolean): DoubleVector {
-                return getCoord(coord, flipCoord).add(geomBounds.origin)
+            override fun convertToPlotCoord(coord: DoubleVector): DoubleVector {
+                return coord.add(geomBounds.origin)
             }
 
             override fun convertToPlotDistance(distance: Double): Double {
                 return distance
             }
+        }
 
-            private fun getCoord(coord: DoubleVector, flipCoord: Boolean) = if (flipCoord) {
-                coord.flip()
-            } else {
-                coord
+        private inner class FlippedTileTargetLocator(locator: GeomTargetLocator) : TransformedTargetLocator(locator) {
+            override fun convertToTargetCoord(coord: DoubleVector): DoubleVector {
+                return coord.subtract(geomBounds.origin).flip()
+            }
+
+            override fun convertToPlotCoord(coord: DoubleVector): DoubleVector {
+                return coord.flip().add(geomBounds.origin)
+            }
+
+            override fun convertToPlotDistance(distance: Double): Double {
+                return distance
             }
         }
     }

@@ -12,6 +12,8 @@ class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
     override val hAxisLabel: String? = null
     override val vAxisLabel: String? = null
 
+    override val flipAxis: Boolean = false
+
     override fun createTileLayout(): TileLayout {
         throw IllegalStateException("Bogus frame of reference provider is not supposed to be used.")
     }

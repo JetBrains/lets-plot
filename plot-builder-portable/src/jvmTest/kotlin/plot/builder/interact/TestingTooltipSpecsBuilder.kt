@@ -44,7 +44,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tipLayoutHint).thenReturn(tipLayoutHint)
 
-        return factory.create(geomTarget)
+        return factory.create(geomTarget, flippedAxis = false)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {

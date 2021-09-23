@@ -12,6 +12,8 @@ interface TileFrameOfReferenceProvider {
     val hAxisLabel: String?
     val vAxisLabel: String?
 
+    val flipAxis: Boolean
+
     fun createTileLayout(): TileLayout
 
     fun createFrameOfReference(layoutInfo: TileLayoutInfo, debugDrawing: Boolean = false): TileFrameOfReference

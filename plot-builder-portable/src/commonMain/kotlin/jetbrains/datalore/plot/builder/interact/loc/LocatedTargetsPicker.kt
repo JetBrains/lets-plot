@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.FeatureSwitch.FLIP_AXIS
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.MathUtil
@@ -20,8 +19,8 @@ internal class LocatedTargetsPicker {
     val picked: List<LookupResult>
         get() = chooseBestResult()
 
-    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null) {
-        val lookupResult = filterResults(result, coord)
+    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null, flippedAxis: Boolean) {
+        val lookupResult = filterResults(result, coord, flippedAxis)
 
         val distance = distance(lookupResult, coord)
         if (!lookupResult.isCrosshairEnabled && distance > CUTOFF_DISTANCE) {
@@ -116,12 +115,12 @@ internal class LocatedTargetsPicker {
             return lft.geomKind === rgt.geomKind && UNIVARIATE_GEOMS.contains(rgt.geomKind)
         }
 
-        private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?): LookupResult {
+        private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?, flippedAxis: Boolean): LookupResult {
             if (coord == null || lookupResult.geomKind !in UNIVARIATE_LINES) {
                 return lookupResult
             }
 
-            val getCoord = if (FLIP_AXIS) { // todo ?
+            val getCoord = if (flippedAxis) {
                 { point: DoubleVector -> point.y }
             } else {
                 { point: DoubleVector -> point.x }
