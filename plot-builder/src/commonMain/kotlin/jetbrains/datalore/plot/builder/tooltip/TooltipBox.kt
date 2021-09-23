@@ -86,9 +86,6 @@ class TooltipBox(
             tooltipMinWidth,
             rotate
         )
-        if (rotate) {
-            this.rotate(-30.0)
-        }
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
