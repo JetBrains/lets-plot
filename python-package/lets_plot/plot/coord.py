@@ -170,14 +170,20 @@ def coord_flip(xlim=None, ylim=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 12
 
+        import numpy as np
         from lets_plot import *
-        from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        us = geocode_states('US-48').get_boundaries(4)
-        ggplot() + geom_map(map=us, fill='gray', color='white') + \\
-            coord_flip(xlim=(-130, -100))
+        np.random.seed(42)
+        n = 10
+        x = np.arange(n)
+        y = 1 + np.random.randint(5, size=n)
+        ggplot() + \\
+            geom_bar(aes(x='x', y='y', fill='x'), data={'x': x, 'y': y}, \\
+                     stat='identity', show_legend=False) + \\
+            scale_fill_discrete() + \\
+            coord_flip()
 
     """
 
