@@ -13,14 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * `order_by` (string) - the name of the variable by which the ordering will be performed;
     * `order` (int) - the ordering direction - 1 for ascending direction and -1 for descending (default value).
 
-  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/master/docs/as_discrete.md).
+  See: [as_discrete](https://lets-plot.org/pages/as_discrete.html).
 
 - Basemap tiles configuring:
     - Subdomains parameter `{s}` for XYZ raster tiles.
     - Solid color tiles: `maptiles_solid()`.
     - Builtin configurations for some 3rd party maptile services. The `lets_plot.tilesets` module.
 
-  See: [Configuring basemap tiles](https://github.com/JetBrains/lets-plot/blob/master/docs/basemap_tiles.md).
+  See: [Configuring basemap tiles](https://lets-plot.org/pages/basemap_tiles.html).
 
 ### Changed
 
@@ -70,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - In tooltip customization API:
     - `layer_tooltips(variables)` - the new parameter `variables` defines a list of variable names, which values will be placed line by line in the general tooltip.
-   See: [Tooltip Customization](https://github.com/JetBrains/lets-plot/blob/master/docs/tooltips.md).
+   See: [Tooltip Customization](https://lets-plot.org/pages/tooltips.html).
 
 ### Changed
 
