@@ -188,6 +188,7 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
             for ((i, point) in points.withIndex()) {
                 pointsLocation.add(PathPoint.create(point, indexMapper(i), lookupSpace))
             }
+
             return PathTargetProjection(pointsLocation)
         }
     }

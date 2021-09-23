@@ -46,12 +46,7 @@ class TargetPrototype(
                 }
 
                 RECT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(
-                        hitCoord,
-                        hitShape.rect.width / 2,
-                        fill,
-                        stemLength
-                    )
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.rect.width / 2, fill, stemLength)
                     HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill, stemLength)
                     CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill, stemLength)
                     ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(hitCoord, 0.0, fill, stemLength)

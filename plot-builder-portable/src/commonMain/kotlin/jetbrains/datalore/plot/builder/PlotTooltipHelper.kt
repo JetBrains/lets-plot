@@ -73,7 +73,7 @@ internal class PlotTooltipHelper(private val flippedAxis: Boolean) {
         val geomBounds: DoubleRectangle,
         val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
-        flippedAxis: Boolean
+        private val flippedAxis: Boolean
     ) {
 
         private val myTargetLocators = targetLocators.map {
@@ -88,7 +88,7 @@ internal class PlotTooltipHelper(private val flippedAxis: Boolean) {
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
-                        addLookupResult(result, plotCoord, locator is FlippedTileTargetLocator)
+                        addLookupResult(result, plotCoord, flippedAxis)
                     }
                 }
             }
