@@ -24,10 +24,5 @@ internal class AdaptableAxisBreaksProvider(
         @Suppress("UnnecessaryVariable")
         val scaleBreaks = breaksGenerator.generateBreaks(domainAfterTransform, targetCount)
         return scaleBreaks
-//        return ScaleBreaks(
-//            scaleBreaks.domainValues,
-//            scaleBreaks.transformedValues,
-//            scaleBreaks.labels
-//        )
     }
 }

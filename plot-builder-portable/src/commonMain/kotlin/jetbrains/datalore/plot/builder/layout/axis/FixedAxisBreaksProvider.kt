@@ -7,20 +7,9 @@ package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
-//class FixedAxisBreaksProvider(
-//    domainBreaks: List<Any>,
-//    transformedBreaks: List<Double>,
-//    labels: List<String>
-//) : AxisBreaksProvider {
 class FixedAxisBreaksProvider(
     override val fixedBreaks: ScaleBreaks
 ) : AxisBreaksProvider {
-
-//    override val fixedBreaks: ScaleBreaks = ScaleBreaks(
-//        domainBreaks,
-//        transformedBreaks,
-//        labels
-//    )
 
     override val isFixedBreaks: Boolean
         get() = true
