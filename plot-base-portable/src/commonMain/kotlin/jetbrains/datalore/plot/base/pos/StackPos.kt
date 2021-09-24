@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext

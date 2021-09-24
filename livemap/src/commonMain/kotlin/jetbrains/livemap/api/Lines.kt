@@ -19,6 +19,7 @@ import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
@@ -86,8 +87,10 @@ class LineBuilder(
                 val line = createLineGeometry(worldPoint, horizontal, mapProjection.mapRect)
                 val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, mapProjection.mapRect)
 
-                + ChartElementComponent().apply {
+                + RenderableComponent().apply {
                     renderer = PathRenderer()
+                }
+                + ChartElementComponent().apply {
                     scalable = this@LineBuilder.zoomable
                     strokeColor = this@LineBuilder.strokeColor
                     strokeWidth = this@LineBuilder.strokeWidth

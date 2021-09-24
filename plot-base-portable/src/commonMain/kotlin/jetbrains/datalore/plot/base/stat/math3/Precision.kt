@@ -36,7 +36,7 @@ import kotlin.math.abs
  */
 object Precision {
     /** Offset to order signed double numbers lexicographically.  */
-    private val SGN_MASK: Long = 1.shl(63)
+    private val SGN_MASK: Long = (1 shl 63).toLong()
     /** Offset to order signed double numbers lexicographically.  */
     private val SGN_MASK_FLOAT = 1.shl(31)
 

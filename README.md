@@ -44,7 +44,7 @@ You can use this API to embed charts into Kotlin/JVM and Kotlin/JS applications 
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 [![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 
-*Scientific mode* in PyCharm and in IntelliJ IDEA provides support for interactive scientific computing and data visualization.
+*Scientific mode* in PyCharm, DataSpell and in IntelliJ IDEA provides support for interactive scientific computing and data visualization.
 
 [*Lets-Plot in SciView*](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview) plugin adds 
 support for interactive plotting to IntelliJ-based IDEs with the *Scientific mode* enabled.

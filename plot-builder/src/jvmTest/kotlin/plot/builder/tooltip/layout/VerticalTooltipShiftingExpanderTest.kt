@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.rect

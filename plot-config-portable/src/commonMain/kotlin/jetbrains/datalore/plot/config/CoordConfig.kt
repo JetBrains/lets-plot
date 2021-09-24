@@ -6,29 +6,38 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.config.Option.Coord.FLIPPED
 
 class CoordConfig private constructor(
-    name: String,
-    options: Map<String, Any>
+    private val name: String,
+    options: Map<String, Any>,
+    private val defaultCoordProvider: CoordProvider
 ) : OptionsAccessor(options) {
 
-    val coord: CoordProvider = CoordProto.createCoordProvider(name, this)
-
     companion object {
-        fun create(coord: Any): CoordConfig {
-            // position - name of position adjustment
-            //        or
-            //        map with options
-            if (coord is Map<*, *>) {
-                @Suppress("UNCHECKED_CAST")
-                val options = coord as Map<String, Any>
-                return createForName(ConfigUtil.featureName(options), options)
-            }
-            return createForName(coord.toString(), HashMap())
-        }
+        fun create(coordOpts: Any?, defaultCoordProvider: CoordProvider): CoordProvider {
+            if (coordOpts == null) return defaultCoordProvider
 
-        private fun createForName(name: String, options: Map<String, Any>): CoordConfig {
-            return CoordConfig(name, options)
+            val coordName = when (coordOpts) {
+                is Map<*, *> -> ConfigUtil.featureName(coordOpts)
+                else -> coordOpts.toString()
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            val options: Map<String, Any> = when (coordOpts) {
+                is Map<*, *> -> coordOpts as Map<String, Any>
+                else -> emptyMap<String, Any>()
+            }
+            return when (coordName) {
+                Option.CoordName.FLIP -> {
+                    // Flip the 'default' coord system.
+                    val withFlip = options + mapOf(FLIPPED to true)
+                    CoordProto.createCoordProvider(defaultCoordProvider, over(withFlip))
+                }
+                else -> {
+                    CoordProto.createCoordProvider(coordName, over(options))
+                }
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil

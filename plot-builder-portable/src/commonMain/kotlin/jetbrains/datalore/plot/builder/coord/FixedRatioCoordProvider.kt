@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 /**
@@ -19,8 +18,16 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 internal open class FixedRatioCoordProvider(
     private val ratio: Double,
     xLim: ClosedRange<Double>?,
-    yLim: ClosedRange<Double>?
-) : CoordProviderBase(xLim, yLim) {
+    yLim: ClosedRange<Double>?,
+    flipped: Boolean
+) : CoordProviderBase(xLim, yLim, flipped) {
+    override fun with(
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        flipped: Boolean
+    ): CoordProvider {
+        return FixedRatioCoordProvider(ratio, xLim, yLim, flipped)
+    }
 
     override fun adjustDomains(
         xDomain: ClosedRange<Double>,

@@ -7,28 +7,31 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal class VerticalTooltipRotatingExpander(private val verticalSpace: jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange,
-                                               private val horizontalSpace: jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange) {
+internal class VerticalTooltipRotatingExpander(
+    private val verticalSpace: DoubleRange,
+    private val horizontalSpace: DoubleRange
+) {
 
     fun fixOverlapping(tooltips: List<PositionedTooltip>, restrictions: List<DoubleRectangle>): List<PositionedTooltip> {
         // <tooltip index, tooltip coord>
         val expandedPositions = ArrayList<Pair<Int, DoubleVector>>()
+        val allRestrictions = ArrayList(restrictions)
 
         var i = 0
         val n = tooltips.size
         while (i < n) {
             val tooltip = tooltips[i]
 
-            if (intersectsAny(tooltip.rect(), restrictions)) {
+            if (intersectsAny(tooltip.rect(), allRestrictions)) {
 
-                val restrictionsWithStems = ArrayList(restrictions)
+                val restrictionsWithStems = ArrayList(allRestrictions)
                 restrictionsWithStems.add(DoubleRectangle(tooltip.stemCoord, POINT_RESTRICTION_SIZE))
 
                 val newPlacement = findValidCandidate(getCandidates(tooltip), restrictionsWithStems)
@@ -39,6 +42,7 @@ internal class VerticalTooltipRotatingExpander(private val verticalSpace: jetbra
                 }
             } else {
                 expandedPositions.add(Pair(i, tooltip.tooltipCoord))
+                allRestrictions.add(tooltip.rect())
             }
             i++
         }

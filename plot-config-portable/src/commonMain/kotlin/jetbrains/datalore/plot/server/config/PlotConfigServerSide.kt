@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil

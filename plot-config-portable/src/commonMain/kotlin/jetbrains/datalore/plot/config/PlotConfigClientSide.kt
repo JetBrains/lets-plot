@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
@@ -30,17 +31,12 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
 
     init {
 
-        val coord = CoordConfig.create(get(COORD)!!)
-        var coordProvider = coord.coord
-        if (!hasOwn(COORD)) {
-            // if coord wasn't set explicitly then geom can provide its own preferred coord system
-            for (layerConfig in layerConfigs) {
-                val geomProtoClientSide = layerConfig.geomProto as GeomProtoClientSide
-                if (geomProtoClientSide.hasPreferredCoordinateSystem()) {
-                    coordProvider = geomProtoClientSide.preferredCoordinateSystem()
-                }
-            }
-        }
+        val preferredCoordProvider: CoordProvider? = layerConfigs
+            .map { it.geomProto as GeomProtoClientSide }
+            .firstOrNull { it.hasPreferredCoordinateSystem() }
+            ?.preferredCoordinateSystem()
+        val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
+        val coordProvider = CoordConfig.create(get(COORD), defaultCoordProvider)
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
     }

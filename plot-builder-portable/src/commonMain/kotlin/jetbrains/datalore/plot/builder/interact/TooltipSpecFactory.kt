@@ -19,11 +19,11 @@ class TooltipSpecFactory(
     private val contextualMapping: ContextualMapping,
     private val axisOrigin: DoubleVector
 ) {
-    fun create(geomTarget: GeomTarget): List<TooltipSpec> {
-        return ArrayList(Helper(geomTarget).createTooltipSpecs())
+    fun create(geomTarget: GeomTarget, flippedAxis: Boolean): List<TooltipSpec> {
+        return ArrayList(Helper(geomTarget, flippedAxis).createTooltipSpecs())
     }
 
-    private inner class Helper(private val myGeomTarget: GeomTarget) {
+    private inner class Helper(private val myGeomTarget: GeomTarget, private val flippedAxis: Boolean) {
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
@@ -85,7 +85,7 @@ class TooltipSpecFactory(
             )
             axis.forEach { (aes, lines) ->
                 if (lines.isNotEmpty()) {
-                    val layoutHint = createHintForAxis(aes)
+                    val layoutHint = createHintForAxis(aes, flippedAxis)
                     tooltipSpecs.add(
                         TooltipSpec(
                             layoutHint = layoutHint,
@@ -148,19 +148,30 @@ class TooltipSpecFactory(
             }
         }
 
-        private fun createHintForAxis(aes: Aes<*>): TipLayoutHint {
-            return when(aes) {
-                 Aes.X -> TipLayoutHint.xAxisTooltip(
-                     coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                     color = AXIS_TOOLTIP_COLOR,
-                     axisRadius = AXIS_RADIUS
-                 )
-                Aes.Y -> TipLayoutHint.yAxisTooltip(
-                    coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                    color = AXIS_TOOLTIP_COLOR,
-                    axisRadius = AXIS_RADIUS
-                )
-                else -> error("Not an axis aes: $aes")
+        private fun createHintForAxis(aes: Aes<*>, flippedAxis: Boolean): TipLayoutHint {
+            val axis = aes.let {
+                when {
+                    flippedAxis && it == Aes.X -> Aes.Y
+                    flippedAxis && it == Aes.Y -> Aes.X
+                    else -> it
+                }
+            }
+            return when(axis) {
+                Aes.X -> {
+                    TipLayoutHint.xAxisTooltip(
+                        coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
+                        color = AXIS_TOOLTIP_COLOR,
+                        axisRadius = AXIS_RADIUS
+                    )
+                }
+                Aes.Y -> {
+                    TipLayoutHint.yAxisTooltip(
+                        coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
+                        color = AXIS_TOOLTIP_COLOR,
+                        axisRadius = AXIS_RADIUS
+                    )
+                }
+                else -> error("Not an axis aes: $axis")
             }
         }
     }

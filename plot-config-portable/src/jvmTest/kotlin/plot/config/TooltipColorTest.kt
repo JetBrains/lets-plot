@@ -58,7 +58,8 @@ class TooltipColorTest {
                     hitIndex = 0,
                     tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, DEFAULT_COLOR),
                     aesTipLayoutHints = emptyMap()
-                )
+                ),
+                flippedAxis = false
             )
         }
 

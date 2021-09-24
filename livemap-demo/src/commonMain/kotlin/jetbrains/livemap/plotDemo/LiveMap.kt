@@ -11,12 +11,13 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            georeference(),
+//            georeference(),
 //            blankPoint(),
 //            blankMap(),
-//            barWithNanValuesInData(),
-            //pieWithNullValuesInData(),
-            //barWithNullValuesInData()
+            barWithNanValuesInData(),
+//            pieWithNanValuesInData(),
+//            pieWithNullValuesInData(),
+//            barWithNullValuesInData()
 //            multiLayerTooltips()
 //            mapJoinBar(),
 //            antiMeridian(),
@@ -161,41 +162,6 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-    private fun pieWithNanValuesInData(): MutableMap<String, Any> {
-        val spec = """{
-  "kind": "plot",
-  "layers": [
-    {
-      "geom": "livemap",
-      "data": {
-        "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
-        "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
-        "z": [1, 2, 4, 44, null, 30, 123, 543, 231],
-        "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
-      },
-      "mapping": {
-        "x": "x",
-        "y": "y",
-        "sym_y": "z",
-        "fill": "c"
-      },
-      "display_mode": "pie",
-      "tiles": {
-        "kind": "vector_lets_plot",
-        "url": "wss://tiles.datalore.jetbrains.com",
-        "theme": null,
-        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
-      },
-      "geocoding": {
-        "url": "http://localhost:3020"
-      }
-    }
-  ]
-}""".trimIndent()
-
-        return parsePlotSpec(spec)
-    }
-
     private fun blankMap(): MutableMap<String, Any> {
         val spec = """{
   "kind": "plot",
@@ -240,6 +206,41 @@ class LiveMap {
         "fill": "c"
       },
       "display_mode": "bar",
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "wss://tiles.datalore.jetbrains.com",
+        "url": "wss://tiles.datalore.jetbrains.com",
+        "theme": null,
+        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+      },
+      "geocoding": {
+        "url": "http://localhost:3020"
+      }
+    }
+  ]
+}""".trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+    private fun pieWithNanValuesInData(): MutableMap<String, Any> {
+        val spec = """{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "livemap",
+      "data": {
+        "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+        "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+        "z": [100, 200, 400, 144, null, 230, 123, 543, -231],
+        "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
+      },
+      "mapping": {
+        "x": "x",
+        "y": "y",
+        "sym_y": "z",
+        "fill": "c"
+      },
+      "display_mode": "pie",
       "tiles": {
         "kind": "vector_lets_plot",
         "url": "wss://tiles.datalore.jetbrains.com",
@@ -868,21 +869,24 @@ class LiveMap {
 
     fun fourPointsTwoLayers(): MutableMap<String, Any> {
         val spec = """{
-                "data":{
-                    "x":[29.777834, 29.778033],
-                    "y":[59.991666, 59.988106],
-                    "lonlat":["29.777834,59.991666", "29.778033,59.988106"],
-                    "label":["one", "two"]
-                },
+
                 "kind":"plot",
                 "layers":[
                     {
                         "geom":"livemap",
+                        "data":{
+                            "x":[29.777834, 29.778033],
+                            "y":[59.991666, 59.988106],
+                            "lonlat":["29.777834,59.991666", "29.778033,59.988106"],
+                            "label":["one", "two"]
+                        },                        
                         "mapping":{
                             "x":"x",
                             "y":"y",
                             "color":"label"
                         },
+                        "location": {"type": "coordinates", "data": [29.7, 60.02]},
+                        "zoom": 10,
                         "display_mode":"point",
                         "tiles":{ "kind":"raster_zxy", "url":"https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"},
                         "shape":19,
@@ -891,9 +895,9 @@ class LiveMap {
                     {
                         "geom":"point",
                         "data":{
-                            "lon":[29.703667, 29.72339],
-                            "lat":[60.01668, 60.008983],
-                            "label":["three", "four"]
+                            "lon":[29.703667, 29.72339, 29.75339, 29.77339, 29.79339, 29.81339],
+                            "lat":[60.01668, 60.008983, 60.012983, 60.022983, 60.032983, 60.042983],
+                            "label":["three", "four", "five", "six", "seve", "eight"]
                         },
                         "mapping":{
                             "x":"lon",

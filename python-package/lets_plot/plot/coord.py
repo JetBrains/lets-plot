@@ -9,11 +9,12 @@ from .core import FeatureSpec
 #
 __all__ = ['coord_cartesian',
            'coord_fixed',
-           'coord_map'
+           'coord_map',
+           'coord_flip'
            ]
 
 
-def coord_cartesian(xlim=None, ylim=None):
+def coord_cartesian(xlim=None, ylim=None, flip=False):
     """
     The Cartesian coordinate system is the most familiar and common type of coordinate system.
     Setting limits on the coordinate system will zoom the plot like you're looking at it with a magnifying glass.
@@ -29,6 +30,8 @@ def coord_cartesian(xlim=None, ylim=None):
         Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
+    flip : bool
+        Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
 
     Returns
     -------
@@ -51,10 +54,10 @@ def coord_cartesian(xlim=None, ylim=None):
 
     """
 
-    return _coord('cartesian', xlim=xlim, ylim=ylim)
+    return _coord('cartesian', xlim=xlim, ylim=ylim, flip=flip)
 
 
-def coord_fixed(ratio=1., xlim=None, ylim=None):
+def coord_fixed(ratio=1., xlim=None, ylim=None, flip=False):
     """
     A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.
 
@@ -72,6 +75,8 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
         Limits (2 numbers) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
+    flip : bool
+        Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
 
     Returns
     -------
@@ -96,10 +101,10 @@ def coord_fixed(ratio=1., xlim=None, ylim=None):
 
     """
 
-    return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim)
+    return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim, flip=flip)
 
 
-def coord_map(xlim=None, ylim=None):
+def coord_map(xlim=None, ylim=None, flip=False):
     """
     Projects a portion of the earth, which is approximately spherical,
     onto a flat 2D plane.
@@ -115,6 +120,8 @@ def coord_map(xlim=None, ylim=None):
         Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
+    flip : bool
+        Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
 
     Returns
     -------
@@ -136,7 +143,51 @@ def coord_map(xlim=None, ylim=None):
 
     """
 
-    return _coord('map', xlim=xlim, ylim=ylim)
+    return _coord('map', xlim=xlim, ylim=ylim, flip=flip)
+
+
+def coord_flip(xlim=None, ylim=None):
+    """
+    Flip axis of default coordinate system so that horizontal axis becomes vertical and vice versa.
+
+    Parameters
+    ----------
+    xlim : list
+        Limits (2 elements) for the x axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+    ylim : list
+        Limits (2 elements) for the y axis.
+        1st element defines lower limit, 2nd element defines upper limit.
+        None means no lower / upper bound - depending on the index in list.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Coordinate system specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 10
+        x = np.arange(n)
+        y = 1 + np.random.randint(5, size=n)
+        ggplot() + \\
+            geom_bar(aes(x='x', y='y', fill='x'), data={'x': x, 'y': y}, \\
+                     stat='identity', show_legend=False) + \\
+            scale_fill_discrete() + \\
+            coord_flip()
+
+    """
+
+    return _coord('flip', xlim=xlim, ylim=ylim, flip=True)
 
 
 def _coord(name, **other):

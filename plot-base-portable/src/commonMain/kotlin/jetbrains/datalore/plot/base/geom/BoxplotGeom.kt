@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.PointShape
@@ -46,7 +47,8 @@ class BoxplotGeom : GeomBase() {
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx),
-            { HintColorUtil.fromColor(it) }
+            { HintColorUtil.fromColor(it) },
+            if (ctx.flipped) TipLayoutHint.Kind.CURSOR_TOOLTIP else null
         )
     }
 

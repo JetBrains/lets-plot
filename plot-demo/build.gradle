@@ -107,18 +107,6 @@ idea {
     }
 }
 
-
-// Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
-// MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
-// 
-// JavaFX Scene mapping requires stylesheet resource URI 
-task copyProcessedResources(type: Copy) {
-    from "${project.buildDir}/processedResources"
-    into "${project.buildDir}/classes/kotlin"
-}
-
-build.dependsOn += copyProcessedResources
-
 // Fix Gradle 7 error:
 // Execution failed for task ':plot-demo:jvm*Jar'.
 // Entry diamonds.csv is a duplicate but no duplicate handling strategy has been set.

@@ -11,8 +11,6 @@ import jetbrains.livemap.fragment.FragmentsRemovingSystem
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.lang.reflect.Method
 
 class FragmentsRemovingSystemTest : RegionsTestBase() {
@@ -71,7 +69,7 @@ class FragmentsRemovingSystemTest : RegionsTestBase() {
         } else DEFAULT_CACHE_SIZE
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
+    @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
     internal annotation class CacheSize(val size: Int)
     companion object {

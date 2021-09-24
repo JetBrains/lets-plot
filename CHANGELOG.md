@@ -130,7 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Ascending/descending ordering of faceting values.
   - Formatting of faceting values. 
                
-  See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/facets.ipynb)
+  See: [Facets demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/cookbook/facets.ipynb)
 
 
 - In tooltip customization API: 
@@ -151,7 +151,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    scale_x_continuous(format='is {.2f}')
    ```
 
-   Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/formatting_axes_etc.ipynb)
+   Demo: [Formatting demo](https://nbviewer.jupyter.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/cookbook/formatting_axes_etc.ipynb)
        
    See also: [Formatting](https://lets-plot.org/pages/formats.html)
 

@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Projection
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -18,8 +17,17 @@ internal class ProjectionCoordProvider(
     private val projectionX: Projection,
     private val projectionY: Projection,
     xLim: ClosedRange<Double>?,
-    yLim: ClosedRange<Double>?
-) : CoordProviderBase(xLim, yLim) {
+    yLim: ClosedRange<Double>?,
+    flipped: Boolean
+) : CoordProviderBase(xLim, yLim, flipped) {
+
+    override fun with(
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        flipped: Boolean
+    ): CoordProvider {
+        return ProjectionCoordProvider(projectionX, projectionY, xLim, yLim, flipped)
+    }
 
     override fun adjustDomains(
         xDomain: ClosedRange<Double>,
@@ -62,7 +70,7 @@ internal class ProjectionCoordProvider(
         val projectedYMax = projectionY.apply(domainSquare.second.upperEnd)
 
         val ratio = (projectedYMax - projectedYMin) / (projectedXMax - projectedXMin)
-        val fixedCoord = FixedRatioCoordProvider(ratio, null, null)
+        val fixedCoord = FixedRatioCoordProvider(ratio, null, null, false)
         return fixedCoord.adjustDomains(xDomain, yDomain, displaySize)
     }
 
