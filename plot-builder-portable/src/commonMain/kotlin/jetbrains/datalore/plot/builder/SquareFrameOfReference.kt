@@ -184,7 +184,13 @@ internal class SquareFrameOfReference(
                 .aesthetics(aesthetics)
                 .aestheticMappers(aestheticMappers)
                 .aesBounds(xyAesBounds)
-                .geomTargetCollector(targetCollector)
+                .geomTargetCollector(
+                    if (flippedAxis) {
+                        targetCollector.flip()
+                    } else {
+                        targetCollector
+                    }
+                )
                 .build()
 
             val pos = rendererData.pos

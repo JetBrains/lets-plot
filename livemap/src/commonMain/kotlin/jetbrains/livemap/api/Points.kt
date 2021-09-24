@@ -17,6 +17,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
@@ -82,8 +83,10 @@ class PointBuilder(
                 if (layerIndex != null && index != null) {
                     +IndexComponent(layerIndex!!, index!!)
                 }
-                +ChartElementComponent().apply {
+                + RenderableComponent().apply {
                     renderer = Renderers.PointRenderer(shape)
+                }
+                +ChartElementComponent().apply {
                     scalable = this@PointBuilder.zoomable
                     when (shape) {
                         in 1..14 -> {

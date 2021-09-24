@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.tooltip.layout
 
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM

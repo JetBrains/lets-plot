@@ -17,6 +17,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.*
 
 @LiveMapDsl
@@ -74,8 +75,10 @@ class TextBuilder(
             else -> error("Can't create text entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
-                + ChartElementComponent().apply {
+                + RenderableComponent().apply {
                     renderer = TextRenderer()
+                }
+                + ChartElementComponent().apply {
                     fillColor = this@TextBuilder.fillColor
                     strokeColor = this@TextBuilder.strokeColor
                     strokeWidth = this@TextBuilder.strokeWidth

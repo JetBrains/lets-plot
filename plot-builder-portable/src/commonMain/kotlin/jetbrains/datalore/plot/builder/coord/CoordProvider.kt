@@ -7,12 +7,19 @@ package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
+    val flipAxis: Boolean
+
+    fun with(
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        flipped: Boolean
+    ): CoordProvider
+
     fun createCoordinateSystem(
         xDomain: ClosedRange<Double>,
         xAxisLength: Double,

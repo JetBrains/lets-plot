@@ -27,6 +27,7 @@ import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
@@ -103,8 +104,10 @@ class PolygonsBuilder(
                 if (layerIndex != null && index != null) {
                     + IndexComponent(layerIndex!!, index!!)
                 }
-                + ChartElementComponent().apply {
+                + RenderableComponent().apply {
                     renderer = PolygonRenderer()
+                }
+                + ChartElementComponent().apply {
                     scalable = this@PolygonsBuilder.zoomable
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor
@@ -128,8 +131,10 @@ class PolygonsBuilder(
         return myFactory
             .createMapEntity("map_ent_geo_object_polygon_" + geoObject.id)
             .addComponents {
-                + ChartElementComponent().apply {
+                + RenderableComponent().apply {
                     renderer = RegionRenderer()
+                }
+                + ChartElementComponent().apply {
                     scalable = this@PolygonsBuilder.zoomable
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor

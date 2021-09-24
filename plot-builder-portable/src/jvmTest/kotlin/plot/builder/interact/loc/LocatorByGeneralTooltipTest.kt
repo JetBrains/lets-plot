@@ -169,7 +169,7 @@ class LocatorByGeneralTooltipTest {
         val targetsPicker = LocatedTargetsPicker()
         targetLocators.forEach { locator ->
             val lookupResult = locator.search(COORD)
-            lookupResult?.let { targetsPicker.addLookupResult(it) }
+            lookupResult?.let { targetsPicker.addLookupResult(it, flippedAxis = false) }
         }
         return targetsPicker.picked
     }

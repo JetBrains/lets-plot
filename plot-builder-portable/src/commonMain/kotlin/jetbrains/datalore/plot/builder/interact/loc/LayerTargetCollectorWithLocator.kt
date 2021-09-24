@@ -94,6 +94,10 @@ class LayerTargetCollectorWithLocator(
         )
     }
 
+    override fun flip(): GeomTargetCollector {
+        return FlippedTargetCollector(this)
+    }
+
     private fun addTarget(targetPrototype: TargetPrototype) {
         myTargets.add(targetPrototype)
         myLocator = null

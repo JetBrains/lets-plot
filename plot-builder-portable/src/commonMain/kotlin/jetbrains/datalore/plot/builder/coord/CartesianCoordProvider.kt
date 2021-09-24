@@ -9,5 +9,14 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 internal class CartesianCoordProvider(
     xLim: ClosedRange<Double>?,
-    yLim: ClosedRange<Double>?
-) : CoordProviderBase(xLim, yLim)
+    yLim: ClosedRange<Double>?,
+    flipped: Boolean = false
+) : CoordProviderBase(xLim, yLim, flipped) {
+    override fun with(
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        flipped: Boolean
+    ): CoordProvider {
+        return CartesianCoordProvider(xLim, yLim, flipped)
+    }
+}

@@ -257,7 +257,6 @@ object GeomInteractionUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
-            GeomKind.BOX_PLOT,
             GeomKind.SEGMENT,
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
                 .showAxisTooltip(true)
@@ -267,6 +266,7 @@ object GeomInteractionUtil {
             } else {
                 builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             }
+            GeomKind.BOX_PLOT,
             GeomKind.BIN_2D,
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,

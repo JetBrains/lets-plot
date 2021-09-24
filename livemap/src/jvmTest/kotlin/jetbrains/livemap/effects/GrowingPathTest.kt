@@ -28,6 +28,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.mapengine.RenderableComponent
 import org.mockito.Mockito
 import kotlin.math.pow
 import kotlin.math.round
@@ -153,8 +154,10 @@ class GrowingPathTest {
                 + ScreenGeometryComponent().apply {
                     geometry = createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0))
                 }
-                + ChartElementComponent().apply {
+                + RenderableComponent().apply {
                     renderer = render
+                }
+                + ChartElementComponent().apply {
                     fillColor = Color.BLACK
                     strokeColor = Color.BLACK
                     strokeWidth = 1.0

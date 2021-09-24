@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.coord
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.test.BeforeTest

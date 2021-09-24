@@ -5,11 +5,11 @@
 
 package jetbrains.livemap.mapengine.basemap
 
-import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.basemap.BasemapCellRendererComponent.Companion.NULL_RENDERER
 import jetbrains.livemap.mapengine.viewport.CellKey
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
@@ -30,12 +30,12 @@ class BasemapCellsRemovingSystem(
             val cellKey = cellEntity.get<BasemapCellComponent>().cellKey
 
             if (viewportGridState.visibleCells.contains(cellKey)) {
-                cellEntity.get<ChartElementComponent>().renderer =
+                cellEntity.get<RenderableComponent>().renderer =
                     cellEntity.get<BasemapCellRendererComponent>().renderer
             }
 
             if (viewportGridState.cellsToRemove.contains(cellKey)) {
-                cellEntity.get<ChartElementComponent>().renderer = NULL_RENDERER
+                cellEntity.get<RenderableComponent>().renderer = NULL_RENDERER
             }
         }
 

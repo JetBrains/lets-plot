@@ -4,20 +4,20 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
+import jetbrains.livemap.chart.BarChart
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PieLocatorHelper
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -112,8 +112,11 @@ class BarsFactory(
                 if (it.layerIndex != null) {
                     + IndexComponent(it.layerIndex!!, 0)
                 }
+                + LocatorComponent(BarChart.Locator())
+                + RenderableComponent().apply {
+                    renderer = BarChart.Renderer()
+                }
                 + ChartElementComponent().apply {
-                    renderer = Renderers.BarRenderer()
                     scalable = this@BarsFactory.zoomable
                     strokeColor = it.strokeColor
                     strokeWidth = it.strokeWidth
@@ -128,7 +131,6 @@ class BarsFactory(
                 + ScreenDimensionComponent()
                 + ScreenLoopComponent()
                 + ScreenOriginComponent()
-                + LocatorComponent(PieLocatorHelper())
             }
         }
     }

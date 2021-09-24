@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Coords
@@ -16,9 +15,20 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal abstract class CoordProviderBase(
-    private val xLim: ClosedRange<Double>?,
-    private val yLim: ClosedRange<Double>?
+    _xLim: ClosedRange<Double>?,
+    _yLim: ClosedRange<Double>?,
+    override val flipAxis: Boolean,
 ) : CoordProvider {
+
+    private val xLim: ClosedRange<Double>? = when {
+        flipAxis -> _yLim
+        else -> _xLim
+    }
+
+    private val yLim: ClosedRange<Double>? = when {
+        flipAxis -> _xLim
+        else -> _yLim
+    }
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,

@@ -8,13 +8,13 @@ package jetbrains.livemap.mapengine.basemap
 import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.api.mapEntity
-import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.basemap.BasemapCellRendererComponent.Companion.NULL_RENDERER
 import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugCellRenderer
@@ -83,7 +83,7 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
                 )
                     .addComponents {
                         + WorldOriginComponent(tileRect.origin)
-                        + ChartElementComponent().apply { NULL_RENDERER }
+                        + RenderableComponent().apply { NULL_RENDERER }
                         + ScreenLoopComponent().apply { rounding = FLOOR }
                         + ScreenOriginComponent()
                         + ScreenDimensionComponent().apply {

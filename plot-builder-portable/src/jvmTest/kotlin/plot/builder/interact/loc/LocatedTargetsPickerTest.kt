@@ -120,7 +120,7 @@ class LocatedTargetsPickerTest {
 
         val targetsPicker = LocatedTargetsPicker()
         listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
-                .forEach { targetsPicker.addLookupResult(it) }
+                .forEach { targetsPicker.addLookupResult(it, flippedAxis = false) }
 
         val lookupResults = targetsPicker.picked
 

@@ -23,10 +23,10 @@ class SquareFrameOfReferenceProvider(
     xAesRange: ClosedRange<Double>,
     yAesRange: ClosedRange<Double>,
     private val coordProvider: CoordProvider,
-    private val theme: Theme,
-    private val flipAxis: Boolean,
+    private val theme: Theme
 ) : TileFrameOfReferenceProvider {
 
+    override val flipAxis: Boolean = coordProvider.flipAxis
     private val vAxisSpec: AxisSpec
     private val hAxisSpec: AxisSpec
 

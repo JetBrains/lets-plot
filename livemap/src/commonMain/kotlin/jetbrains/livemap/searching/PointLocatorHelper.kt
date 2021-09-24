@@ -9,8 +9,8 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
+import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
 class PointLocatorHelper : LocatorHelper {
@@ -24,19 +24,11 @@ class PointLocatorHelper : LocatorHelper {
             return false
         }
 
-        val origins = target.get<ScreenLoopComponent>().origins
-        val radius = target.get<ScreenDimensionComponent>().dimension.x / 2
-
-        origins.forEach {
-            if (LocatorUtil.distance(coord, it) <= radius) {
-                return true
-            }
-        }
-
-        return false
+        val radius = target.get<SymbolComponent>().size.x / 2
+        return target.get<ScreenLoopComponent>().origins.any { LocatorUtil.distance(coord, it) <= radius }
     }
 
     companion object {
-        val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenDimensionComponent::class)
+        val LOCATABLE_COMPONENTS = listOf(SymbolComponent::class, ScreenLoopComponent::class)
     }
 }
