@@ -47,7 +47,7 @@ object Defaults {
             const val POINTER_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
 
             const val MARGIN_BETWEEN_TOOLTIPS = 5.0
-            const val DATA_TOOLTIP_FONT_SIZE = FONT_MEDIUM
+            const val DATA_TOOLTIP_FONT_SIZE = FONT_SMALL
             const val LINE_INTERVAL = 3.0
             const val H_CONTENT_PADDING = 4.0
             const val V_CONTENT_PADDING = 4.0
