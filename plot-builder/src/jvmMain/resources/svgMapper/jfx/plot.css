@@ -47,7 +47,7 @@ Text {
 }
 
 .plt-axis-tooltip Text {
-    -fx-font-size: 15px;
+    -fx-font-size: 13px;
 }
 
 .plt-axis Line {
