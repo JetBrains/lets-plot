@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.MathUtil
 import kotlin.math.abs
 
-internal class LocatedTargetsPicker {
+class LocatedTargetsPicker {
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
     private val myAllLookupResults = ArrayList<LookupResult>()
