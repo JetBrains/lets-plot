@@ -73,14 +73,14 @@ Also read:
   - `order_by` (string) - the name of the variable by which the ordering will be performed;
   - `order` (int) - the ordering direction: 1 for ascending direction and -1 for descending (default).
 
-  See: [as_discrete](https://github.com/JetBrains/lets-plot/blob/master/docs/as_discrete.md).
+  See: [as_discrete](https://lets-plot.org/pages/as_discrete.html).
 
 - Interactive maps:
 
   - Pre-configured raster tilesets in new `lets_plot.tilesets` module.
   - Builtin blank maptiles.
 
-  See: [Configuring basemap tiles](https://github.com/JetBrains/lets-plot/blob/master/docs/basemap_tiles.md).
+  See: [Configuring basemap tiles](https://lets-plot.org/pages/basemap_tiles.html).
 
 ## Change Log
 

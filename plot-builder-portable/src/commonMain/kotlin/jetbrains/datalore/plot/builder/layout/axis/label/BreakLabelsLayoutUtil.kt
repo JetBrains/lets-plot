@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -51,7 +52,7 @@ internal object BreakLabelsLayoutUtil {
     }
 
     fun doLayoutVerticalAxisLabels(
-        orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+        orientation: Orientation,
         breaks: ScaleBreaks,
         axisDomain: ClosedRange<Double>,
         axisMapper: (Double?) -> Double?,
@@ -60,12 +61,11 @@ internal object BreakLabelsLayoutUtil {
 
         val axisBounds = when {
             theme.showTickLabels() -> {
-                val labelsBounds =
-                    verticalAxisLabelsBounds(
-                        breaks,
-                        axisDomain,
-                        axisMapper
-                    )
+                val labelsBounds = verticalAxisLabelsBounds(
+                    breaks,
+                    axisDomain,
+                    axisMapper
+                )
                 applyLabelsOffset(
                     labelsBounds,
                     theme.tickLabelDistance(),
@@ -132,18 +132,16 @@ internal object BreakLabelsLayoutUtil {
         axisDomain: ClosedRange<Double>,
         axisMapper: (Double?) -> Double?
     ): DoubleRectangle {
-        val maxLength =
-            maxLength(breaks.labels)
+        val maxLength = maxLength(breaks.labels)
         val maxLabelWidth = AxisLabelsLayout.TICK_LABEL_SPEC.width(maxLength)
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
-            val axisBreaks =
-                mapToAxis(
-                    breaks.transformedValues,
-                    axisDomain,
-                    axisMapper
-                )
+            val axisBreaks = mapToAxis(
+                breaks.transformedValues,
+                axisDomain,
+                axisMapper
+            )
 
             y1 = min(axisBreaks[0], axisBreaks.last())
             y2 = max(axisBreaks[0], axisBreaks.last())
