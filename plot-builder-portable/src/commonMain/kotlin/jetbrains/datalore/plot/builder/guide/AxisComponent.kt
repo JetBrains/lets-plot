@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.observable.event.EventSources
@@ -17,6 +18,7 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -26,9 +28,11 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
 
     val breaks: Property<List<Double>?> = ValueProperty(null)
     val labels: Property<List<String>?> = ValueProperty(null)
+
     // layout
     val tickLabelRotationDegree: Property<Double> = ValueProperty(0.0)
     val tickLabelHorizontalAnchor: Property<TextLabel.HorizontalAnchor>
+
     // todo: minorBreaks
     val tickLabelVerticalAnchor: Property<TextLabel.VerticalAnchor>
     val tickLabelSmallFont: Property<Boolean> = ValueProperty(false)
@@ -42,6 +46,7 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
     val tickMarkPadding: Property<Double> = ValueProperty(3.0)
     private val length = ValueProperty<Double?>(null)
     private val orientation = ValueProperty<Orientation?>(null)
+
     // theme
     private val myTickMarksEnabled = ValueProperty(true)
     private val myTickLabelsEnabled = ValueProperty(true)
@@ -74,7 +79,8 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
         tickLabelVerticalAnchor = ValueProperty(defTickLabelVerticalAnchor(orientation))
 
         @Suppress("UNCHECKED_CAST")
-        fun <T> EventSource<in PropertyChangeEvent<T>>.asPropertyChangedEventSource() = this as EventSource<PropertyChangeEvent<*>>
+        fun <T> EventSource<in PropertyChangeEvent<T>>.asPropertyChangedEventSource() =
+            this as EventSource<PropertyChangeEvent<*>>
 
         EventSources.composite(
             this.length.asPropertyChangedEventSource(),
@@ -152,16 +158,19 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
                     }
                 }
 
-                var i = 0
-                for (br in breaks) {
+
+                val labelsCleaner = TickLabelsCleaner(orientation.get()!!.isHorizontal)
+
+                for ((i, br) in breaks.withIndex()) {
                     val addGridLine = br >= gridLineMinPos && br <= gridLineMaxPos
                     val label = labels[i % labels.size]
                     val labelOffset = tickLabelOffset(i)
-                    i++
                     val group = buildTick(
-                            label,
-                            labelOffset,
-                            if (addGridLine) gridLineLength.get() else 0.0)
+                        label,
+                        labelOffset,
+                        if (addGridLine) gridLineLength.get() else 0.0,
+                        skipLabel = !labelsCleaner.beforeAddLabel(br, tickLabelRotationDegree.get())
+                    )
 
                     when (orientation.get()) {
                         Orientation.LEFT, Orientation.RIGHT -> transformTranslate(group, 0.0, br)
@@ -180,7 +189,12 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
         }
     }
 
-    private fun buildTick(label: String, labelOffset: DoubleVector, gridLineLength: Double): SvgGElement {
+    private fun buildTick(
+        label: String,
+        labelOffset: DoubleVector,
+        gridLineLength: Double,
+        skipLabel: Boolean
+    ): SvgGElement {
 
         var tickMark: SvgLineElement? = null
         if (tickMarksEnabled().get()) {
@@ -190,7 +204,7 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
         }
 
         var tickLabel: TextLabel? = null
-        if (tickLabelsEnabled().get()) {
+        if (tickLabelsEnabled().get() && !skipLabel) {
             tickLabel = TextLabel(label)
             reg(bindOneWay(tickColor, tickLabel.textColor()))
         }
@@ -311,6 +325,41 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
 
     fun axisLineEnabled(): Property<Boolean> {
         return myAxisLineEnabled
+    }
+
+
+    private class TickLabelsCleaner(val horizontalAxis: Boolean) {
+        private val filledRanges = ArrayList<ClosedRange<Double>>()
+
+        fun beforeAddLabel(loc: Double, rotationDegree: Double): Boolean {
+            if (!isRelevant(rotationDegree)) return true
+
+            val len = PlotLabelSpec.AXIS_TICK.height()
+
+            // find overlap
+            if (filledRanges.any { it.contains(loc) || it.contains(loc + len) }) {
+                // overlap - don't add this label
+                return false
+            }
+
+            filledRanges.add(ClosedRange(loc, loc + len))
+            return true
+        }
+
+        private fun isRelevant(rotationDegree: Double): Boolean {
+            return when {
+                horizontalAxis -> isVertical(rotationDegree)
+                else -> isHorizontal(rotationDegree)
+            }
+        }
+
+        private fun isHorizontal(rotationDegree: Double): Boolean {
+            return rotationDegree % 180 == 0.0
+        }
+
+        private fun isVertical(rotationDegree: Double): Boolean {
+            return (rotationDegree / 90) % 2 == 1.0
+        }
     }
 }
 

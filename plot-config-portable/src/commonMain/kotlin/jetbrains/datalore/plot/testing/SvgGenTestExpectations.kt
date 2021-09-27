@@ -29,7 +29,7 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |	text-rendering: optimizeLegibility;
         |}
         |.plt-data-tooltip text {
-        |	font-size: 15px;
+        |	font-size: 13px;
         |}
         |.plt-axis-tooltip text {
         |	font-size: 13px;
@@ -322,7 +322,7 @@ val EXPECTED_BUNCH_SVG = """
         |	text-rendering: optimizeLegibility;
         |}
         |.plt-data-tooltip text {
-        |	font-size: 15px;
+        |	font-size: 13px;
         |}
         |.plt-axis-tooltip text {
         |	font-size: 13px;
