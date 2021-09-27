@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -62,7 +62,9 @@ class SmoothGeom : GeomBase() {
             val hint = HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
                 .defaultX(xCoord)
-                .defaultKind(HORIZONTAL_TOOLTIP)
+                .defaultKind(
+                    if (ctx.flipped) VERTICAL_TOOLTIP else HORIZONTAL_TOOLTIP
+                )
                 .defaultColor(
                     p.fill()!!,
                     PROPORTION(p.alpha())
