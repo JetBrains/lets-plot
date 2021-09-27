@@ -238,36 +238,59 @@ class LayoutManager(
 
         (tooltips.select(VERTICAL_TOOLTIP, ROTATED_TOOLTIP) - tooltips.selectCorner())
             .let { verticalTooltips ->
-                fixOverlappingWithShifting(
-                    VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
-                        verticalTooltips,
-                        restrictions
-                    ),
-                    restrictions
-                ).forEach(::fixate)
+                if (verticalTooltips.sumOf(PositionedTooltip::width) < myHorizontalSpace.length()) {
+                    fixOverlappingWithShifting(
+                        VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
+                            verticalTooltips,
+                            restrictions
+                        )
+                    ).forEach(::fixate)
+                } else {
+                    verticalTooltips
+                        .sortedBy { it.stemCoord.x }
+                        .let { tooltips ->
+                            tooltips
+                                .filter { it.stemCoord.x > myCursorCoord.x }
+                                .minByOrNull { it.stemCoord.x }
+                                ?: tooltips.last()
+                        }
+                        .let(::fixate)
+                }
             }
 
         return separatedTooltips
     }
 
-    private fun fixOverlappingWithShifting(
-        tooltips: List<PositionedTooltip>,
-        restrictions: List<DoubleRectangle>
-    ): List<PositionedTooltip> {
+    private fun fixOverlappingWithShifting(tooltips: List<PositionedTooltip>): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
+        /*
         val allRestrictions = ArrayList(restrictions)
         val helper = VerticalTooltipShiftingExpander(myHorizontalSpace)
-        tooltips
-            .sortedWith(compareBy { it.tooltipCoord.x })
-            .forEach { tooltip ->
                 helper.fixOverlapping(listOf(0 to tooltip), allRestrictions)
                 val newPosition = helper.spacedTooltips?.firstOrNull()?.second
-                val newTooltip = if (newPosition != null) {
-                    tooltip.moveTo(newPosition)
+                val newTooltip = if (newPosition != null && newPosition != tooltip.tooltipCoord ) {
+                    tooltip.moveTo(newPosition)//.add(DoubleVector(MARGIN_BETWEEN_TOOLTIPS, 0.0)))
                 } else {
                     tooltip
                 }
                 allRestrictions.add(newTooltip.rect())
+                placementList.add(newTooltip)
+
+            }
+        */
+
+        tooltips
+            .sortedWith(compareBy({ it.stemCoord.x }, { it.tooltipCoord.x }))
+            .forEach { tooltip: PositionedTooltip ->
+                val newTooltip = if (placementList.isOverlapped(tooltip)) {
+                    val newPosition = DoubleVector(
+                        placementList.last().rect().right + MARGIN_BETWEEN_TOOLTIPS,
+                        tooltip.tooltipCoord.y
+                    )
+                    tooltip.moveTo(newPosition)
+                } else {
+                    tooltip
+                }
                 placementList.add(newTooltip)
             }
         return placementList
