@@ -23,23 +23,23 @@ class EventsManager : Disposable {
 
     private val mouseEventPeer = MouseEventPeer()
     private val controls = mutableSetOf<UiControl>()
-    private var hoveredComponent: UiControl? = null
+    private var hoveredControl: UiControl? = null
     private val regs = CompositeRegistration()
     private val debugTrace = false
 
     init {
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_ENTERED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_ENTERED, e)
+                hoveredControl?.dispatch(MOUSE_ENTERED, e)
                 dispatchGlobalEvent(MOUSE_ENTERED, e)
             })
         )
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_LEFT, e)
+                hoveredControl?.dispatch(MOUSE_LEFT, e)
                 dispatchGlobalEvent(MOUSE_LEFT, e)
-                hoveredComponent = null
+                hoveredControl = null
             })
         )
 
@@ -49,26 +49,26 @@ class EventsManager : Disposable {
 
                 val c = controls.lastOrNull() { it.bbox.contains(p) }
 
-                if (hoveredComponent != null) {
+                if (hoveredControl != null) {
                     if (c == null) {
                         if (debugTrace) {
-                            println("left $hoveredComponent")
+                            println("left $hoveredControl")
                         }
 
-                        hoveredComponent!!.dispatch(MOUSE_LEFT, e)
-                        hoveredComponent = null
-                    } else if (c != hoveredComponent) {
+                        hoveredControl!!.dispatch(MOUSE_LEFT, e)
+                        hoveredControl = null
+                    } else if (c != hoveredControl) {
                         if (debugTrace) {
-                            println("$hoveredComponent -> $c")
+                            println("$hoveredControl -> $c")
                         }
 
-                        hoveredComponent!!.dispatch(MOUSE_LEFT, e)
+                        hoveredControl!!.dispatch(MOUSE_LEFT, e)
 
-                        hoveredComponent = c
-                        hoveredComponent!!.dispatch(MOUSE_ENTERED, e)
-                    } else if (c == hoveredComponent) {
+                        hoveredControl = c
+                        hoveredControl!!.dispatch(MOUSE_ENTERED, e)
+                    } else if (c == hoveredControl) {
                         if (debugTrace) {
-                            println("moved on $hoveredComponent")
+                            println("moved on $hoveredControl")
                         }
 
                         c.dispatch(MOUSE_MOVED, e)
@@ -81,11 +81,11 @@ class EventsManager : Disposable {
                         // do nothing
                     } else {
                         if (debugTrace) {
-                            println("entered on $hoveredComponent")
+                            println("entered on $hoveredControl")
                         }
 
-                        hoveredComponent = c
-                        hoveredComponent!!.dispatch(MOUSE_ENTERED, e)
+                        hoveredControl = c
+                        hoveredControl!!.dispatch(MOUSE_ENTERED, e)
                     }
                 }
 
@@ -95,42 +95,42 @@ class EventsManager : Disposable {
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_DRAGGED, e)
+                hoveredControl?.dispatch(MOUSE_DRAGGED, e)
                 dispatchGlobalEvent(MOUSE_DRAGGED, e)
             })
         )
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_CLICKED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_CLICKED, e)
+                hoveredControl?.dispatch(MOUSE_CLICKED, e)
                 dispatchGlobalEvent(MOUSE_CLICKED, e)
             })
         )
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_DOUBLE_CLICKED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_DOUBLE_CLICKED, e)
+                hoveredControl?.dispatch(MOUSE_DOUBLE_CLICKED, e)
                 dispatchGlobalEvent(MOUSE_DOUBLE_CLICKED, e)
             })
         )
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_PRESSED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_PRESSED, e)
+                hoveredControl?.dispatch(MOUSE_PRESSED, e)
                 dispatchGlobalEvent(MOUSE_PRESSED, e)
             })
         )
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_RELEASED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_RELEASED, e)
+                hoveredControl?.dispatch(MOUSE_RELEASED, e)
                 dispatchGlobalEvent(MOUSE_RELEASED, e)
             })
         )
 
         regs.add(
             mouseEventPeer.addEventHandler(MOUSE_ENTERED, handler { e ->
-                hoveredComponent?.dispatch(MOUSE_ENTERED, e)
+                hoveredControl?.dispatch(MOUSE_ENTERED, e)
                 dispatchGlobalEvent(MOUSE_ENTERED, e)
             })
         )
@@ -155,7 +155,7 @@ class EventsManager : Disposable {
     }
 
     private fun dispatchGlobalEvent(e: MouseEventSpec, event: MouseEvent) {
-        globalMouseEventHandlers[e]?.forEach { it(hoveredComponent, event) }
+        globalMouseEventHandlers[e]?.forEach { it(hoveredControl, event) }
     }
 
     override fun dispose() {

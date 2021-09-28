@@ -5,16 +5,12 @@
 
 /* root package */
 
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.dom.DomEventUtil
+import jetbrains.datalore.base.event.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
-import jetbrains.datalore.base.js.dom.DomEventListener
-import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
@@ -22,7 +18,6 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
@@ -42,9 +37,6 @@ import mu.KotlinLogging
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.Node
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
 
 private val LOG = KotlinLogging.logger {}
@@ -176,62 +168,8 @@ private fun injectLivemapProvider(
 
 private fun buildPlotSvg(
     plotContainer: PlotContainer,
-    eventTarget: Element
+    parentElement: Element
 ): SVGSVGElement {
-    listOf(
-        DomEventType.Companion.BLUR,
-        DomEventType.Companion.CHANGE,
-        DomEventType.Companion.INPUT,
-        DomEventType.Companion.PASTE,
-        DomEventType.Companion.RESIZE,
-        DomEventType.Companion.CLICK,
-        DomEventType.Companion.CONTEXT_MENU,
-        DomEventType.Companion.DOUBLE_CLICK,
-        DomEventType.Companion.DRAG,
-        DomEventType.Companion.DRAG_END,
-        DomEventType.Companion.DRAG_ENTER,
-        DomEventType.Companion.DRAG_LEAVE,
-        DomEventType.Companion.DRAG_OVER,
-        DomEventType.Companion.DRAG_START,
-        DomEventType.Companion.DROP,
-        DomEventType.Companion.FOCUS,
-        DomEventType.Companion.FOCUS_IN,
-        DomEventType.Companion.FOCUS_OUT,
-        DomEventType.Companion.KEY_DOWN,
-        DomEventType.Companion.KEY_PRESS,
-        DomEventType.Companion.KEY_UP,
-        DomEventType.Companion.LOAD,
-        DomEventType.Companion.MOUSE_ENTER,
-        DomEventType.Companion.MOUSE_LEAVE,
-        DomEventType.Companion.MOUSE_DOWN,
-        DomEventType.Companion.MOUSE_MOVE,
-        DomEventType.Companion.MOUSE_OUT,
-        DomEventType.Companion.MOUSE_OVER,
-        DomEventType.Companion.MOUSE_UP,
-        DomEventType.Companion.MOUSE_WHEEL,
-        DomEventType.Companion.SCROLL,
-        DomEventType.Companion.TOUCH_CANCEL,
-        DomEventType.Companion.TOUCH_END,
-        DomEventType.Companion.TOUCH_MOVE,
-        DomEventType.Companion.TOUCH_START,
-        DomEventType.Companion.COMPOSITION_START,
-        DomEventType.Companion.COMPOSITION_END,
-        DomEventType.Companion.COMPOSITION_UPDATE,
-        DomEventType.Companion.MESSAGE,
-
-        DomEventType.Companion.XHR_PROGRESS,
-        DomEventType.Companion.XHR_LOAD,
-        DomEventType.Companion.XHR_LOAD_START,
-        DomEventType.Companion.XHR_LOAD_END,
-        DomEventType.Companion.XHR_ABORT,
-        DomEventType.Companion.XHR_ERROR,
-    ).forEach {
-        eventTarget.addEventListener(it.name, { e: Event ->
-            //println(it.name)
-        })
-    }
-
-
     plotContainer.ensureContentBuilt()
 
     val svg = plotContainer.svg
@@ -249,7 +187,9 @@ private fun buildPlotSvg(
         }
     }
 
-    DomEventMapper(plotContainer.mouseEventPeer, eventTarget)
+    DomEventMapper(mapper.target) { eventSpec, mouseEvent ->
+        plotContainer.mouseEventPeer.dispatch(eventSpec, mouseEvent)
+    }
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
         val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -269,7 +209,7 @@ private fun buildPlotSvg(
         )
 
         liveMapFigure.mapToCanvas(canvasControl)
-        eventTarget.appendChild(liveMapDiv)
+        parentElement.appendChild(liveMapDiv)
     }
 
     return mapper.target
@@ -323,82 +263,4 @@ private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolea
 
     // Frontend transforms
     return PlotConfigClientSide.processTransform(plotSpec)
-}
-
-class DomEventMapper(
-    private val destMouseEventPeer: MouseEventPeer,
-    private val myEventTarget: Element
-) {
-    private var myButtonPressed = false
-    private var myDragging = false
-    private var myButtonPressCoord: Vector? = null
-    private val myDragThreshold = 3.0
-
-    init {
-        handle(DomEventType.MOUSE_ENTER) {
-            dispatch(MouseEventSpec.MOUSE_ENTERED, it)
-        }
-
-        handle(DomEventType.MOUSE_LEAVE) {
-            dispatch(MouseEventSpec.MOUSE_LEFT, it)
-        }
-
-        handle(DomEventType.CLICK) {
-            if (!myDragging) {
-                dispatch(MouseEventSpec.MOUSE_CLICKED, it)
-            }
-            myDragging = false
-        }
-
-        handle(DomEventType.DOUBLE_CLICK) {
-            dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, it)
-        }
-
-        handle(DomEventType.MOUSE_DOWN) {
-            myButtonPressed = true
-            myButtonPressCoord = Vector(it.x.toInt(), it.y.toInt())
-            dispatch(MouseEventSpec.MOUSE_PRESSED, it)
-        }
-
-        handle(DomEventType.MOUSE_UP) {
-            myButtonPressed = false
-            myButtonPressCoord = null
-            myDragging = false
-            dispatch(MouseEventSpec.MOUSE_RELEASED, it)
-        }
-
-        handle(DomEventType.MOUSE_MOVE) {
-            if (myDragging) {
-                dispatch(MouseEventSpec.MOUSE_DRAGGED, it)
-            }
-            else if (myButtonPressed && !myDragging) {
-                val distance = myButtonPressCoord?.sub(Vector(it.x.toInt(), it.y.toInt()))?.length() ?: 0.0
-                if (distance > myDragThreshold) {
-                    myDragging = true
-                    dispatch(MouseEventSpec.MOUSE_DRAGGED, it)
-                } else {
-                    // Just in case do not generate move event. Can be changed if needed.
-                }
-            } else if (!myButtonPressed && !myDragging) {
-                dispatch(MouseEventSpec.MOUSE_MOVED, it)
-            }
-        }
-    }
-
-    private fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
-        val translatedEvent = DomEventUtil.translateInTargetCoord(mouseEvent, myEventTarget)
-        destMouseEventPeer.dispatch(eventSpec, translatedEvent)
-    }
-
-    private fun handle(eventSpec: DomEventType<MouseEvent>, handler: (MouseEvent) -> Unit) {
-        targetNode(eventSpec).addEventListener(eventSpec.name, DomEventListener<MouseEvent> {
-            handler(it)
-            false
-        })
-    }
-
-    private fun targetNode(eventSpec: DomEventType<MouseEvent>): Node = when (eventSpec) {
-        DomEventType.MOUSE_MOVE, DomEventType.MOUSE_UP -> myEventTarget
-        else -> myEventTarget
-    }
 }
