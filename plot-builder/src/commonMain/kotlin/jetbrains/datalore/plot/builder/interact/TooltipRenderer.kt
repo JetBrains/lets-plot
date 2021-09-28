@@ -79,7 +79,7 @@ internal class TooltipRenderer(
             .map { spec ->
                 spec
                     .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
-                    .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
+                    .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier, spec.layoutHint.kind == ROTATED_TOOLTIP) }
                     .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
@@ -182,7 +182,9 @@ internal class TooltipRenderer(
         private val flippedAxis: Boolean
     ) {
 
-        private val myTargetLocators = targetLocators.map { TileTargetLocator(it) }
+        private val myTargetLocators = targetLocators.map {
+            if (flippedAxis) FlippedTileTargetLocator(it) else TileTargetLocator(it)
+        }
 
         internal val axisOrigin: DoubleVector
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
@@ -206,6 +208,14 @@ internal class TooltipRenderer(
         ) : TransformedTargetLocator(locator) {
             override fun convertToTargetCoord(coord: DoubleVector) = coord.subtract(geomBounds.origin)
             override fun convertToPlotCoord(coord: DoubleVector) = coord.add(geomBounds.origin)
+            override fun convertToPlotDistance(distance: Double) = distance
+        }
+
+        private inner class FlippedTileTargetLocator(
+            locator: GeomTargetLocator
+        ) : TransformedTargetLocator(locator) {
+            override fun convertToTargetCoord(coord: DoubleVector) = coord.subtract(geomBounds.origin).flip()
+            override fun convertToPlotCoord(coord: DoubleVector) = coord.flip().add(geomBounds.origin)
             override fun convertToPlotDistance(distance: Double) = distance
         }
     }
