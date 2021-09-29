@@ -5,14 +5,12 @@
 
 /* root package */
 
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.dom.DomEventUtil
+import jetbrains.datalore.base.event.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
-import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
@@ -25,9 +23,9 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
-import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
@@ -39,8 +37,6 @@ import mu.KotlinLogging
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
 
 private val LOG = KotlinLogging.logger {}
@@ -172,7 +168,7 @@ private fun injectLivemapProvider(
 
 private fun buildPlotSvg(
     plotContainer: PlotContainer,
-    eventTarget: Element
+    parentElement: Element
 ): SVGSVGElement {
     plotContainer.ensureContentBuilt()
 
@@ -191,23 +187,9 @@ private fun buildPlotSvg(
         }
     }
 
-    eventTarget.addEventListener(DomEventType.MOUSE_DOWN.name, { e: Event ->
-        e.preventDefault()
-    })
-
-    eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
-        plotContainer.mouseEventPeer.dispatch(
-            MouseEventSpec.MOUSE_MOVED,
-            DomEventUtil.translateInTargetCoord(e as MouseEvent, mapper.target)
-        )
-    })
-
-    eventTarget.addEventListener(DomEventType.MOUSE_LEAVE.name, { e: Event ->
-        plotContainer.mouseEventPeer.dispatch(
-            MouseEventSpec.MOUSE_LEFT,
-            DomEventUtil.translateInTargetCoord(e as MouseEvent, mapper.target)
-        )
-    })
+    DomEventMapper(mapper.target) { eventSpec, mouseEvent ->
+        plotContainer.mouseEventPeer.dispatch(eventSpec, mouseEvent)
+    }
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
         val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -227,7 +209,7 @@ private fun buildPlotSvg(
         )
 
         liveMapFigure.mapToCanvas(canvasControl)
-        eventTarget.appendChild(liveMapDiv)
+        parentElement.appendChild(liveMapDiv)
     }
 
     return mapper.target
@@ -282,4 +264,3 @@ private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolea
     // Frontend transforms
     return PlotConfigClientSide.processTransform(plotSpec)
 }
-

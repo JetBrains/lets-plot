@@ -34,8 +34,8 @@ object GeomInteractionUtil {
         theme: Theme
     ): GeomInteractionBuilder {
         val axisWithoutTooltip = HashSet<Aes<*>>()
-        if (isLiveMap || !theme.axisX().showTooltip()) axisWithoutTooltip.add(Aes.X)
-        if (isLiveMap || !theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
+        if (isLiveMap || !theme.axisX().showTooltip() || !theme.axisX().showTickLabels()) axisWithoutTooltip.add(Aes.X)
+        if (isLiveMap || !theme.axisY().showTooltip() || !theme.axisY().showTickLabels()) axisWithoutTooltip.add(Aes.Y)
 
         val isCrosshairEnabled = isCrosshairEnabled(layerConfig)
         val builder = createGeomInteractionBuilder(

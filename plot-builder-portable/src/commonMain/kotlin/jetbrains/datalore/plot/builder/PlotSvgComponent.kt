@@ -20,7 +20,8 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.interact.PlotInteractor
+import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -42,9 +43,33 @@ class PlotSvgComponent(
     private val theme: Theme
 ) : SvgComponent() {
 
-    private val tooltipHelper = PlotTooltipHelper(frameOfReferenceProvider.flipAxis)
-
+    val flippedAxis = frameOfReferenceProvider.flipAxis
     val mouseEventPeer = MouseEventPeer()
+
+    var interactor: PlotInteractor? = null
+        set(value) {
+            require(field == null) { "Can be intialize only once." } // TODO: to not waste time on an exhaustive Disposable lifecycle control
+            field = value
+
+            // PlotInteractor controls subscribtions and clears them out on Dispose
+            value?.apply {
+                onViewReset {
+                    println("onViewReset()")
+                }
+
+                onViewPanning {
+                    println("onViewPanning($it)")
+                }
+
+                onViewZoomArea {
+                    println("onViewArea($it)")
+                }
+
+                onViewZoomIn {
+                    println("onViewZoomIn($it)")
+                }
+            }
+        }
 
     internal var liveMapFigures: List<SomeFig> = emptyList()
         private set
@@ -117,7 +142,7 @@ class PlotSvgComponent(
 
         reg(object : Registration() {
             override fun doRemove() {
-                tooltipHelper.removeAllTileInfos()
+                interactor?.dispose()
                 liveMapFigures = emptyList()
             }
         })
@@ -332,7 +357,7 @@ class PlotSvgComponent(
                 placementArea = geomBoundsAbsolute,
                 handlingArea = tile.geomDrawingBounds.add(geomBoundsAbsolute.origin)
             )
-            tooltipHelper.addTileInfo(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
+            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
@@ -403,14 +428,6 @@ class PlotSvgComponent(
                 add(legendBox)
             }
         }
-    }
-
-    fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
-        return tooltipHelper.createTooltipSpecs(plotCoord)
-    }
-
-    fun getTooltipBounds(plotCoord: DoubleVector): PlotTooltipBounds? {
-        return tooltipHelper.getTooltipBounds(plotCoord)
     }
 
     companion object {
