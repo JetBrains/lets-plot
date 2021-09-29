@@ -8,6 +8,7 @@ package jetbrains.datalore
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.config.GeomInteractionUtil
@@ -19,8 +20,12 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
+import jetbrains.datalore.plot.config.Option.Theme.AXIS_TEXT
+import jetbrains.datalore.plot.config.Option.Theme.AXIS_TOOLTIP
+import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -148,7 +153,7 @@ class GeomInteractionBuilderCreationTest {
     fun `X axis tooltip should be always shown (univariate function)`() {
         fun assertAxisXHasTooltip(xMapping: Pair<String, List<Any>>) {
             val builder = histogramInteractionBuilder(mapOf(xMapping))
-            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            val aesListForTooltip = getAesListInAxisTooltip(builder.tooltipLines)
             assertTooltipForAes(Aes.X, aesListForTooltip)
         }
 
@@ -158,6 +163,48 @@ class GeomInteractionBuilderCreationTest {
 
         // continuous
         assertAxisXHasTooltip(Aes.X.name to listOf(0.0))
+    }
+
+    @Test
+    fun `use 'theme' to control tooltips`() {
+        run {
+            // default: X axis tooltip + Y value in the general tooltip
+            val tooltipLines = histogramInteractionBuilder(data, themeOpts = null).tooltipLines
+
+            val axis = getAesListInAxisTooltip(tooltipLines)
+            assertTooltipForAes(Aes.X, axis)
+
+            val general = getAesListInGeneralTooltip(tooltipLines)
+            assertTooltipForAes(Aes.Y, general)
+        }
+        run {
+            // if axis tooltip is hidden - remove value also from the general tooltip
+            val hideTooltips = mapOf(
+                AXIS_TOOLTIP + "_x" to ELEMENT_BLANK,
+                AXIS_TOOLTIP + "_y" to ELEMENT_BLANK,
+            )
+            val tooltipLines = histogramInteractionBuilder(data, themeOpts = hideTooltips).tooltipLines
+
+            val axis = getAesListInAxisTooltip(tooltipLines)
+            assertNoTooltipForAes(Aes.X, axis)
+
+            val general = getAesListInGeneralTooltip(tooltipLines)
+            assertNoTooltipForAes(Aes.Y, general)
+        }
+        run {
+            // if axis tick labels are hidden - not show axis tooltip but this value can be in the general tooltip
+            val hideAxisTickLabels = mapOf(
+                AXIS_TEXT + "_x" to ELEMENT_BLANK,
+                AXIS_TEXT + "_y" to ELEMENT_BLANK,
+            )
+            val tooltipLines = histogramInteractionBuilder(data, themeOpts = hideAxisTickLabels).tooltipLines
+
+            val axis = getAesListInAxisTooltip(tooltipLines)
+            assertNoTooltipForAes(Aes.X, axis)
+
+            val general = getAesListInGeneralTooltip(tooltipLines)
+            assertTooltipForAes(Aes.Y, general)
+        }
     }
 
     private fun tileWithBrewerScale(useBrewerScale: Boolean, useContinuousVars: Boolean): GeomInteractionBuilder {
@@ -192,7 +239,10 @@ class GeomInteractionBuilderCreationTest {
         return createGeomInteractionBuilder(plotOpts)
     }
 
-    private fun histogramInteractionBuilder(mappedData: Map<String, Any>): GeomInteractionBuilder {
+    private fun histogramInteractionBuilder(
+        mappedData: Map<String, Any>,
+        themeOpts: Map<String, Any>? = null
+    ): GeomInteractionBuilder {
         val plotOpts = mutableMapOf(
             Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
@@ -202,10 +252,13 @@ class GeomInteractionBuilderCreationTest {
                 )
             )
         )
-        return createGeomInteractionBuilder(plotOpts)
+        return createGeomInteractionBuilder(
+            plotOpts,
+            theme = themeOpts?.let { ThemeConfig(it).theme } ?: DefaultTheme()
+        )
     }
 
-    private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>): GeomInteractionBuilder {
+    private fun createGeomInteractionBuilder(plotOpts: MutableMap<String, Any>, theme: Theme = DefaultTheme()): GeomInteractionBuilder {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
         require(!PlotConfig.isFailure(plotSpec)) { PlotConfig.getErrorMessage(plotSpec) }
         val plotConfig = PlotConfigClientSide.create(plotSpec) {}
@@ -215,13 +268,25 @@ class GeomInteractionBuilderCreationTest {
             scaleMap = plotConfig.scaleMap,
             multilayer = false,
             isLiveMap = false,
-            theme = DefaultTheme()
+            theme
         )
     }
 
     private fun getAesListInTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
             line.fields.filterIsInstance<MappingValue>().map(MappingValue::aes)
+        }
+    }
+
+    private fun getAesListInAxisTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
+        return tooltipLines.flatMap { line ->
+            line.fields.filterIsInstance<MappingValue>().filter(MappingValue::isAxis).map(MappingValue::aes)
+        }
+    }
+
+    private fun getAesListInGeneralTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
+        return tooltipLines.flatMap { line ->
+            line.fields.filterIsInstance<MappingValue>().filterNot(MappingValue::isOutlier).map(MappingValue::aes)
         }
     }
 
