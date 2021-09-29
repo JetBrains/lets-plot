@@ -69,7 +69,7 @@ class TooltipBox(
         lines: List<TooltipSpec.Line>,
         style: String,
         isOutlier: Boolean,
-        rotate: Boolean = false
+        rotate: Boolean
     ) {
         addClassName(style)
         if (isOutlier) {

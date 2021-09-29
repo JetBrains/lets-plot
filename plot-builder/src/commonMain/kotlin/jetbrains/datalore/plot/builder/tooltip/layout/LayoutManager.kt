@@ -10,8 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
-import jetbrains.datalore.plot.builder.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
@@ -74,9 +74,6 @@ class LayoutManager(
                     desiredPosition.add(positionedTooltip)
                 }
             }
-
-        // add rotated tooltips
-        desiredPosition += calculateRotatedTooltipPosition(tooltips)
 
         // add corner tooltips - if the cursor is located within the visible boundaries
         if (tooltipBounds?.handlingArea?.contains(cursorCoord) != false) {
@@ -142,8 +139,13 @@ class LayoutManager(
 
                 CURSOR_TOOLTIP -> placementList.add(calculateCursorTooltipPosition(measuredTooltip))
 
-                ROTATED_TOOLTIP ->
-                    Unit
+                ROTATED_TOOLTIP -> placementList.add(
+                    calculateVerticalTooltipPosition(
+                        measuredTooltip,
+                        BOTTOM,
+                        ignoreCursor = true
+                    )
+                )
 
                 X_AXIS_TOOLTIP ->
                     // X_AXIS should be processed separately to configure vertical space. If process axis tooltip with narrowed space
@@ -194,34 +196,6 @@ class LayoutManager(
         return placementList
     }
 
-    private fun calculateRotatedTooltipPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
-        val placementList = ArrayList<PositionedTooltip>()
-        tooltips
-            .filter { it.hintKind == ROTATED_TOOLTIP }
-            .sortedWith(compareBy { it.hintCoord.x })
-            .forEach {  measuredTooltip ->
-                var tooltip = calculateVerticalTooltipPosition(
-                    measuredTooltip,
-                    BOTTOM,
-                    ignoreCursor = true
-                )
-               val overlapped = placementList.findLast { it.rect().intersects(tooltip.rect()) }
-               if (overlapped != null) {
-                   val tooltipCoord = DoubleVector(
-                       overlapped.rect().right + MARGIN_BETWEEN_TOOLTIPS,
-                       tooltip.tooltipCoord.y
-                   )
-                   tooltip = PositionedTooltip(
-                       measuredTooltip,
-                       tooltipCoord = tooltipCoord,
-                       stemCoord = tooltip.stemCoord
-                   )
-               }
-               placementList.add(tooltip)
-           }
-        return placementList
-    }
-
     private fun rearrangeWithoutOverlapping(
         tooltips: List<PositionedTooltip>
     ): List<PositionedTooltip> {
@@ -238,7 +212,7 @@ class LayoutManager(
         }
 
         // First add tooltips with pre-arranged position
-        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP, ROTATED_TOOLTIP).forEach(::fixate)
+        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
@@ -262,16 +236,64 @@ class LayoutManager(
         // Add corner tooltips
         (tooltips.selectCorner() - horizontalsWithOverlappedCorners).forEach(::fixate)
 
-        (tooltips.select(VERTICAL_TOOLTIP) - tooltips.selectCorner())
+        (tooltips.select(VERTICAL_TOOLTIP, ROTATED_TOOLTIP) - tooltips.selectCorner())
             .let { verticalTooltips ->
-                VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
-                    verticalTooltips,
-                    restrictions
-                )
+                if (verticalTooltips.sumOf(PositionedTooltip::width) < myHorizontalSpace.length()) {
+                    fixOverlappingWithShifting(
+                        VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
+                            verticalTooltips,
+                            restrictions
+                        )
+                    ).forEach(::fixate)
+                } else {
+                    verticalTooltips
+                        .sortedBy { it.stemCoord.x }
+                        .let { tooltips ->
+                            tooltips
+                                .filter { it.stemCoord.x > myCursorCoord.x }
+                                .minByOrNull { it.stemCoord.x }
+                                ?: tooltips.last()
+                        }
+                        .let(::fixate)
+                }
             }
-            .forEach(::fixate)
 
         return separatedTooltips
+    }
+
+    private fun fixOverlappingWithShifting(tooltips: List<PositionedTooltip>): List<PositionedTooltip> {
+        val placementList = ArrayList<PositionedTooltip>()
+        /*
+        val allRestrictions = ArrayList(restrictions)
+        val helper = VerticalTooltipShiftingExpander(myHorizontalSpace)
+                helper.fixOverlapping(listOf(0 to tooltip), allRestrictions)
+                val newPosition = helper.spacedTooltips?.firstOrNull()?.second
+                val newTooltip = if (newPosition != null && newPosition != tooltip.tooltipCoord ) {
+                    tooltip.moveTo(newPosition)//.add(DoubleVector(MARGIN_BETWEEN_TOOLTIPS, 0.0)))
+                } else {
+                    tooltip
+                }
+                allRestrictions.add(newTooltip.rect())
+                placementList.add(newTooltip)
+
+            }
+        */
+
+        tooltips
+            .sortedWith(compareBy({ it.stemCoord.x }, { it.tooltipCoord.x }))
+            .forEach { tooltip: PositionedTooltip ->
+                val newTooltip = if (placementList.isOverlapped(tooltip)) {
+                    val newPosition = DoubleVector(
+                        placementList.last().rect().right + MARGIN_BETWEEN_TOOLTIPS,
+                        tooltip.tooltipCoord.y
+                    )
+                    tooltip.moveTo(newPosition)
+                } else {
+                    tooltip
+                }
+                placementList.add(newTooltip)
+            }
+        return placementList
     }
 
     private fun calculateVerticalTooltipPosition(

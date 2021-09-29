@@ -223,15 +223,6 @@ internal object AwtPlotFactoryUtil {
 
         val plotComponent: JComponent = svgComponentFactory(svg)
 
-        plotComponent.addMouseListener(object : MouseAdapter() {
-            override fun mouseExited(e: MouseEvent) {
-                super.mouseExited(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
         plotComponent.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
@@ -239,7 +230,66 @@ internal object AwtPlotFactoryUtil {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
                 }
             }
+
+
+            override fun mouseDragged(e: MouseEvent) {
+                super.mouseDragged(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_DRAGGED, AwtEventUtil.translate(e))
+                }
+            }
+
+
         })
+
+        plotComponent.addMouseListener(object : MouseAdapter() {
+            override fun mouseExited(e: MouseEvent) {
+                super.mouseExited(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                }
+            }
+
+
+            override fun mouseClicked(e: MouseEvent) {
+                super.mouseClicked(e)
+                val event = if (e.clickCount % 2 == 1) {
+                    MouseEventSpec.MOUSE_CLICKED
+                } else {
+                    MouseEventSpec.MOUSE_DOUBLE_CLICKED
+                }
+
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(event, AwtEventUtil.translate(e))
+                }
+            }
+
+
+
+            override fun mousePressed(e: MouseEvent) {
+                super.mousePressed(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_PRESSED, AwtEventUtil.translate(e))
+                }
+            }
+
+
+            override fun mouseReleased(e: MouseEvent) {
+                super.mouseReleased(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_RELEASED, AwtEventUtil.translate(e))
+                }
+            }
+
+            override fun mouseEntered(e: MouseEvent) {
+                super.mouseEntered(e)
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_ENTERED, AwtEventUtil.translate(e))
+                }
+            }
+        })
+
+
 
         return plotComponent
     }

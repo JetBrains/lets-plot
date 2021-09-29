@@ -22,16 +22,15 @@ internal class VerticalTooltipRotatingExpander(
     fun fixOverlapping(tooltips: List<PositionedTooltip>, restrictions: List<DoubleRectangle>): List<PositionedTooltip> {
         // <tooltip index, tooltip coord>
         val expandedPositions = ArrayList<Pair<Int, DoubleVector>>()
-        val allRestrictions = ArrayList(restrictions)
 
         var i = 0
         val n = tooltips.size
         while (i < n) {
             val tooltip = tooltips[i]
 
-            if (intersectsAny(tooltip.rect(), allRestrictions)) {
+            if (intersectsAny(tooltip.rect(), restrictions)) {
 
-                val restrictionsWithStems = ArrayList(allRestrictions)
+                val restrictionsWithStems = ArrayList(restrictions)
                 restrictionsWithStems.add(DoubleRectangle(tooltip.stemCoord, POINT_RESTRICTION_SIZE))
 
                 val newPlacement = findValidCandidate(getCandidates(tooltip), restrictionsWithStems)
@@ -42,7 +41,6 @@ internal class VerticalTooltipRotatingExpander(
                 }
             } else {
                 expandedPositions.add(Pair(i, tooltip.tooltipCoord))
-                allRestrictions.add(tooltip.rect())
             }
             i++
         }
