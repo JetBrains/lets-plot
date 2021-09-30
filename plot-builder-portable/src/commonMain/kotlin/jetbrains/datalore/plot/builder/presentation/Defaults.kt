@@ -78,12 +78,9 @@ object Defaults {
 
     class Plot {
         object Axis {
-            const val TITLE_FONT_SIZE =
-                FONT_MEDIUM
-            const val TICK_FONT_SIZE =
-                FONT_SMALL
-            const val TICK_FONT_SIZE_SMALL =
-                FONT_X_SMALL
+            const val TITLE_FONT_SIZE = FONT_MEDIUM
+            const val TICK_FONT_SIZE = FONT_SMALL
+            const val TICK_FONT_SIZE_SMALL = FONT_X_SMALL
 
             val LINE_COLOR = Color.parseHex(DARK_GRAY)
             val TICK_COLOR = Color.parseHex(DARK_GRAY)

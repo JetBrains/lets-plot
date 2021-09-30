@@ -42,7 +42,13 @@ open class OptionsAccessor(
     operator fun get(option: String): Any? {
         return if (hasOwn(option)) {
             options[option]
-        } else defaultOptions[option]
+        } else {
+            defaultOptions[option]
+        }
+    }
+
+    fun getSafe(option: String): Any {
+        return get(option) ?: throw IllegalStateException("Option `$option` not found.")
     }
 
     fun getString(option: String): String? {

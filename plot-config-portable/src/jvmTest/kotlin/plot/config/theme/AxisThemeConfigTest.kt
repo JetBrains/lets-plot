@@ -11,16 +11,19 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @RunWith(Parameterized::class)
-internal class AxisThemeConfigTest(private val myOptions: AxisThemeConfig, private val myExpectedValue: String?) {
+internal class AxisThemeConfigTest(
+    private val axisTheme: AxisThemeConfig,
+    private val expectedValue: String?
+) {
 
     @Test
     fun hasOption() {
-        assertEquals(myExpectedValue != null, myOptions.hasApplicable(OPTION_COMMON))
+        assertEquals(expectedValue != null, axisTheme.hasApplicable(OPTION_COMMON))
     }
 
     @Test
     fun hasOptionValue() {
-        assertEquals(myExpectedValue, myOptions.getApplicable(OPTION_COMMON))
+        assertEquals(expectedValue, axisTheme.getApplicable(OPTION_COMMON))
     }
 
     companion object {
@@ -34,22 +37,23 @@ internal class AxisThemeConfigTest(private val myOptions: AxisThemeConfig, priva
         @Parameterized.Parameters
         fun params(): Collection<Array<Any?>> {
             return listOf<Array<Any?>>(
-                    arrayOf(input(false, false, false, false), null),
-                    arrayOf(input(false, false, false, true), VALUE_AXIS),
-                    arrayOf(input(false, false, true, false), VALUE_AXIS),
-                    arrayOf(input(false, false, true, true), VALUE_AXIS),
-                    arrayOf(input(false, true, false, false), VALUE_COMMON),
-                    arrayOf(input(false, true, false, true), VALUE_AXIS),
-                    arrayOf(input(false, true, true, false), VALUE_AXIS),
-                    arrayOf(input(false, true, true, true), VALUE_AXIS),
-                    arrayOf(input(true, false, false, false), VALUE_COMMON),
-                    arrayOf(input(true, false, false, true), VALUE_COMMON),
-                    arrayOf(input(true, false, true, false), VALUE_AXIS),
-                    arrayOf(input(true, false, true, true), VALUE_AXIS),
-                    arrayOf(input(true, true, false, false), VALUE_COMMON),
-                    arrayOf(input(true, true, false, true), VALUE_COMMON),
-                    arrayOf(input(true, true, true, false), VALUE_AXIS),
-                    arrayOf(input(true, true, true, true), VALUE_AXIS))
+                arrayOf(input(false, false, false, false), null),
+                arrayOf(input(false, false, false, true), VALUE_AXIS),
+                arrayOf(input(false, false, true, false), VALUE_AXIS),
+                arrayOf(input(false, false, true, true), VALUE_AXIS),
+                arrayOf(input(false, true, false, false), VALUE_COMMON),
+                arrayOf(input(false, true, false, true), VALUE_AXIS),
+                arrayOf(input(false, true, true, false), VALUE_AXIS),
+                arrayOf(input(false, true, true, true), VALUE_AXIS),
+                arrayOf(input(true, false, false, false), VALUE_COMMON),
+                arrayOf(input(true, false, false, true), VALUE_COMMON),
+                arrayOf(input(true, false, true, false), VALUE_AXIS),
+                arrayOf(input(true, false, true, true), VALUE_AXIS),
+                arrayOf(input(true, true, false, false), VALUE_COMMON),
+                arrayOf(input(true, true, false, true), VALUE_COMMON),
+                arrayOf(input(true, true, true, false), VALUE_AXIS),
+                arrayOf(input(true, true, true, true), VALUE_AXIS)
+            )
         }
 
         private fun input(commonOwn: Boolean, commonDef: Boolean, axisOwn: Boolean, axisDef: Boolean): AxisThemeConfig {
