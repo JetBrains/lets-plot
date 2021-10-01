@@ -7,12 +7,12 @@ package jetbrains.datalore.plot.config.theme2
 
 import jetbrains.datalore.plot.builder.theme.*
 import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesLPLight
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
-import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
 import jetbrains.datalore.plot.config.theme.LegendThemeConfig
 
 class ThemeConfig2(themeSettings: Map<String, Any>) {
@@ -26,9 +26,6 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
 
         private val theme2: Theme
-
-        //        private val axisXTheme: AxisTheme = AxisThemeConfig.X(options, defOptions)
-//        private val axisYTheme: AxisTheme = AxisThemeConfig.Y(options, defOptions)
         private val axisXTheme: AxisTheme
         private val axisYTheme: AxisTheme
 

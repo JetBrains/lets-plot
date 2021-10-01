@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_TEXT
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_TICKS
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_TITLE
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_TOOLTIP
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TEXT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TICKS
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TITLE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.config.OptionsAccessor
 
 class AxisThemeConfig private constructor(

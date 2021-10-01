@@ -10,10 +10,10 @@ import jetbrains.datalore.plot.builder.guide.LegendDirection.*
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.config.ConfigUtil
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
 import jetbrains.datalore.plot.config.OptionsAccessor
 
 internal class LegendThemeConfig(

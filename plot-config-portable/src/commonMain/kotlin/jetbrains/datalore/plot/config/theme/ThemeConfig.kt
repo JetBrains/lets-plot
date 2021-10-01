@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.theme.*
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
-import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
 
 class ThemeConfig(options: Map<String, Any>) {
 

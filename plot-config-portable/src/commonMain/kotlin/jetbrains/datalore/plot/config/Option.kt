@@ -409,42 +409,9 @@ object Option {
         const val MIN_SUB_SAMPLE = "min_subsample"
     }
 
-    // ToDo: options moved. see ThemeOption
     object Theme {
-        // Axis
-        const val AXIS_TITLE = "axis_title"
-        const val AXIS_TEXT = "axis_text"
-        const val AXIS_TICKS = "axis_ticks"
-        const val AXIS_LINE = "axis_line"
-        const val AXIS_TOOLTIP = "axis_tooltip"
-
-        const val AXIS_TITLE_X = "axis_title_x"
-        const val AXIS_TITLE_Y = "axis_title_y"
-        const val AXIS_TEXT_X = "axis_text_x"
-        const val AXIS_TEXT_Y = "axis_text_y"
-        const val AXIS_TICKS_X = "axis_ticks_x"
-        const val AXIS_TICKS_Y = "axis_ticks_y"
-        const val AXIS_LINE_X = "axis_line_x"
-        const val AXIS_LINE_Y = "axis_line_y"
-        const val AXIS_TOOLTIP_X = "axis_tooltip_x"
-        const val AXIS_TOOLTIP_Y = "axis_tooltip_y"
-
-        // Panel
-        const val PANEL_BACKGROUND = "panel_background"
-        const val PANEL_PANEL_BORDER = "panel_border"
-
-        // Panel grid
-        const val PANEL_GRID = "panel_grid"
-        const val PANEL_GRID_MAJOR = "panel_grid_major"
-        const val PANEL_GRID_MINOR = "panel_grid_minor"
-        const val PANEL_GRID_MAJOR_X = "panel_grid_major_x"
-        const val PANEL_GRID_MINOR_X = "panel_grid_minor_x"
-        const val PANEL_GRID_MAJOR_Y = "panel_grid_major_y"
-        const val PANEL_GRID_MINOR_Y = "panel_grid_minor_y"
-
-        const val LEGEND_POSITION = "legend_position"
-        const val LEGEND_JUSTIFICATION = "legend_justification"
-        const val LEGEND_DIRECTION = "legend_direction"
+        // All options were moved to
+        // jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 
         // view element
         const val ELEMENT_BLANK = "blank"
