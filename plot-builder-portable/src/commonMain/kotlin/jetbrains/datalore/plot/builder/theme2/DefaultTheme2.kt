@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.theme2
 
 import jetbrains.datalore.plot.builder.theme.*
 
-class DefaultTheme(
+class DefaultTheme2(
     private val options: Map<String, Any>
 ) : Theme {
 

@@ -66,7 +66,6 @@ object ThemeOption {
         // text
         const val FONT_FAMILY = "family"     // ToDo
         const val FONT_FACE = "face"
-        const val FONT_SIZE = "font_size"
         const val HJUST = "hjust"       // ToDo
         const val VJUST = "vjust"       // ToDo
         const val ANGLE = "angle"       // ToDo

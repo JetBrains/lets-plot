@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 open class ThemeValuesAccess(
     private val values: Map<String, Any>
 ) {
-    private val cache: MutableMap<String, Any> = HashMap()
+    private val mem: MutableMap<String, Any> = HashMap()
 
     protected operator fun get(option: String): Any? = values[option]
     protected fun getValue(option: String): Any = values.getValue(option)
@@ -21,7 +21,7 @@ open class ThemeValuesAccess(
     protected fun getElemValue(options: List<String>): Map<String, Any> {
         val specificOption = options.first()
         @Suppress("UNCHECKED_CAST")
-        return cache.getOrPut(specificOption) {
+        return mem.getOrPut(specificOption) {
             return options.asReversed().map { values[it] }
                 .fold(HashMap<String, Any>()) { acc, v ->
                     if (v != null) {

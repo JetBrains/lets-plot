@@ -22,7 +22,7 @@ internal class ThemeElemSizeTest(
     private val themeValues: Map<String, Any>,
     private val expected: Double
 ) {
-    private val theme: Theme = DefaultTheme(themeValues)
+    private val theme: Theme = DefaultTheme2(themeValues)
 
     @Test
     fun eval() {

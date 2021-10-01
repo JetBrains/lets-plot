@@ -10,10 +10,6 @@ import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TEXT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TICKS
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TITLE
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
@@ -32,7 +28,7 @@ import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TITLE
 
 object ThemeValuesBase {
     private val TEXT_COMMON = mapOf(
-        Elem.FONT_SIZE to Defaults.FONT_SMALL,
+        Elem.SIZE to Defaults.FONT_SMALL,
         Elem.COLOR to Defaults.TEXT_COLOR,
         Elem.FONT_FACE to FontFace.NORMAL,
     )
@@ -45,7 +41,7 @@ object ThemeValuesBase {
     private val AXIS_TOOLTIP_COMMON = mapOf(
         Elem.COLOR to Color.WHITE,
         Elem.FILL to Color.BLACK,
-        Elem.FONT_SIZE to Defaults.FONT_SMALL,
+        Elem.SIZE to Defaults.FONT_SMALL,
     )
 
     private val GRID_LINE_COMMON = mapOf(
@@ -63,7 +59,7 @@ object ThemeValuesBase {
         ),
         TEXT to TEXT_COMMON,
         TITLE to TEXT_COMMON + mapOf(
-            Elem.FONT_SIZE to Defaults.FONT_MEDIUM,
+            Elem.SIZE to Defaults.FONT_MEDIUM,
             Elem.FONT_FACE to FontFace.BOLD,
         ),
 

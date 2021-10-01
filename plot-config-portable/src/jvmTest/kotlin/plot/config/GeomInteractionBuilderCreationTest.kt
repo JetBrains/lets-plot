@@ -25,7 +25,7 @@ import jetbrains.datalore.plot.config.Option.Theme.AXIS_TOOLTIP
 import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.config.theme.ThemeConfig
+import jetbrains.datalore.plot.config.theme.ThemeConfig2
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -254,7 +254,7 @@ class GeomInteractionBuilderCreationTest {
         )
         return createGeomInteractionBuilder(
             plotOpts,
-            theme = themeOpts?.let { ThemeConfig(it).theme } ?: DefaultTheme()
+            theme = themeOpts?.let { ThemeConfig2(it).theme } ?: DefaultTheme()
         )
     }
 
