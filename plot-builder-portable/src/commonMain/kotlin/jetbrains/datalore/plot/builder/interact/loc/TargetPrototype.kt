@@ -55,6 +55,7 @@ class TargetPrototype(
 
                 PATH -> when (tooltipKind) {
                     HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill, stemLength)
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for PATH")
                 }
 
