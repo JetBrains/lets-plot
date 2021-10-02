@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
 object Option {
 
@@ -414,7 +415,7 @@ object Option {
         // jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 
         // view element
-        const val ELEMENT_BLANK = "blank"
+        const val ELEMENT_BLANK = ELEMENT_BLANK_SHORTHAND
     }
 
     object GeomName {

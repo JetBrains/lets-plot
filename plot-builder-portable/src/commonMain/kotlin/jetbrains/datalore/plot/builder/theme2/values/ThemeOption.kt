@@ -54,6 +54,7 @@ object ThemeOption {
 
     // view element
     val ELEMENT_BLANK = mapOf(Elem.BLANK to true)
+    const val ELEMENT_BLANK_SHORTHAND = "blank"
 
     object Elem {
         const val BLANK = "blank"

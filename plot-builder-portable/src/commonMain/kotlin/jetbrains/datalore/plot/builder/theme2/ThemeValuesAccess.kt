@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.theme2
 
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
 
 open class ThemeValuesAccess(
     private val values: Map<String, Any>
@@ -33,7 +33,7 @@ open class ThemeValuesAccess(
     }
 
     protected fun isElemBlank(options: List<String>): Boolean {
-        val blankValue = getElemValue(options)[ThemeOption.Elem.BLANK]
+        val blankValue = getElemValue(options)[Elem.BLANK]
         return blankValue != null && blankValue as Boolean
     }
 

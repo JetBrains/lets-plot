@@ -11,17 +11,16 @@ class DefaultTheme2(
     private val options: Map<String, Any>
 ) : Theme {
 
-    override fun axisX(): AxisTheme {
-        return DefaultAxisTheme("x", options)
-    }
+    private val axisX = DefaultAxisTheme("x", options)
+    private val axisY = DefaultAxisTheme("y", options)
+    private val legend = DefaultLegendTheme(options)
 
-    override fun axisY(): AxisTheme {
-        return DefaultAxisTheme("y", options)
-    }
 
-    override fun legend(): LegendTheme {
-        return OLD_THEME.legend()
-    }
+    override fun axisX(): AxisTheme = axisX
+
+    override fun axisY(): AxisTheme = axisY
+
+    override fun legend(): LegendTheme = legend
 
     override fun facets(): FacetsTheme {
         return OLD_THEME.facets()

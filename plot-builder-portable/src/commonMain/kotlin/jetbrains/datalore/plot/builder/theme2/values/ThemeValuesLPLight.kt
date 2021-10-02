@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
 object ThemeValuesLPLight {
     val values: Map<String, Any> = ThemeValuesBase.values + mapOf(
         // Axis
-        AXIS_LINE_Y to ELEMENT_BLANK,
+//        AXIS_LINE_Y to ELEMENT_BLANK,
         AXIS_LINE to mapOf(ThemeOption.Elem.COLOR to Color.GREEN),
     )
 }

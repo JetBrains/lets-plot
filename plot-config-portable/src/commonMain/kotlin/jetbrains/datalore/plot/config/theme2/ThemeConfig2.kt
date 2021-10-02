@@ -7,13 +7,9 @@ package jetbrains.datalore.plot.config.theme2
 
 import jetbrains.datalore.plot.builder.theme.*
 import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesLPLight
-import jetbrains.datalore.plot.config.theme.LegendThemeConfig
 
 class ThemeConfig2(themeSettings: Map<String, Any>) {
 
@@ -21,33 +17,42 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
     private abstract class ConfiguredTheme(
         private val options: Map<String, Any>,
-        defOptions: Map<String, Any>
     ) : Theme {
 
 
         private val theme2: Theme
         private val axisXTheme: AxisTheme
         private val axisYTheme: AxisTheme
-
-        private val legendTheme: LegendTheme = LegendThemeConfig(options, defOptions)
+        private val legendTheme: LegendTheme
 
         init {
             // ToDo: select defaults.
-            val baseValues = ThemeValuesLPLight.values
+            val baselineOptions = ThemeValuesLPLight.values
 
-            // Take care of merging 'view objects'.
-            val base: MutableMap<String, Any> = HashMap<String, Any>(baseValues)
-            for ((key, value) in options) {
-                val baseValue = base.getOrPut(key) { value }
-                if (baseValue is Map<*, *>) {
-                    // merge
-                    base[key] = baseValue + value as Map<*, *>
+            // Make sure all values are converted to proper objects.
+            @Suppress("NAME_SHADOWING")
+            val userOptions: Map<String, Any> = options.mapValues { (key, value) ->
+                val value = convertElementBlank(value)
+                LegendThemeConfig2.convertValue(key, value)
+            }
+
+            // Merge baseline and user options.
+            val effectiveOptions: MutableMap<String, Any> = HashMap<String, Any>(baselineOptions)
+            for ((key, userValue) in userOptions) {
+                if(userValue is Map<*, *>) {
+                    // Merge values
+                    val baseValue = effectiveOptions.getOrPut(key) { userValue } as Map<*, *>
+                    effectiveOptions[key] = baseValue + userValue
+                } else {
+                    // Override value
+                    effectiveOptions[key] = userValue
                 }
             }
 
-            theme2 = DefaultTheme2(base)
+            theme2 = DefaultTheme2(effectiveOptions)
             axisXTheme = theme2.axisX()
             axisYTheme = theme2.axisY()
+            legendTheme = theme2.legend()
         }
 
         override fun axisX(): AxisTheme {
@@ -78,10 +83,10 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
     }
 
     private class OneTileTheme(options: Map<String, Any>) :
-        ConfiguredTheme(options, DEF_OPTIONS)
+        ConfiguredTheme(options/*, DEF_OPTIONS*/)
 
     private class MultiTileTheme(options: Map<String, Any>) :
-        ConfiguredTheme(options, DEF_OPTIONS_MULTI_TILE) {
+        ConfiguredTheme(options/*, DEF_OPTIONS_MULTI_TILE*/) {
 
         override fun plot(): PlotTheme {
             return DEF.multiTile().plot()
@@ -90,15 +95,30 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
     companion object {
         internal val DEF: Theme = DefaultTheme()
-        private val DEF_OPTIONS = mapOf(
-            LEGEND_POSITION to DEF.legend().position(),
-            LEGEND_JUSTIFICATION to DEF.legend().justification(),
-            LEGEND_DIRECTION to DEF.legend().direction()
-        )
+//        private val DEF_OPTIONS = mapOf(
+//            LEGEND_POSITION to DEF.legend().position(),
+//            LEGEND_JUSTIFICATION to DEF.legend().justification(),
+//            LEGEND_DIRECTION to DEF.legend().direction()
+//        )
 
-        private val DEF_OPTIONS_MULTI_TILE = DEF_OPTIONS + mapOf(
-            "${AXIS_LINE}_x" to ELEMENT_BLANK,      // replaced by inner frame
-            "${AXIS_LINE}_y" to ELEMENT_BLANK,      // replaced by inner frame
-        )
+//        private val DEF_OPTIONS_MULTI_TILE = DEF_OPTIONS + mapOf(
+//            "${AXIS_LINE}_x" to ELEMENT_BLANK,      // replaced by inner frame
+//            "${AXIS_LINE}_y" to ELEMENT_BLANK,      // replaced by inner frame
+//        )
+
+        /**
+         * Converts old theme 'blank' element to new format
+         *
+         * ToDo: remove after some sensible period of time. (Added Oct1, 2021)
+         */
+        private fun convertElementBlank(value: Any): Any {
+            if (value is String && value == ThemeOption.ELEMENT_BLANK_SHORTHAND) {
+                return ELEMENT_BLANK
+            }
+            if (value is Map<*, *> && value["name"] == "blank") {
+                return ELEMENT_BLANK
+            }
+            return value
+        }
     }
 }
