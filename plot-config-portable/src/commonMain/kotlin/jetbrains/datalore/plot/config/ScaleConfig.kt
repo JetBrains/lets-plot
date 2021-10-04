@@ -15,7 +15,6 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
-import jetbrains.datalore.plot.common.text.Formatter
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
@@ -233,12 +232,12 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
     }
 
     companion object {
-        private const val IDENTITY = "identity"
+        const val IDENTITY = "identity"
         private const val COLOR_GRADIENT = "color_gradient"
-        private const val COLOR_GRADIENT2 = "color_gradient2"
+        const val COLOR_GRADIENT2 = "color_gradient2"
         private const val COLOR_HUE = "color_hue"
         private const val COLOR_GREY = "color_grey"
-        private const val COLOR_BREWER = "color_brewer"
+        const val COLOR_BREWER = "color_brewer"
         private const val SIZE_AREA = "size_area"
 
         fun aesOrFail(options: Map<String, Any>): Aes<*> {

@@ -77,6 +77,7 @@ object Option {
     }
 
     object Plot {
+        const val BISTRO = "bistro"
         const val LAYERS = "layers"
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
@@ -86,6 +87,8 @@ object Option {
         const val THEME = "theme"
         const val SIZE = "ggsize"
         const val GUIDES = "guides"
+        const val WIDTH = "width"
+        const val HEIGHT = "height"
     }
 
     object Layer {
