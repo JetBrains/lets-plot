@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,8 +8,11 @@ package jetbrains.datalore.plot.builder.theme
 import jetbrains.datalore.base.values.Color
 
 /**
- * ToDo: implement 'strip.XXX' properties in PlotTheme
+ * Plotting area, drawn underneath plot.
  */
-interface FacetsTheme {
-    fun labelBackground(): Color
+interface PanelTheme {
+    fun show(): Boolean
+    fun color():Color
+    fun fill():Color
+    fun size():Double
 }

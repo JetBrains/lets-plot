@@ -24,6 +24,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
         private val axisXTheme: AxisTheme
         private val axisYTheme: AxisTheme
         private val legendTheme: LegendTheme
+        private val panelTheme: PanelTheme
 
         init {
             // ToDo: select defaults.
@@ -39,7 +40,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
             // Merge baseline and user options.
             val effectiveOptions: MutableMap<String, Any> = HashMap<String, Any>(baselineOptions)
             for ((key, userValue) in userOptions) {
-                if(userValue is Map<*, *>) {
+                if (userValue is Map<*, *>) {
                     // Merge values
                     val baseValue = effectiveOptions.getOrPut(key) { userValue } as Map<*, *>
                     effectiveOptions[key] = baseValue + userValue
@@ -53,19 +54,16 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
             axisXTheme = theme2.axisX()
             axisYTheme = theme2.axisY()
             legendTheme = theme2.legend()
+            panelTheme = theme2.panel()
         }
 
-        override fun axisX(): AxisTheme {
-            return axisXTheme
-        }
+        override fun axisX(): AxisTheme = axisXTheme
 
-        override fun axisY(): AxisTheme {
-            return axisYTheme
-        }
+        override fun axisY(): AxisTheme = axisYTheme
 
-        override fun legend(): LegendTheme {
-            return legendTheme
-        }
+        override fun legend(): LegendTheme = legendTheme
+
+        override fun panel(): PanelTheme = panelTheme
 
         override fun facets(): FacetsTheme {
             // ToDo: configurable
@@ -82,11 +80,9 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
         }
     }
 
-    private class OneTileTheme(options: Map<String, Any>) :
-        ConfiguredTheme(options/*, DEF_OPTIONS*/)
+    private class OneTileTheme(options: Map<String, Any>) : ConfiguredTheme(options)
 
-    private class MultiTileTheme(options: Map<String, Any>) :
-        ConfiguredTheme(options/*, DEF_OPTIONS_MULTI_TILE*/) {
+    private class MultiTileTheme(options: Map<String, Any>) : ConfiguredTheme(options) {
 
         override fun plot(): PlotTheme {
             return DEF.multiTile().plot()

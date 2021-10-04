@@ -14,6 +14,7 @@ class DefaultTheme2(
     private val axisX = DefaultAxisTheme("x", options)
     private val axisY = DefaultAxisTheme("y", options)
     private val legend = DefaultLegendTheme(options)
+    private val panel = DefaultPanelTheme(options)
 
 
     override fun axisX(): AxisTheme = axisX
@@ -21,6 +22,8 @@ class DefaultTheme2(
     override fun axisY(): AxisTheme = axisY
 
     override fun legend(): LegendTheme = legend
+
+    override fun panel(): PanelTheme = panel
 
     override fun facets(): FacetsTheme {
         return OLD_THEME.facets()

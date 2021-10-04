@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config.theme
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.*
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
@@ -47,6 +48,26 @@ class ThemeConfig(options: Map<String, Any>) {
             return DEF.plot()
         }
 
+        override fun panel(): PanelTheme {
+            return object : PanelTheme {
+                override fun show(): Boolean {
+                    return false
+                }
+
+                override fun color(): Color {
+                    TODO("Not yet implemented")
+                }
+
+                override fun fill(): Color {
+                    TODO("Not yet implemented")
+                }
+
+                override fun size(): Double {
+                    TODO("Not yet implemented")
+                }
+            }
+        }
+
         override fun multiTile(): Theme {
             return MultiTileTheme(options)
         }
@@ -58,8 +79,12 @@ class ThemeConfig(options: Map<String, Any>) {
     private class MultiTileTheme(options: Map<String, Any>) :
         ConfiguredTheme(options, DEF_OPTIONS_MULTI_TILE) {
 
-        override fun plot(): PlotTheme {
-            return DEF.multiTile().plot()
+//        override fun plot(): PlotTheme {
+//            return DEF.multiTile().plot()
+//        }
+
+        override fun panel(): PanelTheme {
+            return DEF.multiTile().panel()
         }
     }
 

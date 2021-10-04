@@ -5,9 +5,8 @@
 
 package jetbrains.datalore.plot.builder.theme
 
-import jetbrains.datalore.base.values.Color
-
+/**
+ * ToDo: implement 'plot.title' etc.
+ */
 interface PlotTheme {
-    fun showInnerFrame(): Boolean
-    fun innerFrameColor(): Color
 }

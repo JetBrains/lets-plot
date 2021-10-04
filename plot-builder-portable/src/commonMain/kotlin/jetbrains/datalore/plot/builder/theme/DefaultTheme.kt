@@ -34,6 +34,18 @@ open class DefaultTheme : Theme {
         return PLOT_THEME
     }
 
+    override fun panel(): PanelTheme {
+        return object : PanelTheme {
+            override fun show(): Boolean = false
+
+            override fun color(): Color = Color.BLACK
+
+            override fun fill(): Color = Color.BLACK
+
+            override fun size(): Double = 1.0
+        }
+    }
+
     override fun multiTile(): Theme {
         return object : DefaultTheme() {
             override fun axisX(): AxisTheme {
@@ -46,6 +58,18 @@ open class DefaultTheme : Theme {
 
             override fun plot(): PlotTheme {
                 return PLOT_THEME_MULTI_TILE
+            }
+
+            override fun panel(): PanelTheme {
+                return object : PanelTheme {
+                    override fun show(): Boolean = true
+
+                    override fun color(): Color = Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
+
+                    override fun fill(): Color = Color.TRANSPARENT
+
+                    override fun size(): Double = 1.0
+                }
             }
         }
     }
@@ -96,23 +120,9 @@ open class DefaultTheme : Theme {
         }
 
         private val PLOT_THEME: PlotTheme = object : PlotTheme {
-            override fun showInnerFrame(): Boolean {
-                return false
-            }
-
-            override fun innerFrameColor(): Color {
-                throw IllegalStateException("The `innerFrameColor()` method shouldn't be used.")
-            }
         }
 
         private val PLOT_THEME_MULTI_TILE: PlotTheme = object : PlotTheme {
-            override fun showInnerFrame(): Boolean {
-                return true
-            }
-
-            override fun innerFrameColor(): Color {
-                return Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
-            }
         }
     }
 }
