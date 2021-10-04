@@ -17,11 +17,10 @@ import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTIO
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_BACKGROUND
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MAJOR
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MINOR
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_PANEL_BORDER
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_RECT
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TITLE
@@ -67,8 +66,9 @@ object ThemeValuesBase {
         AXIS_TOOLTIP to AXIS_TOOLTIP_COMMON,
 
         // Panel
-        PANEL_BACKGROUND to Color.WHITE,
-        PANEL_PANEL_BORDER to ELEMENT_BLANK,
+//        PANEL_BACKGROUND to Color.WHITE,
+//        PANEL_PANEL_BORDER to ELEMENT_BLANK,
+        PANEL_RECT to ELEMENT_BLANK,
 
         // Panel grid
         PANEL_GRID to GRID_LINE_COMMON,

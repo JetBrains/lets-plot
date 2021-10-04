@@ -15,6 +15,11 @@ open class ThemeValuesAccess(
     protected operator fun get(option: String): Any? = values[option]
     protected fun getValue(option: String): Any = values.getValue(option)
 
+//    protected fun getElemValue(option: String): Map<String, Any> {
+//        @Suppress("UNCHECKED_CAST")
+//        return getValue(option) as Map<String, Any>
+//    }
+
     /**
      * @param options A stack of option manes: the most specific - first.
      */
@@ -31,6 +36,11 @@ open class ThemeValuesAccess(
                 }
         } as Map<String, Any>
     }
+
+//    protected fun isElemBlank(option: String): Boolean {
+//        val blankValue = getElemValue(option)[Elem.BLANK]
+//        return blankValue != null && blankValue as Boolean
+//    }
 
     protected fun isElemBlank(options: List<String>): Boolean {
         val blankValue = getElemValue(options)[Elem.BLANK]

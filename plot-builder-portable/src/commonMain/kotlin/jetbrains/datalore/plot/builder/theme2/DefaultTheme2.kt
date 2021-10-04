@@ -34,7 +34,9 @@ class DefaultTheme2(
     }
 
     override fun multiTile(): Theme {
-        return OLD_THEME.multiTile()
+//        return OLD_THEME.multiTile()
+        // The same for now.
+        return this
     }
 
     companion object {

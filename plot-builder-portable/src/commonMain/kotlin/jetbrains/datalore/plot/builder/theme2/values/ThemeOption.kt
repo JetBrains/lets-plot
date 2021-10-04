@@ -36,8 +36,9 @@ object ThemeOption {
     const val AXIS_TOOLTIP_Y = "axis_tooltip_y"
 
     // Panel
-    const val PANEL_BACKGROUND = "panel_background"
-    const val PANEL_PANEL_BORDER = "panel_border"
+//    const val PANEL_BACKGROUND = "panel_background"
+//    const val PANEL_PANEL_BORDER = "panel_border"
+    const val PANEL_RECT = "panel_rect"
 
     // Panel grid
     const val PANEL_GRID = "panel_grid"
