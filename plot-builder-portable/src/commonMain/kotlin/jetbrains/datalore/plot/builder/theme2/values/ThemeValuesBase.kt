@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
@@ -74,6 +75,12 @@ object ThemeValuesBase {
         PANEL_GRID to GRID_LINE_COMMON,
         PANEL_GRID_MAJOR to GRID_LINE_COMMON,
         PANEL_GRID_MINOR to GRID_LINE_COMMON,
+
+        // Facet
+        FACET_STRIP to RECT + mapOf(
+            Elem.FILL to Color.GRAY,
+            Elem.SIZE to 0.0,
+        ),
 
         // Legend
         LEGEND_POSITION to LegendPosition.RIGHT,

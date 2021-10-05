@@ -15,6 +15,8 @@ class DefaultTheme2(
     private val axisY = DefaultAxisTheme("y", options)
     private val legend = DefaultLegendTheme(options)
     private val panel = DefaultPanelTheme(options)
+    private val facets = DefaultFacetsTheme(options)
+    private val plot = DefaultPlotTheme(options)
 
 
     override fun axisX(): AxisTheme = axisX
@@ -25,22 +27,12 @@ class DefaultTheme2(
 
     override fun panel(): PanelTheme = panel
 
-    override fun facets(): FacetsTheme {
-        return OLD_THEME.facets()
-    }
+    override fun facets(): FacetsTheme = facets
 
-    override fun plot(): PlotTheme {
-        return OLD_THEME.plot()
-    }
+    override fun plot(): PlotTheme = plot
 
     override fun multiTile(): Theme {
-//        return OLD_THEME.multiTile()
         // The same for now.
         return this
-    }
-
-    companion object {
-        @Suppress("RemoveRedundantQualifierName")
-        private val OLD_THEME = jetbrains.datalore.plot.builder.theme.DefaultTheme()
     }
 }

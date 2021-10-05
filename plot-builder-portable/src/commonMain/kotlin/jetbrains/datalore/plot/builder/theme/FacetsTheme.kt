@@ -7,9 +7,8 @@ package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
 
-/**
- * ToDo: implement 'strip.XXX' properties in PlotTheme
- */
 interface FacetsTheme {
-    fun labelBackground(): Color
+    fun stripFill(): Color
+    fun stripColor():Color
+    fun stripSize():Double
 }

@@ -123,7 +123,7 @@ internal class PlotTile(
             for (xLabel in xLabels) {
                 val rect = SvgRectElement(labelBounds).apply {
                     strokeWidth().set(0.0)
-                    fillColor().set(theme.labelBackground())
+                    fillColor().set(theme.stripFill())
 
 //                    strokeWidth().set(1.0)
 //                    strokeColor().set(Color.BLACK)
@@ -155,7 +155,7 @@ internal class PlotTile(
             )
             val rect = SvgRectElement(labelBounds)
             rect.strokeWidth().set(0.0)
-            rect.fillColor().set(theme.labelBackground())
+            rect.fillColor().set(theme.stripFill())
             add(rect)
 
             val x = labelBounds.center.x

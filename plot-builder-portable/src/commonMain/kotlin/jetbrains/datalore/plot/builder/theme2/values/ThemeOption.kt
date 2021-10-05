@@ -49,6 +49,9 @@ object ThemeOption {
     const val PANEL_GRID_MAJOR_Y = "panel_grid_major_y"
     const val PANEL_GRID_MINOR_Y = "panel_grid_minor_y"
 
+    // Facet
+    const val FACET_STRIP = "facet_strip"
+
     const val LEGEND_POSITION = "legend_position"
     const val LEGEND_JUSTIFICATION = "legend_justification"
     const val LEGEND_DIRECTION = "legend_direction"

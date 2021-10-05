@@ -114,8 +114,16 @@ open class DefaultTheme : Theme {
         }
 
         private val FACETS_THEME: FacetsTheme = object : FacetsTheme {
-            override fun labelBackground(): Color {
+            override fun stripFill(): Color {
                 return Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
+            }
+
+            override fun stripColor(): Color {
+                TODO("Not yet implemented")
+            }
+
+            override fun stripSize(): Double {
+                TODO("Not yet implemented")
             }
         }
 
