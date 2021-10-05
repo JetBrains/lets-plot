@@ -6,19 +6,16 @@
 package jetbrains.datalore.plot.builder.theme2.values
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP
+import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesBase.PLOT_BACKGROUND
 
-object ThemeValuesLPLight {
+object ThemeValuesRClassic {
     val values: Map<String, Any> = ThemeValuesBase.values + mapOf(
-        // Axis
-//        AXIS_LINE_Y to ELEMENT_BLANK,
-        AXIS_LINE to mapOf(ThemeOption.Elem.COLOR to Color.GREEN),
-
         // Facet
-        ThemeOption.FACET_STRIP to mapOf(
-            ThemeOption.Elem.FILL to Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9),
-            ThemeOption.Elem.SIZE to 0.0,
+        FACET_STRIP to mapOf(
+            Elem.FILL to PLOT_BACKGROUND,
         ),
     )
 }

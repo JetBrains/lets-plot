@@ -119,11 +119,11 @@ open class DefaultTheme : Theme {
             }
 
             override fun stripColor(): Color {
-                TODO("Not yet implemented")
+                return Color.BLACK
             }
 
             override fun stripSize(): Double {
-                TODO("Not yet implemented")
+                return 0.0
             }
         }
 

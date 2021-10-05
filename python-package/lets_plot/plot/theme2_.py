@@ -81,3 +81,7 @@ class theme_lp_light(ThemeSpec):
 class theme_grey(ThemeSpec):
     def __init__(self, **kwargs):
         super().__init__(name='grey', **kwargs)
+
+class theme_classic(ThemeSpec):
+    def __init__(self, **kwargs):
+        super().__init__(name='classic', **kwargs)

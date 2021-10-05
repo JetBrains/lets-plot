@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.builder.theme.*
 import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesLPLight
+import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
 
 class ThemeConfig2(themeSettings: Map<String, Any>) {
 
@@ -25,10 +25,12 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
         private val axisYTheme: AxisTheme
         private val legendTheme: LegendTheme
         private val panelTheme: PanelTheme
+        private val facetsTheme: FacetsTheme
 
         init {
             // ToDo: select defaults.
-            val baselineOptions = ThemeValuesLPLight.values
+//            val baselineOptions = ThemeValuesLPLight.values
+            val baselineOptions = ThemeValuesRClassic.values
 
             // Make sure all values are converted to proper objects.
             @Suppress("NAME_SHADOWING")
@@ -55,6 +57,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
             axisYTheme = theme2.axisY()
             legendTheme = theme2.legend()
             panelTheme = theme2.panel()
+            facetsTheme = theme2.facets()
         }
 
         override fun axisX(): AxisTheme = axisXTheme
@@ -65,10 +68,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
         override fun panel(): PanelTheme = panelTheme
 
-        override fun facets(): FacetsTheme {
-            // ToDo: configurable
-            return DEF.facets()
-        }
+        override fun facets(): FacetsTheme = facetsTheme
 
         override fun plot(): PlotTheme {
             // ToDo: configurable

@@ -61,13 +61,9 @@ internal class PlotTile(
 
         val geomBounds = tileLayoutInfo.geomBounds
 
-//        if (theme.plot().showInnerFrame()) {
         if (theme.panel().show()) {
             val rect = SvgRectElement(geomBounds).apply {
-//                strokeColor().set(theme.plot().innerFrameColor())
                 strokeColor().set(theme.panel().color())
-//                strokeWidth().set(1.0)
-//                fillOpacity().set(0.0)
                 strokeWidth().set(theme.panel().size())
                 fillColor().set(theme.panel().fill())
             }
@@ -122,8 +118,9 @@ internal class PlotTile(
             )
             for (xLabel in xLabels) {
                 val rect = SvgRectElement(labelBounds).apply {
-                    strokeWidth().set(0.0)
+                    strokeWidth().set(theme.stripSize())
                     fillColor().set(theme.stripFill())
+                    strokeColor().set(theme.stripColor())
 
 //                    strokeWidth().set(1.0)
 //                    strokeColor().set(Color.BLACK)
