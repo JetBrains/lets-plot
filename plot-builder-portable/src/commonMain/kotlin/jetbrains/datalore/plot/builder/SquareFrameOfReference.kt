@@ -75,7 +75,7 @@ internal class SquareFrameOfReference(
         }
 
         val panelTheme = theme.panel()
-        if (panelTheme.shown()) {
+        if (panelTheme.showRect()) {
             val panel = buildPanelComponent(geomBounds, panelTheme)
             parent.add(panel)
         }
@@ -171,9 +171,9 @@ internal class SquareFrameOfReference(
 
         private fun buildPanelComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
             return SvgRectElement(bounds).apply {
-                strokeColor().set(theme.color())
-                strokeWidth().set(theme.size())
-                fillColor().set(theme.fill())
+                strokeColor().set(theme.rectColor())
+                strokeWidth().set(theme.rectsize())
+                fillColor().set(theme.rectFill())
             }
         }
 

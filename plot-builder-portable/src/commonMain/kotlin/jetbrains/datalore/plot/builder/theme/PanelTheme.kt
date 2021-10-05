@@ -11,8 +11,11 @@ import jetbrains.datalore.base.values.Color
  * Plotting area, drawn underneath plot.
  */
 interface PanelTheme {
-    fun shown(): Boolean
-    fun color():Color
-    fun fill():Color
-    fun size():Double
+    fun showRect(): Boolean
+    fun rectColor(): Color
+    fun rectFill(): Color
+    fun rectsize(): Double
+
+    fun gridX(): PanelGridTheme
+    fun gridY(): PanelGridTheme
 }

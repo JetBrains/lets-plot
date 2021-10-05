@@ -50,21 +50,25 @@ class ThemeConfig(options: Map<String, Any>) {
 
         override fun panel(): PanelTheme {
             return object : PanelTheme {
-                override fun shown(): Boolean {
+                override fun showRect(): Boolean {
                     return false
                 }
 
-                override fun color(): Color {
+                override fun rectColor(): Color {
                     TODO("Not yet implemented")
                 }
 
-                override fun fill(): Color {
+                override fun rectFill(): Color {
                     TODO("Not yet implemented")
                 }
 
-                override fun size(): Double {
+                override fun rectsize(): Double {
                     TODO("Not yet implemented")
                 }
+
+                override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
+
+                override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
             }
         }
 
@@ -100,5 +104,27 @@ class ThemeConfig(options: Map<String, Any>) {
             "${AXIS_LINE}_x" to ELEMENT_BLANK,      // replaced by inner frame
             "${AXIS_LINE}_y" to ELEMENT_BLANK,      // replaced by inner frame
         )
+
+        private val DUMMY_GRID_THEME: PanelGridTheme = object : PanelGridTheme {
+            override fun showMajor(): Boolean = false
+
+            override fun showMinor(): Boolean = false
+
+            override fun majorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun majorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
+        }
     }
 }

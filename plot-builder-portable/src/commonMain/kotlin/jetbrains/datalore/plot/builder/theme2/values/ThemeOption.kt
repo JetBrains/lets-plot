@@ -36,12 +36,10 @@ object ThemeOption {
     const val AXIS_TOOLTIP_Y = "axis_tooltip_y"
 
     // Panel
-//    const val PANEL_BACKGROUND = "panel_background"
-//    const val PANEL_PANEL_BORDER = "panel_border"
     const val PANEL_RECT = "panel_rect"
 
     // Panel grid
-    const val PANEL_GRID = "panel_grid"
+    const val PANEL_GRID = "panel_grid"  // a line
     const val PANEL_GRID_MAJOR = "panel_grid_major"
     const val PANEL_GRID_MINOR = "panel_grid_minor"
     const val PANEL_GRID_MAJOR_X = "panel_grid_major_x"
@@ -51,6 +49,7 @@ object ThemeOption {
 
     // Facet
     const val FACET_STRIP = "facet_strip"
+    // ToDo: strip-x / strip-y
 
     const val LEGEND_POSITION = "legend_position"
     const val LEGEND_JUSTIFICATION = "legend_justification"

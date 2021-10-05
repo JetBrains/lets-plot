@@ -36,13 +36,17 @@ open class DefaultTheme : Theme {
 
     override fun panel(): PanelTheme {
         return object : PanelTheme {
-            override fun shown(): Boolean = false
+            override fun showRect(): Boolean = false
 
-            override fun color(): Color = Color.BLACK
+            override fun rectColor(): Color = Color.BLACK
 
-            override fun fill(): Color = Color.BLACK
+            override fun rectFill(): Color = Color.BLACK
 
-            override fun size(): Double = 1.0
+            override fun rectsize(): Double = 1.0
+
+            override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
+
+            override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
         }
     }
 
@@ -62,13 +66,17 @@ open class DefaultTheme : Theme {
 
             override fun panel(): PanelTheme {
                 return object : PanelTheme {
-                    override fun shown(): Boolean = true
+                    override fun showRect(): Boolean = true
 
-                    override fun color(): Color = Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
+                    override fun rectColor(): Color = Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
 
-                    override fun fill(): Color = Color.TRANSPARENT
+                    override fun rectFill(): Color = Color.TRANSPARENT
 
-                    override fun size(): Double = 1.0
+                    override fun rectsize(): Double = 1.0
+
+                    override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
+
+                    override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
                 }
             }
         }
@@ -131,6 +139,28 @@ open class DefaultTheme : Theme {
         }
 
         private val PLOT_THEME_MULTI_TILE: PlotTheme = object : PlotTheme {
+        }
+
+        private val DUMMY_GRID_THEME: PanelGridTheme = object : PanelGridTheme {
+            override fun showMajor(): Boolean = false
+
+            override fun showMinor(): Boolean = false
+
+            override fun majorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun majorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
         }
     }
 }
