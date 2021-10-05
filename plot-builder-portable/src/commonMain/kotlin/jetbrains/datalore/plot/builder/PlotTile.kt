@@ -61,14 +61,14 @@ internal class PlotTile(
 
         val geomBounds = tileLayoutInfo.geomBounds
 
-        if (theme.panel().show()) {
-            val rect = SvgRectElement(geomBounds).apply {
-                strokeColor().set(theme.panel().color())
-                strokeWidth().set(theme.panel().size())
-                fillColor().set(theme.panel().fill())
-            }
-            add(rect)
-        }
+//        if (theme.panel().shown()) {
+//            val rect = SvgRectElement(geomBounds).apply {
+//                strokeColor().set(theme.panel().color())
+//                strokeWidth().set(theme.panel().size())
+//                fillColor().set(theme.panel().fill())
+//            }
+//            add(rect)
+//        }
 
         addFacetLabels(geomBounds, theme.facets())
 
@@ -85,7 +85,7 @@ internal class PlotTile(
         } else {
             // Normal plot tiles
 
-            frameOfReference.drawAxis(this)
+            frameOfReference.drawFoR(this)
             geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
 
             for (layer in layers) {
@@ -117,14 +117,11 @@ internal class PlotTile(
                 labelOrig, labelSize
             )
             for (xLabel in xLabels) {
+                // ToDo: This is "strip-x"
                 val rect = SvgRectElement(labelBounds).apply {
                     strokeWidth().set(theme.stripSize())
                     fillColor().set(theme.stripFill())
                     strokeColor().set(theme.stripColor())
-
-//                    strokeWidth().set(1.0)
-//                    strokeColor().set(Color.BLACK)
-//                    fillOpacity().set(0.0)
                 }
                 add(rect)
 
@@ -150,9 +147,13 @@ internal class PlotTile(
                 geomBounds.right + hPad, geomBounds.top - vPad,
                 FACET_TAB_HEIGHT - hPad * 2, geomBounds.height - vPad * 2
             )
-            val rect = SvgRectElement(labelBounds)
-            rect.strokeWidth().set(0.0)
-            rect.fillColor().set(theme.stripFill())
+
+            // ToDo: This is "strip-y"
+            val rect = SvgRectElement(labelBounds).apply {
+                strokeWidth().set(theme.stripSize())
+                fillColor().set(theme.stripFill())
+                strokeColor().set(theme.stripColor())
+            }
             add(rect)
 
             val x = labelBounds.center.x

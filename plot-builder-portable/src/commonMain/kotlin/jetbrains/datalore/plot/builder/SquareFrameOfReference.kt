@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.PanelTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
@@ -51,7 +52,7 @@ internal class SquareFrameOfReference(
 
     // Rendering
 
-    override fun drawAxis(parent: SvgComponent) {
+    override fun drawFoR(parent: SvgComponent) {
         val geomBounds: DoubleRectangle = layoutInfo.geomBounds
 
         // Flip theme
@@ -71,6 +72,12 @@ internal class SquareFrameOfReference(
             val axis = buildAxis(vScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
             axis.moveTo(geomBounds.origin)
             parent.add(axis)
+        }
+
+        val panelTheme = theme.panel()
+        if (panelTheme.shown()) {
+            val panel = buildPanelComponent(geomBounds, panelTheme)
+            parent.add(panel)
         }
 
         if (isDebugDrawing) {
@@ -160,6 +167,14 @@ internal class SquareFrameOfReference(
                 }
             }
             return axis
+        }
+
+        private fun buildPanelComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
+            return SvgRectElement(bounds).apply {
+                strokeColor().set(theme.color())
+                strokeWidth().set(theme.size())
+                fillColor().set(theme.fill())
+            }
         }
 
         private fun buildGeom(

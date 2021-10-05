@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Color
  * Plotting area, drawn underneath plot.
  */
 interface PanelTheme {
-    fun show(): Boolean
+    fun shown(): Boolean
     fun color():Color
     fun fill():Color
     fun size():Double

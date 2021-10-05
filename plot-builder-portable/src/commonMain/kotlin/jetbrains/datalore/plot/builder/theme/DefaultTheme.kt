@@ -36,7 +36,7 @@ open class DefaultTheme : Theme {
 
     override fun panel(): PanelTheme {
         return object : PanelTheme {
-            override fun show(): Boolean = false
+            override fun shown(): Boolean = false
 
             override fun color(): Color = Color.BLACK
 
@@ -62,7 +62,7 @@ open class DefaultTheme : Theme {
 
             override fun panel(): PanelTheme {
                 return object : PanelTheme {
-                    override fun show(): Boolean = true
+                    override fun shown(): Boolean = true
 
                     override fun color(): Color = Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
 

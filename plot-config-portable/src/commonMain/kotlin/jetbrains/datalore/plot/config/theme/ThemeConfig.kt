@@ -50,7 +50,7 @@ class ThemeConfig(options: Map<String, Any>) {
 
         override fun panel(): PanelTheme {
             return object : PanelTheme {
-                override fun show(): Boolean {
+                override fun shown(): Boolean {
                     return false
                 }
 

@@ -18,7 +18,7 @@ class DefaultPanelTheme(
         ThemeOption.RECT
     )
 
-    override fun show(): Boolean {
+    override fun shown(): Boolean {
         return !isElemBlank(rectKey)
     }
 
