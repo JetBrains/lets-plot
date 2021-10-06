@@ -79,6 +79,28 @@ class corr_plot:
     _DEF_MID_COLOR = '#EDEDED'
     _DEF_HIGH_COLOR = '#326C81'
 
+    def _duplicate(self):
+        dup = corr_plot(
+            data=self._data,
+            show_legend=self._show_legend,
+            flip=self._reverse_y,
+            threshold=self.threshold
+        )
+
+        dup._format = self._format
+        dup._color_scale = self._color_scale
+        dup._fill_scale = self._fill_scale
+        dup._points_params = self._points_params
+        dup._tiles_params = self._tiles_params
+        dup._labels_params = self._labels_params
+        dup._labels_map_size = self._labels_map_size
+        dup._palette = self._palette
+        dup._low = self._low
+        dup._mid = self._mid
+        dup._high = self._high
+
+        return dup
+
     def __init__(self, data, show_legend=True, flip=True, threshold=None):
         """
         Parameters
@@ -97,22 +119,19 @@ class corr_plot:
 
         self._data = data
         self._show_legend = show_legend
-        self._format = '.2f'
         self._reverse_y = flip if flip else False
         self.threshold = threshold
+        self._format = '.2f'
         self._color_scale = None
         self._fill_scale = None
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
         self._labels_map_size = None
-        self._palette = None
-        self._low = None
-        self._mid = None
-        self._high = None
-        self.palette_gradient(low=corr_plot._DEF_LOW_COLOR,
-                              mid=corr_plot._DEF_MID_COLOR,
-                              high=corr_plot._DEF_HIGH_COLOR)
+        self._palette = 'gradient'
+        self._low = corr_plot._DEF_LOW_COLOR
+        self._mid = corr_plot._DEF_MID_COLOR
+        self._high = corr_plot._DEF_HIGH_COLOR
 
     def points(self, type=None, diag=None):
         """
@@ -131,8 +150,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        self._points_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
-        return self
+        return self._duplicate()._set_points(type, diag)
 
     def labels(self, type=None, diag=None, map_size=None, color=None):
         """
@@ -156,10 +174,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-
-        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': self.threshold}
-        self._labels_map_size = map_size
-        return self
+        return self._duplicate()._set_labels(type, diag, map_size, color)
 
     def tiles(self, type=None, diag=None):
         """
@@ -178,9 +193,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-
-        self._tiles_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
-        return self
+        return self._duplicate()._set_tiles(type, diag)
 
     def palette_gradient(self, low, mid, high):
         """
@@ -200,11 +213,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        self._palette = 'gradient'
-        self._low = low
-        self._mid = mid
-        self._high = high
-        return self
+        return self._duplicate()._set_gradient_palette(low, mid, high)
 
     def palette_BrBG(self):
         """
@@ -226,7 +235,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('PiYG')
+        return self._duplicate()._set_brewer_palette('PiYG')
 
     def palette_PRGn(self):
         """
@@ -237,7 +246,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('PRGn')
+        return self._duplicate()._set_brewer_palette('PRGn')
 
     def palette_PuOr(self):
         """
@@ -248,7 +257,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('PuOr')
+        return self._duplicate()._set_brewer_palette('PuOr')
 
     def palette_RdBu(self):
         """
@@ -259,7 +268,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('RdBu')
+        return self._duplicate()._set_brewer_palette('RdBu')
 
     def palette_RdGy(self):
         """
@@ -270,7 +279,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('RdGy')
+        return self._duplicate()._set_brewer_palette('RdGy')
 
     def palette_RdYlBu(self):
         """
@@ -281,7 +290,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('RdYlBu')
+        return self._duplicate()._set_brewer_palette('RdYlBu')
 
     def palette_RdYlGn(self):
         """
@@ -292,7 +301,7 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('RdYlGn')
+        return self._duplicate()._set_brewer_palette('RdYlGn')
 
     def palette_Spectral(self):
         """
@@ -303,7 +312,27 @@ class corr_plot:
         `corr_plot`
             Correlation plot specification.
         """
-        return self._set_brewer_palette('Spectral')
+        return self._duplicate()._set_brewer_palette('Spectral')
+
+    def _set_points(self, type=None, diag=None):
+        self._points_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
+        return self
+
+    def _set_labels(self, type=None, diag=None, map_size=None, color=None):
+        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': self.threshold}
+        self._labels_map_size = map_size
+        return self
+
+    def _set_tiles(self, type=None, diag=None):
+        self._tiles_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
+        return self
+
+    def _set_gradient_palette(self, low, mid, high):
+        self._palette = 'gradient'
+        self._low = low
+        self._mid = mid
+        self._high = high
+        return self
 
     def _set_brewer_palette(self, palette):
         self._palette = palette
