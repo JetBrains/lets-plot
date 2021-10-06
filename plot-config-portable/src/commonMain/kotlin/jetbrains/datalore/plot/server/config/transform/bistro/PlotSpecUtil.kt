@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.server.config.transform.bistro
 
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 
@@ -46,7 +47,7 @@ object PlotSpecUtil {
             layer.contants?.forEach { (aes, value) -> layerSpec[toOption(aes)] = value }
 
             layer.samplingOptions?.let { sampling ->
-                layerSpec[Option.Layer.SAMPLING] = when(sampling.kind) {
+                layerSpec[Option.Layer.SAMPLING] = when (sampling.kind) {
                     Option.Sampling.NONE -> Option.Sampling.NONE
                     else -> mapOf(
                         Option.Meta.NAME to sampling.kind,
@@ -104,26 +105,26 @@ object PlotSpecUtil {
             Option.Meta.NAME to coordOptions.name,
             Option.Coord.RATIO to coordOptions.ratio,
             Option.Coord.X_LIM to coordOptions.xLim?.let(this::convertDoublePair),
-            Option.Coord.Y_LIM to coordOptions.yLim?.let (this::convertDoublePair)
+            Option.Coord.Y_LIM to coordOptions.yLim?.let(this::convertDoublePair)
         ).filterNonNullValues()
     }
 
     private fun serializeTheme(themeOptions: ThemeOptions): Map<String, Any?> {
         return mutableMapOf<String, Any?>(
-            Option.Theme.AXIS_TITLE to serializeThemeElement(themeOptions.axisTitle),
-            Option.Theme.AXIS_LINE to serializeThemeElement(themeOptions.axisLine)
+            ThemeOption.AXIS_TITLE to serializeThemeElement(themeOptions.axisTitle),
+            ThemeOption.AXIS_LINE to serializeThemeElement(themeOptions.axisLine)
         ).filterNonNullValues()
     }
 
     private fun serializeThemeElement(element: ThemeOptions.Element?): Map<String, String> {
-        return when(element) {
+        return when (element) {
             ThemeOptions.ELEMENT_BLANK -> mapOf(Option.Meta.NAME to Option.Theme.ELEMENT_BLANK)
             else -> throw IllegalArgumentException("Only element_blank is supported")
         }
     }
 
     private fun serializeSize(size: Vector): Map<String, Any> {
-        return  mapOf(
+        return mapOf(
             Option.Plot.WIDTH to size.x,
             Option.Plot.HEIGHT to size.y
         )
