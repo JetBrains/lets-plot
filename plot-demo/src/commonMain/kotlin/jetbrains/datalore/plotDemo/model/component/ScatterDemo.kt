@@ -418,14 +418,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 rangeY,
                 Orientation.LEFT
             )
-//            axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
-//            axis.labels.set(ScaleUtil.labels(scaleY))
             AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
-
-//            axis.lineWidth.set(theme.axisY().lineWidth())
-//            axis.tickMarkLength.set(theme.axisY().tickMarkLength())
-//            axis.tickMarkPadding.set(theme.axisY().tickMarkPadding())
-//            axis.tickMarkWidth.set(theme.axisY().tickMarkWidth())
             AxisUtil.applyTheme(axis, theme.axisY())
 
             // enable grid-lines

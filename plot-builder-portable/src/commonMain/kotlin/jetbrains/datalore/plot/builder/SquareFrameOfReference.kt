@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.theme.PanelTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -55,30 +56,50 @@ internal class SquareFrameOfReference(
     override fun drawFoR(parent: SvgComponent) {
         val geomBounds: DoubleRectangle = layoutInfo.geomBounds
 
+        val panelTheme = theme.panel()
+
         // Flip theme
-        val (xAxisTheme, yAxisTheme) = when {
+        val (hAxisTheme, vAxisTheme) = when {
             flipAxis -> Pair(theme.axisY(), theme.axisX())
             else -> Pair(theme.axisX(), theme.axisY())
         }
-
-        // X-axis (below geom area)
-        if (layoutInfo.xAxisShown) {
-            val axis = buildAxis(hScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
-            axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
-            parent.add(axis)
-        }
-        // Y-axis (to the left from geom area, axis elements have negative x-positions)
-        if (layoutInfo.yAxisShown) {
-            val axis = buildAxis(vScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
-            axis.moveTo(geomBounds.origin)
-            parent.add(axis)
+        val (hGridTheme, vGridTheme) = when {
+            flipAxis -> Pair(panelTheme.gridY(), panelTheme.gridX())
+            else -> Pair(panelTheme.gridX(), panelTheme.gridY())
         }
 
-        val panelTheme = theme.panel()
         if (panelTheme.showRect()) {
             val panel = buildPanelComponent(geomBounds, panelTheme)
             parent.add(panel)
         }
+
+        // X-axis (below geom area)
+        val hAxis = buildAxis(
+            hScale,
+            layoutInfo.xAxisInfo!!,
+            hideAxisBreaks = !layoutInfo.xAxisShown,
+            coord,
+            hAxisTheme,
+            hGridTheme,
+            geomBounds.height,
+            isDebugDrawing
+        )
+        hAxis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
+        parent.add(hAxis)
+
+        // Y-axis (to the left from geom area, axis elements have negative x-positions)
+        val vAxis = buildAxis(
+            vScale,
+            layoutInfo.yAxisInfo!!,
+            hideAxisBreaks = !layoutInfo.yAxisShown,
+            coord,
+            vAxisTheme,
+            vGridTheme,
+            geomBounds.width,
+            isDebugDrawing
+        )
+        vAxis.moveTo(geomBounds.origin)
+        parent.add(vAxis)
 
         if (isDebugDrawing) {
             drawDebugShapes(parent, geomBounds)
@@ -149,14 +170,22 @@ internal class SquareFrameOfReference(
         private fun buildAxis(
             scale: Scale<Double>,
             info: AxisLayoutInfo,
+            hideAxisBreaks: Boolean,
             coord: CoordinateSystem,
-            theme: AxisTheme,
+            axisTheme: AxisTheme,
+            gridTheme: PanelGridTheme,
+            grigLineLength: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
             val axis = AxisComponent(info.axisLength, info.orientation!!)
+            if (gridTheme.showMajor()) {
+                axis.gridLineLength.set(grigLineLength)
+                axis.gridLineWidth.set(gridTheme.majorLineWidth())
+                axis.gridLineColor.set(gridTheme.majorLineColor())
+            }
             AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
             AxisUtil.applyLayoutInfo(axis, info)
-            AxisUtil.applyTheme(axis, theme)
+            AxisUtil.applyTheme(axis, axisTheme, hideAxisBreaks)
             if (isDebugDrawing) {
                 if (info.tickLabelsBounds != null) {
                     val rect = SvgRectElement(info.tickLabelsBounds)

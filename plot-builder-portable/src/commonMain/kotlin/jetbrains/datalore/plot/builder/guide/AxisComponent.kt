@@ -37,8 +37,8 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
     val tickLabelVerticalAnchor: Property<TextLabel.VerticalAnchor>
     val tickLabelSmallFont: Property<Boolean> = ValueProperty(false)
     val tickLabelOffsets: Property<List<DoubleVector>?> = ValueProperty(null)  // optional
-    val gridLineColor: Property<Color> = ValueProperty(Color.LIGHT_GRAY)
     val lineWidth: Property<Double> = ValueProperty(1.0)
+    val gridLineColor: Property<Color> = ValueProperty(Color.LIGHT_GRAY)
     val gridLineWidth: Property<Double> = ValueProperty(1.0)
     val gridLineLength: Property<Double> = ValueProperty(0.0)
     val tickMarkWidth: Property<Double> = ValueProperty(1.0)
@@ -63,10 +63,10 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
     }
 
     private fun defTickLabelVerticalAnchor(orientation: Orientation): TextLabel.VerticalAnchor {
-        when (orientation) {
-            Orientation.LEFT, Orientation.RIGHT -> return CENTER
-            Orientation.TOP -> return BOTTOM
-            Orientation.BOTTOM -> return TOP
+        return when (orientation) {
+            Orientation.LEFT, Orientation.RIGHT -> CENTER
+            Orientation.TOP -> BOTTOM
+            Orientation.BOTTOM -> TOP
             else -> throw RuntimeException("Unexpected orientation:$orientation")
         }
     }
@@ -145,19 +145,14 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
         val gridLineMinPos = start + 3
         val gridLineMaxPos = end - 3
 
-        if (breaksEnabled()) {
+        if (breaksEnabled() || gridLineLength.get() > 0) {
             // add ticks before axis line
             val breaks = this.breaks.get()
-            if (!(breaks == null || breaks.isEmpty())) {
-
+            if (!breaks.isNullOrEmpty()) {
                 var labels: List<String>? = this.labels.get()
-                if (labels == null || labels.isEmpty()) {
-                    labels = ArrayList()
-                    for (i in breaks.indices) {
-                        labels.add("")
-                    }
+                if (labels.isNullOrEmpty()) {
+                    labels = List(breaks.size) { "" }
                 }
-
 
                 val labelsCleaner = TickLabelsCleaner(orientation.get()!!.isHorizontal)
 

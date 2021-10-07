@@ -12,8 +12,10 @@ object AesScaling {
 
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * 2.0
+        return strokeWidth(p.size()!!)
     }
+
+    fun strokeWidth(aes: Double) = aes * 2.0
 
     fun circleDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
