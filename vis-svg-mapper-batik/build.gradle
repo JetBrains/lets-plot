@@ -28,7 +28,10 @@ kotlin {
                 implementation project(':mapper-core')
                 implementation project(':vis-svg-portable')
                 implementation project(':vis-svg-mapper')
-
+            }
+        }
+        commonTest {
+            dependencies {
                 implementation project(':test-common')
             }
         }
