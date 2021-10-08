@@ -6,12 +6,13 @@
 package jetbrains.datalore.plot.builder.theme2.values
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TICKS
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MAJOR
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MINOR
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_RECT
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesBase.PLOT_BACKGROUND
 
@@ -28,12 +29,17 @@ object ThemeValuesRGrey {
             Elem.COLOR to PLOT_BACKGROUND,
         ),
         PANEL_GRID_MAJOR to mapOf(
-            Elem.COLOR to PLOT_BACKGROUND,
-            Elem.SIZE to AesScaling.strokeWidth(0.7),
+            Elem.SIZE to 1.4,
+        ),
+        PANEL_GRID_MINOR to mapOf(
+            Elem.SIZE to 0.7,
         ),
 
         // Axis
         AXIS_LINE to ELEMENT_BLANK,
+        AXIS_TICKS to mapOf(
+            Elem.SIZE to 1.4
+        ),
 
         // Facets
         ThemeOption.FACET_STRIP to mapOf(

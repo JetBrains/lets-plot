@@ -41,6 +41,8 @@ internal class PlotSvgExportTest {
             plotSize = DoubleVector(400.0, 300.0)  // Ignored
         )
 
+//        println(svg)
+
         kotlin.test.assertEquals(EXPECTED_BUNCH_SVG, svg)
     }
 }

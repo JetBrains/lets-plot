@@ -239,11 +239,37 @@ class AxisComponent(
     companion object {
     }
 
-    class BreaksData(
+    class BreaksData constructor(
         val majorBreaks: List<Double>,
         val majorLabels: List<String>,
-        val minorBreaks: List<Double> = emptyList(),
-    )
+        minorBreaks: List<Double>? = null,
+    ) {
+        val minorBreaks: List<Double> = minorBreaks ?: let {
+            if (majorBreaks.size <= 1) {
+                emptyList()
+            } else {
+                // Default minor grid: a minor line in the middle between each pair of major lines.
+                val minorBreaks: MutableList<Double> = majorBreaks.subList(0, majorBreaks.size - 1)
+                    .zip(majorBreaks.subList(1, majorBreaks.size))
+                    .fold(ArrayList()) { l, pair ->
+                        l.add((pair.second - pair.first) / 2 + pair.first)
+                        l
+                    }
+
+                // Add one in the front
+                majorBreaks.take(2).reduce { first, second -> second - first }.run {
+                    minorBreaks.add(0, minorBreaks.first() - this)
+                }
+
+                // Add one in the back.
+                majorBreaks.takeLast(2).reduce { first, second -> second - first }.run {
+                    minorBreaks.add(0, minorBreaks.last() + this)
+                }
+
+                minorBreaks
+            }
+        }
+    }
 
     class TickLabelAdjustments(
         orientation: Orientation,

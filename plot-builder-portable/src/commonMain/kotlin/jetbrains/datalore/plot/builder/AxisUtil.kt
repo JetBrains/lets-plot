@@ -13,42 +13,6 @@ import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 
 object AxisUtil {
-//    fun applyLayoutInfo(axis: AxisComponent, info: AxisLayoutInfo) {
-//        axis.tickLabelOffsets.set(info.tickLabelAdditionalOffsets)
-//        axis.tickLabelRotationDegree.set(info.tickLabelRotationAngle)
-//        if (info.tickLabelHorizontalAnchor != null) {
-//            axis.tickLabelHorizontalAnchor.set(info.tickLabelHorizontalAnchor)
-//        }
-//        if (info.tickLabelVerticalAnchor != null) {
-//            axis.tickLabelVerticalAnchor.set(info.tickLabelVerticalAnchor)
-//        }
-//        axis.tickLabelSmallFont.set(info.tickLabelSmallFont)
-//    }
-
-//    fun applyTheme(axis: AxisComponent, theme: AxisTheme, hideAxisBreaks: Boolean = false) {
-//        if (!hideAxisBreaks) {
-//            axis.tickLabelsEnabled().set(theme.showLabels())
-//            axis.tickMarksEnabled().set(theme.showTickMarks())
-//        } else {
-//            axis.tickLabelsEnabled().set(false)
-//            axis.tickMarksEnabled().set(false)
-//        }
-//        axis.axisLineEnabled().set(theme.showLine())
-//
-//        axis.lineWidth.set(theme.lineWidth())
-//        axis.tickMarkLength.set(theme.tickMarkLength())
-//        axis.tickMarkPadding.set(theme.tickMarkPadding())
-//        axis.tickMarkWidth.set(theme.tickMarkWidth())
-//    }
-
-//    fun setBreaks(axis: AxisComponent, scale: Scale<Double>, coord: CoordinateSystem, horizontal: Boolean) {
-//        val scaleBreaks = scale.getScaleBreaks()
-//        val mappedBreaks = toAxisCoord(scaleBreaks, scale, coord, horizontal)
-//
-//        axis.breaks.set(mappedBreaks)
-//        axis.labels.set(scaleBreaks.labels)
-//    }
-
     fun breaksData(
         scale: Scale<Double>,
         coord: CoordinateSystem,
