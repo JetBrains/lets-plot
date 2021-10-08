@@ -41,10 +41,10 @@ class DefaultPanelGridTheme(
     }
 
     override fun majorLineColor(): Color {
-        return getElemValue(majorLineKey)[Elem.COLOR] as Color
+        return getColor(getElemValue(majorLineKey), Elem.COLOR)
     }
 
     override fun minorLineColor(): Color {
-        return getElemValue(minorLineKey)[Elem.COLOR] as Color
+        return getColor(getElemValue(minorLineKey), Elem.COLOR)
     }
 }

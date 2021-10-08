@@ -98,6 +98,9 @@ object Defaults {
             const val LINE_WIDTH = 1.0
             const val TICK_LINE_WIDTH = 1.0
             const val GRID_LINE_WIDTH = 1.0
+
+            const val TICK_MARK_LENGTH = 6.0
+            const val TICK_MARK_PADDING = 3.0
         }
     }
 }

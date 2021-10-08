@@ -28,11 +28,11 @@ class DefaultPanelTheme(
     }
 
     override fun rectColor(): Color {
-        return getElemValue(rectKey)[Elem.COLOR] as Color
+        return getColor(getElemValue(rectKey), Elem.COLOR)
     }
 
     override fun rectFill(): Color {
-        return getElemValue(rectKey)[Elem.FILL] as Color
+        return getColor(getElemValue(rectKey), Elem.FILL)
     }
 
     override fun rectsize(): Double {

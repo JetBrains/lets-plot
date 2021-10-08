@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.theme2
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
@@ -38,7 +39,7 @@ class DefaultAxisTheme(
         return !isElemBlank(tickmarkKey)
     }
 
-    override fun showTickLabels(): Boolean {
+    override fun showLabels(): Boolean {
         return !isElemBlank(textKey)
     }
 
@@ -54,15 +55,19 @@ class DefaultAxisTheme(
         return getNumber(getElemValue(lineKey), Elem.SIZE)
     }
 
+    override fun lineColor(): Color {
+        return getColor(getElemValue(lineKey), Elem.COLOR)
+    }
+
     override fun tickMarkWidth(): Double {
         return getNumber(getElemValue(tickmarkKey), Elem.SIZE)
     }
 
-    override fun tickMarkLength(): Double {
-        return 6.0
+    override fun tickMarkColor(): Color {
+        return getColor(getElemValue(tickmarkKey), Elem.COLOR)
     }
 
-    override fun tickMarkPadding(): Double {
-        return 3.0
+    override fun labelColor(): Color {
+        return getColor(getElemValue(textKey), Elem.COLOR)
     }
 }

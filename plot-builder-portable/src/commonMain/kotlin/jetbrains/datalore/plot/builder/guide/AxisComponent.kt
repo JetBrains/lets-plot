@@ -32,8 +32,6 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
     // layout
     val tickLabelRotationDegree: Property<Double> = ValueProperty(0.0)
     val tickLabelHorizontalAnchor: Property<TextLabel.HorizontalAnchor>
-
-    // todo: minorBreaks
     val tickLabelVerticalAnchor: Property<TextLabel.VerticalAnchor>
     val tickLabelSmallFont: Property<Boolean> = ValueProperty(false)
     val tickLabelOffsets: Property<List<DoubleVector>?> = ValueProperty(null)  // optional

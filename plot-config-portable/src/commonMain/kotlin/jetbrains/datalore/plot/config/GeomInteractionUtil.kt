@@ -114,8 +114,8 @@ object GeomInteractionUtil {
         }.let {
             // Not show the axis tooltip if the axis tick labels are hidden
             val axisAesList = it.toMutableList()
-            if (!theme.axisX().showTickLabels()) axisAesList.remove(Aes.X)
-            if (!theme.axisY().showTickLabels()) axisAesList.remove(Aes.Y)
+            if (!theme.axisX().showLabels()) axisAesList.remove(Aes.X)
+            if (!theme.axisY().showLabels()) axisAesList.remove(Aes.Y)
             axisAesList
         }
     }

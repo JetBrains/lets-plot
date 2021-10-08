@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.builder.theme2
 
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
 
 open class ThemeValuesAccess(
@@ -15,15 +17,12 @@ open class ThemeValuesAccess(
     protected operator fun get(option: String): Any? = values[option]
     protected fun getValue(option: String): Any = values.getValue(option)
 
-//    protected fun getElemValue(option: String): Map<String, Any> {
-//        @Suppress("UNCHECKED_CAST")
-//        return getValue(option) as Map<String, Any>
-//    }
-
     /**
      * @param options A stack of option manes: the most specific - first.
      */
-    protected fun getElemValue(options: List<String>): Map<String, Any> {
+    protected fun getElemValue(
+        options: List<String>
+    ): Map<String, Any> {
         val specificOption = options.first()
         @Suppress("UNCHECKED_CAST")
         return mem.getOrPut(specificOption) {
@@ -37,11 +36,6 @@ open class ThemeValuesAccess(
         } as Map<String, Any>
     }
 
-//    protected fun isElemBlank(option: String): Boolean {
-//        val blankValue = getElemValue(option)[Elem.BLANK]
-//        return blankValue != null && blankValue as Boolean
-//    }
-
     protected fun isElemBlank(options: List<String>): Boolean {
         val blankValue = getElemValue(options)[Elem.BLANK]
         return blankValue != null && blankValue as Boolean
@@ -49,5 +43,13 @@ open class ThemeValuesAccess(
 
     protected fun getNumber(elem: Map<String, Any>, option: String): Double {
         return (elem.getValue(option) as Number).toDouble()
+    }
+
+    protected fun getColor(elem: Map<String, Any>, option: String): Color {
+        val value = elem.getValue(option)
+        return when (value) {
+            is Color -> value
+            else -> Colors.parseColor(value as String)
+        }
     }
 }

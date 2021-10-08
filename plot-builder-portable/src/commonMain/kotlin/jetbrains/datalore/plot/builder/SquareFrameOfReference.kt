@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
-import jetbrains.datalore.plot.builder.guide.AxisComponent
+import jetbrains.datalore.plot.builder.guide.AxisComponent2
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -174,18 +174,40 @@ internal class SquareFrameOfReference(
             coord: CoordinateSystem,
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
-            grigLineLength: Double,
+            gridLineLength: Double,
             isDebugDrawing: Boolean
-        ): AxisComponent {
-            val axis = AxisComponent(info.axisLength, info.orientation!!)
-            if (gridTheme.showMajor()) {
-                axis.gridLineLength.set(grigLineLength)
-                axis.gridLineWidth.set(gridTheme.majorLineWidth())
-                axis.gridLineColor.set(gridTheme.majorLineColor())
-            }
-            AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
-            AxisUtil.applyLayoutInfo(axis, info)
-            AxisUtil.applyTheme(axis, axisTheme, hideAxisBreaks)
+        ): AxisComponent2 {
+//            val axis = AxisComponent(info.axisLength, info.orientation!!)
+//            if (gridTheme.showMajor()) {
+//                axis.gridLineLength.set(gridLineLength)
+//                axis.gridLineWidth.set(gridTheme.majorLineWidth())
+//                axis.gridLineColor.set(gridTheme.majorLineColor())
+//            }
+//            AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
+//            AxisUtil.applyLayoutInfo(axis, info)
+//            AxisUtil.applyTheme(axis, axisTheme, hideAxisBreaks)
+
+            val orientation = info.orientation!!
+            val labelAdjustments = AxisComponent2.TickLabelAdjustments(
+                orientation = orientation,
+                horizontalAnchor = info.tickLabelHorizontalAnchor,
+                verticalAnchor = info.tickLabelVerticalAnchor,
+                rotationDegree = info.tickLabelRotationAngle,
+                additionalOffsets = info.tickLabelAdditionalOffsets
+            )
+
+            val axis = AxisComponent2(
+                length = info.axisLength,
+                orientation = orientation,
+                breaksData = AxisUtil.breaksData(scale, coord, orientation.isHorizontal),
+                labelAdjustments = labelAdjustments,
+                gridLineLength = gridLineLength,
+                axisTheme = axisTheme,
+                gridTheme = gridTheme,
+                useSmallFont = info.tickLabelSmallFont,
+                hideAxisBreaks = hideAxisBreaks
+            )
+
             if (isDebugDrawing) {
                 if (info.tickLabelsBounds != null) {
                     val rect = SvgRectElement(info.tickLabelsBounds)

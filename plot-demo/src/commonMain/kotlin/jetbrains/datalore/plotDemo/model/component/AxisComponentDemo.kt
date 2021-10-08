@@ -16,9 +16,11 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.AxisUtil
-import jetbrains.datalore.plot.builder.guide.AxisComponent
+import jetbrains.datalore.plot.builder.guide.AxisComponent2
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
+import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -116,12 +118,29 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             scale: Scale<Double>,
             coord: CoordinateSystem,
             orientation: Orientation
-        ): AxisComponent {
-            val axis = AxisComponent(axisLength, orientation)
-            AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
-            axis.gridLineColor.set(Color.RED)
-            axis.gridLineWidth.set(Plot.Axis.GRID_LINE_WIDTH)
-            axis.gridLineLength.set(100.0)
+        ): AxisComponent2 {
+//            val axis = AxisComponent(axisLength, orientation)
+//            AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
+
+//            axis.gridLineColor.set(Color.RED)
+//            axis.gridLineWidth.set(Plot.Axis.GRID_LINE_WIDTH)
+//            axis.gridLineLength.set(100.0)
+
+            val baselineOptions = ThemeValuesRClassic.values
+            val themeOptions = baselineOptions + mapOf(
+                ThemeOption.PANEL_GRID to mapOf(ThemeOption.Elem.COLOR to Color.RED)
+            )
+            val theme = DefaultTheme2(themeOptions)
+
+            val axis = AxisComponent2(
+                length = axisLength,
+                orientation = orientation,
+                breaksData = AxisUtil.breaksData(scale, coord, orientation.isHorizontal),
+                gridLineLength = 100.0,
+                axisTheme = if (orientation.isHorizontal) theme.axisX() else theme.axisY(),
+                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),
+            )
+
             return axis
         }
     }

@@ -26,9 +26,9 @@ class PlotAxisLayout internal constructor(
 ) : AxisLayout {
 
     override fun initialThickness(): Double {
-        if (theme.showTickMarks() || theme.showTickLabels()) {
+        if (theme.showTickMarks() || theme.showLabels()) {
             val v = theme.tickLabelDistance()
-            return if (theme.showTickLabels()) {
+            return if (theme.showLabels()) {
                 v + initialTickLabelSize(orientation)
             } else {
                 v

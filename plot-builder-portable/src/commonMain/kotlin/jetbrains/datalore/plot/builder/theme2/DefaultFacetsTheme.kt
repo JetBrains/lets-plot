@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.theme2
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
 
 class DefaultFacetsTheme(
     options: Map<String, Any>
@@ -18,14 +19,14 @@ class DefaultFacetsTheme(
     )
 
     override fun stripFill(): Color {
-        return getElemValue(rectKey)[ThemeOption.Elem.FILL] as Color
+        return getColor(getElemValue(rectKey), Elem.FILL)
     }
 
     override fun stripColor(): Color {
-        return getElemValue(rectKey)[ThemeOption.Elem.COLOR] as Color
+        return getColor(getElemValue(rectKey), Elem.COLOR)
     }
 
     override fun stripSize(): Double {
-        return getNumber(getElemValue(rectKey), ThemeOption.Elem.SIZE)
+        return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 }
