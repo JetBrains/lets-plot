@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
-import jetbrains.datalore.plot.builder.guide.AxisComponent2
+import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -176,7 +176,7 @@ internal class SquareFrameOfReference(
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
             isDebugDrawing: Boolean
-        ): AxisComponent2 {
+        ): AxisComponent {
 //            val axis = AxisComponent(info.axisLength, info.orientation!!)
 //            if (gridTheme.showMajor()) {
 //                axis.gridLineLength.set(gridLineLength)
@@ -188,7 +188,7 @@ internal class SquareFrameOfReference(
 //            AxisUtil.applyTheme(axis, axisTheme, hideAxisBreaks)
 
             val orientation = info.orientation!!
-            val labelAdjustments = AxisComponent2.TickLabelAdjustments(
+            val labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation = orientation,
                 horizontalAnchor = info.tickLabelHorizontalAnchor,
                 verticalAnchor = info.tickLabelVerticalAnchor,
@@ -196,7 +196,7 @@ internal class SquareFrameOfReference(
                 additionalOffsets = info.tickLabelAdditionalOffsets
             )
 
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = info.axisLength,
                 orientation = orientation,
                 breaksData = AxisUtil.breaksData(scale, coord, orientation.isHorizontal),

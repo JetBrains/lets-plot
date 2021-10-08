@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.AxisUtil
-import jetbrains.datalore.plot.builder.guide.AxisComponent2
+import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
@@ -118,7 +118,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             scale: Scale<Double>,
             coord: CoordinateSystem,
             orientation: Orientation
-        ): AxisComponent2 {
+        ): AxisComponent {
 //            val axis = AxisComponent(axisLength, orientation)
 //            AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
 
@@ -132,7 +132,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             )
             val theme = DefaultTheme2(themeOptions)
 
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = axisLength,
                 orientation = orientation,
                 breaksData = AxisUtil.breaksData(scale, coord, orientation.isHorizontal),

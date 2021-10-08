@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.builder.guide.AxisComponent2
+import jetbrains.datalore.plot.builder.guide.AxisComponent
 
 object AxisUtil {
 //    fun applyLayoutInfo(axis: AxisComponent, info: AxisLayoutInfo) {
@@ -53,10 +53,10 @@ object AxisUtil {
         scale: Scale<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
-    ): AxisComponent2.BreaksData {
+    ): AxisComponent.BreaksData {
         val scaleBreaks = scale.getScaleBreaks()
         val mappedBreaks = toAxisCoord(scaleBreaks, scale, coord, horizontal)
-        return AxisComponent2.BreaksData(
+        return AxisComponent.BreaksData(
             majorBreaks = mappedBreaks,
             majorLabels = scaleBreaks.labels
         )

@@ -25,7 +25,7 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.plot.builder.AxisUtil
-import jetbrains.datalore.plot.builder.guide.AxisComponent2
+import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
@@ -102,7 +102,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
@@ -119,7 +119,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
@@ -269,7 +269,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
@@ -286,7 +286,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
@@ -384,7 +384,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
@@ -401,7 +401,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = AxisComponent2(
+            val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
