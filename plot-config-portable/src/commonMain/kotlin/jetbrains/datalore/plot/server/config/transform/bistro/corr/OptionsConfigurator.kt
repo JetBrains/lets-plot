@@ -5,6 +5,9 @@
 
 package jetbrains.letsPlot.bistro.corr
 
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.FULL
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
 import jetbrains.letsPlot.bistro.corr.CorrPlot.LayerParams
 
 internal object OptionsConfigurator {
@@ -38,13 +41,13 @@ internal object OptionsConfigurator {
         if (hasTiles && hasPoints) {
             // avoid showing tiles and points in the same cells
             if (tilesType == null && pointsType == null) {
-                tilesType = "lower"
-                pointsType = "upper"
+                tilesType = LOWER
+                pointsType = UPPER
             } else if (tilesType == null) {
-                if (pointsType == "lower") {
-                    tilesType = "upper"
-                } else if (pointsType in listOf("upper", "full")) {
-                    tilesType = "lower"
+                if (pointsType == LOWER) {
+                    tilesType = UPPER
+                } else if (pointsType in listOf(UPPER, FULL)) {
+                    tilesType = LOWER
                 }
             } else if (pointsType == null) {
                 pointsType = flip(tilesType)
@@ -56,8 +59,8 @@ internal object OptionsConfigurator {
             @Suppress("DuplicatedCode")
             if (hasPoints) {
                 if (pointsType == null) {
-                    labelsType = "lower"
-                    pointsType = "upper"
+                    labelsType = LOWER
+                    pointsType = UPPER
                 } else {
                     labelsType = flip(pointsType)
                 }
@@ -65,8 +68,8 @@ internal object OptionsConfigurator {
             @Suppress("DuplicatedCode")
             if (hasTiles) {
                 if (tilesType == null && labelsType == null) {
-                    tilesType = "lower"
-                    labelsType = "upper"
+                    tilesType = LOWER
+                    labelsType = UPPER
                 } else if (tilesType == null) {
                     tilesType = flip(labelsType)
                 } else {
@@ -78,12 +81,12 @@ internal object OptionsConfigurator {
         // Set labels color if labels are over points or tiles.
         if (hasLabels && labels.color == null) {
             if (hasTiles &&
-                overlap(labelsType ?: "full", tilesType ?: "full")
+                overlap(labelsType ?: FULL, tilesType ?: FULL)
             ) {
                 labels.color = "white"
             }
             if (hasPoints &&
-                overlap(labelsType ?: "full", pointsType ?: "full")
+                overlap(labelsType ?: FULL, pointsType ?: FULL)
             ) {
                 labels.color = "white"
             }
@@ -91,7 +94,7 @@ internal object OptionsConfigurator {
 
         // Map labels size if labels are over points.
         if (hasPoints && hasLabels && labels.mapSize == null) {
-            if (overlap(labelsType ?: "full", pointsType ?: "full")
+            if (overlap(labelsType ?: FULL, pointsType ?: FULL)
             ) {
                 labels.mapSize = true
             }
@@ -99,13 +102,13 @@ internal object OptionsConfigurator {
 
         // Update all layers parameters.
         if (hasTiles) {
-            tiles.type = tilesType ?: "full"
+            tiles.type = tilesType ?: FULL
         }
         if (hasPoints) {
-            points.type = pointsType ?: "full"
+            points.type = pointsType ?: FULL
         }
         if (hasLabels) {
-            labels.type = labelsType ?: "full"
+            labels.type = labelsType ?: FULL
         }
     }
 
@@ -119,7 +122,7 @@ internal object OptionsConfigurator {
     ): Boolean {
         fun adjust(params: LayerParams): Boolean {
             return if (params.added) {
-                params.diag = params.diag ?: (params.type == "full")
+                params.diag = params.diag ?: (params.type == FULL)
                 params.diag as Boolean
             } else {
                 false
@@ -148,14 +151,14 @@ internal object OptionsConfigurator {
     }
 
     private fun flip(type: String?): String? {
-        if (type == "upper") return "lower"
-        else if (type == "lower") return "upper"
+        if (type == UPPER) return LOWER
+        else if (type == LOWER) return UPPER
         return type
     }
 
     private fun overlap(type0: String?, type1: String?): Boolean {
         if (type0 == null || type1 == null) return false
-        if (type0 == "full" || type1 == "full") return true
+        if (type0 == FULL || type1 == FULL) return true
         return type0 == type1
     }
 
@@ -165,14 +168,11 @@ internal object OptionsConfigurator {
         labels: LayerParams,
     ): String {
         fun combined(type: String?, otherType: String): String {
-            return if (type == null || otherType == "full") {
-                otherType
-            } else if (type == "full") {
-                type
-            } else if (overlap(type, otherType)) {
-                type
-            } else {
-                "full"
+            return when {
+                type == null || otherType == FULL -> otherType
+                type == FULL -> type
+                overlap(type, otherType) -> type
+                else -> FULL
             }
         }
 

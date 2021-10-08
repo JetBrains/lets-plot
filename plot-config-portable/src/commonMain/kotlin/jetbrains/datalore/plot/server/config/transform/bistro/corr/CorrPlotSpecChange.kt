@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
-import jetbrains.datalore.plot.server.config.transform.bistro.PlotSpecUtil
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr
 import jetbrains.letsPlot.bistro.corr.CorrPlot
 
@@ -22,7 +21,7 @@ class CorrPlotSpecChange : SpecChange {
         spec[Option.Plot.LAYERS] = corrPlotSpec.get(Option.Plot.LAYERS) ?: error("Missing layers in corr plot")
         spec[Option.Plot.SCALES] = corrPlotSpec.get(Option.Plot.SCALES) ?: error("Missing scales in corr plot")
 
-        // size, coord - take either user defined value from plotSpec or computed value from corrSpec
+        // size, coord - take computed value from corrSpec only if there is no user defined value from spec
         if (Option.Plot.COORD !in spec) {
             corrPlotSpec.get(Option.Plot.COORD)?.let { spec[Option.Plot.COORD] = it }
         }
@@ -95,8 +94,7 @@ class CorrPlotSpecChange : SpecChange {
         }
 
         val corrPlotOptions = corrPlot.build()
-        return PlotSpecUtil.toPlotSpec(corrPlotOptions)
-            //.also { println(jetbrains.datalore.base.json.JsonSupport.formatJson(it)) }
+        return corrPlotOptions.toSpec()
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {

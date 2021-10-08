@@ -5,48 +5,25 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro
 
-import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.plot.config.Option.Meta
+import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase
 
 
-class PlotOptions private constructor(
-    b: Builder
+class PlotOptions : Options<PlotOptions>(
+    mutableMapOf(Meta.KIND to Meta.Kind.PLOT)
 ) {
-    val data: Map<String, List<Any>>?
-    val mappings: Map<String, String>?
-    val layerOptions: List<LayerOptions>
-    val title: String?
-    val coord: CoordOptions?
-    val scaleOptions: List<ScaleOptions>
-    val themeOptions: ThemeOptions?
-    val size: Vector?
+    var data: Map<String, List<Any>>? by map(PlotBase.DATA)
+    var mappings: Map<String, String>? by map(PlotBase.MAPPING)
+    var layerOptions: List<LayerOptions>? by map(Plot.LAYERS)
+    var scaleOptions: List<ScaleOptions>? by map(Plot.SCALES)
+    var title: String? by map(Plot.TITLE)
+    var coord: CoordOptions? by map(Plot.COORD)
+    var themeOptions: ThemeOptions? by map(Plot.THEME)
+    var size: Size? by map(Plot.SIZE)
 
-    companion object {
-        val Empty = Builder().build()
-        fun builder() = Builder()
-    }
-
-    class Builder(
-        var data: Map<String, List<Any>>? = null,
-        var mappings: Map<String, String>? = null,
-        var title: String? = null,
-        var coord: CoordOptions? = null,
-        var themeOptions: ThemeOptions? = null,
-        var size: Vector? = null
-    ) {
-        val layerOptions: MutableList<LayerOptions> = mutableListOf<LayerOptions>()
-        val scaleOptions: MutableList<ScaleOptions> = mutableListOf<ScaleOptions>()
-
-        fun build(): PlotOptions = PlotOptions(this)
-    }
-
-    init {
-        data = b.data?.toMap()
-        mappings = b.mappings?.toMap()
-        layerOptions = b.layerOptions.toList()
-        scaleOptions = b.scaleOptions.toList()
-        title = b.title
-        coord = b.coord
-        themeOptions = b.themeOptions
-        size = b.size
+    class Size : Options<Size>() {
+        var width: Int? by map(Plot.WIDTH)
+        var height: Int? by map(Plot.HEIGHT)
     }
 }

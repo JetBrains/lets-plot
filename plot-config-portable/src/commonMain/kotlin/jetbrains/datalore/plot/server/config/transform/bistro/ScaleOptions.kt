@@ -6,24 +6,24 @@
 package jetbrains.datalore.plot.server.config.transform.bistro
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.config.Option
 
 
-class ScaleOptions(
-    val name: String? = null,
-    val aes: Aes<*>? = null,
-    val mapperKind: String? = null,
-    val palette: String? = null,
-    val naValue: Any? = null,
-    val limits: List<Any>? = null,
-    val breaks: List<Any>? = null,
-    val labels: List<String>? = null,
-    val expand: List<Any>? = null,
-    val low: String? = null,
-    val mid: String? = null,
-    val high: String? = null,
-    val midpoint: Double? = null,
-    val isDiscrete: Boolean? = null,
-    val isReverse: Boolean? = null,
-    val guide: String? = null
-) {
+class ScaleOptions : Options<ScaleOptions>() {
+    var name: String? by map(Option.Scale.NAME)
+    var aes: Aes<*>? by map(Option.Scale.AES)
+    var mapperKind: String? by map(Option.Scale.SCALE_MAPPER_KIND)
+    var palette: String? by map(Option.Scale.PALETTE)
+    var naValue: Any? by map(Option.Scale.NA_VALUE)
+    var limits: List<Any>? by map(Option.Scale.LIMITS)
+    var breaks: List<Any>? by map(Option.Scale.BREAKS)
+    var labels: List<String>? by map(Option.Scale.LABELS)
+    var expand: List<Any>? by map(Option.Scale.EXPAND)
+    var low: String? by map(Option.Scale.LOW)
+    var mid: String? by map(Option.Scale.MID)
+    var high: String? by map(Option.Scale.HIGH)
+    var midpoint: Double? by map(Option.Scale.MIDPOINT)
+    var isDiscrete: Boolean? by map(Option.Scale.DISCRETE_DOMAIN)
+    var isReverse: Boolean? by map(Option.Scale.DISCRETE_DOMAIN_REVERSE)
+    var guide: String? by map(Option.Scale.GUIDE)
 }

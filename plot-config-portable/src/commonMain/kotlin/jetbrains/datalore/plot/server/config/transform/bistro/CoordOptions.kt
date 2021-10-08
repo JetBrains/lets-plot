@@ -8,19 +8,9 @@ package jetbrains.datalore.plot.server.config.transform.bistro
 import jetbrains.datalore.plot.config.Option
 
 
-class CoordOptions internal constructor(
-    val name: String?,
-    val xLim: Pair<Double, Double>? = null,
-    val yLim: Pair<Double, Double>? = null,
-    val ratio: Double? = null
-){
-    companion object {
-        fun coordCartesian(xLim: Pair<Double, Double>? = null, yLim: Pair<Double, Double>? = null): CoordOptions {
-            return CoordOptions(Option.CoordName.CARTESIAN, xLim, yLim)
-        }
-
-        fun coordFixed(ratio: Double? = null, xLim: Pair<Double, Double>? = null, yLim: Pair<Double, Double>? = null): CoordOptions {
-            return CoordOptions(Option.CoordName.FIXED, xLim, yLim, ratio)
-        }
-    }
+class CoordOptions : Options<CoordOptions>() {
+    var name: String? by map(Option.Meta.NAME)
+    var xLim: Pair<Double, Double>? by map(Option.Coord.X_LIM)
+    var yLim: Pair<Double, Double>? by map(Option.Coord.Y_LIM)
+    var ratio: Double? by map(Option.Coord.RATIO)
 }

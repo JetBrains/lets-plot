@@ -5,13 +5,21 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro
 
-class ThemeOptions(
-    val axisTitle: Element?,
-    val axisLine: Element?
-) {
-    companion object {
-        val ELEMENT_BLANK = Element()
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.config.Option
+
+
+class ThemeOptions : Options<ThemeOptions>() {
+    var axisTitle: Element? by map(ThemeOption.AXIS_TITLE)
+    var axisLine: Element? by map(ThemeOption.AXIS_LINE)
+
+    class Element : Options<Element>() {
+        var name: String? by map(Option.Meta.NAME)
     }
 
-    class Element
+    companion object {
+        val BLANK = Element().apply {
+            name = Option.Theme.ELEMENT_BLANK
+        }
+    }
 }

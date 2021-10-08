@@ -27,6 +27,12 @@ object Option {
             const val DIAG = "diag"
             const val COLOR = "color"
             const val MAP_SIZE = "map_size"
+
+            object Type {
+                const val FULL = "full"
+                const val LOWER = "lower"
+                const val UPPER = "upper"
+            }
         }
     }
 }

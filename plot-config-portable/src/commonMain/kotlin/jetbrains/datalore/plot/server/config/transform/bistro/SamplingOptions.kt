@@ -7,13 +7,15 @@ package jetbrains.datalore.plot.server.config.transform.bistro
 
 import jetbrains.datalore.plot.config.Option
 
-class SamplingOptions(
-    val kind: String,
-    val n: Int? = null,
-    val seed: Int? = null,
-    val minSubsample: Int? = null
-) {
+class SamplingOptions : Options<SamplingOptions>() {
+    var kind: String? by map(Option.Meta.NAME)
+    var n: Int? by map(Option.Sampling.N)
+    var seed: Int? by map(Option.Sampling.SEED)
+    var minSubsample: Int?  by map(Option.Sampling.MIN_SUB_SAMPLE)
+
     companion object {
-        val NONE = SamplingOptions(Option.Sampling.NONE)
+        val NONE = SamplingOptions().apply {
+            kind = Option.Sampling.NONE
+        }
     }
 }
