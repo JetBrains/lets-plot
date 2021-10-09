@@ -83,6 +83,6 @@ object ThemeOption {
         const val R_GREY = "grey"
 
         // lets-plot themes
-        const val LP_LIGHT = "lp_light"
+        const val LP_MINIMAL2 = "lp_minimal2"
     }
 }
