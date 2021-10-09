@@ -18,13 +18,13 @@ import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesBase.PLOT_BACKGR
 
 object ThemeValuesRGrey {
     val values: Map<String, Any> = ThemeValuesBase.values + mapOf(
-        // Panel (geom background)
+        // Panel (no border)
         PANEL_RECT to mapOf(
             Elem.FILL to Color.parseHex("#EBEBEB"),
             Elem.SIZE to 0.0,
         ),
 
-        // Panel grid
+        // Grid
         PANEL_GRID to mapOf(
             Elem.COLOR to PLOT_BACKGROUND,
         ),

@@ -25,11 +25,11 @@ class DefaultAxisTheme(
 ) : ThemeValuesAccess(options), AxisTheme {
 
     private val suffix = "_$axis"
-    private val lineKey = listOf(AXIS_LINE + suffix, AXIS + suffix, AXIS_LINE, AXIS, LINE)
-    private val textKey = listOf(AXIS_TEXT + suffix, AXIS + suffix, AXIS_TEXT, AXIS, TEXT)
-    private val titleKey = listOf(AXIS_TITLE + suffix, AXIS + suffix, AXIS_TITLE, AXIS, TITLE, TEXT)
-    private val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS + suffix, AXIS_TOOLTIP, AXIS, RECT)
-    private val tickmarkKey = listOf(AXIS_TICKS + suffix, AXIS + suffix, AXIS_TICKS, AXIS, LINE)
+    private val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
+    private val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
+    private val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TITLE, TEXT)
+    private val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
+    private val tickmarkKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
 
     override fun showLine(): Boolean {
         return !isElemBlank(lineKey)

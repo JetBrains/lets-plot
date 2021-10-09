@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.builder.theme.*
 import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
+import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRGrey
 
 class ThemeConfig2(themeSettings: Map<String, Any>) {
@@ -30,9 +30,9 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
         init {
             // ToDo: select defaults.
-//            val baselineOptions = ThemeValuesLPLight.values
+            val baselineOptions = ThemeValuesLPMinimal2.values
 //            val baselineOptions = ThemeValuesRClassic.values
-            val baselineOptions = ThemeValuesRGrey.values
+//            val baselineOptions = ThemeValuesRGrey.values
 
             // Make sure all values are converted to proper objects.
             @Suppress("NAME_SHADOWING")
