@@ -13,9 +13,12 @@ import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 
+// ToDo: temporarily ignore.
+@Ignore
 internal class PlotSvgExportTest {
     @Before
     fun setUp() {

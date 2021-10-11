@@ -136,9 +136,15 @@ open class DefaultTheme : Theme {
         }
 
         private val PLOT_THEME: PlotTheme = object : PlotTheme {
+            override fun titleColor(): Color {
+                return Color.BLACK
+            }
         }
 
         private val PLOT_THEME_MULTI_TILE: PlotTheme = object : PlotTheme {
+            override fun titleColor(): Color {
+                return Color.BLACK
+            }
         }
 
         private val DUMMY_GRID_THEME: PanelGridTheme = object : PanelGridTheme {

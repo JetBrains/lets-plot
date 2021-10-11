@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesLPMinimal2
-import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRGrey
 
 class ThemeConfig2(themeSettings: Map<String, Any>) {
 
@@ -22,6 +21,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
 
         private val theme2: Theme
+        private val plotTheme: PlotTheme
         private val axisXTheme: AxisTheme
         private val axisYTheme: AxisTheme
         private val legendTheme: LegendTheme
@@ -55,6 +55,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
             }
 
             theme2 = DefaultTheme2(effectiveOptions)
+            plotTheme = theme2.plot()
             axisXTheme = theme2.axisX()
             axisYTheme = theme2.axisY()
             legendTheme = theme2.legend()
@@ -72,10 +73,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
         override fun facets(): FacetsTheme = facetsTheme
 
-        override fun plot(): PlotTheme {
-            // ToDo: configurable
-            return DEF.plot()
-        }
+        override fun plot(): PlotTheme = plotTheme
 
         override fun multiTile(): Theme {
             return MultiTileTheme(options)

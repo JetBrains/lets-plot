@@ -12,6 +12,9 @@ object ThemeOption {
     const val LINE = "line"
     const val RECT = "rect"
 
+    const val PLOT_TITLE = "plot_title"
+    const val PLOT_SUBTITLE = "plot_subtitle" // ToDo
+    const val PLOT_CAPTION = "plot_caption"   // ToDo
 
     // Axis
     const val AXIS = "axis"

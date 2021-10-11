@@ -5,8 +5,11 @@
 
 package jetbrains.datalore.plot.builder.theme
 
+import jetbrains.datalore.base.values.Color
+
 /**
- * ToDo: implement 'plot.title' etc.
+ * ToDo: subtitle, caption etc.
  */
 interface PlotTheme {
+    fun titleColor(): Color
 }

@@ -385,6 +385,7 @@ class PlotSvgComponent(
         if (hasTitle()) {
             val titleLabel = TextLabel(title!!)
             titleLabel.addClassName(Style.PLOT_TITLE)
+            titleLabel.textColor().set(theme.plot().titleColor())
             titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
             titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
 
