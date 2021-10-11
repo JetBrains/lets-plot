@@ -54,6 +54,10 @@ class AxisThemeConfig private constructor(
         return !disabled(AXIS_TOOLTIP)
     }
 
+    override fun titleColor(): Color {
+        return defTheme().titleColor()
+    }
+
     override fun lineWidth(): Double {
         return defTheme().lineWidth()
     }

@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -185,7 +186,8 @@ class PlotSvgComponent(
         text: String,
         orientation: Orientation,
         plotBounds: DoubleRectangle,
-        geomBounds: DoubleRectangle
+        geomBounds: DoubleRectangle,
+        axisTheme: AxisTheme
     ) {
         val horizontalAnchor = HorizontalAnchor.MIDDLE
         val verticalAnchor: VerticalAnchor = when (orientation) {
@@ -215,6 +217,7 @@ class PlotSvgComponent(
         val titleLabel = TextLabel(text)
         titleLabel.setHorizontalAnchor(horizontalAnchor)
         titleLabel.setVerticalAnchor(verticalAnchor)
+        titleLabel.textColor().set(axisTheme.titleColor())
         titleLabel.moveTo(titleLocation)
         titleLabel.rotate(rotation)
 
@@ -407,7 +410,8 @@ class PlotSvgComponent(
                     axisTitleLeft,
                     Orientation.LEFT,
                     withoutTitleAndLegends,
-                    geomAreaBounds
+                    geomAreaBounds,
+                    theme.axisY()
                 )
             }
             if (hasAxisTitleBottom()) {
@@ -415,7 +419,8 @@ class PlotSvgComponent(
                     axisTitleBottom,
                     Orientation.BOTTOM,
                     withoutTitleAndLegends,
-                    geomAreaBounds
+                    geomAreaBounds,
+                    theme.axisX()
                 )
             }
         }

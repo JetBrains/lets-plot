@@ -29,6 +29,10 @@ open class DefaultAxisTheme : AxisTheme {
         return true
     }
 
+    override fun titleColor(): Color {
+        return Color.BLACK
+    }
+
     override fun lineWidth(): Double {
         return Plot.Axis.LINE_WIDTH
     }

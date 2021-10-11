@@ -19,6 +19,8 @@ interface AxisTheme {
 
     fun showTooltip(): Boolean
 
+    fun titleColor(): Color
+
     fun lineWidth(): Double
 
     fun lineColor(): Color
