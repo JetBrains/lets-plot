@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
+import jetbrains.datalore.plot.server.config.transform.bistro.OptionsUtil
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr
 import jetbrains.letsPlot.bistro.corr.CorrPlot
 
@@ -94,7 +95,7 @@ class CorrPlotSpecChange : SpecChange {
         }
 
         val corrPlotOptions = corrPlot.build()
-        return corrPlotOptions.toSpec()
+        return OptionsUtil.toSpec(corrPlotOptions)
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {
