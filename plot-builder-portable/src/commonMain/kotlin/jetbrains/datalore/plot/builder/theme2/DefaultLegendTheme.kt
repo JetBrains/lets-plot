@@ -11,10 +11,17 @@ import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_TEXT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_TITLE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TITLE
 
 class DefaultLegendTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), LegendTheme {
+
+    private val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
+    private val textKey = listOf(LEGEND_TEXT, TEXT)
 
     override fun keySize(): Double {
         return 23.0
@@ -42,5 +49,13 @@ class DefaultLegendTheme(
 
     override fun backgroundFill(): Color {
         return Color.WHITE
+    }
+
+    override fun titleColor(): Color {
+        return getColor(getElemValue(titleKey), ThemeOption.Elem.COLOR)
+    }
+
+    override fun textColor(): Color {
+        return getColor(getElemValue(textKey), ThemeOption.Elem.COLOR)
     }
 }

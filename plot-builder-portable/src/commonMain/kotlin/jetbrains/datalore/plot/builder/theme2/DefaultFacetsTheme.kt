@@ -7,16 +7,18 @@ package jetbrains.datalore.plot.builder.theme2
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP_BGR_RECT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP_TEXT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.RECT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TEXT
 
 class DefaultFacetsTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), FacetsTheme {
-    private val rectKey = listOf(
-        ThemeOption.FACET_STRIP,
-        ThemeOption.RECT
-    )
+
+    private val rectKey = listOf(FACET_STRIP_BGR_RECT, RECT)
+    private val textKey = listOf(FACET_STRIP_TEXT, TEXT)
 
     override fun stripFill(): Color {
         return getColor(getElemValue(rectKey), Elem.FILL)
@@ -26,7 +28,11 @@ class DefaultFacetsTheme(
         return getColor(getElemValue(rectKey), Elem.COLOR)
     }
 
-    override fun stripSize(): Double {
+    override fun stripStrokeWidth(): Double {
         return getNumber(getElemValue(rectKey), Elem.SIZE)
+    }
+
+    override fun stripTextColor(): Color {
+        return getColor(getElemValue(textKey), Elem.COLOR)
     }
 }

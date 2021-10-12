@@ -13,13 +13,13 @@ import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MAJOR
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MINOR
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_RECT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_BKGR_RECT
 import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesBase.PLOT_BACKGROUND
 
 object ThemeValuesRGrey {
     val values: Map<String, Any> = ThemeValuesBase.values + mapOf(
         // Panel (no border)
-        PANEL_RECT to mapOf(
+        PANEL_BKGR_RECT to mapOf(
             Elem.FILL to Color.parseHex("#EBEBEB"),
             Elem.SIZE to 0.0,
         ),
@@ -42,7 +42,7 @@ object ThemeValuesRGrey {
         ),
 
         // Facets
-        ThemeOption.FACET_STRIP to mapOf(
+        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
             Elem.FILL to Color.parseHex("#D9D9D9"),
             Elem.SIZE to 0.0,
         ),

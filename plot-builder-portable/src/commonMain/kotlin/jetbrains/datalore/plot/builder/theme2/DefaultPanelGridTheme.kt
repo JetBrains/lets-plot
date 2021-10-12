@@ -20,9 +20,9 @@ class DefaultPanelGridTheme(
 
     private val suffix = "_$axis"
     private val majorLineKey =
-        listOf(PANEL_GRID_MAJOR + suffix, PANEL_GRID + suffix, PANEL_GRID_MAJOR, PANEL_GRID, LINE)
+        listOf(PANEL_GRID_MAJOR + suffix, PANEL_GRID_MAJOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
     private val minorLineKey =
-        listOf(PANEL_GRID_MINOR + suffix, PANEL_GRID + suffix, PANEL_GRID_MINOR, PANEL_GRID, LINE)
+        listOf(PANEL_GRID_MINOR + suffix, PANEL_GRID_MINOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
 
     override fun showMajor(): Boolean {
         return !isElemBlank(majorLineKey)

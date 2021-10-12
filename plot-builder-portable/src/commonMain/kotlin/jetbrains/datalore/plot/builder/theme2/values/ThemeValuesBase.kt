@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP_BGR_RECT
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
@@ -55,7 +55,7 @@ object ThemeValuesBase {
             Elem.SIZE to 0.7,
         ),
 
-        FACET_STRIP to RECT + mapOf(
+        FACET_STRIP_BGR_RECT to RECT + mapOf(
             Elem.COLOR to Color.BLUE,
             Elem.FILL to PLOT_BACKGROUND,
             Elem.SIZE to 1.0,
