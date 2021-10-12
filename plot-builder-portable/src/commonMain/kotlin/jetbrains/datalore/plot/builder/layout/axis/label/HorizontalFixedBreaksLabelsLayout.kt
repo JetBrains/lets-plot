@@ -41,7 +41,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
         axisMapper: (Double?) -> Double?,
         maxLabelsBounds: DoubleRectangle?
     ): AxisLabelsLayoutInfo {
-        if (!theme.showTickLabels()) {
+        if (!theme.showLabels()) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 

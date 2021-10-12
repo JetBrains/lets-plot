@@ -9,16 +9,13 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
-internal class ScaledContext2d(private val myContext2d: Context2d, private val myScale: Double) :
-    Context2d {
+internal class ScaledContext2d(
+    private val ctx: Context2d,
+    private val myScale: Double
+) : Context2d {
 
-    private fun scaled(value: Double): Double {
-        return myScale * value
-    }
-
-    private fun descaled(value: Double): Double {
-        return value / myScale
-    }
+    private fun scaled(value: Double) = myScale * value
+    private fun descaled(value: Double) = value / myScale
 
     private fun scaled(values: DoubleArray): DoubleArray {
         if (myScale == 1.0) {
@@ -31,16 +28,11 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         return res
     }
 
-    private fun scaled(font: Context2d.Font): Context2d.Font {
-        return font.copy(fontSize = font.fontSize * myScale)
-    }
-
-    override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
-        myContext2d.drawImage(snapshot, scaled(x), scaled(y))
-    }
+    private fun scaled(font: Context2d.Font): Context2d.Font = font.copy(fontSize = scaled(font.fontSize))
+    override fun drawImage(snapshot: Snapshot, x: Double, y: Double) = ctx.drawImage(snapshot, scaled(x), scaled(y))
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
-        myContext2d.drawImage(snapshot, scaled(x), scaled(y), scaled(dw), scaled(dh))
+        ctx.drawImage(snapshot, scaled(x), scaled(y), scaled(dw), scaled(dh))
     }
 
     override fun drawImage(
@@ -54,7 +46,7 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         dw: Double,
         dh: Double
     ) {
-        myContext2d.drawImage(
+        ctx.drawImage(
             snapshot,
             scaled(sx),
             scaled(sy),
@@ -67,135 +59,70 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         )
     }
 
-    override fun beginPath() {
-        myContext2d.beginPath()
-    }
-
-    override fun closePath() {
-        myContext2d.closePath()
-    }
-
-    override fun stroke() {
-        myContext2d.stroke()
-    }
-
-    override fun fill() {
-        myContext2d.fill()
-    }
+    override fun beginPath() = ctx.beginPath()
+    override fun closePath() = ctx.closePath()
+    override fun stroke() = ctx.stroke()
+    override fun fill() = ctx.fill()
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        myContext2d.fillRect(scaled(x), scaled(y), scaled(w), scaled(h))
+        ctx.fillRect(scaled(x), scaled(y), scaled(w), scaled(h))
     }
 
-    override fun moveTo(x: Double, y: Double) {
-        myContext2d.moveTo(scaled(x), scaled(y))
-    }
-
-    override fun lineTo(x: Double, y: Double) {
-        myContext2d.lineTo(scaled(x), scaled(y))
-    }
+    override fun moveTo(x: Double, y: Double) = ctx.moveTo(scaled(x), scaled(y))
+    override fun lineTo(x: Double, y: Double) = ctx.lineTo(scaled(x), scaled(y))
 
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
-        myContext2d.arc(scaled(x), scaled(y), scaled(radius), startAngle, endAngle, anticlockwise)
+        ctx.arc(scaled(x), scaled(y), scaled(radius), startAngle, endAngle, anticlockwise)
     }
 
-    override fun save() {
-        myContext2d.save()
-    }
-
-    override fun restore() {
-        myContext2d.restore()
-    }
-
-    override fun setFillStyle(color: Color?) {
-        myContext2d.setFillStyle(color)
-    }
-
-    override fun setStrokeStyle(color: Color?) {
-        myContext2d.setStrokeStyle(color)
-    }
-
-    override fun setGlobalAlpha(alpha: Double) {
-        myContext2d.setGlobalAlpha(alpha)
-    }
-
-    override fun setFont(f: Context2d.Font) {
-        myContext2d.setFont(scaled(f))
-    }
-
-    override fun setLineWidth(lineWidth: Double) {
-        myContext2d.setLineWidth(scaled(lineWidth))
-    }
+    override fun save() = ctx.save()
+    override fun restore() = ctx.restore()
+    override fun setFillStyle(color: Color?) = ctx.setFillStyle(color)
+    override fun setStrokeStyle(color: Color?) = ctx.setStrokeStyle(color)
+    override fun setGlobalAlpha(alpha: Double) = ctx.setGlobalAlpha(alpha)
+    override fun setFont(f: Context2d.Font) = ctx.setFont(scaled(f))
+    override fun setLineWidth(lineWidth: Double) = ctx.setLineWidth(scaled(lineWidth))
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
-        myContext2d.strokeRect(scaled(x), scaled(y), scaled(w), scaled(h))
+        ctx.strokeRect(scaled(x), scaled(y), scaled(w), scaled(h))
     }
 
-    override fun strokeText(text: String, x: Double, y: Double) {
-        myContext2d.strokeText(text, scaled(x), scaled(y))
-    }
-
-    override fun fillText(text: String, x: Double, y: Double) {
-        myContext2d.fillText(text, scaled(x), scaled(y))
-    }
-
-    override fun scale(x: Double, y: Double) {
-        myContext2d.scale(x, y)
-    }
-
-    override fun scale(xy: Double) {
-        scale(xy, xy)
-    }
-
-    override fun rotate(angle: Double) {
-        myContext2d.rotate(angle)
-    }
-
-    override fun translate(x: Double, y: Double) {
-        myContext2d.translate(scaled(x), scaled(y))
-    }
+    override fun strokeText(text: String, x: Double, y: Double) = ctx.strokeText(text, scaled(x), scaled(y))
+    override fun fillText(text: String, x: Double, y: Double) = ctx.fillText(text, scaled(x), scaled(y))
+    override fun scale(x: Double, y: Double) = ctx.scale(x, y)
+    override fun scale(xy: Double) = scale(xy, xy)
+    override fun rotate(angle: Double) = ctx.rotate(angle)
+    override fun translate(x: Double, y: Double) = ctx.translate(scaled(x), scaled(y))
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        myContext2d.transform(m11, m12, m21, m22, scaled(dx), scaled(dy))
+        ctx.transform(m11, m12, m21, m22, scaled(dx), scaled(dy))
     }
 
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) {
-        myContext2d.bezierCurveTo(scaled(cp1x), scaled(cp1y), scaled(cp2x), scaled(cp2y), scaled(x), scaled(y))
+        ctx.bezierCurveTo(scaled(cp1x), scaled(cp1y), scaled(cp2x), scaled(cp2y), scaled(x), scaled(y))
     }
 
-    override fun setLineJoin(lineJoin: Context2d.LineJoin) {
-        myContext2d.setLineJoin(lineJoin)
-    }
-
-    override fun setLineCap(lineCap: Context2d.LineCap) {
-        myContext2d.setLineCap(lineCap)
-    }
-
-    override fun setTextBaseline(baseline: Context2d.TextBaseline) {
-        myContext2d.setTextBaseline(baseline)
-    }
-
-    override fun setTextAlign(align: Context2d.TextAlign) {
-        myContext2d.setTextAlign(align)
-    }
+    override fun setLineJoin(lineJoin: Context2d.LineJoin) = ctx.setLineJoin(lineJoin)
+    override fun setLineCap(lineCap: Context2d.LineCap) = ctx.setLineCap(lineCap)
+    override fun setTextBaseline(baseline: Context2d.TextBaseline) = ctx.setTextBaseline(baseline)
+    override fun setTextAlign(align: Context2d.TextAlign) = ctx.setTextAlign(align)
 
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        myContext2d.setTransform(m11, m12, m21, m22, scaled(dx), scaled(dy))
+        ctx.setTransform(m11, m12, m21, m22, scaled(dx), scaled(dy))
     }
 
-    override fun fillEvenOdd() {
-        myContext2d.fillEvenOdd()
-    }
-
-    override fun setLineDash(lineDash: DoubleArray) {
-        myContext2d.setLineDash(scaled(lineDash))
-    }
-
-    override fun measureText(str: String): Double {
-        return descaled(myContext2d.measureText(str))
-    }
+    override fun fillEvenOdd() = ctx.fillEvenOdd()
+    override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(scaled(lineDash))
+    override fun measureText(str: String): Double = descaled(ctx.measureText(str))
 
     override fun clearRect(rect: DoubleRectangle) {
-        myContext2d.clearRect(DoubleRectangle(rect.origin.mul(2.0), rect.dimension.mul(2.0)))
+        ctx.clearRect(
+            DoubleRectangle(
+                scaled(rect.left),
+                scaled(rect.top),
+                scaled(rect.width),
+                scaled(rect.height)
+            )
+        )
     }
 }

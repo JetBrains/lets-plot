@@ -5,12 +5,13 @@
 
 package jetbrains.datalore.plot.config.theme
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.*
-import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
-import jetbrains.datalore.plot.config.Option.Theme.ELEMENT_BLANK
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
 
 class ThemeConfig(options: Map<String, Any>) {
 
@@ -47,6 +48,30 @@ class ThemeConfig(options: Map<String, Any>) {
             return DEF.plot()
         }
 
+        override fun panel(): PanelTheme {
+            return object : PanelTheme {
+                override fun showRect(): Boolean {
+                    return false
+                }
+
+                override fun rectColor(): Color {
+                    TODO("Not yet implemented")
+                }
+
+                override fun rectFill(): Color {
+                    TODO("Not yet implemented")
+                }
+
+                override fun rectsize(): Double {
+                    TODO("Not yet implemented")
+                }
+
+                override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
+
+                override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
+            }
+        }
+
         override fun multiTile(): Theme {
             return MultiTileTheme(options)
         }
@@ -58,8 +83,12 @@ class ThemeConfig(options: Map<String, Any>) {
     private class MultiTileTheme(options: Map<String, Any>) :
         ConfiguredTheme(options, DEF_OPTIONS_MULTI_TILE) {
 
-        override fun plot(): PlotTheme {
-            return DEF.multiTile().plot()
+//        override fun plot(): PlotTheme {
+//            return DEF.multiTile().plot()
+//        }
+
+        override fun panel(): PanelTheme {
+            return DEF.multiTile().panel()
         }
     }
 
@@ -75,5 +104,27 @@ class ThemeConfig(options: Map<String, Any>) {
             "${AXIS_LINE}_x" to ELEMENT_BLANK,      // replaced by inner frame
             "${AXIS_LINE}_y" to ELEMENT_BLANK,      // replaced by inner frame
         )
+
+        private val DUMMY_GRID_THEME: PanelGridTheme = object : PanelGridTheme {
+            override fun showMajor(): Boolean = false
+
+            override fun showMinor(): Boolean = false
+
+            override fun majorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun majorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
+        }
     }
 }

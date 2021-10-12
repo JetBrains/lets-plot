@@ -24,6 +24,7 @@ internal object SamplingProto {
     fun createSampling(name: String, options: Map<String, Any>): Sampling {
         val opts = OptionsAccessor.over(options)
         return when (name) {
+            Option.Sampling.NONE -> Samplings.NONE
             RANDOM -> Samplings.random(opts.getInteger(N)!!, opts.getLong(SEED))
             PICK -> Samplings.pick(opts.getInteger(N)!!)
             SYSTEMATIC -> Samplings.systematic(opts.getInteger(N)!!)

@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
+import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.bistroTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
@@ -371,6 +372,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 //            throwTestingException(plotSpecRaw)
 
             var plotSpec = migrationTransform().apply(plotSpecRaw)
+            plotSpec = bistroTransform().apply(plotSpec)
             plotSpec = entryTransform().apply(plotSpec)
             PlotConfigServerSide(plotSpec).updatePlotSpec()
             return plotSpec

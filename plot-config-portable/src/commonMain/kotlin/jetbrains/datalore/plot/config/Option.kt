@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
 object Option {
 
@@ -76,6 +77,7 @@ object Option {
     }
 
     object Plot {
+        const val BISTRO = "bistro"
         const val LAYERS = "layers"
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
@@ -85,6 +87,8 @@ object Option {
         const val THEME = "theme"
         const val SIZE = "ggsize"
         const val GUIDES = "guides"
+        const val WIDTH = "width"
+        const val HEIGHT = "height"
     }
 
     object Layer {
@@ -410,19 +414,11 @@ object Option {
     }
 
     object Theme {
-        const val AXIS_LINE = "axis_line"
-        const val AXIS_TICKS = "axis_ticks"
-        const val AXIS_TEXT = "axis_text"
-        const val AXIS_TOOLTIP = "axis_tooltip"
-
-        // tick labels
-        const val AXIS_TITLE = "axis_title"
-        const val LEGEND_POSITION = "legend_position"
-        const val LEGEND_JUSTIFICATION = "legend_justification"
-        const val LEGEND_DIRECTION = "legend_direction"
+        // All options were moved to
+        // jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 
         // view element
-        const val ELEMENT_BLANK = "blank"
+        const val ELEMENT_BLANK = ELEMENT_BLANK_SHORTHAND
     }
 
     object GeomName {

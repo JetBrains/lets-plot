@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 open class AreaGeom : GeomBase() {
@@ -55,7 +56,12 @@ open class AreaGeom : GeomBase() {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                setupTooltipParams(multiPointData.aes)
+                setupTooltipParams(multiPointData.aes),
+                if (ctx.flipped) {
+                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                }
             )
         }
     }

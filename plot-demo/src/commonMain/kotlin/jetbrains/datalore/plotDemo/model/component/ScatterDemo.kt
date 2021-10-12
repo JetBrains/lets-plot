@@ -20,7 +20,6 @@ import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
@@ -28,6 +27,8 @@ import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.plot.builder.AxisUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
+import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
@@ -97,17 +98,19 @@ open class ScatterDemo : SimpleDemoBase() {
         // Render
         val groupComponent = GroupComponent()
 
+        val theme = DefaultTheme2(ThemeValuesRClassic.values)
+
         run {
             // X axis
             val axis = AxisComponent(
-                rangeX,
-                Orientation.BOTTOM
+                length = rangeX,
+                orientation = Orientation.BOTTOM,
+                breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
+                gridLineLength = rangeY,
+                axisTheme = theme.axisX(),
+                gridTheme = theme.panel().gridX(),
             )
-            AxisUtil.setBreaks(axis, scaleX, coord, horizontal = true)
-            AxisUtil.applyTheme(axis, theme.axisX())
 
-            axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.MIDDLE)
-            axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.TOP)
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
             axis.moveTo(xAxisOrigin)
             groupComponent.add(axis.rootGroup)
@@ -117,17 +120,13 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // Y axis
             val axis = AxisComponent(
-                rangeY,
-                Orientation.LEFT
+                length = rangeY,
+                orientation = Orientation.LEFT,
+                breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
+                gridLineLength = rangeX,
+                axisTheme = theme.axisY(),
+                gridTheme = theme.panel().gridY(),
             )
-
-            AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
-            AxisUtil.applyTheme(axis, theme.axisY())
-
-            // enable grid-lines
-            axis.gridLineLength.set(rangeX)
-            axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.RIGHT)
-            axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.CENTER)
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
             axis.moveTo(yAxisOrigin)
@@ -266,20 +265,19 @@ open class ScatterDemo : SimpleDemoBase() {
         // coord system
         val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
 
+        val theme = DefaultTheme2(ThemeValuesRClassic.values)
+
         run {
             // X axis
             val axis = AxisComponent(
-                rangeX,
-                Orientation.BOTTOM
+                length = rangeX,
+                orientation = Orientation.BOTTOM,
+                breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
+                gridLineLength = rangeY,
+                axisTheme = theme.axisX(),
+                gridTheme = theme.panel().gridX(),
             )
 
-            AxisUtil.setBreaks(axis, scaleX, coord, horizontal = true)
-            AxisUtil.applyTheme(axis, theme.axisX())
-
-            //      xAxis.tickLabelOffsets.set(info.tickLabelAdditionalOffsets);
-            //      xAxis.tickLabelRotationDegree.set(info.tickLabelRotationAngle);
-            axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.MIDDLE)
-            axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.TOP)
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
             axis.moveTo(xAxisOrigin)
             groupComponent.add(axis.rootGroup)
@@ -289,20 +287,13 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // Y axis
             val axis = AxisComponent(
-                rangeY,
-                Orientation.LEFT
+                length = rangeY,
+                orientation = Orientation.LEFT,
+                breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
+                gridLineLength = rangeX,
+                axisTheme = theme.axisY(),
+                gridTheme = theme.panel().gridY(),
             )
-
-            AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
-            AxisUtil.applyTheme(axis, theme.axisY())
-
-            // enable grid-lines
-            axis.gridLineLength.set(rangeX)
-            //      yAxis.tickLabelOffsets.set(info.tickLabelAdditionalOffsets);
-            //      yAxis.tickLabelRotationDegree.set(info.tickLabelRotationAngle);
-            axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.RIGHT)
-            axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.CENTER)
-            //      yAxis.tickLabelSmallFont.set(info.tickLabelSmallFont);
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
             axis.moveTo(yAxisOrigin)
@@ -394,18 +385,14 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // X axis
             val axis = AxisComponent(
-                rangeX,
-                Orientation.BOTTOM
+                length = rangeX,
+                orientation = Orientation.BOTTOM,
+                breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
+                gridLineLength = rangeY,
+                axisTheme = theme.axisX(),
+                gridTheme = theme.panel().gridX(),
             )
 
-            AxisUtil.setBreaks(axis, scaleX, coord, horizontal = true)
-            AxisUtil.applyTheme(axis, theme.axisX())
-
-            // enable grid-lines
-            axis.gridLineLength.set(rangeY)
-
-            axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.MIDDLE)
-            axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.TOP)
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
             axis.moveTo(xAxisOrigin)
             groupComponent.add(axis.rootGroup)
@@ -415,23 +402,13 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // Y axis
             val axis = AxisComponent(
-                rangeY,
-                Orientation.LEFT
+                length = rangeY,
+                orientation = Orientation.LEFT,
+                breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
+                gridLineLength = rangeX,
+                axisTheme = theme.axisY(),
+                gridTheme = theme.panel().gridY(),
             )
-//            axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
-//            axis.labels.set(ScaleUtil.labels(scaleY))
-            AxisUtil.setBreaks(axis, scaleY, coord, horizontal = false)
-
-//            axis.lineWidth.set(theme.axisY().lineWidth())
-//            axis.tickMarkLength.set(theme.axisY().tickMarkLength())
-//            axis.tickMarkPadding.set(theme.axisY().tickMarkPadding())
-//            axis.tickMarkWidth.set(theme.axisY().tickMarkWidth())
-            AxisUtil.applyTheme(axis, theme.axisY())
-
-            // enable grid-lines
-            axis.gridLineLength.set(rangeX)
-            axis.tickLabelHorizontalAnchor.set(TextLabel.HorizontalAnchor.RIGHT)
-            axis.tickLabelVerticalAnchor.set(TextLabel.VerticalAnchor.CENTER)
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
             axis.moveTo(yAxisOrigin)

@@ -18,6 +18,8 @@ import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.PanelGridTheme
+import jetbrains.datalore.plot.builder.theme.PanelTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
@@ -51,27 +53,53 @@ internal class SquareFrameOfReference(
 
     // Rendering
 
-    override fun drawAxis(parent: SvgComponent) {
+    override fun drawFoR(parent: SvgComponent) {
         val geomBounds: DoubleRectangle = layoutInfo.geomBounds
 
+        val panelTheme = theme.panel()
+
         // Flip theme
-        val (xAxisTheme, yAxisTheme) = when {
+        val (hAxisTheme, vAxisTheme) = when {
             flipAxis -> Pair(theme.axisY(), theme.axisX())
             else -> Pair(theme.axisX(), theme.axisY())
         }
+        val (hGridTheme, vGridTheme) = when {
+            flipAxis -> Pair(panelTheme.gridY(), panelTheme.gridX())
+            else -> Pair(panelTheme.gridX(), panelTheme.gridY())
+        }
+
+        if (panelTheme.showRect()) {
+            val panel = buildPanelComponent(geomBounds, panelTheme)
+            parent.add(panel)
+        }
 
         // X-axis (below geom area)
-        if (layoutInfo.xAxisShown) {
-            val axis = buildAxis(hScale, layoutInfo.xAxisInfo!!, coord, xAxisTheme, isDebugDrawing)
-            axis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
-            parent.add(axis)
-        }
+        val hAxis = buildAxis(
+            hScale,
+            layoutInfo.xAxisInfo!!,
+            hideAxisBreaks = !layoutInfo.xAxisShown,
+            coord,
+            hAxisTheme,
+            hGridTheme,
+            geomBounds.height,
+            isDebugDrawing
+        )
+        hAxis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
+        parent.add(hAxis)
+
         // Y-axis (to the left from geom area, axis elements have negative x-positions)
-        if (layoutInfo.yAxisShown) {
-            val axis = buildAxis(vScale, layoutInfo.yAxisInfo!!, coord, yAxisTheme, isDebugDrawing)
-            axis.moveTo(geomBounds.origin)
-            parent.add(axis)
-        }
+        val vAxis = buildAxis(
+            vScale,
+            layoutInfo.yAxisInfo!!,
+            hideAxisBreaks = !layoutInfo.yAxisShown,
+            coord,
+            vAxisTheme,
+            vGridTheme,
+            geomBounds.width,
+            isDebugDrawing
+        )
+        vAxis.moveTo(geomBounds.origin)
+        parent.add(vAxis)
 
         if (isDebugDrawing) {
             drawDebugShapes(parent, geomBounds)
@@ -142,14 +170,44 @@ internal class SquareFrameOfReference(
         private fun buildAxis(
             scale: Scale<Double>,
             info: AxisLayoutInfo,
+            hideAxisBreaks: Boolean,
             coord: CoordinateSystem,
-            theme: AxisTheme,
+            axisTheme: AxisTheme,
+            gridTheme: PanelGridTheme,
+            gridLineLength: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
-            val axis = AxisComponent(info.axisLength, info.orientation!!)
-            AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
-            AxisUtil.applyLayoutInfo(axis, info)
-            AxisUtil.applyTheme(axis, theme)
+//            val axis = AxisComponent(info.axisLength, info.orientation!!)
+//            if (gridTheme.showMajor()) {
+//                axis.gridLineLength.set(gridLineLength)
+//                axis.gridLineWidth.set(gridTheme.majorLineWidth())
+//                axis.gridLineColor.set(gridTheme.majorLineColor())
+//            }
+//            AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
+//            AxisUtil.applyLayoutInfo(axis, info)
+//            AxisUtil.applyTheme(axis, axisTheme, hideAxisBreaks)
+
+            val orientation = info.orientation!!
+            val labelAdjustments = AxisComponent.TickLabelAdjustments(
+                orientation = orientation,
+                horizontalAnchor = info.tickLabelHorizontalAnchor,
+                verticalAnchor = info.tickLabelVerticalAnchor,
+                rotationDegree = info.tickLabelRotationAngle,
+                additionalOffsets = info.tickLabelAdditionalOffsets
+            )
+
+            val axis = AxisComponent(
+                length = info.axisLength,
+                orientation = orientation,
+                breaksData = AxisUtil.breaksData(scale, coord, orientation.isHorizontal),
+                labelAdjustments = labelAdjustments,
+                gridLineLength = gridLineLength,
+                axisTheme = axisTheme,
+                gridTheme = gridTheme,
+                useSmallFont = info.tickLabelSmallFont,
+                hideAxisBreaks = hideAxisBreaks
+            )
+
             if (isDebugDrawing) {
                 if (info.tickLabelsBounds != null) {
                     val rect = SvgRectElement(info.tickLabelsBounds)
@@ -160,6 +218,14 @@ internal class SquareFrameOfReference(
                 }
             }
             return axis
+        }
+
+        private fun buildPanelComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
+            return SvgRectElement(bounds).apply {
+                strokeColor().set(theme.rectColor())
+                strokeWidth().set(theme.rectsize())
+                fillColor().set(theme.rectFill())
+            }
         }
 
         private fun buildGeom(

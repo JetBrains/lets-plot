@@ -9,7 +9,8 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.dom.DomEventUtil
+import jetbrains.datalore.base.event.dom.DomEventUtil.getButton
+import jetbrains.datalore.base.event.dom.DomEventUtil.getModifiers
 import jetbrains.datalore.base.event.dom.DomEventUtil.translateInPageCoord
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
@@ -214,8 +215,13 @@ class DomCanvasControl(
             return myTargetBounds.contains(Vector(event.offsetX.toInt(), event.offsetY.toInt()))
         }
 
-        private fun translate(event: DomMouseEvent) : MouseEvent {
-            return DomEventUtil.translateInTargetCoordWithOffset(event, myEventTarget, myTargetBounds.origin)
+        private fun translate(event: DomMouseEvent): MouseEvent {
+            val targetRect = myEventTarget.getBoundingClientRect()
+            return MouseEvent(
+                event.clientX - targetRect.x.toInt() - myTargetBounds.origin.x,
+                event.clientY - targetRect.y.toInt() - myTargetBounds.origin.y,
+                getButton(event),
+                getModifiers(event))
         }
     }
 }

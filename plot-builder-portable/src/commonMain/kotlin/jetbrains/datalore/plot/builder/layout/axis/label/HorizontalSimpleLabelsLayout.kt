@@ -35,7 +35,7 @@ internal class HorizontalSimpleLabelsLayout(
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
-        if (!theme.showTickLabels()) {
+        if (!theme.showLabels()) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 

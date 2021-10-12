@@ -74,117 +74,117 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |  </rect>
         |  <g class="plt-plot">
         |    <g transform="translate(23.0 10.0 ) ">
-        |      <g transform="translate(35.13 245.0 ) " class="plt-axis">
-        |        <g class="tick" transform="translate(112.4075806451613 0.0 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+        |      <g transform="translate(33.13 247.0 ) " class="plt-axis">
+        |        <g class="tick" transform="translate(113.08500000000002 0.0 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="4.0">
         |          </line>
-        |          <g transform="translate(0.0 9.0 ) ">
+        |          <g transform="translate(0.0 7.0 ) ">
         |            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
         |            Lunch
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(219.46241935483874 0.0 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+        |        <g class="tick" transform="translate(220.78500000000003 0.0 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="4.0">
         |          </line>
-        |          <g transform="translate(0.0 9.0 ) ">
+        |          <g transform="translate(0.0 7.0 ) ">
         |            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
         |            Dinner
         |            </text>
         |          </g>
         |        </g>
-        |        <line x1="0.0" y1="0.0" x2="331.87" y2="0.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
+        |        <line x1="0.0" y1="0.0" x2="333.87" y2="0.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(35.13 0.0 ) " class="plt-axis">
-        |        <g class="tick" transform="translate(0.0 245.00000000000003 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |      <g transform="translate(33.13 0.0 ) " class="plt-axis">
+        |        <g class="tick" transform="translate(0.0 247.0 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            0.0
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 206.11111111111114 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 207.79365079365078 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            0.5
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 167.22222222222223 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 168.58730158730157 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            1.0
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 128.33333333333334 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 129.38095238095238 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            1.5
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 89.44444444444446 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 90.17460317460316 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            2.0
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 50.55555555555557 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 50.96825396825395 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            2.5
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 11.666666666666657 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 11.76190476190476 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            3.0
         |            </text>
         |          </g>
         |        </g>
-        |        <line x1="0.0" y1="0.0" x2="0.0" y2="245.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
+        |        <line x1="0.0" y1="0.0" x2="0.0" y2="247.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(35.13 0.0 ) " clip-path="url(#clip-0)" clip-bounds-jfx="[rect (0.0, 0.0), (331.87, 245.0)]">
+        |      <g transform="translate(33.13 0.0 ) " clip-path="url(#clip-0)" clip-bounds-jfx="[rect (0.0, 0.0), (333.87, 247.0)]">
         |        <defs>
         |          <clipPath id="clip-0">
-        |            <rect x="0.0" y="0.0" width="331.87" height="245.0">
+        |            <rect x="0.0" y="0.0" width="333.87" height="247.0">
         |            </rect>
         |          </clipPath>
         |        </defs>
-        |        <rect x="171.2877419354839" y="11.666666666666657" height="233.33333333333337" width="96.3493548387097" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
+        |        <rect x="172.32000000000002" y="11.76190476190476" height="235.23809523809524" width="96.93000000000004" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
         |        </rect>
-        |        <rect x="64.23290322580647" y="89.44444444444446" height="155.55555555555557" width="96.34935483870967" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
+        |        <rect x="64.62" y="90.17460317460316" height="156.82539682539684" width="96.93000000000004" stroke="rgb(0,0,0)" stroke-opacity="0.0" fill="rgb(17,142,216)" fill-opacity="1.0" stroke-width="1.0">
         |        </rect>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
-        |      <g transform="translate(4.0 132.5 ) rotate(-90.0 ) " class="plt-axis-title">
+        |      <g transform="translate(4.0 133.5 ) rotate(-90.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle" dy="0.7em">
         |        count
         |        </text>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
-        |      <g transform="translate(224.065 296.0 ) " class="plt-axis-title">
+        |      <g transform="translate(223.065 296.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle">
         |        time
         |        </text>
@@ -361,66 +361,66 @@ val EXPECTED_BUNCH_SVG = """
         |</style>
         |<g transform="translate(0.0 0.0)" class="plt-plot">
         |    <g transform="translate(23.0 10.0 ) ">
-        |      <g transform="translate(17.71 95.0 ) " class="plt-axis">
-        |        <g class="tick" transform="translate(4.51318181818182 0.0 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+        |      <g transform="translate(15.71 97.0 ) " class="plt-axis">
+        |        <g class="tick" transform="translate(4.604090909090914 0.0 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="4.0">
         |          </line>
-        |          <g transform="translate(0.0 9.0 ) ">
+        |          <g transform="translate(0.0 7.0 ) ">
         |            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
         |            1
         |            </text>
         |          </g>
         |        </g>
-        |        <line x1="0.0" y1="0.0" x2="99.28999999999999" y2="0.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
+        |        <line x1="0.0" y1="0.0" x2="101.28999999999999" y2="0.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(17.71 0.0 ) " class="plt-axis">
-        |        <g class="tick" transform="translate(0.0 90.68181818181819 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |      <g transform="translate(15.71 0.0 ) " class="plt-axis">
+        |        <g class="tick" transform="translate(0.0 92.5909090909091 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            0
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 33.10606060606061 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 33.803030303030305 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            2
         |            </text>
         |          </g>
         |        </g>
-        |        <line x1="0.0" y1="0.0" x2="0.0" y2="95.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
+        |        <line x1="0.0" y1="0.0" x2="0.0" y2="97.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(17.71 0.0 ) " clip-path="url(#clip-0)" clip-bounds-jfx="[rect (0.0, 0.0), (99.28999999999999, 95.0)]">
+        |      <g transform="translate(15.71 0.0 ) " clip-path="url(#clip-0)" clip-bounds-jfx="[rect (0.0, 0.0), (101.28999999999999, 97.0)]">
         |        <defs>
         |          <clipPath id="clip-0">
-        |            <rect x="0.0" y="0.0" width="99.28999999999999" height="95.0">
+        |            <rect x="0.0" y="0.0" width="101.28999999999999" height="97.0">
         |            </rect>
         |          </clipPath>
         |        </defs>
         |        <g>
         |          
         |          <g >
-        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="4.51318181818182" cy="90.68181818181819" r="2.2" />
-        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="94.77681818181819" cy="4.318181818181813" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="4.604090909090914" cy="92.5909090909091" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="96.6859090909091" cy="4.4090909090909065" r="2.2" />
         |          </g>
         |        </g>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
-        |      <g transform="translate(4.0 57.5 ) rotate(-90.0 ) " class="plt-axis-title">
+        |      <g transform="translate(4.0 58.5 ) rotate(-90.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle" dy="0.7em">
         |        b
         |        </text>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
-        |      <g transform="translate(90.35499999999999 146.0 ) " class="plt-axis-title">
+        |      <g transform="translate(89.35499999999999 146.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle">
         |        a
         |        </text>
@@ -430,66 +430,66 @@ val EXPECTED_BUNCH_SVG = """
         |
         |<g transform="translate(150.0 0.0)" class="plt-plot">
         |    <g transform="translate(23.0 10.0 ) ">
-        |      <g transform="translate(17.71 95.0 ) " class="plt-axis">
-        |        <g class="tick" transform="translate(4.51318181818182 0.0 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+        |      <g transform="translate(15.71 97.0 ) " class="plt-axis">
+        |        <g class="tick" transform="translate(4.604090909090914 0.0 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="4.0">
         |          </line>
-        |          <g transform="translate(0.0 9.0 ) ">
+        |          <g transform="translate(0.0 7.0 ) ">
         |            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
         |            1
         |            </text>
         |          </g>
         |        </g>
-        |        <line x1="0.0" y1="0.0" x2="99.28999999999999" y2="0.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
+        |        <line x1="0.0" y1="0.0" x2="101.28999999999999" y2="0.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(17.71 0.0 ) " class="plt-axis">
-        |        <g class="tick" transform="translate(0.0 90.68181818181819 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |      <g transform="translate(15.71 0.0 ) " class="plt-axis">
+        |        <g class="tick" transform="translate(0.0 92.5909090909091 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            0
         |            </text>
         |          </g>
         |        </g>
-        |        <g class="tick" transform="translate(0.0 33.10606060606061 ) ">
-        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+        |        <g class="tick" transform="translate(0.0 33.803030303030305 ) ">
+        |          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-4.0" y2="0.0">
         |          </line>
-        |          <g transform="translate(-9.0 0.0 ) ">
+        |          <g transform="translate(-7.0 0.0 ) ">
         |            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
         |            2
         |            </text>
         |          </g>
         |        </g>
-        |        <line x1="0.0" y1="0.0" x2="0.0" y2="95.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
+        |        <line x1="0.0" y1="0.0" x2="0.0" y2="97.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(17.71 0.0 ) " clip-path="url(#clip-1)" clip-bounds-jfx="[rect (0.0, 0.0), (99.28999999999999, 95.0)]">
+        |      <g transform="translate(15.71 0.0 ) " clip-path="url(#clip-1)" clip-bounds-jfx="[rect (0.0, 0.0), (101.28999999999999, 97.0)]">
         |        <defs>
         |          <clipPath id="clip-1">
-        |            <rect x="0.0" y="0.0" width="99.28999999999999" height="95.0">
+        |            <rect x="0.0" y="0.0" width="101.28999999999999" height="97.0">
         |            </rect>
         |          </clipPath>
         |        </defs>
         |        <g>
         |          
         |          <g >
-        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="4.51318181818182" cy="90.68181818181819" r="2.2" />
-        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="94.77681818181819" cy="4.318181818181813" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="4.604090909090914" cy="92.5909090909091" r="2.2" />
+        |            <circle fill="#118ed8" stroke="#118ed8" stroke-opacity="0.0" stroke-width="0.0" cx="96.6859090909091" cy="4.4090909090909065" r="2.2" />
         |          </g>
         |        </g>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
-        |      <g transform="translate(4.0 57.5 ) rotate(-90.0 ) " class="plt-axis-title">
+        |      <g transform="translate(4.0 58.5 ) rotate(-90.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle" dy="0.7em">
         |        b
         |        </text>
         |      </g>
         |    </g>
         |    <g class="plt-axis">
-        |      <g transform="translate(90.35499999999999 146.0 ) " class="plt-axis-title">
+        |      <g transform="translate(89.35499999999999 146.0 ) " class="plt-axis-title">
         |        <text text-anchor="middle">
         |        a
         |        </text>

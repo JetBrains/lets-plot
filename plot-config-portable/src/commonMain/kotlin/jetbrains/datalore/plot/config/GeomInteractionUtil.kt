@@ -34,8 +34,8 @@ object GeomInteractionUtil {
         theme: Theme
     ): GeomInteractionBuilder {
         val axisWithoutTooltip = HashSet<Aes<*>>()
-        if (isLiveMap || !theme.axisX().showTooltip() || !theme.axisX().showTickLabels()) axisWithoutTooltip.add(Aes.X)
-        if (isLiveMap || !theme.axisY().showTooltip() || !theme.axisY().showTickLabels()) axisWithoutTooltip.add(Aes.Y)
+        if (isLiveMap || !theme.axisX().showTooltip()) axisWithoutTooltip.add(Aes.X)
+        if (isLiveMap || !theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
 
         val isCrosshairEnabled = isCrosshairEnabled(layerConfig)
         val builder = createGeomInteractionBuilder(
@@ -46,7 +46,7 @@ object GeomInteractionUtil {
             isCrosshairEnabled
         )
         val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
-        val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
+        val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind, theme) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, scaleMap, builder.getAxisFromFunctionKind) - hiddenAesList
         val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
 
@@ -106,11 +106,17 @@ object GeomInteractionUtil {
         }
     }
 
-    private fun createAxisAesList(geomBuilder: GeomInteractionBuilder, geomKind: GeomKind): List<Aes<*>> {
+    private fun createAxisAesList(geomBuilder: GeomInteractionBuilder, geomKind: GeomKind, theme: Theme): List<Aes<*>> {
         return when {
             !geomBuilder.isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
             else -> geomBuilder.getAxisFromFunctionKind
+        }.let {
+            // Not show the axis tooltip if the axis tick labels are hidden
+            val axisAesList = it.toMutableList()
+            if (!theme.axisX().showLabels()) axisAesList.remove(Aes.X)
+            if (!theme.axisY().showLabels()) axisAesList.remove(Aes.Y)
+            axisAesList
         }
     }
 

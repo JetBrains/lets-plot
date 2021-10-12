@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.config.Option.PlotBase
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.SpecSelector
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrPlotSpecChange
 
 object PlotConfigServerSideTransforms {
     fun migrationTransform(): PlotSpecTransform {
@@ -43,4 +44,14 @@ object PlotConfigServerSideTransforms {
             )
             .build()
     }
+
+    fun bistroTransform(): PlotSpecTransform {
+        return PlotSpecTransform.builderForRawSpec()
+            .change(
+                CorrPlotSpecChange.specSelector(),
+                CorrPlotSpecChange()
+            )
+            .build()
+    }
+
 }
