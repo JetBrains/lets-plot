@@ -8,5 +8,7 @@ package jetbrains.datalore.plot.builder.theme
 import jetbrains.datalore.base.values.Color
 
 interface FacetsTheme {
-    fun labelBackground(): Color
+    fun stripFill(): Color
+    fun stripColor():Color
+    fun stripSize():Double
 }

@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 
 interface TileFrameOfReference {
-    fun drawAxis(parent: SvgComponent)
+    fun drawFoR(parent: SvgComponent)
 
     fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent
 

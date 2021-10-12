@@ -60,7 +60,7 @@ internal object BreakLabelsLayoutUtil {
     ): AxisLabelsLayoutInfo {
 
         val axisBounds = when {
-            theme.showTickLabels() -> {
+            theme.showLabels() -> {
                 val labelsBounds = verticalAxisLabelsBounds(
                     breaks,
                     axisDomain,

@@ -34,6 +34,22 @@ open class DefaultTheme : Theme {
         return PLOT_THEME
     }
 
+    override fun panel(): PanelTheme {
+        return object : PanelTheme {
+            override fun showRect(): Boolean = false
+
+            override fun rectColor(): Color = Color.BLACK
+
+            override fun rectFill(): Color = Color.BLACK
+
+            override fun rectsize(): Double = 1.0
+
+            override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
+
+            override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
+        }
+    }
+
     override fun multiTile(): Theme {
         return object : DefaultTheme() {
             override fun axisX(): AxisTheme {
@@ -46,6 +62,22 @@ open class DefaultTheme : Theme {
 
             override fun plot(): PlotTheme {
                 return PLOT_THEME_MULTI_TILE
+            }
+
+            override fun panel(): PanelTheme {
+                return object : PanelTheme {
+                    override fun showRect(): Boolean = true
+
+                    override fun rectColor(): Color = Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
+
+                    override fun rectFill(): Color = Color.TRANSPARENT
+
+                    override fun rectsize(): Double = 1.0
+
+                    override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
+
+                    override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
+                }
             }
         }
     }
@@ -90,28 +122,50 @@ open class DefaultTheme : Theme {
         }
 
         private val FACETS_THEME: FacetsTheme = object : FacetsTheme {
-            override fun labelBackground(): Color {
+            override fun stripFill(): Color {
                 return Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
+            }
+
+            override fun stripColor(): Color {
+                return Color.BLACK
+            }
+
+            override fun stripSize(): Double {
+                return 0.0
             }
         }
 
         private val PLOT_THEME: PlotTheme = object : PlotTheme {
-            override fun showInnerFrame(): Boolean {
-                return false
-            }
-
-            override fun innerFrameColor(): Color {
-                throw IllegalStateException("The `innerFrameColor()` method shouldn't be used.")
+            override fun titleColor(): Color {
+                return Color.BLACK
             }
         }
 
         private val PLOT_THEME_MULTI_TILE: PlotTheme = object : PlotTheme {
-            override fun showInnerFrame(): Boolean {
-                return true
+            override fun titleColor(): Color {
+                return Color.BLACK
+            }
+        }
+
+        private val DUMMY_GRID_THEME: PanelGridTheme = object : PanelGridTheme {
+            override fun showMajor(): Boolean = false
+
+            override fun showMinor(): Boolean = false
+
+            override fun majorLineWidth(): Double {
+                TODO("Not yet implemented")
             }
 
-            override fun innerFrameColor(): Color {
-                return Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9)
+            override fun minorLineWidth(): Double {
+                TODO("Not yet implemented")
+            }
+
+            override fun majorLineColor(): Color {
+                TODO("Not yet implemented")
+            }
+
+            override fun minorLineColor(): Color {
+                TODO("Not yet implemented")
             }
         }
     }

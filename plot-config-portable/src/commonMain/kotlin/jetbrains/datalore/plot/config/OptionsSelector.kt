@@ -45,6 +45,31 @@ fun Map<*, *>.getString(path: List<String>, item: String): String? {
     return getMap(path)?.get(item) as? String
 }
 
+fun Map<*, *>.getDouble(vararg query: String): Double? {
+    return getDouble(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getDouble(path: List<String>, item: String): Double? {
+    return getMap(path)?.get(item) as? Double
+}
+
+fun Map<*, *>.getBool(vararg query: String): Boolean? {
+    return getBool(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getBool(path: List<String>, item: String): Boolean? {
+    return when (val v = getMap(path)?.get(item)) {
+        is String -> when(v.lowercase()) {
+            "1", "true" -> true
+            "0", "false" -> false
+            else -> throw IllegalArgumentException("Unexpected boolean value: '$v'")
+        }
+        is Number -> v.toInt() != 0
+        is Boolean -> v
+        else -> null
+    }
+}
+
 fun Map<*, *>.getMap(vararg query: String): Map<String, Any>? {
     return getMap(query.toList())?.typed()
 }
@@ -71,14 +96,13 @@ fun Map<*, *>.provideMap(vararg query: String): MutableMap<String, Any> {
 
 fun Map<*, *>.provideMap(path: List<String>): MutableMap<String, Any> {
     return path.fold(
-        this,
-        { acc, next ->
-            acc.asMutable().getOrPut(
-                key = next,
-                defaultValue = { HashMap<String, Any>() }
-            ) as Map<*, *>
-        }
-    ).asMutable()
+        this
+    ) { acc, next ->
+        acc.asMutable().getOrPut(
+            key = next,
+            defaultValue = { HashMap<String, Any>() }
+        ) as Map<*, *>
+    }.asMutable()
 }
 
 fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {

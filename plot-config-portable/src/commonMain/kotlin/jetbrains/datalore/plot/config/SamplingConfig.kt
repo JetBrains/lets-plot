@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.builder.sampling.Samplings
-import jetbrains.datalore.plot.config.Option.Sampling.NONE
 
 internal object SamplingConfig {
     fun create(sampling: Any): List<Sampling> {
@@ -34,9 +32,9 @@ internal object SamplingConfig {
             return SamplingProto.createSampling(
                 ConfigUtil.featureName(sampling), sampling as Map<String, Any>
             )
-        } else if (NONE == sampling) {
-            return Samplings.NONE
+        } else if (sampling is String) {
+            return SamplingProto.createSampling(sampling, emptyMap())
         }
-        throw IllegalArgumentException("Incorrect sampling specification")
+        throw IllegalArgumentException("Incorrect sampling specification type: '${sampling::class.simpleName}'")
     }
 }
