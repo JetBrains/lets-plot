@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro.util
 
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.config.Option
 
 

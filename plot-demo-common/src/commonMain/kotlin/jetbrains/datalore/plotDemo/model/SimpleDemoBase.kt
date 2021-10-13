@@ -9,11 +9,11 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.vis.svg.SvgColors
 import jetbrains.datalore.vis.svg.SvgCssResource
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -75,7 +75,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
     companion object {
         private val DEFAULT_INNER_SIZE = DoubleVector(700.0, 350.0)
         private val DEFAULT_PADDING = DoubleVector(20.0, 20.0)
-        private val DEFAULT_THEME = DefaultTheme()
+        private val DEFAULT_THEME = ThemeConfig().theme
 
         val EMPTY_GEOM_CONTEXT: GeomContext = EmptyGeomContext()
     }

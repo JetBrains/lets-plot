@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.theme2
+package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.plot.builder.theme.*
 
-class DefaultTheme2(
+class DefaultTheme(
     private val options: Map<String, Any>
 ) : Theme {
 

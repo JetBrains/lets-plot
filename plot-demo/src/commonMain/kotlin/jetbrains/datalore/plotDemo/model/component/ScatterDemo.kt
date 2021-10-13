@@ -27,8 +27,8 @@ import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.plot.builder.AxisUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
-import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
@@ -98,7 +98,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // Render
         val groupComponent = GroupComponent()
 
-        val theme = DefaultTheme2(ThemeValuesRClassic().values)
+        val theme = DefaultTheme(ThemeValuesRClassic().values)
 
         run {
             // X axis
@@ -265,7 +265,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // coord system
         val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
 
-        val theme = DefaultTheme2(ThemeValuesRClassic().values)
+        val theme = DefaultTheme(ThemeValuesRClassic().values)
 
         run {
             // X axis

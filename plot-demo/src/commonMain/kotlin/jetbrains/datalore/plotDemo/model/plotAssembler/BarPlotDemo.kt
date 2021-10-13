@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
@@ -72,7 +71,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             )
             .addConstantAes(Aes.WIDTH, 0.75)
             .build(data, scaleByAes)
-        val assembler = PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+        val assembler = PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), theme)
 
         assembler.disableInteractions()
         return assembler.createPlot()
@@ -146,7 +145,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             scaleByAes,
             listOf(layer),
             CoordProviders.cartesian(),
-            DefaultTheme()
+            theme
         )
         assembler.disableInteractions()
         return assembler.createPlot()

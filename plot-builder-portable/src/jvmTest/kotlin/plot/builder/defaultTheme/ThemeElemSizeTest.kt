@@ -3,15 +3,15 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.theme2
+package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE_X
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_X
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_X
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_X
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -22,7 +22,7 @@ internal class ThemeElemSizeTest(
     private val themeValues: Map<String, Any>,
     private val expected: Double
 ) {
-    private val theme: Theme = DefaultTheme2(themeValues)
+    private val theme: Theme = DefaultTheme(themeValues)
 
     @Test
     fun eval() {

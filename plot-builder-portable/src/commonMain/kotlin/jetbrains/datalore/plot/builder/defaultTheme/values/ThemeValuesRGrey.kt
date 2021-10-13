@@ -3,21 +3,21 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.theme2.values
+package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TICKS
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.FACET_STRIP_BGR_RECT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_BKGR_RECT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MAJOR
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_GRID_MINOR
-import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesBase.Companion.PLOT_BACKGROUND
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesBase.Companion.PLOT_BACKGROUND
 
 
 class ThemeValuesRGrey : ThemeValues(VALUES) {

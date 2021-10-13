@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -22,7 +22,7 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
+import jetbrains.datalore.plot.config.theme.ThemeConfig
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,
@@ -96,7 +96,9 @@ class BarPlotResizeDemo private constructor(
         //};
         val assembler = PlotAssembler.singleTile(
             scaleByAes,
-            listOf(layer), CoordProviders.cartesian(), DefaultTheme()
+            listOf(layer),
+            CoordProviders.cartesian(),
+            ThemeConfig().theme
         )
         return assembler.createPlot()
     }

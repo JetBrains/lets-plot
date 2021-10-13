@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.theme2
+package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_TEXT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_TITLE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TEXT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
 class DefaultLegendTheme(
     options: Map<String, Any>

@@ -7,11 +7,10 @@ package jetbrains.datalore
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TEXT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TOOLTIP
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.config.GeomInteractionUtil
@@ -169,7 +168,7 @@ class GeomInteractionBuilderCreationTest {
     fun `use 'theme' to control tooltips`() {
         run {
             // default: X axis tooltip + Y value in the general tooltip
-            val tooltipLines = histogramInteractionBuilder(data, themeOpts = null).tooltipLines
+            val tooltipLines = histogramInteractionBuilder(data, themeOpts = emptyMap()).tooltipLines
 
             val axis = getAesListInAxisTooltip(tooltipLines)
             assertTooltipForAes(Aes.X, axis)
@@ -241,7 +240,8 @@ class GeomInteractionBuilderCreationTest {
 
     private fun histogramInteractionBuilder(
         mappedData: Map<String, Any>,
-        themeOpts: Map<String, Any>? = null
+//        themeOpts: Map<String, Any>? = null
+        themeOpts: Map<String, Any> = emptyMap()
     ): GeomInteractionBuilder {
         val plotOpts = mutableMapOf(
             Meta.KIND to Meta.Kind.PLOT,
@@ -254,13 +254,14 @@ class GeomInteractionBuilderCreationTest {
         )
         return createGeomInteractionBuilder(
             plotOpts,
-            theme = themeOpts?.let { ThemeConfig(it).theme } ?: DefaultTheme()
+//            theme = themeOpts?.let { ThemeConfig(it).theme } ?: DefaultTheme()
+            theme = ThemeConfig(themeOpts).theme
         )
     }
 
     private fun createGeomInteractionBuilder(
         plotOpts: MutableMap<String, Any>,
-        theme: Theme = DefaultTheme()
+        theme: Theme = ThemeConfig().theme
     ): GeomInteractionBuilder {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
         require(!PlotConfig.isFailure(plotSpec)) { PlotConfig.getErrorMessage(plotSpec) }

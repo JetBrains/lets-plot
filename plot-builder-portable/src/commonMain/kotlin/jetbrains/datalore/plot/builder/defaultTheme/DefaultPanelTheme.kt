@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.theme2
+package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.theme.PanelTheme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PANEL_BKGR_RECT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 
 class DefaultPanelTheme(
     options: Map<String, Any>

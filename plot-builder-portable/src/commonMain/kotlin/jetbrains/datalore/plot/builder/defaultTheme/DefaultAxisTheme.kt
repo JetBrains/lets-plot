@@ -1,23 +1,23 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2021. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.theme2
+package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TEXT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TICKS
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TITLE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_TOOLTIP
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.RECT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TEXT
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
 class DefaultAxisTheme(
     axis: String,

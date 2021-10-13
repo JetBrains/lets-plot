@@ -22,7 +22,6 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.data.AutoMpg
 import jetbrains.datalore.plotDemo.data.Diamonds
 import jetbrains.datalore.plotDemo.data.Iris
@@ -43,7 +42,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
     private fun createPlot(): PlotSvgComponent {
         val (scaleByAes, layers) = getLayersMpg()
 
-        val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), DefaultTheme())
+        val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), theme)
         assembler.title = "Loess Regression"
         assembler.disableInteractions()
         return assembler.createPlot()
@@ -344,7 +343,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
 
         val layers = listOf(scatterLayer, defaultLoessLayer, accurateLoessLayer)
-        val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), DefaultTheme())
+        val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), theme)
         assembler.title = "loess span=0.5(blue) and span=0.3(green)"
         assembler.disableInteractions()
         return assembler.createPlot()
