@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 
 interface FacetsTheme {
     fun stripFill(): Color
-    fun stripColor():Color
-    fun stripSize():Double
+    fun stripColor(): Color
+    fun stripStrokeWidth(): Double
+    fun stripTextColor(): Color
 }

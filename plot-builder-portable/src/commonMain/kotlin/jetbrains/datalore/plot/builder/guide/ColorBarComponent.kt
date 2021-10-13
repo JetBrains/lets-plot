@@ -21,7 +21,7 @@ import kotlin.math.max
 
 class ColorBarComponent(
     override val spec: ColorBarComponentSpec
-) : LegendBox() {
+) : LegendBox(spec.theme) {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val layout = spec.layout
@@ -69,6 +69,7 @@ class ColorBarComponent(
             addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
 
             val label = TextLabel(brLabel)
+            label.textColor().set(theme.textColor())
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setVerticalAnchor(brInfo.labelVerticalAnchor)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top)

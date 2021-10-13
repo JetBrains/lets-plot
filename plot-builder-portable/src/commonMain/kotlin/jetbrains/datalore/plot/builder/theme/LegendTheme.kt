@@ -6,6 +6,9 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.guide.LegendDirection
+import jetbrains.datalore.plot.builder.guide.LegendJustification
+import jetbrains.datalore.plot.builder.guide.LegendPosition
 
 interface LegendTheme {
     fun keySize(): Double
@@ -21,11 +24,15 @@ interface LegendTheme {
      */
     fun padding(): Double
 
-    fun position(): jetbrains.datalore.plot.builder.guide.LegendPosition
+    fun position(): LegendPosition
 
-    fun justification(): jetbrains.datalore.plot.builder.guide.LegendJustification
+    fun justification(): LegendJustification
 
-    fun direction(): jetbrains.datalore.plot.builder.guide.LegendDirection
+    fun direction(): LegendDirection
 
     fun backgroundFill(): Color
+
+    fun titleColor(): Color
+
+    fun textColor(): Color
 }

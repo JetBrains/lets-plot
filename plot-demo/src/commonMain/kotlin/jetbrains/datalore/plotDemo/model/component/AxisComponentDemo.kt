@@ -126,8 +126,8 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 //            axis.gridLineWidth.set(Plot.Axis.GRID_LINE_WIDTH)
 //            axis.gridLineLength.set(100.0)
 
-            val baselineOptions = ThemeValuesRClassic.values
-            val themeOptions = baselineOptions + mapOf(
+            val baselineValues = ThemeValuesRClassic()
+            val themeOptions = baselineValues + mapOf(
                 ThemeOption.PANEL_GRID to mapOf(ThemeOption.Elem.COLOR to Color.RED)
             )
             val theme = DefaultTheme2(themeOptions)

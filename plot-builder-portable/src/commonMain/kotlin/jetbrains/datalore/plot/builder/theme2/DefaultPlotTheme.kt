@@ -7,14 +7,18 @@ package jetbrains.datalore.plot.builder.theme2
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.PlotTheme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.PLOT_TITLE
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.TITLE
 
 class DefaultPlotTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), PlotTheme {
-    private val titleKey = listOf(ThemeOption.PLOT_TITLE, ThemeOption.TITLE, ThemeOption.TEXT)
+
+    private val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)
 
     override fun titleColor(): Color {
-        return getColor(getElemValue(titleKey), ThemeOption.Elem.COLOR)
+        return getColor(getElemValue(titleKey), Elem.COLOR)
     }
 }

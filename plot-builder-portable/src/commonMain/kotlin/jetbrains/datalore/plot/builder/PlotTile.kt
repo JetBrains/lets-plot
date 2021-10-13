@@ -119,7 +119,7 @@ internal class PlotTile(
             for (xLabel in xLabels) {
                 // ToDo: This is "strip-x"
                 val rect = SvgRectElement(labelBounds).apply {
-                    strokeWidth().set(theme.stripSize())
+                    strokeWidth().set(theme.stripStrokeWidth())
                     fillColor().set(theme.stripFill())
                     strokeColor().set(theme.stripColor())
                 }
@@ -129,6 +129,7 @@ internal class PlotTile(
                 val y = labelBounds.center.y
                 val lab = TextLabel(xLabel)
                 lab.moveTo(x, y)
+                lab.textColor().set(theme.stripTextColor())
                 lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
                 lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
                 add(lab)
@@ -150,7 +151,7 @@ internal class PlotTile(
 
             // ToDo: This is "strip-y"
             val rect = SvgRectElement(labelBounds).apply {
-                strokeWidth().set(theme.stripSize())
+                strokeWidth().set(theme.stripStrokeWidth())
                 fillColor().set(theme.stripFill())
                 strokeColor().set(theme.stripColor())
             }
@@ -161,6 +162,7 @@ internal class PlotTile(
 
             val lab = TextLabel(tileLayoutInfo.facetYLabel)
             lab.moveTo(x, y)
+            lab.textColor().set(theme.stripTextColor())
             lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
             lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
             lab.rotate(90.0)

@@ -11,11 +11,14 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 
-abstract class LegendBox : SvgComponent() {
+abstract class LegendBox(
+    val theme: LegendTheme
+) : SvgComponent() {
 
     var debug: Boolean = false
     abstract val spec: LegendBoxSpec
@@ -47,6 +50,7 @@ abstract class LegendBox : SvgComponent() {
                 l.titleHorizontalAnchor,
                 l.titleVerticalAnchor
             )
+            label.textColor().set(theme.titleColor())
             innerGroup.children().add(label.rootGroup)
         }
 
@@ -81,7 +85,7 @@ abstract class LegendBox : SvgComponent() {
         add(innerGroup)
     }
 
-    protected fun addBorder(bounds: DoubleRectangle, strokeColor: Color, strokeWidth: Double) {
+    private fun addBorder(bounds: DoubleRectangle, strokeColor: Color, strokeWidth: Double) {
         add(
             createBorder(
                 bounds,
@@ -91,7 +95,7 @@ abstract class LegendBox : SvgComponent() {
         )
     }
 
-    protected fun addRectangle(bounds: DoubleRectangle, fillColor: Color) {
+    private fun addRectangle(bounds: DoubleRectangle, fillColor: Color) {
         add(
             createRectangle(
                 bounds,

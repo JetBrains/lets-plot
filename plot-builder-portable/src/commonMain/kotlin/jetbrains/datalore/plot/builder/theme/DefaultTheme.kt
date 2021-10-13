@@ -119,6 +119,14 @@ open class DefaultTheme : Theme {
             override fun backgroundFill(): Color {
                 return Color.WHITE
             }
+
+            override fun titleColor(): Color {
+                return Color.BLACK
+            }
+
+            override fun textColor(): Color {
+                return Color.BLACK
+            }
         }
 
         private val FACETS_THEME: FacetsTheme = object : FacetsTheme {
@@ -130,8 +138,12 @@ open class DefaultTheme : Theme {
                 return Color.BLACK
             }
 
-            override fun stripSize(): Double {
+            override fun stripStrokeWidth(): Double {
                 return 0.0
+            }
+
+            override fun stripTextColor(): Color {
+                return Color.BLACK
             }
         }
 

@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendDirection.*
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
@@ -82,7 +83,7 @@ internal class LegendThemeConfig(
         return ThemeConfig.DEF.legend().justification()
     }
 
-    override fun direction(): jetbrains.datalore.plot.builder.guide.LegendDirection {
+    override fun direction(): LegendDirection {
         // "horizontal" or "vertical"
         val o = get(LEGEND_DIRECTION)
         if (o is String) {
@@ -96,5 +97,13 @@ internal class LegendThemeConfig(
 
     override fun backgroundFill(): Color {
         return ThemeConfig.DEF.legend().backgroundFill()
+    }
+
+    override fun titleColor(): Color {
+        return ThemeConfig.DEF.legend().titleColor()
+    }
+
+    override fun textColor(): Color {
+        return ThemeConfig.DEF.legend().textColor()
     }
 }
