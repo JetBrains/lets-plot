@@ -11,13 +11,13 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.ScaleConfig
 import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_BREWER
 import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_GRADIENT2
-import jetbrains.datalore.plot.server.config.transform.bistro.*
-import jetbrains.datalore.plot.server.config.transform.bistro.TooltipsOptions.Companion.variable
-import jetbrains.datalore.plot.server.config.transform.bistro.TooltipsOptions.Format
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.DataUtil.standardiseData
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.FULL
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
+import jetbrains.datalore.plot.server.config.transform.bistro.util.*
+import jetbrains.datalore.plot.server.config.transform.bistro.util.TooltipsOptions.Companion.variable
+import jetbrains.datalore.plot.server.config.transform.bistro.util.TooltipsOptions.Format
 import jetbrains.letsPlot.bistro.corr.CorrUtil.correlations
 import jetbrains.letsPlot.bistro.corr.CorrUtil.correlationsToDataframe
 import jetbrains.letsPlot.bistro.corr.CorrUtil.matrixXYSeries
@@ -38,7 +38,7 @@ import kotlin.math.min
  * @param threshold Minimal correlation abs value to be included in result. Must be in interval [0.0, 1.0]
  * @param adjustSize A scaler to adjust the plot size which was computed by `CorrPlot` automatically.
  */
-class CorrPlot private constructor(
+class CorrPlotOptionsBuilder private constructor(
     private val data: Map<*, *>,
     private val title: String? = null,
     private val showLegend: Boolean,
@@ -98,21 +98,21 @@ class CorrPlot private constructor(
             }
     }
 
-    fun tiles(type: String? = null, diag: Boolean? = null): CorrPlot {
+    fun tiles(type: String? = null, diag: Boolean? = null): CorrPlotOptionsBuilder {
         checkTypeArg(type)
         tiles.type = type
         tiles.diag = diag
         return this
     }
 
-    fun points(type: String? = null, diag: Boolean? = null): CorrPlot {
+    fun points(type: String? = null, diag: Boolean? = null): CorrPlotOptionsBuilder {
         checkTypeArg(type)
         points.type = type
         points.diag = diag
         return this
     }
 
-    fun labels(type: String? = null, diag: Boolean? = null, mapSize: Boolean? = null, color: String? = null): CorrPlot {
+    fun labels(type: String? = null, diag: Boolean? = null, mapSize: Boolean? = null, color: String? = null): CorrPlotOptionsBuilder {
         checkTypeArg(type)
         labels.type = type
         labels.diag = diag
@@ -122,13 +122,13 @@ class CorrPlot private constructor(
         return this
     }
 
-    fun brewerPalette(palette: String): CorrPlot {
+    fun brewerPalette(palette: String): CorrPlotOptionsBuilder {
         colorScaleOptions = scaleBrewer(Aes.COLOR, palette)
         fillScaleOptions = scaleBrewer(Aes.FILL, palette)
         return this
     }
 
-    fun gradientPalette(low: String, mid: String, high: String): CorrPlot {
+    fun gradientPalette(low: String, mid: String, high: String): CorrPlotOptionsBuilder {
         colorScaleOptions = scaleGradient(Aes.COLOR, low, mid, high)
         fillScaleOptions = scaleGradient(Aes.FILL, low, mid, high)
         return this

@@ -3,16 +3,15 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.server.config.transform.bistro.corr
+package jetbrains.datalore.plot.server.config.transform.bistro
 
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
-import jetbrains.datalore.plot.server.config.transform.bistro.OptionsUtil
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr
-import jetbrains.letsPlot.bistro.corr.CorrPlot
+import jetbrains.datalore.plot.server.config.transform.bistro.util.OptionsUtil
+import jetbrains.letsPlot.bistro.corr.CorrPlotOptionsBuilder
 
 class CorrPlotSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
@@ -43,7 +42,7 @@ class CorrPlotSpecChange : SpecChange {
     private fun buildCorrPlotSpec(plotSpec: MutableMap<String, Any>): Map<String, Any> {
         val bistroSpec = plotSpec.getMap(Option.Plot.BISTRO) ?: error("'bistro' not found in PlotSpec")
 
-        val corrPlot = CorrPlot(
+        val corrPlotOptionsBuilder = CorrPlotOptionsBuilder(
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             title = bistroSpec.getString(Corr.TITLE),
             showLegend = bistroSpec.getBool(Corr.SHOW_LEGEND),
@@ -53,21 +52,21 @@ class CorrPlotSpecChange : SpecChange {
         )
 
         bistroSpec.getMap(Corr.TILE_LAYER)?.let {
-            corrPlot.tiles(
+            corrPlotOptionsBuilder.tiles(
                 type = it.getString(Corr.Layer.TYPE),
                 diag = it.getBool(Corr.Layer.DIAG)
             )
         }
 
         bistroSpec.getMap(Corr.POINT_LAYER)?.let {
-            corrPlot.points(
+            corrPlotOptionsBuilder.points(
                 type = it.getString(Corr.Layer.TYPE),
                 diag = it.getBool(Corr.Layer.DIAG)
             )
         }
 
         bistroSpec.getMap(Corr.LABEL_LAYER)?.let {
-            corrPlot.labels(
+            corrPlotOptionsBuilder.labels(
                 type = it.getString(Corr.Layer.TYPE),
                 diag = it.getBool(Corr.Layer.DIAG),
                 mapSize = it.getBool(Corr.Layer.MAP_SIZE),
@@ -76,25 +75,25 @@ class CorrPlotSpecChange : SpecChange {
         }
 
         when (val name = bistroSpec.getString(Corr.PALETTE)) {
-            "gradient" -> corrPlot.gradientPalette(
+            "gradient" -> corrPlotOptionsBuilder.gradientPalette(
                 low = bistroSpec.getString(Corr.GRADIENT_LOW) ?: error("Gradient LOW is not set"),
                 mid = bistroSpec.getString(Corr.GRADIENT_MID) ?: error("Gradient MID is not set"),
                 high = bistroSpec.getString(Corr.GRADIENT_HIGH) ?: error("Gradient HIGH is not set")
             )
-            "BrBG" -> corrPlot.paletteBrBG()
-            "PiYG" -> corrPlot.palettePiYG()
-            "PRGn" -> corrPlot.palettePRGn()
-            "PuOr" -> corrPlot.palettePuOr()
-            "RdBu" -> corrPlot.paletteRdBu()
-            "RdGy" -> corrPlot.paletteRdGy()
-            "RdYlBu" -> corrPlot.paletteRdYlBu()
-            "RdYlGn" -> corrPlot.paletteRdYlGn()
-            "Spectral" -> corrPlot.paletteSpectral()
+            "BrBG" -> corrPlotOptionsBuilder.paletteBrBG()
+            "PiYG" -> corrPlotOptionsBuilder.palettePiYG()
+            "PRGn" -> corrPlotOptionsBuilder.palettePRGn()
+            "PuOr" -> corrPlotOptionsBuilder.palettePuOr()
+            "RdBu" -> corrPlotOptionsBuilder.paletteRdBu()
+            "RdGy" -> corrPlotOptionsBuilder.paletteRdGy()
+            "RdYlBu" -> corrPlotOptionsBuilder.paletteRdYlBu()
+            "RdYlGn" -> corrPlotOptionsBuilder.paletteRdYlGn()
+            "Spectral" -> corrPlotOptionsBuilder.paletteSpectral()
             null -> Unit
             else -> throw IllegalArgumentException("Unknown scale: $name")
         }
 
-        val corrPlotOptions = corrPlot.build()
+        val corrPlotOptions = corrPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(corrPlotOptions)
     }
 
