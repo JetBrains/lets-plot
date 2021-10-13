@@ -98,7 +98,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // Render
         val groupComponent = GroupComponent()
 
-        val theme = DefaultTheme2(ThemeValuesRClassic.values)
+        val theme = DefaultTheme2(ThemeValuesRClassic().values)
 
         run {
             // X axis
@@ -265,7 +265,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // coord system
         val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
 
-        val theme = DefaultTheme2(ThemeValuesRClassic.values)
+        val theme = DefaultTheme2(ThemeValuesRClassic().values)
 
         run {
             // X axis

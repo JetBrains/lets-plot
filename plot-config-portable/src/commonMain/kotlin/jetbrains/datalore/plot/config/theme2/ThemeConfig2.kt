@@ -30,9 +30,9 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
 
         init {
             // ToDo: select defaults.
-            val baselineOptions = ThemeValuesLPMinimal2.values
-//            val baselineOptions = ThemeValuesRClassic.values
-//            val baselineOptions = ThemeValuesRGrey.values
+            val baselineValues = ThemeValuesLPMinimal2()
+//            val baselineValues = ThemeValuesRClassic()
+//            val baselineValues = ThemeValuesRGrey()
 
             // Make sure all values are converted to proper objects.
             @Suppress("NAME_SHADOWING")
@@ -41,18 +41,7 @@ class ThemeConfig2(themeSettings: Map<String, Any>) {
                 LegendThemeConfig2.convertValue(key, value)
             }
 
-            // Merge baseline and user options.
-            val effectiveOptions: MutableMap<String, Any> = HashMap<String, Any>(baselineOptions)
-            for ((key, userValue) in userOptions) {
-                if (userValue is Map<*, *>) {
-                    // Merge values
-                    val baseValue = effectiveOptions.getOrPut(key) { userValue } as Map<*, *>
-                    effectiveOptions[key] = baseValue + userValue
-                } else {
-                    // Override value
-                    effectiveOptions[key] = userValue
-                }
-            }
+            val effectiveOptions: Map<String, Any> = baselineValues + userOptions
 
             theme2 = DefaultTheme2(effectiveOptions)
             plotTheme = theme2.plot()
