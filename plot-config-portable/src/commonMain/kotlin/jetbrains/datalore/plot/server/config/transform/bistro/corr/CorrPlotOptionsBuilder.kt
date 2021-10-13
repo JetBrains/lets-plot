@@ -189,9 +189,7 @@ class CorrPlotOptionsBuilder private constructor(
         val originalVariables = data.keys.map { it.toString() }.toList()
 
         // Compute correlations
-        @Suppress("NAME_SHADOWING")
-        val data = standardiseData(data)
-        val correlations = correlations(data, ::correlationPearson)
+        val correlations = correlations(standardiseData(data), ::correlationPearson)
         // variables in the 'original' order
         val varsInMatrix = correlations.keys.map { it.first }.toSet()
         val varsInOrder = originalVariables.filter { varsInMatrix.contains(it) }
@@ -202,97 +200,74 @@ class CorrPlotOptionsBuilder private constructor(
         val layers = mutableListOf<LayerOptions>()
 
         // Add layers
-        val tooltipsOptions = TooltipsOptions().apply {
-            lines = listOf(variable(CorrVar.CORR))
-            formats = listOf(
-                Format().apply {
-                    field = variable(CorrVar.CORR)
-                    format = VALUE_FORMAT
-                }
-            )
-        }
-
         if (tiles.added) {
             layers.add(
-                LayerOptions().apply {
-                    this.geom = GeomKind.TILE
-                    this.data = layerData(
+                newCorrPlotLayerOptions().apply {
+                    geom = GeomKind.TILE
+                    data = layerData(
                         tiles,
                         correlations,
                         varsInOrder,
                         keepDiag = keepDiag || combinedType == FULL,
                         threshold
                     )
-                    this.mappings = mapOf(
+                    mappings = mapOf(
                         Aes.X to CorrVar.X,
                         Aes.Y to CorrVar.Y,
                         Aes.FILL to CorrVar.CORR,
                     )
-                    this[Aes.SIZE] = 0.0
-                    this[Aes.WIDTH] = 1.002
-                    this[Aes.HEIGHT] = 1.002
-                    this.showLegend = showLegend
-                    this.tooltipsOptions = tooltipsOptions
-                    this.samplingOptions = SamplingOptions.NONE
-                    this.naText = ""
-                    this.labelFormat = VALUE_FORMAT
-                })
+                    size = 0.0
+                    width = 1.002
+                    height = 1.002
+                }
+            )
         }
 
         if (points.added) {
             layers.add(
-                LayerOptions().apply {
-                    this.geom = GeomKind.POINT
-                    this.data = layerData(
+                newCorrPlotLayerOptions().apply {
+                    geom = GeomKind.POINT
+                    data = layerData(
                         points,
                         correlations,
                         varsInOrder,
                         keepDiag = keepDiag || combinedType == FULL,
                         threshold
                     )
-                    this.mappings = mapOf(
+                    mappings = mapOf(
                         Aes.X to CorrVar.X,
                         Aes.Y to CorrVar.Y,
                         Aes.SIZE to CorrVar.CORR_ABS,
                         Aes.COLOR to CorrVar.CORR,
                     )
-                    this.sizeUnit = Aes.X
-                    this.showLegend = showLegend
-                    this.tooltipsOptions = tooltipsOptions
-                    this.samplingOptions = SamplingOptions.NONE
-                    this.naText = ""
-                    this.labelFormat = VALUE_FORMAT
-                })
+                    sizeUnit = Aes.X
+                }
+            )
         }
 
         if (labels.added) {
-            val layerData = layerData(
-                labels,
-                correlations,
-                varsInOrder,
-                keepDiag = keepDiag || combinedType == FULL,
-                threshold
-            )
             layers.add(
-                LayerOptions().apply {
-                    this.geom = GeomKind.TEXT
-                    this.data = layerData
-                    this.mappings = mapOf(
+                newCorrPlotLayerOptions().apply {
+                    geom = GeomKind.TEXT
+                    data = layerData(
+                        labels,
+                        correlations,
+                        varsInOrder,
+                        keepDiag = keepDiag || combinedType == FULL,
+                        threshold
+                    )
+                    mappings = mapOf(
                         Aes.X to CorrVar.X,
                         Aes.Y to CorrVar.Y,
                         Aes.LABEL to CorrVar.CORR,
                         Aes.SIZE to CorrVar.CORR_ABS,
                         Aes.COLOR to CorrVar.CORR
                     )
-                    this.showLegend = showLegend
-                    this.naText = ""
-                    this.labelFormat = VALUE_FORMAT
-                    this.sizeUnit = Aes.X
-                    this.tooltipsOptions = tooltipsOptions
-                    this.samplingOptions = SamplingOptions.NONE
-                    this.size = if (labels.mapSize == true) null else 1.0
-                    this.color = labels.color
-                })
+                    sizeUnit = Aes.X
+                    size = if (labels.mapSize == true) null else 1.0
+                    color = labels.color
+                }
+            )
         }
 
         // Actual labels on axis.
@@ -316,6 +291,24 @@ class CorrPlotOptionsBuilder private constructor(
         val onlyTiles = tiles.added && !points.added && !labels.added
 
         return addCommonParams(plotOptions, plotX, plotY, onlyTiles, flip)
+    }
+
+    private fun newCorrPlotLayerOptions(): LayerOptions {
+        return LayerOptions().apply {
+            naText = ""
+            labelFormat = VALUE_FORMAT
+            showLegend = this@CorrPlotOptionsBuilder.showLegend
+            tooltipsOptions = TooltipsOptions().apply {
+                lines = listOf(variable(CorrVar.CORR))
+                formats = listOf(
+                    Format().apply {
+                        field = variable(CorrVar.CORR)
+                        format = VALUE_FORMAT
+                    }
+                )
+            }
+            samplingOptions = SamplingOptions.NONE
+        }
     }
 
     private fun addCommonParams(
