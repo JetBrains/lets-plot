@@ -24,39 +24,39 @@ object AutoMpg {
     }
 
     val mpg get() = Column(
-        "mpg",
+        "miles per gallon",
         double(0)
     )
     val cylinders get() = Column(
-        "cyl",
+        "number of cylinders",
         int(1)
     )
     val displacement get() = Column(
-        "disp",
+        "engine displacement (cu. inches)",
         double(2)
     )
     val horsepower get() = Column(
-        "hp",
+        "engine horsepower",
         int(3)
     )
     val weight get() = Column(
-        "weight",
+        "vehicle weight (lbs.)",
         double(4)
     )
     val acceleration get() = Column(
-        "acc",
+        "time to accelerate (sec.)",
         double(5)
     )
     val modelYear get() = Column(
-        "year",
+        "model year",
         int(6)
     )
     val origin get() = Column(
-        "origin",
+        "origin of car",
         string(7)
     )
     val vehicleName get() = Column(
-        "name",
+        "vehicle name",
         string(8)
     )
     val df get() = run {
