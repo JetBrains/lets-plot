@@ -19,6 +19,7 @@ def theme_classic(*,
                   axis_title=None, axis_title_x=None, axis_title_y=None,
                   axis_text=None, axis_text_x=None, axis_text_y=None,
                   axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
+                  axis_ticks_length=None, axis_ticks_length_x=None, axis_ticks_length_y=None,
                   axis_line=None, axis_line_x=None, axis_line_y=None,
                   legend_text=None, legend_title=None,
                   legend_position=None, legend_justification=None, legend_direction=None,
@@ -39,5 +40,4 @@ def theme_classic(*,
     """
 
     filtered = _filter_none(locals())
-    filtered.pop('name', None)  # Remove 'name' if any.
     return FeatureSpec('theme', name="classic", **filtered)

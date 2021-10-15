@@ -29,9 +29,7 @@ def theme(name=None, *,
           axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
           # ToDo: axis.ticks.x.top, axis.ticks.x.bottom
           # ToDo: axis.ticks.x.left, axis.ticks.x.right
-
-          # ToDo: axis.ticks.length, etc..
-
+          axis_ticks_length=None, axis_ticks_length_x=None, axis_ticks_length_y=None,
           axis_line=None, axis_line_x=None, axis_line_y=None,
           # ToDo: axis.line.x.top, axis.line.x.bottom
           # ToDo: axis.line.x.left, axis.line.x.right
@@ -202,29 +200,29 @@ def element_blank() -> dict:
 
 
 def element_rect(
-        blank=False,
         fill=None,
         color=None,
         size=None,
         # ToDo: linetype
+        blank=False,
 ) -> dict:
     return locals()
 
 
 def element_line(
-        blank=False,
         color=None,
         size=None,
         # ToDo: linetype, lineend, arrow
+        blank=False,
 ) -> dict:
     return locals()
 
 
 def element_text(
-        blank=False,
         color=None,
         # ToDo: family, face
         # ToDo: font_size = None,
         # ToDo: hjust, vjust, angle, lineheight, margin
+        blank=False,
 ) -> dict:
     return locals()

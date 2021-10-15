@@ -24,6 +24,7 @@ object ThemeOption {
     const val AXIS_TITLE = "axis_title"
     const val AXIS_TEXT = "axis_text"
     const val AXIS_TICKS = "axis_ticks"
+    const val AXIS_TICKS_LENGTH = "axis_ticks_length"
     const val AXIS_LINE = "axis_line"
     const val AXIS_TOOLTIP = "axis_tooltip"
 
@@ -33,8 +34,11 @@ object ThemeOption {
     const val AXIS_TEXT_Y = "axis_text_y"
     const val AXIS_TICKS_X = "axis_ticks_x"
     const val AXIS_TICKS_Y = "axis_ticks_y"
+    const val AXIS_TICKS_LENGTH_X = "axis_ticks_length_x"
+    const val AXIS_TICKS_LENGTH_Y = "axis_ticks_length_y"
     const val AXIS_LINE_X = "axis_line_x"
     const val AXIS_LINE_Y = "axis_line_y"
+
     const val AXIS_TOOLTIP_X = "axis_tooltip_x"
     const val AXIS_TOOLTIP_Y = "axis_tooltip_y"
 

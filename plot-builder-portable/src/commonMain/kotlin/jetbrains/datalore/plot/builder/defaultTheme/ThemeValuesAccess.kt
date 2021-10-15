@@ -14,19 +14,34 @@ internal open class ThemeValuesAccess(
 ) {
     private val mem: MutableMap<String, Any> = HashMap()
 
-    protected operator fun get(option: String): Any? = values[option]
-    protected fun getValue(option: String): Any = values.getValue(option)
+    protected operator fun get(key: String): Any? = values[key]
+    protected fun getValue(key: String): Any = values.getValue(key)
 
     /**
-     * @param options A stack of option manes: the most specific - first.
+     * @param key List of option names: the most specific - first.
      */
-    protected fun getElemValue(
-        options: List<String>
-    ): Map<String, Any> {
-        val specificOption = options.first()
+    private fun getValue(key: List<String>): Any {
+        val specificOption = key.first()
+        return mem.getOrPut(specificOption) {
+            return key.firstNotNullOfOrNull { values[it] }
+                ?: throw IllegalStateException("No theme value found. Key : $key.")
+        }
+    }
+
+    protected fun getNumber(key: List<String>): Double {
+        val value = getValue(key)
+        return (value as? Number)?.toDouble()
+            ?: throw IllegalStateException("Theme value is not a number: $value. Key : $key.")
+    }
+
+    /**
+     * @param key List of option names: the most specific - first.
+     */
+    protected fun getElemValue(key: List<String>): Map<String, Any> {
+        val specificOption = key.first()
         @Suppress("UNCHECKED_CAST")
         return mem.getOrPut(specificOption) {
-            return options.asReversed().map { values[it] }
+            return key.asReversed().map { values[it] }
                 .fold(HashMap<String, Any>()) { acc, v ->
                     if (v != null) {
                         acc.putAll(v as Map<String, Any>)
@@ -36,18 +51,17 @@ internal open class ThemeValuesAccess(
         } as Map<String, Any>
     }
 
-    protected fun isElemBlank(options: List<String>): Boolean {
-        val blankValue = getElemValue(options)[Elem.BLANK]
+    protected fun isElemBlank(key: List<String>): Boolean {
+        val blankValue = getElemValue(key)[Elem.BLANK]
         return blankValue != null && blankValue as Boolean
     }
 
-    protected fun getNumber(elem: Map<String, Any>, option: String): Double {
-        return (elem.getValue(option) as Number).toDouble()
+    protected fun getNumber(elem: Map<String, Any>, key: String): Double {
+        return (elem.getValue(key) as Number).toDouble()
     }
 
-    protected fun getColor(elem: Map<String, Any>, option: String): Color {
-        val value = elem.getValue(option)
-        return when (value) {
+    protected fun getColor(elem: Map<String, Any>, key: String): Color {
+        return when (val value = elem.getValue(key)) {
             is Color -> value
             else -> Colors.parseColor(value as String)
         }
