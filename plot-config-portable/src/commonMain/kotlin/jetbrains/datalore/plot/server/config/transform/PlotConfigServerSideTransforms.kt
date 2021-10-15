@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.config.Option.PlotBase
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.SpecSelector
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
-import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrPlotSpecChange
+import jetbrains.datalore.plot.server.config.transform.bistro.CorrPlotSpecChange
 
 object PlotConfigServerSideTransforms {
     fun migrationTransform(): PlotSpecTransform {

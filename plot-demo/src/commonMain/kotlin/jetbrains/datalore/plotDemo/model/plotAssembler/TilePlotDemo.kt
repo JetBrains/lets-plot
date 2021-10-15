@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class TilePlotDemo : SimpleDemoBase() {
@@ -83,7 +82,7 @@ open class TilePlotDemo : SimpleDemoBase() {
         val assembler = PlotAssembler.singleTile(
             scaleByAes,
             listOf(tilesLayer),
-            CoordProviders.cartesian(), DefaultTheme()
+            CoordProviders.cartesian(), theme
         )
         assembler.title = "Tile geometry"
         assembler.disableInteractions()

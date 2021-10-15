@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot
 
 object FeatureSwitch {
-    const val USE_THEME2 = false
 
     const val PLOT_VIEW_TOOLBOX = false
 

@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil
-import kotlin.test.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class LocatorForSameObjectsTest {
@@ -54,10 +54,9 @@ class LocatorForSameObjectsTest {
         private val SECOND_TARGET = TestUtil.pointTarget(SECOND_POINT_KEY, POINT_COORD)
 
         private fun findTargets(targetLocators: List<GeomTargetLocator>): List<GeomTargetLocator.LookupResult> {
-            val targetsPicker = LocatedTargetsPicker()
+            val targetsPicker = LocatedTargetsPicker(flippedAxis = false)
             targetLocators.forEach { locator ->
-                val lookupResult = locator.search(POINT_COORD)
-                lookupResult?.let { targetsPicker.addLookupResult(it, flippedAxis = false) }
+                locator.search(POINT_COORD)?.let(targetsPicker::addLookupResult)
             }
             return targetsPicker.picked
         }

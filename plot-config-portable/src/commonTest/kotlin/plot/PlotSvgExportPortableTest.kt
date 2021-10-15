@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.annotation.IgnoreJs
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
@@ -13,6 +12,7 @@ import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,7 +23,7 @@ internal class PlotSvgExportPortableTest {
     }
 
     @Test
-    @IgnoreJs
+    @Ignore
     fun svgFromSinglePlot() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_SinglePlot(),
@@ -36,7 +36,7 @@ internal class PlotSvgExportPortableTest {
     }
 
     @Test
-    @IgnoreJs
+    @Ignore
     fun svgFromGGBunch() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_GGBunch(),

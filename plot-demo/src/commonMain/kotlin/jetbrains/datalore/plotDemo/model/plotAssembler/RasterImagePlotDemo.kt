@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SharedPieces
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
@@ -73,7 +72,7 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             scaleByAes,
             listOf(layer),
             CoordProviders.cartesian(),
-            DefaultTheme()
+            theme
         )
         assembler.disableInteractions()
         assembler.title = "Raster image geometry"

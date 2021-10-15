@@ -13,12 +13,15 @@ import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.plotAssembler.ErrorBarPlotDemo.DemoVariant.*
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
@@ -27,7 +30,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
+    fun createPlots(): List<PlotSvgComponent> {
         return listOf(
             simple(),
             withDodgePos(),
@@ -35,19 +38,19 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): jetbrains.datalore.plot.builder.PlotSvgComponent =
-        createPlot(SIMPLE)
+    private fun simple(): PlotSvgComponent =
+        createPlot(SIMPLE, theme)
 
-    private fun withDodgePos(): jetbrains.datalore.plot.builder.PlotSvgComponent =
-        createPlot(WITH_DODGE_POS)
+    private fun withDodgePos(): PlotSvgComponent =
+        createPlot(WITH_DODGE_POS, theme)
 
-    private fun blackWithGroup(): jetbrains.datalore.plot.builder.PlotSvgComponent =
-        createPlot(BLACK_WITH_GROUP)
+    private fun blackWithGroup(): PlotSvgComponent =
+        createPlot(BLACK_WITH_GROUP, theme)
 
 
     companion object {
 
-        private fun createPlot(demoVariant: DemoVariant): jetbrains.datalore.plot.builder.PlotSvgComponent {
+        private fun createPlot(demoVariant: DemoVariant, theme: Theme): PlotSvgComponent {
             // sample see: Cookbook for R: www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
             /*
 
@@ -112,9 +115,9 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             )
 
 
-            val layerBuilder = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+            val layerBuilder = GeomLayerBuilder.demoAndTest()
                 .stat(Stats.IDENTITY)
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.errorBar())
+                .geom(GeomProvider.errorBar())
                 .pos(pos)
                 .addBinding(
                     VarBinding(
@@ -153,9 +156,9 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // lines layer
             //
-            val linesLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+            val linesLayer = GeomLayerBuilder.demoAndTest()
                 .stat(Stats.IDENTITY)
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.line())
+                .geom(GeomProvider.line())
                 .pos(pos)
                 .addBinding(
                     VarBinding(
@@ -175,9 +178,9 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // points layer
             //
-            val pointsLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+            val pointsLayer = GeomLayerBuilder.demoAndTest()
                 .stat(Stats.IDENTITY)
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
+                .geom(GeomProvider.point())
                 .pos(pos)
                 .addBinding(
                     VarBinding(
@@ -204,7 +207,9 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                     errorBarsLayer,
                     linesLayer,
                     pointsLayer
-                ), CoordProviders.cartesian(), DefaultTheme()
+                ),
+                CoordProviders.cartesian(),
+                theme
             )
             assembler.title = "Error Bars"
             assembler.disableInteractions()

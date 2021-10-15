@@ -18,9 +18,9 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.AxisUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.theme2.DefaultTheme2
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption
-import jetbrains.datalore.plot.builder.theme2.values.ThemeValuesRClassic
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -130,7 +130,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val themeOptions = baselineValues + mapOf(
                 ThemeOption.PANEL_GRID to mapOf(ThemeOption.Elem.COLOR to Color.RED)
             )
-            val theme = DefaultTheme2(themeOptions)
+            val theme = DefaultTheme(themeOptions)
 
             val axis = AxisComponent(
                 length = axisLength,

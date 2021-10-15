@@ -166,10 +166,9 @@ class LocatorByGeneralTooltipTest {
     private fun findTargets(
         targetLocators: List<GeomTargetLocator>
     ): List<LookupResult> {
-        val targetsPicker = LocatedTargetsPicker()
+        val targetsPicker = LocatedTargetsPicker(flippedAxis = false)
         targetLocators.forEach { locator ->
-            val lookupResult = locator.search(COORD)
-            lookupResult?.let { targetsPicker.addLookupResult(it, flippedAxis = false) }
+            locator.search(COORD)?.let(targetsPicker::addLookupResult)
         }
         return targetsPicker.picked
     }
