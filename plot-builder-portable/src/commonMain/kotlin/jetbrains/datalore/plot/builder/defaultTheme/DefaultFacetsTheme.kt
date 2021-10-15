@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
-class DefaultFacetsTheme(
+internal class DefaultFacetsTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), FacetsTheme {
 

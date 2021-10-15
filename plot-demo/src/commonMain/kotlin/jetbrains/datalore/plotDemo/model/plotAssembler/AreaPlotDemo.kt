@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -74,7 +75,7 @@ open class AreaPlotDemo : SimpleDemoBase() {
             .build(data, scaleByAes)
 
         val assembler =
-            PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), ThemeConfig().theme)
+            PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), DefaultTheme.minimal2())
         assembler.disableInteractions()
         return assembler.createPlot()
     }

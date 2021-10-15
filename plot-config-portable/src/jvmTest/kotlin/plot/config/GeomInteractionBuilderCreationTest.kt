@@ -6,11 +6,12 @@
 package jetbrains.datalore
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
-import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.config.GeomInteractionUtil
@@ -261,7 +262,7 @@ class GeomInteractionBuilderCreationTest {
 
     private fun createGeomInteractionBuilder(
         plotOpts: MutableMap<String, Any>,
-        theme: Theme = ThemeConfig().theme
+        theme: Theme = DefaultTheme.minimal2()
     ): GeomInteractionBuilder {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
         require(!PlotConfig.isFailure(plotSpec)) { PlotConfig.getErrorMessage(plotSpec) }

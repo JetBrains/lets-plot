@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITL
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
-class DefaultPlotTheme(
+internal class DefaultPlotTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), PlotTheme {
 

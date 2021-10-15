@@ -22,7 +22,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
-internal class ThemeValuesBase : ThemeValues(VALUES) {
+class ThemeValuesBase : ThemeValues(VALUES) {
 
     companion object {
 
@@ -55,7 +55,7 @@ internal class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             PANEL_GRID_MINOR to mapOf(
-                Elem.SIZE to 0.7,
+                Elem.SIZE to 0.5,
             ),
 
             FACET_STRIP_BGR_RECT to RECT + mapOf(

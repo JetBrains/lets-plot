@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 
-class DefaultPanelTheme(
+internal class DefaultPanelTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), PanelTheme {
 

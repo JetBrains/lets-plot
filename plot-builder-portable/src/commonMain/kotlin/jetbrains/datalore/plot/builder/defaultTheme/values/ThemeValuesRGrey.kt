@@ -67,7 +67,7 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
                 Elem.SIZE to 1.4,
             ),
             PANEL_GRID_MINOR to mapOf(
-                Elem.SIZE to 0.7,
+                Elem.SIZE to 0.5,
             ),
 
             // Axis

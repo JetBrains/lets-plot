@@ -75,7 +75,8 @@ object ThemeOption {
 
         // text
         const val FONT_FAMILY = "family"     // ToDo
-        const val FONT_FACE = "face"
+        const val FONT_FACE = "face"         // ToDo
+        const val FONT_SIZE = "font_size"    // ToDo
         const val HJUST = "hjust"       // ToDo
         const val VJUST = "vjust"       // ToDo
         const val ANGLE = "angle"       // ToDo
@@ -89,6 +90,6 @@ object ThemeOption {
         const val R_GREY = "grey"
 
         // lets-plot themes
-        const val LP_MINIMAL2 = "lp_minimal2"
+        const val LP_MINIMAL = "minimal2"
     }
 }

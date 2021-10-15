@@ -21,8 +21,8 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
-import jetbrains.datalore.plot.config.theme.ThemeConfig
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,
@@ -98,7 +98,7 @@ class BarPlotResizeDemo private constructor(
             scaleByAes,
             listOf(layer),
             CoordProviders.cartesian(),
-            ThemeConfig().theme
+            DefaultTheme.minimal2()
         )
         return assembler.createPlot()
     }

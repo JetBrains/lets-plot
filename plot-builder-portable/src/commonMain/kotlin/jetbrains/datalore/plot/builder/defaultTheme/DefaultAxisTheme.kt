@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
-class DefaultAxisTheme(
+internal class DefaultAxisTheme(
     axis: String,
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), AxisTheme {

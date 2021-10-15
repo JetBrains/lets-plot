@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.theme.*
 
 class DefaultTheme(
@@ -34,5 +35,9 @@ class DefaultTheme(
     override fun multiTile(): Theme {
         // The same for now.
         return this
+    }
+
+    companion object {
+        fun minimal2() = DefaultTheme(ThemeValuesLPMinimal2().values)
     }
 }

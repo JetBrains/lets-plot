@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TI
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
-class DefaultLegendTheme(
+internal class DefaultLegendTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), LegendTheme {
 

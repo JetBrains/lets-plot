@@ -9,7 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 
-open class ThemeValuesAccess(
+internal open class ThemeValuesAccess(
     private val values: Map<String, Any>
 ) {
     private val mem: MutableMap<String, Any> = HashMap()
