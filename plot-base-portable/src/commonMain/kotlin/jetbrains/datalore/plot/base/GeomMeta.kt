@@ -211,6 +211,8 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
+            GeomKind.VIOLIN -> listOf()
+
             GeomKind.RIBBON -> listOf(
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,

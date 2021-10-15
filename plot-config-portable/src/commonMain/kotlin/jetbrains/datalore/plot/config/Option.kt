@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomKind.VIOLIN
 import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
 object Option {
@@ -136,6 +137,10 @@ object Option {
             const val FILL = "outlier_fill"
             const val SHAPE = "outlier_shape"
             const val SIZE = "outlier_size"
+        }
+
+        object Violin {
+            // TODO
         }
 
         object Jitter {
@@ -439,6 +444,7 @@ object Option {
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
         private const val BOX_PLOT = "boxplot"
+        private const val VIOLIN = "violin"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
         private const val RIBBON = "ribbon"
@@ -478,6 +484,7 @@ object Option {
             map[H_LINE] = GeomKind.H_LINE
             map[V_LINE] = GeomKind.V_LINE
             map[BOX_PLOT] = GeomKind.BOX_PLOT
+            map[VIOLIN] = GeomKind.VIOLIN
             map[LIVE_MAP] = GeomKind.LIVE_MAP
             map[POINT] = GeomKind.POINT
             map[RIBBON] = GeomKind.RIBBON

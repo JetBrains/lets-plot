@@ -143,6 +143,10 @@ open class AestheticsDefaults {
             return crossBar()
         }
 
+        fun violin(): AestheticsDefaults {
+            return base()
+        }
+
         fun livemap(displayMode: LivemapConstants.DisplayMode): AestheticsDefaults {
             return when (displayMode) {
                 LivemapConstants.DisplayMode.POINT -> point()
