@@ -73,7 +73,7 @@ class AxisComponent(
         }
 
         var axisLine: SvgLineElement? = null
-        if (axisTheme.showLine()) {
+        if (!hideAxisBreaks && axisTheme.showLine()) {
             axisLine = SvgLineElement(x1, y1, x2, y2)
             axisLine.strokeWidth().set(axisTheme.lineWidth())
             axisLine.strokeColor().set(axisTheme.lineColor())
