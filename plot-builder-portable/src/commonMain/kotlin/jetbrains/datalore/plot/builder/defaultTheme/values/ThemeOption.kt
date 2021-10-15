@@ -27,6 +27,7 @@ object ThemeOption {
     const val AXIS_TICKS_LENGTH = "axis_ticks_length"
     const val AXIS_LINE = "axis_line"
     const val AXIS_TOOLTIP = "axis_tooltip"
+    const val AXIS_TOOLTIP_TEXT = "axis_tooltip_text"
 
     const val AXIS_TITLE_X = "axis_title_x"
     const val AXIS_TITLE_Y = "axis_title_y"
@@ -41,6 +42,8 @@ object ThemeOption {
 
     const val AXIS_TOOLTIP_X = "axis_tooltip_x"
     const val AXIS_TOOLTIP_Y = "axis_tooltip_y"
+    const val AXIS_TOOLTIP_TEXT_X = "axis_tooltip_text_x"
+    const val AXIS_TOOLTIP_TEXT_Y = "axis_tooltip_text_y"
 
     // Panel
     const val PANEL_BKGR_RECT = "panel_background"
@@ -80,7 +83,6 @@ object ThemeOption {
         // text
         const val FONT_FAMILY = "family"     // ToDo
         const val FONT_FACE = "face"         // ToDo
-        const val FONT_SIZE = "font_size"    // ToDo
         const val HJUST = "hjust"       // ToDo
         const val VJUST = "vjust"       // ToDo
         const val ANGLE = "angle"       // ToDo

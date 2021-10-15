@@ -52,8 +52,6 @@ class ThemeValuesBase : ThemeValues(VALUES) {
             AXIS_TICKS_LENGTH to 4.0,
 
             AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to Color.WHITE,
-                Elem.FILL to Color.BLACK,
                 Elem.SIZE to 1.0,
             ),
 

@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
@@ -29,9 +30,10 @@ internal class DefaultAxisTheme(
     private val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
     private val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
     private val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS + suffix, AXIS, TITLE, TEXT)
-    private val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
     private val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
     private val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
+    private val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
+    private val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT)
 
     override fun showLine(): Boolean {
         return !isElemBlank(lineKey)
@@ -79,5 +81,22 @@ internal class DefaultAxisTheme(
 
     override fun labelColor(): Color {
         return getColor(getElemValue(textKey), Elem.COLOR)
+    }
+
+    override fun tooltipFill(): Color {
+        return getColor(getElemValue(tooltipKey + lineKey), Elem.FILL)
+    }
+
+    override fun tooltipColor(): Color {
+        return getColor(getElemValue(tooltipKey), Elem.COLOR)
+    }
+
+    override fun tooltipStrokeWidth(): Double {
+        return getNumber(getElemValue(tooltipKey), Elem.SIZE)
+    }
+
+    override fun tooltipTextColor(): Color {
+        // Inherits from the tooltip rect stroke color.
+        return getColor(getElemValue(tooltipTextKey + tooltipKey), Elem.COLOR)
     }
 }

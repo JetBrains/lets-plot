@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_Y
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_Y
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
@@ -51,10 +52,6 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
                 Elem.COLOR to BLACK
             ),
 
-//        LEGEND_TEXT to mapOf(
-//            Elem.COLOR to DARK_GREY
-//        ),
-
             PANEL_BKGR_RECT to ELEMENT_BLANK,
             PANEL_GRID_MINOR to ELEMENT_BLANK,
             PANEL_GRID to mapOf(
@@ -65,6 +62,11 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
             AXIS_TICKS_Y to ELEMENT_BLANK,
             AXIS to mapOf(
                 Elem.COLOR to DARK_GREY
+            ),
+
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to PLOT_BACKGROUND,
+                Elem.FILL to DARK_GREY,
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(

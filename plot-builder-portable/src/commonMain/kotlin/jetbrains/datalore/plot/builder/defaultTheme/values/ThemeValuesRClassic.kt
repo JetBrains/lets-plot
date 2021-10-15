@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
@@ -55,6 +56,11 @@ class ThemeValuesRClassic : ThemeValues(VALUES) {
 
             AXIS to mapOf(
                 Elem.COLOR to DARK_GREY
+            ),
+
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to PLOT_BACKGROUND,
+                Elem.FILL to DARK_GREY,
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(

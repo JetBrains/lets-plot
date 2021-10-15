@@ -40,4 +40,9 @@ interface AxisTheme {
         }
         return result
     }
+
+    fun tooltipFill(): Color
+    fun tooltipColor(): Color
+    fun tooltipStrokeWidth(): Double
+    fun tooltipTextColor(): Color
 }
