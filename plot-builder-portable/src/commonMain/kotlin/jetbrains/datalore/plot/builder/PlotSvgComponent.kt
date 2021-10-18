@@ -34,7 +34,7 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
 
-class PlotSvgComponent(
+class PlotSvgComponent constructor(
     private val title: String?,
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
@@ -412,7 +412,7 @@ class PlotSvgComponent(
                     Orientation.LEFT,
                     withoutTitleAndLegends,
                     geomAreaBounds,
-                    theme.axisY()
+                    theme.axisY(flippedAxis)
                 )
             }
             if (hasAxisTitleBottom()) {
@@ -421,7 +421,7 @@ class PlotSvgComponent(
                     Orientation.BOTTOM,
                     withoutTitleAndLegends,
                     geomAreaBounds,
-                    theme.axisX()
+                    theme.axisX(flippedAxis)
                 )
             }
         }
