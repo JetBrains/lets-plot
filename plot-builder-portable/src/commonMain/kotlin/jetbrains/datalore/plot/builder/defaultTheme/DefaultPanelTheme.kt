@@ -33,7 +33,7 @@ internal class DefaultPanelTheme(
         return getColor(getElemValue(rectKey), Elem.FILL)
     }
 
-    override fun rectsize(): Double {
+    override fun rectStrokeWidth(): Double {
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 

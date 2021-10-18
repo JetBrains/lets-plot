@@ -6,18 +6,20 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class DefaultAxisTheme(
     axis: String,
@@ -28,15 +30,17 @@ internal class DefaultAxisTheme(
     private val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
     private val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
     private val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS + suffix, AXIS, TITLE, TEXT)
+    private val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
+    private val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
     private val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
-    private val tickmarkKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
+    private val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT)
 
     override fun showLine(): Boolean {
         return !isElemBlank(lineKey)
     }
 
     override fun showTickMarks(): Boolean {
-        return !isElemBlank(tickmarkKey)
+        return !isElemBlank(tickKey)
     }
 
     override fun showLabels(): Boolean {
@@ -64,14 +68,35 @@ internal class DefaultAxisTheme(
     }
 
     override fun tickMarkWidth(): Double {
-        return getNumber(getElemValue(tickmarkKey), Elem.SIZE)
+        return getNumber(getElemValue(tickKey), Elem.SIZE)
+    }
+
+    override fun tickMarkLength(): Double {
+        return getNumber(tickLengthKey)
     }
 
     override fun tickMarkColor(): Color {
-        return getColor(getElemValue(tickmarkKey), Elem.COLOR)
+        return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
     override fun labelColor(): Color {
         return getColor(getElemValue(textKey), Elem.COLOR)
+    }
+
+    override fun tooltipFill(): Color {
+        return getColor(getElemValue(tooltipKey + lineKey), Elem.FILL)
+    }
+
+    override fun tooltipColor(): Color {
+        return getColor(getElemValue(tooltipKey), Elem.COLOR)
+    }
+
+    override fun tooltipStrokeWidth(): Double {
+        return getNumber(getElemValue(tooltipKey), Elem.SIZE)
+    }
+
+    override fun tooltipTextColor(): Color {
+        // Inherits from the tooltip rect stroke color.
+        return getColor(getElemValue(tooltipTextKey + tooltipKey), Elem.COLOR)
     }
 }

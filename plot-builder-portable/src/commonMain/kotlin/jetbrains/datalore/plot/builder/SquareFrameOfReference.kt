@@ -223,7 +223,7 @@ internal class SquareFrameOfReference(
         private fun buildPanelComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
             return SvgRectElement(bounds).apply {
                 strokeColor().set(theme.rectColor())
-                strokeWidth().set(theme.rectsize())
+                strokeWidth().set(theme.rectStrokeWidth())
                 fillColor().set(theme.rectFill())
             }
         }

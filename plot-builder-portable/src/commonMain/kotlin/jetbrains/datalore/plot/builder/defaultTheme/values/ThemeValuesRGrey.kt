@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
@@ -77,6 +78,11 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
             AXIS_LINE to ELEMENT_BLANK,
             AXIS_TICKS to mapOf(
                 Elem.SIZE to 1.4
+            ),
+
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to PLOT_BACKGROUND,
+                Elem.FILL to DARK_GREY,
             ),
 
             // Facets

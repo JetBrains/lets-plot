@@ -6,10 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.guide.LegendDirection
-import jetbrains.datalore.plot.builder.guide.LegendJustification
-import jetbrains.datalore.plot.builder.guide.LegendPosition
-import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
@@ -21,6 +18,10 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRI
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.guide.LegendDirection
+import jetbrains.datalore.plot.builder.guide.LegendJustification
+import jetbrains.datalore.plot.builder.guide.LegendPosition
+import jetbrains.datalore.plot.builder.presentation.Defaults
 
 class ThemeValuesBase : ThemeValues(VALUES) {
 
@@ -48,9 +49,9 @@ class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.FONT_FACE to FontFace.BOLD,
             ),
 
+            AXIS_TICKS_LENGTH to 4.0,
+
             AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to Color.WHITE,
-                Elem.FILL to Color.BLACK,
                 Elem.SIZE to 1.0,
             ),
 
