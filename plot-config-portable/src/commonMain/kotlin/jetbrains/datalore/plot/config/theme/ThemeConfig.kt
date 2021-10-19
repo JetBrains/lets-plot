@@ -5,126 +5,57 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.theme.*
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.AXIS_LINE
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
+import jetbrains.datalore.plot.builder.defaultTheme.values.*
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.config.Option
 
-class ThemeConfig(options: Map<String, Any>) {
+class ThemeConfig constructor(
+    themeSettings: Map<String, Any> = emptyMap()
+) {
 
-    val theme: Theme = OneTileTheme(options)
+    val theme: Theme
 
-    private abstract class ConfiguredTheme(
-        private val options: Map<String, Any>,
-        defOptions: Map<String, Any>
-    ) : Theme {
+    init {
 
-        private val axisXTheme: AxisTheme = AxisThemeConfig.X(options, defOptions)
-        private val axisYTheme: AxisTheme = AxisThemeConfig.Y(options, defOptions)
-        private val legendTheme: LegendTheme = LegendThemeConfig(options, defOptions)
+        val themeName = themeSettings.getOrElse(Option.Meta.NAME) { ThemeOption.Name.LP_MINIMAL }.toString()
+        val baselineValues = THEME_VALUES_BY_NAME.getOrElse(themeName) { ThemeValuesBase() }
 
-        override fun axisX(): AxisTheme {
-            return axisXTheme
+        // ToDo: select defaults.
+//        val baselineValues = ThemeValuesLPMinimal2()
+//            val baselineValues = ThemeValuesRClassic()
+//            val baselineValues = ThemeValuesRGrey()
+
+        // Make sure all values are converted to proper objects.
+        @Suppress("NAME_SHADOWING")
+        val userOptions: Map<String, Any> = themeSettings.mapValues { (key, value) ->
+            val value = convertElementBlank(value)
+            LegendThemeConfig.convertValue(key, value)
         }
 
-        override fun axisY(): AxisTheme {
-            return axisYTheme
-        }
-
-        override fun legend(): LegendTheme {
-            return legendTheme
-        }
-
-        override fun facets(): FacetsTheme {
-            // ToDo: configurable
-            return DEF.facets()
-        }
-
-        override fun plot(): PlotTheme {
-            // ToDo: configurable
-            return DEF.plot()
-        }
-
-        override fun panel(): PanelTheme {
-            return object : PanelTheme {
-                override fun showRect(): Boolean {
-                    return false
-                }
-
-                override fun rectColor(): Color {
-                    TODO("Not yet implemented")
-                }
-
-                override fun rectFill(): Color {
-                    TODO("Not yet implemented")
-                }
-
-                override fun rectsize(): Double {
-                    TODO("Not yet implemented")
-                }
-
-                override fun gridX(): PanelGridTheme = DUMMY_GRID_THEME
-
-                override fun gridY(): PanelGridTheme = DUMMY_GRID_THEME
-            }
-        }
-
-        override fun multiTile(): Theme {
-            return MultiTileTheme(options)
-        }
-    }
-
-    private class OneTileTheme(options: Map<String, Any>) :
-        ConfiguredTheme(options, DEF_OPTIONS)
-
-    private class MultiTileTheme(options: Map<String, Any>) :
-        ConfiguredTheme(options, DEF_OPTIONS_MULTI_TILE) {
-
-//        override fun plot(): PlotTheme {
-//            return DEF.multiTile().plot()
-//        }
-
-        override fun panel(): PanelTheme {
-            return DEF.multiTile().panel()
-        }
+        val effectiveOptions: Map<String, Any> = baselineValues + userOptions
+        theme = DefaultTheme(effectiveOptions)
     }
 
     companion object {
-        internal val DEF: Theme = DefaultTheme()
-        private val DEF_OPTIONS = mapOf(
-            LEGEND_POSITION to DEF.legend().position(),
-            LEGEND_JUSTIFICATION to DEF.legend().justification(),
-            LEGEND_DIRECTION to DEF.legend().direction()
+        private val THEME_VALUES_BY_NAME: Map<String, ThemeValues> = mapOf(
+            ThemeOption.Name.R_GREY to ThemeValuesRGrey(),
+            ThemeOption.Name.R_CLASSIC to ThemeValuesRClassic(),
+            ThemeOption.Name.LP_MINIMAL to ThemeValuesLPMinimal2(),
         )
 
-        private val DEF_OPTIONS_MULTI_TILE = DEF_OPTIONS + mapOf(
-            "${AXIS_LINE}_x" to ELEMENT_BLANK,      // replaced by inner frame
-            "${AXIS_LINE}_y" to ELEMENT_BLANK,      // replaced by inner frame
-        )
-
-        private val DUMMY_GRID_THEME: PanelGridTheme = object : PanelGridTheme {
-            override fun showMajor(): Boolean = false
-
-            override fun showMinor(): Boolean = false
-
-            override fun majorLineWidth(): Double {
-                TODO("Not yet implemented")
+        /**
+         * Converts a simple "blank" string to a 'blank element'.
+         */
+        private fun convertElementBlank(value: Any): Any {
+            if (value is String && value == ThemeOption.ELEMENT_BLANK_SHORTHAND) {
+                return ELEMENT_BLANK
             }
-
-            override fun minorLineWidth(): Double {
-                TODO("Not yet implemented")
+            if (value is Map<*, *> && value["name"] == "blank") {
+                return ELEMENT_BLANK
             }
-
-            override fun majorLineColor(): Color {
-                TODO("Not yet implemented")
-            }
-
-            override fun minorLineColor(): Color {
-                TODO("Not yet implemented")
-            }
+            return value
         }
     }
 }

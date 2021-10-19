@@ -8,7 +8,7 @@ package jetbrains.letsPlot.bistro.corr
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.FULL
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
-import jetbrains.letsPlot.bistro.corr.CorrPlot.LayerParams
+import jetbrains.letsPlot.bistro.corr.CorrPlotOptionsBuilder.LayerParams
 
 internal object OptionsConfigurator {
     /**

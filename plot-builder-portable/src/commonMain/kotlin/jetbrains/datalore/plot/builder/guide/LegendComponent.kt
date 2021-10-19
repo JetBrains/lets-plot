@@ -13,7 +13,7 @@ import jetbrains.datalore.vis.svg.*
 
 class LegendComponent(
     override val spec: LegendComponentSpec
-) : LegendBox() {
+) : LegendBox(spec.theme) {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val layout = spec.layout
@@ -42,6 +42,7 @@ class LegendComponent(
 
         // add label at position as was layout
         val label = TextLabel(br.label)
+        label.textColor().set(theme.textColor())
         label.setHorizontalAnchor(TextLabel.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin.add(DoubleVector(0.0, labelBox.height / 2)))

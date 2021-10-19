@@ -45,8 +45,8 @@ internal class TooltipRenderer(
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
 
         regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_MOVED, handler(this::onMouseMove)))
-        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_DRAGGED, handler(this::onMouseDrag)))
-        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_LEFT, handler(this::onMouseLeft)))
+        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_DRAGGED, handler { hideTooltip() }))
+        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_LEFT, handler { hideTooltip() }))
     }
 
     override fun dispose() {
@@ -58,14 +58,6 @@ internal class TooltipRenderer(
         val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
 
         showTooltips(coord)
-    }
-
-    private fun onMouseDrag(e: MouseEvent) {
-        hideTooltip()
-    }
-
-    private fun onMouseLeft(e: MouseEvent) {
-        hideTooltip()
     }
 
     private fun showTooltips(cursor: DoubleVector) {
@@ -190,11 +182,11 @@ internal class TooltipRenderer(
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
-            val targetsPicker = LocatedTargetsPicker().apply {
+            val targetsPicker = LocatedTargetsPicker(flippedAxis).apply {
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
-                        addLookupResult(result, plotCoord, flippedAxis)
+                        addLookupResult(result, plotCoord)
                     }
                 }
             }

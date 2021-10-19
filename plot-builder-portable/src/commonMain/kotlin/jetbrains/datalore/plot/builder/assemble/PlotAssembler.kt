@@ -56,7 +56,7 @@ class PlotAssembler private constructor(
             //  - skip X/Y scale training
             //  - ignore coord provider
             //  - plot layout without axes
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(LiveMapTileLayout(), facets)
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(LiveMapTileLayout(), facets, theme.facets())
             val fOrProvider = BogusFrameOfReferenceProvider()
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         } else {
@@ -69,7 +69,7 @@ class PlotAssembler private constructor(
                 coordProvider,
                 theme
             )
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets)
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets, theme.facets())
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         }
     }

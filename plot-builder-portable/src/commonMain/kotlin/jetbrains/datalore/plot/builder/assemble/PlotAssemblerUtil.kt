@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColo
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.guideTransformedDomainByAes
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
@@ -206,14 +207,15 @@ internal object PlotAssemblerUtil {
         return legendBoxInfos
     }
 
-    fun createPlotLayout(tileLayout: TileLayout, facets: PlotFacets): PlotLayout {
+    fun createPlotLayout(tileLayout: TileLayout, facets: PlotFacets, facetsTheme: FacetsTheme): PlotLayout {
         if (!facets.isDefined) {
             return SingleTilePlotLayout(tileLayout)
         }
 
         return FacetGridPlotLayout(
             facets,
-            tileLayout
+            tileLayout,
+            facetsTheme.showStrip()
         )
     }
 

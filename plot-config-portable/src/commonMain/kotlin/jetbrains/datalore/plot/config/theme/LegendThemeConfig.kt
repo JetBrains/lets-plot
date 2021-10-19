@@ -5,96 +5,89 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.guide.LegendDirection.*
+import jetbrains.datalore.plot.builder.guide.LegendDirection
+import jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL
+import jetbrains.datalore.plot.builder.guide.LegendDirection.VERTICAL
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
-import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_DIRECTION
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_JUSTIFICATION
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.LEGEND_POSITION
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.config.ConfigUtil
-import jetbrains.datalore.plot.config.OptionsAccessor
 
-internal class LegendThemeConfig(
-    options: Map<String, Any>,
-    defOptions: Map<String, Any>
-) : OptionsAccessor(options, defOptions), LegendTheme {
+internal object LegendThemeConfig {
 
-    override fun keySize(): Double {
-        return ThemeConfig.DEF.legend().keySize()
+    fun convertValue(key: String, value: Any): Any {
+        return when (key) {
+            LEGEND_POSITION -> toPosition(value)
+            LEGEND_JUSTIFICATION -> toJustification(value)
+            LEGEND_DIRECTION -> toDirection(value)
+            else -> value
+        }
     }
 
-    override fun margin(): Double {
-        return ThemeConfig.DEF.legend().margin()
-    }
 
-    override fun padding(): Double {
-        return ThemeConfig.DEF.legend().padding()
-    }
-
-    override fun position(): LegendPosition {
-        when (val o = get(LEGEND_POSITION)) {
+    private fun toPosition(value: Any): LegendPosition {
+        return when (value) {
             is String -> {
-                return when (o) {
+                when (value) {
                     "right" -> LegendPosition.RIGHT
                     "left" -> LegendPosition.LEFT
                     "top" -> LegendPosition.TOP
                     "bottom" -> LegendPosition.BOTTOM
                     "none" -> LegendPosition.NONE
                     else -> throw IllegalArgumentException(
-                        "Illegal value '" +
-                                o +
-                                "', " + LEGEND_POSITION + " expected values are: left/right/top/bottom/none or or two-element numeric list"
+                        "Illegal value: '$value'.\n$LEGEND_POSITION " +
+                                "expected value is either a string: left|right|top|bottom|none or two-element numeric list."
                     )
                 }
             }
             is List<*> -> {
-                val v = ConfigUtil.toNumericPair((o as List<*>?)!!)
-                return LegendPosition(v.x, v.y)
+                val v = ConfigUtil.toNumericPair(value)
+                LegendPosition(v.x, v.y)
             }
             is LegendPosition -> {
-                return o
+                value
             }
-            else -> return ThemeConfig.DEF.legend().position()
+            else -> throw IllegalArgumentException(
+                "Illegal value type: ${value::class.simpleName}.\n$LEGEND_POSITION " +
+                        "expected value is either a string: left|right|top|bottom|none or two-element numeric list."
+            )
         }
     }
 
-    override fun justification(): LegendJustification {
+    private fun toJustification(value: Any): LegendJustification {
         // "center" or two-element numeric vector
-        when (val o = get(LEGEND_JUSTIFICATION)) {
+        return when (value) {
             is String -> {
-                when (o) {
-                    "center" -> return LegendJustification.CENTER
+                when (value) {
+                    "center" -> LegendJustification.CENTER
                     else -> throw IllegalArgumentException(
-                        "Illegal value '$o', $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list"
+                        "Illegal value '$value', $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list."
                     )
                 }
             }
             is List<*> -> {
-                val v = ConfigUtil.toNumericPair((o as List<*>?)!!)
-                return LegendJustification(v.x, v.y)
+                val v = ConfigUtil.toNumericPair(value)
+                LegendJustification(v.x, v.y)
             }
             is LegendJustification -> {
-                return o
+                value
             }
+            else -> throw IllegalArgumentException(
+                "Illegal value type: ${value::class.simpleName}, $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list."
+            )
         }
-        return ThemeConfig.DEF.legend().justification()
     }
 
-    override fun direction(): jetbrains.datalore.plot.builder.guide.LegendDirection {
+    private fun toDirection(value: Any): LegendDirection {
         // "horizontal" or "vertical"
-        val o = get(LEGEND_DIRECTION)
-        if (o is String) {
-            when (o) {
-                "horizontal" -> return HORIZONTAL
-                "vertical" -> return VERTICAL
-            }
+        return when (value) {
+            "horizontal" -> HORIZONTAL
+            "vertical" -> VERTICAL
+            else -> throw IllegalArgumentException(
+                "Illegal value: $value, $LEGEND_DIRECTION. Expected values are: 'horizontal' or 'vertical'."
+            )
         }
-        return AUTO
-    }
-
-    override fun backgroundFill(): Color {
-        return ThemeConfig.DEF.legend().backgroundFill()
     }
 }

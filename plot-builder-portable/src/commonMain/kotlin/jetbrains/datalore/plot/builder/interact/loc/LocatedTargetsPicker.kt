@@ -6,12 +6,15 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomKind.*
+import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.MathUtil
 import kotlin.math.abs
 
-class LocatedTargetsPicker {
+class LocatedTargetsPicker(
+    val flippedAxis: Boolean
+) {
     private val myPicked = ArrayList<LookupResult>()
     private var myMinDistance = 0.0
     private val myAllLookupResults = ArrayList<LookupResult>()
@@ -19,7 +22,7 @@ class LocatedTargetsPicker {
     val picked: List<LookupResult>
         get() = chooseBestResult()
 
-    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null, flippedAxis: Boolean) {
+    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null) {
         val lookupResult = filterResults(result, coord, flippedAxis)
 
         val distance = distance(lookupResult, coord)
@@ -28,12 +31,17 @@ class LocatedTargetsPicker {
         }
 
         when {
+            myPicked.isNotEmpty() && lookupResult.geomKind == TEXT -> {
+                // TEXT tooltips are considered only when no other tooltips are present.
+                // Otherwise, TEXT layer is used as decoration, e.g. values of bars, histograms, corrplot,
+                // and we actually want to see acnestors geom tooltip.
+            }
             myPicked.isEmpty() || myMinDistance > distance -> {
                 myPicked.clear()
                 myPicked.add(lookupResult)
                 myMinDistance = distance
             }
-            myMinDistance == distance && isSameUnivariateGeom(myPicked[0], lookupResult) -> {
+            myMinDistance == distance && stackableResults(myPicked[0], lookupResult) -> {
                 myPicked.add(lookupResult)
             }
             myMinDistance == distance -> {
@@ -49,18 +57,18 @@ class LocatedTargetsPicker {
         fun hasAxisTooltip(lookupResult: LookupResult): Boolean {
             return lookupResult.contextualMapping.hasAxisTooltip ||
                     // actually hline/vline have axis info in the general tooltip
-                    lookupResult.geomKind in listOf(GeomKind.V_LINE, GeomKind.H_LINE)
+                    lookupResult.geomKind in listOf(V_LINE, H_LINE)
         }
 
         return when {
             myPicked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> myPicked
-            myAllLookupResults.none { hasGeneralTooltip(it) } -> myPicked
+            myAllLookupResults.none(::hasGeneralTooltip) -> myPicked
             myAllLookupResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
                 listOf(myAllLookupResults.last { hasGeneralTooltip(it) && hasAxisTooltip(it) })
             }
             else -> {
-                val withGeneralTooltip = myAllLookupResults.lastOrNull { hasGeneralTooltip(it) }
-                val withAxisTooltip = myAllLookupResults.lastOrNull { hasAxisTooltip(it) }
+                val withGeneralTooltip = myAllLookupResults.lastOrNull(::hasGeneralTooltip)
+                val withAxisTooltip = myAllLookupResults.lastOrNull(::hasAxisTooltip)
                 listOfNotNull(withGeneralTooltip, withAxisTooltip)
             }
         }
@@ -69,26 +77,20 @@ class LocatedTargetsPicker {
     companion object {
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
-        private val UNIVARIATE_GEOMS = listOf(
-            GeomKind.DENSITY,
-            GeomKind.FREQPOLY,
-            GeomKind.BOX_PLOT,
-            GeomKind.HISTOGRAM,
-            GeomKind.LINE,
-            GeomKind.AREA,
-            GeomKind.BAR,
-            GeomKind.ERROR_BAR,
-            GeomKind.CROSS_BAR,
-            GeomKind.LINE_RANGE,
-            GeomKind.POINT_RANGE
-        )
 
-        private val UNIVARIATE_LINES = listOf(
-            GeomKind.DENSITY,
-            GeomKind.FREQPOLY,
-            GeomKind.LINE,
-            GeomKind.AREA,
-            GeomKind.SEGMENT
+        // Consider layers with the same geom as a single layer to join their tooltips
+        private val STACKABLE_GEOMS = setOf(
+            DENSITY,
+            FREQPOLY,
+            BOX_PLOT,
+            HISTOGRAM,
+            LINE,
+            AREA,
+            BAR,
+            ERROR_BAR,
+            CROSS_BAR,
+            LINE_RANGE,
+            POINT_RANGE
         )
 
         private fun distance(locatedTargetList: LookupResult, coord: DoubleVector?): Double {
@@ -111,33 +113,33 @@ class LocatedTargetsPicker {
             }
         }
 
-        private fun isSameUnivariateGeom(lft: LookupResult, rgt: LookupResult): Boolean {
-            return lft.geomKind === rgt.geomKind && UNIVARIATE_GEOMS.contains(rgt.geomKind)
+        private fun stackableResults(lft: LookupResult, rgt: LookupResult): Boolean {
+            return lft.geomKind === rgt.geomKind && STACKABLE_GEOMS.contains(rgt.geomKind)
         }
 
         private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?, flippedAxis: Boolean): LookupResult {
-            if (coord == null || lookupResult.geomKind !in UNIVARIATE_LINES) {
+            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, FREQPOLY, LINE, AREA, SEGMENT)) {
                 return lookupResult
             }
 
-            val getCoord = if (flippedAxis) {
-                { point: DoubleVector -> point.y }
-            } else {
-                { point: DoubleVector -> point.x }
+            fun xDistanceToCoord(target: GeomTarget): Double {
+                val distance = target.tipLayoutHint.coord!!.subtract(coord)
+                return when (flippedAxis) {
+                    true -> distance.y
+                    false -> distance.x
+                }
             }
 
             // Get closest targets and remove duplicates
             val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
 
-            val minXToTarget = geomTargets
-                .map { target -> getCoord(target.tipLayoutHint.coord!!.subtract(coord)) }
-                .minByOrNull { abs(it) }
+            val minXDistanceToTarget = geomTargets
+                .map(::xDistanceToCoord)
+                .minByOrNull(::abs)
 
             val newTargets = geomTargets
-                .filter { target ->
-                    getCoord(target.tipLayoutHint.coord!!.subtract(coord)) == minXToTarget
-                }
-                .distinctBy { it.hitIndex }
+                .filter { target -> xDistanceToCoord(target) == minXDistanceToTarget }
+                .distinctBy(GeomTarget::hitIndex)
 
             return LookupResult(
                 targets = newTargets,

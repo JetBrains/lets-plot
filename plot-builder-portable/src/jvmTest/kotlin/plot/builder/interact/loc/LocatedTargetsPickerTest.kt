@@ -101,6 +101,14 @@ class LocatedTargetsPickerTest {
     }
 
     @Test
+    fun shouldIgnoreTextTooltipsIfOtherTooltipsArePresent() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.TEXT)
+
+        assertTargetFrom(firstLookupResultConfig)
+    }
+
+    @Test
     fun withOneLayer_WhenOutOfDistance_ShouldSelectNone() {
         firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 1.5)
         secondLookupResultConfig = null
@@ -118,9 +126,9 @@ class LocatedTargetsPickerTest {
 
     private fun assertTargetFrom(vararg expected: LookupResultConfig?) {
 
-        val targetsPicker = LocatedTargetsPicker()
+        val targetsPicker = LocatedTargetsPicker(flippedAxis = false)
         listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
-                .forEach { targetsPicker.addLookupResult(it, flippedAxis = false) }
+                .forEach(targetsPicker::addLookupResult)
 
         val lookupResults = targetsPicker.picked
 

@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.builder.theme
 
 
 interface Theme {
-    fun axisX(): AxisTheme
+    fun axisX(flipAxis: Boolean = false): AxisTheme
 
-    fun axisY(): AxisTheme
+    fun axisY(flipAxis: Boolean = false): AxisTheme
 
     fun legend(): LegendTheme
 

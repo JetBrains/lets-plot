@@ -11,8 +11,8 @@ import jetbrains.datalore.plotDemo.data.AutoMpg
 class Corr {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            //bistro(),
-            bistroThreshold(),
+            bistro(),
+            //bistroThreshold(),
             //complexMpg()
         )
     }
@@ -35,18 +35,15 @@ class Corr {
       "name": "corr",
       "show_legend": true,
       "flip": false,
-      "point_params": null,
-      "tile_params": {
-        "type": null,
-        "diag": null
-      },
-      "label_params": null,
+      "point_params": {"type": "upper", "diag": false},
+      "tile_params": {"type": "lower", "diag": false},
+      "label_params": {"color": "black", "map_size": true, "diag": false},
       "labels_map_size": null
   }  
 }            
         """.trimIndent()
 
-        return parsePlotSpec(spec)
+        return parsePlotSpec(spec).apply { put("data", AutoMpg.df) }
     }
 
     private fun bistroThreshold(): MutableMap<String, Any> {

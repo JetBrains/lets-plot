@@ -4,17 +4,62 @@
 #
 from .core import FeatureSpec
 
-__all__ = ['theme', 'element_blank']
+__all__ = [
+    'theme',
+    'element_blank',
+    "element_line",
+    'element_rect',
+    'element_text'
+]
 
 
-def theme(*,
+def theme(name=None, *,
+          line=None,
+          rect=None,
+          text=None,
+          title=None,
+          # ToDo: aspect.ratio
+          axis=None, axis_x=None, axis_y=None,
           axis_title=None, axis_title_x=None, axis_title_y=None,
+          # ToDo: axis.title.x.top, axis.title.x.bottom
+          # ToDo: axis.title.y.left, axis.title.y.right
           axis_text=None, axis_text_x=None, axis_text_y=None,
+          # ToDo: axis.text.x.top, axis.text.x.bottom
+          # ToDo: axis.text.x.left, axis.text.x.right
           axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
+          # ToDo: axis.ticks.x.top, axis.ticks.x.bottom
+          # ToDo: axis.ticks.x.left, axis.ticks.x.right
+          axis_ticks_length=None, axis_ticks_length_x=None, axis_ticks_length_y=None,
           axis_line=None, axis_line_x=None, axis_line_y=None,
+          # ToDo: axis.line.x.top, axis.line.x.bottom
+          # ToDo: axis.line.x.left, axis.line.x.right
+
+          legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
-          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
-          **kwargs):
+          # ToDo: legend.background, etc...
+
+          panel_background=None,
+          # ToDo: panel.border, etc...
+
+          panel_grid=None,
+          panel_grid_major=None,
+          panel_grid_minor=None,
+          panel_grid_major_x=None,
+          panel_grid_minor_x=None,
+          panel_grid_major_y=None,
+          panel_grid_minor_y=None,
+
+          plot_title=None,
+          # ToDo: plot_subtitle=None,
+          # ToDo: plot_caption=None,
+          # ToDo: plot.background, etc...
+
+          strip_background=None,  # ToDo: x/y
+          strip_text=None,  # ToDo: x/y
+          # ToDo: strip.placement
+
+          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None
+          ):
     """
     Use `theme()` to modify individual components of a theme,
     allowing you to control the appearance of all non-data components of the plot.
@@ -109,36 +154,31 @@ def theme(*,
                   legend_position=[1, 1], legend_justification=[1, 1])
 
     """
-    return FeatureSpec('theme', name=None,
-                       axis_title=axis_title,
-                       axis_title_x=axis_title_x,
-                       axis_title_y=axis_title_y,
-                       axis_text=axis_text,
-                       axis_text_x=axis_text_x,
-                       axis_text_y=axis_text_y,
-                       axis_ticks=axis_ticks,
-                       axis_ticks_x=axis_ticks_x,
-                       axis_ticks_y=axis_ticks_y,
-                       axis_line=axis_line,
-                       axis_line_x=axis_line_x,
-                       axis_line_y=axis_line_y,
-                       legend_position=legend_position,
-                       legend_justification=legend_justification,
-                       legend_direction=legend_direction,
-                       axis_tooltip=axis_tooltip,
-                       axis_tooltip_x=axis_tooltip_x,
-                       axis_tooltip_y=axis_tooltip_y,
-                       **kwargs)
+
+    was_name = locals()['name']  # 'name' is required argument in 'FeatureSpec'
+    filtered = _filter_none(locals())
+    filtered['name'] = was_name
+    return FeatureSpec('theme', **filtered)
 
 
-def element_blank():
+def _filter_none(original: dict) -> dict:
+    def _filter_val(value):
+        if isinstance(value, dict):
+            return _filter_none(value)
+        else:
+            return value
+
+    return {k: _filter_val(v) for k, v in original.items() if v is not None}
+
+
+def element_blank() -> dict:
     """
     Specifies how non-data components of the plot are drawn.
     This theme element draws nothing, and assigns no space.
 
     Returns
     -------
-    `FeatureSpec`
+    `dict`
         Theme element specification.
 
     Examples
@@ -156,4 +196,33 @@ def element_blank():
             theme(axis_title_x=element_blank(), axis_ticks=element_blank())
 
     """
-    return FeatureSpec('theme_element', name='blank')
+    return dict(blank=True)
+
+
+def element_rect(
+        fill=None,
+        color=None,
+        size=None,
+        # ToDo: linetype
+        blank=False,
+) -> dict:
+    return locals()
+
+
+def element_line(
+        color=None,
+        size=None,
+        # ToDo: linetype, lineend, arrow
+        blank=False,
+) -> dict:
+    return locals()
+
+
+def element_text(
+        color=None,
+        # ToDo: family, face
+        # ToDo: font_size = None,
+        # ToDo: hjust, vjust, angle, lineheight, margin
+        blank=False,
+) -> dict:
+    return locals()
