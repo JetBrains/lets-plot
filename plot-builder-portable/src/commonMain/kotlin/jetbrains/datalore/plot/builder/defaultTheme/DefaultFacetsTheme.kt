@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.theme.FacetsTheme
 
 internal class DefaultFacetsTheme(
     options: Map<String, Any>
@@ -19,6 +19,14 @@ internal class DefaultFacetsTheme(
 
     private val rectKey = listOf(FACET_STRIP_BGR_RECT, RECT)
     private val textKey = listOf(FACET_STRIP_TEXT, TEXT)
+
+    override fun showStrip(): Boolean {
+        return !isElemBlank(textKey)
+    }
+
+    override fun showStripBackground(): Boolean {
+        return showStrip() && !isElemBlank(rectKey)
+    }
 
     override fun stripFill(): Color {
         return getColor(getElemValue(rectKey), Elem.FILL)
