@@ -5,19 +5,23 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation
@@ -32,6 +36,8 @@ internal class TooltipRenderer(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
     plotSize: DoubleVector,
+    private val xAxisTheme: AxisTheme,
+    private val yAxisTheme: AxisTheme,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -44,7 +50,7 @@ internal class TooltipRenderer(
         myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
 
-        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_MOVED, handler(this::onMouseMove)))
+        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
         regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_DRAGGED, handler { hideTooltip() }))
         regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_LEFT, handler { hideTooltip() }))
     }
@@ -52,12 +58,6 @@ internal class TooltipRenderer(
     override fun dispose() {
         myTileInfos.clear()
         regs.dispose()
-    }
-
-    private fun onMouseMove(e: MouseEvent) {
-        val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
-
-        showTooltips(coord)
     }
 
     private fun showTooltips(cursor: DoubleVector) {
@@ -69,10 +69,44 @@ internal class TooltipRenderer(
         tooltipSpecs
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec ->
-                spec
-                    .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
-                    .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier, spec.layoutHint.kind == ROTATED_TOOLTIP) }
-                    .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
+
+                val fillColor = when(spec.isOutlier) {
+                    true -> Colors.mimicTransparency(spec.fill, spec.fill.alpha / 255.0, Color.WHITE)
+                    false -> Color.WHITE
+                }
+
+                val textColor = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipTextColor()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipTextColor()
+                    spec.isOutlier -> LIGHT_TEXT_COLOR.takeIf { fillColor.isReadableOnWhite() } ?: DARK_TEXT_COLOR
+                    else -> spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
+                }
+
+                val borderColor = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
+                    else -> textColor
+                }
+
+                val strokeWidth = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+                    else -> 1.0
+                }
+
+                val tooltipBox = TooltipBox().apply { myTooltipLayer.children().add(rootGroup) }
+                tooltipBox.update(
+                    fillColor = fillColor,
+                    textColor = textColor,
+                    borderColor = borderColor,
+                    strokeWidth = strokeWidth,
+                    lines = spec.lines,
+                    style = spec.style,
+                    rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
+                    tooltipMinWidth = spec.minWidth
+                )
+
+                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
             .also { tooltips -> tooltipBounds?.let { showCrosshair(tooltips, it.handlingArea) } }
@@ -84,21 +118,11 @@ internal class TooltipRenderer(
                         arranged.orientation
                     )
                 }
-            }.forEach { it.visible = true } // arranged, show tooltips
+            }
     }
 
     private fun hideTooltip() = clearTooltips()
-
     private fun clearTooltips() = myTooltipLayer.children().clear()
-
-    private fun newTooltipBox(tooltipMinWidth: Double?): TooltipBox {
-        // Add to the layer to be able to calculate a bbox
-        return TooltipBox(tooltipMinWidth).apply { myTooltipLayer.children().add(rootGroup) }
-    }
-
-    private fun newCrosshairComponent(): CrosshairComponent {
-        return CrosshairComponent().apply { myTooltipLayer.children().add(0, rootGroup) }
-    }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
         val showVertical = tooltips.any { it.hintKind == X_AXIS_TOOLTIP }
@@ -110,7 +134,7 @@ internal class TooltipRenderer(
             .filter { tooltip -> tooltip.tooltipSpec.isCrosshairEnabled }
             .mapNotNull { tooltip -> tooltip.tooltipSpec.layoutHint.coord }
             .forEach { coord ->
-                newCrosshairComponent().also { crosshair ->
+                CrosshairComponent().apply { myTooltipLayer.children().add(0, rootGroup) }.also { crosshair ->
                     if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
                     if (showVertical) crosshair.addVertical(coord, geomBounds)
                 }
@@ -160,8 +184,8 @@ internal class TooltipRenderer(
         val tooltipSpecs = ArrayList<TooltipSpec>()
 
         lookupResults.forEach { result ->
-            val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, flippedAxis)) }
+            val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin, flippedAxis, xAxisTheme, yAxisTheme)
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
         }
 
         return tooltipSpecs
@@ -175,7 +199,10 @@ internal class TooltipRenderer(
     ) {
 
         private val myTargetLocators = targetLocators.map {
-            if (flippedAxis) FlippedTileTargetLocator(it) else TileTargetLocator(it)
+            when {
+                flippedAxis -> FlippedTileTargetLocator(it)
+                else -> TileTargetLocator(it)
+            }
         }
 
         internal val axisOrigin: DoubleVector
@@ -212,6 +239,8 @@ internal class TooltipRenderer(
         }
     }
 
+    private fun Color.isReadableOnWhite() = Colors.luminance(this) < 0.5
+
     private val TooltipSpec.style
         get() =
             when (layoutHint.kind) {
@@ -233,5 +262,4 @@ internal class TooltipRenderer(
                 X_AXIS_TOOLTIP -> Orientation.VERTICAL
                 ROTATED_TOOLTIP -> Orientation.VERTICAL
             }
-
 }

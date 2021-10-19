@@ -23,7 +23,6 @@ class TooltipBoxTest {
     private lateinit var peer: MockSvgPlatformPeer
     private lateinit var tooltipBox: TooltipBox
     private val root = SvgSvgElement()
-    private val container = SvgNodeContainer(root)
     private val wordSize = DoubleVector(40.0, 40.0)
     private val wordText = "WORD"
     private val word = wordText to wordSize
@@ -37,11 +36,13 @@ class TooltipBoxTest {
 
         tooltipBox = TooltipBox().apply {
             root.children().add(rootGroup)
-            setContent(
-                Color.BLACK,
-                listOf(TooltipSpec.Line.withValue(wordText)),
-                "anyStyle",
-                isOutlier = false,
+            update(
+                fillColor = Color.BLACK,
+                textColor = Color.WHITE,
+                borderColor = Color.BLACK,
+                strokeWidth = 1.0,
+                lines = listOf(TooltipSpec.Line.withValue(wordText)),
+                style = "anyStyle",
                 rotate = false
             )
         }
