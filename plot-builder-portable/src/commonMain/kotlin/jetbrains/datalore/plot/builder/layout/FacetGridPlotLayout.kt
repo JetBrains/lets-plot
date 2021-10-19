@@ -12,7 +12,8 @@ import kotlin.math.abs
 
 internal class FacetGridPlotLayout(
     private val facets: PlotFacets,
-    private val tileLayout: TileLayout
+    private val tileLayout: TileLayout,
+    private val showFacetStrip: Boolean
 ) : PlotLayoutBase() {
     private val totalPanelHorizontalPadding: Double = PANEL_PADDING * (facets.colCount - 1)
     private val totalPanelVerticalPadding: Double = PANEL_PADDING * (facets.rowCount - 1)
@@ -30,16 +31,19 @@ internal class FacetGridPlotLayout(
         )
 
         val facetTiles = facets.tileInfos()
-        val tileColLabCounts = facetTiles.firstOrNull { it.colLabs.isNotEmpty() }?.colLabs?.size ?: 0
-        val tileWithColLabInRowCount = facetTiles
-            .filter { it.colLabs.isNotEmpty() }
-            .distinctBy { it.row }.count()
 
-        val totalAddedHeight = facetColHeadHeight(tileColLabCounts) * tileWithColLabInRowCount
+        if (showFacetStrip) {
+            val tileColLabCounts = facetTiles.firstOrNull { it.colLabs.isNotEmpty() }?.colLabs?.size ?: 0
+            val tileWithColLabInRowCount = facetTiles
+                .filter { it.colLabs.isNotEmpty() }
+                .distinctBy { it.row }.count()
 
-        val labsInRow = if (facetTiles.any { it.rowLab != null }) 1 else 0
-        val labsTotalDim = DoubleVector(labsInRow * FACET_TAB_HEIGHT, totalAddedHeight)
-        tilesAreaSize = tilesAreaSize.subtract(labsTotalDim)
+            val totalAddedHeight = facetColHeadHeight(tileColLabCounts) * tileWithColLabInRowCount
+
+            val labsInRow = if (facetTiles.any { it.rowLab != null }) 1 else 0
+            val labsTotalDim = DoubleVector(labsInRow * FACET_TAB_HEIGHT, totalAddedHeight)
+            tilesAreaSize = tilesAreaSize.subtract(labsTotalDim)
+        }
 
         // rough estimate (without axis. The final size will be smaller)
         val tileWidth = (tilesAreaSize.x - totalPanelHorizontalPadding) / facets.colCount
@@ -92,18 +96,21 @@ internal class FacetGridPlotLayout(
                 width += axisThicknessY
                 geomX = axisThicknessY
             }
-            if (facetTile.rowLab != null) {
+            if (facetTile.rowLab != null && showFacetStrip) {
                 width += FACET_TAB_HEIGHT
             }
 
             var height = geomHeight
-            var geomY: Double
             if (facetTile.xAxis && facetTile.row == facets.rowCount - 1) {   // bottom row only
                 height += axisThicknessX
             }
-            val addedHeight = facetColHeadHeight(facetTile.colLabs.size)
-            height += addedHeight
-            geomY = addedHeight
+
+            var geomY = 0.0
+            if (showFacetStrip) {
+                val addedHeight = facetColHeadHeight(facetTile.colLabs.size)
+                height += addedHeight
+                geomY = addedHeight
+            }
 
             val bounds = DoubleRectangle(0.0, 0.0, width, height)
             val geomBounds = DoubleRectangle(geomX, geomY, geomWidth, geomHeight)
@@ -123,7 +130,7 @@ internal class FacetGridPlotLayout(
             val offset = DoubleVector(offsetX, offsetY)
             offsetX += width + PANEL_PADDING
 
-            val info = TileLayoutInfo(
+            var info = TileLayoutInfo(
                 bounds,
                 geomBounds,
                 XYPlotLayoutUtil.clipBounds(geomBounds),
@@ -134,7 +141,10 @@ internal class FacetGridPlotLayout(
                 trueIndex = facetTile.trueIndex
             )
                 .withOffset(tilesAreaOffset.add(offset))
-                .withFacetLabels(facetTile.colLabs, facetTile.rowLab)
+
+            if (showFacetStrip) {
+                info = info.withFacetLabels(facetTile.colLabs, facetTile.rowLab)
+            }
 
             tileInfos.add(info)
 

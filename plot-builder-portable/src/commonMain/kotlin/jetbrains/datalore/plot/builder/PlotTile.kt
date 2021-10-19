@@ -105,6 +105,8 @@ internal class PlotTile(
     }
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
+//        if (!theme.showStrip()) return
+
         // facet X label (on top of geom area)
         val xLabels = tileLayoutInfo.facetXLabels
         if (xLabels.isNotEmpty()) {
@@ -118,12 +120,14 @@ internal class PlotTile(
             )
             for (xLabel in xLabels) {
                 // ToDo: This is "strip-x"
-                val rect = SvgRectElement(labelBounds).apply {
-                    strokeWidth().set(theme.stripStrokeWidth())
-                    fillColor().set(theme.stripFill())
-                    strokeColor().set(theme.stripColor())
+                if (theme.showStripBackground()) {
+                    val rect = SvgRectElement(labelBounds).apply {
+                        strokeWidth().set(theme.stripStrokeWidth())
+                        fillColor().set(theme.stripFill())
+                        strokeColor().set(theme.stripColor())
+                    }
+                    add(rect)
                 }
-                add(rect)
 
                 val x = labelBounds.center.x
                 val y = labelBounds.center.y
@@ -150,12 +154,14 @@ internal class PlotTile(
             )
 
             // ToDo: This is "strip-y"
-            val rect = SvgRectElement(labelBounds).apply {
-                strokeWidth().set(theme.stripStrokeWidth())
-                fillColor().set(theme.stripFill())
-                strokeColor().set(theme.stripColor())
+            if (theme.showStrip()) {
+                val rect = SvgRectElement(labelBounds).apply {
+                    strokeWidth().set(theme.stripStrokeWidth())
+                    fillColor().set(theme.stripFill())
+                    strokeColor().set(theme.stripColor())
+                }
+                add(rect)
             }
-            add(rect)
 
             val x = labelBounds.center.x
             val y = labelBounds.center.y

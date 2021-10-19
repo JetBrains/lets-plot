@@ -59,14 +59,11 @@ internal class SquareFrameOfReference(
         val panelTheme = theme.panel()
 
         // Flip theme
-        val (hAxisTheme, vAxisTheme) = when {
-            flipAxis -> Pair(theme.axisY(), theme.axisX())
-            else -> Pair(theme.axisX(), theme.axisY())
-        }
-        val (hGridTheme, vGridTheme) = when {
-            flipAxis -> Pair(panelTheme.gridY(), panelTheme.gridX())
-            else -> Pair(panelTheme.gridX(), panelTheme.gridY())
-        }
+        val hAxisTheme = theme.axisX(flipAxis)
+        val vAxisTheme = theme.axisY(flipAxis)
+
+        val hGridTheme = panelTheme.gridX(flipAxis)
+        val vGridTheme = panelTheme.gridY(flipAxis)
 
         if (panelTheme.showRect()) {
             val panel = buildPanelComponent(geomBounds, panelTheme)
