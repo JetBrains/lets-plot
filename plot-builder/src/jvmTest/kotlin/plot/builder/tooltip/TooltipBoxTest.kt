@@ -23,6 +23,8 @@ class TooltipBoxTest {
     private lateinit var peer: MockSvgPlatformPeer
     private lateinit var tooltipBox: TooltipBox
     private val root = SvgSvgElement()
+    @Suppress("unused") // removing of this val will break all tests
+    private val container = SvgNodeContainer(root)
     private val wordSize = DoubleVector(40.0, 40.0)
     private val wordText = "WORD"
     private val word = wordText to wordSize

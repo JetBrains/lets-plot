@@ -70,9 +70,11 @@ internal class TooltipRenderer(
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec ->
 
-                val fillColor = when(spec.isOutlier) {
-                    true -> Colors.mimicTransparency(spec.fill, spec.fill.alpha / 255.0, Color.WHITE)
-                    false -> Color.WHITE
+                val fillColor = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
+                    spec.isOutlier -> Colors.mimicTransparency(spec.fill, spec.fill.alpha / 255.0, Color.WHITE)
+                    else -> Color.WHITE
                 }
 
                 val textColor = when {
