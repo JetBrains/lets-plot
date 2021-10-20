@@ -11,22 +11,32 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.vis.svg.SvgLineElement
 
-class CrosshairComponent() : SvgComponent() {
+class CrosshairComponent(
+    private val coord: DoubleVector,
+    private val geomBounds: DoubleRectangle,
+    private val showHorizontal: Boolean,
+    private val showVertical: Boolean
+) : SvgComponent() {
     override fun buildComponent() {
-    }
+        if (showVertical) {
+            addLine(coord.x, geomBounds.bottom, coord.x, geomBounds.top)
+        }
 
-    internal fun addHorizontal(coord: DoubleVector, geomBounds: DoubleRectangle) {
-        SvgLineElement(geomBounds.left, coord.y, geomBounds.right, coord.y).apply {
-            add(this)
-            strokeColor().set(Color.LIGHT_GRAY)
-            strokeWidth().set(1.0)
+        if (showHorizontal) {
+            addLine(geomBounds.left, coord.y, geomBounds.right, coord.y)
         }
     }
 
-    internal fun addVertical(coord: DoubleVector, geomBounds: DoubleRectangle) {
-        SvgLineElement(coord.x, geomBounds.bottom, coord.x, geomBounds.top).apply {
+    private fun addLine(x1: Double, y1: Double, x2: Double, y2: Double) {
+        SvgLineElement(x1, y1, x2, y2).apply {
             add(this)
-            strokeColor().set(Color.LIGHT_GRAY)
+            strokeColor().set(Color.WHITE)
+            strokeWidth().set(1.5)
+        }
+
+        SvgLineElement(x1, y1, x2, y2).apply {
+            add(this)
+            strokeColor().set(Color.GRAY)
             strokeWidth().set(1.0)
         }
     }

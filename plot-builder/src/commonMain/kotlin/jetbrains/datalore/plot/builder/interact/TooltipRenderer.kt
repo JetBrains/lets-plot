@@ -136,10 +136,12 @@ internal class TooltipRenderer(
             .filter { tooltip -> tooltip.tooltipSpec.isCrosshairEnabled }
             .mapNotNull { tooltip -> tooltip.tooltipSpec.layoutHint.coord }
             .forEach { coord ->
-                CrosshairComponent().apply { myTooltipLayer.children().add(0, rootGroup) }.also { crosshair ->
-                    if (showHorizontal) crosshair.addHorizontal(coord, geomBounds)
-                    if (showVertical) crosshair.addVertical(coord, geomBounds)
-                }
+                CrosshairComponent(
+                    coord = coord,
+                    geomBounds = geomBounds,
+                    showHorizontal = showHorizontal,
+                    showVertical = showVertical
+                ).apply { myTooltipLayer.children().add(0, rootGroup) }
             }
     }
 
