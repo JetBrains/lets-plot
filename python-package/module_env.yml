@@ -8,6 +8,7 @@ dependencies:
   - python=3.7
   - numpy
   - jupyter
+  - geopandas
   - pytest
   - pip
   - pip:
