@@ -19,3 +19,5 @@ class SamplingOptions : Options<SamplingOptions>() {
         }
     }
 }
+
+fun sampling(block: SamplingOptions.() -> Unit) = SamplingOptions().apply(block)

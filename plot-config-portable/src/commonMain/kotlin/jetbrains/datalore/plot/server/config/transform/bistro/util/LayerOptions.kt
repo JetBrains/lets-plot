@@ -74,3 +74,5 @@ class LayerOptions : Options<PlotOptions>() {
 
     private inline fun <T, reified TValue> T.map(key: Aes<*>): ReadWriteProperty<T, TValue?> = map(toOption(key))
 }
+
+fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)
