@@ -568,11 +568,9 @@ def _generate_data(size):
 
 def _theme_dicts_merge(x, y):
     """
-    Simple values from `y` override values in `x`.
+    Simple values in `y` override values in `x`.
     If values in `y` and `x` both are dictionaries, then they are merged.
     """
     overlapping_keys = x.keys() & y.keys()
-    print(overlapping_keys)
     z = {k: {**x[k], **y[k]} for k in overlapping_keys if type(x[k]) is dict and type(y[k]) is dict}
-    print(z)
     return {**x, **y, **z}
