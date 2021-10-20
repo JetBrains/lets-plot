@@ -51,19 +51,19 @@ class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_TICKS_LENGTH to 4.0,
 
-            AXIS_TOOLTIP to mapOf(
-                Elem.SIZE to 1.0,
-            ),
+//            AXIS_TOOLTIP to mapOf(
+//                Elem.SIZE to 1.0,
+//            ),
 
             PANEL_GRID_MINOR to mapOf(
                 Elem.SIZE to 0.5,
             ),
 
-            FACET_STRIP_BGR_RECT to RECT + mapOf(
-                Elem.COLOR to Color.BLUE,
-                Elem.FILL to PLOT_BACKGROUND,
-                Elem.SIZE to 1.0,
-            ),
+//            FACET_STRIP_BGR_RECT to RECT + mapOf(
+//                Elem.COLOR to Color.BLUE,
+//                Elem.FILL to PLOT_BACKGROUND,
+//                Elem.SIZE to 1.0,
+//            ),
 
             // Legend
             LEGEND_POSITION to LegendPosition.RIGHT,

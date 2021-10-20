@@ -41,7 +41,8 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
             ),
 
             RECT to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to DARK_GREY,
+                Elem.FILL to LIGHT_GREY
             ),
 
             TEXT to mapOf(
@@ -70,9 +71,7 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(
-//            Elem.FILL to Colors.lighter(Color.VERY_LIGHT_GRAY, 0.9),
-                Elem.FILL to PLOT_BACKGROUND,
-                Elem.SIZE to 0.0,
+                Elem.BLANK to true,
             ),
         )
     }
