@@ -10,15 +10,16 @@ import pytest
 from lets_plot.plot.geom_image_ import geom_image
 
 
-def _image_spec(width, height, type, bytes):
+def _image_spec(width, height, href):
     return dict(
         geom='image',
-        image_spec=dict(
-            width=width,
-            height=height,
-            type=type,
-            bytes=bytes
-        ),
+        # image_spec=dict(
+        #     width=width,
+        #     height=height,
+        #     type=type,
+        #     bytes=bytes
+        # ),
+        href=href,
         data=None,
         mapping=dict(
             x=None,
@@ -30,7 +31,10 @@ def _image_spec(width, height, type, bytes):
         ),
         stat=None,
         position=None,
-        show_legend=None
+        show_legend=None,
+        data_meta={},
+        sampling=None,
+        tooltips=None,
     )
 
 
@@ -44,7 +48,10 @@ class TestOutputWithDifferentArrayShapeAndDtype:
     # -- gray --
 
     # 2 x 3 array of ints
-    expected_gray_2_x_3 = _image_spec(3, 2, 'gray', 'AAAA////')
+    expected_gray_2_x_3 = _image_spec(
+        3, 2,
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAD0lEQVR4nGNgAIL///8DAAYCAv507macAAAAAElFTkSuQmCC'
+    )
     _append_test_parameters_0(parameter_list,
                               np.array([
                                   [0, 0, 0],
@@ -63,7 +70,10 @@ class TestOutputWithDifferentArrayShapeAndDtype:
     # -- rgb --
 
     # 1 x 2 x 3 array of ints
-    expected_RGB_1_x_2 = _image_spec(2, 1, 'rgb', 'AAAA////')
+    expected_RGB_1_x_2 = _image_spec(
+        2, 1,
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAB7QOjdAAAAD0lEQVR4nGNgYGD4//8/AAYBAv4CsjmuAAAAAElFTkSuQmCC'
+    )
     _append_test_parameters_0(parameter_list,
                               np.array([
                                   [[0, 0, 0], [255, 255, 255]]
@@ -80,7 +90,10 @@ class TestOutputWithDifferentArrayShapeAndDtype:
     # -- rgb + alpha --
 
     # 1 x 2 x 4 array of ints
-    expected_RGBA_1_2 = _image_spec(2, 1, 'rgba', 'AAAAgP///4A=')
+    expected_RGBA_1_2 = _image_spec(
+        2, 1,
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGNgYGBo+P//fwMADAAD/jYVGcgAAAAASUVORK5CYII='
+    )
     _append_test_parameters_0(parameter_list,
                               np.array([
                                   [[0, 0, 0, 128], [255, 255, 255, 128]]

@@ -21,7 +21,13 @@ class PlotContainer(
 
     init {
         if (plot.interactionsEnabled) {
-            plot.interactor = Interactor(myDecorationLayer, plot, mouseEventPeer)
+            plot.interactor = Interactor(
+                decorationLayer = myDecorationLayer,
+                mouseEventPeer = mouseEventPeer,
+                plotSize = plot.plotSize,
+                flippedAxis = plot.flippedAxis,
+                theme = plot.theme
+            )
         }
     }
 

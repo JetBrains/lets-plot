@@ -8,15 +8,12 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.base.values.Colors.darker
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
@@ -24,17 +21,13 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CO
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.HIDDEN
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.VISIBLE
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import kotlin.math.max
 import kotlin.math.min
 
-class TooltipBox(
-    private val tooltipMinWidth: Double? = null
-): SvgComponent() {
+class TooltipBox: SvgComponent() {
     enum class Orientation {
         VERTICAL,
         HORIZONTAL
@@ -48,15 +41,9 @@ class TooltipBox(
     }
 
     val contentRect get() = DoubleRectangle.span(DoubleVector.ZERO, myTextBox.dimension)
-    var visible: Boolean
-        get() = rootGroup.visibility().get() == VISIBLE
-        set(isVisible) { rootGroup.visibility().set(VISIBLE.takeIf { isVisible } ?: HIDDEN) }
 
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
-
-    private var textColor: Color = Color.BLACK
-    private var fillColor: Color = Color.WHITE
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
 
     override fun buildComponent() {
@@ -64,21 +51,17 @@ class TooltipBox(
         add(myTextBox)
     }
 
-    internal fun setContent(
-        color: Color,
+    fun update(
+        fillColor: Color,
+        textColor: Color,
+        borderColor: Color,
+        strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         style: String,
-        isOutlier: Boolean,
-        rotate: Boolean
+        rotate: Boolean,
+        tooltipMinWidth: Double? = null
     ) {
         addClassName(style)
-        if (isOutlier) {
-            fillColor = Colors.mimicTransparency(color, color.alpha / 255.0, Color.WHITE)
-            textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
-        } else {
-            fillColor = Color.WHITE
-            textColor = color.takeIf { color.isDark() } ?: darker(color) ?: DARK_TEXT_COLOR
-        }
         myTextBox.update(
             lines,
             labelTextColor = DARK_TEXT_COLOR,
@@ -86,6 +69,7 @@ class TooltipBox(
             tooltipMinWidth,
             rotate
         )
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -93,14 +77,20 @@ class TooltipBox(
         moveTo(tooltipCoord.x, tooltipCoord.y)
     }
 
-    private fun Color.isDark() = Colors.luminance(this) < 0.5
-
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
         internal var pointerDirection: PointerDirection? = null
 
         override fun buildComponent() {
             add(myPointerPath)
+        }
+
+        internal fun updateStyle(fillColor: Color, borderColor: Color, strokeWidth: Double) {
+            myPointerPath.apply {
+                strokeColor().set(borderColor)
+                strokeOpacity().set(strokeWidth)
+                fillColor().set(fillColor)
+            }
         }
 
         internal fun update(pointerCoord: DoubleVector, orientation: Orientation) {
@@ -115,12 +105,6 @@ class TooltipBox(
                     pointerCoord.y < contentRect.top -> UP
                     else -> null
                 }
-            }
-
-            myPointerPath.apply {
-                strokeColor().set(textColor)
-                strokeOpacity().set(1.0)
-                fillColor().set(fillColor)
             }
 
             val vertFootingIndent = -calculatePointerFootingIndent(contentRect.height)
@@ -186,8 +170,8 @@ class TooltipBox(
         val dimension get() = myContent.run { DoubleVector(width().get()!!, height().get()!!) }
 
         override fun buildComponent() {
-            myContent.children().add(myLines)
             add(myContent)
+            myContent.children().add(myLines)
         }
 
         internal fun update(
@@ -235,10 +219,9 @@ class TooltipBox(
             }
 
             val textSize = linesInfo
-                .fold(DoubleVector.ZERO, { textDimension, (labelText, labelComponent, valueComponent) ->
+                .fold(DoubleVector.ZERO) { textDimension, (labelText, labelComponent, valueComponent) ->
                     val valueBBox = valueComponent.rootGroup.bBox
-                    val labelBBox =
-                        labelComponent?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+                    val labelBBox = labelComponent?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
                     // bBox.top is negative baseline of the text.
                     // Can't use bBox.height:
@@ -282,7 +265,7 @@ class TooltipBox(
                             labelBBox.height + labelBBox.top
                         ) + LINE_INTERVAL
                     )
-                }).let {  textSize ->
+                }.let { textSize ->
                     if (rotate) {
                         linesInfo
                             .onEach { (_, labelComponent, valueComponent) ->

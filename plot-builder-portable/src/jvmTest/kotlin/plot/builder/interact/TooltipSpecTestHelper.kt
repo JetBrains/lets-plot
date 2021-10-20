@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
@@ -13,6 +12,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
+import jetbrains.datalore.plot.builder.interact.TestUtil.axisTheme
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 import kotlin.test.assertEquals
@@ -93,8 +93,11 @@ open class TooltipSpecTestHelper {
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
             ),
-            DoubleVector.ZERO
-        ).create(geomTarget, flippedAxis = false)
+            DoubleVector.ZERO,
+            flippedAxis = false,
+            axisTheme,
+            axisTheme
+        ).create(geomTarget)
     }
 
     internal fun createTooltipSpecWithValueSources(
@@ -110,8 +113,11 @@ open class TooltipSpecTestHelper {
                 DataFrame.Builder().build(),
                 valueSources
             ),
-            DoubleVector.ZERO
-        ).create(geomTarget, flippedAxis = false)
+            DoubleVector.ZERO,
+            flippedAxis = false,
+            axisTheme,
+            axisTheme
+        ).create(geomTarget)
     }
 
     internal fun buildTooltipSpecs() {
