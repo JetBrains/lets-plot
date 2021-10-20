@@ -16,12 +16,34 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 object TestUtil {
+    val axisTheme = object : AxisTheme {
+        override fun showLine() = TODO("Not yet implemented")
+        override fun showTickMarks() = TODO("Not yet implemented")
+        override fun showLabels() = TODO("Not yet implemented")
+        override fun showTitle() = TODO("Not yet implemented")
+        override fun showTooltip() = TODO("Not yet implemented")
+        override fun titleColor() = TODO("Not yet implemented")
+        override fun lineWidth() = TODO("Not yet implemented")
+        override fun lineColor() = TODO("Not yet implemented")
+        override fun tickMarkColor() = TODO("Not yet implemented")
+        override fun labelColor() = TODO("Not yet implemented")
+        override fun tickMarkWidth() = TODO("Not yet implemented")
+        override fun tickMarkLength() = TODO("Not yet implemented")
+        override fun tooltipFill() = AXIS_TOOLTIP_COLOR
+        override fun tooltipColor() = AXIS_TOOLTIP_COLOR
+        override fun tooltipStrokeWidth() = 1.0
+        override fun tooltipTextColor() = LIGHT_TEXT_COLOR
+    }
+
     private const val VARIABLE_NAME = "A"
     private const val VARIABLE_VALUE = "value"
 

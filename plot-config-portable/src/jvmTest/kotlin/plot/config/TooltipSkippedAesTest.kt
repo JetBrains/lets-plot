@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -177,15 +178,33 @@ class TooltipSkippedAesTest {
     }
 
     companion object {
+        private val axisTheme = object : AxisTheme {
+            override fun showLine() = TODO("Not yet implemented")
+            override fun showTickMarks() = TODO("Not yet implemented")
+            override fun showLabels() = TODO("Not yet implemented")
+            override fun showTitle() = TODO("Not yet implemented")
+            override fun showTooltip() = TODO("Not yet implemented")
+            override fun titleColor() = TODO("Not yet implemented")
+            override fun lineWidth() = TODO("Not yet implemented")
+            override fun lineColor() = TODO("Not yet implemented")
+            override fun tickMarkColor() = TODO("Not yet implemented")
+            override fun labelColor() = TODO("Not yet implemented")
+            override fun tickMarkWidth() = TODO("Not yet implemented")
+            override fun tickMarkLength() = TODO("Not yet implemented")
+            override fun tooltipFill() = Color.WHITE
+            override fun tooltipColor() = Color.BLACK
+            override fun tooltipStrokeWidth() = 1.0
+            override fun tooltipTextColor() = Color.GRAY
+        }
+
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {
-            val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO)
+            val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
             return factory.create(
                 GeomTarget(
                     hitIndex = 0,
                     tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, Color.BLACK),
                     aesTipLayoutHints = emptyMap()
-                ),
-                flippedAxis = false
+                )
             )
         }
 

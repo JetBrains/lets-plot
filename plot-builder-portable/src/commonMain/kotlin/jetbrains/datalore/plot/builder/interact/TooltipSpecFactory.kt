@@ -6,20 +6,22 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 class TooltipSpecFactory(
     private val contextualMapping: ContextualMapping,
-    private val axisOrigin: DoubleVector
+    private val axisOrigin: DoubleVector,
+    private val flippedAxis: Boolean,
+    private val xAxisTheme: AxisTheme,
+    private val yAxisTheme: AxisTheme
 ) {
-    fun create(geomTarget: GeomTarget, flippedAxis: Boolean): List<TooltipSpec> {
+    fun create(geomTarget: GeomTarget): List<TooltipSpec> {
         return ArrayList(Helper(geomTarget, flippedAxis).createTooltipSpecs())
     }
 
@@ -38,21 +40,10 @@ class TooltipSpecFactory(
             return tooltipSpecs
         }
 
-        private fun hitIndex(): Int {
-            return myGeomTarget.hitIndex
-        }
-
-        private fun tipLayoutHint(): TipLayoutHint {
-            return myGeomTarget.tipLayoutHint
-        }
-
-        private fun outlierHints(): Map<Aes<*>, TipLayoutHint> {
-            return myGeomTarget.aesTipLayoutHints
-        }
-
-        private fun hintColors(): Map<Aes<*>, Color?> {
-            return myGeomTarget.aesTipLayoutHints.map { it.key to it.value.color }.toMap()
-        }
+        private fun hitIndex() = myGeomTarget.hitIndex
+        private fun tipLayoutHint() = myGeomTarget.tipLayoutHint
+        private fun outlierHints() = myGeomTarget.aesTipLayoutHints
+        private fun hintColors() = myGeomTarget.aesTipLayoutHints.map { it.key to it.value.color }.toMap()
 
         private fun outlierTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -127,13 +118,8 @@ class TooltipSpecFactory(
             }
         }
 
-        private fun outlierDataPoints(): List<DataPoint> {
-            return myDataPoints.filter { it.isOutlier && !it.isAxis }
-        }
-
-        private fun axisDataPoints(): List<DataPoint> {
-            return myDataPoints.filter(DataPoint::isAxis)
-        }
+        private fun outlierDataPoints() = myDataPoints.filter { it.isOutlier && !it.isAxis }
+        private fun axisDataPoints() = myDataPoints.filter(DataPoint::isAxis)
 
         private fun generalDataPoints(): List<DataPoint> {
             val nonOutlierDataPoints = myDataPoints.filterNot(DataPoint::isOutlier)
@@ -160,14 +146,14 @@ class TooltipSpecFactory(
                 Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
                         coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                        color = AXIS_TOOLTIP_COLOR,
+                        color = xAxisTheme.tooltipFill(),
                         axisRadius = AXIS_RADIUS
                     )
                 }
                 Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                        color = AXIS_TOOLTIP_COLOR,
+                        color = yAxisTheme.tooltipFill(),
                         axisRadius = AXIS_RADIUS
                     )
                 }

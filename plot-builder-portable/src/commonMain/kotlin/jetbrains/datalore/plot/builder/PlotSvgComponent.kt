@@ -41,7 +41,7 @@ class PlotSvgComponent constructor(
     private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
-    private val theme: Theme
+    val theme: Theme
 ) : SvgComponent() {
 
     val flippedAxis = frameOfReferenceProvider.flipAxis

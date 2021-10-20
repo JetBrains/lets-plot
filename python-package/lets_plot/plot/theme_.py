@@ -13,13 +13,13 @@ __all__ = [
 ]
 
 
-def theme(name=None, *,
+def theme(*,
           line=None,
           rect=None,
           text=None,
           title=None,
           # ToDo: aspect.ratio
-          axis=None, axis_x=None, axis_y=None,
+          axis=None,
           axis_title=None, axis_title_x=None, axis_title_y=None,
           # ToDo: axis.title.x.top, axis.title.x.bottom
           # ToDo: axis.title.y.left, axis.title.y.right
@@ -155,10 +155,8 @@ def theme(name=None, *,
 
     """
 
-    was_name = locals()['name']  # 'name' is required argument in 'FeatureSpec'
     filtered = _filter_none(locals())
-    filtered['name'] = was_name
-    return FeatureSpec('theme', **filtered)
+    return FeatureSpec('theme', name=None, **filtered)
 
 
 def _filter_none(original: dict) -> dict:
