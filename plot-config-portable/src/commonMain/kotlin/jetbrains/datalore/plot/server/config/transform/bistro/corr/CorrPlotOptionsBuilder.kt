@@ -277,10 +277,6 @@ class CorrPlotOptionsBuilder private constructor(
             dropOtherNA = combinedType == FULL
         )
 
-        val plotOptions = PlotOptions()
-        plotOptions.size = plotSize(xs, ys, title != null, showLegend, adjustSize)
-        plotOptions.title = title
-        plotOptions.layerOptions = layers
 
         // preserve the original order on x/y scales
         val xsSet = xs.distinct().toSet()
@@ -290,7 +286,53 @@ class CorrPlotOptionsBuilder private constructor(
 
         val onlyTiles = tiles.added && !points.added && !labels.added
 
-        return addCommonParams(plotOptions, plotX, plotY, onlyTiles, flip)
+        val xLim = Pair(-0.6, plotX.size - 1 + 0.6)
+        val yLim = Pair(-0.6, plotY.size - 1 + 0.6)
+
+        return PlotOptions().apply {
+            size = plotSize(xs, ys, title != null, showLegend, adjustSize)
+            title = title
+            layerOptions = layers
+            themeOptions = ThemeOptions().apply {
+                axisTitle = ThemeOptions.BLANK
+                axisLine = ThemeOptions.BLANK
+                panelGrid = ThemeOptions.BLANK
+            }
+            scaleOptions = listOf(
+                ScaleOptions().apply {
+                    aes = Aes.SIZE
+                    mapperKind = ScaleConfig.IDENTITY
+                    naValue = 0
+                    guide = Option.Guide.NONE
+                }, ScaleOptions().apply {
+                    aes = Aes.X
+                    isDiscrete = true
+                    breaks = plotX
+                    limits = plotX
+                    expand = EXPAND
+                }, ScaleOptions().apply {
+                    aes = Aes.Y
+                    isDiscrete = true
+                    breaks = plotY
+                    limits = if (flip) plotY.asReversed() else plotY
+                    expand = EXPAND
+                },
+                colorScaleOptions,
+                fillScaleOptions
+            )
+            coord = when (onlyTiles) {
+                true -> CoordOptions().apply {
+                    name = Option.CoordName.CARTESIAN
+                    this.xLim = xLim
+                    this.yLim = yLim
+                }
+                false -> CoordOptions().apply {
+                    name = Option.CoordName.FIXED
+                    this.xLim = xLim
+                    this.yLim = yLim
+                }
+            }
+        }
     }
 
     private fun newCorrPlotLayerOptions(): LayerOptions {
@@ -309,62 +351,6 @@ class CorrPlotOptionsBuilder private constructor(
             }
             samplingOptions = SamplingOptions.NONE
         }
-    }
-
-    private fun addCommonParams(
-        plotOptions: PlotOptions,
-        xValues: List<String>,
-        yValues: List<String>,
-        onlyTiles: Boolean,
-        flipY: Boolean
-    ): PlotOptions {
-        @Suppress("NAME_SHADOWING")
-        plotOptions.themeOptions = ThemeOptions().apply {
-            axisTitle = ThemeOptions.BLANK
-            axisLine = ThemeOptions.BLANK
-        }
-
-        val scaleSize =  ScaleOptions().apply {
-            aes = Aes.SIZE
-            mapperKind = ScaleConfig.IDENTITY
-            naValue = 0
-            guide = Option.Guide.NONE
-        }
-
-        val scaleX = ScaleOptions().apply {
-            aes = Aes.X
-            isDiscrete = true
-            breaks = xValues
-            limits = xValues
-            expand = EXPAND
-        }
-
-        val scaleY = ScaleOptions().apply {
-            aes = Aes.Y
-            isDiscrete = true
-            breaks = yValues
-            limits = if (flipY) yValues.asReversed() else yValues
-            expand = EXPAND
-        }
-
-        plotOptions.scaleOptions = listOf(scaleSize, scaleX, scaleY, colorScaleOptions, fillScaleOptions)
-
-        val xLim = Pair(-0.6, xValues.size - 1 + 0.6)
-        val yLim = Pair(-0.6, yValues.size - 1 + 0.6)
-        plotOptions.coord = when (onlyTiles) {
-            true -> CoordOptions().apply {
-                this.name = Option.CoordName.CARTESIAN
-                this.xLim = xLim
-                this.yLim = yLim
-            }
-            false -> CoordOptions().apply {
-                this.name = Option.CoordName.FIXED
-                this.xLim = xLim
-                this.yLim = yLim
-            }
-        }
-
-        return plotOptions
     }
 
     companion object {
