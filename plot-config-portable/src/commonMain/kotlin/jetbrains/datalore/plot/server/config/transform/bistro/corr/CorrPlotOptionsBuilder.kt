@@ -360,7 +360,7 @@ class CorrPlotOptionsBuilder private constructor(
     companion object {
         private const val VALUE_FORMAT = ".2f"
 
-        private const val LEGEND_NAME = "Corr"
+        private const val LEGEND_NAME = ""
         private val SCALE_BREAKS = listOf(-1.0, -0.5, 0.0, 0.5, 1.0)
         private val SCALE_LABELS = listOf("-1", "-0.5", "0", "0.5", "1")
         private val SCALE_LIMITS = listOf(-1.0, 1.0)
