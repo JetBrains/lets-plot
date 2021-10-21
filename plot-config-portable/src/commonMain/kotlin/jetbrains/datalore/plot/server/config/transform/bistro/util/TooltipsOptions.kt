@@ -20,6 +20,9 @@ class TooltipsOptions : Options<ThemeOptions>() {
     }
 
     companion object {
+        fun format(block: Format.() -> Unit) = Format().apply(block)
         fun variable(name: String) = "@$name"
     }
 }
+
+fun tooltips(block: TooltipsOptions.() -> Unit) = TooltipsOptions().apply(block)

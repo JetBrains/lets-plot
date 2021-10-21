@@ -5,10 +5,23 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis
 
 object Defaults {
+    // Plot size
+    const val ASPECT_RATIO = 3.0 / 2.0
+    const val MIN_PLOT_WIDTH = 50.0
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    const val DEF_PLOT_WIDTH = 600.0
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    const val DEF_LIVE_MAP_WIDTH = 800.0
+    val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
+    val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
+
     // HEX colors only (because of using of parseHex())
     const val DARK_GRAY = "#3d3d3d"
     val GRAY = Color.GRAY.toHexColor()

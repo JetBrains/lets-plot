@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.util
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-open class Options<T>(
+abstract class Options<T>(
     val properties: MutableMap<String, Any?>
 ) {
     constructor() : this(mutableMapOf())

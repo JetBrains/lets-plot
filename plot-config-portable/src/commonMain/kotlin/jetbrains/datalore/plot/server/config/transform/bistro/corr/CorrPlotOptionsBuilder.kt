@@ -16,8 +16,7 @@ import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.L
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
 import jetbrains.datalore.plot.server.config.transform.bistro.util.*
-import jetbrains.datalore.plot.server.config.transform.bistro.util.TooltipsOptions.Companion.variable
-import jetbrains.datalore.plot.server.config.transform.bistro.util.TooltipsOptions.Format
+import jetbrains.datalore.plot.server.config.transform.bistro.util.ThemeOptions.Element
 import jetbrains.letsPlot.bistro.corr.CorrUtil.correlations
 import jetbrains.letsPlot.bistro.corr.CorrUtil.correlationsToDataframe
 import jetbrains.letsPlot.bistro.corr.CorrUtil.matrixXYSeries
@@ -202,7 +201,7 @@ class CorrPlotOptionsBuilder private constructor(
         // Add layers
         if (tiles.added) {
             layers.add(
-                newCorrPlotLayerOptions().apply {
+                newCorrPlotLayerOptions {
                     geom = GeomKind.TILE
                     data = layerData(
                         tiles,
@@ -225,7 +224,7 @@ class CorrPlotOptionsBuilder private constructor(
 
         if (points.added) {
             layers.add(
-                newCorrPlotLayerOptions().apply {
+                newCorrPlotLayerOptions {
                     geom = GeomKind.POINT
                     data = layerData(
                         points,
@@ -247,7 +246,7 @@ class CorrPlotOptionsBuilder private constructor(
 
         if (labels.added) {
             layers.add(
-                newCorrPlotLayerOptions().apply {
+                newCorrPlotLayerOptions {
                     geom = GeomKind.TEXT
                     data = layerData(
                         labels,
@@ -277,10 +276,6 @@ class CorrPlotOptionsBuilder private constructor(
             dropOtherNA = combinedType == FULL
         )
 
-        val plotOptions = PlotOptions()
-        plotOptions.size = plotSize(xs, ys, title != null, showLegend, adjustSize)
-        plotOptions.title = title
-        plotOptions.layerOptions = layers
 
         // preserve the original order on x/y scales
         val xsSet = xs.distinct().toSet()
@@ -290,81 +285,76 @@ class CorrPlotOptionsBuilder private constructor(
 
         val onlyTiles = tiles.added && !points.added && !labels.added
 
-        return addCommonParams(plotOptions, plotX, plotY, onlyTiles, flip)
+        val xLim = Pair(-0.6, plotX.size - 1 + 0.6)
+        val yLim = Pair(-0.6, plotY.size - 1 + 0.6)
+
+        return plot {
+            size = plotSize(xs, ys, title != null, showLegend, adjustSize)
+            title = title
+            layerOptions = layers
+            themeOptions = theme {
+                axisTitle = Element.BLANK
+                axisLine = Element.BLANK
+                panelGrid = Element.BLANK
+                axisTicksX = Element.line()
+                axisTicksY = Element.line()
+            }
+            scaleOptions = listOf(
+                scale {
+                    aes = Aes.SIZE
+                    mapperKind = ScaleConfig.IDENTITY
+                    naValue = 0
+                    guide = Option.Guide.NONE
+                },
+                scale {
+                    aes = Aes.X
+                    isDiscrete = true
+                    breaks = plotX
+                    limits = plotX
+                    expand = EXPAND
+                },
+                scale {
+                    aes = Aes.Y
+                    isDiscrete = true
+                    breaks = plotY
+                    limits = if (flip) plotY.asReversed() else plotY
+                    expand = EXPAND
+                },
+                colorScaleOptions,
+                fillScaleOptions
+            )
+            coord = when (onlyTiles) {
+                true -> coord {
+                    name = Option.CoordName.CARTESIAN
+                    this.xLim = xLim
+                    this.yLim = yLim
+                }
+                false -> coord {
+                    name = Option.CoordName.FIXED
+                    this.xLim = xLim
+                    this.yLim = yLim
+                }
+            }
+        }
     }
 
-    private fun newCorrPlotLayerOptions(): LayerOptions {
+    private fun newCorrPlotLayerOptions(block: LayerOptions.() -> Unit): LayerOptions {
         return LayerOptions().apply {
             naText = ""
             labelFormat = VALUE_FORMAT
             showLegend = this@CorrPlotOptionsBuilder.showLegend
-            tooltipsOptions = TooltipsOptions().apply {
-                lines = listOf(variable(CorrVar.CORR))
+            tooltipsOptions = tooltips {
+                lines = listOf(TooltipsOptions.variable(CorrVar.CORR))
                 formats = listOf(
-                    Format().apply {
-                        field = variable(CorrVar.CORR)
+                    TooltipsOptions.format {
+                        field = TooltipsOptions.variable(CorrVar.CORR)
                         format = VALUE_FORMAT
                     }
                 )
             }
             samplingOptions = SamplingOptions.NONE
+            block(this)
         }
-    }
-
-    private fun addCommonParams(
-        plotOptions: PlotOptions,
-        xValues: List<String>,
-        yValues: List<String>,
-        onlyTiles: Boolean,
-        flipY: Boolean
-    ): PlotOptions {
-        @Suppress("NAME_SHADOWING")
-        plotOptions.themeOptions = ThemeOptions().apply {
-            axisTitle = ThemeOptions.BLANK
-            axisLine = ThemeOptions.BLANK
-        }
-
-        val scaleSize =  ScaleOptions().apply {
-            aes = Aes.SIZE
-            mapperKind = ScaleConfig.IDENTITY
-            naValue = 0
-            guide = Option.Guide.NONE
-        }
-
-        val scaleX = ScaleOptions().apply {
-            aes = Aes.X
-            isDiscrete = true
-            breaks = xValues
-            limits = xValues
-            expand = EXPAND
-        }
-
-        val scaleY = ScaleOptions().apply {
-            aes = Aes.Y
-            isDiscrete = true
-            breaks = yValues
-            limits = if (flipY) yValues.asReversed() else yValues
-            expand = EXPAND
-        }
-
-        plotOptions.scaleOptions = listOf(scaleSize, scaleX, scaleY, colorScaleOptions, fillScaleOptions)
-
-        val xLim = Pair(-0.6, xValues.size - 1 + 0.6)
-        val yLim = Pair(-0.6, yValues.size - 1 + 0.6)
-        plotOptions.coord = when (onlyTiles) {
-            true -> CoordOptions().apply {
-                this.name = Option.CoordName.CARTESIAN
-                this.xLim = xLim
-                this.yLim = yLim
-            }
-            false -> CoordOptions().apply {
-                this.name = Option.CoordName.FIXED
-                this.xLim = xLim
-                this.yLim = yLim
-            }
-        }
-
-        return plotOptions
     }
 
     companion object {
@@ -396,7 +386,7 @@ class CorrPlotOptionsBuilder private constructor(
         }
 
         private fun scaleGradient(aesthetic: Aes<*>, low: String, mid: String, high: String): ScaleOptions {
-            return ScaleOptions().apply {
+            return scale {
                 aes = aesthetic
                 name = LEGEND_NAME
                 breaks = SCALE_BREAKS
@@ -410,7 +400,7 @@ class CorrPlotOptionsBuilder private constructor(
         }
 
         private fun scaleBrewer(aesthetic: Aes<*>, paletteName: String): ScaleOptions {
-            return ScaleOptions().apply {
+            return scale {
                 aes = aesthetic
                 mapperKind = COLOR_BREWER
                 palette = paletteName
@@ -450,7 +440,7 @@ class CorrPlotOptionsBuilder private constructor(
             val width = geomWidth + labelWidthX + legendWidth
             val height = geomWidth + titleHeight + labelHeightY
 
-            return PlotOptions.Size().apply {
+            return PlotOptions.size {
                 this.width = width
                 this.height = height
             }

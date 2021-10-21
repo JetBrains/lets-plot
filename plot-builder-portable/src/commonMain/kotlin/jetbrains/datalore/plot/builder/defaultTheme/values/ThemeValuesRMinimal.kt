@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_Y
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_Y
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
@@ -16,13 +16,12 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesBase.Companion.PLOT_BACKGROUND
 
-class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
+class ThemeValuesRMinimal : ThemeValues(VALUES) {
 
     companion object {
 
@@ -54,13 +53,12 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
             ),
 
             PANEL_BKGR_RECT to ELEMENT_BLANK,
-            PANEL_GRID_MINOR to ELEMENT_BLANK,
             PANEL_GRID to mapOf(
                 Elem.COLOR to LIGHT_GREY
             ),
 
-            AXIS_LINE_Y to ELEMENT_BLANK,
-            AXIS_TICKS_Y to ELEMENT_BLANK,
+            AXIS_LINE to ELEMENT_BLANK,
+            AXIS_TICKS to ELEMENT_BLANK,
             AXIS to mapOf(
                 Elem.COLOR to DARK_GREY
             ),

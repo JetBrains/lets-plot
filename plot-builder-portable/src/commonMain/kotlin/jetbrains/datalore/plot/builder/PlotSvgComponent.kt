@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
+import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -438,8 +439,6 @@ class PlotSvgComponent constructor(
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)
-
-        private val DEF_PLOT_SIZE = DoubleVector(600.0, 400.0)
         private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
     }
 }

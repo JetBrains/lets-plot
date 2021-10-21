@@ -5,21 +5,38 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro.util
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
-import jetbrains.datalore.plot.config.Option
 
 
 class ThemeOptions : Options<ThemeOptions>() {
     var axisTitle: Element? by map(ThemeOption.AXIS_TITLE)
     var axisLine: Element? by map(ThemeOption.AXIS_LINE)
+    var panelGrid: Element? by map(ThemeOption.PANEL_GRID)
+    var axisTicksX: Element? by map(ThemeOption.AXIS_TICKS_X)
+    var axisTicksY: Element? by map(ThemeOption.AXIS_TICKS_Y)
 
     class Element : Options<Element>() {
-        var name: String? by map(Option.Meta.NAME)
-    }
+        var blank: Boolean? by map(ThemeOption.Elem.BLANK)
+        var fill: Color? by map(ThemeOption.Elem.FILL)
+        var color: Color? by map(ThemeOption.Elem.COLOR)
+        var size: Double? by map(ThemeOption.Elem.SIZE)
 
-    companion object {
-        val BLANK = Element().apply {
-            name = Option.Theme.ELEMENT_BLANK
+        init {
+            blank = false
+        }
+
+        companion object {
+            val BLANK = Element().apply {
+                blank = true
+            }
+
+            fun line(size: Double? = null, color: Color? = null) = Element().apply {
+                this.size = size
+                this.color = color
+            }
         }
     }
 }
+
+fun theme(block: ThemeOptions.() -> Unit) = ThemeOptions().apply(block)
