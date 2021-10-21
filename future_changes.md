@@ -24,10 +24,11 @@
 - The default plot size was increased by 20%, it's now 600x400 px. 
 
 ### Fixed
-
+  
+- Ordering facets - the "order" value 0 disables facet ordering [[#454](https://github.com/JetBrains/lets-plot/issues/454)].
 - Tooltips for discrete variables: add the dependence of the tooltip on the number of factors.
   The X-axis tooltip is always shown for discrete data.
-- map_join doesn't work when join variables with same names without mappings [[#428](https://github.com/JetBrains/lets-plot/issues/428)]
+- map_join doesn't work when join variables with same names without mappings [[#428](https://github.com/JetBrains/lets-plot/issues/428)].
 - Zoom without clipping breaks tooltips [[#373](https://github.com/JetBrains/lets-plot/issues/373)].
 - Unreadable breaks on axis [[#430](https://github.com/JetBrains/lets-plot/issues/430)].
 - Map rendering is broken when browser uses scaling [[#450](https://github.com/JetBrains/lets-plot/issues/450)].
