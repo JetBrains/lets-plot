@@ -27,6 +27,7 @@ import jetbrains.livemap.mapengine.basemap.vector.debug.DebugTileDataRenderer
 import jetbrains.livemap.mapengine.viewport.CellKey
 import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 class TileLoadingSystem(
     private val myQuantumIterations: Int,
     private val myTileService: TileService,

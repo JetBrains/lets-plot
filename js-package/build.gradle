@@ -24,10 +24,6 @@ dependencies {
 }
 
 kotlin {
-    sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
-    }
-
     target {
         browser {
         }

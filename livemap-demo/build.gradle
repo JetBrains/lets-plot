@@ -4,10 +4,6 @@ plugins {
 }
 
 kotlin {
-    sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
-    }
-
     jvm()
     jvm("jvmJfx")
     jvm("jvmRawJfx")

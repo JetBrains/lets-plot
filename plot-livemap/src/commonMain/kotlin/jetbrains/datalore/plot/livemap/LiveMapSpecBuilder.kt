@@ -269,6 +269,7 @@ internal class LiveMapSpecBuilder {
             throw IllegalArgumentException("Invalid map region type: $regionType")
         }
 
+        @kotlinx.coroutines.ObsoleteCoroutinesApi
         fun createTileSystemProvider(options: Map<*, *>, debugTiles: Boolean, quant: Int): BasemapTileSystemProvider {
             if (debugTiles) {
                 return Tilesets.chessboard()

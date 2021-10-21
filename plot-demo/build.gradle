@@ -10,10 +10,6 @@ plugins {
  */
 
 kotlin {
-    sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
-    }
-
     jvm()
     jvm("jvmBatik")
     jvm("jvmJfx")

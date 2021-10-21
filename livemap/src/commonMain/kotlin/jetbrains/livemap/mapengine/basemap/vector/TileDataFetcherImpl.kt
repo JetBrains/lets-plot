@@ -14,6 +14,7 @@ import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.viewport.CellKey
 import jetbrains.livemap.mapengine.viewport.convertCellKeyToQuadKeys
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, private val myTileService: TileService) :
     TileDataFetcher {
 

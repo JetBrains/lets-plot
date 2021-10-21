@@ -4,10 +4,6 @@ plugins {
 }
 
 kotlin {
-    sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
-    }
-
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")   // generates index.html and opens it in browser

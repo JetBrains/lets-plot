@@ -8,10 +8,6 @@ plugins {
 }
 
 kotlin {
-    sourceSets.all {
-        languageSettings.optIn('kotlinx.coroutines.ObsoleteCoroutinesApi')
-        languageSettings.optIn('io.ktor.util.KtorExperimentalAPI')
-    }
 
     jvm()
     js {

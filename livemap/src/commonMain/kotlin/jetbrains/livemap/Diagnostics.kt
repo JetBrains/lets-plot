@@ -202,7 +202,7 @@ open class Diagnostics {
         }
 
         internal inner class DownloadingTilesDiagnostic : Diagnostic {
-
+            @kotlinx.coroutines.ObsoleteCoroutinesApi
             override fun update() {
                 val vector = registry
                     .getEntities(TileResponseComponent::class)
@@ -226,6 +226,7 @@ open class Diagnostics {
         }
 
         internal interface Diagnostic {
+            @kotlinx.coroutines.ObsoleteCoroutinesApi
             fun update()
         }
 
