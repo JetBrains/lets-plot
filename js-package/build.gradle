@@ -23,12 +23,17 @@ dependencies {
     implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
 }
 
-kotlin {
-    target {
-        browser {
-        }
 
-        binaries.executable()
+
+kotlin {
+    js(IR) {
+
+        target {
+            browser {
+            }
+
+            binaries.executable()
+        }
     }
 }
 

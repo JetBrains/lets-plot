@@ -14,7 +14,7 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
-    js {
+    js(IR) {
         browser {
         }
 
