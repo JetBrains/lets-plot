@@ -8,6 +8,10 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.presentation.Defaults.ASPECT_RATIO
+import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
+import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
+import jetbrains.datalore.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
@@ -15,14 +19,6 @@ import jetbrains.datalore.plot.config.PlotConfig
 import kotlin.math.max
 
 object PlotSizeHelper {
-    private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
-    private const val MIN_PLOT_WIDTH = 50.0  // Used somethere else?
-    private const val DEF_PLOT_WIDTH = 500.0
-    private const val DEF_LIVE_MAP_WIDTH = 800.0
-    private val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
-    private val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
-
-
     /**
      * Plot spec can be either raw or processed
      */
