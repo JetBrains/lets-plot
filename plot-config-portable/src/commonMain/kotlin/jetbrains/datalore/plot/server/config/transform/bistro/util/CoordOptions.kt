@@ -14,3 +14,5 @@ class CoordOptions : Options<CoordOptions>() {
     var yLim: Pair<Double, Double>? by map(Option.Coord.Y_LIM)
     var ratio: Double? by map(Option.Coord.RATIO)
 }
+
+fun coord(block: CoordOptions.() -> Unit) = CoordOptions().apply(block)

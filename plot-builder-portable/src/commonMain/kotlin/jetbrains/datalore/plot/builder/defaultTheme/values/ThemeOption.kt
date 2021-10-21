@@ -94,8 +94,10 @@ object ThemeOption {
         // ggplot2 themes
         const val R_CLASSIC = "classic"
         const val R_GREY = "grey"
+        const val R_MINIMAL = "minimal"
 
         // lets-plot themes
         const val LP_MINIMAL = "minimal2"
+        const val LP_NONE = "none"
     }
 }

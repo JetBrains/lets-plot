@@ -29,6 +29,8 @@ import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.HIDDEN
+import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.VISIBLE
 import jetbrains.datalore.vis.svg.SvgNode
 
 
@@ -96,7 +98,10 @@ internal class TooltipRenderer(
                     else -> 1.0
                 }
 
-                val tooltipBox = TooltipBox().apply { myTooltipLayer.children().add(rootGroup) }
+                val tooltipBox = TooltipBox().apply {
+                    rootGroup.visibility().set(HIDDEN)
+                    myTooltipLayer.children().add(rootGroup)
+                }
                 tooltipBox.update(
                     fillColor = fillColor,
                     textColor = textColor,
@@ -119,6 +124,7 @@ internal class TooltipRenderer(
                         arranged.stemCoord,
                         arranged.orientation
                     )
+                    rootGroup.visibility().set(VISIBLE)
                 }
             }
     }

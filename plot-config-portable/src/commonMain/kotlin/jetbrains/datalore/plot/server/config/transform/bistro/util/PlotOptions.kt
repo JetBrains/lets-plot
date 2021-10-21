@@ -26,4 +26,10 @@ class PlotOptions : Options<PlotOptions>(
         var width: Int? by map(Plot.WIDTH)
         var height: Int? by map(Plot.HEIGHT)
     }
+
+    companion object {
+        fun size(block: Size.() -> Unit) = Size().apply(block)
+    }
 }
+
+fun plot(block: PlotOptions.() -> Unit) = PlotOptions().apply(block)

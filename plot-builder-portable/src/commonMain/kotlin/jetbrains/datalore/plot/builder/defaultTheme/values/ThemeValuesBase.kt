@@ -7,9 +7,7 @@ package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
@@ -23,7 +21,7 @@ import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.presentation.Defaults
 
-class ThemeValuesBase : ThemeValues(VALUES) {
+open class ThemeValuesBase : ThemeValues(VALUES) {
 
     companion object {
 
@@ -51,18 +49,8 @@ class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_TICKS_LENGTH to 4.0,
 
-            AXIS_TOOLTIP to mapOf(
-                Elem.SIZE to 1.0,
-            ),
-
             PANEL_GRID_MINOR to mapOf(
                 Elem.SIZE to 0.5,
-            ),
-
-            FACET_STRIP_BGR_RECT to RECT + mapOf(
-                Elem.COLOR to Color.BLUE,
-                Elem.FILL to PLOT_BACKGROUND,
-                Elem.SIZE to 1.0,
             ),
 
             // Legend

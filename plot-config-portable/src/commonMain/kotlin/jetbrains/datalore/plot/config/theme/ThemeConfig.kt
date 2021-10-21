@@ -42,7 +42,9 @@ class ThemeConfig constructor(
         private val THEME_VALUES_BY_NAME: Map<String, ThemeValues> = mapOf(
             ThemeOption.Name.R_GREY to ThemeValuesRGrey(),
             ThemeOption.Name.R_CLASSIC to ThemeValuesRClassic(),
+            ThemeOption.Name.R_MINIMAL to ThemeValuesRMinimal(),
             ThemeOption.Name.LP_MINIMAL to ThemeValuesLPMinimal2(),
+            ThemeOption.Name.LP_NONE to ThemeValuesLPNone(),
         )
 
         /**

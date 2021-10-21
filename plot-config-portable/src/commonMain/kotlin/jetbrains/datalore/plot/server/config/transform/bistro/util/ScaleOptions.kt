@@ -27,3 +27,5 @@ class ScaleOptions : Options<ScaleOptions>() {
     var isReverse: Boolean? by map(Option.Scale.DISCRETE_DOMAIN_REVERSE)
     var guide: String? by map(Option.Scale.GUIDE)
 }
+
+fun scale(block: ScaleOptions.() -> Unit) = ScaleOptions().apply(block)
