@@ -82,8 +82,8 @@ internal class ThemeOptionTest {
     }
 
 
-    private fun accessKeyForOption(theme: Theme, elem: String): List<String> {
-        return when (elem) {
+    private fun accessKeyForOption(theme: Theme, option: String): List<String> {
+        return when (option) {
             // Elements
             ThemeOption.AXIS_TICKS_X -> (theme.axisX() as DefaultAxisTheme).tickKey
             ThemeOption.AXIS_LINE_X -> (theme.axisX() as DefaultAxisTheme).lineKey
@@ -115,7 +115,7 @@ internal class ThemeOptionTest {
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.axisX() as DefaultAxisTheme).tickLengthKey
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.axisY() as DefaultAxisTheme).tickLengthKey
 
-            else -> throw IllegalStateException("Unknown element: $elem")
+            else -> throw IllegalStateException("Unknown theme option: $option")
         }
 
     }
