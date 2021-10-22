@@ -16,7 +16,7 @@ internal class DefaultPlotTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), PlotTheme {
 
-    private val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)
+    internal val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)
 
     override fun titleColor(): Color {
         return getColor(getElemValue(titleKey), Elem.COLOR)
