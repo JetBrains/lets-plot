@@ -9,6 +9,11 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform"
     id "org.jetbrains.gradle.plugin.idea-ext"
     id "groovy"   // add 'test' task
+    id "maven-publish"
+}
+
+repositories {
+    mavenLocal()
 }
 
 kotlin {
@@ -82,6 +87,14 @@ idea {
         settings {
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
         }
     }
 }
