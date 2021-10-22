@@ -75,6 +75,7 @@ class BusyStateSystem(
             ))
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun updateImpl(context: EcsContext, dt: Double) {
         val entitiesState = BUSY.takeIf { componentManager.count<BusyStateComponent>() > 0 } ?: NOT_BUSY
         val markerState = SHOWING.takeIf { componentManager.count<BusyMarkerComponent>() > 0 } ?: NOT_SHOWING

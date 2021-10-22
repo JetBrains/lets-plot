@@ -29,6 +29,7 @@ class ChartElementScaleSystem(
         require(maxScale >= 1.0) { "maxScale should be greater or equal 1.0 but was $maxScale" }
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         onEachEntity2<ZoomLevelChangedComponent, ChartElementComponent> { entity, _, chartElementComponent ->
             with(chartElementComponent) {

@@ -16,7 +16,7 @@ class CursorStyleSystem(componentManager: EcsComponentManager, private val myCur
     override fun initImpl(context: EcsContext) {
         componentManager.createEntity("CursorInputComponent").add(myInput)
     }
-
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun updateImpl(context: EcsContext, dt: Double) {
         myInput.location?.let { location ->
             getEntities(COMPONENT_TYPES).find { entity ->

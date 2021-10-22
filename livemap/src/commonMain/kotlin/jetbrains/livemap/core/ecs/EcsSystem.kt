@@ -7,6 +7,7 @@ package jetbrains.livemap.core.ecs
 
 interface EcsSystem {
     fun init(context: EcsContext)
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     fun update(context: EcsContext, dt: Double)
     fun destroy()
 }

@@ -34,6 +34,7 @@ object GrowingPathEffect {
     class GrowingPathEffectSystem(componentManager: EcsComponentManager) :
         AbstractSystem<EcsContext>(componentManager) {
 
+        @kotlinx.coroutines.ObsoleteCoroutinesApi
         override fun updateImpl(context: EcsContext, dt: Double) {
             for (entity in getEntities(COMPONENT_TYPES)) {
                 val path = asLineString(entity.get<ScreenGeometryComponent>().geometry)
