@@ -17,7 +17,6 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         initImpl(context as T)
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun update(context: EcsContext, dt: Double) {
         executeTasks()
 
@@ -29,7 +28,6 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
 
     protected open fun initImpl(context: T) {}
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     protected open fun updateImpl(context: T, dt: Double) {}
 
     inline fun <reified T: EcsComponent> getEntities(): Sequence<EcsEntity> {

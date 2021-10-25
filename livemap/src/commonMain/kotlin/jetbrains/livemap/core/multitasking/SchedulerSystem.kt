@@ -20,7 +20,6 @@ class SchedulerSystem(
         microTaskExecutor.start()
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun updateImpl(context: EcsContext, dt: Double) {
         if (componentManager.count(MicroThreadComponent::class) > 0) {
             val microThreadEntities = getEntities(MicroThreadComponent::class).toList().asSequence()

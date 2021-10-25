@@ -8,7 +8,6 @@ package jetbrains.gis.tileprotocol.socket
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.websocket.WebSockets
-@kotlinx.coroutines.ObsoleteCoroutinesApi
 actual class TileWebSocketBuilder actual constructor(
     private val myUrl: String
 ) : SocketBuilder {

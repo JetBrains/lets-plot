@@ -9,7 +9,6 @@ package jetbrains.livemap.core.ecs
 class AnimationObjectSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
     override fun init(context: EcsContext) {}
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun update(context: EcsContext, dt: Double) {
         getEntities(AnimationObjectComponent::class).forEach {
 

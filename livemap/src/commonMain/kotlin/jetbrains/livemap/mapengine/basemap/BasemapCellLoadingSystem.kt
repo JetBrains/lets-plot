@@ -35,7 +35,6 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
         }
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         myDonorTileCalculators = createDonorTileCalculators()
 
@@ -54,7 +53,6 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
         getSingleton<RequestTilesComponent>().requestTiles = requestTiles
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     private fun createDonorTileCalculators(): Map<BasemapLayerKind, DonorTileCalculator> {
         val layerTileMap = HashMap<BasemapLayerKind, MutableMap<CellKey, Tile>>()
 

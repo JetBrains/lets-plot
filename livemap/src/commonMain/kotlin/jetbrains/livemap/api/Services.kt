@@ -30,7 +30,6 @@ object Services {
         }
     )
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     fun bogusTileProvider(): TileService {
         class DummySocketBuilder : SocketBuilder {
             override fun build(handler: SocketHandler): Socket {
@@ -57,12 +56,10 @@ object Services {
         url = "https://geo2.datalore.jetbrains.com"
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     fun devTileProvider() = liveMapVectorTiles {
         url = "ws://10.0.0.127:3933"
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     fun jetbrainsTileProvider() = liveMapVectorTiles {
         url = "wss://tiles.datalore.jetbrains.com"
     }

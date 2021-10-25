@@ -216,7 +216,6 @@ class Projection {
 }
 
 @LiveMapDsl
-@kotlinx.coroutines.ObsoleteCoroutinesApi
 class LiveMapTileServiceBuilder {
     lateinit var url: String
     var theme = TileService.Theme.COLOR
@@ -287,7 +286,6 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     }
 }
 
-@kotlinx.coroutines.ObsoleteCoroutinesApi
 fun liveMapVectorTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
     LiveMapTileServiceBuilder().apply(block).build()
 

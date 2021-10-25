@@ -19,7 +19,6 @@ class EcsController(
         mySystems.forEach { it.init(myContext) }
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     fun update(dt: Double) {
         myContext.startFrame()
 

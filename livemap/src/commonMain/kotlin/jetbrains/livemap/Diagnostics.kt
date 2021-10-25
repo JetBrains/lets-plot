@@ -27,7 +27,6 @@ import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     open fun update(dt: Long) {}
 
     class LiveMapDiagnostics(
@@ -96,7 +95,6 @@ open class Diagnostics {
             uiService.addRenderable(metricsLabel)
         }
 
-        @kotlinx.coroutines.ObsoleteCoroutinesApi
         override fun update(dt: Long) {
             deltaTime = dt
             debugService.setValue(TIMER_TICK, "Timer tick: ${deltaTime.toOdd()}") // reduces excessive repaints
@@ -120,7 +118,6 @@ open class Diagnostics {
             private var message = ""
             private val timeToShow = 7 * 1000
 
-            @kotlinx.coroutines.ObsoleteCoroutinesApi
             override fun update() {
                 if (slowestSystemTime > 16.0) {
                     if (slowestSystemTime > freezeTime) {
@@ -205,7 +202,6 @@ open class Diagnostics {
         }
 
         internal inner class DownloadingTilesDiagnostic : Diagnostic {
-            @kotlinx.coroutines.ObsoleteCoroutinesApi
             override fun update() {
                 val vector = registry
                     .getEntities(TileResponseComponent::class)
@@ -229,7 +225,6 @@ open class Diagnostics {
         }
 
         internal interface Diagnostic {
-            @kotlinx.coroutines.ObsoleteCoroutinesApi
             fun update()
         }
 

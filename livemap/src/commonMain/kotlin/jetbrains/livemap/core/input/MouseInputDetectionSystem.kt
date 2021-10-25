@@ -19,7 +19,6 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
 
     private val myInteractiveEntityView: InteractiveEntityView = InteractiveEntityView()
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun updateImpl(context: EcsContext, dt: Double) {
         val entitiesByEventTypeAndZIndex = HashMap<MouseEventType, HashMap<Int, ArrayList<EcsEntity>>>()
         val canvasLayers = getSingleton<LayersOrderComponent>().canvasLayers

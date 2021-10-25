@@ -16,7 +16,6 @@ import jetbrains.livemap.mapengine.basemap.solid.chessBoard
 import jetbrains.livemap.mapengine.basemap.solid.fixed
 import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem
 
-@kotlinx.coroutines.ObsoleteCoroutinesApi
 object Tilesets {
     fun chessboard(black: Color = Color.GRAY, white: Color = Color.LIGHT_GRAY) : BasemapTileSystemProvider {
         return object : BasemapTileSystemProvider {

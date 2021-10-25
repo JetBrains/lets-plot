@@ -35,7 +35,6 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
         myRegs.add(context.eventSource.addEventHandler(MOUSE_CLICKED, handler( this::onMouseClicked )))
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override fun update(context: EcsContext, dt: Double) {
         myDragCurrentLocation?.let {
             if ( it != myDragStartLocation) {

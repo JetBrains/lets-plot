@@ -162,7 +162,6 @@ class LiveMap(
         return myComponentManager.getSingleton<HoverObjectComponent>().searchResult
     }
 
-    @kotlinx.coroutines.ObsoleteCoroutinesApi
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
         if (!myInitialized) {
             init(componentManager)
