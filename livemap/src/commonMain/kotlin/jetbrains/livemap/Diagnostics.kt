@@ -202,6 +202,7 @@ open class Diagnostics {
         }
 
         internal inner class DownloadingTilesDiagnostic : Diagnostic {
+
             override fun update() {
                 val vector = registry
                     .getEntities(TileResponseComponent::class)

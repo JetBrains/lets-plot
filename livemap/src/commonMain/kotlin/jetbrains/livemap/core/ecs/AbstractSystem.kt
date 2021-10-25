@@ -17,6 +17,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         initImpl(context as T)
     }
 
+
     override fun update(context: EcsContext, dt: Double) {
         executeTasks()
 
