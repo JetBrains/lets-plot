@@ -23,6 +23,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':vis-canvas')
                 implementation project(':gis')
+                compileOnly "io.ktor:ktor-client-websockets:$ktor_version"
             }
         }
         commonTest {

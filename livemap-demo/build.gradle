@@ -11,37 +11,11 @@ kotlin {
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
     jvm("jvmBatikPlot")
-    js() {
+    js(IR) {
         browser {
-            dceTask {
-                keep.addAll(
-                        "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.barsDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.emptyLiveMapDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.featuresDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.linesDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.pathsDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.piesDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.pointsDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.polygonsDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.rasterTilesDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.solidColorTilesDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.rectDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.demo.textDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.pathDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.polygonDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.drawImageDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.scaleRotateTranslateDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineJoinLineCapDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.fillRectStrokeRectDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineDashDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.textAlignAndBaselineDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.textStyleDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.sectorDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.saveRestoreDemo",
-                )
-            }
         }
+
+        binaries.executable()
     }
 
 

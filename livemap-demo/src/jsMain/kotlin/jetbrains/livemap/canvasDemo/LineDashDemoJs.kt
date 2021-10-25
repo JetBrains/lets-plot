@@ -5,8 +5,10 @@
 
 package jetbrains.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("lineDashDemo")
+@JsExport
 fun lineDashDemo() {
     baseCanvasDemo { canvas, _ ->
         LineDashDemoModel(canvas)

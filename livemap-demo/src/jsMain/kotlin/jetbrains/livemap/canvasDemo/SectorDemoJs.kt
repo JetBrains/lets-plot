@@ -5,8 +5,10 @@
 
 package jetbrains.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("sectorDemo")
+@JsExport
 fun sectorDemo() {
     baseCanvasDemo { canvas, _ ->
         SectorDemoModel(canvas)

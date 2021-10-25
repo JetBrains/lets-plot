@@ -5,8 +5,10 @@
 
 package jetbrains.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("textStyleDemo")
+@JsExport
 fun textStyleDemo() {
     baseCanvasDemo { canvas, _ ->
         TextStyleDemoModel(canvas)

@@ -9,6 +9,8 @@ import jetbrains.datalore.vis.browser.DomMapperDemoUtil
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgDemoModel.a.DemoModelA
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 fun svgElementsDemoA() {
     val svgGroup = DemoModelA.createModel()
     val svgRoot = SvgSvgElement(500.0, 500.0)
