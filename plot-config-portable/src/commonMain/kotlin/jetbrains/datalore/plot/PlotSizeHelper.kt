@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
-import kotlin.js.JsExport
 import kotlin.math.max
 
 object PlotSizeHelper {
