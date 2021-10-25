@@ -18,4 +18,18 @@ abstract class ThemeValues(
         }
         return result
     }
+
+    companion object {
+        fun forName(theme: String): ThemeValues {
+            return when (theme) {
+                ThemeOption.Name.R_GREY -> ThemeValuesRGrey()
+                ThemeOption.Name.R_LIGHT -> ThemeValuesRLight()
+                ThemeOption.Name.R_CLASSIC -> ThemeValuesRClassic()
+                ThemeOption.Name.R_MINIMAL -> ThemeValuesRMinimal()
+                ThemeOption.Name.LP_MINIMAL -> ThemeValuesLPMinimal2()
+                ThemeOption.Name.LP_NONE -> ThemeValuesLPNone()
+                else -> throw IllegalArgumentException("Unsupported theme: '$theme'")
+            }
+        }
+    }
 }

@@ -6,8 +6,9 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
-import jetbrains.datalore.plot.builder.defaultTheme.values.*
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option
 
@@ -20,12 +21,7 @@ class ThemeConfig constructor(
     init {
 
         val themeName = themeSettings.getOrElse(Option.Meta.NAME) { ThemeOption.Name.LP_MINIMAL }.toString()
-        val baselineValues = THEME_VALUES_BY_NAME.getOrElse(themeName) { ThemeValuesBase() }
-
-        // ToDo: select defaults.
-//        val baselineValues = ThemeValuesLPMinimal2()
-//            val baselineValues = ThemeValuesRClassic()
-//            val baselineValues = ThemeValuesRGrey()
+        val baselineValues = ThemeValues.forName(themeName)
 
         // Make sure all values are converted to proper objects.
         @Suppress("NAME_SHADOWING")
@@ -39,13 +35,6 @@ class ThemeConfig constructor(
     }
 
     companion object {
-        private val THEME_VALUES_BY_NAME: Map<String, ThemeValues> = mapOf(
-            ThemeOption.Name.R_GREY to ThemeValuesRGrey(),
-            ThemeOption.Name.R_CLASSIC to ThemeValuesRClassic(),
-            ThemeOption.Name.R_MINIMAL to ThemeValuesRMinimal(),
-            ThemeOption.Name.LP_MINIMAL to ThemeValuesLPMinimal2(),
-            ThemeOption.Name.LP_NONE to ThemeValuesLPNone(),
-        )
 
         /**
          * Converts a simple "blank" string to a 'blank element'.

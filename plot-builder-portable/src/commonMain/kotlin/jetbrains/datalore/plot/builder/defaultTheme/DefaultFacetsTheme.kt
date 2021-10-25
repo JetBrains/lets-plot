@@ -17,8 +17,8 @@ internal class DefaultFacetsTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), FacetsTheme {
 
-    private val rectKey = listOf(FACET_STRIP_BGR_RECT, RECT)
-    private val textKey = listOf(FACET_STRIP_TEXT, TEXT)
+    internal val rectKey = listOf(FACET_STRIP_BGR_RECT, RECT)
+    internal val textKey = listOf(FACET_STRIP_TEXT, TEXT)
 
     override fun showStrip(): Boolean {
         return !isElemBlank(textKey)

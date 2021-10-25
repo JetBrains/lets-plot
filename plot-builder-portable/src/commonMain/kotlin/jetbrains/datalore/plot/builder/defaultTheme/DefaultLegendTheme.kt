@@ -20,8 +20,8 @@ internal class DefaultLegendTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), LegendTheme {
 
-    private val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
-    private val textKey = listOf(LEGEND_TEXT, TEXT)
+    internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
+    internal val textKey = listOf(LEGEND_TEXT, TEXT)
 
     override fun keySize(): Double {
         return 23.0

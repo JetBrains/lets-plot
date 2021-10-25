@@ -27,13 +27,16 @@ internal class DefaultAxisTheme(
 ) : ThemeValuesAccess(options), AxisTheme {
 
     private val suffix = "_$axis"
-    private val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
-    private val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
-    private val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS + suffix, AXIS, TITLE, TEXT)
-    private val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
-    private val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
-    private val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
-    private val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT)
+    internal val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
+    internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
+    internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS + suffix, AXIS, TITLE, TEXT)
+    internal val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
+    internal val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
+    internal val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
+    internal val tooltipFillKey = tooltipKey + lineKey
+    internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT)
+    // Inherits from the tooltip rect stroke color.
+    internal val tooltipTextColorKey = tooltipTextKey + tooltipKey
 
     override fun showLine(): Boolean {
         return !isElemBlank(lineKey)
@@ -84,7 +87,7 @@ internal class DefaultAxisTheme(
     }
 
     override fun tooltipFill(): Color {
-        return getColor(getElemValue(tooltipKey + lineKey), Elem.FILL)
+        return getColor(getElemValue(tooltipFillKey), Elem.FILL)
     }
 
     override fun tooltipColor(): Color {
@@ -96,7 +99,6 @@ internal class DefaultAxisTheme(
     }
 
     override fun tooltipTextColor(): Color {
-        // Inherits from the tooltip rect stroke color.
-        return getColor(getElemValue(tooltipTextKey + tooltipKey), Elem.COLOR)
+        return getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
     }
 }
