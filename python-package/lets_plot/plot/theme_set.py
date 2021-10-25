@@ -6,6 +6,7 @@ from .core import FeatureSpec
 
 __all__ = [
     'theme_grey',
+    'theme_light',
     'theme_classic',
     'theme_minimal',
     'theme_minimal2',
@@ -18,6 +19,13 @@ def theme_grey():
     ToDo
     """
     return FeatureSpec('theme', name="grey")
+
+
+def theme_light():
+    """
+    ToDo
+    """
+    return FeatureSpec('theme', name="light")
 
 
 def theme_classic():

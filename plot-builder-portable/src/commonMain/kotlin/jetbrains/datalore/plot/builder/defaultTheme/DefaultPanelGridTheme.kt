@@ -19,9 +19,9 @@ internal class DefaultPanelGridTheme(
 ) : ThemeValuesAccess(options), PanelGridTheme {
 
     private val suffix = "_$axis"
-    private val majorLineKey =
+    internal val majorLineKey =
         listOf(PANEL_GRID_MAJOR + suffix, PANEL_GRID_MAJOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
-    private val minorLineKey =
+    internal val minorLineKey =
         listOf(PANEL_GRID_MINOR + suffix, PANEL_GRID_MINOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
 
     override fun showMajor(): Boolean {

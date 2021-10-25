@@ -92,12 +92,61 @@ object ThemeOption {
 
     object Name {
         // ggplot2 themes
-        const val R_CLASSIC = "classic"
         const val R_GREY = "grey"
+        const val R_LIGHT = "light"
+        const val R_CLASSIC = "classic"
         const val R_MINIMAL = "minimal"
 
         // lets-plot themes
         const val LP_MINIMAL = "minimal2"
         const val LP_NONE = "none"
+    }
+
+    internal object ForTest {
+        val themeNames = listOf(
+            Name.R_GREY,
+            Name.R_LIGHT,
+            Name.R_CLASSIC,
+            Name.R_MINIMAL,
+            Name.LP_MINIMAL,
+            Name.LP_NONE,
+        )
+        val elemWithColorAndSize = listOf(
+            AXIS_TICKS_X,
+            AXIS_TICKS_Y,
+            AXIS_LINE_X,
+            AXIS_LINE_Y,
+            AXIS_TOOLTIP_X,
+            AXIS_TOOLTIP_Y,
+            PANEL_BKGR_RECT,
+            PANEL_GRID_MAJOR_X,
+            PANEL_GRID_MINOR_X,
+            PANEL_GRID_MAJOR_Y,
+            PANEL_GRID_MINOR_Y,
+            FACET_STRIP_BGR_RECT,
+        )
+        // Actually, text sizes are defined in "theme values".
+        val elemWithColorOnly = listOf(
+            PLOT_TITLE,
+            AXIS_TITLE_X,
+            AXIS_TITLE_Y,
+            AXIS_TEXT_X,
+            AXIS_TEXT_Y,
+            AXIS_TOOLTIP_TEXT_X,
+            AXIS_TOOLTIP_TEXT_Y,
+            FACET_STRIP_TEXT,
+            LEGEND_TEXT,
+            LEGEND_TITLE,
+        )
+        val elemWithFill = listOf(
+            AXIS_TOOLTIP_X,
+            AXIS_TOOLTIP_Y,
+            PANEL_BKGR_RECT,
+            FACET_STRIP_BGR_RECT,
+        )
+        val numericOptions = listOf(
+            AXIS_TICKS_LENGTH_X,
+            AXIS_TICKS_LENGTH_Y,
+        )
     }
 }

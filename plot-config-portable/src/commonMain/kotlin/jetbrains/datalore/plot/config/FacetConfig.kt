@@ -115,7 +115,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             is Number -> optionVal.toInt()
             else -> throw IllegalArgumentException(
                 "Unsupported `order` value: $optionVal.\n" +
-                        "Use: 1 (natural) or -1 (descending)."
+                        "Use: 1 (natural), -1 (descending) or 0 (no ordering)."
             )
         }
     }

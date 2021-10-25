@@ -19,7 +19,7 @@ internal class DefaultPanelTheme(
     private val gridX = DefaultPanelGridTheme("x", options)
     private val gridY = DefaultPanelGridTheme("y", options)
 
-    private val rectKey = listOf(PANEL_BKGR_RECT, RECT)
+    internal val rectKey = listOf(PANEL_BKGR_RECT, RECT)
 
     override fun showRect(): Boolean {
         return !isElemBlank(rectKey)
