@@ -12,10 +12,6 @@ plugins {
     id "maven-publish"
 }
 
-repositories {
-    mavenLocal()
-}
-
 kotlin {
     jvm()
     js {
@@ -87,14 +83,6 @@ idea {
         settings {
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
         }
     }
 }
