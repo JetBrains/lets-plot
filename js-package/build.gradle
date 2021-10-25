@@ -30,6 +30,13 @@ kotlin {
 
         target {
             browser {
+                dceTask {
+                    keep.addAll(
+                            "lets-plot-js-package.buildPlotFromRawSpecs",
+                            "lets-plot-js-package.buildPlotFromProcessedSpecs",
+                            "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
+                    )
+                }
             }
 
             binaries.executable()
