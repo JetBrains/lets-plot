@@ -36,7 +36,6 @@ kotlin {
                 implementation project(':vis-canvas')
                 implementation project(':gis')
                 implementation project(':livemap')
-                compileOnly "io.ktor:ktor-client-websockets:$ktor_version"
             }
         }
         commonTest {

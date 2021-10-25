@@ -14,8 +14,6 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
  * Run with LinearRegressionDemoBrowser.kt
  */
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
 fun linearRegressionDemo() {
     with(LinearRegressionPlotDemoDom()) {
         DomMapperDemoUtil.mapToDom(svgRoots(), "root")
