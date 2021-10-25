@@ -25,6 +25,7 @@ import jetbrains.gis.tileprotocol.socket.SafeSocketHandler
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 
+
 open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme) {
     enum class Theme {
         COLOR,
