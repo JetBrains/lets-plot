@@ -12,8 +12,6 @@ import jetbrains.datalore.vis.browser.DomMapperDemoUtil.mapToDom
  * Called from generated HTML
  * Run with AxisComponentDemoBrowser.kt
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
 fun axisComponentDemo() {
     with(AxisComponentDemo()) {
         val svgRoots = createSvgRoots()

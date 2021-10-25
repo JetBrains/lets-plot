@@ -5,10 +5,8 @@
 
 package jetbrains.livemap.canvasDemo
 
-@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("saveRestoreDemo")
-@JsExport
 fun saveRestoreDemo() {
     baseCanvasDemo { canvas, _ ->
         SaveRestoreDemoModel(canvas)

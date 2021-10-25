@@ -14,8 +14,6 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
  * Run with LoessRegressionDemoBrowser.kt
  */
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
 fun loessRegressionDemo() {
     with(LoessRegressionPlotDemoDom()) {
         DomMapperDemoUtil.mapToDom(svgRoots(), "root")

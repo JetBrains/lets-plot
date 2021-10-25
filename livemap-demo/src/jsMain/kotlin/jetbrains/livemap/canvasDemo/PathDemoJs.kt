@@ -5,10 +5,8 @@
 
 package jetbrains.livemap.canvasDemo
 
-@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("pathDemo")
-@JsExport
 fun pathDemo() {
     baseCanvasDemo { canvas, _ ->
         PathDemoModel(canvas)
