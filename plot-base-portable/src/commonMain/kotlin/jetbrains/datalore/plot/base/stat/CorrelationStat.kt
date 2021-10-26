@@ -36,6 +36,8 @@ class CorrelationStat(
             "Threshold value:  $threshold must be in interval [0.0, 1.0]"
         }
 
+        messageConsumer("WARN (!): \"corr stat\" is deprecated. Please use \"corr_plot()\"")
+
         val cm = correlationMatrix(data, type, fillDiagonal, ::correlationPearson, threshold)
         val values = cm.getNumeric(Stats.CORR)
         val abs: List<Double?> = values.map { it?.let(::abs) }

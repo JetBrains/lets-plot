@@ -21,7 +21,9 @@
 ### Changed
 
 - The size of fonts on plot was slightly increased all across the board.
-- The default plot size was increased by 20%, it's now 600x400 px. 
+- The default plot size was increased by 20%, it's now 600x400 px.
+- **Deprecated API**: `stat_corr()` and "correlation stat" will be removed in one of the future releases. 
+  Please use the `corr_plot()` plot builder object instead. 
 
 ### Fixed
   
