@@ -22,14 +22,11 @@ class FacetGridDemo {
         )
     }
 
-
-
-
     private fun cols(): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "x" to AutoMpg.modelYear.name,
+            "x" to AutoMpg.cylinders.name,
             "x_format" to "{d} cyl"
         )
         return plotSpec
