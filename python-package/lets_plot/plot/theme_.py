@@ -62,34 +62,92 @@ def theme(*,
           ):
     """
     Use `theme()` to modify individual components of a theme,
-    allowing you to control the appearance of all non-data components of the plot.
+    allowing you to control all non-data components of the plot.
 
     Parameters
     ----------
-    axis_title : str or `FeatureSpec`
-        Label of axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_title_x : str or `FeatureSpec`
-        x axis label. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_title_y : str or `FeatureSpec`
-        y axis label. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_text : str or `FeatureSpec`
-        Tick labels along axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_text_x : str or `FeatureSpec`
-        x axis tick labels. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_text_y : str or `FeatureSpec`
-        y axis tick labels. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_ticks : str or `FeatureSpec`
-        Tick marks along axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_ticks_x : str or `FeatureSpec`
-        x axis tick marks. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_ticks_y : str or `FeatureSpec`
-        y axis tick marks. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_line : str or `FeatureSpec`
-        Lines along axes. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_line_x : str or `FeatureSpec`
-        Line along x axis. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_line_y : str or `FeatureSpec`
-        Line along y axis. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    line : str or dict
+        All line elements.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify line parameters.
+    rect : str or dict
+        All rectangular elements.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_rect()` to specify rectangular element parameters.
+    text : str or dict
+        All text elements.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify text parameters.
+    title : str or dict
+        All title elements: plot, axes, legends.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify title text parameters, inherited from `text`.
+    axis : str or dict
+        All axis elements: lines, ticks, texts, titles.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify axes parameters.
+    axis_title : str or dict
+        Labels of axes.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify axes label parameters, inherited from `text`.
+    axis_title_x : str or dict
+        x axis label.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify x axis label parameters, inherited from `axis_title`.
+    axis_title_y : str or dict
+        y axis label.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify y axis label parameters, inherited from `axis_title`.
+    axis_text : str or dict
+        Tick labels along axes.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify all axes tick label parameters, inherited from `text`.
+    axis_text_x : str or dict
+        x axis tick labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify all x axis tick label parameters, inherited from `axis_text`.
+    axis_text_y : str or dict
+        y axis tick labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify all y axis tick label parameters, inherited from `axis_text`.
+    axis_ticks : str or dict
+        Tick marks along axes.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify all tick mark parameters, inherited from `line`.
+    axis_ticks_x : str or dict
+        x axis tick marks.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify all x axis tick mark parameters, inherited from `axis_ticks`.
+    axis_ticks_y : str or dict
+        y axis tick marks.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify all y axis tick mark parameters, inherited from `axis_ticks`.
+    axis_ticks_length : int
+        Length of tick marks.
+    axis_ticks_length_x : int
+        Length of x axis tick marks.
+    axis_ticks_length_y : int
+        Length of y axis tick marks.
+    axis_line : str or dict
+        Lines along axes.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify line parameters along all axes, inherited from `line`.
+    axis_line_x : str or dict
+        Line along x axis.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify line parameters along x axis, inherited from `axis_line`.
+    axis_line_y : str or dict
+        Line along y axis.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify line parameters along y axis, inherited from `axis_line`.
+    legend_text : str or dict
+        Legend item labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify legend item label parameters, inherited from `text`.
+    legend_title : str or dict
+        Title of legend.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify legend title parameters, inherited from `title`.
     legend_position : {'none', 'left', 'right', 'bottom', 'top'} or list
         The position of legends. To remove the plot legend, use the 'none' value.
         If parameter is a list, then it should be a two-element numeric vector,
@@ -101,12 +159,62 @@ def theme(*,
         For string parameter the only possible value is 'center'.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
-    axis_tooltip : str or `FeatureSpec`
-        Axes tooltips. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_tooltip_x : str or `FeatureSpec`
-        x axis tooltips. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-    axis_tooltip_y : str or `FeatureSpec`
-        y axis tooltips. Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+    panel_background : str or dict
+        Background of plotting area.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify plotting area background parameters, inherited from `rect`.
+    panel_grid : str or dict
+        Grid lines.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify grid line parameters, inherited from `line`.
+    panel_grid_major : str or dict
+        Major grid lines.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify major grid line parameters, inherited from `panel_grid`.
+    panel_grid_minor : str or dict
+        Minor grid lines.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify minor grid line parameters, inherited from `panel_grid`.
+    panel_grid_major_x : str or dict
+        Major grid lines along x axis.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify major grid line parameters along x axis, inherited from `panel_grid_major`.
+    panel_grid_minor_x : str or dict
+        Minor grid lines along x axis.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify minor grid line parameters along x axis, inherited from `panel_grid_minor`.
+    panel_grid_major_y : str or dict
+        Major grid lines along y axis.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify major grid line parameters along y axis, inherited from `panel_grid_major`.
+    panel_grid_minor_y : str or dict
+        Minor grid lines along y axis.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_line()` to specify minor grid line parameters along y axis, inherited from `panel_grid_minor`.
+    plot_title : str or dict
+        Plot title.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify plot title parameters, inherited from `title`.
+    strip_background : str or dict
+        Background of facet labels.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify facet label background parameters, inherited from `rect`.
+    strip_text : str or dict
+        Facet labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify facet label parameters, inherited from `text`.
+    axis_tooltip : str or dict
+        Axes tooltips.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_rect()` to specify axes tooltip parameters, inherited from `rect`.
+    axis_tooltip_x : str or dict
+        x axis tooltips.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_rect()` to specify x axis tooltip parameters, inherited from `axis_tooltip`.
+    axis_tooltip_y : str or dict
+        y axis tooltips.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_rect()` to specify y axis tooltip parameters, inherited from `axis_tooltip`.
 
     Returns
     -------
@@ -117,27 +225,7 @@ def theme(*,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11-13
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        cats = ['a', 'b', 'c', 'd', 'e']
-        np.random.seed(42)
-        p = np.random.uniform(size=len(cats))
-        x = np.random.choice(cats, p=p/p.sum(), size=1000)
-        ggplot({'x': x}, aes(x='x')) + \\
-            geom_bar(aes(fill='x')) + \\
-            scale_fill_discrete(name='cat') + \\
-            theme(axis_title_x='blank', axis_text_x='blank', \\
-                  axis_ticks_x='blank', axis_line='blank', \\
-                  legend_position='bottom')
-
-    |
-
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 12-13
+        :emphasize-lines: 11-16
 
         import numpy as np
         from lets_plot import *
@@ -145,13 +233,42 @@ def theme(*,
         n = 100
         np.random.seed(42)
         x = np.random.normal(size=n)
-        y = np.random.normal(size=n)
-        v = np.random.uniform(size=n)
-        ggplot({'x': x, 'y': y, 'v': v}, aes('x', 'y')) + \\
-            geom_point(aes(color='v')) + \\
-            scale_color_gradient(name='value') + \\
-            theme(axis_tooltip=element_blank(), legend_direction='horizontal', \\
-                  legend_position=[1, 1], legend_justification=[1, 1])
+        c = np.random.choice(['a', 'b', 'c'], size=n)
+        ggplot({'x': x, 'class': c}, aes('x')) + \\
+            geom_density(aes(color='class'), size=2) + \\
+            ggtitle('Density of classes') + \\
+            theme(axis_line=element_line(size=4), \\
+                  axis_ticks_length=10, \\
+                  axis_title_y='blank', \\
+                  legend_position=[1, 1], legend_justification=[1, 1], \\
+                  panel_background=element_rect(color='black', fill='#eeeeee', size=2), \\
+                  panel_grid=element_line(color='black', size=1))
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14-19
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        p = np.random.uniform(size=7)
+        x = np.random.choice(range(p.size), p=p/p.sum(), size=n)
+        c = np.random.choice(['a', 'b', 'c'], p=[.5, .3, .2], size=n)
+        ggplot({'x': x, 'class': c}) + \\
+            geom_bar(aes('x', fill='x')) + \\
+            scale_y_continuous(breaks=list(range(0, 151, 25))) + \\
+            scale_fill_discrete() + \\
+            facet_grid(y='class') + \\
+            theme(axis_line_x='blank', \\
+                  axis_ticks=element_line(color='white'), \\
+                  panel_grid_major_x='blank', \
+                  strip_background=element_rect(color='black', fill='white'), \\
+                  axis_tooltip=element_rect(color='black', fill='white'), \\
+                  legend_position='top')
 
     """
 
@@ -204,6 +321,41 @@ def element_rect(
         # ToDo: linetype
         blank=False,
 ) -> dict:
+    """
+    Specifies how non-data components of the plot are drawn.
+    This theme element draws borders and backgrounds.
+
+    Parameters
+    ----------
+    fill : str
+        Fill color.
+    color : str
+        Border color.
+    size : int
+        Border size.
+    blank : bool, default=False
+        If True - draws nothing, and assigns no space.
+
+    Returns
+    -------
+    `dict`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme(panel_background=element_rect())
+
+    """
     return locals()
 
 
@@ -213,6 +365,39 @@ def element_line(
         # ToDo: linetype, lineend, arrow
         blank=False,
 ) -> dict:
+    """
+    Specifies how non-data components of the plot are drawn.
+    This theme element draws lines.
+
+    Parameters
+    ----------
+    color : str
+        Line color.
+    size : int
+        Line size.
+    blank : bool, default=False
+        If True - draws nothing, and assigns no space.
+
+    Returns
+    -------
+    `dict`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme(panel_grid=element_line(size=3))
+
+    """
     return locals()
 
 
@@ -223,4 +408,35 @@ def element_text(
         # ToDo: hjust, vjust, angle, lineheight, margin
         blank=False,
 ) -> dict:
+    """
+    Specifies how non-data components of the plot are drawn.
+    This theme element draws texts.
+
+    Parameters
+    ----------
+    color : str
+        Text color.
+    blank : bool, default=False
+        If True - draws nothing, and assigns no space.
+
+    Returns
+    -------
+    `dict`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme(axis_text=element_text(color='#bdbdbd'))
+
+    """
     return locals()
