@@ -5,10 +5,8 @@
 
 package jetbrains.livemap.canvasDemo
 
-@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("scaleRotateTranslateDemo")
-@JsExport
 fun scaleRotateTranslateDemo() {
     baseCanvasDemo { canvas, _ ->
         ScaleRotateTranslateDemoModel(canvas)

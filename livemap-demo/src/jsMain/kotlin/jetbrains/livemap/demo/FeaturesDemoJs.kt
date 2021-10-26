@@ -5,10 +5,8 @@
 
 package jetbrains.livemap.demo
 
-@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("featuresDemo")
-@JsExport
 fun featuresDemo() {
     DemoBaseJs(::FeaturesDemoModel).show()
 }

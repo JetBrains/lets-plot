@@ -5,10 +5,8 @@
 
 package jetbrains.livemap.canvasDemo
 
-@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("drawImageDemo")
-@JsExport
 fun drawImageDemo() {
     baseCanvasDemo { canvas, createSnapshot ->
         DrawImageAndClearRectDemoModel(canvas, createSnapshot)
