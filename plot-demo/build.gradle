@@ -127,7 +127,3 @@ jvmBrowserJar {
 jvmJfxJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
-jsJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
