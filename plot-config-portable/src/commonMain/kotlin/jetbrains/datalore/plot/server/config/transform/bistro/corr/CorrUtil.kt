@@ -8,20 +8,16 @@ package jetbrains.letsPlot.bistro.corr
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.filterFinite
-import jetbrains.datalore.plot.server.config.transform.bistro.corr.DataUtil.standardiseData
 import kotlin.math.absoluteValue
 
 internal object CorrUtil {
-    fun correlations(
+    fun computeCorrelations(
         data: Map<String, List<Any?>>,
         corrFun: (List<Double>, List<Double>) -> Double
     ): Map<Pair<String, String>, Double> {
-        @Suppress("NAME_SHADOWING")
-        val data = standardiseData(data)
-
         val df = DataFrameUtil.fromMap(data)
         val numerics = df.variables().filter { df.isNumeric(it) }
-        val correlations = HashMap<Pair<DataFrame.Variable, DataFrame.Variable>, Double>()
+        val correlations = LinkedHashMap<Pair<DataFrame.Variable, DataFrame.Variable>, Double>()
 
         for (variable in numerics) {
             correlations[variable to variable] = 1.0
@@ -43,6 +39,20 @@ internal object CorrUtil {
                 it.key.second.label
             )
         }
+    }
+
+    fun correlationsFromCoefficients(
+        coeff: Map<String, List<Any?>>
+    ): Map<Pair<String, String>, Double> {
+        val correlations = LinkedHashMap<Pair<String, String>, Double>()
+
+        coeff.forEach { (vx, vxCoeffs) ->
+            coeff.keys.forEachIndexed() { vyIndex, vy ->
+                correlations[vx to vy] = vxCoeffs.get(vyIndex) as Double
+            }
+        }
+
+        return correlations
     }
 
     private fun correlation(
