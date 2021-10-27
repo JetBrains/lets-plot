@@ -1,7 +1,7 @@
 ## [2.2.0] - 2021-10-??
 
 ### Added
-- correlation coefficients support in data for `corr_plot()`
+- Correlation coefficients support in data for `corr_plot()`
 - `coord_flip()`.
   
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
