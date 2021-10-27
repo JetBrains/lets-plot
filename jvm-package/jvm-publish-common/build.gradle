@@ -68,6 +68,13 @@ task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
 
     // lets-plot JavaFX renderer resource.
     exclude 'svgMapper/**/*'
+
+    // Exclude JavaFX and its dependencies
+    exclude 'javafx/**/*'
+    exclude 'com/**/*'
+    exclude 'module-info.*'
+    exclude 'javafx*'
+    exclude 'lib*'
 }
 
 task jarLetsPlotJvmCommonSources(type: ShadowJar) {

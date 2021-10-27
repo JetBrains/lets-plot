@@ -70,6 +70,7 @@ task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
     exclude 'jetbrains/datalore/vis/svg/**/*'
     exclude 'jetbrains/datalore/vis/svgToScene/**/*'
     exclude 'jetbrains/datalore/vis/svgToString/**/*'
+    exclude 'jetbrains/letsPlot/**/*'
 
     // Exclude other classes: either not needed or present in `lets-plot-common.jar`
     exclude 'com/google/**/*'
@@ -82,6 +83,13 @@ task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
     exclude 'junit/**/*'
     exclude 'org/junit/**/*'
     exclude 'org/hamcrest/**/*'
+
+    // Exclude JavaFX and its dependencies
+    exclude 'javafx/**/*'
+    exclude 'com/**/*'
+    exclude 'module-info.*'
+    exclude 'javafx*'
+    exclude 'lib*'
 }
 
 task jarLetsPlotJvmJfxSources(type: ShadowJar) {
