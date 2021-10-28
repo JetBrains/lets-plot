@@ -70,6 +70,7 @@ task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
     exclude 'jetbrains/datalore/vis/svg/**/*'
     exclude 'jetbrains/datalore/vis/svgToScene/**/*'
     exclude 'jetbrains/datalore/vis/svgToString/**/*'
+    exclude 'jetbrains/letsPlot/**/*'
 
     // Exclude other classes: either not needed or present in `lets-plot-common.jar`
     exclude 'com/google/**/*'
