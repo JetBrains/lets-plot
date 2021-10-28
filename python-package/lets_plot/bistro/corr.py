@@ -71,23 +71,15 @@ class corr_plot:
 
     """
 
-    _LEGEND_NAME = 'Corr'
-    _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
-    _LABELS = ['-1', '-0.5', '0', '0.5', '1']
-    _LIMITS = [-1.0, 1.0]
-    _DEF_LOW_COLOR = '#B3412C'
-    _DEF_MID_COLOR = '#EDEDED'
-    _DEF_HIGH_COLOR = '#326C81'
-
     def _duplicate(self):
         dup = corr_plot(
             data=self._data,
+            coefficients=self._coefficients,
             show_legend=self._show_legend,
             flip=self._reverse_y,
             threshold=self.threshold
         )
 
-        dup._format = self._format
         dup._color_scale = self._color_scale
         dup._fill_scale = self._fill_scale
         dup._points_params = self._points_params
@@ -101,12 +93,14 @@ class corr_plot:
 
         return dup
 
-    def __init__(self, data, show_legend=True, flip=True, threshold=None):
+    def __init__(self, data, coefficients=False, show_legend=True, flip=True, threshold=None):
         """
         Parameters
         ----------
         data : dict or `DataFrame`
-            Correlation will be calculated for each variable pair.
+            Correlation coefficients or data (correlation will be calculated for each variable pair).
+        coefficients : bool, default=False
+            True if data contains correlation coefficients.
         show_legend : bool, default=True
             If True legend is shown.
         flip : bool, default=True
@@ -118,20 +112,20 @@ class corr_plot:
         """
 
         self._data = data
+        self._coefficients = coefficients
         self._show_legend = show_legend
         self._reverse_y = flip if flip else False
         self.threshold = threshold
-        self._format = '.2f'
         self._color_scale = None
         self._fill_scale = None
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
         self._labels_map_size = None
-        self._palette = 'gradient'
-        self._low = corr_plot._DEF_LOW_COLOR
-        self._mid = corr_plot._DEF_MID_COLOR
-        self._high = corr_plot._DEF_HIGH_COLOR
+        self._palette = None
+        self._low = None
+        self._mid = None
+        self._high = None
 
     def points(self, type=None, diag=None):
         """
@@ -379,6 +373,7 @@ class corr_plot:
 
         return PlotSpec(data=self._data, mapping=None, scales=[], layers=[], bistro={
             'name': 'corr',
+            'coefficients': self._coefficients,
             'show_legend': self._show_legend,
             'flip': self._reverse_y,
             'threshold': self.threshold,

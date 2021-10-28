@@ -44,9 +44,10 @@ class CorrPlotSpecChange : SpecChange {
 
         val corrPlotOptionsBuilder = CorrPlotOptionsBuilder(
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
+            coefficients = bistroSpec.getBool(Corr.COEFFICIENTS),
             title = bistroSpec.getString(Corr.TITLE),
             showLegend = bistroSpec.getBool(Corr.SHOW_LEGEND),
-            flip = bistroSpec.getBool(Corr.FLIP) ?: true,
+            flip = bistroSpec.getBool(Corr.FLIP),
             threshold = bistroSpec.getDouble(Corr.THRESHOLD),
             adjustSize = bistroSpec.getDouble(Corr.ADJUST_SIZE)
         )

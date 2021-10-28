@@ -1,7 +1,11 @@
 ## [2.2.0] - 2021-10-??
 
 ### Added
-- `coord_flip()`, see [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb). 
+- Correlation coefficients support in data for `corr_plot()`
+- `coord_flip()`.
+  
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
+
 - Date-time formatting support:
   - tooltip format() should understand date-time format pattern [[#387](https://github.com/JetBrains/lets-plot/issues/387)];
   - scale_x_datetime should apply date-time formatting to the breaks [[#392](https://github.com/JetBrains/lets-plot/issues/392)].
@@ -13,10 +17,10 @@
   - Other themes: `theme_minimal2()` - the default theme, `theme_none()`.
 
 - Theme modification: more parameters were added the `theme()` function. 
-> Note: fonts size, family and face can not yet be configured. 
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
 
+> Note: fonts size, family and face still can not be configured.
 
 ### Changed
 

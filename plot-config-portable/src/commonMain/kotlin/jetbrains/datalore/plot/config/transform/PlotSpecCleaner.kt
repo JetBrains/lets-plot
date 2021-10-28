@@ -17,7 +17,7 @@ object PlotSpecCleaner {
     private fun cleanCopyOfMap(map: Map<*, *>): MutableMap<String, Any> {
         // - drops key-value pair if value is null
         // - converts all keys to strings
-        val out = HashMap<String, Any>()
+        val out = LinkedHashMap<String, Any>()
         for (k in map.keys) {
             val v = map[k]
             if (v != null) {
