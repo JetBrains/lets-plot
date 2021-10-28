@@ -49,8 +49,8 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Input data expected: list of strings containing:
 
     - names of colors (e.g. 'green'),
@@ -121,8 +121,8 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Input data expected: list of strings containing:
 
     - names of colors (e.g. 'green'),
@@ -193,8 +193,8 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Input data expected: numeric codes of shapes.
 
     Examples
@@ -263,8 +263,8 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Input data expected: numeric codes or names of line types (e.g. 'dotdash').
     The codes are: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash',
     5 = 'longdash', 6 = 'twodash'.
@@ -336,8 +336,8 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Input data expected: numeric values in range [0, 1].
 
     Examples
@@ -405,8 +405,8 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Input data expected: positive numeric values.
 
     Examples

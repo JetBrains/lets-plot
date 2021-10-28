@@ -24,8 +24,8 @@ def aes(x=None, y=None, **other):
     `FeatureSpec`
         Aesthetic mapping specification.
 
-    Note
-    ----
+    Notes
+    -----
     Generates aesthetic mappings that describe how variables in the data are projected to visual properties
     (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
     colour to color.
@@ -104,8 +104,8 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     A layer is a combination of data, stat and geom with a potential position adjustment. Usually layers are created
     using geom_* or stat_* calls but they can be created directly using this function.
 

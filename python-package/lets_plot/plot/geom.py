@@ -74,8 +74,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     The point geometry is used to create scatterplots.
     The scatterplot is useful for displaying the relationship between
     two continuous variables, although it can also be used with one continuous
@@ -91,14 +91,14 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - shape : shape of the point.
     - size : size of the point.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -232,8 +232,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_path()` connects the observations in the order in which they appear in the data.
     `geom_path()` lets you explore how two variables are related over time.
 
@@ -246,12 +246,12 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -366,8 +366,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_line()` connects the observations in the order of the variable on the x axis.
     `geom_line()` can be used to plot time series.
 
@@ -495,8 +495,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_smooth()` aids the eye in seeing patterns in the presence of overplotting.
 
     Computed variables:
@@ -633,8 +633,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_bar()` makes the height of the bar proportional to the number
     of observed variable values, mapped to x axis. Is intended to use for discrete data.
     If used for continuous data with stat='bin' produces histogram for binned data.
@@ -773,8 +773,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_histogram()` displays a 1d distribution by dividing variable
     mapped to x axis into bins and counting the number of observations in each bin.
 
@@ -901,8 +901,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_bin2d()` applies rectangular grid to the plane then counts observation
     in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
 
@@ -1031,8 +1031,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     Understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles.
@@ -1138,8 +1138,8 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     Understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles.
@@ -1226,8 +1226,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
 
     `geom_errorbar()` understands the following aesthetics mappings:
@@ -1338,8 +1338,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
     The mean is represented by horizontal line.
 
@@ -1456,8 +1456,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
     The mid-point is defined by `y`.
 
@@ -1570,8 +1570,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
 
     `geom_linerange()` understands the following aesthetics mappings:
@@ -1680,8 +1680,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_contour()` displays contours of a 3d surface in 2d.
 
     Computed variables:
@@ -1797,8 +1797,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_contourf()` fills contours of a 3d surface in 2d.
 
     Computed variables:
@@ -1914,8 +1914,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_polygon()` draws polygons, which are filled paths.
     Each vertex of the polygon requires a separate row in the data.
 
@@ -1928,14 +1928,14 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -2084,8 +2084,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_map()` draws polygons which boundaries are specified by `map` parameter.
     Aesthetics of ploygons (`fill` etc.) are computed basing on input data and mapping
     (see `data` and `mapping` arguments).
@@ -2098,14 +2098,14 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -2212,8 +2212,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_abline()` understands the following aesthetics mappings:
 
     - slope : line slope.
@@ -2314,8 +2314,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_hline()` understands the following aesthetics mappings:
 
     - yintercept : line y-intercept.
@@ -2412,8 +2412,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_hline()` understands the following aesthetics mappings:
 
     - xintercept : line x-intercept.
@@ -2526,8 +2526,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     Computed variables:
 
     - ..lower.. : lower hinge, 25% quantile.
@@ -2683,8 +2683,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`.
 
     `geom_ribbon()` understands the following aesthetics mappings:
@@ -2793,8 +2793,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_area()` draws an area bounded by the data and x axis.
 
     `geom_area()` understands the following aesthetics mappings:
@@ -2922,8 +2922,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     Computed variables:
 
     - ..density.. : density estimate (mapped by default).
@@ -3089,8 +3089,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_density2d()` draws density function.
 
     Computed variables:
@@ -3106,8 +3106,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - size : lines width. Defines line width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    Note
-    ----
+    |
+
     'density2d' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
 
@@ -3281,8 +3281,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_density2df()` fills density contours.
 
     Computed variables:
@@ -3295,8 +3295,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     - alpha : transparency level of a layer. Understands numbers between 0 and 1.
     - fill : color of geometry filling.
 
-    Note
-    ----
+    |
+
     'density2df' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
 
@@ -3464,8 +3464,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     The jitter geometry is used to create jittered points.
     The scatterplot is useful for displaying the relationship between two discrete variables.
 
@@ -3572,8 +3572,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_freqpoly()` connects the top points in `geom_bar()`.
 
     Computed variables:
@@ -3677,8 +3677,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_step()` draws steps between the observations in the order of X.
 
     `geom_step()` understands the following aesthetics mappings:
@@ -3781,8 +3781,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_rect()` draws rectangles.
 
     `geom_rect()` understands the following aesthetics mappings:
@@ -3797,14 +3797,14 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invoke `limits()` function.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object
@@ -3921,8 +3921,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_segment()` draws segments.
 
     `geom_segment()` understands the following aesthetics mappings:
@@ -4041,8 +4041,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     Adds text directly to the plot.
 
     `geom_text()` understands the following aesthetics mappings:
@@ -4059,14 +4059,14 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
     - angle : text rotation angle in degrees.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object

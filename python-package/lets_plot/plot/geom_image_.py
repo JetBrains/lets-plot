@@ -61,8 +61,8 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     This geom doesn't understand any aesthetics.
     It doesn't support color scales either.
 

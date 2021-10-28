@@ -16,8 +16,8 @@ class layer_tooltips(FeatureSpec):
     """
     Configure tooltips.
 
-    Note
-    ----
+    Notes
+    -----
     Set tooltips='none' to hide tooltips from this layer.
 
     Examples
@@ -141,23 +141,23 @@ class layer_tooltips(FeatureSpec):
         `layer_tooltips`
             Layer tooltips specification.
 
-        Note
-        ----
+        Notes
+        -----
         It's possible to set the format for all positional aesthetics:
 
         - field='^X' - for all positional x,
         - field='^Y' - for all positional y.
 
-        Note
-        ----
+        |
+
         The string template in `format` will allow to change lines
         for the default tooltip without `line` specifying.
         Also the template will change the line for outliers.
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
 
-        Note
-        ----
+        |
+
         For more info see https://lets-plot.org/pages/formats.html.
 
         Examples
@@ -230,8 +230,8 @@ class layer_tooltips(FeatureSpec):
         `layer_tooltips`
             Layer tooltips specification.
 
-        Note
-        ----
+        Notes
+        -----
         Variables and aesthetics can be accessed via special syntax:
 
         - ^color for aes,
