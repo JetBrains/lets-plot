@@ -440,7 +440,11 @@ class CorrPlotOptionsBuilder private constructor(
 
             val labelWidthX = axisLabelWidth(xs)
             val labelWidthY = axisLabelWidth(ys)
-            val colWidth = geomWidth / colCount
+            val colWidth = when (colCount) {
+                0 -> geomWidth
+                else -> geomWidth / colCount
+            }
+
             val labelHeightY = if (labelWidthY * 1.0 > colWidth) labelWidthY / 2 else 20
 
             val width = geomWidth + labelWidthX + legendWidth

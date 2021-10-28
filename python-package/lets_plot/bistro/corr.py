@@ -3,6 +3,9 @@
 #
 
 """Correlation matrix implementation module"""
+from typing import Any
+
+from lets_plot.plot.util import is_data_frame
 
 try:
     import numpy
@@ -17,6 +20,48 @@ except ImportError:
 from lets_plot.plot.core import PlotSpec
 
 __all__ = ['corr_plot']
+
+
+def _is_corr_matrix(data: Any):
+    if is_data_frame(data):
+        if data.shape[0] != data.shape[1]:
+            return False
+
+        if not(all(col_type == 'float64' for col_type in data.dtypes)):
+            return False
+
+        for column in data:
+            import math
+            if not all(math.isnan(v) or (1.0 >= v >= -1.0) for v in data[column]):
+                return False
+
+        return True
+
+    elif isinstance(data, dict):
+        m = len(data.keys())
+        for column in data.values():
+            if not isinstance(column, (list, tuple)):
+                return False
+
+            if len(column) != m:
+                return False
+
+            import math
+            for v in column:
+                if not isinstance(v, float):
+                    return False
+
+                if math.isnan(v):
+                    return True
+
+                if 1.0 >= v >= -1.0:
+                    return True
+
+                return False
+
+            return True
+    else:
+        return False
 
 
 class corr_plot:
@@ -74,7 +119,7 @@ class corr_plot:
     def _duplicate(self):
         dup = corr_plot(
             data=self._data,
-            coefficients=self._coefficients,
+            correlation_matrix=self._correlation_matrix,
             show_legend=self._show_legend,
             flip=self._reverse_y,
             threshold=self.threshold
@@ -93,14 +138,16 @@ class corr_plot:
 
         return dup
 
-    def __init__(self, data, coefficients=False, show_legend=True, flip=True, threshold=None):
+    def __init__(self, data, correlation_matrix=None, show_legend=True, flip=True, threshold=None):
         """
         Parameters
         ----------
         data : dict or `DataFrame`
-            Correlation coefficients or data (correlation will be calculated for each variable pair).
-        coefficients : bool, default=False
-            True if data contains correlation coefficients.
+            Correlation matrix or data (correlation will be calculated for each variable pair).
+        correlation_matrix : bool, default=None
+            True if the data is a correlation matrix. None enables auto-detection -
+            data will be recognized as correlation matrix when it is a square matrix and all values are
+            in range -1.0..+1.0 or NaN.
         show_legend : bool, default=True
             If True legend is shown.
         flip : bool, default=True
@@ -111,8 +158,15 @@ class corr_plot:
 
         """
 
+        if correlation_matrix is None:
+            correlation_matrix = _is_corr_matrix(data)
+
+            if not correlation_matrix and is_data_frame(data):
+                data = data.corr()
+                correlation_matrix = True
+
         self._data = data
-        self._coefficients = coefficients
+        self._correlation_matrix = correlation_matrix
         self._show_legend = show_legend
         self._reverse_y = flip if flip else False
         self.threshold = threshold
@@ -373,7 +427,7 @@ class corr_plot:
 
         return PlotSpec(data=self._data, mapping=None, scales=[], layers=[], bistro={
             'name': 'corr',
-            'coefficients': self._coefficients,
+            'coefficients': self._correlation_matrix,
             'show_legend': self._show_legend,
             'flip': self._reverse_y,
             'threshold': self.threshold,
