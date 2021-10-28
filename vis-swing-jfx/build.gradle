@@ -23,10 +23,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-                implementation("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-controls:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-swing-common')
             }

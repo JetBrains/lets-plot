@@ -73,12 +73,15 @@ task jarLetsPlotGISClasses(type: ShadowJar) {
     exclude 'jetbrains/datalore/plot/*.class'
     exclude 'jetbrains/datalore/vis/**/*'
     exclude 'jetbrains/datalore/vis/**/*'
+    exclude 'jetbrains/letsPlot/**/*'
 
     // lets-plot JavaFX renderer resource.
     exclude 'svgMapper/**/*'
 
     // Ktor
     exclude 'io/ktor/**/*'
+    exclude 'DebugProbesKt.bin'
+    exclude 'Empty.class'
 }
 
 task jarLetsPlotGISSources(type: ShadowJar) {

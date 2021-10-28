@@ -28,10 +28,9 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-controls:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation project(':vis-canvas')
             }
@@ -40,6 +39,10 @@ kotlin {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
+
+                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
 
                 implementation project(':plot-config')
                 implementation project(':plot-builder-portable')
