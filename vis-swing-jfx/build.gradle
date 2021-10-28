@@ -26,9 +26,9 @@ kotlin {
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-swing-common')
 
-//                for javafx.application.Platform. TODO: Replace with runOnFxThread
+                //  for javafx.application.Platform. TODO: Replace with runOnFxThread
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
-//                // for  javafx.embed.swing.JFXPanel
+                // for  javafx.embed.swing.JFXPanel
                 compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
             }
         }
