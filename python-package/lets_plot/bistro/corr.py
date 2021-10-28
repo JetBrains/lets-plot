@@ -161,9 +161,9 @@ class corr_plot:
         if correlation_matrix is None:
             correlation_matrix = _is_corr_matrix(data)
 
-            if not correlation_matrix and is_data_frame(data):
-                data = data.corr()
-                correlation_matrix = True
+        if not correlation_matrix and is_data_frame(data):
+            data = data.corr()
+            correlation_matrix = True
 
         self._data = data
         self._correlation_matrix = correlation_matrix
