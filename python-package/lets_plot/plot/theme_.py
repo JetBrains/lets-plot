@@ -86,60 +86,28 @@ def theme(*,
         All axis elements: lines, ticks, texts, titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify axes parameters.
-    axis_title : str or dict
+    axis_title, axis_title_x, axis_title_y : str or dict
         Labels of axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify axes label parameters, inherited from `text`.
-    axis_title_x : str or dict
-        x axis label.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify x axis label parameters, inherited from `axis_title`.
-    axis_title_y : str or dict
-        y axis label.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify y axis label parameters, inherited from `axis_title`.
-    axis_text : str or dict
+        Set `element_text()` to specify axes label parameters.
+        `axis_title_*` inherits from `axis_title` which inherits from `text`.
+    axis_text, axis_text_x, axis_text_y : str or dict
         Tick labels along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify all axes tick label parameters, inherited from `text`.
-    axis_text_x : str or dict
-        x axis tick labels.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify all x axis tick label parameters, inherited from `axis_text`.
-    axis_text_y : str or dict
-        y axis tick labels.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify all y axis tick label parameters, inherited from `axis_text`.
-    axis_ticks : str or dict
+        Set `element_text()` to specify all axes tick label parameters.
+        `axis_text_*` inherits from `axis_text` which inherits from `text`.
+    axis_ticks, axis_ticks_x, axis_ticks_y : str or dict
         Tick marks along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify all tick mark parameters, inherited from `line`.
-    axis_ticks_x : str or dict
-        x axis tick marks.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify all x axis tick mark parameters, inherited from `axis_ticks`.
-    axis_ticks_y : str or dict
-        y axis tick marks.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify all y axis tick mark parameters, inherited from `axis_ticks`.
-    axis_ticks_length : int
+        Set `element_line()` to specify all tick mark parameters.
+        `axis_ticks_*` inherits from `axis_ticks` which inherits from `line`.
+    axis_ticks_length, axis_ticks_length_x, axis_ticks_length_y : float
         Length of tick marks.
-    axis_ticks_length_x : int
-        Length of x axis tick marks.
-    axis_ticks_length_y : int
-        Length of y axis tick marks.
-    axis_line : str or dict
+    axis_line, axis_line_x, axis_line_y : str or dict
         Lines along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify line parameters along all axes, inherited from `line`.
-    axis_line_x : str or dict
-        Line along x axis.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify line parameters along x axis, inherited from `axis_line`.
-    axis_line_y : str or dict
-        Line along y axis.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify line parameters along y axis, inherited from `axis_line`.
+        Set `element_line()` to specify line parameters along all axes.
+        `axis_line_*` inherits from `axis_line` which inherits from `line`.
     legend_text : str or dict
         Legend item labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -163,34 +131,12 @@ def theme(*,
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify plotting area background parameters, inherited from `rect`.
-    panel_grid : str or dict
-        Grid lines.
+    panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
+        Grid lines. Specify major grid lines or minor grid lines separately if needed.
         Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify grid line parameters, inherited from `line`.
-    panel_grid_major : str or dict
-        Major grid lines.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify major grid line parameters, inherited from `panel_grid`.
-    panel_grid_minor : str or dict
-        Minor grid lines.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify minor grid line parameters, inherited from `panel_grid`.
-    panel_grid_major_x : str or dict
-        Major grid lines along x axis.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify major grid line parameters along x axis, inherited from `panel_grid_major`.
-    panel_grid_minor_x : str or dict
-        Minor grid lines along x axis.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify minor grid line parameters along x axis, inherited from `panel_grid_minor`.
-    panel_grid_major_y : str or dict
-        Major grid lines along y axis.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify major grid line parameters along y axis, inherited from `panel_grid_major`.
-    panel_grid_minor_y : str or dict
-        Minor grid lines along y axis.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify minor grid line parameters along y axis, inherited from `panel_grid_minor`.
+        Set `element_line()` to specify grid line parameters.
+        `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
+        which in turn inherits from `line`.
     plot_title : str or dict
         Plot title.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -203,18 +149,11 @@ def theme(*,
         Facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify facet label parameters, inherited from `text`.
-    axis_tooltip : str or dict
+    axis_tooltip, axis_tooltip_x, axis_tooltip_y : str or dict
         Axes tooltips.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_rect()` to specify axes tooltip parameters, inherited from `rect`.
-    axis_tooltip_x : str or dict
-        x axis tooltips.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_rect()` to specify x axis tooltip parameters, inherited from `axis_tooltip`.
-    axis_tooltip_y : str or dict
-        y axis tooltips.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_rect()` to specify y axis tooltip parameters, inherited from `axis_tooltip`.
+        Set `element_rect()` to specify axes tooltip parameters.
+        `axis_tooltip_*` inherits from `axis_tooltip` which inherits from `rect`.
 
     Returns
     -------
