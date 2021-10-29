@@ -1,7 +1,7 @@
 ## [2.2.0] - 2021-10-??
 
 ### Added
-- Correlation matrix support for the data parameter in the `corr_plot()` function.
+
 - `coord_flip()`.
   
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
@@ -21,6 +21,13 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
 
 > Note: fonts size, family and face still can not be configured.
+
+- `corr_plot()` function now also accepts pre-computed correlation coefficients. I.e. the following two expressions are equivalent:
+```python
+    corr_plot(iris_df).points().labels().build()
+    corr_plot(iris_df.corr()).points().labels().build()  # new
+```
+                     
 
 ### Changed
 
