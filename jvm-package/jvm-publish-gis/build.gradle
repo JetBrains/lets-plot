@@ -79,6 +79,8 @@ task jarLetsPlotGISClasses(type: ShadowJar) {
 
     // Ktor
     exclude 'io/ktor/**/*'
+    exclude 'DebugProbesKt.bin'
+    exclude 'Empty.class'
 }
 
 task jarLetsPlotGISSources(type: ShadowJar) {

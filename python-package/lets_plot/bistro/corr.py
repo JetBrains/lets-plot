@@ -27,7 +27,7 @@ def _is_corr_matrix(data: Any):
         if data.shape[0] != data.shape[1]:
             return False
 
-        if not(all(col_type == 'float64' for col_type in data.dtypes)):
+        if not (all(col_type == 'float64' for col_type in data.dtypes)):
             return False
 
         for column in data:
@@ -119,7 +119,6 @@ class corr_plot:
     def _duplicate(self):
         dup = corr_plot(
             data=self._data,
-            correlation_matrix=self._correlation_matrix,
             show_legend=self._show_legend,
             flip=self._reverse_y,
             threshold=self.threshold
@@ -138,15 +137,13 @@ class corr_plot:
 
         return dup
 
-    def __init__(self, data, correlation_matrix=None, show_legend=True, flip=True, threshold=None):
+    def __init__(self, data, show_legend=True, flip=True, threshold=None):
         """
         Parameters
         ----------
         data : dict or `DataFrame`
             Correlation matrix or data (correlation will be calculated for each variable pair).
-        correlation_matrix : bool, default=None
-            True if the data is a correlation matrix. None enables auto-detection -
-            data will be recognized as correlation matrix when it is a square matrix and all values are
+            data will be recognized as correlation matrix if it has a square shape and all values are
             in range -1.0..+1.0 or NaN.
         show_legend : bool, default=True
             If True legend is shown.
@@ -158,15 +155,7 @@ class corr_plot:
 
         """
 
-        if correlation_matrix is None:
-            correlation_matrix = _is_corr_matrix(data)
-
-            if not correlation_matrix and is_data_frame(data):
-                data = data.corr()
-                correlation_matrix = True
-
         self._data = data
-        self._correlation_matrix = correlation_matrix
         self._show_legend = show_legend
         self._reverse_y = flip if flip else False
         self.threshold = threshold
@@ -425,9 +414,19 @@ class corr_plot:
         else:
             tile_params = None
 
-        return PlotSpec(data=self._data, mapping=None, scales=[], layers=[], bistro={
+        data = self._data
+        if _is_corr_matrix(data):
+            coefficients = True
+        else:
+            if is_data_frame(data):
+                data = data.corr()
+                coefficients = True
+            else:
+                coefficients = False
+
+        return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
             'name': 'corr',
-            'coefficients': self._correlation_matrix,
+            'coefficients': coefficients,
             'show_legend': self._show_legend,
             'flip': self._reverse_y,
             'threshold': self.threshold,

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.letsPlot.bistro.corr
+package jetbrains.datalore.plot.server.config.transform.bistro.corr
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
@@ -11,18 +11,18 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.ScaleConfig
 import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_BREWER
 import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_GRADIENT2
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.computeCorrelations
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.correlationsFromCoefficients
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.correlationsToDataframe
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.matrixXYSeries
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.DataUtil.standardiseData
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.Method.correlationPearson
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.FULL
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import jetbrains.datalore.plot.server.config.transform.bistro.util.*
 import jetbrains.datalore.plot.server.config.transform.bistro.util.ThemeOptions.Element
-import jetbrains.letsPlot.bistro.corr.CorrUtil.computeCorrelations
-import jetbrains.letsPlot.bistro.corr.CorrUtil.correlationsFromCoefficients
-import jetbrains.letsPlot.bistro.corr.CorrUtil.correlationsToDataframe
-import jetbrains.letsPlot.bistro.corr.CorrUtil.matrixXYSeries
-import jetbrains.letsPlot.bistro.corr.Method.correlationPearson
-import jetbrains.letsPlot.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import kotlin.math.max
 import kotlin.math.min
 
