@@ -15,7 +15,7 @@ def arrow(angle=None, length=None, ends=None, type=None):
 
     Parameters
     ----------
-    angle : int
+    angle : float
         The angle of the arrow head in degrees (smaller numbers produce narrower, pointer arrows). 
         Essentially describes the width of the arrow head.
     length : int
