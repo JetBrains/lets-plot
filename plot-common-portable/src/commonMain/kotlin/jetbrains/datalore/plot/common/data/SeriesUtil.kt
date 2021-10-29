@@ -271,15 +271,25 @@ object SeriesUtil {
     }
 
     fun mean(values: List<Double?>, defaultValue: Double?): Double? {
-        var result = 0.0
-        var i = -1.0
-        for (value in values) {
-            if (value != null && value.isFinite()) {
-                i++
-                result = value / (i + 1) + result * (i / (i + 1))
-            }
+        fun notNanDoubles() = values
+            .asSequence()
+            .filterNotNull()
+            .filterNot(Double::isNaN)
+
+        val firstValue: Double = notNanDoubles().firstOrNull() ?: return defaultValue // no values left
+
+        if (notNanDoubles().all { it == firstValue }) {
+            return firstValue
         }
-        return if (i >= 0) result else defaultValue
+
+        // Other good algorithms:
+        // https://mlblogblog.wordpress.com/2017/11/22/r2-the-best-algorithm-to-compute-the-online-mean/
+
+        val result = notNanDoubles().foldIndexed(0.0) { i, mean, value ->
+            value / (i + 1.0) + mean * (i / (i + 1.0))
+        }
+
+        return result.takeUnless { it.isNaN() } ?: defaultValue
     }
 
     fun sum(values: List<Double?>): Double {

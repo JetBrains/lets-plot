@@ -3,12 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.letsPlot.bistro.corr
+package jetbrains.datalore.plot.server.config.transform.bistro.corr
 
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrPlotOptionsBuilder.LayerParams
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.FULL
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
-import jetbrains.letsPlot.bistro.corr.CorrPlotOptionsBuilder.LayerParams
 
 internal object OptionsConfigurator {
     /**

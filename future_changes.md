@@ -1,7 +1,11 @@
 ## [2.2.0] - 2021-10-??
 
 ### Added
-- `coord_flip()`, see [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb). 
+
+- `coord_flip()`.
+  
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
+
 - Date-time formatting support:
   - tooltip format() should understand date-time format pattern [[#387](https://github.com/JetBrains/lets-plot/issues/387)];
   - scale_x_datetime should apply date-time formatting to the breaks [[#392](https://github.com/JetBrains/lets-plot/issues/392)].
@@ -13,10 +17,17 @@
   - Other themes: `theme_minimal2()` - the default theme, `theme_none()`.
 
 - Theme modification: more parameters were added the `theme()` function. 
-> Note: fonts size, family and face can not yet be configured. 
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
 
+> Note: fonts size, family and face still can not be configured.
+
+- `corr_plot()` function now also accepts pre-computed correlation coefficients. I.e. the following two expressions are equivalent:
+```python
+    corr_plot(iris_df).points().labels().build()
+    corr_plot(iris_df.corr()).points().labels().build()  # new
+```
+                     
 
 ### Changed
 
@@ -34,3 +45,5 @@
 - Zoom without clipping breaks tooltips [[#373](https://github.com/JetBrains/lets-plot/issues/373)].
 - Unreadable breaks on axis [[#430](https://github.com/JetBrains/lets-plot/issues/430)].
 - Map rendering is broken when browser uses scaling [[#450](https://github.com/JetBrains/lets-plot/issues/450)].
+- corr_plot() error for data with zero variation [[#329](https://github.com/JetBrains/lets-plot/issues/329)]
+- Misleading error message [[#271](https://github.com/JetBrains/lets-plot/issues/271)]

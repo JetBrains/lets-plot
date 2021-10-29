@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.letsPlot.bistro.corr
+package jetbrains.datalore.plot.server.config.transform.bistro.corr
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
@@ -11,17 +11,18 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.ScaleConfig
 import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_BREWER
 import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_GRADIENT2
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.computeCorrelations
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.correlationsFromCoefficients
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.correlationsToDataframe
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.matrixXYSeries
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.DataUtil.standardiseData
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.Method.correlationPearson
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.FULL
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import jetbrains.datalore.plot.server.config.transform.bistro.util.*
 import jetbrains.datalore.plot.server.config.transform.bistro.util.ThemeOptions.Element
-import jetbrains.letsPlot.bistro.corr.CorrUtil.correlations
-import jetbrains.letsPlot.bistro.corr.CorrUtil.correlationsToDataframe
-import jetbrains.letsPlot.bistro.corr.CorrUtil.matrixXYSeries
-import jetbrains.letsPlot.bistro.corr.Method.correlationPearson
-import jetbrains.letsPlot.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import kotlin.math.max
 import kotlin.math.min
 
@@ -39,6 +40,7 @@ import kotlin.math.min
  */
 class CorrPlotOptionsBuilder private constructor(
     private val data: Map<*, *>,
+    private val coefficients: Boolean,
     private val title: String? = null,
     private val showLegend: Boolean,
     private val flip: Boolean,
@@ -53,6 +55,7 @@ class CorrPlotOptionsBuilder private constructor(
 
     constructor(
         data: Map<*, *>,
+        coefficients: Boolean? = null,
         title: String? = null,
         showLegend: Boolean? = null,
         flip: Boolean? = null,
@@ -60,6 +63,7 @@ class CorrPlotOptionsBuilder private constructor(
         adjustSize: Double? = null,
     ) : this(
         data,
+        coefficients ?: false,
         title,
         showLegend ?: true,
         flip ?: true,
@@ -185,13 +189,15 @@ class CorrPlotOptionsBuilder private constructor(
 
         OptionsConfigurator.configure(tiles, points, labels, flip)
 
-        val originalVariables = data.keys.map { it.toString() }.toList()
+        val data = standardiseData(data)
+        val correlations = when (coefficients) {
+            true -> correlationsFromCoefficients(data)
+            false -> computeCorrelations(data, ::correlationPearson)
+        }
 
-        // Compute correlations
-        val correlations = correlations(standardiseData(data), ::correlationPearson)
         // variables in the 'original' order
         val varsInMatrix = correlations.keys.map { it.first }.toSet()
-        val varsInOrder = originalVariables.filter { varsInMatrix.contains(it) }
+        val varsInOrder = data.keys.filter(varsInMatrix::contains)
 
         val keepDiag = getKeepMatrixDiag(tiles, points, labels)
         val combinedType = OptionsConfigurator.getCombinedMatrixType(tiles, points, labels)
@@ -203,7 +209,7 @@ class CorrPlotOptionsBuilder private constructor(
             layers.add(
                 newCorrPlotLayerOptions {
                     geom = GeomKind.TILE
-                    data = layerData(
+                    this.data = layerData(
                         tiles,
                         correlations,
                         varsInOrder,
@@ -226,7 +232,7 @@ class CorrPlotOptionsBuilder private constructor(
             layers.add(
                 newCorrPlotLayerOptions {
                     geom = GeomKind.POINT
-                    data = layerData(
+                    this.data = layerData(
                         points,
                         correlations,
                         varsInOrder,
@@ -248,7 +254,7 @@ class CorrPlotOptionsBuilder private constructor(
             layers.add(
                 newCorrPlotLayerOptions {
                     geom = GeomKind.TEXT
-                    data = layerData(
+                    this.data = layerData(
                         labels,
                         correlations,
                         varsInOrder,
@@ -434,7 +440,11 @@ class CorrPlotOptionsBuilder private constructor(
 
             val labelWidthX = axisLabelWidth(xs)
             val labelWidthY = axisLabelWidth(ys)
-            val colWidth = geomWidth / colCount
+            val colWidth = when (colCount) {
+                0 -> geomWidth
+                else -> geomWidth / colCount
+            }
+
             val labelHeightY = if (labelWidthY * 1.0 > colWidth) labelWidthY / 2 else 20
 
             val width = geomWidth + labelWidthX + legendWidth

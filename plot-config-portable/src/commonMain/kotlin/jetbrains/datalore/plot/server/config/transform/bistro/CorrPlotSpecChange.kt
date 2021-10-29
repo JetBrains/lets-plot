@@ -9,9 +9,9 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
+import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrPlotOptionsBuilder
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.Option.Corr
 import jetbrains.datalore.plot.server.config.transform.bistro.util.OptionsUtil
-import jetbrains.letsPlot.bistro.corr.CorrPlotOptionsBuilder
 
 class CorrPlotSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
@@ -44,9 +44,10 @@ class CorrPlotSpecChange : SpecChange {
 
         val corrPlotOptionsBuilder = CorrPlotOptionsBuilder(
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
+            coefficients = bistroSpec.getBool(Corr.COEFFICIENTS),
             title = bistroSpec.getString(Corr.TITLE),
             showLegend = bistroSpec.getBool(Corr.SHOW_LEGEND),
-            flip = bistroSpec.getBool(Corr.FLIP) ?: true,
+            flip = bistroSpec.getBool(Corr.FLIP),
             threshold = bistroSpec.getDouble(Corr.THRESHOLD),
             adjustSize = bistroSpec.getDouble(Corr.ADJUST_SIZE)
         )

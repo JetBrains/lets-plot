@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.corr
 object DataUtil {
 
     fun standardiseData(rawData: Map<*, *>): Map<String, List<Any?>> {
-        val standardisedData = HashMap<String, List<Any?>>()
+        val standardisedData = LinkedHashMap<String, List<Any?>>()
         for ((rawKey, rawValue) in rawData) {
             val key = rawKey.toString()
             standardisedData[key] = toList(key, rawValue!!)

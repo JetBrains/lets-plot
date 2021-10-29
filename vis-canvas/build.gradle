@@ -34,9 +34,8 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-controls:$jfx_version:${jfx_platform()}")
-                implementation("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
             }
         }
         jvmTest {
