@@ -45,3 +45,5 @@
 - Zoom without clipping breaks tooltips [[#373](https://github.com/JetBrains/lets-plot/issues/373)].
 - Unreadable breaks on axis [[#430](https://github.com/JetBrains/lets-plot/issues/430)].
 - Map rendering is broken when browser uses scaling [[#450](https://github.com/JetBrains/lets-plot/issues/450)].
+- corr_plot() error for data with zero variation [[#329](https://github.com/JetBrains/lets-plot/issues/329)]
+- Misleading error message [[#271](https://github.com/JetBrains/lets-plot/issues/271)]
