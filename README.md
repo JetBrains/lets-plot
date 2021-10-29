@@ -88,6 +88,12 @@ Also read:
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/datetime_formatting.ipynb).
 
 
+- `corr_plot()` function now also accepts pre-computed correlation coefficients. I.e. the following two expressions are equivalent:
+```python
+    corr_plot(iris_df).points().labels().build()
+    corr_plot(iris_df.corr()).points().labels().build()  # new
+``` 
+
 ## Change Log
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
