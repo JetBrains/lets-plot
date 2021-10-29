@@ -91,8 +91,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     `geom_livemap()` draws map, which can be moved and zoomed.
 
     `geom_livemap()` understands the following aesthetics mappings:
@@ -104,14 +104,14 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     - sym_x : value order for pie chart and bar chart.
     - sym_y : value specifying the sector size for pie chart and the heigth for bar chart.
 
-    Note
-    ----
+    |
+
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
 
-    Note
-    ----
+    |
+
     The conventions for the values of `map_join` parameter are as follows.
 
     - Joining data and `GeoDataFrame` object

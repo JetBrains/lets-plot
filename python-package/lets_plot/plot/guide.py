@@ -25,8 +25,8 @@ def guide_legend(nrow=None, ncol=None, byrow=None):
     `FeatureSpec`
         Color guide specification.
 
-    Note
-    ----
+    Notes
+    -----
     Legend type guide shows key (i.e., geoms) mapped onto values.
 
     Examples
@@ -69,8 +69,8 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None):
     `FeatureSpec`
         Color guide specification.
 
-    Note
-    ----
+    Notes
+    -----
     Color bar guide shows continuous color scales mapped onto values.
     Color bar is available with scale_fill and scale_color.
 

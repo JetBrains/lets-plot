@@ -35,8 +35,8 @@ def as_discrete(variable, label=None, order_by=None, order=None):
     `MappingMeta` or list
         Variable meta information.
 
-    Note
-    ----
+    Notes
+    -----
     The plot will use a discrete scale for the aesthetic mapping.
     It is similar to the `factor()` function from R but works differently - there is no data transformation.
 

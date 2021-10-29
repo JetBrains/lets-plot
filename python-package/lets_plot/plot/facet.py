@@ -36,8 +36,8 @@ def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=Non
     `FeatureSpec`
         Facet grid specification.
 
-    Note
-    ----
+    Notes
+    -----
     Format pattern in the `x_format` / `y_format` parameters can be
     just a number format (like 'd') or a string template where number format
     is surrounded by curly braces: "{d} cylinders".
@@ -119,8 +119,8 @@ def facet_wrap(facets, ncol=None, nrow=None, order=1, format=None, dir="h"):
     `FeatureSpec`
         Facet wrap specification.
 
-    Note
-    ----
+    Notes
+    -----
     Format patterns in the `format` parameter can be just a number format (like 'd') or
     a string template where number format is surrounded by curly braces: "{d} cylinders".
 

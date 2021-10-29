@@ -251,8 +251,8 @@ class Geocoder:
         `GeoDataFrame`
             Table of data.
 
-        Note
-        ----
+        Notes
+        -----
         If `resolution` has int type, it may take one of the following values:
 
         - 1-3 for world scale view,
