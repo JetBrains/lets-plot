@@ -25,8 +25,8 @@ def position_dodge(width=None):
     `FeatureSpec`
         Geom object position specification.
 
-    Note
-    ----
+    Notes
+    -----
         Adjust position by dodging overlaps to the side.
 
     Examples
@@ -66,8 +66,8 @@ def position_jitter(width=None, height=None):
     `FeatureSpec`
         Geom object position specification.
 
-    Note
-    ----
+    Notes
+    -----
         Adjust position by dodging overlaps to the side.
 
     Examples
@@ -109,8 +109,8 @@ def position_nudge(x=None, y=None):
     `FeatureSpec`
         Geom object position specification.
 
-    Note
-    ----
+    Notes
+    -----
         Adjust position by dodging overlaps to the side.
 
     Examples
@@ -154,8 +154,8 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
     `FeatureSpec`
         Geom object position specification.
 
-    Note
-    ----
+    Notes
+    -----
         Adjust position by dodging overlaps to the side.
 
     Examples

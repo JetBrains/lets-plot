@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
+import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -34,14 +35,14 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
 
-class PlotSvgComponent(
+class PlotSvgComponent constructor(
     private val title: String?,
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
     private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
-    private val theme: Theme
+    val theme: Theme
 ) : SvgComponent() {
 
     val flippedAxis = frameOfReferenceProvider.flipAxis
@@ -412,7 +413,7 @@ class PlotSvgComponent(
                     Orientation.LEFT,
                     withoutTitleAndLegends,
                     geomAreaBounds,
-                    theme.axisY()
+                    theme.axisY(flippedAxis)
                 )
             }
             if (hasAxisTitleBottom()) {
@@ -421,7 +422,7 @@ class PlotSvgComponent(
                     Orientation.BOTTOM,
                     withoutTitleAndLegends,
                     geomAreaBounds,
-                    theme.axisX()
+                    theme.axisX(flippedAxis)
                 )
             }
         }
@@ -438,8 +439,6 @@ class PlotSvgComponent(
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)
-
-        private val DEF_PLOT_SIZE = DoubleVector(600.0, 400.0)
         private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
     }
 }

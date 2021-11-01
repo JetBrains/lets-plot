@@ -35,7 +35,7 @@ abstract class PlotFacets {
 
 
     companion object {
-        const val DEF_ORDER_DIR = 1
+        const val DEF_ORDER_DIR = 0 // no ordering
         val DEF_FORMATTER: (Any) -> String = { it.toString() }
 
         fun undefined(): PlotFacets {
@@ -175,8 +175,9 @@ abstract class PlotFacets {
             levels as List<Comparable<Any>>
 
             return when {
-                order < 0 -> levels.sortedDescending()
-                else -> levels.sorted()
+                order <= -1 -> levels.sortedDescending()
+                order >= 1 -> levels.sorted()
+                else -> levels  // not ordered
             }
         }
     }

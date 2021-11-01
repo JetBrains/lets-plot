@@ -5,10 +5,23 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis
 
 object Defaults {
+    // Plot size
+    const val ASPECT_RATIO = 3.0 / 2.0
+    const val MIN_PLOT_WIDTH = 50.0
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    const val DEF_PLOT_WIDTH = 600.0
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    const val DEF_LIVE_MAP_WIDTH = 800.0
+    val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
+    val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
+
     // HEX colors only (because of using of parseHex())
     const val DARK_GRAY = "#3d3d3d"
     val GRAY = Color.GRAY.toHexColor()
@@ -35,10 +48,8 @@ object Defaults {
         }
 
         object Legend {
-            const val TITLE_FONT_SIZE =
-                FONT_MEDIUM
-            const val ITEM_FONT_SIZE =
-                FONT_SMALL
+            const val TITLE_FONT_SIZE = FONT_MEDIUM
+            const val ITEM_FONT_SIZE = FONT_SMALL
             val OUTLINE_COLOR = Color.parseHex(XX_LIGHT_GRAY)
         }
 
@@ -64,17 +75,17 @@ object Defaults {
         }
     }
 
-    class Table {
-        object Head {
-            const val FONT_SIZE = FONT_MEDIUM
-            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
-        }
-
-        object Data {
-            const val FONT_SIZE = FONT_MEDIUM
-            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
-        }
-    }
+//    class Table {
+//        object Head {
+//            const val FONT_SIZE = FONT_MEDIUM
+//            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+//        }
+//
+//        object Data {
+//            const val FONT_SIZE = FONT_MEDIUM
+//            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+//        }
+//    }
 
     class Plot {
         object Axis {
@@ -83,8 +94,8 @@ object Defaults {
             const val TICK_FONT_SIZE_SMALL = FONT_X_SMALL
 
             val LINE_COLOR = Color.parseHex(DARK_GRAY)
-            val TICK_COLOR = Color.parseHex(DARK_GRAY)
-            val GRID_LINE_COLOR = Color.parseHex(X_LIGHT_GRAY)
+//            val TICK_COLOR = Color.parseHex(DARK_GRAY)
+//            val GRID_LINE_COLOR = Color.parseHex(X_LIGHT_GRAY)
 
             // Bug in WebKit (?) : combination of style
             //    shape-rendering: crispedges;
@@ -95,11 +106,11 @@ object Defaults {
       public static final double TICK_LINE_WIDTH = 0.8;
       public static final double GRID_LINE_WIDTH = 0.8;
 */
-            const val LINE_WIDTH = 1.0
-            const val TICK_LINE_WIDTH = 1.0
-            const val GRID_LINE_WIDTH = 1.0
+//            const val LINE_WIDTH = 1.0
+//            const val TICK_LINE_WIDTH = 1.0
+//            const val GRID_LINE_WIDTH = 1.0
 
-            const val TICK_MARK_LENGTH = 4.0 //6.0
+            //            const val TICK_MARK_LENGTH = 4.0 //6.0
             const val TICK_MARK_PADDING = 3.0
         }
     }

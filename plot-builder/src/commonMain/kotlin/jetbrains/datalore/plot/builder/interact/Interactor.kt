@@ -11,15 +11,17 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgNode
 
 internal class Interactor(
     decorationLayer: SvgNode,
-    private val plot: PlotSvgComponent,
-    mouseEventPeer: MouseEventPeer
+    mouseEventPeer: MouseEventPeer,
+    plotSize: DoubleVector,
+    flippedAxis: Boolean,
+    theme: Theme,
 ) : PlotInteractor {
     private val reg = CompositeRegistration()
     private val eventsManager: EventsManager
@@ -31,11 +33,18 @@ internal class Interactor(
         reg.add(Registration.from(eventsManager))
         eventsManager.setEventSource(mouseEventPeer)
 
-        tooltipRenderer = TooltipRenderer(decorationLayer, plot.flippedAxis, plot.plotSize, mouseEventPeer)
+        tooltipRenderer = TooltipRenderer(
+            decorationLayer,
+            flippedAxis,
+            plotSize,
+            theme.axisX(flippedAxis),
+            theme.axisY(flippedAxis),
+            mouseEventPeer
+        )
         reg.add(Registration.from(tooltipRenderer))
 
         if (FeatureSwitch.PLOT_VIEW_TOOLBOX) {
-            viewToolboxRenderer = ViewToolboxRenderer(decorationLayer, plot.plotSize, eventsManager)
+            viewToolboxRenderer = ViewToolboxRenderer(decorationLayer, plotSize, eventsManager)
             reg.add(Registration.from(viewToolboxRenderer))
         } else {
             viewToolboxRenderer = null
@@ -45,7 +54,7 @@ internal class Interactor(
     override fun onTileAdded(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
-        targetLocators: List<GeomTargetLocator>
+        targetLocators: List<GeomTargetLocator>,
     ) {
         tooltipRenderer.addTileInfo(geomBounds, tooltipBounds, targetLocators)
     }

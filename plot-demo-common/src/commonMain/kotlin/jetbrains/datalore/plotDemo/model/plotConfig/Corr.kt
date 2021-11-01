@@ -11,16 +11,48 @@ import jetbrains.datalore.plotDemo.data.AutoMpg
 class Corr {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            //bistro(),
-            bistroThreshold(),
-            //complexMpg()
+            corrPlotWithCoef(),
+            simple(),
+            withThreshold(),
+            complexMpg()
         )
     }
 
-    private fun bistro(): MutableMap<String, Any> {
+    private fun corrPlotWithCoef(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "kind": "plot",
+              "ggtitle": { "text": "Precomputed coefficients" },
+              "data": {
+                "sepal length (cm)": [1.0, -0.11756978413300088, 0.8717537758865838, 0.8179411262715758],
+                "sepal width (cm)": [-0.11756978413300088, 1.0, -0.42844010433053864,-0.3661259325364377],
+                "petal length (cm)": [0.8717537758865838, -0.42844010433053864, 1.0, 0.962865431402796],
+                "petal width (cm)": [0.8179411262715758, -0.3661259325364377, 0.962865431402796, 1.0]
+              },
+              "bistro": {
+                "name": "corr",
+                "coefficients": true,
+                "point_params": {
+                  "type": null,
+                  "diag": null
+                },
+                "tile_params": null,
+                "label_params": {
+                  "type": null,
+                  "diag": null
+                }
+              }
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun simple(): MutableMap<String, Any> {
         val spec = """
 {
   "kind": "plot",
+  "ggtitle": { "text": "Simple" },
   "data": {
     "a": [ 0.4967, -0.138, 0.6476, 1.5230, -0.234, -0.234, 1.5792, 0.7674, -0.469, 0.5425],
     "b": [ -0.4634, -0.4657, 0.24196, -1.9132, -1.7249, -0.5622, -1.0128, 0.31424, -0.9080, -1.4123],
@@ -35,24 +67,22 @@ class Corr {
       "name": "corr",
       "show_legend": true,
       "flip": false,
-      "point_params": null,
-      "tile_params": {
-        "type": null,
-        "diag": null
-      },
-      "label_params": null,
+      "point_params": {"type": "upper", "diag": false},
+      "tile_params": {"type": "lower", "diag": false},
+      "label_params": {"color": "black", "map_size": true, "diag": false},
       "labels_map_size": null
   }  
 }            
         """.trimIndent()
 
-        return parsePlotSpec(spec)
+        return parsePlotSpec(spec).apply { put("data", AutoMpg.df) }
     }
 
-    private fun bistroThreshold(): MutableMap<String, Any> {
+    private fun withThreshold(): MutableMap<String, Any> {
         val spec = """
 {
   "kind": "plot",
+  "ggtitle": { "text": "Thershold = 0.63" },
   "data": {
     "a": [ 0.4967, -0.138, 0.6476, 1.5230, -0.234, -0.234, 1.5792, 0.7674, -0.469, 0.5425],
     "b": [ -0.4634, -0.4657, 0.24196, -1.9132, -1.7249, -0.5622, -1.0128, 0.31424, -0.9080, -1.4123],

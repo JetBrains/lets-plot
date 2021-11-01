@@ -18,6 +18,9 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
               threshold=None,
               **other_args):
     """
+    Function `stat_corr(...)` is deprecated. Please use `corr_plot()` instead.
+    See https://lets-plot.org/pages/charts.html#correlation-plot-icon-correlation-plot for details.
+
     Computes correlations between numeric variables in the `data` and draws a correlation matrix.
     By default uses the `tile` geometry.
 
@@ -59,8 +62,8 @@ def stat_corr(mapping=None, *, data=None, geom=None, position=None, show_legend=
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     The correlation statistic computes the following variables that can be used in the aesthetic mapping:
 
     - ..x.. : X coordinates.

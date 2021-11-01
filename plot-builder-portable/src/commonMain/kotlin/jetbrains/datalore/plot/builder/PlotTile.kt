@@ -105,6 +105,8 @@ internal class PlotTile(
     }
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
+//        if (!theme.showStrip()) return
+
         // facet X label (on top of geom area)
         val xLabels = tileLayoutInfo.facetXLabels
         if (xLabels.isNotEmpty()) {
@@ -117,13 +119,8 @@ internal class PlotTile(
                 labelOrig, labelSize
             )
             for (xLabel in xLabels) {
-                // ToDo: This is "strip-x"
-                val rect = SvgRectElement(labelBounds).apply {
-                    strokeWidth().set(theme.stripStrokeWidth())
-                    fillColor().set(theme.stripFill())
-                    strokeColor().set(theme.stripColor())
-                }
-                add(rect)
+                // ToDo: Use "facet X" theme.
+                addFacetLabBackground(labelBounds, theme)
 
                 val x = labelBounds.center.x
                 val y = labelBounds.center.y
@@ -149,13 +146,8 @@ internal class PlotTile(
                 FACET_TAB_HEIGHT - hPad * 2, geomBounds.height - vPad * 2
             )
 
-            // ToDo: This is "strip-y"
-            val rect = SvgRectElement(labelBounds).apply {
-                strokeWidth().set(theme.stripStrokeWidth())
-                fillColor().set(theme.stripFill())
-                strokeColor().set(theme.stripColor())
-            }
-            add(rect)
+            // ToDo: Use "facet Y" theme.
+            addFacetLabBackground(labelBounds, theme)
 
             val x = labelBounds.center.x
             val y = labelBounds.center.y
@@ -167,6 +159,17 @@ internal class PlotTile(
             lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
             lab.rotate(90.0)
             add(lab)
+        }
+    }
+
+    private fun addFacetLabBackground(labelBounds: DoubleRectangle, facetTheme: FacetsTheme) {
+        if (facetTheme.showStripBackground()) {
+            val rect = SvgRectElement(labelBounds).apply {
+                strokeWidth().set(facetTheme.stripStrokeWidth())
+                fillColor().set(facetTheme.stripFill())
+                strokeColor().set(facetTheme.stripColor())
+            }
+            add(rect)
         }
     }
 

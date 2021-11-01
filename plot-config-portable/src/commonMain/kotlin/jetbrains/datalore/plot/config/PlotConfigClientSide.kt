@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.FeatureSwitch.USE_THEME2
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
@@ -18,16 +17,16 @@ import jetbrains.datalore.plot.config.Option.Plot.GUIDES
 import jetbrains.datalore.plot.config.Option.Plot.THEME
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOptionsMap
 import jetbrains.datalore.plot.config.theme.ThemeConfig
-import jetbrains.datalore.plot.config.theme2.ThemeConfig2
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 
-    internal val theme: Theme = when {
-        USE_THEME2 -> ThemeConfig2(getMap(THEME)).theme
-        else -> ThemeConfig(getMap(THEME)).theme
-    }
+    //    internal val theme: Theme = when {
+//        USE_THEME2 -> ThemeConfig2(getMap(THEME)).theme
+//        else -> ThemeConfig(getMap(THEME)).theme
+//    }
+    internal val theme: Theme = ThemeConfig(getMap(THEME)).theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 

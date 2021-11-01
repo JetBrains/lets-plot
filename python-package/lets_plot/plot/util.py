@@ -158,3 +158,11 @@ def is_ndarray(data) -> bool:
         return isinstance(data, ndarray)
     except ImportError:
         return False
+
+
+def is_data_frame(data: Any) -> bool:
+    try:
+        from pandas import DataFrame
+        return isinstance(data, DataFrame)
+    except ImportError:
+        return False

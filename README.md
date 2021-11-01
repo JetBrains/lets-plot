@@ -59,32 +59,45 @@ Also read:
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
 
-## What is new in 2.1.0
-                      
-- Upgraded dependencies:
+## What is new in 2.2.0
 
-  - Kotlin: 1.5.21
-  - Apache Batik: 1.14 [[#398](https://github.com/JetBrains/lets-plot/issues/398)]
+- Added support for `coord_flip()`. 
 
-- Ordering categories:
- 
-  New parameters added to the `as_discrete` function:
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
+                          
 
-  - `order_by` (string) - the name of the variable by which the ordering will be performed;
-  - `order` (int) - the ordering direction: 1 for ascending direction and -1 for descending (default).
+- Improved plot appearance and `theme` support:
 
-  See: [as_discrete](https://lets-plot.org/pages/as_discrete.html).
+  - Bigger fonts across the board;
+  - Gridlines;
+  - 4 themes from ggplot2 (R) library: `theme_grey(), theme_light(), theme_classic(), theme_minimal()`;
+  - Our designer theme: `theme_minimal2()` (used by default);
+  - `theme_none()` for the case you want to design another theme;
+  - A lot more parameters in the `theme()` function, also helpers: `element_line()`, `element_rect()`, `element_text()`.
 
-- Interactive maps:
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
+    
+> Note: fonts size, family and face still can not be configured.
 
-  - Pre-configured raster tilesets in new `lets_plot.tilesets` module.
-  - Builtin blank maptiles.
 
-  See: [Configuring basemap tiles](https://lets-plot.org/pages/basemap_tiles.html).
+- Improved Date-time formatting support:
+
+  - tooltip format() should understand date-time format pattern [[#387](https://github.com/JetBrains/lets-plot/issues/387)];
+  - scale_x_datetime should apply date-time formatting to the breaks [[#392](https://github.com/JetBrains/lets-plot/issues/392)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/datetime_formatting.ipynb).
+
+
+- `corr_plot()` function now also accepts pre-computed correlation coefficients. I.e. the following two expressions are equivalent:
+```python
+    corr_plot(iris_df).points().labels().build()
+    corr_plot(iris_df.corr()).points().labels().build()  # new
+``` 
 
 ## Change Log
 
 See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
+
 
 ## License
 

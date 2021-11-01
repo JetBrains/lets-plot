@@ -107,6 +107,11 @@ class Color @JvmOverloads constructor(
         private const val COLOR = "color"
         private const val RGBA = "rgba"
 
+        fun parseOrNull(string: String): Color? {
+            return runCatching { parseHex(string) }.getOrNull()
+                ?: runCatching { parseRGB(string) }.getOrNull()
+        }
+
         fun parseRGB(text: String): Color {
             val firstParen = findNext(text, "(", 0)
             val prefix = text.substring(0, firstParen)

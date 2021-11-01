@@ -31,11 +31,18 @@ interface AxisTheme {
 
     fun tickMarkWidth(): Double
 
+    fun tickMarkLength(): Double
+
     fun tickLabelDistance(): Double {
         var result = Defaults.Plot.Axis.TICK_MARK_PADDING  // little space always
         if (showTickMarks()) {
-            result += Defaults.Plot.Axis.TICK_MARK_LENGTH
+            result += tickMarkLength()
         }
         return result
     }
+
+    fun tooltipFill(): Color
+    fun tooltipColor(): Color
+    fun tooltipStrokeWidth(): Double
+    fun tooltipTextColor(): Color
 }

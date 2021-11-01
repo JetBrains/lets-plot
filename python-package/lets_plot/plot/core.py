@@ -24,8 +24,8 @@ def aes(x=None, y=None, **other):
     `FeatureSpec`
         Aesthetic mapping specification.
 
-    Note
-    ----
+    Notes
+    -----
     Generates aesthetic mappings that describe how variables in the data are projected to visual properties
     (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
     colour to color.
@@ -104,8 +104,8 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     `LayerSpec`
         Geom object specification.
 
-    Note
-    ----
+    Notes
+    -----
     A layer is a combination of data, stat and geom with a potential position adjustment. Usually layers are created
     using geom_* or stat_* calls but they can be created directly using this function.
 
@@ -247,7 +247,8 @@ class PlotSpec(FeatureSpec):
 
     @classmethod
     def duplicate(cls, other):
-        dup = PlotSpec(data=None, mapping=None, scales=other.__scales, layers=other.__layers, is_livemap=other.__is_livemap)
+        dup = PlotSpec(data=None, mapping=None, scales=other.__scales, layers=other.__layers,
+                       is_livemap=other.__is_livemap)
         dup.props().update(other.props())
         return dup
 
@@ -359,7 +360,14 @@ class PlotSpec(FeatureSpec):
 
             if other.kind == 'theme':
                 new_theme_options = {k: v for k, v in other.props().items() if v is not None}
-                plot.props()['theme'] = {**plot.props().get('theme', {}), **new_theme_options}
+                if 'name' in new_theme_options:
+                    # pre-configured theme overrides existing theme all together.
+                    plot.props()['theme'] = new_theme_options
+                else:
+                    # merge themes
+                    old_theme_options = plot.props().get('theme', {})
+                    plot.props()['theme'] = _theme_dicts_merge(old_theme_options, new_theme_options)
+
                 return plot
 
             if isinstance(other, FeatureSpecArray):
@@ -556,3 +564,13 @@ def _generate_data(size):
     """ For testing reasons only """
     # return FeatureSpec('dummy', name=None, data='x' * size)
     return PlotSpec(data='x' * size, mapping=None, scales=[], layers=[])
+
+
+def _theme_dicts_merge(x, y):
+    """
+    Simple values in `y` override values in `x`.
+    If values in `y` and `x` both are dictionaries, then they are merged.
+    """
+    overlapping_keys = x.keys() & y.keys()
+    z = {k: {**x[k], **y[k]} for k in overlapping_keys if type(x[k]) is dict and type(y[k]) is dict}
+    return {**x, **y, **z}

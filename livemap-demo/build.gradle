@@ -11,7 +11,7 @@ kotlin {
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
     jvm("jvmBatikPlot")
-    js() {
+    js(LEGACY) {
         browser {
             dceTask {
                 keep.addAll(

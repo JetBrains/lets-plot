@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
@@ -72,7 +71,7 @@ open class ScatterPlotDemo : SimpleDemoBase() {
         val assembler = PlotAssembler.singleTile(
             scaleByAes,
             listOf(layer),
-            CoordProviders.cartesian(), DefaultTheme()
+            CoordProviders.cartesian(), theme
         )
         assembler.title = "Scatter plot"
         assembler.disableInteractions()

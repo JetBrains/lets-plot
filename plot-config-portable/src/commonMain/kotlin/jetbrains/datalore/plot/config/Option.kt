@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.VIOLIN
-import jetbrains.datalore.plot.builder.theme2.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
 object Option {
 

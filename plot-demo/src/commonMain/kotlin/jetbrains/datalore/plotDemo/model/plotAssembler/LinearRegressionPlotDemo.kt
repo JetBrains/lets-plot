@@ -21,7 +21,6 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import kotlin.random.Random
 
@@ -165,7 +164,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                 trueLineLayer,
                 regressionLineLayer,
                 seLineLayer
-            ), CoordProviders.cartesian(), DefaultTheme()
+            ), CoordProviders.cartesian(), theme
         )
         assembler.title = "Linear Regression"
         assembler.disableInteractions()

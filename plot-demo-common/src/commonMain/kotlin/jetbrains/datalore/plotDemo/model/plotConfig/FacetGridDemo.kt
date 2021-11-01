@@ -7,6 +7,8 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 class FacetGridDemo {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -16,6 +18,7 @@ class FacetGridDemo {
             both(),
             bothFlipped(),
             both_YOrderingDesc(),
+            numericFacetVariable(),
         )
     }
 
@@ -94,4 +97,39 @@ class FacetGridDemo {
         plotSpec["data"] = AutoMpg.df
         return plotSpec
     }
+
+    private fun numericFacetVariable() : MutableMap<String, Any> {
+        val rnd = Random(0)
+        val n = 100
+        val x = (1..n).map() { rnd.nextDouble() }.joinToString { it.toString() }
+        val c = (1..n).map { rnd.nextInt(1..6) }.joinToString { it.toString() }
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [$x],
+            |    "c": [$c]
+            |  },
+            |  "mapping": {"x": "x"},
+            |  "facet": {
+            |    "name": "grid",
+            |    "x": "c",
+            |    "x_order": 1,
+            |    "y_order": 1
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "histogram",
+            |      "tooltips": {
+            |        "tooltip_formats": [],
+            |        "tooltip_lines": ["@|@c"]
+            |      }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
+    }
+
 }

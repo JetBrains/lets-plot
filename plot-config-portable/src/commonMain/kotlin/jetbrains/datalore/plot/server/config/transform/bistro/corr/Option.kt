@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.corr
 object Option {
     object Corr {
         const val NAME = "corr"
+        const val COEFFICIENTS = "coefficients"
         const val TITLE = "title"
         const val SHOW_LEGEND = "show_legend"
         const val FLIP = "flip"

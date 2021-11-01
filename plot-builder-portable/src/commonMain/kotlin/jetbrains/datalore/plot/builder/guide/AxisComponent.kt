@@ -33,7 +33,6 @@ class AxisComponent(
     private val hideAxisBreaks: Boolean = false
 ) : SvgComponent() {
 
-    private val tickMarkLength = Defaults.Plot.Axis.TICK_MARK_LENGTH
     private val tickMarkPadding = Defaults.Plot.Axis.TICK_MARK_PADDING
 
     override fun buildComponent() {
@@ -74,7 +73,7 @@ class AxisComponent(
         }
 
         var axisLine: SvgLineElement? = null
-        if (axisTheme.showLine()) {
+        if (!hideAxisBreaks && axisTheme.showLine()) {
             axisLine = SvgLineElement(x1, y1, x2, y2)
             axisLine.strokeWidth().set(axisTheme.lineWidth())
             axisLine.strokeColor().set(axisTheme.lineColor())
@@ -175,7 +174,7 @@ class AxisComponent(
             tickLabel.textColor().set(axisTheme.labelColor())
         }
 
-        val markLength = tickMarkLength
+        val markLength = axisTheme.tickMarkLength()
         when (orientation) {
             Orientation.LEFT -> {
                 if (tickMark != null) {

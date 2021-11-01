@@ -3,6 +3,9 @@
 #
 
 """Correlation matrix implementation module"""
+from typing import Any
+
+from lets_plot.plot.util import is_data_frame
 
 try:
     import numpy
@@ -17,6 +20,48 @@ except ImportError:
 from lets_plot.plot.core import PlotSpec
 
 __all__ = ['corr_plot']
+
+
+def _is_corr_matrix(data: Any):
+    if is_data_frame(data):
+        if data.shape[0] != data.shape[1]:
+            return False
+
+        if not (all(col_type == 'float64' for col_type in data.dtypes)):
+            return False
+
+        for column in data:
+            import math
+            if not all(math.isnan(v) or (1.0 >= v >= -1.0) for v in data[column]):
+                return False
+
+        return True
+
+    elif isinstance(data, dict):
+        m = len(data.keys())
+        for column in data.values():
+            if not isinstance(column, (list, tuple)):
+                return False
+
+            if len(column) != m:
+                return False
+
+            import math
+            for v in column:
+                if not isinstance(v, float):
+                    return False
+
+                if math.isnan(v):
+                    return True
+
+                if 1.0 >= v >= -1.0:
+                    return True
+
+                return False
+
+            return True
+    else:
+        return False
 
 
 class corr_plot:
@@ -71,14 +116,6 @@ class corr_plot:
 
     """
 
-    _LEGEND_NAME = 'Corr'
-    _BREAKS = [-1.0, -0.5, 0.0, 0.5, 1.0]
-    _LABELS = ['-1', '-0.5', '0', '0.5', '1']
-    _LIMITS = [-1.0, 1.0]
-    _DEF_LOW_COLOR = '#B3412C'
-    _DEF_MID_COLOR = '#EDEDED'
-    _DEF_HIGH_COLOR = '#326C81'
-
     def _duplicate(self):
         dup = corr_plot(
             data=self._data,
@@ -87,7 +124,6 @@ class corr_plot:
             threshold=self.threshold
         )
 
-        dup._format = self._format
         dup._color_scale = self._color_scale
         dup._fill_scale = self._fill_scale
         dup._points_params = self._points_params
@@ -106,7 +142,9 @@ class corr_plot:
         Parameters
         ----------
         data : dict or `DataFrame`
-            Correlation will be calculated for each variable pair.
+            Correlation matrix or data (correlation will be calculated for each variable pair).
+            data will be recognized as correlation matrix if it has a square shape and all values are
+            in range -1.0..+1.0 or NaN.
         show_legend : bool, default=True
             If True legend is shown.
         flip : bool, default=True
@@ -121,17 +159,16 @@ class corr_plot:
         self._show_legend = show_legend
         self._reverse_y = flip if flip else False
         self.threshold = threshold
-        self._format = '.2f'
         self._color_scale = None
         self._fill_scale = None
         self._points_params = None
         self._tiles_params = None
         self._labels_params = None
         self._labels_map_size = None
-        self._palette = 'gradient'
-        self._low = corr_plot._DEF_LOW_COLOR
-        self._mid = corr_plot._DEF_MID_COLOR
-        self._high = corr_plot._DEF_HIGH_COLOR
+        self._palette = None
+        self._low = None
+        self._mid = None
+        self._high = None
 
     def points(self, type=None, diag=None):
         """
@@ -377,8 +414,19 @@ class corr_plot:
         else:
             tile_params = None
 
-        return PlotSpec(data=self._data, mapping=None, scales=[], layers=[], bistro={
+        data = self._data
+        if _is_corr_matrix(data):
+            coefficients = True
+        else:
+            if is_data_frame(data):
+                data = data.corr()
+                coefficients = True
+            else:
+                coefficients = False
+
+        return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
             'name': 'corr',
+            'coefficients': coefficients,
             'show_legend': self._show_legend,
             'flip': self._reverse_y,
             'threshold': self.threshold,
