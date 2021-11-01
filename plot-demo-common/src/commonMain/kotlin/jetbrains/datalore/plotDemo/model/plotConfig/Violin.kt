@@ -19,7 +19,8 @@ class Violin {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
-                "                'x': 'sepal length (cm)'" +
+                "                'x': 'target'" +
+                "                'y': 'sepal length (cm)'" +
                 "              }," +
 
                 "   'layers': [" +
