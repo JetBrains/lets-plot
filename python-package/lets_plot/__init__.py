@@ -113,8 +113,8 @@ class LetsPlot:
         settings : dict
             Dictionary of settings.
 
-        Note
-        ----
+        Notes
+        -----
         List of possible settings:
 
         - html_isolated_frame : preload Lets-Plot JS library or not (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`.

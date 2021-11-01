@@ -61,8 +61,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Scale for shapes. A continuous variable cannot be mapped to shape.
 
     Examples
@@ -724,8 +724,8 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Create your own color scale. Values are strings, encoding colors.
 
     Examples
@@ -798,8 +798,8 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Create your own color scale for fill aesthetic. Values are strings, encoding filling colors.
 
     Examples
@@ -870,8 +870,8 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Create your own discrete scale for size aesthetic. Values are numbers, defining sizes.
 
     Examples
@@ -944,8 +944,8 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Create your own discrete scale for size aesthetic. Values are numbers, encoding shapes.
 
     Examples
@@ -1018,8 +1018,8 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Create your own discrete scale for line type aesthetic.
     Values are strings or numbers, encoding linetypes.
     Available codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash',
@@ -1093,8 +1093,8 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Create your own discrete scale for alpha (transparency) aesthetic.
     Values should be taken from [0, 1] interval.
 
@@ -1173,8 +1173,8 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define smooth gradient between two colors (defined by low and high) for filling color.
 
     Examples
@@ -1234,8 +1234,8 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define smooth gradient between two colors (defined by low and high) for filling color.
 
     Examples
@@ -1309,7 +1309,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     `FeatureSpec`
         Scale specification.
 
-    Note
+    Notes
     -----
     Define smooth gradient between two colors (defined by low and high) for color aesthetic.
 
@@ -1445,8 +1445,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define diverging color gradient for filling color. Default mid point is set to white color.
 
     Examples
@@ -1522,8 +1522,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define diverging color gradient for color aesthetic. Default mid point is set to white color.
 
     Examples
@@ -1602,8 +1602,8 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define qualitative color scale with evenly spaced hues for filling color aesthetic.
 
     Examples
@@ -1681,8 +1681,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define qualitative color scale with evenly spaced hues for color aesthetic.
 
     Examples
@@ -1754,8 +1754,8 @@ def scale_fill_discrete(direction=None,
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define qualitative color scale with evenly spaced hues for filling color aesthetic.
 
     Examples
@@ -1829,8 +1829,8 @@ def scale_color_discrete(direction=None,
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Define qualitative color scale with evenly spaced hues for color aesthetic.
 
     Examples
@@ -1908,7 +1908,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     `FeatureSpec`
         Scale specification.
 
-    Note
+    Notes
     -----
     Defines sequential grey color scale for filling color aesthetic.
 
@@ -1987,8 +1987,8 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Defines sequential grey color scale for color aesthetic.
 
     Examples
@@ -2091,8 +2091,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Defines sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
@@ -2185,8 +2185,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     Defines sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
@@ -2557,8 +2557,8 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
     `FeatureSpec`
         Scale specification.
 
-    Note
-    ----
+    Notes
+    -----
     This method maps 0 data to 0 size. Useful in some stats such as count.
 
     Examples

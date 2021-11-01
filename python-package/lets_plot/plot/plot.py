@@ -31,8 +31,8 @@ def ggplot(data=None, mapping=None):
     `PlotSpec`
         Plot specification.
 
-    Note
-    ----
+    Notes
+    -----
     `ggplot()` initializes a ggplot object.
     It can be used to declare the input data frame for a graphic and
     to specify the set of plot aesthetics intended to be common
@@ -185,6 +185,7 @@ class GGBunch(FeatureSpec):
             Width of plot in px.
         height : int
             Height of plot in px.
+
         """
         if width and not height:
             raise TypeError('height argument is required')

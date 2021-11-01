@@ -246,8 +246,8 @@ def sampling_vertex_vw(n):
     `FeatureSpec`
         Vertices sample specification.
 
-    Note
-    ----
+    Notes
+    -----
     Vertex sampling is designed for polygon simplification.
 
     Examples
@@ -292,8 +292,8 @@ def sampling_vertex_dp(n):
     `FeatureSpec`
         Vertices sample specification.
 
-    Note
-    ----
+    Notes
+    -----
     Vertex sampling is designed for polygon simplification.
 
     Examples
