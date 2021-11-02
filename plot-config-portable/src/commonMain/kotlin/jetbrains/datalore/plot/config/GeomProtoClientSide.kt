@@ -83,8 +83,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.VIOLIN -> return GeomProvider.violin {
-                val geom = ViolinGeom()
-                geom
+                ViolinGeom()
             }
 
             GeomKind.LIVE_MAP -> {

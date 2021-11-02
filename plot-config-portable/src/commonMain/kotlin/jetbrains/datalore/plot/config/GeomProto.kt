@@ -104,6 +104,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 crossBarDefaults()
             DEFAULTS[BOX_PLOT] =
                 boxplotDefaults()
+            DEFAULTS[VIOLIN] =
+                violinDefaults()
             DEFAULTS[AREA] =
                 areaDefaults()
             DEFAULTS[DENSITY] =
@@ -167,6 +169,13 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun boxplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "boxplot"
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
+            return defaults
+        }
+
+        private fun violinDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "boxplot" // TODO: "violin"
             defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
             return defaults
         }

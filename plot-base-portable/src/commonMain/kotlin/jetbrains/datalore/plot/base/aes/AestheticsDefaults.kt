@@ -144,7 +144,9 @@ open class AestheticsDefaults {
         }
 
         fun violin(): AestheticsDefaults {
-            return base()
+            return AestheticsDefaults()
+                .update(Aes.COLOR, Color.BLACK)
+                .update(Aes.FILL, Color.WHITE)
         }
 
         fun livemap(displayMode: LivemapConstants.DisplayMode): AestheticsDefaults {
