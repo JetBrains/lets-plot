@@ -71,6 +71,11 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
     }
 
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+
     project.ext.jfx_platform = { -> //getJfxPlatform()
         OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
         if ( os.isWindows() ) {
