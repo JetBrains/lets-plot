@@ -164,10 +164,11 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                     val userDataAesList = line.fields.filterIsInstance<MappingValue>().map { it.aes }
                     geomOutliers.removeAll(userDataAesList)
                 }
-                val axisValueSources = myTooltipAxisAes.map { aes -> MappingValue(aes, isOutlier = true, isAxis = true) }
+                val axisValueSources = myTooltipAxisAes.map { aes ->
+                    getMappingValueSource(aes, isOutlier = true, isAxis = true, myUserTooltipSpec!!.valueSources)
+                }
                 val geomOutlierValueSources = geomOutliers.map { aes ->
-                    val formatted = myUserTooltipSpec!!.valueSources.filterIsInstance<MappingValue>().find { it.aes == aes }
-                    formatted?.toOutlier() ?: MappingValue(aes, isOutlier = true)
+                    getMappingValueSource(aes, isOutlier = true, isAxis = false, myUserTooltipSpec!!.valueSources)
                 }
 
                 myUserTooltipSpec!!.tooltipLinePatterns!! + (axisValueSources + geomOutlierValueSources).map(TooltipLine.Companion::defaultLineForValueSource)
@@ -196,6 +197,16 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         private val AES_X = listOf(Aes.X)
         private val AES_XY = listOf(Aes.X, Aes.Y)
 
+        private fun getMappingValueSource(
+            aes: Aes<*>,
+            isOutlier: Boolean,
+            isAxis: Boolean,
+            userDefinedValueSources: List<ValueSource>?
+        ): ValueSource {
+            val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
+            return userDefined?.withFlags(isOutlier, isAxis) ?: MappingValue(aes, isOutlier = isOutlier, isAxis = isAxis)
+        }
+
         fun defaultValueSourceTooltipLines(
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
@@ -203,14 +214,14 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
             userDefinedValueSources: List<ValueSource>? = null,
             constantsMap: Map<Aes<*>, Any>? = null
         ): List<TooltipLine> {
-            val axisValueSources = axisAes.map { aes -> MappingValue(aes, isOutlier = true, isAxis = true) }
+            val axisValueSources = axisAes.map { aes ->
+                getMappingValueSource(aes, isOutlier = true, isAxis = true, userDefinedValueSources)
+            }
             val outlierValueSources = outliers.map { aes ->
-                val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
-                userDefined?.toOutlier() ?: MappingValue(aes, isOutlier = true)
+                getMappingValueSource(aes, isOutlier = true, isAxis = false, userDefinedValueSources)
             }
             val aesValueSources = aesListForTooltip.map { aes ->
-                val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
-                userDefined ?: MappingValue(aes)
+                getMappingValueSource(aes, isOutlier = false, isAxis = false, userDefinedValueSources)
             }
             val constantValues = constantsMap?.map { (_, value) -> ConstantValue(value, format = null) } ?: emptyList()
             return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
