@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Standard ggplot2 themes: `theme_grey(), theme_light(), theme_classic(), theme_minimal()`;
   - Other themes: `theme_minimal2()` - the default theme, `theme_none()`.
 
-- Theme modification: more parameters were added the `theme()` function.
+- Theme modification: more parameters were added to the `theme()` function.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
 
