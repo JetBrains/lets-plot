@@ -130,8 +130,8 @@ class layer_tooltips(FeatureSpec):
             The field name starts with a '^' prefix for aesthetics,
             the variable name starts with a '@' prefix or without any prefix.
         format : str
-            Formatting specification. The format contains a number format ('1.f')
-            or a string template ('{.1f}').
+            Formatting specification. The format contains a number format ('1.f'),
+            a string template ('{.1f}') or a date/time format ('%d.%m.%y').
             The numeric format for non-numeric value will be ignored.
             If you need to include a brace character in the literal text,
             it can be escaped by doubling: `{{` and `}}`.
