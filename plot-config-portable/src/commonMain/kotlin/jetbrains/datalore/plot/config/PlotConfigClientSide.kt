@@ -22,10 +22,6 @@ import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLa
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 
-    //    internal val theme: Theme = when {
-//        USE_THEME2 -> ThemeConfig2(getMap(THEME)).theme
-//        else -> ThemeConfig(getMap(THEME)).theme
-//    }
     internal val theme: Theme = ThemeConfig(getMap(THEME)).theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
@@ -40,7 +36,13 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             .firstOrNull { it.hasPreferredCoordinateSystem() }
             ?.preferredCoordinateSystem()
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
-        val coordProvider = CoordConfig.create(get(COORD), defaultCoordProvider)
+        val coordProvider = CoordConfig.create(
+            get(COORD),
+            scaleMap[Aes.X].transform,
+            scaleMap[Aes.Y].transform,
+            defaultCoordProvider)
+
+
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
     }

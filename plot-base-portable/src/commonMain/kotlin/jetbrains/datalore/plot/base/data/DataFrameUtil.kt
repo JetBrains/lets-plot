@@ -28,9 +28,6 @@ object DataFrameUtil {
         transformVar: DataFrame.Variable,
         scale: Scale<*>
     ): DataFrame {
-//        val transformSource = getTransformSource(data, variable, scale)
-//        val transformResult = scale.transform.apply(transformSource)
-
         var transformed = scale.applyTransform(
             data[variable],
             checkLimits = true
@@ -39,11 +36,6 @@ object DataFrameUtil {
             .putNumeric(transformVar, transformed)
             .build()
     }
-
-//    private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
-//        var transformSource = data[variable]
-//        return ScaleUtil.cleanUpTransformSource(transformSource, scale)
-//    }
 
     fun hasVariable(data: DataFrame, varName: String): Boolean {
         for (`var` in data.variables()) {

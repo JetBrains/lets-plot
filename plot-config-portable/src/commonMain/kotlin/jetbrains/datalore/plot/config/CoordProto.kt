@@ -5,11 +5,10 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.Coord.RATIO
-import jetbrains.datalore.plot.config.Option.Coord.X_LIM
-import jetbrains.datalore.plot.config.Option.Coord.Y_LIM
 import jetbrains.datalore.plot.config.Option.CoordName.CARTESIAN
 import jetbrains.datalore.plot.config.Option.CoordName.FIXED
 import jetbrains.datalore.plot.config.Option.CoordName.FLIP
@@ -17,9 +16,14 @@ import jetbrains.datalore.plot.config.Option.CoordName.MAP
 
 internal object CoordProto {
 
-    fun createCoordProvider(coordName: String, options: OptionsAccessor): CoordProvider {
-        val xLim = options.getRangeOrNull(X_LIM)
-        val yLim = options.getRangeOrNull(Y_LIM)
+    fun createCoordProvider(
+        coordName: String,
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        options: OptionsAccessor
+    ): CoordProvider {
+//        val xLim = options.getRangeOrNull(X_LIM)
+//        val yLim = options.getRangeOrNull(Y_LIM)
         val flipped = options.getBoolean(Option.Coord.FLIPPED)
         return when (coordName) {
             CARTESIAN -> CoordProviders.cartesian(xLim, yLim, flipped)
@@ -30,10 +34,15 @@ internal object CoordProto {
         }
     }
 
-    fun createCoordProvider(defaultProvider: CoordProvider, options: OptionsAccessor): CoordProvider {
-        val xLim = options.getRangeOrNull(X_LIM)
-        val yLim = options.getRangeOrNull(Y_LIM)
-        val flipped = options.getBoolean(Option.Coord.FLIPPED)
+    fun createCoordProvider(
+        defaultProvider: CoordProvider,
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?,
+        flipped: Boolean,
+    ): CoordProvider {
+//        val xLim = options.getRangeOrNull(X_LIM)
+//        val yLim = options.getRangeOrNull(Y_LIM)
+//        val flipped = options.getBoolean(Option.Coord.FLIPPED)
         return defaultProvider.with(xLim, yLim, flipped)
     }
 }
