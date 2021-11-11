@@ -386,7 +386,36 @@ class PlotSpec(FeatureSpec):
         d['kind'] = self.kind
         d['scales'] = [scale.as_dict() for scale in self.__scales]
         d['layers'] = [layer.as_dict() for layer in self.__layers]
-        return d
+
+        # Empty corr_plot layer adds geom with default visuals, if remove - no layer will be added at all
+        keep_if_empty = ['point_params', 'tile_params', 'label_params']
+
+        def cleanup(o):
+            if isinstance(o, list):
+                return [cleanup(item) for item in o]
+
+            if isinstance(o, dict):
+                res = {}
+                for k, v in o.items():
+                    if v is None:
+                        continue
+
+                    if k == 'data':
+                        res[k] = v
+                        continue
+
+                    if isinstance(v, (dict, list)):
+                        clean = cleanup(v)
+                        if len(clean) > 0 or k in keep_if_empty:
+                            res[k] = clean
+                    else:
+                        res[k] = v
+                return res
+
+            else:
+                return o
+
+        return cleanup(d)
 
     def __str__(self):
         result = ['plot']
