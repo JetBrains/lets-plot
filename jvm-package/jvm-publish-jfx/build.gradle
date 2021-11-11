@@ -12,7 +12,6 @@ kotlin {
         commonMain {
             dependencies {
                 compileOnly kotlin('stdlib-common')
-                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jvmMain {

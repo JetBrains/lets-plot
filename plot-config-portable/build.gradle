@@ -32,7 +32,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 //                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
 
                 implementation project(':base-portable')
@@ -54,7 +53,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 implementation project(':vis-svg-portable')
             }
@@ -65,7 +63,6 @@ kotlin {
                 implementation kotlin('test-junit')
                 implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
                 implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "org.mockito:mockito-core:$mockito_version"
                 implementation "org.assertj:assertj-core:$assertj_version"
             }

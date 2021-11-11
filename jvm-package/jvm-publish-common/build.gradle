@@ -12,7 +12,6 @@ kotlin {
         commonMain {
             dependencies {
                 api kotlin('stdlib-common')
-                api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 api project(':base-portable')
                 api project(':base')
@@ -118,10 +117,10 @@ publishing {
                     dep.appendNode('artifactId', 'kotlin-stdlib-jdk8')
                     dep.appendNode('version', kotlin_version)
                     // Kotlin reflection
-                    dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
-                    dep.appendNode('artifactId', 'kotlin-reflect')
-                    dep.appendNode('version', kotlin_version)
+//                    dep = deps.appendNode('dependency')
+//                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
+//                    dep.appendNode('artifactId', 'kotlin-reflect')
+//                    dep.appendNode('version', kotlin_version)
                     // Kotlin test
 //                    dep = deps.appendNode('dependency')
 //                    dep.appendNode('groupId', 'org.jetbrains.kotlin')

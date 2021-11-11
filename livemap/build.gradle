@@ -29,7 +29,6 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jvmMain {
