@@ -34,10 +34,8 @@ import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_MAX_FACTOR
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_MIN_FACTOR
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOL_ZOOM_IN_EASING
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOL_ZOOM_OUT_EASING
+import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_ZOOM_IN_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_ZOOM_OUT_MULTIPLIER
 import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
@@ -260,12 +258,8 @@ class LiveMap(
 
                 // Charts
                 ChartElementScaleSystem(
-                    minScale = myDevParams.read(SCALABLE_SYMBOLS_MIN_FACTOR),
-                    maxScale = myDevParams.read(SCALABLE_SYMBOLS_MAX_FACTOR),
-                    zoomInEasing = myDevParams.read(SCALABLE_SYMBOL_ZOOM_IN_EASING).function,
-                    zoomOutEasing = myDevParams.read(SCALABLE_SYMBOL_ZOOM_OUT_EASING).function,
-                    minZoom = viewport.minZoom,
-                    maxZoom = viewport.maxZoom,
+                    zoomInMultiplier = myDevParams.read(SCALABLE_SYMBOLS_ZOOM_IN_MULTIPLIER),
+                    zoomOutMultiplier = myDevParams.read(SCALABLE_SYMBOLS_ZOOM_OUT_MULTIPLIER),
                     componentManager
                 ),
                 RenderingSystem(componentManager),
