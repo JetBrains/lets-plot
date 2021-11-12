@@ -22,7 +22,10 @@ import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
-import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.layout.LegendBoxesLayout
+import jetbrains.datalore.plot.builder.layout.PlotLayout
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -50,27 +53,8 @@ class PlotSvgComponent constructor(
 
     var interactor: PlotInteractor? = null
         set(value) {
-            require(field == null) { "Can be intialize only once." } // TODO: to not waste time on an exhaustive Disposable lifecycle control
+            check(field == null) { "Can be intialize only once." }
             field = value
-
-            // PlotInteractor controls subscribtions and clears them out on Dispose
-            value?.apply {
-                onViewReset {
-                    println("onViewReset()")
-                }
-
-                onViewPanning {
-                    println("onViewPanning($it)")
-                }
-
-                onViewZoomArea {
-                    println("onViewArea($it)")
-                }
-
-                onViewZoomIn {
-                    println("onViewZoomIn($it)")
-                }
-            }
         }
 
     internal var liveMapFigures: List<SomeFig> = emptyList()
@@ -160,29 +144,6 @@ class PlotSvgComponent constructor(
         clear()
     }
 
-
-//    private fun rebuildPlot() {
-//        clear()
-//        buildPlot()
-//    }
-
-
-    private fun createTile(
-        tilesOrigin: DoubleVector,
-        tileInfo: TileLayoutInfo,
-        tileLayers: List<GeomLayer>,
-        theme: Theme,
-    ): PlotTile {
-
-        val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
-            tileInfo,
-            DEBUG_DRAWING
-        )
-        val tile = PlotTile(tileLayers, tilesOrigin, tileInfo, theme, frameOfReference)
-        tile.isDebugDrawing = DEBUG_DRAWING
-        return tile
-    }
-
     private fun createAxisTitle(
         text: String,
         orientation: Orientation,
@@ -234,6 +195,9 @@ class PlotSvgComponent constructor(
         add(parent)
     }
 
+    /**
+     * Only used when DEBUG_DRAWING is ON.
+     */
     private fun onMouseMove(e: SvgElement, message: String) {
         e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
             SvgEventHandler<Event> {
@@ -345,7 +309,16 @@ class PlotSvgComponent constructor(
 //            println("     bounds: " + tileInfo.bounds)
 //            println("geom bounds: " + tileInfo.geomBounds)
 //            println("clip bounds: " + tileInfo.clipBounds)
-            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), theme)
+
+            // Create a plot tile.
+//            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), theme)
+            val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
+                tileLayoutInfo,
+                DEBUG_DRAWING
+            )
+            val tileLayers = tileLayers(tileLayersIndex)
+            val tile = PlotTile(tileLayers, tilesOrigin, tileLayoutInfo, theme, frameOfReference)
+            tile.isDebugDrawing = DEBUG_DRAWING
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
             tile.moveTo(plotOriginAbsolute)
