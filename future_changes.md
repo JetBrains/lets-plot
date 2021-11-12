@@ -7,4 +7,5 @@
 ### Fixed
 
 - Coord system limits do not work with x/y scale with transform [[#474](https://github.com/JetBrains/lets-plot/issues/474)].
+- Provide 0-23 hour formatting [[#469](https://github.com/JetBrains/lets-plot/issues/469)].
 
