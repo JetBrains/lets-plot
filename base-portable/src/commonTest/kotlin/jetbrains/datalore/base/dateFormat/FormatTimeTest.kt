@@ -25,18 +25,49 @@ class FormatTimeTest {
         // Noon                     12:00   12:00 pm
         // Midnight (end of day)    24:00   12:00 am
 
-        val dayStart = Time(0, 0)
-        val noon = Time(12, 0)
-        val dayEnd = Time(24, 0)
-
         val f12 = DateTimeFormat("%I:%M %P")
-        assertEquals("12:00 am", f12.apply(dayStart))
-        assertEquals("12:00 pm", f12.apply(noon))
-        assertEquals("12:00 am", f12.apply(dayEnd))
-
         val f24 = DateTimeFormat("%H:%M")
-        assertEquals("00:00", f24.apply(dayStart))
-        assertEquals("12:00", f24.apply(noon))
-        assertEquals("24:00", f24.apply(dayEnd))
+
+        // midnight (start of day)
+        Time(0, 0).run {
+            assertEquals("12:00 am", f12.apply(this))
+            assertEquals("00:00", f24.apply(this))
+        }
+
+        // noon
+        Time(12, 0).run {
+            assertEquals("12:00 pm", f12.apply(this))
+            assertEquals("12:00", f24.apply(this))
+        }
+
+        // midnight (end of day)
+        Time(24, 0).run {
+            assertEquals("12:00 am", f12.apply(this))
+            assertEquals("24:00", f24.apply(this))
+        }
+
+        // minute after midnight
+        Time(0, 1).run {
+            assertEquals("12:01 am", f12.apply(this))
+            assertEquals("00:01", f24.apply(this))
+        }
+
+        // minute after noon
+        Time(12, 1).run {
+            assertEquals("12:01 pm", f12.apply(this))
+            assertEquals("12:01", f24.apply(this))
+        }
+
+        // hour after midnight
+        Time(1, 0).run {
+            assertEquals("01:00 am", f12.apply(this))
+            assertEquals("01:00", f24.apply(this))
+        }
+
+        // hour after noon
+        Time(13, 0).run {
+            assertEquals("01:00 pm", f12.apply(this))
+            assertEquals("13:00", f24.apply(this))
+        }
     }
 }
