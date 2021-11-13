@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 interface TileLayout {
-    fun doLayout(preferredSize: DoubleVector): TileLayoutInfo
+    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo
 }

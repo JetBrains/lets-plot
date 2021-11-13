@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.PlotInteractor
@@ -43,6 +44,7 @@ class PlotSvgComponent constructor(
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
     private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
+    private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme
@@ -287,7 +289,7 @@ class PlotSvgComponent constructor(
         }
 
         // Layout plot inners
-        val plotInfo = plotLayout.doLayout(geomAndAxis.dimension)
+        val plotInfo = plotLayout.doLayout(geomAndAxis.dimension, coordProvider)
 
         if (plotInfo.tiles.isEmpty()) {
             return
@@ -314,6 +316,7 @@ class PlotSvgComponent constructor(
 //            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), theme)
             val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
                 tileLayoutInfo,
+                coordProvider,
                 DEBUG_DRAWING
             )
             val tileLayers = tileLayers(tileLayersIndex)

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import kotlin.math.abs
 
 internal class FacetGridPlotLayout(
@@ -24,7 +25,7 @@ internal class FacetGridPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (paddingLeft + paddingRight),
             preferredSize.y - (paddingTop + paddingBottom)
@@ -50,7 +51,7 @@ internal class FacetGridPlotLayout(
         val tileHeight = (tilesAreaSize.y - totalPanelVerticalPadding) / facets.rowCount
 
         // initial layout
-        var tileInfo = layoutTile(tileWidth, tileHeight)
+        var tileInfo = layoutTile(tileWidth, tileHeight, coordProvider)
 
         // do 1 or 2 times
         for (i in 0..1) {
@@ -70,7 +71,7 @@ internal class FacetGridPlotLayout(
             val newPanelHeight = geomHeight + tileInfo.axisThicknessX()
 
             // re-layout
-            tileInfo = layoutTile(newPanelWidth, newPanelHeight)
+            tileInfo = layoutTile(newPanelWidth, newPanelHeight, coordProvider)
         }
 
         // create final plot tiles layout infos
@@ -159,8 +160,8 @@ internal class FacetGridPlotLayout(
         return PlotLayoutInfo(tileInfos, plotSize)
     }
 
-    private fun layoutTile(tileWidth: Double, tileHeight: Double): MyTileInfo {
-        val layoutInfo = tileLayout.doLayout(DoubleVector(tileWidth, tileHeight))
+    private fun layoutTile(tileWidth: Double, tileHeight: Double, coordProvider: CoordProvider): MyTileInfo {
+        val layoutInfo = tileLayout.doLayout(DoubleVector(tileWidth, tileHeight), coordProvider)
         return MyTileInfo(layoutInfo)
     }
 

@@ -66,7 +66,7 @@ class PlotAssembler private constructor(
                 scaleByAes[Aes.Y],
                 xAesRange,
                 yAesRange,
-                coordProvider,
+                coordProvider.flipAxis,
                 theme
             )
             val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets, theme.facets())
@@ -85,6 +85,7 @@ class PlotAssembler private constructor(
             layersByTile = layersByTile,
             plotLayout = plotLayout,
             frameOfReferenceProvider = fOrProvider,
+            coordProvider = coordProvider,
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme

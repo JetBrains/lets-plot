@@ -129,6 +129,7 @@ internal class PlotToolbox(
                         // translate to "geom" space.
                         val translated = r.subtract(target.geomBounds.origin)
                         println("Zoom tool: apply: $translated")
+                        target.zoom(translated)
                     }
                 ))
             )

@@ -9,5 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 
 interface InteractionTarget {
+    fun zoom(geomBounds: DoubleRectangle)
+
     val geomBounds: DoubleRectangle
 }

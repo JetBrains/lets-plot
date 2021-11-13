@@ -90,6 +90,9 @@ internal class Interactor(
                     override val geomBounds: DoubleRectangle
                         get() = geomBounds
 
+                    override fun zoom(geomBounds: DoubleRectangle) {
+                        println("Target zoom: $geomBounds")
+                    }
                 }
             }
         }
