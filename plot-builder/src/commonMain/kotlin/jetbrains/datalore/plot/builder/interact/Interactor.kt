@@ -13,6 +13,8 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.tool.DragFeedback
+import jetbrains.datalore.plot.builder.interact.tool.InteractionContext
+import jetbrains.datalore.plot.builder.interact.tool.InteractionTarget
 import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -23,7 +25,7 @@ internal class Interactor(
     mouseEventPeer: MouseEventPeer,
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
-    theme: Theme,
+    theme: Theme
 ) : PlotInteractor {
     val eventsManager: EventsManager = EventsManager()
 
@@ -58,7 +60,13 @@ internal class Interactor(
 
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {
         val disposable: Disposable = when (toolFeedback) {
-            is DragFeedback -> toolFeedback.start(decorationLayer, eventsManager, geomBoundsList)
+            is DragFeedback -> toolFeedback.start(
+                DragInteractionContext(
+                    decorationLayer,
+                    eventsManager,
+                    geomBoundsList
+                )
+            )
             else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
         }
         return Registration.from(disposable)
@@ -67,5 +75,23 @@ internal class Interactor(
 
     override fun dispose() {
         reg.dispose()
+    }
+
+    private class DragInteractionContext(
+        override val decorationsLayer: SvgNode,
+        override val eventsManager: EventsManager,
+        val geomBoundsList: List<DoubleRectangle>
+    ) : InteractionContext {
+
+        override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
+            val geomBounds = geomBoundsList.find { it.contains(plotCoord) }
+            return geomBounds?.let {
+                object : InteractionTarget {
+                    override val geomBounds: DoubleRectangle
+                        get() = geomBounds
+
+                }
+            }
+        }
     }
 }

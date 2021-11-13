@@ -6,30 +6,23 @@
 package jetbrains.datalore.plot.builder.interact.tool
 
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 
 internal class MouseDragInteraction(
-    private val eventsManager: EventsManager,
-    private val geomBoundsList: List<DoubleRectangle>
+    private val ctx: InteractionContext
 ) : Disposable {
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    var started: Boolean = false
-        private set
-    var completed: Boolean = false
-        private set
-    var aborted: Boolean = false
-        private set
+    private val started: Boolean
+        get() = _target != null
+    private var completed: Boolean = false
+    private var aborted: Boolean = false
 
-    var geomBounds: DoubleRectangle = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-        private set
-        get():DoubleRectangle {
-            require(started) { "Mouse drag target wasn't acquired." }
-            return field
+    private var _target: InteractionTarget? = null
+    val target: InteractionTarget
+        get():InteractionTarget {
+            return _target ?: throw IllegalStateException("Mouse drag target wasn't acquired.")
         }
 
     // Coordinate relative to the entire plot.
@@ -59,9 +52,8 @@ internal class MouseDragInteraction(
         check(!disposed) { "Disposed." }
         check(!started) { "Mouse drag has already started." }
 
-
         reg.add(
-            eventsManager.onMouseEvent(MouseEventSpec.MOUSE_RELEASED) { _, e ->
+            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_RELEASED) { _, e ->
                 if (started && !(completed || aborted)) {
                     val absCoord = e.location.toDoubleVector()
                     completed = true
@@ -72,20 +64,18 @@ internal class MouseDragInteraction(
         )
 
         reg.add(
-            eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DRAGGED) { _, e ->
+            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DRAGGED) { _, e ->
                 if (!(completed || aborted)) {
-                    val absCoord = e.location.toDoubleVector()
+                    val plotCoord = e.location.toDoubleVector()
                     if (!started) {
-                        val target = geomBoundsList.find { it.contains(absCoord) }
-                        if (target != null) {
-                            started = true
-                            geomBounds = target
-                            dragFrom = absCoord
-                            dragTo = absCoord
+                        ctx.findTarget(plotCoord)?.let {
+                            _target = it
+                            dragFrom = plotCoord
+                            dragTo = plotCoord
                             onStarted(this)
                         }
                     } else {
-                        dragTo = absCoord
+                        dragTo = plotCoord
                         onDragged(this)
                     }
                 }
@@ -98,7 +88,7 @@ internal class MouseDragInteraction(
     fun reset() {
         check(!disposed) { "Disposed." }
         println("MouseDragInteraction reset.")
-        started = false
+        _target = null
         completed = false
         aborted = false
     }
@@ -107,6 +97,7 @@ internal class MouseDragInteraction(
         if (!disposed) {
             println("MouseDragInteraction dispose.")
             disposed = true
+            _target = null
             reg.dispose()
         }
     }

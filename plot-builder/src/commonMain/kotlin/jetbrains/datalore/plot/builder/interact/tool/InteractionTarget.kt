@@ -5,8 +5,9 @@
 
 package jetbrains.datalore.plot.builder.interact.tool
 
-import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 
-interface DragFeedback : ToolFeedback {
-    fun start(ctx: InteractionContext): Disposable
+interface InteractionTarget {
+    val geomBounds: DoubleRectangle
 }

@@ -9,14 +9,12 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.interact.ui.EventsManager
-import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import kotlin.math.max
 import kotlin.math.min
 
 class DrawRectFeedback(
-    private val onCompleted: ((DoubleRectangle) -> Unit)
+    private val onCompleted: ((Pair<DoubleRectangle, InteractionTarget>) -> Unit)
 ) : DragFeedback {
     private val rect = SvgRectElement().apply {
         strokeColor().set(Color.GRAY)
@@ -28,45 +26,32 @@ class DrawRectFeedback(
         height().set(0.0)
     }
 
-    override fun start(
-        svgParent: SvgNode,
-        eventsManager: EventsManager,
-        geomBoundsList: List<DoubleRectangle>
-    ): Disposable {
-        val interaction = MouseDragInteraction(eventsManager, geomBoundsList)
+    override fun start(ctx: InteractionContext): Disposable {
+
+        val decorationsLayer = ctx.decorationsLayer
+        val interaction = MouseDragInteraction(ctx)
 
         interaction.loop(
             onStarted = {
                 println("DrawRectFeedback start.")
-                calcRect(it.dragFrom, it.dragTo, it.geomBounds).let {
-                    rect.x().set(it.left)
-                    rect.y().set(it.top)
-                    rect.width().set(it.width)
-                    rect.height().set(it.height)
-                }
-                svgParent.children().add(rect)
+                updateRect(it.dragFrom, it.dragTo, it.target.geomBounds)
+                decorationsLayer.children().add(rect)
             },
             onDragged = {
                 println("DrawRectFeedback drag.")
-                calcRect(it.dragFrom, it.dragTo, it.geomBounds).let {
-                    rect.x().set(it.left)
-                    rect.y().set(it.top)
-                    rect.width().set(it.width)
-                    rect.height().set(it.height)
-                }
+                updateRect(it.dragFrom, it.dragTo, it.target.geomBounds)
             },
             onCompleted = {
                 println("DrawRectFeedback complete.")
-                svgParent.children().remove(rect)
-                val r = calcRect(it.dragFrom, it.dragTo, it.geomBounds)
-                // translate to "geom" space.
-                val translated = r.subtract(it.geomBounds.origin)
+                decorationsLayer.children().remove(rect)
+                val r = calcRect(it.dragFrom, it.dragTo, it.target.geomBounds)
+                val target = it.target
                 it.reset()
-                onCompleted(translated)
+                onCompleted(r to target)
             },
             onAborted = {
                 println("DrawRectFeedback abort.")
-                svgParent.children().remove(rect)
+                decorationsLayer.children().remove(rect)
                 it.reset()
             }
         )
@@ -74,9 +59,22 @@ class DrawRectFeedback(
         return object : Disposable {
             override fun dispose() {
                 println("DrawRectFeedback dispose.")
-                svgParent.children().remove(rect)
+                decorationsLayer.children().remove(rect)
                 interaction.dispose()
             }
+        }
+    }
+
+    private fun updateRect(
+        dragFrom: DoubleVector,
+        dragTo: DoubleVector,
+        geomBounds: DoubleRectangle
+    ) {
+        calcRect(dragFrom, dragTo, geomBounds).let { r ->
+            rect.x().set(r.left)
+            rect.y().set(r.top)
+            rect.width().set(r.width)
+            rect.height().set(r.height)
         }
     }
 

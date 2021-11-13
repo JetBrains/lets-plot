@@ -5,22 +5,15 @@
 
 package jetbrains.datalore.plot.builder.interact.tool
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.plot.builder.interact.ui.EventsManager
-import jetbrains.datalore.vis.svg.SvgNode
 
 class PanGeomFeedback(
-    private val onCompleted: ((DoubleVector) -> Unit)
+    private val onCompleted: ((Pair<DoubleVector, InteractionTarget>) -> Unit)
 ) : DragFeedback {
 
-    override fun start(
-        svgParent: SvgNode,
-        eventsManager: EventsManager,
-        geomBoundsList: List<DoubleRectangle>
-    ): Disposable {
-        val interaction = MouseDragInteraction(eventsManager, geomBoundsList)
+    override fun start(ctx: InteractionContext): Disposable {
+        val interaction = MouseDragInteraction(ctx)
 
         interaction.loop(
             onStarted = {
@@ -32,8 +25,9 @@ class PanGeomFeedback(
             onCompleted = {
                 println("PanGeomFeedback complete.")
                 val v = it.dragTo.subtract(it.dragFrom)
+                val target = it.target
                 it.reset()
-                onCompleted(v)
+                onCompleted(v to target)
             },
             onAborted = {
                 println("PanGeomFeedback abort.")

@@ -125,8 +125,10 @@ internal class PlotToolbox(
         init {
             regs.add(
                 interactor.startToolFeedback(DrawRectFeedback(
-                    onCompleted = {
-                        println("Zoom tool: apply: $it")
+                    onCompleted = { (r, target) ->
+                        // translate to "geom" space.
+                        val translated = r.subtract(target.geomBounds.origin)
+                        println("Zoom tool: apply: $translated")
                     }
                 ))
             )
