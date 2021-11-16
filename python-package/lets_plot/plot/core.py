@@ -130,6 +130,39 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     return LayerSpec(**locals())
 
 
+def _cleanup(obj):
+    # Empty corr_plot layer adds geom with default visuals, if remove - no layer will be added at all
+    keep_if_empty = ['point_params', 'tile_params', 'label_params']
+
+    if isinstance(obj, dict):
+        res = {}
+        for k, v in obj.items():
+            if v is None:
+                continue
+
+            if k in ['data', 'map']:
+                res[k] = v
+                continue
+
+            if isinstance(v, (dict, list)):
+                clean = _cleanup(v)
+                if len(clean) > 0 or k in keep_if_empty:
+                    res[k] = clean
+            else:
+                res[k] = v
+        return res
+
+    if isinstance(obj, list):
+        if all(isinstance(item, (dict, type(None))) for item in obj):
+            return [v for v in map(lambda item: _cleanup(item), obj) if v is not None]
+
+        # ignore non-dict list or it may produce unexpected result: [['asd'], [None]] => [['asd'],[]]
+        return obj
+
+    else:
+        return obj
+
+
 #
 #  -----------------------------------
 #  Specs
@@ -145,7 +178,7 @@ def _specs_to_dict(opts_raw):
         else:
             opts[k] = v
 
-    return opts
+    return _cleanup(opts)
 
 
 class FeatureSpec():
@@ -387,35 +420,7 @@ class PlotSpec(FeatureSpec):
         d['scales'] = [scale.as_dict() for scale in self.__scales]
         d['layers'] = [layer.as_dict() for layer in self.__layers]
 
-        # Empty corr_plot layer adds geom with default visuals, if remove - no layer will be added at all
-        keep_if_empty = ['point_params', 'tile_params', 'label_params']
-
-        def cleanup(o):
-            if isinstance(o, list):
-                return [cleanup(item) for item in o]
-
-            if isinstance(o, dict):
-                res = {}
-                for k, v in o.items():
-                    if v is None:
-                        continue
-
-                    if k == 'data':
-                        res[k] = v
-                        continue
-
-                    if isinstance(v, (dict, list)):
-                        clean = cleanup(v)
-                        if len(clean) > 0 or k in keep_if_empty:
-                            res[k] = clean
-                    else:
-                        res[k] = v
-                return res
-
-            else:
-                return o
-
-        return cleanup(d)
+        return _cleanup(d)
 
     def __str__(self):
         result = ['plot']
@@ -556,7 +561,7 @@ class FeatureSpecArray(FeatureSpec):
 
     def as_dict(self):
         elements = [{e.kind: e.as_dict()} for e in self.__elements]
-        return {'feature-list': elements}
+        return _cleanup({'feature-list': elements})
 
     def __add__(self, other):
         if isinstance(other, DummySpec):

@@ -20,21 +20,12 @@ def _image_spec(width, height, href):
         #     bytes=bytes
         # ),
         href=href,
-        data=None,
         mapping=dict(
-            x=None,
-            y=None,
             xmin=[-0.5],
             ymin=[-0.5],
             xmax=[width - 1 + 0.5],
             ymax=[height - 1 + 0.5],
-        ),
-        stat=None,
-        position=None,
-        show_legend=None,
-        data_meta={},
-        sampling=None,
-        tooltips=None,
+        )
     )
 
 
