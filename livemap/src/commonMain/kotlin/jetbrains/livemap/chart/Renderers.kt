@@ -38,7 +38,6 @@ object Renderers {
             val chartElement = entity.get<ChartElementComponent>()
             val symbolData = entity.get<SymbolComponent>()
             val radius = symbolData.size.x * chartElement.scaleFactor / 2.0
-            println("PointRenderer.render() - radius: $radius")
 
             ctx.translate(-radius, -radius)
 

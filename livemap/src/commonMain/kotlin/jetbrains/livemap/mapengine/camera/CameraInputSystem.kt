@@ -6,7 +6,9 @@
 package jetbrains.livemap.mapengine.camera
 
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.minus
+import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
@@ -46,22 +48,42 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         myCamera.isZoomFractionChanged = false
         myCamera.isMoved = false
 
-        myCamera.requestedZoom?.let {
+        if (myCamera.requestedAnimation == true) {
+            val zoomDelta = myCamera.requestedZoom?.let { it - myCamera.zoom } ?: 0.0
+            val center = myCamera.requestedPosition ?: viewport.position
+            val scaleOrigin = viewport.center
+            if (zoomDelta != 0.0) {
+                if (!cameraEntity.contains<CameraScale.CameraScaleEffectComponent>()) {
+                    CameraScale.setAnimation(cameraEntity, scaleOrigin, center, zoomDelta)
+                }
+            }
+        } else if (myCamera.requestedReset == true) {
+            updateCamera(context.initialZoom!!.toDouble(), context.initialPosition)
+        }
+        else {
+            updateCamera(myCamera.requestedZoom, myCamera.requestedPosition)
+        }
+
+        myCamera.requestedZoom = null
+        myCamera.requestedPosition = null
+        myCamera.requestedAnimation = null
+        myCamera.requestedReset = null
+
+        if (myCamera.isZoomFractionChanged || myCamera.isMoved) {
+            updateAll(myCamera.isZoomLevelChanged, myCamera.isZoomFractionChanged, myCamera.isMoved)
+        }
+    }
+
+    private fun updateCamera(requestedZoom: Double?, requestedPosition: Vec<World>?) {
+        requestedZoom?.let {
             myCamera.isZoomLevelChanged = it % 1.0 == 0.0
             myCamera.isZoomFractionChanged = true
             myCamera.zoom = it
         }
 
-        myCamera.requestedPosition?.let {
+        requestedPosition?.let {
             myCamera.position = it
             myCamera.isMoved = true
-        }
-
-        myCamera.requestedZoom = null
-        myCamera.requestedPosition = null
-
-        if (myCamera.isZoomFractionChanged || myCamera.isMoved) {
-            updateAll(myCamera.isZoomLevelChanged, myCamera.isZoomFractionChanged, myCamera.isMoved)
         }
     }
 

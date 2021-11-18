@@ -36,6 +36,8 @@ import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
 import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_ZOOM_IN_MULTIPLIER
 import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_ZOOM_OUT_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.SHOW_ADVANCED_ACTIONS
+import jetbrains.livemap.config.DevParams.Companion.SHOW_RESET_POSITION_ACTION
 import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
@@ -229,7 +231,9 @@ class LiveMap(
                     componentManager,
                     myMapLocationConsumer,
                     myLayerManager,
-                    myAttribution
+                    myAttribution,
+                    myDevParams.isSet(SHOW_ADVANCED_ACTIONS),
+                    myDevParams.isSet(SHOW_RESET_POSITION_ACTION),
                 ),
 
                 BasemapCellLoadingSystem(componentManager),

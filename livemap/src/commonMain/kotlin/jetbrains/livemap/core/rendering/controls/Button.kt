@@ -10,34 +10,84 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.rendering.primitives.Frame
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.core.rendering.primitives.RenderBox
-import jetbrains.livemap.core.rendering.primitives.Text
 
-class Button(position: DoubleVector, buttonSize: DoubleVector, buttonText: String) : RenderBox {
-    override val origin get() = frame.origin
-    override val dimension get() = frame.dimension
-    private var frame: RenderBox
+class Button(
+    val name: String
+) : RenderBox {
+    override val origin get() = position
+    override val dimension get() = buttonSize
+    private lateinit var frame: RenderBox
+    private var isDirty = true
 
-    init {
-        val buttonRect = DoubleRectangle(ZERO, buttonSize)
-        val textPosition = buttonRect.center
-
-        val rectangle = Rectangle().apply {
-            rect = buttonRect
-            color = Color.LIGHT_GRAY
+    var enabled: Boolean = true
+        set(value) {
+            field = value
+            isDirty = true
         }
 
-        val txt = Text().apply {
-            text = listOf(buttonText)
-            origin = textPosition
+    var enabledVisual: RenderBox? = null
+        set(value) {
+            field = value
+            isDirty = true
         }
 
-        frame = Frame.create(position, rectangle, txt)
-    }
+    var disabledVisual: RenderBox? = null
+        set(value) {
+            field = value
+            isDirty = true
+        }
+
+    var position: DoubleVector = ZERO
+        set(value) {
+            field = value
+            isDirty = true
+        }
+
+    var buttonSize: DoubleVector = ZERO
+        set(value) {
+            field = value
+            isDirty = true
+        }
+
+    var onClick: ((InputMouseEvent) -> Unit)? = null
+    var onDoubleClick: ((InputMouseEvent) -> Unit)? = null
 
     override fun render(ctx: Context2d) {
+        if (isDirty) {
+            rebuildFrame()
+            isDirty = false
+        }
+
         frame.render(ctx)
+    }
+
+    fun dispatchClick(e: InputMouseEvent) {
+        if (enabled) {
+            onClick?.invoke(e)
+        }
+    }
+
+    fun dispatchDoubleClick(e: InputMouseEvent) {
+        if (enabled) {
+            onDoubleClick?.invoke(e)
+        }
+    }
+
+    private fun rebuildFrame() {
+        frame = Frame.create(
+            position,
+            when(enabled) {
+                true -> enabledVisual ?: blank(Color.LIGHT_GRAY)
+                false -> disabledVisual ?: blank(Color.GRAY)
+            }
+        )
+    }
+    private fun blank(fill: Color) = Rectangle().apply {
+        rect = DoubleRectangle(ZERO, buttonSize)
+        color = fill
     }
 }
