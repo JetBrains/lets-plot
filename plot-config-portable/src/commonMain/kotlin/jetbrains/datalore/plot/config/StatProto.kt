@@ -96,6 +96,8 @@ object StatProto {
                 )
             }
 
+            StatKind.VIOLIN -> return configureViolinStat(options)
+
             StatKind.DENSITY -> return configureDensityStat(options)
 
             StatKind.DENSITY2D -> return configureDensity2dStat(options, false)
@@ -168,6 +170,10 @@ object StatProto {
             fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL, CorrelationStat.DEF_FILL_DIAGONAL),
             threshold = options.getDoubleDef(Corr.THRESHOLD, CorrelationStat.DEF_THRESHOLD)
         )
+    }
+
+    private fun configureViolinStat(options: OptionsAccessor): ViolinStat {
+        return ViolinStat()
     }
 
     private fun configureDensityStat(options: OptionsAccessor): DensityStat {
