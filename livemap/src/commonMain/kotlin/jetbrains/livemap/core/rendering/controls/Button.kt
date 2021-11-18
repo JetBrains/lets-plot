@@ -10,23 +10,44 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.core.input.CursorStyle
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.rendering.primitives.Frame
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.core.rendering.primitives.RenderBox
+import jetbrains.livemap.ui.UiService
 
 class Button(
     val name: String
 ) : RenderBox {
     override val origin get() = position
     override val dimension get() = buttonSize
+    private lateinit var ui: UiService
     private lateinit var frame: RenderBox
     private var isDirty = true
+        set(value) {
+            if (value != field) {
+                if (value) {
+                    ui.repaint()
+                }
+
+                field = value
+            }
+        }
 
     var enabled: Boolean = true
         set(value) {
-            field = value
-            isDirty = true
+            if (field != value) {
+
+                if (value) {
+                    ui.setCursor(this, CursorStyle.POINTER)
+                } else {
+                    ui.defaultCursor(this)
+                }
+
+                field = value
+                isDirty = true
+            }
         }
 
     var enabledVisual: RenderBox? = null
@@ -75,6 +96,10 @@ class Button(
         if (enabled) {
             onDoubleClick?.invoke(e)
         }
+    }
+
+    fun attach(ui: UiService) {
+       this.ui = ui
     }
 
     private fun rebuildFrame() {

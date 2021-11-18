@@ -244,13 +244,11 @@ class LiveMapUiSystem(
 
         internal fun updateMakeGeometryButton(drawingGeometry: Boolean) {
             myDrawingGeometry = drawingGeometry
-            myUiService.repaint()
         }
 
         internal fun updateZoomButtons(zoom: Double) {
             myZoomPlusButton.enabled = zoom != myViewport.maxZoom.toDouble()
             myZoomMinusButton.enabled = zoom != myViewport.minZoom.toDouble()
-            myUiService.repaint()
         }
     }
 

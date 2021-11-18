@@ -39,6 +39,7 @@ class UiService(
     }
 
     fun addButton(button: Button): EcsEntity {
+        button.attach(this)
         return addParentLayerComponent(
             myComponentManager
                 .createEntity(button.name)
@@ -81,12 +82,25 @@ class UiService(
             }
     }
 
-    fun remove(obj: RenderBox) {
+    private fun findEntity(obj: RenderBox): EcsEntity? {
         myComponentManager.onEachEntity<UiRenderComponent> { entity, uiComponent ->
             if (uiComponent.renderBox === obj) {
-                myComponentManager.removeEntity(entity)
-                return
+                return entity
             }
         }
+
+        return null
+    }
+
+    fun remove(obj: RenderBox) {
+        findEntity(obj)?.let(myComponentManager::removeEntity)
+    }
+
+    fun setCursor(obj: RenderBox, cursorStyle: CursorStyle) {
+        findEntity(obj)?.setComponent(CursorStyleComponent(cursorStyle))
+    }
+
+    fun defaultCursor(obj: RenderBox) {
+        findEntity(obj)?.remove<CursorStyleComponent>()
     }
 }
