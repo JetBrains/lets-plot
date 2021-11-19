@@ -23,30 +23,16 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             return withEmptyStatValues()
         }
 
-        val ys: List<Double>
-        val ws: List<Double>
-        // TODO: Move filtering and sorting into the buildStat()
-        if (data.has(TransformVar.WEIGHT)) {
-            val (ysFiltered, wsFiltered) = SeriesUtil.filterFinite(
-                data.getNumeric(TransformVar.Y),
-                data.getNumeric(TransformVar.WEIGHT)
-            )
-            val (ysSorted, wsSorted) = (ysFiltered zip wsFiltered)
-                .sortedBy { it.first }
-                .unzip()
-            ys = ysSorted
-            ws = wsSorted
-        } else {
-            ys = data.getNumeric(TransformVar.Y)
-                .filterNotNull().filter { it.isFinite() }
-                .sorted()
-            ws = List(ys.size) { 1.0 }
-        }
-        if (ys.isEmpty()) return withEmptyStatValues()
+        val ys = data.getNumeric(TransformVar.Y)
         val xs = if (data.has(TransformVar.X)) {
             data.getNumeric(TransformVar.X)
         } else {
             List(ys.size) { 0.0 }
+        }
+        val ws = if (data.has(TransformVar.WEIGHT)) {
+            data.getNumeric(TransformVar.WEIGHT)
+        } else {
+            List(ys.size) { 1.0 }
         }
 
         val statData = buildStat(xs, ys, ws)
@@ -70,7 +56,6 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             ys: List<Double?>,
             ws: List<Double?>
         ): MutableMap<DataFrame.Variable, List<Double>> {
-
             val binnedData: MutableMap<Double, Pair<MutableList<Double>, MutableList<Double>>> = HashMap()
             for ((x, p) in xs zip (ys zip ws)) {
                 binnedData.getOrPut(x!!) { Pair(ArrayList(), ArrayList()) }
@@ -83,53 +68,49 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             val statDensity = ArrayList<Double>()
 
             for ((x, bin) in binnedData) {
-                val y = bin.first
-                val weights = bin.second
-                val ySummary = FiveNumberSummary(y)
-                val rangeY = ClosedRange(ySummary.min, ySummary.max)
-                val n = 512 // TODO: Should be a parameter
-                val localStatY = DensityStatUtil.createStepValues(rangeY, n)
-                statX += MutableList(localStatY.size) { x }
-                statY += localStatY
-                val localStatDensity = ArrayList<Double>()
+                val (ysFiltered, wsFiltered) = SeriesUtil.filterFinite(bin.first, bin.second)
+                val (ysSorted, wsSorted) = (ysFiltered zip wsFiltered)
+                    .sortedBy { it.first }
+                    .unzip()
+                val binY = ysSorted.toMutableList()
+                val binW = wsSorted.toMutableList()
 
-                val fullScalMax = 5000 // TODO: Should be a parameter
-                val kernel = DensityStat.Kernel.GAUSSIAN // TODO: Should be a parameter
-                val bandWidth = DensityStatUtil.bandWidth(
-                    DensityStat.DEF_BW,
-                    y
-                )
-                val adjust = 1.0 // TODO: Should be a parameter
-                val kernelFun: (Double) -> Double = DensityStatUtil.kernel(kernel)
-                val densityFunction: (Double) -> Double = when (y.size <= fullScalMax) {
+                val ySummary = FiveNumberSummary(binY)
+                val rangeY = ClosedRange(ySummary.min, ySummary.max)
+                val localStatY = DensityStatUtil.createStepValues(rangeY, DensityStat.DEF_N)
+
+                val bandWidth = DensityStatUtil.bandWidth(DensityStat.DEF_BW, binY)
+                val kernelFun: (Double) -> Double = DensityStatUtil.kernel(DensityStat.DEF_KERNEL)
+                val densityFunction: (Double) -> Double = when (binY.size <= DensityStat.DEF_FULL_SCAN_MAX) {
                     true -> DensityStatUtil.densityFunctionFullScan(
-                        y,
-                        weights,
+                        binY,
+                        binW,
                         kernelFun,
                         bandWidth,
-                        adjust
+                        DensityStat.DEF_ADJUST
                     )
                     false -> DensityStatUtil.densityFunctionFast(
-                        y,
-                        weights,
+                        binY,
+                        binW,
                         kernelFun,
                         bandWidth,
-                        adjust
+                        DensityStat.DEF_ADJUST
                     )
                 }
 
-                val nTotal = weights.sum()
-                for (u in localStatY) {
-                    val d = densityFunction(u)
-                    localStatDensity.add(d / nTotal)
+                val nTotal = binW.sum()
+                for (y in localStatY) {
+                    statDensity.add(densityFunction(y) / nTotal)
                 }
-                statDensity += localStatDensity
+
+                statX += MutableList(localStatY.size) { x }
+                statY += localStatY
             }
 
             return mutableMapOf(
                 Stats.X to statX,
                 Stats.Y to statY,
-                Stats.DENSITY to statDensity,
+                Stats.DENSITY to statDensity
             )
         }
     }
