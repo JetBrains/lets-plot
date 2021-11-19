@@ -30,16 +30,16 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        // TODO: Replace it by normal geometry builder
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)) {
-            val x = p.x()!!
-            val ymin = p.ymin()!!
-            val ymax = p.ymax()!!
-
-            val start = DoubleVector(x, ymin)
-            val end = DoubleVector(x, ymax)
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.WEIGHT)) {
+            val xStart = p.x()!! - 20 * p.weight()!!
+            val xEnd = p.x()!! + 20 * p.weight()!!
+            val y = p.y()!!
+            val start = DoubleVector(xStart, y)
+            val end = DoubleVector(xEnd, y)
             val line = helper.createLine(start, end, p)
             root.add(line)
         }

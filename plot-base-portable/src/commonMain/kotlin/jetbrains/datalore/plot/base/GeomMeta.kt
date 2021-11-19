@@ -213,8 +213,8 @@ object GeomMeta {
 
             GeomKind.VIOLIN -> listOf(
                 Aes.X,
-                Aes.YMIN,
-                Aes.YMAX
+                Aes.Y,
+                Aes.WEIGHT
             )
 
             GeomKind.RIBBON -> listOf(

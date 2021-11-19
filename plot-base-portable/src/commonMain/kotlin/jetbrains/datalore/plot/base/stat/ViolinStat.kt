@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -14,7 +15,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 class ViolinStat : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -22,19 +23,33 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             return withEmptyStatValues()
         }
 
-        val ys = data.getNumeric(TransformVar.Y)
+        val ys: List<Double>
+        val ws: List<Double>
+        // TODO: Move filtering and sorting into the buildStat()
+        if (data.has(TransformVar.WEIGHT)) {
+            val (ysFiltered, wsFiltered) = SeriesUtil.filterFinite(
+                data.getNumeric(TransformVar.Y),
+                data.getNumeric(TransformVar.WEIGHT)
+            )
+            val (ysSorted, wsSorted) = (ysFiltered zip wsFiltered)
+                .sortedBy { it.first }
+                .unzip()
+            ys = ysSorted
+            ws = wsSorted
+        } else {
+            ys = data.getNumeric(TransformVar.Y)
+                .filterNotNull().filter { it.isFinite() }
+                .sorted()
+            ws = List(ys.size) { 1.0 }
+        }
+        if (ys.isEmpty()) return withEmptyStatValues()
         val xs = if (data.has(TransformVar.X)) {
             data.getNumeric(TransformVar.X)
         } else {
-            List<Double>(ys.size) { 0.0 }
+            List(ys.size) { 0.0 }
         }
 
-        val statData = buildStat(xs, ys)
-
-        val statCount = statData.remove(Stats.COUNT)
-        if (statCount == null || statCount.all { it == 0.0 }) {
-            return withEmptyStatValues()
-        }
+        val statData = buildStat(xs, ys, ws)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -46,47 +61,75 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.YMIN to Stats.Y_MIN,
-            Aes.YMAX to Stats.Y_MAX
+            Aes.Y to Stats.Y,
+            Aes.WEIGHT to Stats.DENSITY,
         )
 
         fun buildStat(
             xs: List<Double?>,
-            ys: List<Double?>
+            ys: List<Double?>,
+            ws: List<Double?>
         ): MutableMap<DataFrame.Variable, List<Double>> {
 
-            val xyPairs = xs.zip(ys).filter { (x, y) ->
-                SeriesUtil.allFinite(x, y)
-            }
-            if (xyPairs.isEmpty()) {
-                return mutableMapOf()
-            }
-
-            val binnedData: MutableMap<Double, MutableList<Double>> = HashMap()
-            for ((x, y) in xyPairs) {
-                binnedData.getOrPut(x!!) { ArrayList() }.add(y!!)
+            val binnedData: MutableMap<Double, Pair<MutableList<Double>, MutableList<Double>>> = HashMap()
+            for ((x, p) in xs zip (ys zip ws)) {
+                binnedData.getOrPut(x!!) { Pair(ArrayList(), ArrayList()) }
+                binnedData[x]?.first?.add(p.first!!)
+                binnedData[x]?.second?.add(p.second!!)
             }
 
             val statX = ArrayList<Double>()
-            val statMin = ArrayList<Double>()
-            val statMax = ArrayList<Double>()
-            val statCount = ArrayList<Double>()
+            val statY = ArrayList<Double>()
+            val statDensity = ArrayList<Double>()
 
             for ((x, bin) in binnedData) {
-                val count = bin.size.toDouble()
-                val summary = FiveNumberSummary(bin)
+                val y = bin.first
+                val weights = bin.second
+                val ySummary = FiveNumberSummary(y)
+                val rangeY = ClosedRange(ySummary.min, ySummary.max)
+                val n = 512 // TODO: Should be a parameter
+                val localStatY = DensityStatUtil.createStepValues(rangeY, n)
+                statX += MutableList(localStatY.size) { x }
+                statY += localStatY
+                val localStatDensity = ArrayList<Double>()
 
-                statX.add(x)
-                statMin.add(summary.min)
-                statMax.add(summary.max)
-                statCount.add(count)
+                val fullScalMax = 5000 // TODO: Should be a parameter
+                val kernel = DensityStat.Kernel.GAUSSIAN // TODO: Should be a parameter
+                val bandWidth = DensityStatUtil.bandWidth(
+                    DensityStat.DEF_BW,
+                    y
+                )
+                val adjust = 1.0 // TODO: Should be a parameter
+                val kernelFun: (Double) -> Double = DensityStatUtil.kernel(kernel)
+                val densityFunction: (Double) -> Double = when (y.size <= fullScalMax) {
+                    true -> DensityStatUtil.densityFunctionFullScan(
+                        y,
+                        weights,
+                        kernelFun,
+                        bandWidth,
+                        adjust
+                    )
+                    false -> DensityStatUtil.densityFunctionFast(
+                        y,
+                        weights,
+                        kernelFun,
+                        bandWidth,
+                        adjust
+                    )
+                }
+
+                val nTotal = weights.sum()
+                for (u in localStatY) {
+                    val d = densityFunction(u)
+                    localStatDensity.add(d / nTotal)
+                }
+                statDensity += localStatDensity
             }
 
             return mutableMapOf(
                 Stats.X to statX,
-                Stats.Y_MIN to statMin,
-                Stats.Y_MAX to statMax,
-                Stats.COUNT to statCount,
+                Stats.Y to statY,
+                Stats.DENSITY to statDensity,
             )
         }
     }
