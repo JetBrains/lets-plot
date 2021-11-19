@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
@@ -181,33 +182,43 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean
         ) {
-            val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
-                Triple(
-                    line.label,
-                    line.label.takeUnless(String?::isNullOrEmpty)?.let(::TextLabel),
-                    TextLabel(line.value)
-                )
-            }
-            // for labels
-            linesInfo.onEach { (_, labelComponent, _) ->
-                if (labelComponent != null) {
-                    labelComponent.textColor().set(labelTextColor)
-                    myLines.children().add(labelComponent.rootGroup)
+            class TextComponent(text: String, textColor: Color) {
+                val isBlank = text.isBlank()
+                val textLabel = TextLabel(text).also {
+                    it.textColor().set(textColor)
+                    myLines.children().add(it.rootGroup)
+                }
+                val bBox: DoubleRectangle = if (isBlank) {
+                    // todo: for Batik - throwing an exception for a text element with a blank string
+                    DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+                } else {
+                    textLabel.rootGroup.bBox
                 }
             }
-            // for values
-            linesInfo.onEach { (_, _, valueComponent) ->
-                valueComponent.textColor().set(valueTextColor)
-                myLines.children().add(valueComponent.rootGroup)
+
+            val linesInfo: List<Pair<TextComponent?, TextComponent>> = lines.map { line ->
+                Pair(
+                    line.label?.let { TextComponent(it, labelTextColor) },
+                    TextComponent(line.value, valueTextColor)
+                )
             }
 
+            // max line height - will be used as default height for empty line when both (label and value) are blank
+            val defaultLineHeight = linesInfo
+                .map { (labelComponent, valueComponent) ->
+                    max(valueComponent.bBox.height, labelComponent?.bBox?.height ?: 0.0)
+                }
+                .maxOrNull()
+                ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+
+            // max line width
             val maxLabelWidth = linesInfo
-                .mapNotNull { (_, labelComponent, _) -> labelComponent }
-                .map { it.rootGroup.bBox.width }
+                .mapNotNull { (labelComponent, _) -> labelComponent }
+                .map { it.bBox.width }
                 .maxOrNull() ?: 0.0
             var maxLineWidth = tooltipMinWidth ?: 0.0
-            linesInfo.forEach { (_, labelComponent, valueComponent) ->
-                val valueWidth = valueComponent.rootGroup.bBox.width
+            linesInfo.forEach { (labelComponent, valueComponent) ->
+                val valueWidth = valueComponent.bBox.width
                 maxLineWidth = max(
                     maxLineWidth,
                     if (labelComponent == null) {
@@ -219,63 +230,63 @@ class TooltipBox: SvgComponent() {
             }
 
             val textSize = linesInfo
-                .fold(DoubleVector.ZERO) { textDimension, (labelText, labelComponent, valueComponent) ->
-                    val valueBBox = valueComponent.rootGroup.bBox
-                    val labelBBox = labelComponent?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+                .fold(DoubleVector.ZERO) { textDimension, (labelComponent, valueComponent) ->
+                    val valueBBox = valueComponent.bBox
+                    val labelBBox = labelComponent?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
                     // bBox.top is negative baseline of the text.
                     // Can't use bBox.height:
                     //  - in Batik it is close to the abs(bBox.top)
                     //  - in JavaFx it is constant = fontSize
                     val yPosition = textDimension.y - min(valueBBox.top, labelBBox.top)
-                    valueComponent.y().set(yPosition)
-                    labelComponent?.y()?.set(yPosition)
+                    valueComponent.textLabel.y().set(yPosition)
+                    labelComponent?.textLabel?.y()?.set(yPosition)
 
                     when {
                         labelComponent != null -> {
                             // Move label to the left border, value - to the right
 
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            labelComponent.x().set(-labelBBox.left)
+                            labelComponent.textLabel.x().set(-labelBBox.left)
 
-                            valueComponent.x().set(maxLineWidth)
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            valueComponent.textLabel.x().set(maxLineWidth)
+                            valueComponent.textLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
                         valueBBox.width == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            valueComponent.x().set(-valueBBox.left)
-                        }
-                        labelText == "" -> {
-                            // Move value to the right border
-                            valueComponent.x().set(maxLineWidth)
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            valueComponent.textLabel.x().set(-valueBBox.left)
                         }
                         else -> {
                             // Move value to the center
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                            valueComponent.x().set(maxLineWidth / 2)
+                            valueComponent.textLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+                            valueComponent.textLabel.x().set(maxLineWidth / 2)
                         }
                     }
 
+                    val lineHeight = when {
+                        valueComponent.isBlank && (labelComponent?.isBlank ?: true) -> defaultLineHeight
+                        else ->
+                            max(
+                                valueBBox.height + valueBBox.top,
+                                labelBBox.height + labelBBox.top
+                            )
+                    }
                     DoubleVector(
                         x = maxLineWidth,
-                        y = valueComponent.y().get()!! + max(
-                            valueBBox.height + valueBBox.top,
-                            labelBBox.height + labelBBox.top
-                        ) + LINE_INTERVAL
+                        y = valueComponent.textLabel.y().get()!! + lineHeight + LINE_INTERVAL
                     )
                 }.let { textSize ->
                     if (rotate) {
                         linesInfo
-                            .onEach { (_, labelComponent, valueComponent) ->
-                                labelComponent?.rotate(90.0)
-                                labelComponent?.y()?.set(-labelComponent.y().get()!!)
-                                labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                            .onEach { (labelComponent, valueComponent) ->
+                                labelComponent?.textLabel?.rotate(90.0)
+                                labelComponent?.textLabel?.y()?.set(-labelComponent.textLabel.y().get()!!)
+                                labelComponent?.textLabel?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
 
-                                valueComponent.y().set(-valueComponent.y().get()!!)
-                                valueComponent.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
-                                valueComponent.rotate(90.0)
+                                valueComponent.textLabel.y().set(-valueComponent.textLabel.y().get()!!)
+                                valueComponent.textLabel.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                valueComponent.textLabel.rotate(90.0)
                             }
                         textSize.flip()
                     } else {
