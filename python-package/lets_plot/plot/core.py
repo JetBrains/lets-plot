@@ -130,37 +130,43 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     return LayerSpec(**locals())
 
 
-def _cleanup(obj):
-    # Empty corr_plot layer adds geom with default visuals, if remove - no layer will be added at all
-    keep_if_empty = ['point_params', 'tile_params', 'label_params']
+def _cleanup_spec_list(obj):
+    assert isinstance(obj, list)
 
-    if isinstance(obj, dict):
-        res = {}
-        for k, v in obj.items():
-            if v is None:
-                continue
+    if all(isinstance(item, (dict, type(None))) for item in obj):
+        return [v for v in map(lambda item: _cleanup_spec(item), obj) if v is not None]
 
-            if k in ['data', 'map']:
-                res[k] = v
-                continue
+    # ignore non-dict list or it may produce unexpected result: [['asd'], [None]] => [['asd'],[]]
+    return obj
 
-            if isinstance(v, (dict, list)):
-                clean = _cleanup(v)
-                if len(clean) > 0 or k in keep_if_empty:
+
+def _cleanup_spec(obj: dict):
+    assert isinstance(obj, dict)
+    res = {}
+    for k, v in obj.items():
+        if v is None:
+            continue
+
+        if k in ['data', 'map']:
+            res[k] = v
+            continue
+
+        if isinstance(v, list):
+            if k in ['scales', 'layers', 'feature-list', 'tooltip_formats', 'tooltip_lines', 'tooltip_variables']:
+                clean = _cleanup_spec_list(v)
+                if len(clean) > 0:
                     res[k] = clean
             else:
                 res[k] = v
-        return res
 
-    if isinstance(obj, list):
-        if all(isinstance(item, (dict, type(None))) for item in obj):
-            return [v for v in map(lambda item: _cleanup(item), obj) if v is not None]
-
-        # ignore non-dict list or it may produce unexpected result: [['asd'], [None]] => [['asd'],[]]
-        return obj
-
-    else:
-        return obj
+        elif isinstance(v, dict):
+            clean = _cleanup_spec(v)
+            # Empty corr_plot layer adds geom with default visuals, if remove - no layer will be added at all
+            if len(clean) > 0 or k in ['point_params', 'tile_params', 'label_params']:
+                res[k] = clean
+        else:
+            res[k] = v
+    return res
 
 
 #
@@ -178,7 +184,7 @@ def _specs_to_dict(opts_raw):
         else:
             opts[k] = v
 
-    return _cleanup(opts)
+    return _cleanup_spec(opts)
 
 
 class FeatureSpec():
@@ -420,7 +426,7 @@ class PlotSpec(FeatureSpec):
         d['scales'] = [scale.as_dict() for scale in self.__scales]
         d['layers'] = [layer.as_dict() for layer in self.__layers]
 
-        return _cleanup(d)
+        return _cleanup_spec(d)
 
     def __str__(self):
         result = ['plot']
@@ -561,7 +567,7 @@ class FeatureSpecArray(FeatureSpec):
 
     def as_dict(self):
         elements = [{e.kind: e.as_dict()} for e in self.__elements]
-        return _cleanup({'feature-list': elements})
+        return _cleanup_spec({'feature-list': elements})
 
     def __add__(self, other):
         if isinstance(other, DummySpec):
