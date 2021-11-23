@@ -13,41 +13,54 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.input.*
+import jetbrains.livemap.core.input.EventListenerComponent
+import jetbrains.livemap.core.input.InputMouseEvent
+import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.core.openLink
 import jetbrains.livemap.core.rendering.Alignment
+import jetbrains.livemap.core.rendering.controls.Button
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.primitives.Attribution
-import jetbrains.livemap.core.rendering.primitives.MutableImage
+import jetbrains.livemap.core.rendering.primitives.Image
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
 import jetbrains.livemap.makegeometrywidget.createFormattedGeometryString
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.LiveMapContext
-import jetbrains.livemap.mapengine.camera.CameraComponent
-import jetbrains.livemap.mapengine.camera.CameraScale
+import jetbrains.livemap.mapengine.camera.Camera
 import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_GET_CENTER
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MAKE_GEOMETRY
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MAKE_GEOMETRY_ACTIVE
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MINUS
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MINUS_DISABLED
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_PLUS
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_PLUS_DISABLED
+import jetbrains.livemap.ui.ResourceManager.Companion.KEY_RESET_POSITION
 
 class LiveMapUiSystem(
     private val myUiService: UiService,
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
-    private val myAttribution: String?
+    private val myAttribution: String?,
+    private val showAdvancedActions: Boolean,
+    private val showResetPositionAction: Boolean,
 ) : AbstractSystem<LiveMapContext>(componentManager) {
+    private lateinit var myCamera: Camera
+    private lateinit var myZoomPlusButton: Button
+    private lateinit var myZoomMinusButton: Button
+    private lateinit var myResetPositionButton: Button
+    private lateinit var myGetCenterButton: Button
+    private lateinit var myMakeGeometryButton: Button
     private lateinit var myLiveMapLocation: LiveMapLocation
-    private lateinit var myZoomPlus: MutableImage
-    private lateinit var myZoomMinus: MutableImage
-    private lateinit var myGetCenter: MutableImage
-    private lateinit var myMakeGeometry: MutableImage
     private lateinit var myViewport: Viewport
-    private lateinit var myButtonPlus: EcsEntity
-    private lateinit var myButtonMinus: EcsEntity
     private var myDrawingGeometry = false
 
     private var myUiState: UiState = ResourcesLoading()
+
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         myUiState.update(context)
@@ -55,46 +68,79 @@ class LiveMapUiSystem(
 
     override fun initImpl(context: LiveMapContext) {
         myViewport = context.mapRenderContext.viewport
-
-        myLiveMapLocation =
-            LiveMapLocation(myViewport, context.mapProjection)
-
-        myUiService.resourceManager
-            .add(KEY_PLUS, BUTTON_PLUS)
-            .add(KEY_PLUS_DISABLED, BUTTON_PLUS_DISABLED)
-            .add(KEY_MINUS, BUTTON_MINUS)
-            .add(KEY_MINUS_DISABLED, BUTTON_MINUS_DISABLED)
-            .add(KEY_GET_CENTER, BUTTON_GET_CENTER)
-            .add(KEY_MAKE_GEOMETRY, BUTTON_MAKE_GEOMETRY)
-            .add(KEY_MAKE_GEOMETRY_ACTIVE, BUTTON_MAKE_GEOMETRY_ACTIVE)
+        myCamera = context.camera
+        myLiveMapLocation = LiveMapLocation(myViewport, context.mapProjection)
 
         initUi()
     }
 
     private fun initUi() {
-        val padding = 13.0
-        val side = 26.0
-        val size = DoubleVector(side, side)
-        val plusOrigin = DoubleVector(padding, padding)
-        val minusOrigin = plusOrigin.add(DoubleVector(0.0, side + padding))
-        val getCenterOrigin = minusOrigin.add(DoubleVector(0.0, side + padding))
-        val getMakeGeometryOrigin = getCenterOrigin.add(DoubleVector(0.0, side + padding))
+        myZoomPlusButton = newButton(
+            name = "zoom_plus",
+            enabledVisual = KEY_PLUS,
+            disabledVisual = KEY_PLUS_DISABLED
+        ) { _, _ ->
+            myCamera.animate(myCamera.zoom + 1.0, myViewport.position)
+        }
 
-        myZoomPlus = MutableImage(plusOrigin, size)
-        myButtonPlus = myUiService.addButton(myZoomPlus)
-        addListenersToZoomButton(myButtonPlus, myViewport.maxZoom, 1.0)
+        myZoomMinusButton = newButton(
+            name = "zoom_minus",
+            enabledVisual = KEY_MINUS,
+            disabledVisual = KEY_MINUS_DISABLED
+        ) { _, _ ->
+            myCamera.animate(myCamera.zoom - 1.0, myViewport.position)
+        }
 
-        myZoomMinus = MutableImage(minusOrigin, size)
-        myButtonMinus = myUiService.addButton(myZoomMinus)
-        addListenersToZoomButton(myButtonMinus, myViewport.minZoom, -1.0)
+        myResetPositionButton = newButton(
+            name = "reset_position",
+            enabledVisual = KEY_RESET_POSITION
+        ) { _, _ ->
+            myCamera.reset()
+        }
 
-        myGetCenter = MutableImage(getCenterOrigin, size)
-        val buttonGetCenter = myUiService.addButton(myGetCenter)
-        addListenersToGetCenterButton(buttonGetCenter)
+        myGetCenterButton = newButton(
+            name = "get_map_position",
+            enabledVisual = KEY_GET_CENTER
+        ) { _, _ ->
+            myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
+        }
 
-        myMakeGeometry = MutableImage(getMakeGeometryOrigin, size)
-        val buttonMakeGeometry = myUiService.addButton(myMakeGeometry)
-        addListenersToMakeGeometryButton(buttonMakeGeometry)
+        myMakeGeometryButton = newButton(
+            name = "path_painter",
+            enabledVisual = KEY_MAKE_GEOMETRY
+        ) { source, _ ->
+            if (containsEntity(MakeGeometryWidgetComponent::class)) {
+                finishDrawing()
+                source.enabledVisual = loadIcon(KEY_MAKE_GEOMETRY)
+            } else {
+                activateCreateWidget()
+                source.enabledVisual = loadIcon(KEY_MAKE_GEOMETRY_ACTIVE)
+            }
+        }
+
+        val buttons = mutableListOf<Button>().apply {
+            add(myZoomPlusButton)
+            add(myZoomMinusButton)
+            if (showResetPositionAction) {
+                add(myResetPositionButton)
+            }
+            if (showAdvancedActions) {
+                add(myGetCenterButton)
+                add(myMakeGeometryButton)
+            }
+        }
+
+        fun layoutButtons(buttons: List<Button>) {
+            val step = DoubleVector(0.0, padding + iconSize.y)
+            var p = DoubleVector(padding, padding)
+            buttons.forEach {
+                it.position = p
+                p = p.add(step)
+            }
+        }
+
+        layoutButtons(buttons)
+        buttons.forEach(myUiService::addButton)
 
         if (myAttribution != null) {
             val parts = AttributionParser(myAttribution).parse()
@@ -132,49 +178,6 @@ class LiveMapUiSystem(
         }
     }
 
-    private fun addListenersToGetCenterButton(button: EcsEntity) {
-        val listeners = button.getComponent<EventListenerComponent>()
-
-        listeners.addClickListener {
-            it.stopPropagation()
-            myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
-        }
-
-        listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
-    }
-
-    private fun addListenersToZoomButton(button: EcsEntity, disablingZoom: Int, animationDelta: Double) {
-        val camera = getSingletonEntity(CameraComponent::class)
-        val listeners = button.getComponent<EventListenerComponent>()
-
-        listeners.addClickListener {
-            it.stopPropagation()
-            if (camera.contains(CameraScale.CameraScaleEffectComponent::class) || camera.getComponent<CameraComponent>().zoom == disablingZoom.toDouble()) {
-                return@addClickListener
-            }
-
-            CameraScale.setAnimation(
-                camera,
-                myViewport.center,
-                myViewport.position,
-                animationDelta
-            )
-        }
-
-        listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
-    }
-
-    private fun addListenersToMakeGeometryButton(button: EcsEntity) {
-        val listeners = button.getComponent<EventListenerComponent>()
-
-        listeners.addClickListener {
-            it.stopPropagation()
-            if (containsEntity(MakeGeometryWidgetComponent::class)) finishDrawing() else activateCreateWidget()
-        }
-
-        listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
-    }
-
     private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
         val listeners = link.getComponent<EventListenerComponent>()
 
@@ -201,10 +204,10 @@ class LiveMapUiSystem(
     private fun activateCreateWidget() {
         createEntity("make_geometry_widget")
             .addComponents {
-                + myLayerManager.addLayer("make_geometry_layer", LayerGroup.FEATURES)
-                + LayerEntitiesComponent()
-                + MouseInputComponent()
-                + MakeGeometryWidgetComponent()
+                +myLayerManager.addLayer("make_geometry_layer", LayerGroup.FEATURES)
+                +LayerEntitiesComponent()
+                +MouseInputComponent()
+                +MakeGeometryWidgetComponent()
             }
     }
 
@@ -214,15 +217,7 @@ class LiveMapUiSystem(
 
     private inner class ResourcesLoading : UiState() {
         override fun update(context: LiveMapContext) {
-            if (myUiService.resourceManager.isReady(
-                    KEY_PLUS,
-                    KEY_MINUS,
-                    KEY_PLUS_DISABLED,
-                    KEY_MINUS_DISABLED,
-                    KEY_GET_CENTER,
-                    KEY_MAKE_GEOMETRY,
-                    KEY_MAKE_GEOMETRY_ACTIVE
-                )
+            if (myUiService.resourceManager.isReady()
             ) {
                 myUiState = Processing().apply { initialize(context) }
             }
@@ -232,8 +227,6 @@ class LiveMapUiSystem(
     private inner class Processing : UiState() {
 
         fun initialize(context: LiveMapContext) {
-
-            myGetCenter.snapshot = myUiService.resourceManager[KEY_GET_CENTER]
             updateMakeGeometryButton(drawingGeometry = false)
             updateZoomButtons(context.camera.zoom)
         }
@@ -251,106 +244,44 @@ class LiveMapUiSystem(
 
         internal fun updateMakeGeometryButton(drawingGeometry: Boolean) {
             myDrawingGeometry = drawingGeometry
-
-            val buttonImage = when(myDrawingGeometry) {
-                true -> myUiService.resourceManager[KEY_MAKE_GEOMETRY_ACTIVE]
-                false -> myUiService.resourceManager[KEY_MAKE_GEOMETRY]
-            }
-            myMakeGeometry.snapshot = buttonImage
-            myUiService.repaint()
         }
 
         internal fun updateZoomButtons(zoom: Double) {
-            val res = myUiService.resourceManager
+            myZoomPlusButton.enabled = zoom != myViewport.maxZoom.toDouble()
+            myZoomMinusButton.enabled = zoom != myViewport.minZoom.toDouble()
+        }
+    }
 
-            if (zoom == myViewport.minZoom.toDouble() && myButtonMinus.contains<CursorStyleComponent>()) {
-                myButtonMinus.remove<CursorStyleComponent>()
-            } else if(zoom != myViewport.minZoom.toDouble() && !myButtonMinus.contains<CursorStyleComponent>()) {
-                myButtonMinus.add(CursorStyleComponent(CursorStyle.POINTER))
+    private fun loadIcon(key: String, dim: DoubleVector = iconSize): Image {
+        return myUiService.resourceManager[key].let {
+            Image().apply {
+                snapshot = it
+                size = dim
             }
+        }
+    }
 
-            if (zoom == myViewport.maxZoom.toDouble() && myButtonPlus.contains<CursorStyleComponent>()) {
-                myButtonPlus.remove<CursorStyleComponent>()
-            } else if(zoom != myViewport.maxZoom.toDouble() && !myButtonPlus.contains<CursorStyleComponent>()) {
-                myButtonPlus.add(CursorStyleComponent(CursorStyle.POINTER))
-            }
-
-            myZoomMinus.snapshot = when (zoom) {
-                myViewport.minZoom.toDouble() -> res[KEY_MINUS_DISABLED]
-                else -> res[KEY_MINUS]
-            }
-            myZoomPlus.snapshot = when (zoom) {
-                myViewport.maxZoom.toDouble() -> res[KEY_PLUS_DISABLED]
-                else -> res[KEY_PLUS]
-            }
-
-            myUiService.repaint()
+    private fun newButton(
+        name: String,
+        enabledVisual: String,
+        disabledVisual: String? = null,
+        clickHandler: (Button, InputMouseEvent) -> Unit = { _, _ -> },
+    ): Button = Button(name).apply {
+        this.enabledVisual = loadIcon(enabledVisual)
+        this.disabledVisual = disabledVisual?.let { loadIcon(disabledVisual) }
+        buttonSize = iconSize
+        onDoubleClick = InputMouseEvent::stopPropagation
+        onClick = { e ->
+            e.stopPropagation()
+            clickHandler(this, e)
         }
     }
 
     companion object {
-        private const val KEY_PLUS = "img_plus"
-        private const val KEY_PLUS_DISABLED = "img_plus_disable"
-        private const val KEY_MINUS = "img_minus"
-        private const val KEY_MINUS_DISABLED = "img_minus_disable"
-        private const val KEY_GET_CENTER = "img_get_center"
-        private const val KEY_MAKE_GEOMETRY = "img_create_geometry"
-        private const val KEY_MAKE_GEOMETRY_ACTIVE = "img_create_geometry_active"
-
-        private const val BUTTON_PLUS =
-            ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAUVBMVEUAAADf39/f39/n5+fk5OTk5OTl5e"
-                    + "Xl5eXk5OTm5ubl5eXl5eXm5uYAAAAQEBAgICCfn5+goKDl5eXo6Oj29vb39/f4+Pj5+fn9/f3+/v7///8nQ8gkAAAADXRSTlMAECAgX2B/gL+/z9/fDLiFVAAAAKJJREFUeNrt1tEOwi"
-                    + "AMheGi2xQ2KBzc3Hj/BxXv5K41MTHKf/+lCSRNichcLMS5gZ6dF6iaTxUtyPejSFszZkMjciXy9oyJHNaiaoMloOjaAT0qHXX0WRQDJzVi74Ma+drvoBj8S5xEiH1TEKHQIhahyM2g9I"
-                    + "//1L4hq1HkkPqO6OgL0aFHFpvO3OBo0h9UA5kFeZWTLWN+80isjU5OrpMhegCRuP2dffXKGwAAAABJRU5ErkJggg==")
-
-        private const val BUTTON_MINUS =
-            ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAUVBMVEUAAADf39/f39/n5+fk5OTk5OTl5"
-                    + "eXl5eXk5OTm5ubl5eXl5eXm5uYAAAAQEBAgICCfn5+goKDl5eXo6Oj29vb39/f4+Pj5+fn9/f3+/v7///8nQ8gkAAAADXRSTlMAECAgX2B/gL+/z9/fDLiFVAAAAI1JREFUeNrt1rEOw"
-                    + "jAMRdEXaAtJ2qZ9JqHJ/38oYqObzYRQ7n5kS14MwN081YUB764zTcULgJnyrE1bFkaHkVKboUM4ITA3U4UeZLN1kHbUOuqoo19E27p8lHYVSsupVYXWM0q69dJp0N6P21FHf4OqHXkWm"
-                    + "3kwYLI/VAPcTMl6UoTx2ycRGIOe3CcHvAAlagACEKjXQgAAAABJRU5ErkJggg==")
-
-        private const val BUTTON_MINUS_DISABLED =
-            ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAABmJLR0QA/wD/AP+gvaeTAAAA"
-                    + "CXBIWXMAABYlAAAWJQFJUiTwAAAAB3RJTUUH4wYTDA80Pt7fQwAAAaRJREFUaN7t2jFqAkEUBuB/xt1XiKwGwWqLbBBSWecEtltEG61yg+QCabyBrZU2Wm2jp0gn2McUCxJBcEUXdpQx"
-                    + "RbIJadJo4WzeX07x4OPNNMMv8JX5fF4ioqcgCO4dx6nBgMRx/Or7fsd13UF6JgBgsVhcTyaTFyKqwMAopZb1ev3O87w3AQC9Xu+diCpSShQKBViWBSGECRDsdjtorVPUrQzD8CHFlEol"
-                    + "2LZtBAYAiAjFYhFSShBRhYgec9VqNbBt+yrdjGkRQsCyLCRJgul0Wpb5fP4m1ZqaXC4HAHAcpyaRgUj5w8gE6BeOQQxiEIMYxCAGMYhBDGIQg/4p6CyfCMPhEKPR6KQZrVYL7Xb7MjZ0"
-                    + "KuZcM/gN/XVdLmEGAIh+v38EgHK5bPRmVqsVXzkGMYhBDGIQgxjEIAYxiEEMyiToeDxmA7TZbGYAcDgcjEUkSQLgs24mG41GAADb7dbILWmtEccxAMD3/Y5USnWVUkutNdbrNZRSxkD2"
-                    + "+z2iKPqul7muO8hmATBNGIYP4/H4OW1oXXqiKJo1m81AKdX1PG8NAB90n6KaLrmkCQAAAABJRU5ErkJggg==")
-
-        private const val BUTTON_PLUS_DISABLED =
-            ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAABmJLR0QA/wD/AP+gvaeTAAAAC"
-                    + "XBIWXMAABYlAAAWJQFJUiTwAAAAB3RJTUUH4wYTDBAFolrR5wAAAdlJREFUaN7t2j9v2kAYBvDnDvsdEDJUSEwe6gipU+Z+AkZ7KCww5Rs0XyBLvkFWJrIckxf8KbohZS8dLKFGQsIIL"
-                    + "PlAR4fE/adEaiWScOh9JsuDrZ/v7hmsV+Axs9msQUSXcRx/8jzvHBYkz/OvURRd+75/W94TADCfz98nSfKFiFqwMFrr+06n8zEIgm8CAIbD4XciakkpUavV4DgOhBA2QLDZbGCMKVEfZ"
-                    + "JqmFyWm0WjAdV0rMABARKjX65BSgohaRPS50m63Y9d135UrY1uEEHAcB0VRYDqdNmW1Wj0rtbamUqkAADzPO5c4gUj5i3ESoD9wDGIQgxjEIAYxyCKQUgphGCIMQyil7AeNx+Mnr3nLM"
-                    + "YhBDHqVHOQnglLqnxssDMMn7/f7fQwGg+NYoUPU8aEqnc/Qc9vlGJ4BAGI0Gu0BoNlsvsgX+/vMJEnyIu9ZLBa85RjEIAa9Aej3Oj5UNb9pbb9WuLYZxCAGMYhBDGLQf4D2+/1pgFar1"
-                    + "R0A7HY7axFFUQB4GDeT3W43BoD1em3lKhljkOc5ACCKomuptb7RWt8bY7BcLqG1tgay3W6RZdnP8TLf929PcwCwTJqmF5PJ5Kqc0Dr2ZFl21+v1Yq31TRAESwD4AcX3uBFfeFCxAAAAA"
-                    + "ElFTkSuQmCC")
-
-        private const val BUTTON_GET_CENTER =
-            ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI"
-                    + "WXMAABYlAAAWJQFJUiTwAAAAB3RJTUUH4wYcCCsV3DWWMQAAAc9JREFUaN7tmkGu2jAQhv+xE0BsEjYsgAW5Ae8Ej96EG7x3BHIDeoSepNyg3CAsQtgGNkFGeLp4hNcu2kIaXnE6vxQp"
-                    + "ika2P2Xs8YyGcFaSJGGr1XolomdmnsINrZh5MRqNvpQfCAC22+2Ymb8y8xhuam2M+RRF0ZoAIMuyhJnHWmv0ej34vg8ieniKw+GA3W6H0+lUQj3pNE1nAGZaa/T7fXie5wQMAHieh263"
-                    + "i6IowMyh1vqgiOgFAIIgcAbkRymlEIbh2/4hmioAEwDodDpwVb7vAwCYearQACn1jtEIoJ/gBKgpQHEcg4iueuI4/vDxLjeFzWbDADAYDH5veOORzswfOl6WZbKHrtZ8Pq/Fpooqu9yf"
-                    + "XOCvF3bjfOJyAiRAAiRAv4wb94ohdcx3dRx6dEkcEiABEiAB+n9qCrfk+FVVdb5KCR4RwVrbnATv3tmq7CEBEiAB+vdA965tV16X1LabWFOow7bu8aSmIMe2ANUM9Mg36JuAiGgJAMYY"
-                    + "ZyGKoihfV4qZlwCQ57mTf8lai/1+X3rZgpIkCdvt9reyvSwIAif6fqy1OB6PyPP80l42HA6jZjYAlkrTdHZuN5u4QMHMSyJaGmM+R1GUA8B3Hdvtjp1TGh0AAAAASUVORK5CYII=")
-
+        private const val iconSide = 26.0
+        private const val padding = 13.0
+        private val iconSize = DoubleVector(iconSide, iconSide)
         private const val CONTRIBUTORS_FONT_FAMILY =
             "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, " + "\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
-
-        private const val BUTTON_MAKE_GEOMETRY =
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAQlBMVEUAAADf39/n5+fm5ubm5ubm5ubm5u" +
-                    "YAAABvb29wcHB/f3+AgICPj4+/v7/f39/m5ubv7+/w8PD8/Pz9/f3+/v7////uOQjKAAAAB3RSTlMAICCvw/H3O5ZWYwAAAK" +
-                    "ZJREFUeAHt1sEOgyAQhGEURMWFsdR9/1ctddPepwlJD/z3LyRzIOvcHCKY/NTMArJlch6PS4nqieCAqlRPxIaUDOiPBhooix" +
-                    "QWpbWVOFTWu0whMST90WaoMCiZOZRAb7OLZCVQ+jxCIDMcMsMhMwTKItttCPQdmkDFzK4MEkPSH2VDhUJ62Awc0iKS//Q3Gm" +
-                    "igiIsztaGAszLmOuF/OxLd7CkSw+RetQbMcCdSSXgAAAAASUVORK5CYII="
-
-        private const val BUTTON_MAKE_GEOMETRY_ACTIVE =
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAflBMVEUAAACfv9+fv+eiv+aiwOajwOajv+" +
-                    "ajwOaiv+ajv+akwOakweaiv+aoxu+ox++ox/Cx0fyy0vyz0/2z0/601P+92f++2v/G3v/H3v/H3//U5v/V5//Z6f/Z6v/a6f" +
-                    "/a6v/d7P/f7f/n8f/o8f/o8v/s9P/6/P/7/P/7/f////8N3bWvAAAADHRSTlMAICCvr6/Dw/Hx9/cE8gnKAAABCUlEQVR42t" +
-                    "XW2U7DMBAFUIcC6TJ0i20oDnRNyvz/DzJtJCJxkUdTqUK5T7Gs82JfTezcQzkjS54KMRMyZly4R1pU3pDVnEpHtPKmrGkqyB" +
-                    "tDNBgUmy9mrrtFLZ+/VoeIKArJIm4joBNriBtArKP2T+QzYck/olqSMf2+frmblKK1EVuWfNpQ5GveTCh16P3+aN+hAChz5N" +
-                    "u+S/0+XC6aXUqvSiPA1JYaodERGh2h0ZH0bQ9GaXl/0ErLsW87w9yD6twRbbBvOvIfeAw68uGnb5BbBsvQhuVZ/wEganR0AB" +
-                    "TOGmoDIB+OWdQ2YUhPAjuaUWUzS0ElzZcWU73Q6IZH4uTytByZyPS5cN9XNuQXxwNiAAAAAABJRU5ErkJggg=="
     }
 }

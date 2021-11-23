@@ -6,40 +6,15 @@
 package jetbrains.livemap.config
 
 import jetbrains.livemap.core.rendering.layers.RenderTarget
-import jetbrains.livemap.core.util.EasingFunction
-import kotlin.math.pow
 
 class DevParams(private val devParams: Map<*, *>) {
 
     companion object {
         val SCALABLE_SYMBOLS = BoolParam("scalable_symbols", false)
-        val SCALABLE_SYMBOLS_MIN_FACTOR = DoubleParam("scalable_symbols_min_factor", 0.5)
-        val SCALABLE_SYMBOLS_MAX_FACTOR = DoubleParam("scalable_symbols_max_factor", 2.5)
-        val SCALABLE_SYMBOL_ZOOM_IN_EASING = EnumParam<Easing>(
-            key = "scalable_symbol_zoom_in_easing",
-            defaultValue = Easing.IN_QUAD,
-            valuesMap = listOf(
-                "IN_QUAD" to Easing.IN_QUAD,
-                "IN_QUBIC" to Easing.IN_QUBIC,
-                "IN_QUART" to Easing.IN_QUART,
-                "OUT_QUAD" to Easing.OUT_QUAD,
-                "OUT_QUBIC" to Easing.OUT_QUBIC,
-                "OUT_QUART" to Easing.OUT_QUART,
-            )
-        )
-
-        val SCALABLE_SYMBOL_ZOOM_OUT_EASING = EnumParam<Easing>(
-            key = "scalable_symbol_zoom_out_easing",
-            defaultValue = Easing.OUT_QUAD,
-            valuesMap = listOf(
-                "IN_QUAD" to Easing.IN_QUAD,
-                "IN_QUBIC" to Easing.IN_QUBIC,
-                "IN_QUART" to Easing.IN_QUART,
-                "OUT_QUAD" to Easing.OUT_QUAD,
-                "OUT_QUBIC" to Easing.OUT_QUBIC,
-                "OUT_QUART" to Easing.OUT_QUART,
-            )
-        )
+        val SCALABLE_SYMBOLS_ZOOM_IN_MULTIPLIER = DoubleParam("scalable_symbols_zoom_in_multiplier", 0.5)
+        val SCALABLE_SYMBOLS_ZOOM_OUT_MULTIPLIER = DoubleParam("scalable_symbols_zoom_out_multiplier", 1.0)
+        val SHOW_ADVANCED_ACTIONS = BoolParam("show_advanced_actions", true)
+        val SHOW_RESET_POSITION_ACTION = BoolParam("show_reset_position_action", false)
 
         val PERF_STATS = BoolParam("perf_stats", false)
         val DEBUG_TILES = BoolParam("debug_tiles", false)
@@ -72,16 +47,6 @@ class DevParams(private val devParams: Map<*, *>) {
                     Pair("auto", MicroTaskExecutor.AUTO)
                 )
             )
-    }
-
-    enum class Easing(val function: EasingFunction) {
-        LINEAR({ x -> x }),
-        IN_QUAD({ x -> x * x }),
-        IN_QUBIC({ x -> x * x * x }),
-        IN_QUART({ x -> x * x * x * x }),
-        OUT_QUAD({ x -> 1 - (1 - x) * (1 - x) }),
-        OUT_QUBIC({ x -> 1 - (1 - x).pow(3) }),
-        OUT_QUART({ x -> 1 - (1 - x).pow(4) }),
     }
 
     enum class MicroTaskExecutor {

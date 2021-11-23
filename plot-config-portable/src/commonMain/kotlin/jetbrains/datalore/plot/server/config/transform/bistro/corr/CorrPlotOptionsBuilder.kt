@@ -99,6 +99,30 @@ class CorrPlotOptionsBuilder private constructor(
                 added = true
                 field = v
             }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as LayerParams
+
+            if (added != other.added) return false
+            if (type != other.type) return false
+            if (diag != other.diag) return false
+            if (color != other.color) return false
+            if (mapSize != other.mapSize) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = added.hashCode()
+            result = 31 * result + (type?.hashCode() ?: 0)
+            result = 31 * result + (diag?.hashCode() ?: 0)
+            result = 31 * result + (color?.hashCode() ?: 0)
+            result = 31 * result + (mapSize?.hashCode() ?: 0)
+            return result
+        }
     }
 
     fun tiles(type: String? = null, diag: Boolean? = null): CorrPlotOptionsBuilder {

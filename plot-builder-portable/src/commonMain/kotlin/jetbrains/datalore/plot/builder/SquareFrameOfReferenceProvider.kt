@@ -22,11 +22,12 @@ class SquareFrameOfReferenceProvider(
     private val yScaleProto: Scale<Double>,
     xAesRange: ClosedRange<Double>,
     yAesRange: ClosedRange<Double>,
-    private val coordProvider: CoordProvider,
+//    private val coordProvider: CoordProvider,
+    override val flipAxis: Boolean,
     private val theme: Theme
 ) : TileFrameOfReferenceProvider {
 
-    override val flipAxis: Boolean = coordProvider.flipAxis
+    //    override val flipAxis: Boolean = coordProvider.flipAxis
     private val vAxisSpec: AxisSpec
     private val hAxisSpec: AxisSpec
 
@@ -59,7 +60,7 @@ class SquareFrameOfReferenceProvider(
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
             hDomain, vDomain,
-            coordProvider,
+//            coordProvider,
             hAxisSpec.theme,
             Orientation.BOTTOM
         )
@@ -67,7 +68,7 @@ class SquareFrameOfReferenceProvider(
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
             hDomain, vDomain,
-            coordProvider,
+//            coordProvider,
             vAxisSpec.theme,
             Orientation.LEFT
         )
@@ -75,7 +76,11 @@ class SquareFrameOfReferenceProvider(
         return XYPlotTileLayout(hAxisLayout, vAxisLayout)
     }
 
-    override fun createFrameOfReference(layoutInfo: TileLayoutInfo, debugDrawing: Boolean): TileFrameOfReference {
+    override fun createFrameOfReference(
+        layoutInfo: TileLayoutInfo,
+        coordProvider: CoordProvider,
+        debugDrawing: Boolean
+    ): TileFrameOfReference {
         val hAxisLayoutInfo = layoutInfo.xAxisInfo!!
         val vAxisLayoutInfo = layoutInfo.yAxisInfo!!
 

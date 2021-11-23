@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
@@ -181,47 +182,101 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean
         ) {
-            val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
-                Triple(
-                    line.label,
-                    line.label.takeUnless(String?::isNullOrEmpty)?.let(::TextLabel),
+            val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
+                Pair(
+                    line.label?.let(::TextLabel),
                     TextLabel(line.value)
                 )
             }
             // for labels
-            linesInfo.onEach { (_, labelComponent, _) ->
+            components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
                     labelComponent.textColor().set(labelTextColor)
                     myLines.children().add(labelComponent.rootGroup)
                 }
             }
             // for values
-            linesInfo.onEach { (_, _, valueComponent) ->
+            components.onEach { (_, valueComponent) ->
                 valueComponent.textColor().set(valueTextColor)
                 myLines.children().add(valueComponent.rootGroup)
             }
 
-            val maxLabelWidth = linesInfo
-                .mapNotNull { (_, labelComponent, _) -> labelComponent }
-                .map { it.rootGroup.bBox.width }
-                .maxOrNull() ?: 0.0
-            var maxLineWidth = tooltipMinWidth ?: 0.0
-            linesInfo.forEach { (_, labelComponent, valueComponent) ->
-                val valueWidth = valueComponent.rootGroup.bBox.width
-                maxLineWidth = max(
-                    maxLineWidth,
-                    if (labelComponent == null) {
-                        valueWidth
-                    } else {
-                        maxLabelWidth + valueWidth + LABEL_VALUE_INTERVAL
-                    }
+            // bBoxes
+            fun getBBox(text: String?, textLabel: TextLabel?): DoubleRectangle? {
+                if (textLabel == null || text.isNullOrBlank()) {
+                    // also for blank string - Batik throws an exception for a text element with a blank string
+                    return null
+                }
+                return textLabel.rootGroup.bBox
+            }
+            val rawBBoxes = lines.zip(components).map { (line, component) ->
+                val (labelComponent, valueComponent) = component
+                Pair(
+                    getBBox(line.label, labelComponent),
+                    getBBox(line.value, valueComponent)
                 )
             }
 
-            val textSize = linesInfo
-                .fold(DoubleVector.ZERO) { textDimension, (labelText, labelComponent, valueComponent) ->
-                    val valueBBox = valueComponent.rootGroup.bBox
-                    val labelBBox = labelComponent?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            // max label width - all labels will be aligned to this value
+            val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
+
+            // max line height - will be used as default height for empty string
+            val defaultLineHeight = rawBBoxes.flatMap { it.toList().filterNotNull() }
+                .maxOfOrNull(DoubleRectangle::height) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+
+            val labelWidths = lines.map { line ->
+                when {
+                    line.label == null -> {
+                        // label null - the value component will be centered
+                        0.0
+                    }
+                    line.label!!.isEmpty() -> {
+                        // label is not null, but empty - add space for the label, the value will be moved to the right
+                        maxLabelWidth
+                    }
+                    else -> {
+                        // align the label width to the maximum and add interval between label and value
+                        maxLabelWidth + LABEL_VALUE_INTERVAL
+                    }
+                }
+            }
+            val valueWidths = rawBBoxes.map { (_, valueBBox) -> valueBBox?.dimension?.x ?: 0.0 }
+            val lineWidths = labelWidths.zip(valueWidths)
+
+            // max line width
+            val maxLineWidth = lineWidths.maxOf { (labelWidth, valueWidth) ->
+                max(tooltipMinWidth ?: 0.0, labelWidth + valueWidth)
+            }
+
+            // prepare bbox
+            val lineBBoxes = rawBBoxes.zip(lineWidths).map { (bBoxes, width) ->
+                val (labelBBox, valueBBox) = bBoxes
+                val (labelWidth, valueWidth) = width
+
+                val labelDimension = DoubleVector(
+                    labelWidth,
+                    labelBBox?.run { height + top } ?: 0.0
+                )
+                val valueDimension = DoubleVector(
+                    valueWidth,
+                    valueBBox?.run { height + top } ?: if (labelBBox == null) {
+                        // it's the empty line - use default height
+                        defaultLineHeight
+                    } else {
+                        0.0
+                    }
+                )
+                Pair(
+                    DoubleRectangle(labelBBox?.origin ?: DoubleVector.ZERO, labelDimension),
+                    DoubleRectangle(valueBBox?.origin ?: DoubleVector.ZERO, valueDimension)
+                )
+            }
+
+            val textSize = components
+                .zip(lineBBoxes)
+                .fold(DoubleVector.ZERO) { textDimension, (lineInfo, bBoxes) ->
+                    val (labelComponent,valueComponent) = lineInfo
+                    val (labelBBox, valueBBox) = bBoxes
 
                     // bBox.top is negative baseline of the text.
                     // Can't use bBox.height:
@@ -232,7 +287,7 @@ class TooltipBox: SvgComponent() {
                     labelComponent?.y()?.set(yPosition)
 
                     when {
-                        labelComponent != null -> {
+                        labelComponent != null && labelBBox.dimension.x > 0 -> {
                             // Move label to the left border, value - to the right
 
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
@@ -241,15 +296,10 @@ class TooltipBox: SvgComponent() {
                             valueComponent.x().set(maxLineWidth)
                             valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
-                        valueBBox.width == maxLineWidth -> {
+                        valueBBox.dimension.x == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             valueComponent.x().set(-valueBBox.left)
-                        }
-                        labelText == "" -> {
-                            // Move value to the right border
-                            valueComponent.x().set(maxLineWidth)
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
                         }
                         else -> {
                             // Move value to the center
@@ -257,18 +307,17 @@ class TooltipBox: SvgComponent() {
                             valueComponent.x().set(maxLineWidth / 2)
                         }
                     }
-
                     DoubleVector(
                         x = maxLineWidth,
                         y = valueComponent.y().get()!! + max(
-                            valueBBox.height + valueBBox.top,
-                            labelBBox.height + labelBBox.top
+                            valueBBox.height,
+                            labelBBox.height
                         ) + LINE_INTERVAL
                     )
                 }.let { textSize ->
                     if (rotate) {
-                        linesInfo
-                            .onEach { (_, labelComponent, valueComponent) ->
+                        components
+                            .onEach { (labelComponent, valueComponent) ->
                                 labelComponent?.rotate(90.0)
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
                                 labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)

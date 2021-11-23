@@ -27,7 +27,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
 

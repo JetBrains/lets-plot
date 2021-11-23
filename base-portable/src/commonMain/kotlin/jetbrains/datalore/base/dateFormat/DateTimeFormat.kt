@@ -108,17 +108,13 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
             }
         }
 
-        private fun getHours24(dateTime: DateTime): Int =
-            when(dateTime.hours) {
-                0 -> 24
-                else -> dateTime.hours
-            }
+        private fun getHours24(dateTime: DateTime): Int = dateTime.hours
 
         private fun getMeridian(dateTime: DateTime): String {
             val hours = dateTime.hours
             return when {
                 hours == 24 -> "am"
-                hours <= 12 -> "am"
+                hours < 12 -> "am"
                 else -> "pm"
             }
         }

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MARGIN
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MIN_SIZE
@@ -19,12 +20,13 @@ internal class XYPlotTileLayout(
     private val yAxisLayout: AxisLayout
 ) : TileLayout {
 
-    override fun doLayout(preferredSize: DoubleVector): TileLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
         var (xAxisInfo, yAxisInfo) = computeAxisInfos(
             xAxisLayout,
             yAxisLayout,
-            preferredSize
+            preferredSize,
+            coordProvider
         )
 
         var geomBounds = geomBounds(
@@ -113,7 +115,8 @@ internal class XYPlotTileLayout(
         private fun computeAxisInfos(
             xAxisLayout: AxisLayout,
             yAxisLayout: AxisLayout,
-            plotSize: DoubleVector
+            plotSize: DoubleVector,
+            coordProvider: CoordProvider
         ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
             val xAxisThickness = xAxisLayout.initialThickness()
             var yAxisInfo = computeYAxisInfo(
@@ -122,7 +125,8 @@ internal class XYPlotTileLayout(
                     xAxisThickness,
                     yAxisLayout.initialThickness(),
                     plotSize
-                )
+                ),
+                coordProvider
             )
 
             val yAxisThickness = yAxisInfo.axisBounds().dimension.x
@@ -132,7 +136,8 @@ internal class XYPlotTileLayout(
                     xAxisThickness,
                     yAxisThickness,
                     plotSize
-                )
+                ),
+                coordProvider
             )
 
             if (xAxisInfo.axisBounds().dimension.y > xAxisThickness) {
@@ -143,7 +148,8 @@ internal class XYPlotTileLayout(
                         xAxisInfo.axisBounds().dimension.y,
                         yAxisThickness,
                         plotSize
-                    )
+                    ),
+                    coordProvider
                 )
             }
 
@@ -153,7 +159,8 @@ internal class XYPlotTileLayout(
         private fun computeXAxisInfo(
             axisLayout: AxisLayout,
             plotSize: DoubleVector,
-            geomBounds: DoubleRectangle
+            geomBounds: DoubleRectangle,
+            coordProvider: CoordProvider
         ): AxisLayoutInfo {
             val axisLength = geomBounds.dimension.x
             val stretch = axisLength * AXIS_STRETCH_RATIO
@@ -163,14 +170,15 @@ internal class XYPlotTileLayout(
                 geomBounds,
                 plotSize
             )
-            return axisLayout.doLayout(geomBounds.dimension, maxTickLabelsBounds)
+            return axisLayout.doLayout(geomBounds.dimension, maxTickLabelsBounds, coordProvider)
         }
 
         private fun computeYAxisInfo(
             axisLayout: AxisLayout,
-            geomBounds: DoubleRectangle
+            geomBounds: DoubleRectangle,
+            coordProvider: CoordProvider
         ): AxisLayoutInfo {
-            return axisLayout.doLayout(geomBounds.dimension, null)
+            return axisLayout.doLayout(geomBounds.dimension, null, coordProvider)
         }
     }
 }

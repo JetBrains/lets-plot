@@ -65,6 +65,17 @@ allprojects {
     version = "2.2.1-alpha1"
     project.ext.js_artifact_version = "2.2.1.dev1"
     // see also: python-package/lets_plot/_version.py
+
+    // Generate JVM 1.8 bytecode
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+
     project.ext.jfx_platform = { -> //getJfxPlatform()
         OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
         if ( os.isWindows() ) {

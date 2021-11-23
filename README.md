@@ -66,7 +66,7 @@ Also read:
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
                           
 
-- Improved plot appearance and `theme` support:
+- Improved plot appearance and better `theme` support:
 
   - Bigger fonts across the board;
   - Gridlines;

@@ -65,10 +65,10 @@ class MappingValue(
         )
     }
 
-    fun toOutlier(): MappingValue {
+    fun withFlags(isOutlier: Boolean, isAxis: Boolean): MappingValue {
         return MappingValue(
             aes = aes,
-            isOutlier = true,
+            isOutlier = isOutlier,
             isAxis = isAxis,
             format = format
         )

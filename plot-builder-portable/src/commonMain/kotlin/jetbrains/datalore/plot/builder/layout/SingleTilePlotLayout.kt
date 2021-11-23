@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 internal class SingleTilePlotLayout(private val myTileLayout: TileLayout) : PlotLayoutBase() {
 
@@ -13,12 +14,13 @@ internal class SingleTilePlotLayout(private val myTileLayout: TileLayout) : Plot
         setPadding(10.0, 10.0, 0.0, 0.0)
     }
 
-    override fun doLayout(preferredSize: DoubleVector): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         val tilePreferredSize = DoubleVector(
-                preferredSize.x - (paddingLeft + paddingRight),
-                preferredSize.y - (paddingTop + paddingBottom))
+            preferredSize.x - (paddingLeft + paddingRight),
+            preferredSize.y - (paddingTop + paddingBottom)
+        )
 
-        var tileInfo = myTileLayout.doLayout(tilePreferredSize)
+        var tileInfo = myTileLayout.doLayout(tilePreferredSize, coordProvider)
         tileInfo = tileInfo.withOffset(DoubleVector(paddingLeft, paddingTop))
 
         var plotSize = tileInfo.bounds.dimension
