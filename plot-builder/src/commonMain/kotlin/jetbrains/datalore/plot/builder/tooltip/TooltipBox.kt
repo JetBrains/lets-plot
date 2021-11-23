@@ -182,22 +182,21 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean
         ) {
-            val linesInfo: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
+            val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
                     TextLabel(line.value)
                 )
             }
-
             // for labels
-            linesInfo.onEach { (labelComponent, _) ->
+            components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
                     labelComponent.textColor().set(labelTextColor)
                     myLines.children().add(labelComponent.rootGroup)
                 }
             }
             // for values
-            linesInfo.onEach { (_, valueComponent) ->
+            components.onEach { (_, valueComponent) ->
                 valueComponent.textColor().set(valueTextColor)
                 myLines.children().add(valueComponent.rootGroup)
             }
@@ -210,26 +209,23 @@ class TooltipBox: SvgComponent() {
                 }
                 return textLabel.rootGroup.bBox
             }
-            val rawBBoxes = linesInfo.mapIndexed { index, (labelComponent, valueComponent) ->
+            val rawBBoxes = lines.zip(components).map { (line, component) ->
+                val (labelComponent, valueComponent) = component
                 Pair(
-                    getBBox(lines[index].label, labelComponent),
-                    getBBox(lines[index].value, valueComponent)
+                    getBBox(line.label, labelComponent),
+                    getBBox(line.value, valueComponent)
                 )
             }
 
             // max label width - all labels will be aligned to this value
-            val maxLabelWidth = rawBBoxes
-                .mapNotNull { (labelBBox, _) -> labelBBox?.width }
-                .maxOrNull()
-                ?: 0.0
+            val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
             val defaultLineHeight = rawBBoxes
-                .mapNotNull { (labelBB, valueBB) ->
-                    listOfNotNull(labelBB?.height, valueBB?.height).maxOrNull()
+                .maxOf { (labelBB, valueBB) ->
+                    listOfNotNull(labelBB, valueBB).maxOfOrNull(DoubleRectangle::height)
+                        ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
                 }
-                .maxOrNull()
-                ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             val labelWidths = lines.map { line ->
                 when {
@@ -246,52 +242,44 @@ class TooltipBox: SvgComponent() {
                         maxLabelWidth + LABEL_VALUE_INTERVAL
                     }
                 }
-
             }
-            val valueWidths = rawBBoxes.map { (_, valueBBox) ->
-                valueBBox?.dimension?.x ?: 0.0
-            }
+            val valueWidths = rawBBoxes.map { (_, valueBBox) -> valueBBox?.dimension?.x ?: 0.0 }
             val lineWidths = labelWidths.zip(valueWidths)
 
             // max line width
-            var maxLineWidth = tooltipMinWidth ?: 0.0
-            lineWidths.forEach { (labelWidth, valueWidth) ->
-                maxLineWidth = max(maxLineWidth, labelWidth + valueWidth)
+            val maxLineWidth = lineWidths.maxOf { (labelWidth, valueWidth) ->
+                max(tooltipMinWidth ?: 0.0, labelWidth + valueWidth)
             }
 
             // prepare bbox
             val lineBBoxes = rawBBoxes.zip(lineWidths).map { (bBoxes, width) ->
+                val (labelBBox, valueBBox) = bBoxes
+                val (labelWidth, valueWidth) = width
+
                 val labelDimension = DoubleVector(
-                    width.first,
-                    bBoxes.first?.run { height + top } ?: 0.0
-                )
-                val labelBBox = DoubleRectangle(
-                    bBoxes.first?.origin ?: DoubleVector.ZERO,
-                    labelDimension
+                    labelWidth,
+                    labelBBox?.run { height + top } ?: 0.0
                 )
                 val valueDimension = DoubleVector(
-                    width.second,
-                    bBoxes.second?.run { height + top } ?: if (bBoxes.first == null) {
+                    valueWidth,
+                    valueBBox?.run { height + top } ?: if (labelBBox == null) {
                         // it's the empty line - use default height
                         defaultLineHeight
                     } else {
                         0.0
                     }
                 )
-                val valueBBox = DoubleRectangle(
-                    bBoxes.second?.origin ?: DoubleVector.ZERO,
-                    valueDimension
+                Pair(
+                    DoubleRectangle(labelBBox?.origin ?: DoubleVector.ZERO, labelDimension),
+                    DoubleRectangle(valueBBox?.origin ?: DoubleVector.ZERO, valueDimension)
                 )
-                labelBBox to valueBBox
             }
 
-            val textSize = linesInfo
+            val textSize = components
                 .zip(lineBBoxes)
                 .fold(DoubleVector.ZERO) { textDimension, (lineInfo, bBoxes) ->
-                    val labelComponent = lineInfo.first
-                    val valueComponent = lineInfo.second
-                    val labelBBox = bBoxes.first
-                    val valueBBox = bBoxes.second
+                    val (labelComponent,valueComponent) = lineInfo
+                    val (labelBBox, valueBBox) = bBoxes
 
                     // bBox.top is negative baseline of the text.
                     // Can't use bBox.height:
@@ -331,7 +319,7 @@ class TooltipBox: SvgComponent() {
                     )
                 }.let { textSize ->
                     if (rotate) {
-                        linesInfo
+                        components
                             .onEach { (labelComponent, valueComponent) ->
                                 labelComponent?.rotate(90.0)
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
