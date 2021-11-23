@@ -139,10 +139,6 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
-        object Violin {
-            // TODO
-        }
-
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"

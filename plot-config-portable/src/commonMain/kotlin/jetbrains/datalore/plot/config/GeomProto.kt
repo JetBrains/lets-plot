@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.GeomMeta
+import jetbrains.datalore.plot.base.geom.ViolinGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
@@ -176,7 +177,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun violinDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "violin"
-            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to ViolinGeom.DEF_WIDTH)
             return defaults
         }
 

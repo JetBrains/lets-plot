@@ -82,10 +82,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
-            GeomKind.VIOLIN -> return GeomProvider.violin {
-                ViolinGeom()
-            }
-
             GeomKind.LIVE_MAP -> {
                 return GeomProvider.livemap(parseFromLayerOptions(opts))
             }
@@ -195,7 +191,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
-            // violin - special case
+            PROVIDER[GeomKind.VIOLIN] = GeomProvider.violin()
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()
             PROVIDER[GeomKind.DENSITY] = GeomProvider.density()

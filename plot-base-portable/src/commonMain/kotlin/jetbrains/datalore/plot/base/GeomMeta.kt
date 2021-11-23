@@ -214,7 +214,13 @@ object GeomMeta {
             GeomKind.VIOLIN -> listOf(
                 Aes.X,
                 Aes.Y,
-                Aes.WEIGHT
+                Aes.WEIGHT,
+
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE, // line width
             )
 
             GeomKind.RIBBON -> listOf(

@@ -20,12 +20,14 @@ class Violin {
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "                'x': 'target'," +
-                "                'y': 'sepal length (cm)'" +
+                "                'y': 'sepal length (cm)'," +
+                "                'fill': 'target'" +
                 "              }," +
 
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'violin'" +
+                "                 'geom': 'violin'," +
+                "                 'alpha': 0.7" +
                 "               }" +
                 "             ]" +
                 "}"
