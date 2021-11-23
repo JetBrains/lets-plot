@@ -221,11 +221,8 @@ class TooltipBox: SvgComponent() {
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
-            val defaultLineHeight = rawBBoxes
-                .maxOf { (labelBB, valueBB) ->
-                    listOfNotNull(labelBB, valueBB).maxOfOrNull(DoubleRectangle::height)
-                        ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
-                }
+            val defaultLineHeight = rawBBoxes.flatMap { it.toList().filterNotNull() }
+                .maxOfOrNull(DoubleRectangle::height) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             val labelWidths = lines.map { line ->
                 when {
