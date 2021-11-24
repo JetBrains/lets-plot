@@ -19,6 +19,13 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+        // TODO: return applyCustom(data, statCtx, messageConsumer)
+        return applyDensity(data, statCtx, messageConsumer)
+    }
+
+    // TODO: v1
+    private fun applyCustom(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
@@ -44,6 +51,62 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
         return builder.build()
     }
 
+    // TODO: v2
+    private fun applyDensity(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+
+        if (!hasRequiredValues(data, Aes.Y)) {
+            return withEmptyStatValues()
+        }
+
+        val ys = data.getNumeric(TransformVar.Y)
+        val xs = if (data.has(TransformVar.X)) {
+            data.getNumeric(TransformVar.X)
+        } else {
+            List(ys.size) { 0.0 }
+        }
+        val ws = if (data.has(TransformVar.WEIGHT)) {
+            data.getNumeric(TransformVar.WEIGHT)
+        } else {
+            List(ys.size) { 1.0 }
+        }
+
+        val binnedData = (xs zip (ys zip ws))
+            .groupBy({ it.first }, { it.second })
+            .mapValues { it.value.unzip() }
+
+        val statX = ArrayList<Double>()
+        val statY = ArrayList<Double>()
+        val statDensity = ArrayList<Double>()
+
+        for ((x, bin) in binnedData) {
+            val binY = bin.first
+            val binW = bin.second
+            val bData = DataFrame.Builder()
+                .putNumeric(TransformVar.X, binY)
+                .putNumeric(TransformVar.WEIGHT, binW)
+                .build()
+            val bandWidth = DensityStatUtil.bandWidth(DensityStat.DEF_BW, binY)
+            val dStat = DensityStat(
+                bandWidth = bandWidth,
+                bandWidthMethod = DensityStat.DEF_BW,
+                adjust = DensityStat.DEF_ADJUST,
+                kernel = DensityStat.DEF_KERNEL,
+                n = DensityStat.DEF_N,
+                fullScalMax = DensityStat.DEF_FULL_SCAN_MAX
+            )
+            val sData = dStat.apply(bData, SimpleStatContext(bData), messageConsumer)
+            statX += MutableList(sData.rowCount()) { x!! }
+            statY += sData.getNumeric(Stats.X).map { it!! }
+            statDensity += sData.getNumeric(Stats.DENSITY).map { it!! }
+        }
+
+        return DataFrame.Builder()
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.Y, statY)
+            .putNumeric(Stats.DENSITY, statDensity)
+            .build()
+    }
+
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
@@ -56,12 +119,9 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             ys: List<Double?>,
             ws: List<Double?>
         ): MutableMap<DataFrame.Variable, List<Double>> {
-            val binnedData: MutableMap<Double, Pair<MutableList<Double>, MutableList<Double>>> = HashMap()
-            for ((x, p) in xs zip (ys zip ws)) {
-                binnedData.getOrPut(x!!) { Pair(ArrayList(), ArrayList()) }
-                binnedData[x]?.first?.add(p.first!!)
-                binnedData[x]?.second?.add(p.second!!)
-            }
+            val binnedData = (xs zip (ys zip ws))
+                .groupBy({ it.first }, { it.second })
+                .mapValues { it.value.unzip() }
 
             val statX = ArrayList<Double>()
             val statY = ArrayList<Double>()
@@ -103,7 +163,7 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
                     statDensity.add(densityFunction(y) / nTotal)
                 }
 
-                statX += MutableList(localStatY.size) { x }
+                statX += MutableList(localStatY.size) { x!! }
                 statY += localStatY
             }
 
