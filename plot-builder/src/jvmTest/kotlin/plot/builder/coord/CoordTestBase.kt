@@ -32,7 +32,9 @@ internal open class CoordTestBase {
         val domainY = dataBounds.yRange()
         val displaySize = unitDisplaySize(ratio)
 
-        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+//        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+        val domains = provider.adjustDomains(domainX, domainY)
+        // The `adjustDomains` has different meaning now!!!
 
         assertEquals(expectedX, domains.first, "X range")
         assertEquals(expectedY, domains.second, "Y range")
@@ -53,7 +55,9 @@ internal open class CoordTestBase {
         var domainX = dataBounds.xRange()
         var domainY = dataBounds.yRange()
         val displaySize = unitDisplaySize(ratio)
-        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+//        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+        // The `adjustDomains` has different meaning now!!!
+        val domains = provider.adjustDomains(domainX, domainY)
         domainX = domains.first
         domainY = domains.second
 

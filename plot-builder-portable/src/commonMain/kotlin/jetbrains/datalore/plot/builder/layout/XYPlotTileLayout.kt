@@ -5,87 +5,97 @@
 
 package jetbrains.datalore.plot.builder.layout
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MARGIN
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MIN_SIZE
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.clipBounds
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.geomBounds
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.maxTickLabelsBounds
 
 internal class XYPlotTileLayout(
-    private val xAxisLayout: AxisLayout,
-    private val yAxisLayout: AxisLayout
+    private val hAxisLayout: AxisLayout,
+    private val vAxisLayout: AxisLayout,
+    private val hDomain: ClosedRange<Double>, // transformed data ranges.
+    private val vDomain: ClosedRange<Double>,
 ) : TileLayout {
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
-        var (xAxisInfo, yAxisInfo) = computeAxisInfos(
-            xAxisLayout,
-            yAxisLayout,
+        var (hAxisInfo, vAxisInfo) = computeAxisInfos(
+            hAxisLayout,
+            vAxisLayout,
             preferredSize,
+            hDomain, vDomain,
             coordProvider
         )
 
-        var geomBounds = geomBounds(
-            xAxisThickness = xAxisInfo.axisBounds().dimension.y,
-            yAxisThickness = yAxisInfo.axisBounds().dimension.x,
-            preferredSize
+        val hAxisThickness = hAxisInfo.axisBounds().dimension.y
+        val vAxisThickness = vAxisInfo.axisBounds().dimension.x
+
+        val geomBoundsAfterLayout = geomBounds(
+            hAxisThickness,
+            vAxisThickness,
+            preferredSize,
+            hDomain,
+            vDomain,
+            coordProvider
         )
 
         // X-axis labels bounds may exceed axis length - adjust
-        run {
+        val geomBounds = geomBoundsAfterLayout.let {
             val maxTickLabelsBounds = maxTickLabelsBounds(
                 Orientation.BOTTOM,
                 0.0,
-                geomBounds,
+                it,
                 preferredSize
             )
-            val tickLabelsBounds = xAxisInfo.tickLabelsBounds
+            val tickLabelsBounds = hAxisInfo.tickLabelsBounds
             val leftOverflow = maxTickLabelsBounds.left - tickLabelsBounds!!.origin.x
             val rightOverflow = tickLabelsBounds.origin.x + tickLabelsBounds.dimension.x - maxTickLabelsBounds.right
+            var newX = it.origin.x
+            var newW = it.dimension.x
             if (leftOverflow > 0) {
-                geomBounds = DoubleRectangle(
-                    geomBounds.origin.x + leftOverflow,
-                    geomBounds.origin.y,
-                    geomBounds.dimension.x - leftOverflow,
-                    geomBounds.dimension.y
-                )
+                newX = it.origin.x + leftOverflow
+                newW = it.dimension.x - leftOverflow
             }
+
             if (rightOverflow > 0) {
-                geomBounds = DoubleRectangle(
-                    geomBounds.origin.x,
-                    geomBounds.origin.y,
-                    geomBounds.dimension.x - rightOverflow,
-                    geomBounds.dimension.y
-                )
+                newW = newW - rightOverflow
+            }
+
+            val boundsNew = DoubleRectangle(
+                newX, it.origin.y,
+                newW, it.dimension.y
+            )
+
+            if (boundsNew != geomBoundsAfterLayout) {
+                val sizeNew = coordProvider.adjustGeomSize(hDomain, vDomain, boundsNew.dimension)
+                DoubleRectangle(boundsNew.origin, sizeNew)
+            } else {
+                boundsNew
             }
         }
 
-        geomBounds = geomBounds.union(
-            DoubleRectangle(geomBounds.origin, GEOM_MIN_SIZE)
+        // Combine geom area and x/y axis
+        val geomWithAxisBounds = tileBounds(
+            hAxisInfo.axisBounds(),
+            vAxisInfo.axisBounds(),
+            geomBounds
         )
 
-        // Combine geom area and x/y axis
-        val geomWithAxisBounds =
-            tileBounds(
-                xAxisInfo.axisBounds(),
-                yAxisInfo.axisBounds(),
-                geomBounds
-            )
-
         // sync axis info with new (may be) geom area size
-        xAxisInfo = xAxisInfo.withAxisLength(geomBounds.width).build()
-        yAxisInfo = yAxisInfo.withAxisLength(geomBounds.height).build()
+        hAxisInfo = hAxisInfo.withAxisLength(geomBounds.width).build()
+        vAxisInfo = vAxisInfo.withAxisLength(geomBounds.height).build()
 
         return TileLayoutInfo(
             geomWithAxisBounds,
             geomBounds,
             clipBounds(geomBounds),
-            xAxisInfo,
-            yAxisInfo,
+            hAxisInfo,
+            vAxisInfo,
             trueIndex = 0
         )
     }
@@ -116,6 +126,8 @@ internal class XYPlotTileLayout(
             xAxisLayout: AxisLayout,
             yAxisLayout: AxisLayout,
             plotSize: DoubleVector,
+            hDomain: ClosedRange<Double>,
+            vDomain: ClosedRange<Double>,
             coordProvider: CoordProvider
         ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
             val xAxisThickness = xAxisLayout.initialThickness()
@@ -124,7 +136,10 @@ internal class XYPlotTileLayout(
                 geomBounds(
                     xAxisThickness,
                     yAxisLayout.initialThickness(),
-                    plotSize
+                    plotSize,
+                    hDomain,
+                    vDomain,
+                    coordProvider
                 ),
                 coordProvider
             )
@@ -132,10 +147,14 @@ internal class XYPlotTileLayout(
             val yAxisThickness = yAxisInfo.axisBounds().dimension.x
             var xAxisInfo = computeXAxisInfo(
                 xAxisLayout,
-                plotSize, geomBounds(
+                plotSize,
+                geomBounds(
                     xAxisThickness,
                     yAxisThickness,
-                    plotSize
+                    plotSize,
+                    hDomain,
+                    vDomain,
+                    coordProvider
                 ),
                 coordProvider
             )
@@ -147,7 +166,10 @@ internal class XYPlotTileLayout(
                     geomBounds(
                         xAxisInfo.axisBounds().dimension.y,
                         yAxisThickness,
-                        plotSize
+                        plotSize,
+                        hDomain,
+                        vDomain,
+                        coordProvider
                     ),
                     coordProvider
                 )

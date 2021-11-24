@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Coords
@@ -20,12 +19,12 @@ internal abstract class CoordProviderBase(
     override val flipAxis: Boolean,
 ) : CoordProvider {
 
-    private val xLim: ClosedRange<Double>? = when {
+    private val hLim: ClosedRange<Double>? = when {
         flipAxis -> _yLim
         else -> _xLim
     }
 
-    private val yLim: ClosedRange<Double>? = when {
+    private val vLim: ClosedRange<Double>? = when {
         flipAxis -> _xLim
         else -> _yLim
     }
@@ -75,18 +74,28 @@ internal abstract class CoordProviderBase(
                 yDomain,
                 mapperY
             ),
-            xLim?.let { MapperUtil.map(it, mapperX) },
-            yLim?.let { MapperUtil.map(it, mapperY) }
+            hLim?.let { MapperUtil.map(it, mapperX) },
+            vLim?.let { MapperUtil.map(it, mapperY) }
         )
     }
 
-    override fun adjustDomains(
-        xDomain: ClosedRange<Double>,
-        yDomain: ClosedRange<Double>,
-        displaySize: DoubleVector
+    final override fun adjustDomains(
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>,
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        return Pair(xLim ?: xDomain, yLim ?: yDomain)
+        return adjustDomainsIntern(
+            hDomain = hLim ?: hDomain,
+            vDomain = vLim ?: vDomain
+        )
     }
+
+    protected open fun adjustDomainsIntern(
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        return (hDomain to vDomain)
+    }
+
 
     companion object {
         fun linearMapper(domain: ClosedRange<Double>, axisLength: Double): (Double?) -> Double? {

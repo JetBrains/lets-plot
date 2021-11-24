@@ -36,6 +36,7 @@ class CoordConfig private constructor(
                 else -> emptyMap<String, Any>()
             }
 
+            // Use "transformed" values for limits.
             val accessor = over(options)
             val xLim = accessor.getRangeOrNull(Option.Coord.X_LIM)?.let { validateRange(it, transformX) }
             val yLim = accessor.getRangeOrNull(Option.Coord.Y_LIM)?.let { validateRange(it, transformY) }
