@@ -23,10 +23,8 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
-import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.theme.ThemeConfig
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.config.transformToClientPlotConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -150,6 +148,47 @@ class GeomInteractionBuilderCreationTest {
     }
 
     @Test
+    fun `the total number of factors from two layers is enough to show the tooltip`() {
+        val layer1 =  mapOf(
+            GEOM to Option.GeomName.POINT,
+            MAPPING to mapOf(
+                Aes.X.name to listOf(0, 1, 2),
+                Aes.Y.name to listOf(0, 0, 0),
+                Aes.COLOR.name to listOf('a', 'b', 'c')
+            )
+        )
+        val layer2 =  mapOf(
+            GEOM to Option.GeomName.POINT,
+            MAPPING to mapOf(
+                Aes.X.name to listOf(3, 4, 5),
+                Aes.Y.name to listOf(0, 0, 0),
+                Aes.COLOR.name to listOf('d', 'e', 'f')
+            )
+        )
+        val plotOpts = mutableMapOf(
+            Meta.KIND to Meta.Kind.PLOT,
+            LAYERS to listOf(layer1, layer2)
+        )
+
+        val plotConfig = transformToClientPlotConfig(plotOpts)
+        plotConfig.layerConfigs.forEach { layerConfig ->
+            val builder = GeomInteractionUtil.createGeomInteractionBuilder(
+                layerConfig = layerConfig,
+                scaleMap = plotConfig.scaleMap,
+                multilayer = false,
+                isLiveMap = false,
+                theme = DefaultTheme.minimal2()
+            )
+            val tooltipLines = builder.tooltipLines
+            val aesListForTooltip = getAesListInTooltip(tooltipLines)
+            assertAesList(
+                listOf(Aes.X, Aes.Y, Aes.COLOR),
+                aesListForTooltip
+            )
+        }
+    }
+
+    @Test
     fun `X axis tooltip should be always shown (univariate function)`() {
         fun assertAxisXHasTooltip(xMapping: Pair<String, List<Any>>) {
             val builder = histogramInteractionBuilder(mapOf(xMapping))
@@ -241,7 +280,6 @@ class GeomInteractionBuilderCreationTest {
 
     private fun histogramInteractionBuilder(
         mappedData: Map<String, Any>,
-//        themeOpts: Map<String, Any>? = null
         themeOpts: Map<String, Any> = emptyMap()
     ): GeomInteractionBuilder {
         val plotOpts = mutableMapOf(
@@ -255,7 +293,6 @@ class GeomInteractionBuilderCreationTest {
         )
         return createGeomInteractionBuilder(
             plotOpts,
-//            theme = themeOpts?.let { ThemeConfig(it).theme } ?: DefaultTheme()
             theme = ThemeConfig(themeOpts).theme
         )
     }
@@ -264,9 +301,7 @@ class GeomInteractionBuilderCreationTest {
         plotOpts: MutableMap<String, Any>,
         theme: Theme = DefaultTheme.minimal2()
     ): GeomInteractionBuilder {
-        val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
-        require(!PlotConfig.isFailure(plotSpec)) { PlotConfig.getErrorMessage(plotSpec) }
-        val plotConfig = PlotConfigClientSide.create(plotSpec) {}
+        val plotConfig = transformToClientPlotConfig(plotOpts)
         val layerConfig = plotConfig.layerConfigs.first()
         return GeomInteractionUtil.createGeomInteractionBuilder(
             layerConfig = layerConfig,
