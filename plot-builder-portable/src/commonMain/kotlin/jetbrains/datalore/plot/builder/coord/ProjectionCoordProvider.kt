@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.coord.Projection
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.abs
 
 internal class ProjectionCoordProvider(
     private val projectionX: Projection,
@@ -29,49 +30,31 @@ internal class ProjectionCoordProvider(
         return ProjectionCoordProvider(projectionX, projectionY, xLim, yLim, flipped)
     }
 
-    override fun adjustDomains(
-        xDomain: ClosedRange<Double>,
-        yDomain: ClosedRange<Double>,
-        displaySize: DoubleVector
+    protected override fun adjustDomainsIntern(
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-
-        // account for limits
-        val adjusted = super.adjustDomains(xDomain, yDomain, displaySize)
+        @Suppress("NAME_SHADOWING")
+        val xDomain = projectionX.toValidDomain(hDomain)
 
         @Suppress("NAME_SHADOWING")
-        val xDomain = projectionX.toValidDomain(adjusted.first)
+        val yDomain = projectionY.toValidDomain(vDomain)
+        return (xDomain to yDomain)
+    }
 
-        @Suppress("NAME_SHADOWING")
-        val yDomain = projectionY.toValidDomain(adjusted.second)
+    override fun adjustGeomSize(
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>,
+        geomSize: DoubleVector
+    ): DoubleVector {
+        // Adjust geom dimensions ratio.
+        val h0 = projectionX.apply(hDomain.lowerEnd)
+        val h1 = projectionX.apply(hDomain.upperEnd)
+        val v0 = projectionY.apply(vDomain.lowerEnd)
+        val v1 = projectionY.apply(vDomain.upperEnd)
 
-        // compute projected ratio
-        val spanX = SeriesUtil.span(xDomain)
-        val spanY = SeriesUtil.span(yDomain)
-        val domainSquare: Pair<ClosedRange<Double>, ClosedRange<Double>> =
-            if (spanX > spanY) {
-                val center = xDomain.lowerEnd + spanX / 2
-                val halfSpan = spanY / 2
-                Pair(
-                    ClosedRange(center - halfSpan, center + halfSpan),
-                    yDomain
-                )
-            } else {
-                val center = yDomain.lowerEnd + spanY / 2
-                val halfSpan = spanX / 2
-                Pair(
-                    xDomain,
-                    ClosedRange(center - halfSpan, center + halfSpan)
-                )
-            }
-
-        val projectedXMin = projectionX.apply(domainSquare.first.lowerEnd)
-        val projectedXMax = projectionX.apply(domainSquare.first.upperEnd)
-        val projectedYMin = projectionY.apply(domainSquare.second.lowerEnd)
-        val projectedYMax = projectionY.apply(domainSquare.second.upperEnd)
-
-        val ratio = (projectedYMax - projectedYMin) / (projectedXMax - projectedXMin)
-        val fixedCoord = FixedRatioCoordProvider(ratio, null, null, false)
-        return fixedCoord.adjustDomains(xDomain, yDomain, displaySize)
+        val domainRatio = abs(h1 - h0) / abs(v1 - v0)
+        return FixedRatioCoordProvider.reshapeGeom(geomSize, domainRatio)
     }
 
     override fun buildAxisScaleX(

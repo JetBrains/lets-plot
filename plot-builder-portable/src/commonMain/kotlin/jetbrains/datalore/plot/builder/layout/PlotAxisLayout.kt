@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
@@ -18,9 +17,8 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 class PlotAxisLayout internal constructor(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
-    private val domainX: ClosedRange<Double>,
-    private val domainY: ClosedRange<Double>,
-//    private val coordProvider: CoordProvider,
+    private val domainX: ClosedRange<Double>, // ToDo: don't store it here (stored in XYPlotLayout)
+    private val domainY: ClosedRange<Double>, // ToDo: don't store it here (stored in XYPlotLayout)
     private val theme: AxisTheme,
     private val orientation: Orientation
 ) : AxisLayout {
@@ -50,7 +48,7 @@ class PlotAxisLayout internal constructor(
     }
 
     private fun createLayouter(displaySize: DoubleVector, coordProvider: CoordProvider): AxisLayouter {
-        val domains = coordProvider.adjustDomains(domainX, domainY, displaySize)
+        val domains = (domainX to domainY)
         val axisDomain = axisDomain(domains, orientation)
 
         val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
@@ -59,36 +57,6 @@ class PlotAxisLayout internal constructor(
 
     companion object {
         private val TICK_LABEL_SPEC = PlotLabelSpec.AXIS_TICK
-
-//        fun bottom(
-//            scale: Scale<Double>,
-//            xDomain: ClosedRange<Double>,
-//            yDomain: ClosedRange<Double>,
-////            coordProvider: CoordProvider,
-//            theme: AxisTheme
-//        ): AxisLayout {
-//            return PlotAxisLayout(
-//                AxisBreaksProviderFactory.forScale(scale),
-//                xDomain, yDomain,
-//                theme,
-//                Orientation.BOTTOM
-//            )
-//        }
-
-//        fun left(
-//            scale: Scale<Double>,
-//            xDomain: ClosedRange<Double>,
-//            yDomain: ClosedRange<Double>,
-////            coordProvider: CoordProvider,
-//            theme: AxisTheme
-//        ): AxisLayout {
-//            return PlotAxisLayout(
-//                AxisBreaksProviderFactory.forScale(scale),
-//                xDomain, yDomain,
-//                theme,
-//                Orientation.LEFT
-//            )
-//        }
 
         private fun initialTickLabelSize(orientation: Orientation): Double {
             return if (orientation.isHorizontal)

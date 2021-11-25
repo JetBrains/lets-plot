@@ -30,11 +30,12 @@ internal open class DefaultCoordinateSystem(
     }
 
     override fun applyClientLimits(clientBounds: DoubleRectangle): DoubleRectangle {
-        val hRange = clientLimitsX?.let { lim -> convertRange(lim, toClientOffsetX) }
-            ?: clientBounds.xRange()
-        val vRange = clientLimitsY?.let { lim -> convertRange(lim, toClientOffsetY) }
-            ?: clientBounds.yRange()
-        return DoubleRectangle(hRange, vRange)
+//        val hRange = clientLimitsX?.let { lim -> convertRange(lim, toClientOffsetX) }
+//            ?: clientBounds.xRange()
+//        val vRange = clientLimitsY?.let { lim -> convertRange(lim, toClientOffsetY) }
+//            ?: clientBounds.yRange()
+//        return DoubleRectangle(hRange, vRange)
+        return clientBounds
     }
 
     override fun flip(): CoordinateSystem {

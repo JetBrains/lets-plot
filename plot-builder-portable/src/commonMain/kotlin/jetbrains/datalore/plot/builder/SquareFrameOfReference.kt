@@ -113,14 +113,14 @@ internal class SquareFrameOfReference(
             parent.add(rect)
         }
 
-        run {
-            val clipBounds = layoutInfo.clipBounds
-            val rect = SvgRectElement(clipBounds)
-            rect.fillColor().set(Color.DARK_GREEN)
-            rect.strokeWidth().set(0.0)
-            rect.fillOpacity().set(0.3)
-            parent.add(rect)
-        }
+//        run {
+//            val clipBounds = layoutInfo.clipBounds
+//            val rect = SvgRectElement(clipBounds)
+//            rect.fillColor().set(Color.DARK_GREEN)
+//            rect.strokeWidth().set(0.0)
+//            rect.fillOpacity().set(0.3)
+//            parent.add(rect)
+//        }
 
         run {
             val rect = SvgRectElement(geomBounds)
@@ -135,8 +135,8 @@ internal class SquareFrameOfReference(
         val hAxisMapper = hScale.mapper
         val vAxisMapper = vScale.mapper
 
-        val hAxisDomain = layoutInfo.xAxisInfo!!.axisDomain!!
-        val vAxisDomain = layoutInfo.yAxisInfo!!.axisDomain!!
+        val hAxisDomain = layoutInfo.xAxisInfo!!.axisDomain
+        val vAxisDomain = layoutInfo.yAxisInfo!!.axisDomain
         val aesBounds = DoubleRectangle(
             xRange = ClosedRange(
                 hAxisMapper(hAxisDomain.lowerEnd) as Double,
@@ -174,17 +174,7 @@ internal class SquareFrameOfReference(
             gridLineLength: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
-//            val axis = AxisComponent(info.axisLength, info.orientation!!)
-//            if (gridTheme.showMajor()) {
-//                axis.gridLineLength.set(gridLineLength)
-//                axis.gridLineWidth.set(gridTheme.majorLineWidth())
-//                axis.gridLineColor.set(gridTheme.majorLineColor())
-//            }
-//            AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
-//            AxisUtil.applyLayoutInfo(axis, info)
-//            AxisUtil.applyTheme(axis, axisTheme, hideAxisBreaks)
-
-            val orientation = info.orientation!!
+            val orientation = info.orientation
             val labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation = orientation,
                 horizontalAnchor = info.tickLabelHorizontalAnchor,

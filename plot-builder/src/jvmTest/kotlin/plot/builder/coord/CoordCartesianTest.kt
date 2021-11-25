@@ -7,9 +7,11 @@ package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import org.junit.Ignore
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@Ignore
 internal class CoordCartesianTest : jetbrains.datalore.plot.builder.coord.CoordTestBase() {
 
     @BeforeTest

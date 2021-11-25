@@ -77,6 +77,10 @@ kotlin {
                 implementation project(':vis-demo-common-jfx')
                 implementation project(':vis-swing-common')
                 implementation project(':vis-swing-jfx')
+
+                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
             }
         }
         jvmBrowserMain {

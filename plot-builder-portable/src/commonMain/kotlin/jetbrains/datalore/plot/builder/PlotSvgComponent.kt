@@ -23,11 +23,12 @@ import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
-import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
-import jetbrains.datalore.plot.builder.layout.LegendBoxesLayout
-import jetbrains.datalore.plot.builder.layout.PlotLayout
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
+import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -38,9 +39,10 @@ import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
+import kotlin.math.max
 
 class PlotSvgComponent constructor(
-    private val title: String?,
+    title: String?,
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
     private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
@@ -50,6 +52,7 @@ class PlotSvgComponent constructor(
     val theme: Theme
 ) : SvgComponent() {
 
+    private val title: String? = title?.let { if (it.isBlank()) null else it.trim() }
     val flippedAxis = frameOfReferenceProvider.flipAxis
     val mouseEventPeer = MouseEventPeer()
 
@@ -65,39 +68,17 @@ class PlotSvgComponent constructor(
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
 
-    private fun hasTitle(): Boolean {
-        return !title.isNullOrBlank()
-    }
+    // ToDo: remove
+    private val axisTitleLeft: String? = frameOfReferenceProvider.vAxisLabel
 
     // ToDo: remove
-    private val axisTitleLeft: String
-        get() {
-            require(hasAxisTitleLeft()) { "No left axis title" }
-            return frameOfReferenceProvider.vAxisLabel!!
-        }
+    private val axisTitleBottom: String? = frameOfReferenceProvider.hAxisLabel
 
-    // ToDo: remove
-    private val axisTitleBottom: String
-        get() {
-            require(hasAxisTitleBottom()) { "No bottom axis title" }
-            return frameOfReferenceProvider.hAxisLabel!!
-        }
-
-    // ToDo: remove
-    private fun hasAxisTitleLeft(): Boolean {
-        return !frameOfReferenceProvider.vAxisLabel.isNullOrEmpty()
-    }
-
-    // ToDo: remove
-    private fun hasAxisTitleBottom(): Boolean {
-        return !frameOfReferenceProvider.hAxisLabel.isNullOrEmpty()
-    }
+    private val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
     private fun tileLayers(tileIndex: Int): List<GeomLayer> {
         return layersByTile[tileIndex]
     }
-
-    private val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
     override fun buildComponent() {
         try {
@@ -146,80 +127,12 @@ class PlotSvgComponent constructor(
         clear()
     }
 
-    private fun createAxisTitle(
-        text: String,
-        orientation: Orientation,
-        plotBounds: DoubleRectangle,
-        geomBounds: DoubleRectangle,
-        axisTheme: AxisTheme
-    ) {
-        val horizontalAnchor = HorizontalAnchor.MIDDLE
-        val verticalAnchor: VerticalAnchor = when (orientation) {
-            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> VerticalAnchor.TOP
-            Orientation.BOTTOM -> VerticalAnchor.BOTTOM
-        }
-
-        val titleLocation: DoubleVector
-        var rotation = 0.0
-        when (orientation) {
-            Orientation.LEFT -> {
-                titleLocation =
-                    DoubleVector(plotBounds.left + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
-                rotation = -90.0
-            }
-            Orientation.RIGHT -> {
-                titleLocation =
-                    DoubleVector(plotBounds.right - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
-                rotation = 90.0
-            }
-            Orientation.TOP -> titleLocation =
-                DoubleVector(geomBounds.center.x, plotBounds.top + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
-            Orientation.BOTTOM -> titleLocation =
-                DoubleVector(geomBounds.center.x, plotBounds.bottom - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
-        }
-
-        val titleLabel = TextLabel(text)
-        titleLabel.setHorizontalAnchor(horizontalAnchor)
-        titleLabel.setVerticalAnchor(verticalAnchor)
-        titleLabel.textColor().set(axisTheme.titleColor())
-        titleLabel.moveTo(titleLocation)
-        titleLabel.rotate(rotation)
-
-        val titleElement = titleLabel.rootGroup
-        titleElement.addClass(Style.AXIS_TITLE)
-
-        // hack: we have style: ".axis .title text" and we don't want to break backward-compatibility with 'census' charts
-        val parent = SvgGElement()
-        parent.addClass(Style.AXIS)
-
-        parent.children().add(titleElement)
-
-        add(parent)
-    }
-
-    /**
-     * Only used when DEBUG_DRAWING is ON.
-     */
-    private fun onMouseMove(e: SvgElement, message: String) {
-        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
-            SvgEventHandler<Event> {
-            override fun handle(node: SvgNode, e: Event) {
-                println(message)
-            }
-        })
-    }
-
     private fun buildPlotComponents() {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
-            val rect = SvgRectElement(overallRect)
-            rect.strokeColor().set(Color.MAGENTA)
-            rect.strokeWidth().set(1.0)
-            rect.fillOpacity().set(0.0)
-            onMouseMove(rect, "MAGENTA: preferred size: $overallRect")
-            add(rect)
+            drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
         }
 
         // compute geom bounds
@@ -229,81 +142,74 @@ class PlotSvgComponent constructor(
             overallRect
         }
 
-        // subtract title size
-        val withoutTitle = if (hasTitle()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(title!!)
-            DoubleRectangle(
-                entirePlot.origin.add(DoubleVector(0.0, titleSize.y)),
-                entirePlot.dimension.subtract(DoubleVector(0.0, titleSize.y))
-            )
-        } else {
-            entirePlot
-        }
-
-        // adjust for legend boxes
-        var boxesLayoutResult: LegendBoxesLayout.Result? = null
         val legendTheme = theme.legend()
-        val withoutTitleAndLegends = if (legendTheme.position().isFixed) {
-            val legendBoxesLayout =
-                LegendBoxesLayout(withoutTitle, legendTheme)
-            boxesLayoutResult = legendBoxesLayout.doLayout(legendBoxInfos)
-            boxesLayoutResult.plotInnerBoundsWithoutLegendBoxes
-        } else {
-            withoutTitle
-        }
+        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
+            legendBoxInfos,
+            legendTheme
+        )
 
-        @Suppress("ConstantConditionIf")
-        if (DEBUG_DRAWING) {
-            val rect = SvgRectElement(withoutTitleAndLegends)
-            rect.strokeColor().set(Color.BLUE)
-            rect.strokeWidth().set(1.0)
-            rect.fillOpacity().set(0.0)
-            onMouseMove(rect, "BLUE: plot without title and legends: $withoutTitleAndLegends")
-            add(rect)
-        }
-
-        // subtract left axis title width
-        var geomAndAxis = withoutTitleAndLegends
+        // -------------
+        val entirePlotSize = entirePlot.dimension
         val axisEnabled = !containsLiveMap
-        if (axisEnabled) {
-            if (hasAxisTitleLeft()) {
-                val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleLeft)
-                val thickness =
-                    titleSize.y + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
-                geomAndAxis = DoubleRectangle(
-                    geomAndAxis.left + thickness, geomAndAxis.top,
-                    geomAndAxis.width - thickness, geomAndAxis.height
-                )
-            }
-
-            // subtract bottom axis title height
-            if (hasAxisTitleBottom()) {
-                val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleBottom)
-                val thickness =
-                    titleSize.y + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
-                geomAndAxis = DoubleRectangle(
-                    geomAndAxis.left, geomAndAxis.top,
-                    geomAndAxis.width, geomAndAxis.height - thickness
-                )
-            }
-        }
+        val plotInnerSizeAvailable = subtractTitlesAndLegends(
+            entirePlotSize,
+            title,
+            axisTitleLeft,
+            axisTitleBottom,
+            axisEnabled,
+            legendsBlockInfo, theme
+        )
 
         // Layout plot inners
-        val plotInfo = plotLayout.doLayout(geomAndAxis.dimension, coordProvider)
-
+        val plotInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
         if (plotInfo.tiles.isEmpty()) {
             return
         }
 
-        val geomAreaBounds = PlotLayoutUtil.absoluteGeomBounds(geomAndAxis.origin, plotInfo)
-        if (legendTheme.position().isOverlay) {
-            // put 'overlay' in 'geom' bounds
-            val legendBoxesLayout = LegendBoxesLayout(geomAreaBounds, legendTheme)
-            boxesLayoutResult = legendBoxesLayout.doLayout(legendBoxInfos)
+        // Inner size includes geoms, axis and facet labels.
+        val plotInnerSize = plotInfo.size
+        val plotOuterSize = addTitlesAndLegends(
+            plotInnerSize,
+            title,
+            axisTitleLeft,
+            axisTitleBottom,
+            axisEnabled,
+            legendsBlockInfo, theme
+        )
+
+        // plot origin
+        val delta = overallRect.center.subtract(
+            DoubleRectangle(overallRect.origin, plotOuterSize).center
+        )
+        val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+        val plotOuterOrigin = overallRect.origin.add(deltaApplied)
+        val plotOuterBounds = DoubleRectangle(plotOuterOrigin, plotOuterSize)
+        @Suppress("ConstantConditionIf")
+        if (DEBUG_DRAWING) {
+            drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
+        val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title)
+        val plotOuterBoundsWithoutTitle = DoubleRectangle(
+            plotOuterBounds.origin.add(titleSizeDelta),
+            plotOuterBounds.dimension.subtract(titleSizeDelta)
+        )
+        @Suppress("ConstantConditionIf")
+        if (DEBUG_DRAWING) {
+            drawDebugRect(plotOuterBoundsWithoutTitle, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitle")
+        }
+
+        // Inner bounds - all without titiles and legends.
+        val plotInnerOrigin = plotOuterOrigin
+            .add(titleSizeDelta)
+            .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
+            .add(axisTitleSizeDelta(axisTitleLeft, null, axisEnabled))
+
+        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotInfo)
+            .add(plotInnerOrigin)
+
         // build tiles
-        val tilesOrigin = geomAndAxis.origin
+        val tilesOrigin = plotInnerOrigin
         for (tileLayoutInfo in plotInfo.tiles) {
             val tileLayersIndex = tileLayoutInfo.trueIndex
 
@@ -313,7 +219,6 @@ class PlotSvgComponent constructor(
 //            println("clip bounds: " + tileInfo.clipBounds)
 
             // Create a plot tile.
-//            val tile = createTile(tilesOrigin, tileLayoutInfo, tileLayers(tileLayersIndex), theme)
             val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
                 tileLayoutInfo,
                 coordProvider,
@@ -321,7 +226,6 @@ class PlotSvgComponent constructor(
             )
             val tileLayers = tileLayers(tileLayersIndex)
             val tile = PlotTile(tileLayers, tilesOrigin, tileLayoutInfo, theme, frameOfReference)
-            tile.isDebugDrawing = DEBUG_DRAWING
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
             tile.moveTo(plotOriginAbsolute)
@@ -341,62 +245,61 @@ class PlotSvgComponent constructor(
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
-                val rect = SvgRectElement(tooltipBounds.handlingArea)
-                rect.strokeColor().set(Color.ORANGE)
-                rect.strokeWidth().set(1.0)
-                rect.fillOpacity().set(0.0)
-                add(rect)
+                drawDebugRect(tooltipBounds.handlingArea, Color.ORANGE, "ORANGE: tooltipBounds.handlingArea")
             }
         }
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
-            val rect = SvgRectElement(geomAreaBounds)
-            rect.strokeColor().set(Color.RED)
-            rect.strokeWidth().set(1.0)
-            rect.fillOpacity().set(0.0)
-            add(rect)
+            drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
         }
 
         // add plot title
-        if (hasTitle()) {
-            val titleLabel = TextLabel(title!!)
+        if (title != null) {
+            val titleLabel = TextLabel(title)
             titleLabel.addClassName(Style.PLOT_TITLE)
             titleLabel.textColor().set(theme.plot().titleColor())
             titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
             titleLabel.setVerticalAnchor(VerticalAnchor.CENTER)
 
             val titleSize = PlotLayoutUtil.titleDimensions(title)
-            val titleBounds = DoubleRectangle(geomAreaBounds.origin.x, 0.0, titleSize.x, titleSize.y)
+            val titleBounds = DoubleRectangle(
+                geomAreaBounds.left, plotOuterBounds.top,
+                titleSize.x, titleSize.y
+            )
             titleLabel.moveTo(DoubleVector(titleBounds.left, titleBounds.center.y))
             add(titleLabel)
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
-                val rect = SvgRectElement(titleBounds)
-                rect.strokeColor().set(Color.BLUE)
-                rect.strokeWidth().set(1.0)
-                rect.fillOpacity().set(0.0)
-                add(rect)
+                drawDebugRect(titleBounds, Color.BLUE)
             }
+        }
+
+        val overallTileBounds = PlotLayoutUtil.overallTileBounds(plotInfo)
+            .add(plotInnerOrigin)
+
+        @Suppress("ConstantConditionIf")
+        if (DEBUG_DRAWING) {
+            drawDebugRect(overallTileBounds, Color.DARK_MAGENTA, "DARK_MAGENTA: overallTileBounds")
         }
 
         // add axis titles
         if (axisEnabled) {
-            if (hasAxisTitleLeft()) {
-                createAxisTitle(
+            if (axisTitleLeft != null) {
+                addAxisTitle(
                     axisTitleLeft,
                     Orientation.LEFT,
-                    withoutTitleAndLegends,
+                    overallTileBounds,
                     geomAreaBounds,
                     theme.axisY(flippedAxis)
                 )
             }
-            if (hasAxisTitleBottom()) {
-                createAxisTitle(
+            if (axisTitleBottom != null) {
+                addAxisTitle(
                     axisTitleBottom,
                     Orientation.BOTTOM,
-                    withoutTitleAndLegends,
+                    overallTileBounds,
                     geomAreaBounds,
                     theme.axisX(flippedAxis)
                 )
@@ -404,14 +307,111 @@ class PlotSvgComponent constructor(
         }
 
         // add legends
-        if (boxesLayoutResult != null) {
-            for (boxWithLocation in boxesLayoutResult.boxWithLocationList) {
+        if (!legendTheme.position().isHidden) {
+            val legendsBlockInfoLayouted = LegendBoxesLayout(
+                outerBounds = plotOuterBoundsWithoutTitle,
+                innerBounds = geomAreaBounds,
+                legendTheme
+            ).doLayout(legendsBlockInfo)
+
+            for (boxWithLocation in legendsBlockInfoLayouted.boxWithLocationList) {
                 val legendBox = boxWithLocation.legendBox.createLegendBox()
                 legendBox.moveTo(boxWithLocation.location)
                 add(legendBox)
             }
         }
     }
+
+    private fun addAxisTitle(
+        text: String,
+        orientation: Orientation,
+        overallTileBounds: DoubleRectangle,  // tiles union bounds
+        overallGeomBounds: DoubleRectangle,  // geom bounds union
+        axisTheme: AxisTheme
+    ) {
+        val referenceRect = when (orientation) {
+            Orientation.LEFT,
+            Orientation.RIGHT ->
+                DoubleRectangle(
+                    overallTileBounds.left, overallGeomBounds.top,
+                    overallTileBounds.width, overallGeomBounds.height
+                )
+            Orientation.TOP,
+            Orientation.BOTTOM ->
+                DoubleRectangle(
+                    overallGeomBounds.left, overallTileBounds.top,
+                    overallGeomBounds.width, overallTileBounds.height
+                )
+        }
+
+        val horizontalAnchor = HorizontalAnchor.MIDDLE
+        val verticalAnchor = when (orientation) {
+            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> VerticalAnchor.BOTTOM
+            Orientation.BOTTOM -> VerticalAnchor.TOP
+        }
+
+        val rotation = when (orientation) {
+            Orientation.LEFT -> -90.0
+            Orientation.RIGHT -> -90.0
+            else -> 0.0
+        }
+
+        val titleLocation = when (orientation) {
+            Orientation.LEFT ->
+                // Add 2 pix to the margin for better uppearence.
+                DoubleVector(referenceRect.left - (PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN + 2), referenceRect.center.y)
+            Orientation.RIGHT ->
+                DoubleVector(referenceRect.right + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, referenceRect.center.y)
+            Orientation.TOP ->
+                DoubleVector(referenceRect.center.x, referenceRect.top - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
+            Orientation.BOTTOM ->
+                DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
+        }
+
+        val titleLabel = TextLabel(text)
+        titleLabel.setHorizontalAnchor(horizontalAnchor)
+        titleLabel.setVerticalAnchor(verticalAnchor)
+        titleLabel.textColor().set(axisTheme.titleColor())
+        titleLabel.moveTo(titleLocation)
+        titleLabel.rotate(rotation)
+
+        val titleElement = titleLabel.rootGroup
+        titleElement.addClass(Style.AXIS_TITLE)
+
+        // hack: we have style: ".axis .title text" and we don't want to break backward-compatibility with 'census' charts
+        val parent = SvgGElement()
+        parent.addClass(Style.AXIS)
+
+        parent.children().add(titleElement)
+        add(parent)
+    }
+
+
+    private fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
+        val rect = SvgRectElement(r)
+        rect.strokeColor().set(color)
+        rect.strokeWidth().set(1.0)
+        rect.fillOpacity().set(0.0)
+        message?.run {
+            onMouseMove(rect, "$message: $r")
+        }
+        add(rect)
+    }
+
+    /**
+     * Only used when DEBUG_DRAWING is ON.
+     *
+     * Doesn't seem to work any longer
+     */
+    private fun onMouseMove(e: SvgElement, message: String) {
+        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
+            SvgEventHandler<Event> {
+            override fun handle(node: SvgNode, e: Event) {
+                println(message)
+            }
+        })
+    }
+
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)
