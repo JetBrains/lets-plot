@@ -33,7 +33,7 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val groupedDataPoints = aesthetics.dataPoints().groupBy {  it.x()!! }
+        val groupedDataPoints = aesthetics.dataPoints().groupBy {  it.x() }
         val halfWidth = halfWidth(aesthetics, ctx)
         for ((_, nonOrderedDataPoints) in groupedDataPoints) {
             val dataPoints = GeomUtil.ordered_Y(nonOrderedDataPoints, false)
@@ -88,8 +88,8 @@ class ViolinGeom : GeomBase() {
     }
 
     private fun halfWidth(aesthetics: Aesthetics, ctx: GeomContext): Double {
-        val wMax = aesthetics.dataPoints().map { it.weight()!! }.maxOrNull()!!
-        return ctx.getResolution(Aes.X) / (2 * wMax)
+        val maxWeight: Double = aesthetics.dataPoints().map { it.weight()!! }.maxOrNull() ?: 0.0
+        return ctx.getResolution(Aes.X) / (2 * maxWeight)
     }
 
     private fun toLocationBound(sign: Double, halfWidth: Double): (p: DataPointAesthetics) -> DoubleVector? {
