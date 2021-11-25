@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.interact
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Scale
 
 interface MappedDataAccess {
 
