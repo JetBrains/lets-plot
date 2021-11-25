@@ -56,16 +56,17 @@ object Transforms {
         val breaksGenerator: BreaksGenerator
     ) : BreaksGenerator {
         override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-            val domainBeforeTransform = MapperUtil.map(domain) {
-                transform.applyInverse(it)
-            }
+            val domainBeforeTransform = MapperUtil.map(domain, transform::applyInverse)
             return breaksGenerator.labelFormatter(domainBeforeTransform, targetCount)
         }
 
+        override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+            val domainBeforeTransform = MapperUtil.map(domain, transform::applyInverse)
+            return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)
+        }
+
         override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-            val domainBeforeTransform = MapperUtil.map(domain) {
-                transform.applyInverse(it)
-            }
+            val domainBeforeTransform = MapperUtil.map(domain, transform::applyInverse)
             val scaleBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
             val originalBreaks = scaleBreaks.domainValues
             val transformedBreaks = transform.apply(originalBreaks).map {
