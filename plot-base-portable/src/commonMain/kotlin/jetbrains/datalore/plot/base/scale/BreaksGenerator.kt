@@ -14,4 +14,6 @@ interface BreaksGenerator {
      * Formatting arbitrary datapoints (like in tooltips).
      */
     fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String
+
+    fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String
 }

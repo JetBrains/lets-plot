@@ -62,7 +62,8 @@ internal class PointDataAccess(
                 .run(data::range)
                 .run(::ensureApplicableRange)
 
-            val formatter = scale.getBreaksGenerator().labelFormatter(domain, 100)
+            // Use the scale's default formatter (the 'format' parameter does not apply to tooltips)
+            val formatter = scale.getBreaksGenerator().defaultFormatter(domain, 100)
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)
