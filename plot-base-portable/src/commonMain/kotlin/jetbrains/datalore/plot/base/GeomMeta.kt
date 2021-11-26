@@ -220,7 +220,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.LINETYPE,
-                Aes.SIZE, // line width
+                Aes.SIZE
             )
 
             GeomKind.RIBBON -> listOf(

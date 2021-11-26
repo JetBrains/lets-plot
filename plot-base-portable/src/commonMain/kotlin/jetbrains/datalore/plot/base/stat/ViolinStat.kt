@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.data.TransformVar
 
 class ViolinStat : BaseStat(DEF_MAPPING) {
 
-    // TODO: Try to replace by XMIN, XMAX and Y
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
@@ -47,7 +46,7 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.WEIGHT to Stats.DENSITY,
+            Aes.WEIGHT to Stats.DENSITY
         )
 
         private fun buildStat(

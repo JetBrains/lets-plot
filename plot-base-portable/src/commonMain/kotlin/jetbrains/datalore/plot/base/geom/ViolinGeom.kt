@@ -95,8 +95,9 @@ class ViolinGeom : GeomBase() {
     private fun toLocationBound(sign: Double, halfWidth: Double): (p: DataPointAesthetics) -> DoubleVector? {
         return fun (p: DataPointAesthetics): DoubleVector? {
             val x = p.x()!! + halfWidth * DEF_WIDTH * sign * p.weight()!!
-            return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(p.y())) {
-                DoubleVector(x, p.y()!!)
+            val y = p.y()!!
+            return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
+                DoubleVector(x, y)
             } else null
         }
     }
