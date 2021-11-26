@@ -62,18 +62,24 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             val statX = ArrayList<Double>()
             val statY = ArrayList<Double>()
             val statDensity = ArrayList<Double>()
+            val statCount = ArrayList<Double>()
+            val statScaled = ArrayList<Double>()
 
             for ((x, bin) in binnedData) {
                 val statData = buildBinStat(bin.first, bin.second, messageConsumer)
                 statX += MutableList(statData.getValue(Stats.Y).size) { x }
                 statY += statData.getValue(Stats.Y)
                 statDensity += statData.getValue(Stats.DENSITY)
+                statCount += statData.getValue(Stats.COUNT)
+                statScaled += statData.getValue(Stats.SCALED)
             }
 
             return mutableMapOf(
                 Stats.X to statX,
                 Stats.Y to statY,
-                Stats.DENSITY to statDensity
+                Stats.DENSITY to statDensity,
+                Stats.COUNT to statCount,
+                Stats.SCALED to statScaled
             )
         }
 
@@ -99,7 +105,9 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
 
             return mutableMapOf(
                 Stats.Y to statData.getNumeric(Stats.X).requireNoNulls(),
-                Stats.DENSITY to statData.getNumeric(Stats.DENSITY).requireNoNulls()
+                Stats.DENSITY to statData.getNumeric(Stats.DENSITY).requireNoNulls(),
+                Stats.COUNT to statData.getNumeric(Stats.COUNT).requireNoNulls(),
+                Stats.SCALED to statData.getNumeric(Stats.SCALED).requireNoNulls()
             )
         }
     }
