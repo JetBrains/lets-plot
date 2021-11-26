@@ -22,7 +22,8 @@ __all__ = ['scale_shape',
            'scale_fill_hue', 'scale_fill_discrete', 'scale_color_hue', 'scale_color_discrete',
            'scale_fill_grey', 'scale_color_grey',
            'scale_fill_brewer', 'scale_color_brewer',
-           'scale_x_datetime', 'scale_y_datetime', 'scale_alpha',
+           'scale_x_datetime', 'scale_y_datetime', 'scale_x_time',
+           'scale_alpha',
            'scale_size', 'scale_size_area'
            ]
 
@@ -2374,6 +2375,66 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
                   format=format,
                   #
                   datetime=True)
+
+
+def scale_x_time(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Position scale x for time data.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
+    na_value
+        Missing values will be replaced with this value.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import datetime as dt
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 31
+        np.random.seed(42)
+        d = [dt.timedelta(days=v).total_seconds() * 1000 for v in range(n)]
+        t = np.random.normal(loc=-5, scale=6, size=n)
+        ggplot({'d': d, 't': t}, aes('d', 't')) + \\
+            geom_line(aes(fill='t')) + \\
+            scale_x_time()
+
+    """
+    return _scale('x',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=expand,
+                  na_value=na_value,
+                  guide=None,
+                  trans=None,
+                  #
+                  time=True)
 
 
 #
