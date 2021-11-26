@@ -153,6 +153,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == SLOPE ||
                     aes == WIDTH ||
                     aes == HEIGHT ||
+                    aes == WEIGHT ||
                     aes == HJUST ||
                     aes == VJUST ||
                     aes == ANGLE ||
