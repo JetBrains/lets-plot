@@ -11,12 +11,11 @@ import jetbrains.datalore.base.datetime.Duration.Companion.HOUR
 import jetbrains.datalore.base.datetime.Duration.Companion.MINUTE
 import jetbrains.datalore.base.datetime.Duration.Companion.SECOND
 import jetbrains.datalore.base.datetime.Duration.Companion.WEEK
-import jetbrains.datalore.base.datetime.Duration.Companion.day
 import jetbrains.datalore.base.datetime.Duration.Companion.hour
 import jetbrains.datalore.base.datetime.Duration.Companion.millis
 import jetbrains.datalore.base.datetime.Duration.Companion.minute
 import jetbrains.datalore.base.datetime.Duration.Companion.second
-import jetbrains.datalore.base.datetime.Duration.Companion.week
+import jetbrains.datalore.base.datetime.Duration.Companion.totalDays
 import jetbrains.datalore.base.stringFormat.StringFormat
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -47,21 +46,22 @@ class TimeBreaksHelper(
         return when {
             targetStep < 1000 -> ticks.map(formatter)
             else -> {
-                val hideSeconds = ticks.all { it >= DAY.duration || Duration(it.toLong()).second == 0 }
+                val hideSeconds = ticks.all { it >= DAY.duration || Duration(it.toLong()).second == 0L }
                 ticks.map { formatString(it.toLong(), hideSeconds = hideSeconds) }
             }
         }
     }
 
     private fun formatString(v: Long, hideSeconds: Boolean = false): String {
-        val sign = "-".takeIf { v < 0 } ?: ""
+        if (v == 0L) {
+            return "0"
+        }
+
         val duration = Duration(abs(v))
 
         val parts = mutableListOf<String>()
-        when {
-            duration.week > 0 && duration.day > 0 -> parts.add(formatWeekAndDay(duration))
-            duration.week > 0 && duration.day == 0 -> parts.add(formatWeek(duration))
-            duration.week == 0 && duration.day > 0 -> parts.add(formatDay(duration))
+        if (duration.totalDays > 0) {
+            parts.add(formatTotalDays(duration))
         }
 
         val timeParts = StringBuilder()
@@ -76,6 +76,7 @@ class TimeBreaksHelper(
 
             if (duration.millis > 0) {
                 if (span > SECOND.duration && timeParts.isEmpty()) {
+                    // show seconds even on axis start - otherwise it looks strange
                     timeParts.append(formatHms(duration))
                 }
 
@@ -83,15 +84,17 @@ class TimeBreaksHelper(
                     timeParts.append(".")
                 }
 
-                timeParts.append(duration.millis)
+                if (duration.millis % 10 == 0L && duration.millis % 100 == 0L) {
+                    timeParts.append(duration.millis / 100)
+                } else {
+                    timeParts.append(duration.millis)
+                }
             }
         }
         timeParts.toString().takeIf(String::isNotBlank)?.let(parts::add)
 
-        return when {
-            parts.isEmpty() -> "0"
-            else -> parts.joinToString(prefix = sign, separator = " ")
-        }
+        val sign = "-".takeIf { v < 0 } ?: ""
+        return  parts.joinToString(prefix = sign, separator = " ")
     }
 
     private fun computeNiceTicks(): List<Double> {
@@ -116,15 +119,11 @@ class TimeBreaksHelper(
     }
 
     companion object {
-        private val weekAndDayFormat = newStringFormat("{d}W-{d}D")
-        private val weekFormat = newStringFormat("{d}W")
-        private val dayFormat = newStringFormat("{d}D")
-        private val hmsFormat = newStringFormat("{02d}:{02d}:{02d}")
-        private val hmFormat = newStringFormat("{02d}:{02d}")
+        private val dayFormat = newStringFormat("{d}d")
+        private val hmsFormat = newStringFormat("{d}:{02d}:{02d}")
+        private val hmFormat = newStringFormat("{d}:{02d}")
 
-        private fun formatWeekAndDay(duration: Duration) = weekAndDayFormat.apply(duration.week, duration.day)
-        private fun formatWeek(duration: Duration) = weekFormat.apply(duration.week)
-        private fun formatDay(duration: Duration) = dayFormat.apply(duration.day)
+        private fun formatTotalDays(duration: Duration) = dayFormat.apply(duration.totalDays)
         private fun formatHms(duration: Duration) = hmsFormat.apply(duration.hour, duration.minute, duration.second)
         private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
 

@@ -58,11 +58,16 @@ class Duration(val duration: Long) : Comparable<Duration> {
         val DAY = HOUR.mul(24)
         val WEEK = DAY.mul(7)
 
-        val Duration.week: Int get() = (this.duration / WEEK.duration).toInt()
-        val Duration.day: Int get() = ((this.duration % WEEK.duration) / DAY.duration).toInt()
-        val Duration.hour: Int get() = ((this.duration % DAY.duration) / HOUR.duration).toInt()
-        val Duration.minute: Int get() = ((this.duration % HOUR.duration) / MINUTE.duration).toInt()
-        val Duration.second: Int get() = ((this.duration % MINUTE.duration) / SECOND.duration).toInt()
-        val Duration.millis: Int get() = ((this.duration % SECOND.duration) / MS.duration).toInt()
+        val Duration.week: Long get() = duration / WEEK.duration
+        val Duration.day: Long get() = duration % WEEK.duration / DAY.duration
+        val Duration.hour: Long get() = duration % DAY.duration / HOUR.duration
+        val Duration.minute: Long get() = duration % HOUR.duration / MINUTE.duration
+        val Duration.second: Long get() = duration % MINUTE.duration / SECOND.duration
+        val Duration.millis: Long get() = duration % SECOND.duration / MS.duration
+
+        val Duration.totalWeeks: Long get() = duration / WEEK.duration
+        val Duration.totalDays: Long get() = duration / DAY.duration
+        val Duration.totalHours: Long get() = duration / DAY.duration
+        val Duration.totalMinutes: Long get() = duration / MINUTE.duration
     }
 }

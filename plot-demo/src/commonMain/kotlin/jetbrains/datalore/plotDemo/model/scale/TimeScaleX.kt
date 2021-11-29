@@ -15,11 +15,15 @@ import kotlin.random.Random
 class TimeScaleX {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plot("5 seconds", 0..5000 step 100, MS),
+            plot("5 seconds", 0..5000 step 25, MS),
             plot("24 hours", 0..24, HOUR),
             plot("5 days", 0..120, HOUR),
             plot("30 days", 0..720, HOUR),
-            plot("Negative time: -30 to 30 minutes", -30..30, MINUTE),
+            plot("-30..30, MINUTE", -30..30, MINUTE),
+            plot("Special: no zero (12 to 30 minutes)", 12..30, MINUTE),
+            plot("Special: assymetric range (-8 to 30 minutes)", -8..30, MINUTE),
+            plot("Special: negative (-30..-20, MINUTE)", -30..-20, MINUTE),
+            plot("Special: reversed negative (-20..-30, MINUTE)", -20 downTo -30, MINUTE),
         )
     }
 
