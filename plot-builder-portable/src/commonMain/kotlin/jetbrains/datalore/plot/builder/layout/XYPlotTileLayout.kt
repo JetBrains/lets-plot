@@ -123,66 +123,66 @@ internal class XYPlotTileLayout(
         }
 
         private fun computeAxisInfos(
-            xAxisLayout: AxisLayout,
-            yAxisLayout: AxisLayout,
+            hAxisLayout: AxisLayout,
+            vAxisLayout: AxisLayout,
             plotSize: DoubleVector,
             hDomain: ClosedRange<Double>,
             vDomain: ClosedRange<Double>,
             coordProvider: CoordProvider
         ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
-            val xAxisThickness = xAxisLayout.initialThickness()
-            var yAxisInfo = computeYAxisInfo(
-                yAxisLayout,
+            val hAxisThickness = hAxisLayout.initialThickness()
+            var vAxisInfo = computeVAxisInfo(
+                vAxisLayout,
+                vDomain,
                 geomBounds(
-                    xAxisThickness,
-                    yAxisLayout.initialThickness(),
+                    hAxisThickness,
+                    vAxisLayout.initialThickness(),
                     plotSize,
                     hDomain,
                     vDomain,
                     coordProvider
-                ),
-                coordProvider
+                )
             )
 
-            val yAxisThickness = yAxisInfo.axisBounds().dimension.x
-            var xAxisInfo = computeXAxisInfo(
-                xAxisLayout,
+            val vAxisThickness = vAxisInfo.axisBounds().dimension.x
+            var hAxisInfo = computeHAxisInfo(
+                hAxisLayout,
+                hDomain,
                 plotSize,
                 geomBounds(
-                    xAxisThickness,
-                    yAxisThickness,
+                    hAxisThickness,
+                    vAxisThickness,
                     plotSize,
                     hDomain,
                     vDomain,
                     coordProvider
-                ),
-                coordProvider
+                )
             )
 
-            if (xAxisInfo.axisBounds().dimension.y > xAxisThickness) {
+            if (hAxisInfo.axisBounds().dimension.y > hAxisThickness) {
                 // Re-layout y-axis if x-axis became thicker than its 'original thickness'.
-                yAxisInfo = computeYAxisInfo(
-                    yAxisLayout,
+                vAxisInfo = computeVAxisInfo(
+                    vAxisLayout,
+                    vDomain,
                     geomBounds(
-                        xAxisInfo.axisBounds().dimension.y,
-                        yAxisThickness,
+                        hAxisInfo.axisBounds().dimension.y,
+                        vAxisThickness,
                         plotSize,
                         hDomain,
                         vDomain,
                         coordProvider
-                    ),
-                    coordProvider
+                    )
                 )
             }
 
-            return Pair(xAxisInfo, yAxisInfo)
+            return Pair(hAxisInfo, vAxisInfo)
         }
 
-        private fun computeXAxisInfo(
+        private fun computeHAxisInfo(
             axisLayout: AxisLayout,
+            axisDomain: ClosedRange<Double>,
             plotSize: DoubleVector,
-            geomBounds: DoubleRectangle,
-            coordProvider: CoordProvider
+            geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
             val axisLength = geomBounds.dimension.x
             val stretch = axisLength * AXIS_STRETCH_RATIO
@@ -192,15 +192,15 @@ internal class XYPlotTileLayout(
                 geomBounds,
                 plotSize
             )
-            return axisLayout.doLayout(geomBounds.dimension, maxTickLabelsBounds, coordProvider)
+            return axisLayout.doLayout(axisDomain, axisLength, maxTickLabelsBounds)
         }
 
-        private fun computeYAxisInfo(
+        private fun computeVAxisInfo(
             axisLayout: AxisLayout,
-            geomBounds: DoubleRectangle,
-            coordProvider: CoordProvider
+            axisDomain: ClosedRange<Double>,
+            geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
-            return axisLayout.doLayout(geomBounds.dimension, null, coordProvider)
+            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, null)
         }
     }
 }
