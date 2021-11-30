@@ -14,7 +14,7 @@ None JavaFX platforms use SVG embedded stylesheet defined in Style.kt
 
 .plt-container {
     /*
-    Helvetica is narrower than font we use to have in DOM/Batik
+    Helvetica is narrower than font we used to have in DOM/Batik
     See: ...plot.builder.presentation.Defaults.kt
 
     ToDo: use font of same `size` on all platforms. Update LabelMetrics
@@ -73,7 +73,6 @@ Text {
 
 .plt_legend .legend-title Text {
     -fx-font-size: 15.0px;
-    -fx-font-weight: bold;
 }
 
 .plt_legend Text {
