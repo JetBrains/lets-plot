@@ -22,15 +22,7 @@ None JavaFX platforms use SVG embedded stylesheet defined in Style.kt
     */
     -fx-font-family: "Helvetica";
 
-    -fx-background-color: white;
-}
-
-.plt-container.plt-transparent {
     -fx-background-color: transparent;
-}
-
-.plt-backdrop {
-    -fx-visibility: hidden;
 }
 
 Text {

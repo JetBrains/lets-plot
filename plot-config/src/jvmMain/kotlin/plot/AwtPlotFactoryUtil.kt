@@ -12,7 +12,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
@@ -216,11 +215,6 @@ internal object AwtPlotFactoryUtil {
         plotContainer.ensureContentBuilt()
         val svg = plotContainer.svg
 
-        if (plotContainer.isLiveMap) {
-            // Plot transparent for live-map base layer to be visible.
-            svg.addClass(Style.PLOT_TRANSPARENT)
-        }
-
         val plotComponent: JComponent = svgComponentFactory(svg)
 
         plotComponent.addMouseMotionListener(object : MouseAdapter() {
@@ -263,7 +257,6 @@ internal object AwtPlotFactoryUtil {
                     plotContainer.mouseEventPeer.dispatch(event, AwtEventUtil.translate(e))
                 }
             }
-
 
 
             override fun mousePressed(e: MouseEvent) {

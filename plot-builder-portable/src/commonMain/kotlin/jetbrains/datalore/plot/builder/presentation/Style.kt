@@ -24,9 +24,6 @@ object Style {
     const val PLOT = "plt-plot"
     const val PLOT_TITLE = "plt-plot-title"
 
-    const val PLOT_TRANSPARENT = "plt-transparent"
-    const val PLOT_BACKDROP = "plt-backdrop"
-
     const val AXIS = "plt-axis"
 
     const val AXIS_TITLE = "plt-axis-title"
@@ -49,12 +46,6 @@ object Style {
         |	-webkit-user-select: none;
         |	-moz-user-select: none;
         |	-ms-user-select: none;
-        |}
-        |.$PLOT_BACKDROP {
-        |   fill: $BACKDROP_COLOR;
-        |}
-        |.$PLOT_TRANSPARENT .$PLOT_BACKDROP {
-        |   visibility: hidden;
         |}
         |text {
         |	font-size: ${FONT_MEDIUM}px;

@@ -12,6 +12,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
@@ -29,6 +30,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -129,6 +131,22 @@ class PlotSvgComponent constructor(
 
     private fun buildPlotComponents() {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
+
+        // ToDo: Theme plot.background
+        add(SvgRectElement(overallRect).apply {
+//            strokeColor().set(theme.rectColor())
+//            strokeWidth().set(theme.rectStrokeWidth())
+//            fillColor().set(theme.rectFill())
+            strokeWidth().set(0.0)
+            if (containsLiveMap) {
+                // Don't fill rect over livemap figure.
+                fillOpacity().set(0.0)
+            } else {
+                fillColor().set(Colors.parseColor(Defaults.BACKDROP_COLOR))
+                fillOpacity().set(0.99) // For JFx. 100% opaque rect blocks 'mouse left' events
+            }
+        })
+
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
