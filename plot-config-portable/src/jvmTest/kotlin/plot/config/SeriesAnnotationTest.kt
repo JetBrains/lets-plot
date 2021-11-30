@@ -70,8 +70,7 @@ class SeriesAnnotationTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(Aes.X, isDiscrete = false)
-            .assertDateTimeScale(Aes.X)
+            .assertDateTimeScale(Aes.X, isDateTime = true)
     }
 
     @Test
@@ -82,8 +81,7 @@ class SeriesAnnotationTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(Aes.X, isDiscrete = false)
-            .assertDateTimeScale(Aes.X)
+            .assertDateTimeScale(Aes.X, isDateTime = true)
     }
 
     @Test
@@ -93,8 +91,7 @@ class SeriesAnnotationTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertScale(Aes.X, isDiscrete = false)
-            .assertDateTimeScale(Aes.X)
+            .assertDateTimeScale(Aes.X, isDateTime = true)
     }
 
     @Test
@@ -104,8 +101,7 @@ class SeriesAnnotationTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertScale(Aes.X, isDiscrete = false)
-            .assertDateTimeScale(Aes.X)
+            .assertDateTimeScale(Aes.X, isDateTime = true)
     }
 
     @Test
@@ -113,19 +109,20 @@ class SeriesAnnotationTest {
         val spec = makePlotSpec(
             dataStorage = PLOT,
             mappingStorage = PLOT,
-            scales = """{"aesthetic": "x", "discrete": true}"""
+            scales = """{"aesthetic": "x", "reverse": true}"""
         )
         transformToClientPlotConfig(spec)
-            .assertScale(Aes.X, isDiscrete = true)
+            .assertDateTimeScale(Aes.X, isDateTime = false)
     }
 
     private fun PlotConfigClientSide.assertDateTimeScale(
-        aes: Aes<*>
+        aes: Aes<*>,
+        isDateTime: Boolean
     ): PlotConfigClientSide {
         val scale = scaleMap[aes]
         val breaksGenerator =
             (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
-        assertTrue(breaksGenerator is DateTimeBreaksGen)
+        assertTrue(breaksGenerator is DateTimeBreaksGen == isDateTime)
         return this
     }
 }
