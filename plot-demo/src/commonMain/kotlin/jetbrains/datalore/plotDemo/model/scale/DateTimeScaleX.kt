@@ -15,8 +15,11 @@ import kotlin.random.Random
 class DateTimeScaleX {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plot("hours", hour),
-            plot("days", day)
+            plot("hours", hour, withScales = true),
+            plot("days", day, withScales = true),
+
+            plot("hours", hour, withScales = false),
+            plot("days", day, withScales = false),
         )
     }
 
@@ -27,7 +30,7 @@ class DateTimeScaleX {
         private const val day = 24.0 * hour
         private val instant = UTC.toInstant(DateTime(Date(1, Month.FEBRUARY, 2003)))
 
-        fun plot(title: String, timeScale: Double): MutableMap<String, Any> {
+        fun plot(title: String, timeScale: Double, withScales: Boolean): MutableMap<String, Any> {
             val n = 30
 
             val rnd = Random(0)
@@ -37,17 +40,18 @@ class DateTimeScaleX {
                     "      'time': [$time]," +
                     "      'values': [$values]" +
                     "   }"
+            val scales = " {" +
+                    "         'name': 'Time($title)'," +
+                    "         'aesthetic': 'x'," +
+                    "         'datetime': true" +
+                    "      }"
+            val dataMeta =" 'data_meta' : { 'series_annotations': [ { 'column': 'time', 'type': 'datetime'} ] },"
+
             val spec = "{" +
                     "   'kind': 'plot'," +
-                    "   'data': " + data +
-                    "           ," +
-                    "   'scales': [" +
-                    "               {" +
-                    "                 'name': 'Time($title)'," +
-                    "                 'aesthetic': 'x'," +
-                    "                 'datetime': true" +
-                    "               }" +
-                    "             ]," +
+                    "   'data': " + data +  "," +
+                    "   'scales': [" + (scales.takeIf { withScales }  ?: "") + "]," +
+                    (dataMeta.takeIf { !withScales } ?: "") +
                     "   'mapping': {" +
                     "             'x': 'time'," +
                     "             'y': 'values'" +

@@ -57,6 +57,13 @@ object Option {
             const val ORDER_BY = "order_by"
             const val ORDER = "order"
         }
+
+        object SeriesAnnotation {
+            const val TAG = "series_annotations"
+            const val COLUMN = "column"
+            const val TYPE = "type"
+            const val DATE_TIME = "datetime"
+        }
     }
 
     object GGBunch {

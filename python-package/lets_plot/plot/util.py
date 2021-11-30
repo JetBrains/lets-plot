@@ -16,6 +16,11 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
+def isinstance_datetime(values: Any):
+    from numpy import datetime64
+    return values.dtypes.type == datetime64
+
+
 def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     data_meta = {}
 
@@ -32,6 +37,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     # mapping
     mapping = {}
     mapping_meta = []
+    series_meta = []
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
@@ -50,6 +56,14 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
             if len(mapping_meta) > 0:
                 data_meta.update({'mapping_annotations': mapping_meta})
+
+            if isinstance_datetime(raw_data[variable]):
+                series_meta.append({
+                    'column': variable,
+                    'type': "datetime"
+                })
+                if len(series_meta) > 0:
+                    data_meta.update({'series_annotations': series_meta})
 
     return data, aes(**mapping), {'data_meta': data_meta}
 

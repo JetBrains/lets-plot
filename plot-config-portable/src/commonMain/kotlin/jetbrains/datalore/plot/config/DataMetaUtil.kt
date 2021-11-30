@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
@@ -18,6 +19,7 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.LABEL
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
 import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
@@ -174,6 +176,58 @@ object DataMetaUtil {
                     varName,
                     orderBy = orderOptionForVar.byVariable.takeIf { it != orderOptionForVar.variableName },
                     orderOptionForVar.getOrderDir()
+                )
+            }
+    }
+
+    // Series Annotations
+
+    private fun Map<*, *>.getSeriesAnnotationsSpec(): List<Map<*, *>> {
+        return this
+            .getMap(Option.Meta.DATA_META)
+            ?.getMaps(SeriesAnnotation.TAG)
+            ?: emptyList()
+    }
+
+    fun createDateTimeScaleSpecs(
+        plotOptions: Map<String, Any>,
+        scaleOptions: List<Any?> = emptyList()
+    ): List<MutableMap<String, Any?>> {
+        val alreadyDefinedScales = scaleOptions.mapNotNull {
+            if (it is Map<*, *>) {
+                it[Scale.AES]
+            } else {
+                null
+            }
+        }
+
+        val plotMapping = plotOptions.getMap(Option.PlotBase.MAPPING)?.map { it } ?: emptyList()
+        val layerMapping = plotOptions.getMaps(Option.Plot.LAYERS)
+            ?.mapNotNull { layerOptions -> layerOptions.getMap(Option.PlotBase.MAPPING) }
+            ?.flatMap { it.entries }
+            ?: emptyList()
+        val xyMappings = (plotMapping + layerMapping).filter { it.key in listOf(Aes.X.name, Aes.Y.name) }
+
+        val plotSeriesAnnotations = plotOptions.getSeriesAnnotationsSpec()
+        val layersSeriesAnnotations = plotOptions.getMaps(Option.Plot.LAYERS)
+            ?.map { layerOptions -> layerOptions.getSeriesAnnotationsSpec() }
+            ?.flatten()
+            ?: emptyList()
+
+        return (plotSeriesAnnotations + layersSeriesAnnotations)
+            .flatMap { opts ->
+                val varName = opts.getString(SeriesAnnotation.COLUMN)
+                val aesList = xyMappings.filter { (_, variable) -> variable == varName }.map { (aes, _) -> aes }
+                aesList.associateWith { opts.getString(SeriesAnnotation.TYPE) }.toList()
+            }
+            .toMap()
+            .filterValues(SeriesAnnotation.DATE_TIME::equals)
+            .keys
+            .filter { aes -> aes !in alreadyDefinedScales }
+            .map { aes ->
+                mutableMapOf(
+                    Scale.AES to aes,
+                    Scale.DATE_TIME to true
                 )
             }
     }
