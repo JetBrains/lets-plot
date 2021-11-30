@@ -2,6 +2,11 @@
 
 ### Added
 
+- `scale_x_time()` and `scale_y_time()`
+
+  **TODO: FIX URL** See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-DD-MM/notebooks/scale_time.ipynb).
+
+
 ### Changed
 
 ### Fixed
@@ -12,3 +17,4 @@
 - `coord_fixed()` should adjust dimensions of "geom" panel accordingly [[#478](https://github.com/JetBrains/lets-plot/issues/478)].
 - The tooltip dependence on number of factors works separately by layers [[#481](https://github.com/JetBrains/lets-plot/issues/481)].
 - tooltip on y-axis looks wrong [[#393](https://github.com/JetBrains/lets-plot/issues/393)].
+- Provide scaleXTimeOffset for relative duration axis [[#468](https://github.com/JetBrains/lets-plot/issues/468)].
