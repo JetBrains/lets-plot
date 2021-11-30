@@ -193,13 +193,7 @@ object DataMetaUtil {
         plotOptions: Map<String, Any>,
         scaleOptions: List<Any?> = emptyList()
     ): List<MutableMap<String, Any?>> {
-        val alreadyDefinedScales = scaleOptions.mapNotNull {
-            if (it is Map<*, *>) {
-                it[Scale.AES]
-            } else {
-                null
-            }
-        }
+        val alreadyDefinedScales = scaleOptions.mapNotNull { it as? Map<*, *> }.map { it[Scale.AES] }
 
         val plotMapping = plotOptions.getMap(Option.PlotBase.MAPPING)?.map { it } ?: emptyList()
         val layerMapping = plotOptions.getMaps(Option.Plot.LAYERS)
