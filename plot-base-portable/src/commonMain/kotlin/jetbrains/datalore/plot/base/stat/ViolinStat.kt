@@ -5,10 +5,12 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class ViolinStat : BaseStat(DEF_MAPPING) {
 
@@ -33,7 +35,7 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             List(ys.size) { 1.0 }
         }
 
-        val statData = buildStat(xs, ys, ws, messageConsumer)
+        val statData = buildStat(xs, ys, ws)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -52,8 +54,7 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
         private fun buildStat(
             xs: List<Double?>,
             ys: List<Double?>,
-            ws: List<Double?>,
-            messageConsumer: (s: String) -> Unit
+            ws: List<Double?>
         ): MutableMap<DataFrame.Variable, List<Double>> {
             val binnedData = (xs zip (ys zip ws))
                 .groupBy({ it.first!! }, { it.second })
@@ -66,12 +67,23 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             val statScaled = ArrayList<Double>()
 
             for ((x, bin) in binnedData) {
-                val statData = buildBinStat(bin.first, bin.second, messageConsumer)
-                statX += MutableList(statData.getValue(Stats.Y).size) { x }
-                statY += statData.getValue(Stats.Y)
-                statDensity += statData.getValue(Stats.DENSITY)
-                statCount += statData.getValue(Stats.COUNT)
-                statScaled += statData.getValue(Stats.SCALED)
+                val (filteredY, filteredW) = SeriesUtil.filterFinite(bin.first, bin.second)
+                val (binY, binW) = (filteredY zip filteredW)
+                    .sortedBy { it.first }
+                    .unzip()
+                val ySummary = FiveNumberSummary(binY)
+                val rangeY = ClosedRange(ySummary.min, ySummary.max)
+                val binStatY = DensityStatUtil.createStepValues(rangeY, DensityStat.DEF_N)
+                val densityFunction = getDensityFunction(binY, binW)
+                val binStatCount = binStatY.map { densityFunction(it) }
+                val weightsSum = binW.sum()
+                val maxBinCount = binStatCount.maxOrNull()!!
+
+                statX += MutableList(binStatY.size) { x }
+                statY += binStatY
+                statDensity += binStatCount.map { it / weightsSum }
+                statCount += binStatCount
+                statScaled += binStatCount.map { it / maxBinCount }
             }
 
             return mutableMapOf(
@@ -83,32 +95,28 @@ class ViolinStat : BaseStat(DEF_MAPPING) {
             )
         }
 
-        private fun buildBinStat(
-            binY: List<Double?>,
-            binW: List<Double?>,
-            messageConsumer: (s: String) -> Unit
-        ): MutableMap<DataFrame.Variable, List<Double>> {
-            // TODO: Replace defaults by params
-            val stat = DensityStat(
-                bandWidth = DensityStatUtil.bandWidth(DensityStat.DEF_BW, binY),
-                bandWidthMethod = DensityStat.DEF_BW,
-                adjust = DensityStat.DEF_ADJUST,
-                kernel = DensityStat.DEF_KERNEL,
-                n = DensityStat.DEF_N,
-                fullScalMax = DensityStat.DEF_FULL_SCAN_MAX
-            )
-            val data = DataFrame.Builder()
-                .putNumeric(TransformVar.X, binY)
-                .putNumeric(TransformVar.WEIGHT, binW)
-                .build()
-            val statData = stat.apply(data, SimpleStatContext(data), messageConsumer)
-
-            return mutableMapOf(
-                Stats.Y to statData.getNumeric(Stats.X).requireNoNulls(),
-                Stats.DENSITY to statData.getNumeric(Stats.DENSITY).requireNoNulls(),
-                Stats.COUNT to statData.getNumeric(Stats.COUNT).requireNoNulls(),
-                Stats.SCALED to statData.getNumeric(Stats.SCALED).requireNoNulls()
-            )
+        private fun getDensityFunction(
+            binY: List<Double>,
+            binW: List<Double>
+        ): (Double) -> Double {
+            val bandWidth = DensityStatUtil.bandWidth(DensityStat.DEF_BW, binY)
+            val kernelFun: (Double) -> Double = DensityStatUtil.kernel(DensityStat.DEF_KERNEL)
+            return when (binY.size <= DensityStat.DEF_FULL_SCAN_MAX) {
+                true -> DensityStatUtil.densityFunctionFullScan(
+                    binY,
+                    binW,
+                    kernelFun,
+                    bandWidth,
+                    DensityStat.DEF_ADJUST
+                )
+                false -> DensityStatUtil.densityFunctionFast(
+                    binY,
+                    binW,
+                    kernelFun,
+                    bandWidth,
+                    DensityStat.DEF_ADJUST
+                )
+            }
         }
     }
 }
