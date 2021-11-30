@@ -17,6 +17,7 @@ class TimeScaleX {
         return listOf(
             plot("5 seconds", 0..5000 step 25, MS),
             plot("24 hours", 0..24, HOUR),
+            plot("24 hours", 0..24, HOUR, timeAxis = "y"),
             plot("5 days", 0..120, HOUR),
             plot("30 days", 0..720, HOUR),
             plot("-30..30, MINUTE", -30..30, MINUTE),
@@ -28,10 +29,16 @@ class TimeScaleX {
     }
 
     companion object {
-        fun plot(title: String, entries: Iterable<Int>, period: Duration): MutableMap<String, Any> {
+        fun plot(title: String, entries: Iterable<Int>, period: Duration, timeAxis: String = "x"): MutableMap<String, Any> {
             val rnd = Random(0)
             val time = entries.map { it * period.duration }
             val values = time.indices.map { rnd.nextDouble(0.0, 20.0) }
+
+            val mapping = when (timeAxis) {
+                "x" -> """{"x": "time", "y": "values"}"""
+                "y" -> """{"x": "values", "y": "time"}"""
+                else -> throw IllegalStateException()
+            }
 
             val spec =
                 """|{
@@ -40,12 +47,12 @@ class TimeScaleX {
                    |        "time": [${time.joinToString()}],
                    |        "values": [${values.joinToString()}]
                    |    },
-                   |    "mapping": {"x": "time", "y": "values"},
+                   |    "mapping": $mapping,
                    |    "layers": [{"geom": "line"}],
                    |    "scales": [
                    |        {
                    |            "name": "$title",
-                   |            "aesthetic": "x",
+                   |            "aesthetic": "$timeAxis",
                    |            "time": true
                    |        }
                    |    ]
