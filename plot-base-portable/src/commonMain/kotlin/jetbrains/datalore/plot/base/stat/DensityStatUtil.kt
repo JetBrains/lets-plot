@@ -70,6 +70,24 @@ object DensityStatUtil {
         }
     }
 
+    internal fun densityFunction(
+        values: List<Double>,
+        weights: List<Double>,
+        bw: Double?,
+        bwMethod: DensityStat.BandWidthMethod,
+        ad: Double,
+        ker: DensityStat.Kernel,
+        fullScalMax: Int
+    ): (Double) -> Double {
+        val bandWidth = bw ?: bandWidth(bwMethod, values)
+        val kernelFun: (Double) -> Double = kernel(ker)
+
+        return when (values.size <= fullScalMax) {
+            true -> densityFunctionFullScan(values, weights, kernelFun, bandWidth, ad)
+            false -> densityFunctionFast(values, weights, kernelFun, bandWidth, ad)
+        }
+    }
+
     internal fun densityFunctionFullScan(
         xs: List<Double>,
         weights: List<Double>,

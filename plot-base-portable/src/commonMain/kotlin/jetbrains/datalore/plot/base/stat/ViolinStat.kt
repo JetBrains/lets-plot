@@ -80,7 +80,7 @@ class ViolinStat(
             val ySummary = FiveNumberSummary(binY)
             val rangeY = ClosedRange(ySummary.min, ySummary.max)
             val binStatY = DensityStatUtil.createStepValues(rangeY, n)
-            val densityFunction = DensityStat.getDensityFunction(
+            val densityFunction = DensityStatUtil.densityFunction(
                 binY, binW,
                 bandWidth, bandWidthMethod, adjust, kernel, fullScalMax
             )
