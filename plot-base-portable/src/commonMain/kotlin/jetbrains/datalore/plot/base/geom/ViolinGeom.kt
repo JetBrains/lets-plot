@@ -33,7 +33,7 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val groupedDataPoints = aesthetics.dataPoints().groupBy {  it.x() }
+        val groupedDataPoints = aesthetics.dataPoints().groupBy { it.x() }
         val halfWidth = halfWidth(aesthetics, ctx)
         for ((_, nonOrderedDataPoints) in groupedDataPoints) {
             val dataPoints = GeomUtil.ordered_Y(nonOrderedDataPoints, false)
