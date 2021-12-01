@@ -80,15 +80,11 @@ class ViolinGeom : GeomBase() {
 
     private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics, sign: Double, halfWidth: Double): DoubleVector? {
         val coord = toLocationBound(sign, halfWidth)(p)
-        return if (coord != null) {
-            geomHelper.toClient(coord, p)
-        } else {
-            null
-        }
+        return coord?.let { geomHelper.toClient(it, p) }
     }
 
     private fun halfWidth(aesthetics: Aesthetics, ctx: GeomContext): Double {
-        val maxWeight: Double = aesthetics.dataPoints().map { it.weight()!! }.maxOrNull() ?: 0.0
+        val maxWeight = aesthetics.dataPoints().map { it.weight()!! }.maxOrNull() ?: 0.0
         return ctx.getResolution(Aes.X) / (2 * maxWeight)
     }
 

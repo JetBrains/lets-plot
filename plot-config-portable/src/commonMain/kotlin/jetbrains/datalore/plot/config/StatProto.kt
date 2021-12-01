@@ -96,7 +96,7 @@ object StatProto {
                 )
             }
 
-            StatKind.VIOLIN -> return ViolinStat()
+            StatKind.VIOLIN -> return configureViolinStat(options)
 
             StatKind.DENSITY -> return configureDensityStat(options)
 
@@ -172,6 +172,31 @@ object StatProto {
         )
     }
 
+    private fun configureViolinStat(options: OptionsAccessor): ViolinStat {
+        var bwValue: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
+        options[Density.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValue = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            }
+        }
+
+        val kernel = options.getString(Density.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+
+        return ViolinStat(
+            bandWidth = bwValue,
+            bandWidthMethod = bwMethod,
+            adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
+            kernel = kernel ?: DensityStat.DEF_KERNEL,
+            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
+            fullScalMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
+        )
+    }
+
     private fun configureDensityStat(options: OptionsAccessor): DensityStat {
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
@@ -196,7 +221,6 @@ object StatProto {
             fullScalMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
         )
     }
-
 
     private fun configureDensity2dStat(options: OptionsAccessor, filled: Boolean): AbstractDensity2dStat {
         var bwValueX: Double? = null

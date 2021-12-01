@@ -72,29 +72,10 @@ class DensityStat(
         val statDensity = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
-
-        val bandWidth = bandWidth ?: DensityStatUtil.bandWidth(
-            bandWidthMethod,
-            xs
+        val densityFunction = getDensityFunction(
+            xs, weights,
+            bandWidth, bandWidthMethod, adjust, kernel, fullScalMax
         )
-
-        val kernelFun: (Double) -> Double = DensityStatUtil.kernel(kernel)
-        val densityFunction: (Double) -> Double = when (xs.size <= fullScalMax) {
-            true -> DensityStatUtil.densityFunctionFullScan(
-                xs,
-                weights,
-                kernelFun,
-                bandWidth,
-                adjust
-            )
-            false -> DensityStatUtil.densityFunctionFast(
-                xs,
-                weights,
-                kernelFun,
-                bandWidth,
-                adjust
-            )
-        }
 
         val nTotal = weights.sum()
         for (x in statX) {
@@ -138,11 +119,44 @@ class DensityStat(
         val DEF_BW = NRD0
         const val DEF_FULL_SCAN_MAX = 5000
 
+        const val MAX_N = 1024
+
+        fun getDensityFunction(
+            values: List<Double>,
+            weights: List<Double>,
+            bandWidth: Double?,
+            bandWidthMethod: BandWidthMethod,
+            adjust: Double,
+            kernel: Kernel,
+            fullScalMax: Int
+        ): (Double) -> Double {
+            val bandWidthValue = bandWidth ?: DensityStatUtil.bandWidth(
+                bandWidthMethod,
+                values
+            )
+            val kernelFun: (Double) -> Double = DensityStatUtil.kernel(kernel)
+
+            return when (values.size <= fullScalMax) {
+                true -> DensityStatUtil.densityFunctionFullScan(
+                    values,
+                    weights,
+                    kernelFun,
+                    bandWidthValue,
+                    adjust
+                )
+                false -> DensityStatUtil.densityFunctionFast(
+                    values,
+                    weights,
+                    kernelFun,
+                    bandWidthValue,
+                    adjust
+                )
+            }
+        }
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.DENSITY
         )
-
-        private const val MAX_N = 1024
     }
 }
