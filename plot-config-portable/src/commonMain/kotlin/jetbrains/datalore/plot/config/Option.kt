@@ -62,7 +62,11 @@ object Option {
             const val TAG = "series_annotations"
             const val COLUMN = "column"
             const val TYPE = "type"
-            const val DATE_TIME = "datetime"
+
+            object DateTime {
+                const val DATE_TIME = "datetime"
+                const val TIME_ZONE = "time_zone"
+            }
         }
     }
 

@@ -191,7 +191,7 @@ object DataMetaUtil {
 
     fun createDateTimeScaleSpecs(
         plotOptions: Map<String, Any>,
-        scaleOptions: List<Any?> = emptyList()
+        scaleOptions: List<Any?>
     ): List<MutableMap<String, Any?>> {
         val alreadyDefinedScales = scaleOptions.mapNotNull { it as? Map<*, *> }.map { it[Scale.AES] }
 
@@ -209,20 +209,24 @@ object DataMetaUtil {
             ?: emptyList()
 
         return (plotSeriesAnnotations + layersSeriesAnnotations)
-            .flatMap { opts ->
-                val varName = opts.getString(SeriesAnnotation.COLUMN)
+            .flatMap { options ->
+                val varName = options.getString(SeriesAnnotation.COLUMN)
                 val aesList = xyMappings.filter { (_, variable) -> variable == varName }.map { (aes, _) -> aes }
-                aesList.associateWith { opts.getString(SeriesAnnotation.TYPE) }.toList()
+                aesList.associateWith { options }.toList()
             }
-            .toMap()
-            .filterValues(SeriesAnnotation.DATE_TIME::equals)
-            .keys
-            .filter { aes -> aes !in alreadyDefinedScales }
-            .map { aes ->
-                mutableMapOf(
-                    Scale.AES to aes,
-                    Scale.DATE_TIME to true
-                )
+            .filter { (aes, _) -> aes !in alreadyDefinedScales }
+            .mapNotNull { (aes, options) ->
+                when (options[SeriesAnnotation.TYPE]) {
+                    SeriesAnnotation.DateTime.DATE_TIME -> {
+                        mutableMapOf(
+                            Scale.AES to aes,
+                            Scale.DATE_TIME to true
+                        )
+                    }
+                    else -> {
+                        null
+                    }
+                }
             }
     }
 }
