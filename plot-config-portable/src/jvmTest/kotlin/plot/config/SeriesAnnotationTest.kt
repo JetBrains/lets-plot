@@ -8,14 +8,16 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.config.AsDiscreteTest.*
-import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.*
+import jetbrains.datalore.plot.config.AsDiscreteTest.Storage
+import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
+import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SeriesAnnotationTest {
 
-    private val data = """
+    private val myData = """
         {
             "date": [946684800000.0, 949363200000.0, 951868800000.0],
             "y": [0, 0, 0]
@@ -27,7 +29,7 @@ class SeriesAnnotationTest {
         mappingStorage: Storage,
         scales: String? = null
     ): String {
-        val data = "\"data\": ${this.data},"
+        val data = "\"data\": $myData,"
         val mapping = "\"x\": \"date\", \"y\": \"y\""
         val annotation = """
             |"data_meta": {
@@ -68,7 +70,6 @@ class SeriesAnnotationTest {
             dataStorage = PLOT,
             mappingStorage = PLOT
         )
-
         transformToClientPlotConfig(spec)
             .assertDateTimeScale(Aes.X, isDateTime = true)
     }
@@ -79,7 +80,6 @@ class SeriesAnnotationTest {
             dataStorage = LAYER,
             mappingStorage = LAYER
         )
-
         transformToClientPlotConfig(spec)
             .assertDateTimeScale(Aes.X, isDateTime = true)
     }
@@ -106,23 +106,111 @@ class SeriesAnnotationTest {
 
     @Test
     fun `scale X is already defined`() {
-        val spec = makePlotSpec(
-            dataStorage = PLOT,
-            mappingStorage = PLOT,
-            scales = """{"aesthetic": "x", "reverse": true}"""
-        )
+        run {
+            val spec = makePlotSpec(
+                dataStorage = PLOT,
+                mappingStorage = PLOT,
+                scales = """{"aesthetic": "x", "reverse": true}"""
+            )
+            transformToClientPlotConfig(spec)
+                .assertDateTimeScale(Aes.X, isDateTime = false)
+        }
+        run {
+            val spec = makePlotSpec(
+                dataStorage = PLOT,
+                mappingStorage = PLOT,
+                scales = """{"aesthetic": "x", "discrete": true}"""
+            )
+            transformToClientPlotConfig(spec)
+                .assertScale(Aes.X, isDiscrete = true)
+                .assertDateTimeScale(Aes.X, isDateTime = false)
+        }
+    }
+
+    @Test
+    fun `as_discrete annotation is a higher priority`() {
+        val spec = """
+            {
+              "data": $myData,
+              "data_meta": {
+                "mapping_annotations": [
+                  {
+                    "aes": "x",
+                    "annotation": "as_discrete"
+                  }
+                ],  
+                "series_annotations": [
+                    {
+                        "column": "date",
+                        "type": "datetime"
+                    }
+                ]
+              },
+              "mapping": {
+                "x": "date", "y": "y"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "point"
+                }
+              ]
+            }
+        """.trimIndent()
+
         transformToClientPlotConfig(spec)
+            .assertScale(Aes.X, isDiscrete = true)
             .assertDateTimeScale(Aes.X, isDateTime = false)
     }
+
+    @Test
+    fun twoLayers() {
+        val spec = """
+            {
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "point",
+                  "data": { "d1": [946684800000.0] },
+                  "mapping": {
+                    "x": "d1"
+                  },
+                  "data_meta": {
+                    "series_annotations": [
+                        {
+                        "column": "d1",
+                        "type": "datetime"
+                        }
+                    ]
+                  }
+                },
+                {
+                  "geom": "point",
+                  "data": { "d2": [949363200000.0] },                  
+                  "mapping": {
+                    "x": "d2"
+                  }                 
+                }
+              ]
+            }""".trimIndent()
+
+        transformToClientPlotConfig(spec)
+            .assertDateTimeScale(Aes.X, isDateTime = true)
+    }
+
 
     private fun PlotConfigClientSide.assertDateTimeScale(
         aes: Aes<*>,
         isDateTime: Boolean
     ): PlotConfigClientSide {
         val scale = scaleMap[aes]
-        val breaksGenerator =
-            (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
-        assertTrue(breaksGenerator is DateTimeBreaksGen == isDateTime)
+        if (scale.isContinuous) {
+            val breaksGenerator =
+                (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+            assertTrue(breaksGenerator is DateTimeBreaksGen == isDateTime)
+        } else {
+            assertFalse(isDateTime)
+        }
         return this
     }
 }
