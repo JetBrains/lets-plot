@@ -11,7 +11,8 @@ import jetbrains.datalore.plotDemo.data.Iris
 class Violin {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            basic()
+            basic(),
+            withNan()
         )
     }
 
@@ -35,6 +36,27 @@ class Violin {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
+
+    }
+
+    private fun withNan(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'class': ['A', 'A', 'A', null, 'B', 'B', 'B', 'B']," +
+                "             'value': [0, 0, 2, 2, 1, 1, 3, null]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'class'," +
+                "                'y': 'value'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
 
     }
 }

@@ -63,6 +63,7 @@ class ViolinStat(
         ws: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
         val binnedData = (xs zip (ys zip ws))
+            .filter { it.first?.isFinite() == true }
             .groupBy({ it.first!! }, { it.second })
             .mapValues { it.value.unzip() }
 
