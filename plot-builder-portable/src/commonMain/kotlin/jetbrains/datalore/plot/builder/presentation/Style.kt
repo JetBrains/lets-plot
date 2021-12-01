@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.plot.builder.presentation.Defaults.BACKDROP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL

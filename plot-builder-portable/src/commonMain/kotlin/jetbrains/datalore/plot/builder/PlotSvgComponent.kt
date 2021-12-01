@@ -30,7 +30,6 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
-import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -133,19 +132,23 @@ class PlotSvgComponent constructor(
         val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
 
         // ToDo: Theme plot.background
-        add(SvgRectElement(overallRect).apply {
-//            strokeColor().set(theme.rectColor())
-//            strokeWidth().set(theme.rectStrokeWidth())
-//            fillColor().set(theme.rectFill())
-            strokeWidth().set(0.0)
-            if (containsLiveMap) {
-                // Don't fill rect over livemap figure.
-                fillOpacity().set(0.0)
-            } else {
-                fillColor().set(Colors.parseColor(Defaults.BACKDROP_COLOR))
-                fillOpacity().set(0.99) // For JFx. 100% opaque rect blocks 'mouse left' events
-            }
-        })
+        val plotTheme = theme.plot()
+        if (plotTheme.showBackground()) {
+            add(SvgRectElement(overallRect).apply {
+                strokeColor().set(plotTheme.backgroundColor())
+                strokeWidth().set(plotTheme.backgroundStrokeWidth())
+                fillColor().set(plotTheme.backgroundFill())
+                if (containsLiveMap) {
+                    // Don't fill rect over livemap figure.
+                    fillOpacity().set(0.0)
+                } else {
+                    if (Colors.solid(plotTheme.backgroundFill())) {
+                        // Workaround for JFX: 100% opaque rect blocks 'mouse left' events.
+                        fillOpacity().set(0.99)
+                    }
+                }
+            })
+        }
 
 
         @Suppress("ConstantConditionIf")

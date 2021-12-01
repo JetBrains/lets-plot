@@ -29,7 +29,7 @@ object Defaults {
     val X_LIGHT_GRAY = Color.VERY_LIGHT_GRAY.toHexColor()
     const val XX_LIGHT_GRAY = "#e0e0e0"
 
-    const val BACKDROP_COLOR = "white"
+//    const val BACKDROP_COLOR = "white"
 
     const val TEXT_COLOR = DARK_GRAY
 

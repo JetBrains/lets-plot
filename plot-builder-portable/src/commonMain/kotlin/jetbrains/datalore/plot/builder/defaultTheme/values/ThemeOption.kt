@@ -12,6 +12,7 @@ object ThemeOption {
     const val LINE = "line"
     const val RECT = "rect"
 
+    const val PLOT_BKGR_RECT = "plot_background"
     const val PLOT_TITLE = "plot_title"
     const val PLOT_SUBTITLE = "plot_subtitle" // ToDo
     const val PLOT_CAPTION = "plot_caption"   // ToDo
@@ -112,6 +113,7 @@ object ThemeOption {
             Name.LP_NONE,
         )
         val elemWithColorAndSize = listOf(
+            PLOT_BKGR_RECT,
             AXIS_TICKS_X,
             AXIS_TICKS_Y,
             AXIS_LINE_X,
@@ -125,6 +127,7 @@ object ThemeOption {
             PANEL_GRID_MINOR_Y,
             FACET_STRIP_BGR_RECT,
         )
+
         // Actually, text sizes are defined in "theme values".
         val elemWithColorOnly = listOf(
             PLOT_TITLE,
@@ -139,6 +142,7 @@ object ThemeOption {
             LEGEND_TITLE,
         )
         val elemWithFill = listOf(
+            PLOT_BKGR_RECT,
             AXIS_TOOLTIP_X,
             AXIS_TOOLTIP_Y,
             PANEL_BKGR_RECT,
