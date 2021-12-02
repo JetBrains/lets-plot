@@ -34,9 +34,10 @@ def theme(*,
           # ToDo: axis.line.x.top, axis.line.x.bottom
           # ToDo: axis.line.x.left, axis.line.x.right
 
+          legend_background=None,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
-          # ToDo: legend.background, etc...
+          # ToDo: other legend options...
 
           panel_background=None,
           # ToDo: panel.border, etc...
@@ -49,10 +50,10 @@ def theme(*,
           panel_grid_major_y=None,
           panel_grid_minor_y=None,
 
+          plot_background=None,
           plot_title=None,
           # ToDo: plot_subtitle=None,
-          # ToDo: plot_caption=None,
-          # ToDo: plot.background, etc...
+          # ToDo: plot_caption=None, , etc...
 
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
@@ -108,6 +109,10 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify line parameters along all axes.
         `axis_line_*` inherits from `axis_line` which inherits from `line`.
+    legend_background : str or dict
+        Background of legend.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify legend background parameters, inherited from `rect`.
     legend_text : str or dict
         Legend item labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -137,6 +142,10 @@ def theme(*,
         Set `element_line()` to specify grid line parameters.
         `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
         which in turn inherits from `line`.
+    plot_background : str or dict
+        Background of the entire plot.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify plot background parameters, inherited from `rect`.
     plot_title : str or dict
         Plot title.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
