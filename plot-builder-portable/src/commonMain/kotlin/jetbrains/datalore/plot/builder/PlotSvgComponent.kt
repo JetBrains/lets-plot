@@ -131,7 +131,6 @@ class PlotSvgComponent constructor(
     private fun buildPlotComponents() {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
 
-        // ToDo: Theme plot.background
         val plotTheme = theme.plot()
         if (plotTheme.showBackground()) {
             add(SvgRectElement(overallRect).apply {
@@ -149,7 +148,6 @@ class PlotSvgComponent constructor(
                 }
             })
         }
-
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {

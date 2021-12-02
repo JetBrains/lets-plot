@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.defaultTheme.values
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
@@ -47,6 +48,11 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             PLOT_BKGR_RECT to mapOf(
+                Elem.FILL to Color.WHITE,
+                Elem.SIZE to 0.0,
+            ),
+
+            LEGEND_BKGR_RECT to mapOf(
                 Elem.FILL to Color.WHITE,
                 Elem.SIZE to 0.0,
             ),

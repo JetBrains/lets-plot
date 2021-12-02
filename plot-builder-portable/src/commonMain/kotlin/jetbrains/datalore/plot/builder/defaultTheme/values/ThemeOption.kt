@@ -63,6 +63,7 @@ object ThemeOption {
     const val FACET_STRIP_TEXT = "strip_text"   // ToDo: x / y
 
     // Legend
+    const val LEGEND_BKGR_RECT = "legend_background"
     const val LEGEND_TEXT = "legend_text"
     const val LEGEND_TITLE = "legend_title"
     const val LEGEND_POSITION = "legend_position"
@@ -114,6 +115,7 @@ object ThemeOption {
         )
         val elemWithColorAndSize = listOf(
             PLOT_BKGR_RECT,
+            LEGEND_BKGR_RECT,
             AXIS_TICKS_X,
             AXIS_TICKS_Y,
             AXIS_LINE_X,
@@ -143,6 +145,7 @@ object ThemeOption {
         )
         val elemWithFill = listOf(
             PLOT_BKGR_RECT,
+            LEGEND_BKGR_RECT,
             AXIS_TOOLTIP_X,
             AXIS_TOOLTIP_Y,
             PANEL_BKGR_RECT,
