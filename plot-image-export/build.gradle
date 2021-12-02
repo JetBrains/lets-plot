@@ -109,7 +109,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT"
-                        url = "https://opensource.org/licenses/MIT"
+                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
                     }
                 }
                 developers {
