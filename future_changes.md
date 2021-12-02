@@ -6,7 +6,7 @@
 
   **TODO: FIX URL** See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-DD-MM/notebooks/scale_time.ipynb).
        
-- `plot_background`, `legend_background` parameters in `theme()`. 
+- `plot_background`, `legend_background` parameters in `theme()` [[#485](https://github.com/JetBrains/lets-plot/issues/485)]. 
 
 ### Changed
 
