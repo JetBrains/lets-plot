@@ -2378,7 +2378,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
 
 def scale_x_time(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
     """
-    Position scale x for time data.
+    Position scale x for data representing "time delta" values expressed in milliseconds.
 
     Parameters
     ----------
@@ -2440,7 +2440,7 @@ def scale_x_time(name=None, breaks=None, labels=None, limits=None, expand=None, 
 
 def scale_y_time(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
     """
-    Position scale y for time data.
+    Position scale y for data representing "time delta" values expressed in milliseconds.
 
     Parameters
     ----------
