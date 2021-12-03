@@ -4,7 +4,7 @@
 
 - `scale_x_time()` and `scale_y_time()` [[#468](https://github.com/JetBrains/lets-plot/issues/468)].
 
-  **TODO: FIX URL** See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-DD-MM/notebooks/scale_time.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-12/notebooks/scale_time.ipynb).
        
 - `plot_background`, `legend_background` parameters in `theme()` [[#485](https://github.com/JetBrains/lets-plot/issues/485)]. 
 
