@@ -34,16 +34,15 @@ class ViolinGeom : GeomBase() {
     ) {
         val helper = LinesHelper(pos, coord, ctx)
         val groupedDataPoints = aesthetics.dataPoints().groupBy { it.x() }
-        val halfWidth = halfWidth(aesthetics, ctx)
         for ((_, nonOrderedDataPoints) in groupedDataPoints) {
             val dataPoints = GeomUtil.ordered_Y(nonOrderedDataPoints, false)
-            val paths = helper.createBands(dataPoints, toLocationBound(-1.0, halfWidth), toLocationBound(1.0, halfWidth))
+            val paths = helper.createBands(dataPoints, toLocationBound(-1.0, ctx), toLocationBound(1.0, ctx))
             paths.reverse()
             appendNodes(paths, root)
 
             helper.setAlphaEnabled(false)
-            appendNodes(helper.createLines(dataPoints, toLocationBound(-1.0, halfWidth)), root)
-            appendNodes(helper.createLines(dataPoints, toLocationBound(1.0, halfWidth)), root)
+            appendNodes(helper.createLines(dataPoints, toLocationBound(-1.0, ctx)), root)
+            appendNodes(helper.createLines(dataPoints, toLocationBound(1.0, ctx)), root)
         }
 
         buildHints(aesthetics, pos, coord, ctx, -1.0)
@@ -51,11 +50,10 @@ class ViolinGeom : GeomBase() {
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext, sign: Double) {
-        val halfWidth = halfWidth(aesthetics, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
             aesthetics.dataPoints(),
-            MultiPointDataConstructor.singlePointAppender { p -> toClient(geomHelper, p, sign, halfWidth) },
+            MultiPointDataConstructor.singlePointAppender { p -> toClient(geomHelper, p, sign, ctx) },
             MultiPointDataConstructor.reducer(0.999, false)
         )
 
@@ -78,19 +76,14 @@ class ViolinGeom : GeomBase() {
         return GeomTargetCollector.TooltipParams.params().setColor(HintColorUtil.fromFill(aes))
     }
 
-    private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics, sign: Double, halfWidth: Double): DoubleVector? {
-        val coord = toLocationBound(sign, halfWidth)(p)
+    private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics, sign: Double, ctx: GeomContext): DoubleVector? {
+        val coord = toLocationBound(sign, ctx)(p)
         return coord?.let { geomHelper.toClient(it, p) }
     }
 
-    private fun halfWidth(aesthetics: Aesthetics, ctx: GeomContext): Double {
-        val maxWeight = aesthetics.dataPoints().map { it.weight()!! }.maxOrNull() ?: 0.0
-        return ctx.getResolution(Aes.X) / (2 * maxWeight)
-    }
-
-    private fun toLocationBound(sign: Double, halfWidth: Double): (p: DataPointAesthetics) -> DoubleVector? {
+    private fun toLocationBound(sign: Double, ctx: GeomContext): (p: DataPointAesthetics) -> DoubleVector? {
         return fun (p: DataPointAesthetics): DoubleVector? {
-            val x = p.x()!! + halfWidth * DEF_WIDTH * sign * p.weight()!!
+            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * DEF_WIDTH * sign * p.violinwidth()!!
             val y = p.y()!!
             return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
                 DoubleVector(x, y)

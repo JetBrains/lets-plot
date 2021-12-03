@@ -26,6 +26,7 @@ object Stats {
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
+    val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
 
     val CORR = DataFrame.Variable("..corr..", STAT, "corr")
     val CORR_ABS = DataFrame.Variable("..corr_abs..", STAT, "corr_abs")
@@ -50,6 +51,7 @@ object Stats {
             MIDDLE,
             UPPER,
             WIDTH,
+            VIOLIN_WIDTH,
             SCALED,
             GROUP,
             CORR,

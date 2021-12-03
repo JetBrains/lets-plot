@@ -24,7 +24,6 @@ class Violin {
                 "                'y': 'sepal length (cm)'," +
                 "                'fill': 'target'" +
                 "              }," +
-
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +

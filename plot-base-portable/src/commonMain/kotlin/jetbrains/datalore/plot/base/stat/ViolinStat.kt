@@ -23,12 +23,12 @@ class ViolinStat(
 
     init {
         require(n <= DensityStat.MAX_N) {
-            "The input n = $n  > ${DensityStat.MAX_N} is too large!"
+            "The input n = $n > ${DensityStat.MAX_N} is too large!"
         }
     }
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
+        return listOf(Aes.X, Aes.Y, Aes.VIOLINWIDTH)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -42,8 +42,8 @@ class ViolinStat(
         } else {
             List(ys.size) { 0.0 }
         }
-        val ws = if (data.has(TransformVar.WEIGHT)) {
-            data.getNumeric(TransformVar.WEIGHT)
+        val ws = if (data.has(TransformVar.VIOLINWIDTH)) {
+            data.getNumeric(TransformVar.VIOLINWIDTH)
         } else {
             List(ys.size) { 1.0 }
         }
@@ -86,12 +86,12 @@ class ViolinStat(
                 bandWidth, bandWidthMethod, adjust, kernel, fullScalMax
             )
             val binStatCount = binStatY.map { densityFunction(it) }
-            val weightsSum = binW.sum()
+            val widthsSum = binW.sum()
             val maxBinCount = binStatCount.maxOrNull()!!
 
             statX += MutableList(binStatY.size) { x }
             statY += binStatY
-            statDensity += binStatCount.map { it / weightsSum }
+            statDensity += binStatCount.map { it / widthsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
         }
@@ -99,6 +99,7 @@ class ViolinStat(
         return mutableMapOf(
             Stats.X to statX,
             Stats.Y to statY,
+            Stats.VIOLIN_WIDTH to statScaled,
             Stats.DENSITY to statDensity,
             Stats.COUNT to statCount,
             Stats.SCALED to statScaled
@@ -109,7 +110,7 @@ class ViolinStat(
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.WEIGHT to Stats.DENSITY
+            Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH
         )
     }
 }

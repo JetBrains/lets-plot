@@ -214,7 +214,7 @@ object GeomMeta {
             GeomKind.VIOLIN -> listOf(
                 Aes.X,
                 Aes.Y,
-                Aes.WEIGHT,
+                Aes.VIOLINWIDTH,
 
                 Aes.ALPHA,
                 Aes.COLOR,

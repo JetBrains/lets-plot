@@ -32,6 +32,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
+import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -396,6 +397,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun height(): Double {
             return get(HEIGHT)
+        }
+
+        override fun violinwidth(): Double {
+            return get(VIOLINWIDTH)
         }
 
         override fun weight(): Double {
