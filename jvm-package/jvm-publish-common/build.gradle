@@ -75,6 +75,15 @@ task jarLetsPlotJvmCommonSources(type: ShadowJar) {
     archiveVersion = artifactVersion
     classifier 'sources'
     configurations = [rootProject.configurations.letsPlotJvmCommonSources]
+
+    // Include License file in shadow JAR.
+    jvmJar {
+        metaInf {
+            from("$rootDir"){
+                include "LICENSE"
+            }
+        }
+    }
 }
 
 publishing {
