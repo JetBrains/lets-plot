@@ -41,15 +41,14 @@ object DataMetaUtil {
         return this
             .getMap(Option.Meta.DATA_META)
             ?.getMaps(MappingAnnotation.TAG)
-            ?.filter { it.read(ANNOTATION) == annotation}
+            ?.filter { it.read(ANNOTATION) == annotation }
             ?: emptyList()
     }
-
 
     /**
     @returns Set<aes> of discrete aes
      */
-    fun getAsDiscreteAesSet(options: Map<*, *>): Set<Any> {
+    private fun getAsDiscreteAesSet(options: Map<*, *>): Set<Any> {
         return options
             .getMaps(MappingAnnotation.TAG)
             ?.associate { it.read(AES)!! to it.read(ANNOTATION)!! }
@@ -85,7 +84,7 @@ object DataMetaUtil {
     fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
-        commonDiscreteAes: Set<*>,
+        commonDataMeta: Map<*, *>,
         commonMappings: Map<*, *>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {
@@ -98,13 +97,18 @@ object DataMetaUtil {
                 ownMappings,
                 // re-insert existing variables as discrete
                 DataFrameUtil.toMap(ownData)
-                    .filter { (varName, _) -> isDiscrete(varName) }
+                    .filter { (varName, _) -> isDiscrete(varName) || isDateTime(varName) }
                     .entries
                     .fold(DataFrame.Builder(ownData)) { acc, (varName, values) ->
                         val variable = findVariableOrFail(ownData, varName)
-                        // re-insert as discrete
                         acc.remove(variable)
-                        acc.putDiscrete(variable, values)
+                        if (isDiscrete(varName)) {
+                            // re-insert as discrete
+                            acc.putDiscrete(variable, values)
+                        } else {
+                            // correct label
+                            acc.put(createVariable(varName, fromDateTime(varName)), values)
+                        }
                     }
                     .build()
             )
@@ -119,6 +123,8 @@ object DataMetaUtil {
             return@run ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
         }
 
+        val commonDiscreteAes = getAsDiscreteAesSet(commonDataMeta)
+
         // Original (not encoded) discrete var names from both common and own mappings.
         val combinedDiscreteVars = run {
             // common names already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
@@ -132,16 +138,38 @@ object DataMetaUtil {
 
         val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(ownData)
 
+        // date-time variables
+        val dateTimeVars =
+            getDateTimeColumns(commonDataMeta) + getDateTimeColumns(options.getMap(Option.Meta.DATA_META))
+
+        val ownDateTimeMapping = ownMappings
+            .filterKeys { aes -> aes in setOf(Aes.X.name, Aes.Y.name) }
+            .filterValues { varName -> varName in dateTimeVars && varName !in combinedDiscreteVars }
+
+        val dtData = combinedDfVars
+            .filter { (dfVarName, _) -> dfVarName in dateTimeVars }
+            .mapKeys { (dfVarName, _) ->
+                createVariable(toDateTime(dfVarName), label = dfVarName)
+            }
+            .entries
+
         return Pair(
             ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
                 require(varName is String)
                 toDiscrete(varName)
+            } + ownDateTimeMapping.mapValues { (_, varName) ->
+                require(varName is String)
+                toDateTime(varName)
             },
             combinedDfVars
                 .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
                 .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
                 .entries
-                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values) }
+                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) ->
+                    acc.putDiscrete(dfVar, values)
+                }.also { builder ->
+                    dtData.forEach { builder.put(it.key, it.value) }
+                }
                 .build()
         )
     }
@@ -182,52 +210,27 @@ object DataMetaUtil {
 
     // Series Annotations
 
-    private fun Map<*, *>.getSeriesAnnotationsSpec(): List<Map<*, *>> {
-        return this
-            .getMap(Option.Meta.DATA_META)
-            ?.getMaps(SeriesAnnotation.TAG)
-            ?: emptyList()
+    private const val dateTimePrefix = "@datetime@"
+
+    fun isDateTime(variable: String) = variable.startsWith(dateTimePrefix)
+
+    private fun toDateTime(variable: String): String {
+        require(!isDateTime(variable)) { "toDateTime() - variable already encoded: $variable" }
+        return "$dateTimePrefix$variable"
     }
 
-    fun createDateTimeScaleSpecs(
-        plotOptions: Map<String, Any>,
-        scaleOptions: List<Any?>
-    ): List<MutableMap<String, Any?>> {
-        val alreadyDefinedScales = scaleOptions.mapNotNull { it as? Map<*, *> }.map { it[Scale.AES] }
+    private fun fromDateTime(variable: String): String {
+        require(isDateTime(variable)) { "fromDateTime() - variable is not encoded: $variable" }
+        return variable.removePrefix(dateTimePrefix)
+    }
 
-        val plotMapping = plotOptions.getMap(Option.PlotBase.MAPPING)?.map { it } ?: emptyList()
-        val layerMapping = plotOptions.getMaps(Option.Plot.LAYERS)
-            ?.mapNotNull { layerOptions -> layerOptions.getMap(Option.PlotBase.MAPPING) }
-            ?.flatMap { it.entries }
-            ?: emptyList()
-        val xyMappings = (plotMapping + layerMapping).filter { it.key in listOf(Aes.X.name, Aes.Y.name) }
-
-        val plotSeriesAnnotations = plotOptions.getSeriesAnnotationsSpec()
-        val layersSeriesAnnotations = plotOptions.getMaps(Option.Plot.LAYERS)
-            ?.map { layerOptions -> layerOptions.getSeriesAnnotationsSpec() }
-            ?.flatten()
-            ?: emptyList()
-
-        return (plotSeriesAnnotations + layersSeriesAnnotations)
-            .flatMap { options ->
-                val varName = options.getString(SeriesAnnotation.COLUMN)
-                val aesList = xyMappings.filter { (_, variable) -> variable == varName }.map { (aes, _) -> aes }
-                aesList.associateWith { options }.toList()
-            }
-            .filter { (aes, _) -> aes !in alreadyDefinedScales }
-            .mapNotNull { (aes, options) ->
-                when (options[SeriesAnnotation.TYPE]) {
-                    SeriesAnnotation.DateTime.DATE_TIME -> {
-                        mutableMapOf(
-                            Scale.AES to aes,
-                            Scale.DATE_TIME to true
-                        )
-                    }
-                    else -> {
-                        null
-                    }
-                }
-            }
+    private fun getDateTimeColumns(options: Map<*, *>): Set<Any> {
+        return options
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.read(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE)!! }
+            ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
+            ?.keys
+            ?: emptySet()
     }
 }
 

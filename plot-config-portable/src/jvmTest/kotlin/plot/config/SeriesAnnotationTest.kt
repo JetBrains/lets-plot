@@ -24,27 +24,37 @@ class SeriesAnnotationTest {
         }
     """
 
+    private val seriesAnnotation = """
+            |"series_annotations": [
+            |    {
+            |        "column": "date",
+            |        "type": "datetime"
+            |    }
+            |]
+        """.trimMargin()
+    private val mappingAnnotation = """
+            |"mapping_annotations": [
+            |    {
+            |        "aes": "x",
+            |        "annotation": "as_discrete"
+            |    }
+            ]""".trimMargin()
+
+
     private fun makePlotSpec(
         dataStorage: Storage,
         mappingStorage: Storage,
+        dataMetaAnnotations: String = seriesAnnotation,
         scales: String? = null
     ): String {
         val data = "\"data\": $myData,"
         val mapping = "\"x\": \"date\", \"y\": \"y\""
-        val annotation = """
-            |"data_meta": {
-            |    "series_annotations": [
-            |        {
-            |            "column": "date",
-            |            "type": "datetime"
-            |        }
-            |    ]
-            |},
-        """.trimMargin()
         return """
             |{
             |  ${data.takeIf { dataStorage == PLOT } ?: ""}
-            |  ${annotation.takeIf { mappingStorage == PLOT } ?: ""}
+            |  "data_meta": {
+            |       ${dataMetaAnnotations.takeIf { mappingStorage == PLOT } ?: ""}
+            |  },
             |  "mapping": {
             |    ${mapping.takeIf { mappingStorage == PLOT } ?: ""}
             |  },
@@ -53,7 +63,9 @@ class SeriesAnnotationTest {
             |  "layers": [
             |    {
             |      ${data.takeIf { dataStorage == LAYER } ?: ""}
-            |      ${annotation.takeIf { mappingStorage == LAYER } ?: ""}
+            |      "data_meta": { 
+            |           ${dataMetaAnnotations.takeIf { mappingStorage == LAYER } ?: ""}
+            |      },
             |      "geom": "point",
             |      "mapping": {
             |        ${mapping.takeIf { mappingStorage == LAYER } ?: ""}
@@ -71,7 +83,7 @@ class SeriesAnnotationTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true)
+            .assertDateTimeScale(Aes.X, isDateTime = true, name = "date")
     }
 
     @Test
@@ -81,7 +93,7 @@ class SeriesAnnotationTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true)
+            .assertDateTimeScale(Aes.X, isDateTime = true, name = "date")
     }
 
     @Test
@@ -91,7 +103,7 @@ class SeriesAnnotationTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true)
+            .assertDateTimeScale(Aes.X, isDateTime = true, name = "date")
     }
 
     @Test
@@ -101,7 +113,7 @@ class SeriesAnnotationTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true)
+            .assertDateTimeScale(Aes.X, isDateTime = true, name = "date")
     }
 
     @Test
@@ -113,7 +125,7 @@ class SeriesAnnotationTest {
                 scales = """{"aesthetic": "x", "reverse": true}"""
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDateTime = false)
+                .assertDateTimeScale(Aes.X, isDiscrete = false, isDateTime = false, name = "date")
         }
         run {
             val spec = makePlotSpec(
@@ -122,45 +134,49 @@ class SeriesAnnotationTest {
                 scales = """{"aesthetic": "x", "discrete": true}"""
             )
             transformToClientPlotConfig(spec)
-                .assertScale(Aes.X, isDiscrete = true)
-                .assertDateTimeScale(Aes.X, isDateTime = false)
+                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false, name = "date")
         }
     }
 
     @Test
     fun `as_discrete annotation is a higher priority`() {
-        val spec = """
-            {
-              "data": $myData,
-              "data_meta": {
-                "mapping_annotations": [
-                  {
-                    "aes": "x",
-                    "annotation": "as_discrete"
-                  }
-                ],  
-                "series_annotations": [
-                    {
-                        "column": "date",
-                        "type": "datetime"
-                    }
-                ]
-              },
-              "mapping": {
-                "x": "date", "y": "y"
-              },
-              "kind": "plot",
-              "layers": [
-                {
-                  "geom": "point"
-                }
-              ]
-            }
-        """.trimIndent()
-
-        transformToClientPlotConfig(spec)
-            .assertScale(Aes.X, isDiscrete = true)
-            .assertDateTimeScale(Aes.X, isDateTime = false)
+        val dataMetaAnnotations = "$seriesAnnotation, $mappingAnnotation"
+        run {
+            val spec = makePlotSpec(
+                dataStorage = PLOT,
+                mappingStorage = PLOT,
+                dataMetaAnnotations
+            )
+            transformToClientPlotConfig(spec)
+                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+        }
+        run {
+            val spec = makePlotSpec(
+                dataStorage = LAYER,
+                mappingStorage = LAYER,
+                dataMetaAnnotations
+            )
+            transformToClientPlotConfig(spec)
+                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+        }
+        run {
+            val spec = makePlotSpec(
+                dataStorage = PLOT,
+                mappingStorage = LAYER,
+                dataMetaAnnotations
+            )
+            transformToClientPlotConfig(spec)
+                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+        }
+        run {
+            val spec = makePlotSpec(
+                dataStorage = LAYER,
+                mappingStorage = PLOT,
+                dataMetaAnnotations
+            )
+            transformToClientPlotConfig(spec)
+                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+        }
     }
 
     @Test
@@ -195,14 +211,18 @@ class SeriesAnnotationTest {
             }""".trimIndent()
 
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true)
+            .assertDateTimeScale(Aes.X, isDateTime = true, name = "x")
     }
 
 
     private fun PlotConfigClientSide.assertDateTimeScale(
         aes: Aes<*>,
-        isDateTime: Boolean
+        isDateTime: Boolean,
+        isDiscrete: Boolean = !isDateTime,
+        name: String? = null
     ): PlotConfigClientSide {
+        assertScale(Aes.X, isDiscrete, name)
+
         val scale = scaleMap[aes]
         if (scale.isContinuous) {
             val breaksGenerator =

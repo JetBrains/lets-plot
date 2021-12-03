@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from datetime import datetime
 from typing import Any, Tuple, Sequence
 
 from lets_plot.geo_data_internals.utils import find_geo_names
@@ -14,11 +15,6 @@ def as_boolean(val, *, default):
         return default
 
     return bool(val) and val != 'False'
-
-
-def isinstance_datetime(values):
-    from datetime import datetime
-    return all(isinstance(val, datetime) for val in values)
 
 
 def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
@@ -59,7 +55,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
     if data is not None:
         for col_name in data:
-            if isinstance_datetime(data[col_name]):
+            if all(isinstance(val, datetime) for val in data[col_name]):
                 series_meta.append({
                     'column': col_name,
                     'type': "datetime"

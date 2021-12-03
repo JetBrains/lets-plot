@@ -48,7 +48,7 @@ abstract class PlotConfig(
         val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
             options = this,
             commonData = DataFrame.Builder.emptyFrame(),
-            commonDiscreteAes = emptySet<Any>(),
+            commonDataMeta = emptyMap<Any, Any>(),
             commonMappings = emptyMap<Any, Any>(),
             isClientSide = isClientSide
         )
@@ -63,11 +63,7 @@ abstract class PlotConfig(
 
         // build all scales
         val excludeStatVariables = !isClientSide
-        scaleConfigs = createScaleConfigs(
-            (getList(SCALES) + DataMetaUtil.createScaleSpecs(opts)).let { scaleOptions ->
-                return@let scaleOptions + DataMetaUtil.createDateTimeScaleSpecs(opts, scaleOptions)
-            }
-        )
+        scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
         val scaleProviderByAes = PlotConfigUtil.createScaleProviders(
             layerConfigs, scaleConfigs, excludeStatVariables
         )
@@ -127,7 +123,7 @@ abstract class PlotConfig(
                 layerOptions,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
+                getMap(DATA_META),
                 DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING))
             )
             layerConfigs.add(layerConfig)
@@ -139,7 +135,7 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
+        plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig
 

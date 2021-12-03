@@ -38,7 +38,7 @@ class LayerConfig(
     layerOptions: Map<String, Any>,
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
-    plotDiscreteAes: Set<*>,
+    plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
     private val clientSide: Boolean
@@ -98,7 +98,7 @@ class LayerConfig(
         val (layerMappings, layerData) = createDataFrame(
             options = this,
             commonData = sharedData,
-            commonDiscreteAes = plotDiscreteAes,
+            commonDataMeta = plotDataMeta,
             commonMappings = plotMappings,
             isClientSide = clientSide
         )
