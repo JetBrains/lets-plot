@@ -5,16 +5,17 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.Area
+import jetbrains.datalore.plotDemo.model.plotConfig.BackgroundPink
 
-object AreaBrowser {
+object BackgroundPinkBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(Area()) {
+        with(BackgroundPink()) {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
-                "Area plot",
+                "Plot background - pink (in a pink window)",
                 plotSpecList(),
+                backgroundColor = "pink"
             ))
         }
     }
