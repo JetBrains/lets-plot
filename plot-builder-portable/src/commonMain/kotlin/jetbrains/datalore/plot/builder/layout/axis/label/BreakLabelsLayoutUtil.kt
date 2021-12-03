@@ -34,7 +34,7 @@ internal object BreakLabelsLayoutUtil {
         while (breaks.size > maxCount) {
             val delta = max(1, (breaks.size - maxCount) / 2)
             count -= delta
-            if (count < 1) {
+            if (count <= 1) {
                 breaks = breaksProvider.getBreaks(1, axisLength)
                 break
             }
