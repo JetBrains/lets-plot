@@ -228,6 +228,7 @@ class PlotSvgComponent constructor(
             .add(plotInnerOrigin)
 
         // build tiles
+        @Suppress("UnnecessaryVariable")
         val tilesOrigin = plotInnerOrigin
         for (tileLayoutInfo in plotInfo.tiles) {
             val tileLayersIndex = tileLayoutInfo.trueIndex

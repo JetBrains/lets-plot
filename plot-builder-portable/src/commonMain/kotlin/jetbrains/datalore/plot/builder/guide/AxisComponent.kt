@@ -30,7 +30,9 @@ class AxisComponent(
     private val axisTheme: AxisTheme,
     private val gridTheme: PanelGridTheme,
     private val useSmallFont: Boolean = false,
-    private val hideAxisBreaks: Boolean = false
+    private val hideAxis: Boolean = false,
+    private val hideAxisBreaks: Boolean = false,
+    private val hideGridlines: Boolean = false,
 ) : SvgComponent() {
 
     private val tickMarkPadding = Defaults.Plot.Axis.TICK_MARK_PADDING
@@ -41,9 +43,11 @@ class AxisComponent(
 
     private fun buildAxis() {
         val rootElement = rootGroup
-        rootElement.addClass(Style.AXIS)
-        if (useSmallFont) {
-            rootElement.addClass(Style.SMALL_TICK_FONT)
+        if (!hideAxis) {
+            rootElement.addClass(Style.AXIS)
+            if (useSmallFont) {
+                rootElement.addClass(Style.SMALL_TICK_FONT)
+            }
         }
 
         val l = length
@@ -72,62 +76,80 @@ class AxisComponent(
             }
         }
 
-        var axisLine: SvgLineElement? = null
-        if (!hideAxisBreaks && axisTheme.showLine()) {
-            axisLine = SvgLineElement(x1, y1, x2, y2)
-            axisLine.strokeWidth().set(axisTheme.lineWidth())
-            axisLine.strokeColor().set(axisTheme.lineColor())
-        }
+        // Grid lines.
+        if (!hideGridlines) {
+            // Minor grid.
+            // do not draw grid lines then it's too close to axis ends.
+            val gridLineMinPos = start + 6
+            val gridLineMaxPos = end - 6
 
-        // do not draw grid lines then it's too close to axis ends.
-        val gridLineMinPos = start + 6
-        val gridLineMaxPos = end - 6
+            if (gridTheme.showMinor()) {
+                for (br in breaksData.minorBreaks) {
+                    if (br >= gridLineMinPos && br <= gridLineMaxPos) {
+                        val elem = buildGridLine(br, gridTheme.minorLineWidth(), gridTheme.minorLineColor())
+                        rootElement.children().add(elem)
+                    }
+                }
+            }
 
-        // Minor grid.
-        if (gridTheme.showMinor()) {
-            for (br in breaksData.minorBreaks) {
-                if (br >= gridLineMinPos && br <= gridLineMaxPos) {
-                    val elem = buildGridLine(br, gridTheme.minorLineWidth(), gridTheme.minorLineColor())
-                    rootElement.children().add(elem)
+            // Major grid.
+            if (gridTheme.showMajor()) {
+                for (br in breaksData.majorBreaks) {
+                    if (br >= gridLineMinPos && br <= gridLineMaxPos) {
+                        val elem = buildGridLine(br, gridTheme.majorLineWidth(), gridTheme.majorLineColor())
+                        rootElement.children().add(elem)
+                    }
                 }
             }
         }
 
-        // Major grid.
-        if (gridTheme.showMajor()) {
-            for (br in breaksData.majorBreaks) {
-                if (br >= gridLineMinPos && br <= gridLineMaxPos) {
-                    val elem = buildGridLine(br, gridTheme.majorLineWidth(), gridTheme.majorLineColor())
-                    rootElement.children().add(elem)
+        // Axis
+        if (!hideAxis) {
+            // Ticks and labels
+            if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
+                val labelsCleaner = TickLabelsCleaner(orientation.isHorizontal)
+
+                for ((i, br) in breaksData.majorBreaks.withIndex()) {
+                    val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
+                    val labelOffset = tickLabelBaseOffset().add(labelAdjustments.additionalOffset(i))
+                    val group = buildTick(
+                        label,
+                        labelOffset,
+                        skipLabel = !labelsCleaner.beforeAddLabel(br, labelAdjustments.rotationDegree),
+                        axisTheme
+                    )
+
+                    when (orientation) {
+                        Orientation.LEFT, Orientation.RIGHT -> transformTranslate(group, 0.0, br)
+                        Orientation.TOP, Orientation.BOTTOM -> transformTranslate(group, br, 0.0)
+                    }
+
+                    rootElement.children().add(group)
                 }
             }
-        }
 
-        if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
-            val labelsCleaner = TickLabelsCleaner(orientation.isHorizontal)
+            // Axis line
+//        val axisLine: SvgLineElement? =
+//            if (!hideAxisBreaks && axisTheme.showLine()) {
+//                SvgLineElement(x1, y1, x2, y2).apply {
+//                    strokeWidth().set(axisTheme.lineWidth())
+//                    strokeColor().set(axisTheme.lineColor())
+//                }
+//            } else {
+//                null
+//            }
+//
+//        if (axisLine != null) {
+//            rootElement.children().add(axisLine)
+//        }
 
-            for ((i, br) in breaksData.majorBreaks.withIndex()) {
-                val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
-                val labelOffset = tickLabelBaseOffset().add(labelAdjustments.additionalOffset(i))
-                val group = buildTick(
-                    label,
-                    labelOffset,
-                    skipLabel = !labelsCleaner.beforeAddLabel(br, labelAdjustments.rotationDegree),
-                    axisTheme
-                )
-
-                when (orientation) {
-                    Orientation.LEFT, Orientation.RIGHT -> transformTranslate(group, 0.0, br)
-                    Orientation.TOP, Orientation.BOTTOM -> transformTranslate(group, br, 0.0)
+            if (!hideAxisBreaks && axisTheme.showLine()) {
+                val axisLine = SvgLineElement(x1, y1, x2, y2).apply {
+                    strokeWidth().set(axisTheme.lineWidth())
+                    strokeColor().set(axisTheme.lineColor())
                 }
-
-                rootElement.children().add(group)
+                rootElement.children().add(axisLine)
             }
-        }
-
-        // axis line
-        if (axisLine != null) {
-            rootElement.children().add(axisLine)
         }
     }
 

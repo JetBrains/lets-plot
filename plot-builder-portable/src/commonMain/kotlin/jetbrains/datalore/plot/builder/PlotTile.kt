@@ -74,9 +74,9 @@ internal class PlotTile(
         } else {
             // Normal plot tiles
 
-            frameOfReference.drawFoR(this)
-            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
+            frameOfReference.drawBeforeGeomLayer(this)
 
+            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
             for (layer in layers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
@@ -90,6 +90,8 @@ internal class PlotTile(
                 layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }
+
+            frameOfReference.drawAfterGeomLayer(this)
         }
     }
 

@@ -20,6 +20,7 @@ def theme(*,
           title=None,
           # ToDo: aspect.ratio
           axis=None,
+          axis_ontop=None, axis_ontop_x=None, axis_ontop_y=None,
           axis_title=None, axis_title_x=None, axis_title_y=None,
           # ToDo: axis.title.x.top, axis.title.x.bottom
           # ToDo: axis.title.y.left, axis.title.y.right
@@ -87,6 +88,8 @@ def theme(*,
         All axis elements: lines, ticks, texts, titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify axes parameters.
+    axis_ontop, axis_ontop_x, axis_ontop_y : bool
+        Option to place axis (lines, tickmarks and labels) over the data layers.
     axis_title, axis_title_x, axis_title_y : str or dict
         Labels of axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.

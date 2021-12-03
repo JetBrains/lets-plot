@@ -22,6 +22,10 @@ object ThemeOption {
     const val AXIS_X = "axis_x"
     const val AXIS_Y = "axis_y"
 
+    const val AXIS_ONTOP = "axis_ontop"
+    const val AXIS_ONTOP_X = "axis_ontop_x"
+    const val AXIS_ONTOP_Y = "axis_ontop_y"
+
     const val AXIS_TITLE = "axis_title"
     const val AXIS_TEXT = "axis_text"
     const val AXIS_TICKS = "axis_ticks"
