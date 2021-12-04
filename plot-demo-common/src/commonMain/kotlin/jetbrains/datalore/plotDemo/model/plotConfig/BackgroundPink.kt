@@ -35,6 +35,7 @@ class BackgroundPink {
                 "           ]" +
                 "           ," +
                 "   'theme': { 'plot_background': {'fill': 'pink', 'blank': false}, 'legend_background': {'fill': 'pink', 'blank': false}}," +
+//                "   'theme': { 'axis_title_x': 'blank'}," +
                 "   'ggtitle': { 'text': 'background - pink'}" +
                 "}"
 

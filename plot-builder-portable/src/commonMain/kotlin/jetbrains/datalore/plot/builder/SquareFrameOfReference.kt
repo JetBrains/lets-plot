@@ -125,7 +125,7 @@ internal class SquareFrameOfReference(
             parent.add(vAxis)
         }
 
-        if (isDebugDrawing) {
+        if (isDebugDrawing && !beforeGeomLayer) {
             drawDebugShapes(parent, geomBounds)
         }
     }
