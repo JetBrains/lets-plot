@@ -12,13 +12,8 @@ import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {
     private val myVectorByVar: Map<Variable, List<*>>
-
-    internal enum class Type {
-        NUMBER,
-        DATE_TIME,
-        DISCRETE
-    }
-    private val myTypes: MutableMap<Variable, Type>
+    private val myIsNumeric: MutableMap<Variable, Boolean>
+    private val myIsDateTime: MutableMap<Variable, Boolean>
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
@@ -39,7 +34,8 @@ class DataFrame private constructor(builder: Builder) {
     init {
         assertAllSeriesAreSameSize(builder.myVectorByVar)
         myVectorByVar = HashMap(builder.myVectorByVar)
-        myTypes = HashMap(builder.myTypes)
+        myIsNumeric = HashMap(builder.myIsNumeric)
+        myIsDateTime = HashMap(builder.myIsDateTime)
         myOrderSpecs = builder.myOrderSpecs
         myOrderSpecs.forEach { orderSpec ->
             myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
@@ -125,17 +121,16 @@ class DataFrame private constructor(builder: Builder) {
 
     fun isNumeric(variable: Variable): Boolean {
         assertDefined(variable)
-        return myTypes[variable] != Type.DISCRETE
-    }
-
-    fun isDiscrete(variable: Variable): Boolean {
-        assertDefined(variable)
-        return myTypes[variable] == Type.DISCRETE
+        if (!myIsNumeric.containsKey(variable)) {
+            val checkedDoubles = SeriesUtil.checkedDoubles(get(variable))
+            myIsNumeric[variable] = checkedDoubles.notEmptyAndCanBeCast()
+        }
+        return myIsNumeric[variable]!!
     }
 
     fun isDateTime(variable: Variable): Boolean {
         assertDefined(variable)
-        return myTypes[variable] == Type.DATE_TIME
+        return myIsDateTime.containsKey(variable)
     }
 
     fun range(variable: Variable): ClosedRange<Double>? {
@@ -184,7 +179,7 @@ class DataFrame private constructor(builder: Builder) {
         for (variable in myVectorByVar.keys) {
             val serie = myVectorByVar[variable]
             val modifiedSerie = serieFun(serie!!)
-            builder.putIntern(variable, modifiedSerie, myTypes[variable])
+            builder.putIntern(variable, modifiedSerie)
         }
         return builder.build()
     }
@@ -265,50 +260,52 @@ class DataFrame private constructor(builder: Builder) {
 
     class Builder {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
-        internal val myTypes = HashMap<Variable, Type>()
+        internal val myIsNumeric = HashMap<Variable, Boolean>()
+        internal val myIsDateTime = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderSpec>()
 
         constructor()
 
         constructor(data: DataFrame) {
             myVectorByVar.putAll(data.myVectorByVar)
-            myTypes.putAll(data.myTypes)
+            myIsNumeric.putAll(data.myIsNumeric)
+            myIsDateTime.putAll(data.myIsDateTime)
             myOrderSpecs.addAll(data.myOrderSpecs)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {
-            putIntern(variable, v, type = null)
+            putIntern(variable, v)
+            myIsNumeric.remove(variable)  // unknown state
+            myIsDateTime.remove(variable)
             return this
         }
 
         fun putNumeric(variable: Variable, v: List<Double?>): Builder {
-            putIntern(variable, v, Type.NUMBER)
+            putIntern(variable, v)
+            myIsNumeric[variable] = true
             return this
         }
 
         fun putDiscrete(variable: Variable, v: List<*>): Builder {
-            putIntern(variable, v, Type.DISCRETE)
+            putIntern(variable, v)
+            myIsNumeric[variable] = false
             return this
         }
 
         fun putDateTime(variable: Variable, v: List<*>): Builder {
-            putIntern(variable, v, Type.DATE_TIME)
+            putIntern(variable, v)
+            myIsDateTime[variable] = true
             return this
         }
 
-        internal fun putIntern(variable: Variable, v: List<*>, type: Type?) {
+        internal fun putIntern(variable: Variable, v: List<*>) {
             myVectorByVar[variable] = ArrayList(v)
-            myTypes[variable] = type
-                ?: if (SeriesUtil.checkedDoubles(v).notEmptyAndCanBeCast()) {
-                    Type.NUMBER
-                } else {
-                    Type.DISCRETE
-                }
         }
 
         fun remove(variable: Variable): Builder {
             myVectorByVar.remove(variable)
-            myTypes.remove(variable)
+            myIsNumeric.remove(variable)
+            myIsDateTime.remove(variable)
             return this
         }
 
