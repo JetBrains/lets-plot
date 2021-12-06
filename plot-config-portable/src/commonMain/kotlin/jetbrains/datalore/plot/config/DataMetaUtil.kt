@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
@@ -48,7 +47,7 @@ object DataMetaUtil {
     /**
     @returns Set<aes> of discrete aes
      */
-    private fun getAsDiscreteAesSet(options: Map<*, *>): Set<Any> {
+    fun getAsDiscreteAesSet(options: Map<*, *>): Set<Any> {
         return options
             .getMaps(MappingAnnotation.TAG)
             ?.associate { it.read(AES)!! to it.read(ANNOTATION)!! }
@@ -70,7 +69,7 @@ object DataMetaUtil {
             .groupBy ({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
             .mapValues { (_, labels) -> labels.findLast { it != null } } // {aes: last_not_null_label}
             .map { (aes, label) ->
-                mutableMapOf<String, Any?>(
+                mutableMapOf(
                     Scale.AES to aes,
                     Scale.DISCRETE_DOMAIN to true,
                     Scale.NAME to label
@@ -84,7 +83,7 @@ object DataMetaUtil {
     fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
-        commonDataMeta: Map<*, *>,
+        commonDiscreteAes: Set<*>,
         commonMappings: Map<*, *>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {
@@ -97,18 +96,13 @@ object DataMetaUtil {
                 ownMappings,
                 // re-insert existing variables as discrete
                 DataFrameUtil.toMap(ownData)
-                    .filter { (varName, _) -> isDiscrete(varName) || isDateTime(varName) }
+                    .filter { (varName, _) -> isDiscrete(varName) }
                     .entries
                     .fold(DataFrame.Builder(ownData)) { acc, (varName, values) ->
                         val variable = findVariableOrFail(ownData, varName)
+                        // re-insert as discrete
                         acc.remove(variable)
-                        if (isDiscrete(varName)) {
-                            // re-insert as discrete
-                            acc.putDiscrete(variable, values)
-                        } else {
-                            // correct label
-                            acc.put(createVariable(varName, fromDateTime(varName)), values)
-                        }
+                        acc.putDiscrete(variable, values)
                     }
                     .build()
             )
@@ -123,8 +117,6 @@ object DataMetaUtil {
             return@run ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
         }
 
-        val commonDiscreteAes = getAsDiscreteAesSet(commonDataMeta)
-
         // Original (not encoded) discrete var names from both common and own mappings.
         val combinedDiscreteVars = run {
             // common names already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
@@ -138,38 +130,16 @@ object DataMetaUtil {
 
         val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(ownData)
 
-        // date-time variables
-        val dateTimeVars =
-            getDateTimeColumns(commonDataMeta) + getDateTimeColumns(options.getMap(Option.Meta.DATA_META))
-
-        val ownDateTimeMapping = ownMappings
-            .filterKeys { aes -> aes in setOf(Aes.X.name, Aes.Y.name) }
-            .filterValues { varName -> varName in dateTimeVars && varName !in combinedDiscreteVars }
-
-        val dtData = combinedDfVars
-            .filter { (dfVarName, _) -> dfVarName in dateTimeVars }
-            .mapKeys { (dfVarName, _) ->
-                createVariable(toDateTime(dfVarName), label = dfVarName)
-            }
-            .entries
-
         return Pair(
             ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
                 require(varName is String)
                 toDiscrete(varName)
-            } + ownDateTimeMapping.mapValues { (_, varName) ->
-                require(varName is String)
-                toDateTime(varName)
             },
             combinedDfVars
                 .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
                 .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
                 .entries
-                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) ->
-                    acc.putDiscrete(dfVar, values)
-                }.also { builder ->
-                    dtData.forEach { builder.put(it.key, it.value) }
-                }
+                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values) }
                 .build()
         )
     }
@@ -210,24 +180,10 @@ object DataMetaUtil {
 
     // Series Annotations
 
-    private const val dateTimePrefix = "@datetime@"
-
-    fun isDateTime(variable: String) = variable.startsWith(dateTimePrefix)
-
-    private fun toDateTime(variable: String): String {
-        require(!isDateTime(variable)) { "toDateTime() - variable already encoded: $variable" }
-        return "$dateTimePrefix$variable"
-    }
-
-    private fun fromDateTime(variable: String): String {
-        require(isDateTime(variable)) { "fromDateTime() - variable is not encoded: $variable" }
-        return variable.removePrefix(dateTimePrefix)
-    }
-
-    private fun getDateTimeColumns(options: Map<*, *>): Set<Any> {
+    fun getDateTimeColumns(options: Map<*, *>): Set<String> {
         return options
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.read(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE)!! }
+            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE)!! }
             ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
             ?.keys
             ?: emptySet()

@@ -98,7 +98,7 @@ class LayerConfig(
         val (layerMappings, layerData) = createDataFrame(
             options = this,
             commonData = sharedData,
-            commonDataMeta = plotDataMeta,
+            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
             commonMappings = plotMappings,
             isClientSide = clientSide
         )
@@ -138,15 +138,23 @@ class LayerConfig(
                 !GeoConfig.isApplicable(layerOptions, combinedMappingOptions)
                 )
 
-        var combinedData =
-            if (dropData) {
-                DataFrame.Builder.emptyFrame()
-            } else if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
-                DataFrameUtil.appendReplace(sharedData, layerData)
-            } else if (!layerData.isEmpty) {
-                layerData
-            } else {
-                sharedData
+        var combinedData = (
+                if (dropData) {
+                    DataFrame.Builder.emptyFrame()
+                } else if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
+                    DataFrameUtil.appendReplace(sharedData, layerData)
+                } else if (!layerData.isEmpty) {
+                    layerData
+                } else {
+                    sharedData
+                }
+                )
+            .run {
+                // Mark 'DateTime' variables
+                val dateTimeVariables = DataMetaUtil.getDateTimeColumns(
+                    layerOptions.getMap(Option.Meta.DATA_META) ?: emptyMap<Any, Any>()
+                ) + DataMetaUtil.getDateTimeColumns(plotDataMeta)
+                DataFrameUtil.addDateTimeVariables(this, dateTimeVariables)
             }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>

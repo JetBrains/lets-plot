@@ -109,9 +109,10 @@ object PlotConfigUtil {
 
         // Append date-time scale provider
         val variablesByMappedAes = associateAesWithMappedVariables(varBindings)
-        variablesByMappedAes
-            .filter { (_, variables) -> variables.map(DataFrame.Variable::name).any(DataMetaUtil::isDateTime) }
+        associateVarBindingsWithData(layerConfigs, excludeStatVariables)
+            .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
             .keys
+            .map(VarBinding::aes)
             .filter { aes -> aes in setOf(Aes.X, Aes.Y) }
             .filter { aes -> aes !in scaleProviderByAes }
             .forEach { aes ->
@@ -124,7 +125,6 @@ object PlotConfigUtil {
             ScaleProviderHelper.getOrCreateDefault(it, scaleProviderByAes)
         }
     }
-
 
     private fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<Aes<*>, List<DataFrame.Variable>> {
         val variablesByMappedAes: MutableMap<Aes<*>, MutableList<DataFrame.Variable>> = HashMap()

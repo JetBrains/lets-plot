@@ -12,7 +12,13 @@ import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {
     private val myVectorByVar: Map<Variable, List<*>>
-    private val myIsNumeric: MutableMap<Variable, Boolean>
+
+    internal enum class Type {
+        NUMBER,
+        DATE_TIME,
+        DISCRETE
+    }
+    private val myTypes: MutableMap<Variable, Type>
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
@@ -33,7 +39,7 @@ class DataFrame private constructor(builder: Builder) {
     init {
         assertAllSeriesAreSameSize(builder.myVectorByVar)
         myVectorByVar = HashMap(builder.myVectorByVar)
-        myIsNumeric = HashMap(builder.myIsNumeric)
+        myTypes = HashMap(builder.myTypes)
         myOrderSpecs = builder.myOrderSpecs
         myOrderSpecs.forEach { orderSpec ->
             myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
@@ -119,11 +125,17 @@ class DataFrame private constructor(builder: Builder) {
 
     fun isNumeric(variable: Variable): Boolean {
         assertDefined(variable)
-        if (!myIsNumeric.containsKey(variable)) {
-            val checkedDoubles = SeriesUtil.checkedDoubles(get(variable))
-            myIsNumeric[variable] = checkedDoubles.notEmptyAndCanBeCast()
-        }
-        return myIsNumeric[variable]!!
+        return myTypes[variable] != Type.DISCRETE
+    }
+
+    fun isDiscrete(variable: Variable): Boolean {
+        assertDefined(variable)
+        return myTypes[variable] == Type.DISCRETE
+    }
+
+    fun isDateTime(variable: Variable): Boolean {
+        assertDefined(variable)
+        return myTypes[variable] == Type.DATE_TIME
     }
 
     fun range(variable: Variable): ClosedRange<Double>? {
@@ -172,7 +184,7 @@ class DataFrame private constructor(builder: Builder) {
         for (variable in myVectorByVar.keys) {
             val serie = myVectorByVar[variable]
             val modifiedSerie = serieFun(serie!!)
-            builder.putIntern(variable, modifiedSerie)
+            builder.putIntern(variable, modifiedSerie, myTypes[variable])
         }
         return builder.build()
     }
@@ -253,42 +265,50 @@ class DataFrame private constructor(builder: Builder) {
 
     class Builder {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
-        internal val myIsNumeric = HashMap<Variable, Boolean>()
+        internal val myTypes = HashMap<Variable, Type>()
         internal val myOrderSpecs = ArrayList<OrderSpec>()
 
         constructor()
 
         constructor(data: DataFrame) {
             myVectorByVar.putAll(data.myVectorByVar)
-            myIsNumeric.putAll(data.myIsNumeric)
+            myTypes.putAll(data.myTypes)
             myOrderSpecs.addAll(data.myOrderSpecs)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {
-            putIntern(variable, v)
-            myIsNumeric.remove(variable)  // unknown state
+            putIntern(variable, v, type = null)
             return this
         }
 
         fun putNumeric(variable: Variable, v: List<Double?>): Builder {
-            putIntern(variable, v)
-            myIsNumeric[variable] = true
+            putIntern(variable, v, Type.NUMBER)
             return this
         }
 
         fun putDiscrete(variable: Variable, v: List<*>): Builder {
-            putIntern(variable, v)
-            myIsNumeric[variable] = false
+            putIntern(variable, v, Type.DISCRETE)
             return this
         }
 
-        internal fun putIntern(variable: Variable, v: List<*>) {
-            myVectorByVar[variable] = ArrayList(v)
+        fun putDateTime(variable: Variable, v: List<*>): Builder {
+            putIntern(variable, v, Type.DATE_TIME)
+            return this
         }
 
-        fun  remove(variable: Variable): Builder {
+        internal fun putIntern(variable: Variable, v: List<*>, type: Type?) {
+            myVectorByVar[variable] = ArrayList(v)
+            myTypes[variable] = type
+                ?: if (SeriesUtil.checkedDoubles(v).notEmptyAndCanBeCast()) {
+                    Type.NUMBER
+                } else {
+                    Type.DISCRETE
+                }
+        }
+
+        fun remove(variable: Variable): Builder {
             myVectorByVar.remove(variable)
-            myIsNumeric.remove(variable)
+            myTypes.remove(variable)
             return this
         }
 

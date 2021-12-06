@@ -54,7 +54,7 @@ fun PlotConfigClientSide.assertVariable(
         fail("Variable $varName is not found in ${layer.combinedData.variables().map(DataFrame.Variable::name)}")
     }
     val dfVar = DataFrameUtil.findVariableOrFail(layer.combinedData, varName)
-    assertEquals(!isDiscrete, layer.combinedData.isNumeric(dfVar), msg())
+    assertEquals(isDiscrete, layer.combinedData.isDiscrete(dfVar), msg())
     return this
 }
 

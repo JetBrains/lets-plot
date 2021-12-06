@@ -48,7 +48,7 @@ abstract class PlotConfig(
         val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
             options = this,
             commonData = DataFrame.Builder.emptyFrame(),
-            commonDataMeta = emptyMap<Any, Any>(),
+            commonDiscreteAes = emptySet<Any>(),
             commonMappings = emptyMap<Any, Any>(),
             isClientSide = isClientSide
         )
