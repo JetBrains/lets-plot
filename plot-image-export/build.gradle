@@ -85,6 +85,13 @@ def artifactVersion = project.version
 
 jvmJar {
     archiveFileName = "$artifactBaseName-${artifactVersion}.jar"
+
+    // Add LICENSE file to the META-INF folder inside published JAR files.
+    metaInf {
+        from("$rootDir"){
+            include "LICENSE"
+        }
+    }
 }
 
 jvmSourcesJar {

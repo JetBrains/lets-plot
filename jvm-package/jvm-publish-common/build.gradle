@@ -67,14 +67,6 @@ task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
 
     // lets-plot JavaFX renderer resource.
     exclude 'svgMapper/**/*'
-}
-
-task jarLetsPlotJvmCommonSources(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    classifier 'sources'
-    configurations = [rootProject.configurations.letsPlotJvmCommonSources]
 
     // Include License file in shadow JAR.
     jvmJar {
@@ -84,6 +76,14 @@ task jarLetsPlotJvmCommonSources(type: ShadowJar) {
             }
         }
     }
+}
+
+task jarLetsPlotJvmCommonSources(type: ShadowJar) {
+    group project.letsPlotTaskGroup
+    archiveBaseName = artifactBaseName
+    archiveVersion = artifactVersion
+    classifier 'sources'
+    configurations = [rootProject.configurations.letsPlotJvmCommonSources]
 }
 
 publishing {
