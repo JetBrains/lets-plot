@@ -85,6 +85,13 @@ def artifactVersion = project.version
 
 jvmJar {
     archiveFileName = "$artifactBaseName-${artifactVersion}.jar"
+
+    // Add LICENSE file to the META-INF folder inside published JAR files.
+    metaInf {
+        from("$rootDir"){
+            include "LICENSE"
+        }
+    }
 }
 
 jvmSourcesJar {
@@ -109,7 +116,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT"
-                        url = "https://opensource.org/licenses/MIT"
+                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
                     }
                 }
                 developers {

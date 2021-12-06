@@ -67,6 +67,15 @@ task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
 
     // lets-plot JavaFX renderer resource.
     exclude 'svgMapper/**/*'
+
+    // Include License file in shadow JAR.
+    jvmJar {
+        metaInf {
+            from("$rootDir"){
+                include "LICENSE"
+            }
+        }
+    }
 }
 
 task jarLetsPlotJvmCommonSources(type: ShadowJar) {
@@ -95,7 +104,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT"
-                        url = "https://opensource.org/licenses/MIT"
+                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
                     }
                 }
                 developers {
