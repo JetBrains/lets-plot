@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.defaultTheme
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
@@ -27,6 +28,7 @@ internal class DefaultAxisTheme(
 ) : ThemeValuesAccess(options), AxisTheme {
 
     private val suffix = "_$axis"
+    internal val ontopKey = listOf(AXIS_ONTOP + suffix, AXIS_ONTOP)
     internal val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
     internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
     internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS + suffix, AXIS, TITLE, TEXT)
@@ -35,8 +37,13 @@ internal class DefaultAxisTheme(
     internal val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
     internal val tooltipFillKey = tooltipKey + lineKey
     internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT)
+
     // Inherits from the tooltip rect stroke color.
     internal val tooltipTextColorKey = tooltipTextKey + tooltipKey
+
+    override fun isOntop(): Boolean {
+        return getBoolean(ontopKey)
+    }
 
     override fun showLine(): Boolean {
         return !isElemBlank(lineKey)

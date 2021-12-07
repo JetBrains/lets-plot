@@ -51,7 +51,8 @@ class AwtLiveMapPanel(
         cursorServiceConfig.defaultSetter { plotOverlayComponent.cursor = Cursor.getDefaultCursor() }
         cursorServiceConfig.pointerSetter { plotOverlayComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
 
-        background = Color.WHITE
+//        background = Color.WHITE
+        isOpaque = false
         preferredSize = plotOverlayComponent.preferredSize
 
         // layout

@@ -18,12 +18,13 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKG
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesBase.Companion.PLOT_BACKGROUND
 
 
 class ThemeValuesRGrey : ThemeValues(VALUES) {
 
     companion object {
+
+        private val PLOT_BACKGROUND = Color.WHITE
 
         private val PANEL_BACKGROUND: Color = Color.parseHex("#EBEBEB")
         private val STRIP_BACKGROUND: Color = Color.parseHex("#D9D9D9")

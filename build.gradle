@@ -62,8 +62,8 @@ configurations {
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "2.2.1-alpha1"
-    project.ext.js_artifact_version = "2.2.1.dev1"
+    version = "2.2.2-alpha1"
+    project.ext.js_artifact_version = "2.2.2.dev1"
     // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode
@@ -208,7 +208,7 @@ subprojects {
                             licenses {
                                 license {
                                     name = "MIT"
-                                    url = "https://opensource.org/licenses/MIT"
+                                    url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
                                 }
                             }
                             developers {
@@ -240,6 +240,17 @@ subprojects {
         }
 
         afterEvaluate {
+
+            // Add LICENSE file to the META-INF folder inside published JAR files
+            jvmJar {
+                metaInf {
+                    from("$rootDir"){
+                        include "LICENSE"
+                    }
+                }
+            }
+
+            // Configure artifacts signing process.
             def publications_to_sign = []
             for (task in it.tasks.withType(PublishToMavenRepository)) {
                 if (task.getPublication().name in publications_to_publish) {
@@ -254,7 +265,7 @@ subprojects {
                     }
                 }
             }
-
+            // Sign artifacts.
             publications_to_sign.each {
                 signing.sign(it)
             }

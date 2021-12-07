@@ -9,11 +9,14 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 class LegendComponent(
     override val spec: LegendComponentSpec
-) : LegendBox(spec.theme) {
+) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val layout = spec.layout
@@ -55,30 +58,28 @@ class LegendComponent(
     private fun createKeyElement(legendBreak: LegendBreak, size: DoubleVector): SvgGElement {
         val g = SvgGElement()
 
-        val innerSize = DoubleVector(size.x - 2, size.y - 2)
-
-        val backgroundFill = spec.theme.backgroundFill()
-
         // common background
-        val backgroundRect = SvgRectElement(1.0, 1.0, innerSize.x, innerSize.y)
-        backgroundRect.strokeWidth().set(1.0)
-        backgroundRect.strokeColor().set(backgroundFill)
-        backgroundRect.fillColor().set(backgroundFill)
+        val keyBounds = DoubleRectangle(DoubleVector.ZERO, size)
+        val backgroundRect = SvgRectElement(keyBounds)
+        backgroundRect.strokeWidth().set(0.0)
+        backgroundRect.fillColor().set(theme.backgroundFill())
 
         g.children().add(backgroundRect)
 
         // key
+        val innerSize = DoubleVector(size.x - 2, size.y - 2)
         val keyElement = legendBreak.createKeyElement(innerSize)
         val keyElementTransform = buildTransform(DoubleVector(1.0, 1.0), 0.0)
         keyElement.transform().set(keyElementTransform)
 
         g.children().add(keyElement)
 
-        // white frame
-        val frame = SvgRectElement(0.0, 0.0, size.x, size.y)
-        frame.strokeWidth().set(1.0)
-        frame.strokeColor().set(backgroundFill)
-        frame.fill().set(SvgColors.NONE)
+        // add a frame (To nicely trim internals?)
+        val frame = createTransparentRect(
+            keyBounds,
+            strokeColor = theme.backgroundFill(),
+            1.0
+        )
 
         g.children().add(frame)
         return g

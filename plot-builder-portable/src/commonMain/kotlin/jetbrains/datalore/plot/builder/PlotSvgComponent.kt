@@ -12,6 +12,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
@@ -130,6 +131,24 @@ class PlotSvgComponent constructor(
     private fun buildPlotComponents() {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
 
+        val plotTheme = theme.plot()
+        if (plotTheme.showBackground()) {
+            add(SvgRectElement(overallRect).apply {
+                strokeColor().set(plotTheme.backgroundColor())
+                strokeWidth().set(plotTheme.backgroundStrokeWidth())
+                fillColor().set(plotTheme.backgroundFill())
+                if (containsLiveMap) {
+                    // Don't fill rect over livemap figure.
+                    fillOpacity().set(0.0)
+                } else {
+                    if (Colors.solid(plotTheme.backgroundFill())) {
+                        // Workaround for JFX: 100% opaque rect blocks 'mouse left' events.
+                        fillOpacity().set(0.99)
+                    }
+                }
+            })
+        }
+
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
@@ -149,10 +168,9 @@ class PlotSvgComponent constructor(
         )
 
         // -------------
-        val entirePlotSize = entirePlot.dimension
         val axisEnabled = !containsLiveMap
         val plotInnerSizeAvailable = subtractTitlesAndLegends(
-            entirePlotSize,
+            baseSize = entirePlot.dimension,
             title,
             axisTitleLeft,
             axisTitleBottom,
@@ -177,31 +195,34 @@ class PlotSvgComponent constructor(
             legendsBlockInfo, theme
         )
 
-        // plot origin
-        val delta = overallRect.center.subtract(
-            DoubleRectangle(overallRect.origin, plotOuterSize).center
-        )
-        val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-        val plotOuterOrigin = overallRect.origin.add(deltaApplied)
-        val plotOuterBounds = DoubleRectangle(plotOuterOrigin, plotOuterSize)
+        // Position the "entire" plot rect in the center of the "overall" rect.
+        val plotOuterBounds = let {
+            val delta = overallRect.center.subtract(
+                DoubleRectangle(overallRect.origin, plotOuterSize).center
+            )
+            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+            val plotOuterOrigin = overallRect.origin.add(deltaApplied)
+            DoubleRectangle(plotOuterOrigin, plotOuterSize)
+        }
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title)
-        val plotOuterBoundsWithoutTitle = DoubleRectangle(
-            plotOuterBounds.origin.add(titleSizeDelta),
-            plotOuterBounds.dimension.subtract(titleSizeDelta)
-        )
+        val plotOuterBoundsWithoutTitle = let {
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title)
+            DoubleRectangle(
+                plotOuterBounds.origin.add(titleSizeDelta),
+                plotOuterBounds.dimension.subtract(titleSizeDelta)
+            )
+        }
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             drawDebugRect(plotOuterBoundsWithoutTitle, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitle")
         }
 
         // Inner bounds - all without titiles and legends.
-        val plotInnerOrigin = plotOuterOrigin
-            .add(titleSizeDelta)
+        val plotInnerOrigin = plotOuterBoundsWithoutTitle.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(axisTitleSizeDelta(axisTitleLeft, null, axisEnabled))
 
@@ -209,6 +230,7 @@ class PlotSvgComponent constructor(
             .add(plotInnerOrigin)
 
         // build tiles
+        @Suppress("UnnecessaryVariable")
         val tilesOrigin = plotInnerOrigin
         for (tileLayoutInfo in plotInfo.tiles) {
             val tileLayersIndex = tileLayoutInfo.trueIndex

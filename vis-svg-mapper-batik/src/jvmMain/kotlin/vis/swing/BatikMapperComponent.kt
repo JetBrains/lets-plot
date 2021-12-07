@@ -9,7 +9,9 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
-import java.awt.*
+import java.awt.Dimension
+import java.awt.Graphics
+import java.awt.Graphics2D
 import javax.swing.JPanel
 
 class BatikMapperComponent(
@@ -24,7 +26,8 @@ class BatikMapperComponent(
 
     init {
         isFocusable = true
-        background = Color(0, 0, 0, 0)
+//        background = Color(0, 0, 0, 0)
+        isOpaque = false
 
         myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
@@ -52,38 +55,6 @@ class BatikMapperComponent(
                     }
                 })
         )
-
-//        this.addMouseMotionListener(object : MouseMotionListener {
-//            override fun mouseDragged(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//
-//            override fun mouseMoved(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//        })
-
-//        this.addMouseListener(object : MouseAdapter() {
-//            override fun mouseClicked(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//
-//            override fun mousePressed(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//
-//            override fun mouseReleased(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//
-//            override fun mouseEntered(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//
-//            override fun mouseExited(e: MouseEvent) {
-//                myHelper.handleMouseEvent(e)
-//            }
-//        })
     }
 
     override fun paintComponent(g: Graphics) {

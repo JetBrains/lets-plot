@@ -15,7 +15,11 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 fun transformToClientPlotConfig(spec: String): PlotConfigClientSide {
-    return parsePlotSpec(spec)
+    return transformToClientPlotConfig(parsePlotSpec(spec))
+}
+
+fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigClientSide {
+    return plotSpec
         .let(ServerSideTestUtil::serverTransformWithoutEncoding)
         .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
         .let(TestUtil::assertClientWontFail)

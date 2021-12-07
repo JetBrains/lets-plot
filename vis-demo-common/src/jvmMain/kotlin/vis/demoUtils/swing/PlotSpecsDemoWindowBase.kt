@@ -18,6 +18,7 @@ abstract class PlotSpecsDemoWindowBase(
     private val specList: List<MutableMap<String, Any>>,
     private val maxCol: Int = 3,
     private val plotSize: Dimension? = null,
+    background: Color,
 ) : JFrame(title) {
     private val rootPanel: JPanel
 
@@ -26,7 +27,7 @@ abstract class PlotSpecsDemoWindowBase(
 
         rootPanel = JPanel()
         rootPanel.layout = GridLayout(0, min(maxCol, specList.size))
-        rootPanel.background = Color.WHITE
+        rootPanel.background = background
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
         addWindowListener(object : WindowListener {
             override fun windowActivated(e: WindowEvent?) {

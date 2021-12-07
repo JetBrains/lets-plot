@@ -1,6 +1,6 @@
 # Lets-Plot  [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
-<a href="https://opensource.org/licenses/MIT">
+<a href="https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE">
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="Couldn't load MIT license svg"/>
 </a>
 

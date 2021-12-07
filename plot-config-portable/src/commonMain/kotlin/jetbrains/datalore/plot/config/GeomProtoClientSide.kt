@@ -131,7 +131,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     val labelFormat = opts[Text.LABEL_FORMAT] as? String
 
                     if (labelFormat != null) {
-                        geom.formatter = StringFormat.forOneArg(labelFormat)
+                        geom.formatter = StringFormat.forOneArg(labelFormat)::format
                     } else {
                         throw IllegalArgumentException("Expected: label_format = 'format string'")
                     }

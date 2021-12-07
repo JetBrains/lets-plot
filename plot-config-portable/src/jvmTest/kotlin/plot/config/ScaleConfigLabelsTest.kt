@@ -63,27 +63,77 @@ class ScaleConfigLabelsTest {
 
     @Test
     fun `set format for labels of the log scale`() {
-        val scaleMap = getScaleMap(
-            data,
-            mappingXY,
-            scales = listOf(
-                mapOf(
-                    Option.Scale.AES to Aes.X.name,
-                    CONTINUOUS_TRANSFORM to "log10",
-                    FORMAT to ".2f"
-                ),
-                mapOf(
-                    Option.Scale.AES to Aes.Y.name,
-                    CONTINUOUS_TRANSFORM to "log10",
-                    FORMAT to ".3f"
+        run {
+            //default
+            val scaleMap = getScaleMap(
+                data,
+                mappingXY,
+                scales = listOf(
+                    mapOf(
+                        Option.Scale.AES to Aes.X.name,
+                        CONTINUOUS_TRANSFORM to "log10"
+                    ),
+                    mapOf(
+                        Option.Scale.AES to Aes.Y.name,
+                        CONTINUOUS_TRANSFORM to "log10"
+                    )
                 )
             )
-        )
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
-        val yLabels = getScaleLabels(scaleMap[Aes.Y])
+            val xLabels = getScaleLabels(scaleMap[Aes.X])
+            val yLabels = getScaleLabels(scaleMap[Aes.Y])
 
-        assertEquals(listOf("0.40", "0.63", "1.00", "1.58", "2.51"), xLabels)
-        assertEquals(listOf("0.398", "0.631", "1.000", "1.585", "2.512"), yLabels)
+            assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), xLabels)
+            assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), yLabels)
+        }
+        run {
+            val scaleMap = getScaleMap(
+                data,
+                mappingXY,
+                scales = listOf(
+                    mapOf(
+                        Option.Scale.AES to Aes.X.name,
+                        CONTINUOUS_TRANSFORM to "log10",
+                        FORMAT to "x = {}"
+                    ),
+                    mapOf(
+                        Option.Scale.AES to Aes.Y.name,
+                        CONTINUOUS_TRANSFORM to "log10",
+                        FORMAT to "y = {.2f}"
+                    )
+                )
+            )
+            val xLabels = getScaleLabels(scaleMap[Aes.X])
+            val yLabels = getScaleLabels(scaleMap[Aes.Y])
+
+            assertEquals(listOf("x = 0.3981071705534972", "x = 0.6309573444801932", "x = 1.0", "x = 1.5848931924611136", "x = 2.51188643150958"), xLabels)
+            // todo {} should use the default formatted value:
+            //      assertEquals(listOf("x = 0.4", "x = 0.6", "x = 1.0", "x = 1.0", "x = 2.5"), xLabels)
+
+            assertEquals(listOf("y = 0.40", "y = 0.63", "y = 1.00", "y = 1.58", "y = 2.51"), yLabels)
+        }
+        run {
+            val scaleMap = getScaleMap(
+                data,
+                mappingXY,
+                scales = listOf(
+                    mapOf(
+                        Option.Scale.AES to Aes.X.name,
+                        CONTINUOUS_TRANSFORM to "log10",
+                        FORMAT to ".2f"
+                    ),
+                    mapOf(
+                        Option.Scale.AES to Aes.Y.name,
+                        CONTINUOUS_TRANSFORM to "log10",
+                        FORMAT to ".3f"
+                    )
+                )
+            )
+            val xLabels = getScaleLabels(scaleMap[Aes.X])
+            val yLabels = getScaleLabels(scaleMap[Aes.Y])
+
+            assertEquals(listOf("0.40", "0.63", "1.00", "1.58", "2.51"), xLabels)
+            assertEquals(listOf("0.398", "0.631", "1.000", "1.585", "2.512"), yLabels)
+        }
     }
 
     @Test
@@ -266,7 +316,7 @@ class ScaleConfigLabelsTest {
             scales: List<Map<String, Any>>,
         ) = buildPointLayer(data, mapping, scales = scales).scaleMap
 
-        private fun getScaleLabels(
+        internal fun getScaleLabels(
             scale: Scale<Double>,
             targetCount: Int = 5,
             closeRange: ClosedRange<Double> = ClosedRange(-0.5, 0.5),

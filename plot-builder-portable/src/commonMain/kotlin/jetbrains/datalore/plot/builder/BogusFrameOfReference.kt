@@ -11,7 +11,11 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 
 internal class BogusFrameOfReference : TileFrameOfReference {
 
-    override fun drawFoR(parent: SvgComponent) {
+    override fun drawBeforeGeomLayer(parent: SvgComponent) {
+        throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
+    }
+
+    override fun drawAfterGeomLayer(parent: SvgComponent) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
 

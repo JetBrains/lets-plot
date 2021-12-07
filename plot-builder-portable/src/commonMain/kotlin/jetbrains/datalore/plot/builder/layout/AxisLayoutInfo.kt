@@ -71,8 +71,8 @@ class AxisLayoutInfo private constructor(b: Builder) {
     }
 
     class Builder {
-        var myAxisLength: Double = 0.toDouble()
-        var myOrientation: jetbrains.datalore.plot.builder.guide.Orientation? = null
+        var myAxisLength: Double = 0.0
+        var myOrientation: Orientation? = null
         var myAxisDomain: ClosedRange<Double>? = null
         var myMaxTickLabelsBounds: DoubleRectangle? = null
         var myTickLabelSmallFont = false
@@ -92,7 +92,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun orientation(o: jetbrains.datalore.plot.builder.guide.Orientation): Builder {
+        fun orientation(o: Orientation): Builder {
             myOrientation = o
             return this
         }

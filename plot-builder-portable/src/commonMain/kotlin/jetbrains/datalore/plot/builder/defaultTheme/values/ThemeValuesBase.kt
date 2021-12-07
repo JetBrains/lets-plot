@@ -6,13 +6,16 @@
 package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
@@ -24,8 +27,6 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 open class ThemeValuesBase : ThemeValues(VALUES) {
 
     companion object {
-
-        internal val PLOT_BACKGROUND = Color.WHITE
 
         private val VALUES: Map<String, Any> = mapOf(
             LINE to mapOf(
@@ -47,6 +48,17 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.FONT_FACE to FontFace.BOLD,
             ),
 
+            PLOT_BKGR_RECT to mapOf(
+                Elem.FILL to Color.WHITE,
+                Elem.SIZE to 0.0,
+            ),
+
+            LEGEND_BKGR_RECT to mapOf(
+                Elem.FILL to Color.WHITE,
+                Elem.SIZE to 0.0,
+            ),
+
+            AXIS_ONTOP to false,
             AXIS_TICKS_LENGTH to 4.0,
 
             PANEL_GRID_MINOR to mapOf(

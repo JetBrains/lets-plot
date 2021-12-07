@@ -8,6 +8,7 @@ package jetbrains.datalore.vis.demoUtils
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.demoUtils.swing.PlotSpecsDemoWindowBase
 import jetbrains.datalore.vis.swing.batik.DefaultPlotPanelBatik
+import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -17,11 +18,13 @@ class PlotSpecsDemoWindowBatik(
     specList: List<MutableMap<String, Any>>,
     maxCol: Int = 3,
     plotSize: Dimension? = null,
+    background: Color = Color.WHITE
 ) : PlotSpecsDemoWindowBase(
     title,
     specList = specList,
     maxCol = maxCol,
     plotSize = plotSize,
+    background = background
 ) {
 
     override fun createPlotComponent(rawSpec: MutableMap<String, Any>, plotSize: Dimension?): JComponent {

@@ -19,7 +19,7 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
     }
 
     class PatternSpecPart(str: String): SpecPart(str) {
-        val pattern: Pattern = Pattern.patternByString(str) ?: throw IllegalArgumentException("Wrong date-time pattern: $str")
+        val pattern: Pattern = Pattern.patternByString(str) ?: throw IllegalArgumentException("Wrong date-time pattern: '$str'")
 
         override fun exec(dateTime: DateTime): String {
             return getValueForPattern(pattern, dateTime)

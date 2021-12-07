@@ -49,22 +49,20 @@ class SquareFrameOfReferenceProvider(
     override val vAxisLabel: String? = if (vAxisSpec.theme.showTitle()) vAxisSpec.label else null
 
     override fun createTileLayout(): TileLayout {
-        val hDomain = hAxisSpec.aesRange
-        val vDomain = vAxisSpec.aesRange
-
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
-            hDomain, vDomain,
             hAxisSpec.theme,
             Orientation.BOTTOM
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
-            hDomain, vDomain,
             vAxisSpec.theme,
             Orientation.LEFT
         )
+
+        val hDomain = hAxisSpec.aesRange
+        val vDomain = vAxisSpec.aesRange
 
         return XYPlotTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain)
     }
