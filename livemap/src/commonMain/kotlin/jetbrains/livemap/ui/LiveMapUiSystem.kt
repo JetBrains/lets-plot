@@ -70,112 +70,6 @@ class LiveMapUiSystem(
         myViewport = context.mapRenderContext.viewport
         myCamera = context.camera
         myLiveMapLocation = LiveMapLocation(myViewport, context.mapProjection)
-
-        initUi()
-    }
-
-    private fun initUi() {
-        myZoomPlusButton = newButton(
-            name = "zoom_plus",
-            enabledVisual = KEY_PLUS,
-            disabledVisual = KEY_PLUS_DISABLED
-        ) { _, _ ->
-            myCamera.animate(myCamera.zoom + 1.0, myViewport.position)
-        }
-
-        myZoomMinusButton = newButton(
-            name = "zoom_minus",
-            enabledVisual = KEY_MINUS,
-            disabledVisual = KEY_MINUS_DISABLED
-        ) { _, _ ->
-            myCamera.animate(myCamera.zoom - 1.0, myViewport.position)
-        }
-
-        myResetPositionButton = newButton(
-            name = "reset_position",
-            enabledVisual = KEY_RESET_POSITION
-        ) { _, _ ->
-            myCamera.reset()
-        }
-
-        myGetCenterButton = newButton(
-            name = "get_map_position",
-            enabledVisual = KEY_GET_CENTER
-        ) { _, _ ->
-            myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
-        }
-
-        myMakeGeometryButton = newButton(
-            name = "path_painter",
-            enabledVisual = KEY_MAKE_GEOMETRY
-        ) { source, _ ->
-            if (containsEntity(MakeGeometryWidgetComponent::class)) {
-                finishDrawing()
-                source.enabledVisual = loadIcon(KEY_MAKE_GEOMETRY)
-            } else {
-                activateCreateWidget()
-                source.enabledVisual = loadIcon(KEY_MAKE_GEOMETRY_ACTIVE)
-            }
-        }
-
-        val buttons = mutableListOf<Button>().apply {
-            add(myZoomPlusButton)
-            add(myZoomMinusButton)
-            if (showResetPositionAction) {
-                add(myResetPositionButton)
-            }
-            if (showAdvancedActions) {
-                add(myGetCenterButton)
-                add(myMakeGeometryButton)
-            }
-        }
-
-        fun layoutButtons(buttons: List<Button>) {
-            val step = DoubleVector(0.0, padding + iconSize.y)
-            var p = DoubleVector(padding, padding)
-            buttons.forEach {
-                it.position = p
-                p = p.add(step)
-            }
-        }
-
-        layoutButtons(buttons)
-        buttons.forEach(myUiService::addButton)
-
-        if (myAttribution != null) {
-            val parts = AttributionParser(myAttribution).parse()
-            val texts = ArrayList<Text>()
-
-            for (part in parts) {
-                val c = if (part is AttributionParts.SimpleLink) Color(26, 13, 171) else Color.BLACK
-
-                val attributionText = Text().apply {
-                    color = c
-                    fontFamily = CONTRIBUTORS_FONT_FAMILY
-                    fontSize = 11.0
-                    text = listOf(part.text)
-                }
-
-                if (part is AttributionParts.SimpleLink) {
-                    myUiService.addLink(attributionText).let {
-                        addListenerToLink(it) {
-                            openLink(part.href)
-                        }
-                    }
-                }
-
-                texts.add(attributionText)
-            }
-
-            Attribution(DoubleVector(myViewport.size.x, myViewport.size.y), texts).apply {
-                background = Color(200, 200, 200, 179)
-                this.padding = 2.0
-                horizontalAlignment = Alignment.HorizontalAlignment.LEFT
-                verticalAlignment = Alignment.VerticalAlignment.BOTTOM
-            }.run {
-                myUiService.addRenderable(this)
-            }
-        }
     }
 
     private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
@@ -227,6 +121,107 @@ class LiveMapUiSystem(
     private inner class Processing : UiState() {
 
         fun initialize(context: LiveMapContext) {
+            myZoomPlusButton = newButton(
+                name = "zoom_plus",
+                enabledVisual = KEY_PLUS,
+                disabledVisual = KEY_PLUS_DISABLED
+            ) { _, _ ->
+                myCamera.animate(myCamera.zoom + 1.0, myViewport.position)
+            }
+
+            myZoomMinusButton = newButton(
+                name = "zoom_minus",
+                enabledVisual = KEY_MINUS,
+                disabledVisual = KEY_MINUS_DISABLED
+            ) { _, _ ->
+                myCamera.animate(myCamera.zoom - 1.0, myViewport.position)
+            }
+
+            myResetPositionButton = newButton(
+                name = "reset_position",
+                enabledVisual = KEY_RESET_POSITION
+            ) { _, _ ->
+                myCamera.reset()
+            }
+
+            myGetCenterButton = newButton(
+                name = "get_map_position",
+                enabledVisual = KEY_GET_CENTER
+            ) { _, _ ->
+                myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
+            }
+
+            myMakeGeometryButton = newButton(
+                name = "path_painter",
+                enabledVisual = KEY_MAKE_GEOMETRY
+            ) { source, _ ->
+                if (containsEntity(MakeGeometryWidgetComponent::class)) {
+                    finishDrawing()
+                    source.enabledVisual = loadIcon(KEY_MAKE_GEOMETRY)
+                } else {
+                    activateCreateWidget()
+                    source.enabledVisual = loadIcon(KEY_MAKE_GEOMETRY_ACTIVE)
+                }
+            }
+
+            val buttons = mutableListOf<Button>().apply {
+                add(myZoomPlusButton)
+                add(myZoomMinusButton)
+                if (showResetPositionAction) {
+                    add(myResetPositionButton)
+                }
+                if (showAdvancedActions) {
+                    add(myGetCenterButton)
+                    add(myMakeGeometryButton)
+                }
+            }
+
+            fun layoutButtons(buttons: List<Button>) {
+                val step = DoubleVector(0.0, padding + iconSize.y)
+                var p = DoubleVector(padding, padding)
+                buttons.forEach {
+                    it.position = p
+                    p = p.add(step)
+                }
+            }
+
+            layoutButtons(buttons)
+            buttons.forEach(myUiService::addButton)
+
+            if (myAttribution != null) {
+                val parts = AttributionParser(myAttribution).parse()
+                val texts = ArrayList<Text>()
+
+                for (part in parts) {
+                    val c = if (part is AttributionParts.SimpleLink) Color(26, 13, 171) else Color.BLACK
+
+                    val attributionText = Text().apply {
+                        color = c
+                        fontFamily = CONTRIBUTORS_FONT_FAMILY
+                        fontSize = 11.0
+                        text = listOf(part.text)
+                    }
+
+                    if (part is AttributionParts.SimpleLink) {
+                        myUiService.addLink(attributionText).let {
+                            addListenerToLink(it) {
+                                openLink(part.href)
+                            }
+                        }
+                    }
+
+                    texts.add(attributionText)
+                }
+
+                Attribution(DoubleVector(myViewport.size.x, myViewport.size.y), texts).apply {
+                    background = Color(200, 200, 200, 179)
+                    this.padding = 2.0
+                    horizontalAlignment = Alignment.HorizontalAlignment.LEFT
+                    verticalAlignment = Alignment.VerticalAlignment.BOTTOM
+                }.run {
+                    myUiService.addRenderable(this)
+                }
+            }
             updateMakeGeometryButton(drawingGeometry = false)
             updateZoomButtons(context.camera.zoom)
         }
