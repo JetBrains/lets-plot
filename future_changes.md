@@ -1,49 +1,22 @@
-## [2.2.0] - 2021-10-??
+## [2.2.1] - 2021-12-??
 
 ### Added
 
-- `coord_flip()`.
-  
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
+- `scale_x_time()` and `scale_y_time()` [[#468](https://github.com/JetBrains/lets-plot/issues/468)].
 
-- Date-time formatting support:
-  - tooltip format() should understand date-time format pattern [[#387](https://github.com/JetBrains/lets-plot/issues/387)];
-  - scale_x_datetime should apply date-time formatting to the breaks [[#392](https://github.com/JetBrains/lets-plot/issues/392)].
-    
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/datetime_formatting.ipynb).
-
-- Pre-configured themes:
-  - Standard ggplot2 themes: `theme_grey(), theme_light(), theme_classic(), theme_minimal()`;
-  - Other themes: `theme_minimal2()` - the default theme, `theme_none()`.
-
-- Theme modification: more parameters were added the `theme()` function. 
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
-
-> Note: fonts size, family and face still can not be configured.
-
-- `corr_plot()` function now also accepts pre-computed correlation coefficients. I.e. the following two expressions are equivalent:
-```python
-    corr_plot(iris_df).points().labels().build()
-    corr_plot(iris_df.corr()).points().labels().build()  # new
-```
-                     
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-12/notebooks/scale_time.ipynb).
+       
+- `plot_background, legend_background` parameters in `theme()` [[#485](https://github.com/JetBrains/lets-plot/issues/485)]. 
+- `axis_ontop, axis_ontop_x, axis_ontop_y` parameters in `theme()`                                                                
 
 ### Changed
 
-- The size of fonts on plot was slightly increased all across the board.
-- The default plot size was increased by 20%, it's now 600x400 px.
-- **Deprecated API**: `stat_corr()` and "correlation stat" will be removed in one of the future releases. 
-  Please use the `corr_plot()` plot builder object instead. 
-
 ### Fixed
-  
-- Ordering facets - the "order" value 0 disables facet ordering [[#454](https://github.com/JetBrains/lets-plot/issues/454)].
-- Tooltips for discrete variables: add the dependence of the tooltip on the number of factors.
-  The X-axis tooltip is always shown for discrete data.
-- map_join doesn't work when join variables with same names without mappings [[#428](https://github.com/JetBrains/lets-plot/issues/428)].
-- Zoom without clipping breaks tooltips [[#373](https://github.com/JetBrains/lets-plot/issues/373)].
-- Unreadable breaks on axis [[#430](https://github.com/JetBrains/lets-plot/issues/430)].
-- Map rendering is broken when browser uses scaling [[#450](https://github.com/JetBrains/lets-plot/issues/450)].
-- corr_plot() error for data with zero variation [[#329](https://github.com/JetBrains/lets-plot/issues/329)]
-- Misleading error message [[#271](https://github.com/JetBrains/lets-plot/issues/271)]
+
+- Coord system limits do not work with x/y scale with transform [[#474](https://github.com/JetBrains/lets-plot/issues/474)].
+- Provide 0-23 hour formatting [[#469](https://github.com/JetBrains/lets-plot/issues/469)].
+- No tooltip shown when I'm trying to add an empty line [[#382](https://github.com/JetBrains/lets-plot/issues/382)].
+- `coord_fixed()` should adjust dimensions of "geom" panel accordingly [[#478](https://github.com/JetBrains/lets-plot/issues/478)].
+- The tooltip dependence on number of factors works separately by layers [[#481](https://github.com/JetBrains/lets-plot/issues/481)].
+- Tooltip on y-axis looks wrong [[#393](https://github.com/JetBrains/lets-plot/issues/393)].
+- Is kotlin-reflect really needed for lets-plot? [[#471](https://github.com/JetBrains/lets-plot/issues/471)].

@@ -19,7 +19,6 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.PlotConfig
@@ -125,10 +124,10 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
 
     var style = "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
 
-    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
-    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
-        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
-    }
+//    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
+//    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
+//        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
+//    }
     parentElement.setAttribute("style", style)
 }
 
@@ -179,9 +178,6 @@ private fun buildPlotSvg(
     mapper.attachRoot()
 
     if (plotContainer.isLiveMap) {
-        // Plot - transparent for live-map base layer to be visible.
-        svg.addClass(Style.PLOT_TRANSPARENT)
-
         mapper.target.style.run {
             setPosition(CssPosition.RELATIVE)
         }

@@ -18,82 +18,75 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class SquareFrameOfReferenceProvider(
-    private val xScaleProto: Scale<Double>,
-    private val yScaleProto: Scale<Double>,
-    xAesRange: ClosedRange<Double>,
-    yAesRange: ClosedRange<Double>,
-    private val coordProvider: CoordProvider,
+    private val hScaleProto: Scale<Double>,
+    private val vScaleProto: Scale<Double>,
+    hDomain: ClosedRange<Double>,
+    vDomain: ClosedRange<Double>,
+    override val flipAxis: Boolean,
     private val theme: Theme
 ) : TileFrameOfReferenceProvider {
 
-    override val flipAxis: Boolean = coordProvider.flipAxis
-    private val vAxisSpec: AxisSpec
     private val hAxisSpec: AxisSpec
+    private val vAxisSpec: AxisSpec
 
     init {
-        val xAxisSpec = AxisSpec(
-            AxisBreaksProviderFactory.forScale(xScaleProto),
-            xAesRange,
-            xScaleProto.name,
+        hAxisSpec = AxisSpec(
+            AxisBreaksProviderFactory.forScale(hScaleProto),
+            hDomain,
+            hScaleProto.name,
             theme.axisX()
         )
 
-        val yAxisSpec = AxisSpec(
-            AxisBreaksProviderFactory.forScale(yScaleProto),
-            yAesRange,
-            yScaleProto.name,
+        vAxisSpec = AxisSpec(
+            AxisBreaksProviderFactory.forScale(vScaleProto),
+            vDomain,
+            vScaleProto.name,
             theme.axisY()
         )
-
-        hAxisSpec = if (flipAxis) yAxisSpec else xAxisSpec
-        vAxisSpec = if (flipAxis) xAxisSpec else yAxisSpec
     }
 
     override val hAxisLabel: String? = if (hAxisSpec.theme.showTitle()) hAxisSpec.label else null
     override val vAxisLabel: String? = if (vAxisSpec.theme.showTitle()) vAxisSpec.label else null
 
     override fun createTileLayout(): TileLayout {
-        val hDomain = hAxisSpec.aesRange
-        val vDomain = vAxisSpec.aesRange
-
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
-            hDomain, vDomain,
-            coordProvider,
             hAxisSpec.theme,
             Orientation.BOTTOM
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
-            hDomain, vDomain,
-            coordProvider,
             vAxisSpec.theme,
             Orientation.LEFT
         )
 
-        return XYPlotTileLayout(hAxisLayout, vAxisLayout)
+        val hDomain = hAxisSpec.aesRange
+        val vDomain = vAxisSpec.aesRange
+
+        return XYPlotTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain)
     }
 
-    override fun createFrameOfReference(layoutInfo: TileLayoutInfo, debugDrawing: Boolean): TileFrameOfReference {
+    override fun createFrameOfReference(
+        layoutInfo: TileLayoutInfo,
+        coordProvider: CoordProvider,
+        debugDrawing: Boolean
+    ): TileFrameOfReference {
         val hAxisLayoutInfo = layoutInfo.xAxisInfo!!
         val vAxisLayoutInfo = layoutInfo.yAxisInfo!!
-
-        val hScaleProto = if (flipAxis) yScaleProto else xScaleProto
-        val vScaleProto = if (flipAxis) xScaleProto else yScaleProto
 
         // Set-up scales and coordinate system.
         val hScale = coordProvider.buildAxisScaleX(
             hScaleProto,
-            hAxisLayoutInfo.axisDomain!!,
+            hAxisLayoutInfo.axisDomain,
             hAxisLayoutInfo.axisLength,
-            hAxisLayoutInfo.axisBreaks!!
+            hAxisLayoutInfo.axisBreaks
         )
         val vScale = coordProvider.buildAxisScaleY(
             vScaleProto,
-            vAxisLayoutInfo.axisDomain!!,
+            vAxisLayoutInfo.axisDomain,
             vAxisLayoutInfo.axisLength,
-            vAxisLayoutInfo.axisBreaks!!
+            vAxisLayoutInfo.axisBreaks
         )
         val coord = coordProvider.createCoordinateSystem(
             hAxisLayoutInfo.axisDomain,

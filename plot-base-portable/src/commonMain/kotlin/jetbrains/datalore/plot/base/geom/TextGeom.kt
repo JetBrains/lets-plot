@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
@@ -21,7 +20,7 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
-    var formatter: StringFormat? = null
+    var formatter: ((Any) -> String)? = null
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
 
@@ -80,7 +79,7 @@ class TextGeom : GeomBase() {
     private fun toString(label: Any?): String {
         return when {
             label == null -> naValue
-            formatter != null -> formatter!!.format(label)
+            formatter != null -> formatter!!.invoke(label)
             else -> label.toString()
         }
     }

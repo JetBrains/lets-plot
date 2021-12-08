@@ -33,8 +33,6 @@ internal class PlotTile(
     private val frameOfReference: TileFrameOfReference,
 ) : SvgComponent() {
 
-    var isDebugDrawing: Boolean = false
-
     private val myTargetLocators = ArrayList<GeomTargetLocator>()
 
     var liveMapFigure: SomeFig? = null
@@ -61,15 +59,6 @@ internal class PlotTile(
 
         val geomBounds = tileLayoutInfo.geomBounds
 
-//        if (theme.panel().shown()) {
-//            val rect = SvgRectElement(geomBounds).apply {
-//                strokeColor().set(theme.panel().color())
-//                strokeWidth().set(theme.panel().size())
-//                fillColor().set(theme.panel().fill())
-//            }
-//            add(rect)
-//        }
-
         addFacetLabels(geomBounds, theme.facets())
 
         // render geoms
@@ -85,9 +74,9 @@ internal class PlotTile(
         } else {
             // Normal plot tiles
 
-            frameOfReference.drawFoR(this)
-            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
+            frameOfReference.drawBeforeGeomLayer(this)
 
+            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
             for (layer in layers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
@@ -101,6 +90,8 @@ internal class PlotTile(
                 layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }
+
+            frameOfReference.drawAfterGeomLayer(this)
         }
     }
 

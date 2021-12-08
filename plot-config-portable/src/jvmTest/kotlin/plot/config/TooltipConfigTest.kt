@@ -824,6 +824,38 @@ class TooltipConfigTest {
         )
     }
 
+    @Test
+    fun `tooltip format() should be applied to axis tooltips`() {
+        val formats =  listOf(
+            mapOf(FIELD to "^x", FORMAT to "x = {.1f}"), //  x-axis tooltip
+            mapOf(FIELD to "^Y", FORMAT to "y = {.1f}")  //  all positionals including y-axis tooltip
+        )
+        val expected = listOf("x = 1.6", "y = 160.0")
+
+        run {
+            val tooltipConfig = mapOf(TOOLTIP_FORMATS to formats)
+            val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
+            val axisTooltips = getAxisTooltips(geomLayer).map(DataPoint::value)
+            assertEquals(expected.size, axisTooltips.size, "Wrong number of axis tooltips")
+            for (index in expected.indices) {
+                assertEquals(expected[index], axisTooltips[index])
+            }
+        }
+        run {
+            // with specified lines
+            val tooltipConfig = mapOf(
+                TOOLTIP_LINES to listOf("@class"),
+                TOOLTIP_FORMATS to formats
+            )
+            val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
+            val axisTooltips = getAxisTooltips(geomLayer).map(DataPoint::value)
+            assertEquals(expected.size, axisTooltips.size, "Wrong number of axis tooltips")
+            for (index in expected.indices) {
+                assertEquals(expected[index], axisTooltips[index])
+            }
+        }
+    }
+
     companion object {
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
             return getGeneralTooltipLines(geomLayer).map(Line::toString)

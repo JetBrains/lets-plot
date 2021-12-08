@@ -25,7 +25,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':plot-common-portable')
@@ -42,7 +41,6 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':plot-config')
 //                implementation project(':plot-config-portable')
             }

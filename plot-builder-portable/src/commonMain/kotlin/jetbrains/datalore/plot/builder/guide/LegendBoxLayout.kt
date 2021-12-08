@@ -14,8 +14,9 @@ abstract class LegendBoxLayout(
     private val title: String,
     legendDirection: LegendDirection
 ) {
-
+    // legend keys/colorbar + labels.
     abstract val graphSize: DoubleVector
+
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
     val titleHorizontalAnchor = TextLabel.HorizontalAnchor.LEFT
     val titleVerticalAnchor = if (isHorizontal) {
@@ -23,6 +24,13 @@ abstract class LegendBoxLayout(
     } else {
         TextLabel.VerticalAnchor.TOP
     }
+
+    val titleLocation: DoubleVector
+        get() = if (isHorizontal) {
+            DoubleVector(0.0, graphSize.y / 2)
+        } else {
+            DoubleVector.ZERO
+        }
 
     val titleBounds: DoubleRectangle
         get() {
@@ -38,8 +46,11 @@ abstract class LegendBoxLayout(
         get() = when {
             isHorizontal ->
                 DoubleVector(titleSize(title).x, 0.0)
-            else ->
-                DoubleVector(0.0, titleSize(title).y)
+            else -> {
+                // make some space betwee title and the rest of the content.
+                val y = TITLE_SPEC.height() + TITLE_SPEC.height() / 3
+                DoubleVector(0.0, y)
+            }
         }
 
     val size: DoubleVector
@@ -49,16 +60,6 @@ abstract class LegendBoxLayout(
                 .union(titleBounds)
                 .union(graphBounds)
             return titleAndContent.dimension
-        }
-
-    val titleLocation: DoubleVector
-        get() = if (isHorizontal) {
-            val graphSize = graphSize
-            DoubleVector(0.0, graphSize.y / 2)
-        } else {
-            // make some distance from the contents
-            val y = -TITLE_SPEC.height() / 3
-            DoubleVector(0.0, y)
         }
 
     companion object {

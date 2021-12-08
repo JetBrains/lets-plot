@@ -25,7 +25,11 @@ internal class LinearBreaksGen(
     }
 
     override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return formatter ?: createFormatter(generateBreakValues(domain, targetCount))
+        return formatter ?: defaultFormatter(domain, targetCount)
+    }
+
+    override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return createFormatter(generateBreakValues(domain, targetCount))
     }
 
     companion object {

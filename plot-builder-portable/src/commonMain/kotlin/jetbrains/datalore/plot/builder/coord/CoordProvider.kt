@@ -42,8 +42,13 @@ interface CoordProvider {
     ): Scale<Double>
 
     fun adjustDomains(
-        xDomain: ClosedRange<Double>,
-        yDomain: ClosedRange<Double>,
-        displaySize: DoubleVector
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>,
     ): Pair<ClosedRange<Double>, ClosedRange<Double>>
+
+    fun adjustGeomSize(
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>,
+        geomSize: DoubleVector
+    ): DoubleVector
 }

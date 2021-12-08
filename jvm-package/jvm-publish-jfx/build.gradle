@@ -12,7 +12,6 @@ kotlin {
         commonMain {
             dependencies {
                 compileOnly kotlin('stdlib-common')
-                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jvmMain {
@@ -110,7 +109,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT"
-                        url = "https://opensource.org/licenses/MIT"
+                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
                     }
                 }
                 developers {

@@ -15,7 +15,6 @@ object AreaBrowser {
             (PlotConfigBrowserDemoUtil.show(
                 "Area plot",
                 plotSpecList(),
-//                demoComponentSize
             ))
         }
     }

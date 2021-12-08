@@ -361,11 +361,6 @@ object PlotConfigUtil {
             scaleByAes[aes] = scale
         }
 
-//        if(FLIP_AXIS_COORD) {
-//            val xScale = scaleByAes.getValue(Aes.X)
-//            scaleByAes[Aes.X] = scaleByAes.getValue(Aes.Y)
-//            scaleByAes[Aes.Y] = xScale
-//        }
         return TypedScaleMap(scaleByAes)
     }
 
@@ -386,24 +381,6 @@ object PlotConfigUtil {
             SeriesUtil.range(filtered)
         }
     }
-
-
-//    /**
-//     * ToDo: move to SeriesUtil (or better place)
-//     */
-//    private fun ensureApplicableDomain(
-//        dataRange: ClosedRange<Double>?,
-//        transform: ContinuousTransform
-//    ): ClosedRange<Double> {
-//        return when {
-//            dataRange == null ->
-//                transform.createApplicableDomain(0.0)
-//            SeriesUtil.isSubTiny(dataRange) ->
-//                transform.createApplicableDomain(dataRange.lowerEnd)
-//            else ->
-//                dataRange
-//        }
-//    }
 
     private fun isDiscreteScaleForEmptyData(scaleProvider: ScaleProvider<*>): Boolean {
         // Empty data is neither 'discrete' nor 'numeric'.

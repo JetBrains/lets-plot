@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 
@@ -18,7 +19,11 @@ class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
         throw IllegalStateException("Bogus frame of reference provider is not supposed to be used.")
     }
 
-    override fun createFrameOfReference(layoutInfo: TileLayoutInfo, debugDrawing: Boolean): TileFrameOfReference {
+    override fun createFrameOfReference(
+        layoutInfo: TileLayoutInfo,
+        coordProvider: CoordProvider,
+        debugDrawing: Boolean
+    ): TileFrameOfReference {
         return BogusFrameOfReference()
     }
 }

@@ -284,6 +284,7 @@ object Option {
         const val DISCRETE_DOMAIN = "discrete"
         const val DISCRETE_DOMAIN_REVERSE = "reverse"
         const val DATE_TIME = "datetime"
+        const val TIME = "time"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
         const val FORMAT = "format"

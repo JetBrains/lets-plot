@@ -23,7 +23,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 //                implementation project(':plot-config')
             }
         }

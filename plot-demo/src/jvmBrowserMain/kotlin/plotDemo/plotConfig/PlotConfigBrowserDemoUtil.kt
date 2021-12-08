@@ -23,14 +23,16 @@ object PlotConfigBrowserDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector = DoubleVector(400.0, 300.0),
-        applyBackendTransform: Boolean = true
+        applyBackendTransform: Boolean = true,
+        backgroundColor: String = "lightgrey"
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
                 plotSpecList,
                 plotSize,
-                applyBackendTransform
+                applyBackendTransform,
+                backgroundColor
             )
         }
     }
@@ -44,7 +46,8 @@ object PlotConfigBrowserDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector,
-        applyBackendTransform: Boolean
+        applyBackendTransform: Boolean,
+        backgroundColor: String
     ): String {
 
         val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
@@ -82,7 +85,7 @@ object PlotConfigBrowserDemoUtil {
                                 display: inline-block;
                             }
                             body { 
-                                background-color:lightgrey
+                                background-color:$backgroundColor
                             }
                         """.trimIndent()
                     }

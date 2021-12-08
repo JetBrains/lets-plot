@@ -36,6 +36,10 @@ class DateTimeBreaksGen(
     }
 
     override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return labelFormatter ?: breaksHelper(domain, targetCount).formatter
+        return labelFormatter ?: defaultFormatter(domain, targetCount)
+    }
+
+    override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return breaksHelper(domain, targetCount).formatter
     }
 }

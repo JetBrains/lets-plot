@@ -21,7 +21,7 @@ import kotlin.math.max
 
 class ColorBarComponent(
     override val spec: ColorBarComponentSpec
-) : LegendBox(spec.theme) {
+) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val layout = spec.layout
@@ -76,20 +76,11 @@ class ColorBarComponent(
             guideBarGroup.children().add(label.rootGroup)
         }
 
-        // add white frame
-        guideBarGroup.children().add(
-            createBorder(
-                barBounds,
-                spec.theme.backgroundFill(),
-                1.0
-            )
-        )
-
         if (debug) {
             // frame bar and labels
             val graphBounds = DoubleRectangle(DoubleVector.ZERO, layout.graphSize)
             guideBarGroup.children().add(
-                createBorder(
+                createTransparentRect(
                     graphBounds,
                     Color.DARK_BLUE,
                     1.0
@@ -167,7 +158,7 @@ class ColorBarComponent(
     private fun addTickMark(g: SvgGElement, p0: DoubleVector, p1: DoubleVector) {
         val line = SvgLineElement(p0.x, p0.y, p1.x, p1.y)
         line.strokeWidth().set(1.0)
-        line.strokeColor().set(spec.theme.backgroundFill());
+        line.strokeColor().set(theme.backgroundFill());
         g.children().add(line)
     }
 }

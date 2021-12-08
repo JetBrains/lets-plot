@@ -8,6 +8,7 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
@@ -21,8 +22,10 @@ import jetbrains.livemap.model.coord
 class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
+            zoom = 5
             devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
             geocodingService = Services.devGeocodingService()
+            location { coordinate = explicitVec(96.37587535342406, 61.8742484121002) }
             layers {
 
                 points {

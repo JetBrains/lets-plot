@@ -60,13 +60,22 @@ class PlotAssembler private constructor(
             val fOrProvider = BogusFrameOfReferenceProvider()
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         } else {
+            val flipAxis = coordProvider.flipAxis
             val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+            val (hDomain, vDomain) = coordProvider.adjustDomains(
+                hDomain = if (flipAxis) yAesRange else xAesRange,
+                vDomain = if (flipAxis) xAesRange else yAesRange
+            )
+            val (hAes, vAes) = when (flipAxis) {
+                true -> Aes.Y to Aes.X
+                else -> Aes.X to Aes.Y
+            }
             val fOrProvider = SquareFrameOfReferenceProvider(
-                scaleByAes[Aes.X],
-                scaleByAes[Aes.Y],
-                xAesRange,
-                yAesRange,
-                coordProvider,
+                scaleByAes[hAes],
+                scaleByAes[vAes],
+                hDomain,
+                vDomain,
+                flipAxis,
                 theme
             )
             val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets, theme.facets())
@@ -85,6 +94,7 @@ class PlotAssembler private constructor(
             layersByTile = layersByTile,
             plotLayout = plotLayout,
             frameOfReferenceProvider = fOrProvider,
+            coordProvider = coordProvider,
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme

@@ -10,12 +10,13 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.guide.Orientation
 
 class AxisLayoutInfo private constructor(b: Builder) {
-    val axisBreaks: ScaleBreaks?
+    val axisBreaks: ScaleBreaks
     val axisLength: Double
-    val orientation: jetbrains.datalore.plot.builder.guide.Orientation?
-    val axisDomain: ClosedRange<Double>?
+    val orientation: Orientation
+    val axisDomain: ClosedRange<Double>
 
     val tickLabelsBounds: DoubleRectangle?
     val tickLabelRotationAngle: Double
@@ -31,10 +32,10 @@ class AxisLayoutInfo private constructor(b: Builder) {
         require(b.myTickLabelsBounds != null)
         require(b.myAxisDomain != null)
 
-        this.axisBreaks = b.myAxisBreaks
+        this.axisBreaks = b.myAxisBreaks!!
         this.axisLength = b.myAxisLength
-        this.orientation = b.myOrientation
-        this.axisDomain = b.myAxisDomain
+        this.orientation = b.myOrientation!!
+        this.axisDomain = b.myAxisDomain!!
 
         this.tickLabelsBounds = b.myTickLabelsBounds
         this.tickLabelRotationAngle = b.myTickLabelRotationAngle
@@ -70,8 +71,8 @@ class AxisLayoutInfo private constructor(b: Builder) {
     }
 
     class Builder {
-        var myAxisLength: Double = 0.toDouble()
-        var myOrientation: jetbrains.datalore.plot.builder.guide.Orientation? = null
+        var myAxisLength: Double = 0.0
+        var myOrientation: Orientation? = null
         var myAxisDomain: ClosedRange<Double>? = null
         var myMaxTickLabelsBounds: DoubleRectangle? = null
         var myTickLabelSmallFont = false
@@ -91,7 +92,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun orientation(o: jetbrains.datalore.plot.builder.guide.Orientation): Builder {
+        fun orientation(o: Orientation): Builder {
             myOrientation = o
             return this
         }

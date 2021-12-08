@@ -17,11 +17,13 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRI
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesBase.Companion.PLOT_BACKGROUND
 
 class ThemeValuesRClassic : ThemeValues(VALUES) {
 
     companion object {
+
+        private val PLOT_BACKGROUND = Color.WHITE
+
         private val BLACK: Color = Color.parseHex("#171717")
         private val DARK_GREY: Color = Color.parseHex("#474747")
         private val LIGHT_GREY: Color = Color.parseHex("#E9E9E9")

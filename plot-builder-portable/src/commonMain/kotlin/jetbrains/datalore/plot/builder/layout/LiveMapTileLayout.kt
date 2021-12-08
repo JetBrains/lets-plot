@@ -5,29 +5,17 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MIN_SIZE
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.clipBounds
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.geomBounds
+import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.liveMapGeomBounds
 
 internal class LiveMapTileLayout : TileLayout {
 
-    override fun doLayout(preferredSize: DoubleVector): TileLayoutInfo {
-        var geomBounds = geomBounds(
-            0.0,
-            0.0,
-            preferredSize
-        )
-        geomBounds = geomBounds.union(
-            DoubleRectangle(
-                geomBounds.origin,
-                GEOM_MIN_SIZE
-            )
-        )
-        val geomWithAxisBounds = geomBounds
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
+        val geomBounds = liveMapGeomBounds(preferredSize)
         return TileLayoutInfo(
-            geomWithAxisBounds,
+            geomBounds,
             geomBounds,
             clipBounds(geomBounds),
             null, null,

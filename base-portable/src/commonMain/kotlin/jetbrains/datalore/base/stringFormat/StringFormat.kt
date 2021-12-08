@@ -14,7 +14,7 @@ import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.*
 
 class StringFormat private constructor(
     private val pattern: String,
-    val formatType: FormatType
+    private val formatType: FormatType
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
@@ -22,7 +22,7 @@ class StringFormat private constructor(
         STRING_FORMAT
     }
 
-    private val myFormatters: List<((Any) -> String)>
+    private val myFormatters: List<(Any) -> String>
 
     init {
         myFormatters = when (formatType) {
@@ -48,19 +48,19 @@ class StringFormat private constructor(
 
     fun format(values: List<Any>): String {
         if (argsNumber != values.size) {
-            error("Can't format values $values with pattern '$pattern'). Wrong number of arguments: expected $argsNumber instead of ${values.size}")
+            error("Can't format values $values with pattern '$pattern'. Wrong number of arguments: expected $argsNumber instead of ${values.size}")
         }
         return when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> {
                 require(myFormatters.size == 1)
-                formatValue(values.single(), myFormatters.single())
+                myFormatters.single()(values.single())
             }
             STRING_FORMAT -> {
                 var index = 0
                 BRACES_REGEX.replace(pattern) {
                     val originalValue = values[index]
                     val formatter = myFormatters[index++]
-                    formatValue(originalValue, formatter)
+                    formatter(originalValue)
                 }
                     .replace("{{", "{")
                     .replace("}}", "}")
@@ -101,13 +101,6 @@ class StringFormat private constructor(
         }
     }
 
-    private fun formatValue(value: Any, formatter: ((Any) -> String)?): String {
-        return when (formatter) {
-            null -> value.toString()
-            else -> formatter(value)
-        }
-    }
-
     companion object {
         // Format strings contain “replacement fields” surrounded by braces {}.
         // Anything that is not contained in braces is considered literal text, which is copied unchanged to the output.
@@ -117,16 +110,16 @@ class StringFormat private constructor(
         //     "{.1f} -> 1.2
         //     "{{{.1f}}} -> {1.2}
         private val BRACES_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
-        const val TEXT_IN_BRACES = 2
+        private const val TEXT_IN_BRACES = 2
 
         fun valueInLinePattern() = "{}"
 
         fun forOneArg(
             pattern: String,
             type: FormatType? = null,
-            formatFor: String? = null,
+            formatFor: String? = null
         ): StringFormat {
-            return create(pattern, type, formatFor, 1)
+            return create(pattern, type, formatFor, expectedArgs = 1)
         }
 
         fun forNArgs(

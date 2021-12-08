@@ -30,9 +30,12 @@ interface LegendTheme {
 
     fun direction(): LegendDirection
 
-    fun backgroundFill(): Color
-
     fun titleColor(): Color
 
     fun textColor(): Color
+
+    fun showBackground(): Boolean
+    fun backgroundColor(): Color
+    fun backgroundFill(): Color
+    fun backgroundStrokeWidth(): Double
 }

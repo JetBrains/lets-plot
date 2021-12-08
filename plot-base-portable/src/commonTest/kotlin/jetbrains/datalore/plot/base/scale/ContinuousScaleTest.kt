@@ -101,6 +101,8 @@ class ContinuousScaleTest {
             override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
                 return { "hi" }
             }
+
+            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) = labelFormatter(domain, targetCount)
         }
 
         fun actual(scale: Scale<*>): BreaksGenerator {

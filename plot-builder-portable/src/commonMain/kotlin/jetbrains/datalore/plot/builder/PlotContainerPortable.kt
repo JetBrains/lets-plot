@@ -10,9 +10,7 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.presentation.Style.PLOT_BACKDROP
 import jetbrains.datalore.vis.svg.SvgCssResource
-import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 
 /**
@@ -74,27 +72,18 @@ open class PlotContainerPortable(
             }
         })
 
-        // Add Plot background.
+        // Notes on plot background.
+        // (No more actual as the background rect is now added in PlotSvgComponent)
 
+        // 1.
         // Batik doesn't seem to support any styling (via 'style' element or 'style' attribute)
         // of root <svg>-element.
-        // Therefore the 'backdrop' rectungle is necessary.
-        val backdrop = SvgRectElement()
-        backdrop.addClass(PLOT_BACKDROP)
 
-        // Jfx Scene ignores these values (percentage is not supported).
-        // In the case of Jfx Scene the 'backdrop' rectungle has visibility=hidden
-        // and styling of the root <svg>-element is used.
+        // 2.
+        // Jfx Scene ignores size values set in % (percentage is not supported).
+        // Styling of the root <svg>-element can be done in an external css file.
         // (see: 'resources/svgMapper/jfx/plot.css' in plot-builder)
-        backdrop.setAttribute("width", "100%")
-        backdrop.setAttribute("height", "100%")
 
-        // This works for DOM / Batik but ignored by JFX Scene
-        // Also, 'width'/'height' attributes are required by Batik.
-        // (or it fails with org.apache.batik.bridge.BridgeException)
-//        backdrop.setAttribute(SVG_STYLE_ATTRIBUTE, "width: 100%; height: 100%")
-
-        svg.children().add(backdrop)
         svg.children().add(plot.rootGroup)
     }
 

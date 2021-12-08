@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.STRING_FORMAT
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint

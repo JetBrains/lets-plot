@@ -32,7 +32,11 @@ internal class NonlinearBreaksGen(
     }
 
     override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return formatter ?: createMultiFormatter(generateBreakValues(domain, targetCount, transform))
+        return formatter ?: defaultFormatter(domain, targetCount)
+    }
+
+    override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
     }
 
     companion object {

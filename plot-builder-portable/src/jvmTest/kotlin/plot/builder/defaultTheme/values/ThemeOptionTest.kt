@@ -107,7 +107,9 @@ internal class ThemeOptionTest {
             ThemeOption.FACET_STRIP_BGR_RECT -> (theme.facets() as DefaultFacetsTheme).rectKey
             ThemeOption.FACET_STRIP_TEXT -> (theme.facets() as DefaultFacetsTheme).textKey
 
+            ThemeOption.PLOT_BKGR_RECT -> (theme.plot() as DefaultPlotTheme).backgroundKey
             ThemeOption.PLOT_TITLE -> (theme.plot() as DefaultPlotTheme).titleKey
+            ThemeOption.LEGEND_BKGR_RECT -> (theme.legend() as DefaultLegendTheme).backgroundKey
             ThemeOption.LEGEND_TEXT -> (theme.legend() as DefaultLegendTheme).textKey
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey
 
