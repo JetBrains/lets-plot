@@ -111,8 +111,7 @@ object PlotConfigUtil {
         val variablesByMappedAes = associateAesWithMappedVariables(varBindings)
         associateVarBindingsWithData(layerConfigs, excludeStatVariables)
             .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
-            .keys
-            .map(VarBinding::aes)
+            .map { (varBinding, _) -> varBinding.aes }
             .filter { aes -> aes in setOf(Aes.X, Aes.Y) }
             .filter { aes -> aes !in scaleProviderByAes }
             .forEach { aes ->
