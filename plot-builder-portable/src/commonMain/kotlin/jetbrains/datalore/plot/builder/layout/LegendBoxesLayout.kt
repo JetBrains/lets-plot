@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import kotlin.math.max
 
 internal class LegendBoxesLayout(
     private val outerBounds: DoubleRectangle,
@@ -21,13 +22,14 @@ internal class LegendBoxesLayout(
         val legendJustification = theme.justification()
 
         val blockSize = legendsBlockInfo.size()
-        val centroid = innerBounds.center
+        val innerCenter = innerBounds.center
+        val sideLegendTop = max(outerBounds.top, innerCenter.y - blockSize.y / 2)
 
         val legendOrigin: DoubleVector = when (legendPosition) {
-            LegendPosition.LEFT -> DoubleVector(outerBounds.left, centroid.y - blockSize.y / 2)
-            LegendPosition.RIGHT -> DoubleVector(outerBounds.right - blockSize.x, centroid.y - blockSize.y / 2)
-            LegendPosition.TOP -> DoubleVector(centroid.x - blockSize.x / 2, outerBounds.top)
-            LegendPosition.BOTTOM -> DoubleVector(centroid.x - blockSize.x / 2, outerBounds.bottom - blockSize.y)
+            LegendPosition.LEFT -> DoubleVector(outerBounds.left, sideLegendTop)
+            LegendPosition.RIGHT -> DoubleVector(outerBounds.right - blockSize.x, sideLegendTop)
+            LegendPosition.TOP -> DoubleVector(innerCenter.x - blockSize.x / 2, outerBounds.top)
+            LegendPosition.BOTTOM -> DoubleVector(innerCenter.x - blockSize.x / 2, outerBounds.bottom - blockSize.y)
             else -> LegendBoxesLayoutUtil.overlayLegendOrigin(
                 innerBounds,
                 blockSize,
