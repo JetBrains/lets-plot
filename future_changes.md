@@ -9,8 +9,6 @@
 - `plot_background, legend_background` parameters in `theme()` [[#485](https://github.com/JetBrains/lets-plot/issues/485)]. 
 - `axis_ontop, axis_ontop_x, axis_ontop_y` parameters in `theme()`                                                                
 
-### Changed
-
 ### Fixed
 
 - Coord system limits do not work with x/y scale with transform [[#474](https://github.com/JetBrains/lets-plot/issues/474)].
