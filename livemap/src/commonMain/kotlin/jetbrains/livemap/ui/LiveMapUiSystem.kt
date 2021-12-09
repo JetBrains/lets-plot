@@ -224,6 +224,8 @@ class LiveMapUiSystem(
             }
             updateMakeGeometryButton(drawingGeometry = false)
             updateZoomButtons(context.camera.zoom)
+
+            myUiService.repaint()
         }
 
         override fun update(context: LiveMapContext) {
