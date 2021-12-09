@@ -2326,7 +2326,7 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
         Defaults: multiplicative = 0.05, additive = 0.
-    na_value :
+    na_value
         Missing values will be replaced with this value.
     format : str
         Defines the format for labels on the scale. The syntax resembles Python's:
@@ -2408,7 +2408,7 @@ def scale_x_time(name=None, breaks=None, labels=None, limits=None, expand=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 13
 
         import datetime as dt
         import numpy as np
@@ -2470,7 +2470,7 @@ def scale_y_time(name=None, breaks=None, labels=None, limits=None, expand=None, 
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 13
 
         import datetime as dt
         import numpy as np

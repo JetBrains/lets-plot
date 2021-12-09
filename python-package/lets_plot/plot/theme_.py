@@ -88,7 +88,7 @@ def theme(*,
         All axis elements: lines, ticks, texts, titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify axes parameters.
-    axis_ontop, axis_ontop_x, axis_ontop_y : bool
+    axis_ontop, axis_ontop_x, axis_ontop_y : bool, default=False
         Option to place axis (lines, tickmarks and labels) over the data layers.
     axis_title, axis_title_x, axis_title_y : str or dict
         Labels of axes.
@@ -216,7 +216,7 @@ def theme(*,
             facet_grid(y='class') + \\
             theme(axis_line_x='blank', \\
                   axis_ticks=element_line(color='white'), \\
-                  panel_grid_major_x='blank', \
+                  panel_grid_major_x='blank', \\
                   strip_background=element_rect(color='black', fill='white'), \\
                   axis_tooltip=element_rect(color='black', fill='white'), \\
                   legend_position='top')

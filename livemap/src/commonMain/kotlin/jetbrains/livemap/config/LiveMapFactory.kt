@@ -52,11 +52,10 @@ class LiveMapFactory(
             myLiveMapSpec.minZoom,
             myLiveMapSpec.maxZoom
         )
+        myViewport.zoom = myViewport.minZoom + 1 // + 1 to not blink zoomOut button in disabled state
     }
 
     fun createLiveMap(): Async<LiveMap> {
-        myViewport.zoom = 1
-
         return Asyncs.constant(
             LiveMap(
                 myMapRuler = myMapRuler,
