@@ -96,8 +96,8 @@ object PlotConfigUtil {
         excludeStatVariables: Boolean
     ): Map<Aes<*>, ScaleProvider<*>> {
 
-        val aesSet = getVarBindings(layerConfigs, excludeStatVariables).map { it.aes }.toSet() +
-                setOf(Aes.X, Aes.Y)
+        val varBindings = getVarBindings(layerConfigs, excludeStatVariables)
+        val aesSet = varBindings.map(VarBinding::aes).toSet() + setOf(Aes.X, Aes.Y)
 
         val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
@@ -107,12 +107,23 @@ object PlotConfigUtil {
             scaleProviderByAes[scaleConfig.aes] = scaleProvider
         }
 
+        // Append date-time scale provider
+        val variablesByMappedAes = associateAesWithMappedVariables(varBindings)
+        associateVarBindingsWithData(layerConfigs, excludeStatVariables)
+            .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
+            .map { (varBinding, _) -> varBinding.aes }
+            .filter { aes -> aes in setOf(Aes.X, Aes.Y) }
+            .filter { aes -> aes !in scaleProviderByAes }
+            .forEach { aes ->
+                val name = defaultScaleName(aes, variablesByMappedAes)
+                scaleProviderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProvider(aes, name)
+            }
+
         // Append all the rest scale providers.
         return aesSet.associateWith {
             ScaleProviderHelper.getOrCreateDefault(it, scaleProviderByAes)
         }
     }
-
 
     private fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<Aes<*>, List<DataFrame.Variable>> {
         val variablesByMappedAes: MutableMap<Aes<*>, MutableList<DataFrame.Variable>> = HashMap()
@@ -274,6 +285,21 @@ object PlotConfigUtil {
         return allTransformsByAes
     }
 
+    private fun defaultScaleName(aes: Aes<*>, variablesByMappedAes: Map<Aes<*>, List<DataFrame.Variable>>): String {
+        return if (variablesByMappedAes.containsKey(aes)) {
+            val variables = variablesByMappedAes.getValue(aes)
+            val labels = variables.map(DataFrame.Variable::label).distinct()
+            if (labels.size > 1 && (aes == Aes.X || aes == Aes.Y)) {
+                // Don't show multiple labels on X,Y axis.
+                aes.name
+            } else {
+                labels.joinToString()
+            }
+        } else {
+            aes.name
+        }
+    }
+
     internal fun createScales(
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
@@ -323,24 +349,9 @@ object PlotConfigUtil {
         }
 
         // Create scales for all aes.
-        fun defaultScaleName(aes: Aes<*>): String {
-            return if (variablesByMappedAes.containsKey(aes)) {
-                val variables = variablesByMappedAes.getValue(aes)
-                val labels = variables.map { it.label }.distinct()
-                if (labels.size > 1 && (aes == Aes.X || aes == Aes.Y)) {
-                    // Don't show multiple labels on X,Y axis.
-                    aes.name
-                } else {
-                    labels.joinToString()
-                }
-            } else {
-                aes.name
-            }
-        }
-
         val scaleByAes = HashMap<Aes<*>, Scale<*>>()
         for (aes in aesSet + setOf(Aes.X, Aes.Y)) {
-            val defaultName = defaultScaleName(aes)
+            val defaultName = defaultScaleName(aes, variablesByMappedAes)
             val scaleProvider = scaleProviderByAes.getValue(aes)
 
             @Suppress("MoveVariableDeclarationIntoWhen")

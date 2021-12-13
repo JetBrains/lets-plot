@@ -29,7 +29,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
+        plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOption>
     ): LayerConfig {
 
@@ -39,7 +39,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             layerOptions,
             sharedData,
             plotMappings,
-            plotDiscreteAes,
+            plotDataMeta,
             plotOrderOptions,
             GeomProto(geomKind),
             false
