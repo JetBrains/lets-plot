@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.handler
@@ -23,14 +23,14 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGH
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
+import jetbrains.datalore.plot.builder.tooltip.RetainableComponents
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.HIDDEN
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.VISIBLE
+import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility
 import jetbrains.datalore.vis.svg.SvgNode
 
 
@@ -46,15 +46,17 @@ internal class TooltipRenderer(
     private val myLayoutManager: LayoutManager
     private val myTooltipLayer: SvgGElement
     private val myTileInfos = ArrayList<TileInfo>()
+    private val tooltipStorage: RetainableComponents<TooltipBox>
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
         myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
+        tooltipStorage = RetainableComponents(::TooltipBox, myTooltipLayer)
 
-        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
-        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_DRAGGED, handler { hideTooltip() }))
-        regs.add(mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_LEFT, handler { hideTooltip() }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltip() }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltip() }))
     }
 
     override fun dispose() {
@@ -66,11 +68,11 @@ internal class TooltipRenderer(
         val tooltipSpecs = createTooltipSpecs(cursor)
         val tooltipBounds = getTooltipBounds(cursor)
 
-        clearTooltips()
+        val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
-        tooltipSpecs
-            .filter { spec -> spec.lines.isNotEmpty() }
-            .map { spec ->
+        tooltipSpecs.zip(tooltipComponents)
+            .filter { (spec, _) -> spec.lines.isNotEmpty() }
+            .map { (spec, tooltipBox) ->
 
                 val fillColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
@@ -98,39 +100,38 @@ internal class TooltipRenderer(
                     else -> 1.0
                 }
 
-                val tooltipBox = TooltipBox().apply {
-                    rootGroup.visibility().set(HIDDEN)
-                    myTooltipLayer.children().add(rootGroup)
-                }
-                tooltipBox.update(
-                    fillColor = fillColor,
-                    textColor = textColor,
-                    borderColor = borderColor,
-                    strokeWidth = strokeWidth,
-                    lines = spec.lines,
-                    style = spec.style,
-                    rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
-                    tooltipMinWidth = spec.minWidth
-                )
-
+                tooltipBox
+                    // not all tooltips will get position - overlapped axis toooltips likely won't.
+                    // Hide and later show only ones with position
+                    .apply { rootGroup.visibility().set(Visibility.HIDDEN) }
+                    .update(
+                        fillColor = fillColor,
+                        textColor = textColor,
+                        borderColor = borderColor,
+                        strokeWidth = strokeWidth,
+                        lines = spec.lines,
+                        style = spec.style,
+                        rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
+                        tooltipMinWidth = spec.minWidth
+                    )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
             .also { tooltips -> tooltipBounds?.let { showCrosshair(tooltips, it.handlingArea) } }
-            .map { arranged ->
+            .forEach { arranged ->
                 arranged.tooltipBox.apply {
+                    rootGroup.visibility().set(Visibility.VISIBLE) // show only tooltips that got their position
                     setPosition(
                         arranged.tooltipCoord,
                         arranged.stemCoord,
                         arranged.orientation
                     )
-                    rootGroup.visibility().set(VISIBLE)
                 }
             }
     }
 
-    private fun hideTooltip() = clearTooltips()
-    private fun clearTooltips() = myTooltipLayer.children().clear()
+    private fun hideTooltip() = tooltipStorage.provide(0)
+
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
         val showVertical = tooltips.any { it.hintKind == X_AXIS_TOOLTIP }

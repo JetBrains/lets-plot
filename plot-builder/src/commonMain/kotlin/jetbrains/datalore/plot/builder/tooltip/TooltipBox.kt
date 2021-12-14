@@ -155,7 +155,7 @@ class TooltipBox: SvgComponent() {
     }
 
     private inner class TextBox : SvgComponent() {
-        private val myLines = SvgSvgElement().apply {
+        private val myLinesContainer = SvgSvgElement().apply {
             x().set(0.0)
             y().set(0.0)
             width().set(0.0)
@@ -172,7 +172,7 @@ class TooltipBox: SvgComponent() {
 
         override fun buildComponent() {
             add(myContent)
-            myContent.children().add(myLines)
+            myContent.children().add(myLinesContainer)
         }
 
         internal fun update(
@@ -182,6 +182,8 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean
         ) {
+            myLinesContainer.children().clear()
+
             val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
@@ -192,13 +194,13 @@ class TooltipBox: SvgComponent() {
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
                     labelComponent.textColor().set(labelTextColor)
-                    myLines.children().add(labelComponent.rootGroup)
+                    myLinesContainer.children().add(labelComponent.rootGroup)
                 }
             }
             // for values
             components.onEach { (_, valueComponent) ->
                 valueComponent.textColor().set(valueTextColor)
-                myLines.children().add(valueComponent.rootGroup)
+                myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
             // bBoxes
@@ -332,7 +334,7 @@ class TooltipBox: SvgComponent() {
                     }
                 }
 
-            myLines.apply {
+            myLinesContainer.apply {
                 x().set(if (rotate) 0.0 else H_CONTENT_PADDING)
                 y().set(V_CONTENT_PADDING)
                 width().set(textSize.x + H_CONTENT_PADDING * 2)
