@@ -16,27 +16,15 @@ class TestWithListAndDictArgs:
     mapping_arg = gg.aes('X')
     expected[0] = dict(
         geom='n',
-        mapping=mapping_arg.as_dict(),
-        data=None,
-        stat=None,
-        position=None,
-        show_legend=None,
-        sampling=None,
-        tooltips=None,
-        data_meta= {},
+        data_meta={},
+        mapping=mapping_arg.as_dict()
     )
 
     # II
     expected[1] = dict(
         geom='n',
-        mapping={'x': None, 'y': None},
-        data=None,
-        stat=None,
-        position=None,
-        show_legend=None,
-        sampling=None,
-        tooltips=None,
-        data_meta= {},
+        mapping={},
+        data_meta={},
         arrow={'angle': 0, 'length': 1, 'ends': 'a', 'type': 'b', 'name': 'arrow'}
     )
 
