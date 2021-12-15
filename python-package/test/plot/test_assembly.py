@@ -17,7 +17,13 @@ def test_plot_geom_geom():
 
     expect = {
         'kind': 'plot',
-        'layers': [{'geom': 'geom1'}, {'geom': 'geom2'}]
+        'mapping': {},
+        'data_meta': {},
+        'layers': [
+            geom1.as_dict(),
+            geom2.as_dict()
+        ],
+        'scales': []
     }
 
     assert (plot + geom1 + geom2).as_dict() == expect
@@ -32,8 +38,11 @@ def test_plot_geom_scale():
 
     expect = {
         'kind': 'plot',
-        'layers': [{'geom': 'geom'}],
-        'scales': [{'aesthetic': 'A'}]}
+        'mapping': {},
+        'data_meta': {},
+        'layers': [geom.as_dict()],
+        'scales': [scale.as_dict()]
+    }
 
     assert (plot + geom + scale).as_dict() == expect
     assert (plot + scale + geom).as_dict() == expect
@@ -45,8 +54,12 @@ def test_plot_ggtitle():
     ggtitle = gg.labs(title="New plot title")
 
     expect = {
+        'ggtitle': {'text': 'New plot title'},
         'kind': 'plot',
-        'ggtitle': {'text': 'New plot title'}
+        'data_meta': {},
+        'layers': [],
+        'mapping': {},
+        'scales': []
     }
 
     assert (plot + ggtitle).as_dict() == expect

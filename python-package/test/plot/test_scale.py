@@ -30,7 +30,7 @@ def test_scale(args_list, args_dict, expected):
 
 def test_labs_empty():
     spec = gg.labs()
-    assert len(spec.as_dict()) == 0
+    assert spec.as_dict()['feature-list'] == []
 
 
 def test_plot_title():

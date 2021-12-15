@@ -12,6 +12,7 @@ from lets_plot.plot.geom_image_ import geom_image
 
 def _image_spec(width, height, href):
     return dict(
+        data_meta={},
         geom='image',
         # image_spec=dict(
         #     width=width,

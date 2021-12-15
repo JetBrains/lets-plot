@@ -130,43 +130,8 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     return LayerSpec(**locals())
 
 
-def _cleanup_spec_list(obj):
-    assert isinstance(obj, list)
-
-    if all(isinstance(item, (dict, type(None))) for item in obj):
-        return [v for v in map(lambda item: _cleanup_spec(item), obj) if v is not None]
-
-    # ignore non-dict list or it may produce unexpected result: [['asd'], [None]] => [['asd'],[]]
-    return obj
-
-
-def _cleanup_spec(obj: dict):
-    assert isinstance(obj, dict)
-    res = {}
-    for k, v in obj.items():
-        if v is None:
-            continue
-
-        if k in ['data', 'map']:
-            res[k] = v
-            continue
-
-        if isinstance(v, list):
-            if k in ['scales', 'layers', 'feature-list', 'tooltip_formats', 'tooltip_lines', 'tooltip_variables']:
-                clean = _cleanup_spec_list(v)
-                if len(clean) > 0:
-                    res[k] = clean
-            else:
-                res[k] = v
-
-        elif isinstance(v, dict):
-            clean = _cleanup_spec(v)
-            # Empty corr_plot layer adds geom with default visuals, if remove - no layer will be added at all
-            if len(clean) > 0 or k in ['point_params', 'tile_params', 'label_params']:
-                res[k] = clean
-        else:
-            res[k] = v
-    return res
+def _filter_none(original: dict) -> dict:
+    return {k: v for k, v in original.items() if v is not None}
 
 
 #
@@ -184,7 +149,7 @@ def _specs_to_dict(opts_raw):
         else:
             opts[k] = v
 
-    return _cleanup_spec(opts)
+    return _filter_none(opts)
 
 
 class FeatureSpec():
@@ -425,8 +390,7 @@ class PlotSpec(FeatureSpec):
         d['kind'] = self.kind
         d['scales'] = [scale.as_dict() for scale in self.__scales]
         d['layers'] = [layer.as_dict() for layer in self.__layers]
-
-        return _cleanup_spec(d)
+        return d
 
     def __str__(self):
         result = ['plot']
@@ -567,7 +531,7 @@ class FeatureSpecArray(FeatureSpec):
 
     def as_dict(self):
         elements = [{e.kind: e.as_dict()} for e in self.__elements]
-        return _cleanup_spec({'feature-list': elements})
+        return {'feature-list': elements}
 
     def __add__(self, other):
         if isinstance(other, DummySpec):
