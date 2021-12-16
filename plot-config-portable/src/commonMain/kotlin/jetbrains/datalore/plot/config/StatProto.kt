@@ -96,7 +96,7 @@ object StatProto {
                 )
             }
 
-            StatKind.YDENSITY -> return configureViolinStat(options)
+            StatKind.YDENSITY -> return configureYDensityStat(options)
 
             StatKind.DENSITY -> return configureDensityStat(options)
 
@@ -172,7 +172,7 @@ object StatProto {
         )
     }
 
-    private fun configureViolinStat(options: OptionsAccessor): YDensityStat {
+    private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
         options[Density.BAND_WIDTH]?.run {

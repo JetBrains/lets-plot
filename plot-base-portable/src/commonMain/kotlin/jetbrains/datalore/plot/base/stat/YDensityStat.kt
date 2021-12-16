@@ -57,6 +57,17 @@ class YDensityStat(
         return builder.build()
     }
 
+    override fun normalize(data: DataFrame): DataFrame {
+        val statDensity = data.getNumeric(Stats.DENSITY).map { it!! }
+        val densityMax = statDensity.maxOrNull()!!
+        val builder = DataFrame.Builder()
+        for (variable in data.variables()) {
+            builder.put(variable, data[variable])
+        }
+        builder.putNumeric(Stats.VIOLIN_WIDTH, statDensity.map { it / densityMax })
+        return builder.build()
+    }
+
     private fun buildStat(
         xs: List<Double?>,
         ys: List<Double?>,
@@ -99,7 +110,6 @@ class YDensityStat(
         return mutableMapOf(
             Stats.X to statX,
             Stats.Y to statY,
-            Stats.VIOLIN_WIDTH to statScaled,
             Stats.DENSITY to statDensity,
             Stats.COUNT to statCount,
             Stats.SCALED to statScaled
