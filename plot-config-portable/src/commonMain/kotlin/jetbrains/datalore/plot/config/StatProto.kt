@@ -96,7 +96,7 @@ object StatProto {
                 )
             }
 
-            StatKind.VIOLIN -> return configureViolinStat(options)
+            StatKind.YDENSITY -> return configureViolinStat(options)
 
             StatKind.DENSITY -> return configureDensityStat(options)
 
@@ -172,7 +172,7 @@ object StatProto {
         )
     }
 
-    private fun configureViolinStat(options: OptionsAccessor): ViolinStat {
+    private fun configureViolinStat(options: OptionsAccessor): YDensityStat {
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
         options[Density.BAND_WIDTH]?.run {
@@ -187,13 +187,13 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        return ViolinStat(
+        return YDensityStat(
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
-            fullScalMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
         )
     }
 

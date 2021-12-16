@@ -12,13 +12,13 @@ import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-class ViolinStat(
+class YDensityStat(
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
     private val kernel: DensityStat.Kernel,
     private val n: Int,
-    private val fullScalMax: Int
+    private val fullScanMax: Int
 ) : BaseStat(DEF_MAPPING) {
 
     init {
@@ -28,7 +28,7 @@ class ViolinStat(
     }
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y, Aes.VIOLINWIDTH)
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -42,8 +42,8 @@ class ViolinStat(
         } else {
             List(ys.size) { 0.0 }
         }
-        val ws = if (data.has(TransformVar.VIOLINWIDTH)) {
-            data.getNumeric(TransformVar.VIOLINWIDTH)
+        val ws = if (data.has(TransformVar.WEIGHT)) {
+            data.getNumeric(TransformVar.WEIGHT)
         } else {
             List(ys.size) { 1.0 }
         }
@@ -83,7 +83,7 @@ class ViolinStat(
             val binStatY = DensityStatUtil.createStepValues(rangeY, n)
             val densityFunction = DensityStatUtil.densityFunction(
                 binY, binW,
-                bandWidth, bandWidthMethod, adjust, kernel, fullScalMax
+                bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
             )
             val binStatCount = binStatY.map { densityFunction(it) }
             val widthsSum = binW.sum()

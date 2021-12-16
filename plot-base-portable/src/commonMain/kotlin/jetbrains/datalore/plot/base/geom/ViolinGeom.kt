@@ -33,7 +33,12 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val groupedDataPoints = aesthetics.dataPoints().groupBy { it.x() }
+        val groupedDataPoints = GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.X,
+            Aes.Y,
+            Aes.VIOLINWIDTH
+        ).groupBy { it.x() }
         for ((_, nonOrderedDataPoints) in groupedDataPoints) {
             val dataPoints = GeomUtil.ordered_Y(nonOrderedDataPoints, false)
             val paths = helper.createBands(dataPoints, toLocationBound(-1.0, ctx), toLocationBound(1.0, ctx))
@@ -85,9 +90,7 @@ class ViolinGeom : GeomBase() {
         return fun (p: DataPointAesthetics): DoubleVector? {
             val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * DEF_WIDTH * sign * p.violinwidth()!!
             val y = p.y()!!
-            return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
-                DoubleVector(x, y)
-            } else null
+            return DoubleVector(x, y)
         }
     }
 

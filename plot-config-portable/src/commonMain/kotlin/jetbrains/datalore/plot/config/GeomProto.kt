@@ -176,7 +176,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
 
         private fun violinDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
-            defaults["stat"] = "violin"
+            defaults["stat"] = "ydensity"
             defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to ViolinGeom.DEF_WIDTH)
             return defaults
         }

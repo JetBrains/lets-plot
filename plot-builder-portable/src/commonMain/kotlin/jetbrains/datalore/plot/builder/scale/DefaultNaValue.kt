@@ -68,7 +68,7 @@ object DefaultNaValue {
         VALUE_MAP.put(SIZE, AesScaling.sizeFromCircleDiameter(1.0))
         VALUE_MAP.put(WIDTH, 1.0)
         VALUE_MAP.put(HEIGHT, 1.0)
-        VALUE_MAP.put(VIOLINWIDTH, 1.0)
+        VALUE_MAP.put(VIOLINWIDTH, 0.0)
         VALUE_MAP.put(WEIGHT, 1.0)
         VALUE_MAP.put(INTERCEPT, 0.0)
         VALUE_MAP.put(SLOPE, 1.0)
