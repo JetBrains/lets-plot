@@ -77,12 +77,12 @@ object DensityStatUtil {
         bwMethod: DensityStat.BandWidthMethod,
         ad: Double,
         ker: DensityStat.Kernel,
-        fullScalMax: Int
+        fullScanMax: Int
     ): (Double) -> Double {
         val bandWidth = bw ?: bandWidth(bwMethod, values)
         val kernelFun: (Double) -> Double = kernel(ker)
 
-        return when (values.size <= fullScalMax) {
+        return when (values.size <= fullScanMax) {
             true -> densityFunctionFullScan(values, weights, kernelFun, bandWidth, ad)
             false -> densityFunctionFast(values, weights, kernelFun, bandWidth, ad)
         }
