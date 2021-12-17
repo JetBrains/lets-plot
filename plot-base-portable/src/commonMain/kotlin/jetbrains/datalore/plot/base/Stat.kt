@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base
 interface Stat {
     fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit = {}): DataFrame
 
-    fun normalize(data: DataFrame): DataFrame
+    fun normalize(dataAfterStat: DataFrame): DataFrame
 
     fun consumes(): List<Aes<*>>
 

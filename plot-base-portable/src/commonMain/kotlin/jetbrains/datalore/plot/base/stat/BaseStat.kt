@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.TransformVar
 
 abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Variable>) : Stat {
-    override fun normalize(data: DataFrame): DataFrame {
-        return data
+    override fun normalize(dataAfterStat: DataFrame): DataFrame {
+        return dataAfterStat
     }
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {

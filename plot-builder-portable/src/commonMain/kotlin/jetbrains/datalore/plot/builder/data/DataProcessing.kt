@@ -134,7 +134,7 @@ object DataProcessing {
             groupSizeListAfterStat = groupMerger.getGroupSizes()
         }
 
-        val resultData = Builder().run {
+        val dataAfterStat = Builder().run {
             // put results
             for (variable in resultSeries.keys) {
                 put(variable, resultSeries[variable]!!)
@@ -149,7 +149,7 @@ object DataProcessing {
             // build DataFrame
             build()
         }
-        val dataAfterNormalizing = stat.normalize(resultData)
+        val dataAfterNormalizing = stat.normalize(dataAfterStat)
 
         val groupingContextAfterStat = GroupingContext.withOrderedGroups(
             dataAfterNormalizing,

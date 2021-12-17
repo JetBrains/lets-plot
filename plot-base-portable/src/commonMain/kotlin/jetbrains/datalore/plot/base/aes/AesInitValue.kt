@@ -68,7 +68,7 @@ object AesInitValue {
         VALUE_MAP[SIZE] = 0.5  // Line thickness. Should be redefined for other shapes
         VALUE_MAP[WIDTH] = 1.0
         VALUE_MAP[HEIGHT] = 1.0
-        VALUE_MAP[VIOLINWIDTH] = 1.0
+        VALUE_MAP[VIOLINWIDTH] = 0.0
         VALUE_MAP[WEIGHT] = 1.0
         VALUE_MAP[INTERCEPT] = 0.0
         VALUE_MAP[SLOPE] = 1.0

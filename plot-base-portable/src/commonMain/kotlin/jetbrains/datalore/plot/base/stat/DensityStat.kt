@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 /**
  * Computes kernel density estimate for 'n' values evenly distributed throughout the range of the input series.
  *
- * If size of the input series exceeds the 'fullScalMax' value, then the less accurate but more efficient computation replaces
+ * If size of the input series exceeds the 'fullScanMax' value, then the less accurate but more efficient computation replaces
  * highly inefficient 'full scan' computation.
  */
 class DensityStat(
@@ -25,7 +25,7 @@ class DensityStat(
     private val adjust: Double,
     private val kernel: Kernel,
     private val n: Int,
-    private val fullScalMax: Int
+    private val fullScanMax: Int
 ) : BaseStat(DEF_MAPPING) {
 
     init {
@@ -74,7 +74,7 @@ class DensityStat(
         val statScaled = ArrayList<Double>()
         val densityFunction = DensityStatUtil.densityFunction(
             xs, weights,
-            bandWidth, bandWidthMethod, adjust, kernel, fullScalMax
+            bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
         )
 
         val nTotal = weights.sum()

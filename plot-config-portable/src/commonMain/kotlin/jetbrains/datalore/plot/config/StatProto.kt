@@ -218,7 +218,7 @@ object StatProto {
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
-            fullScalMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
         )
     }
 
