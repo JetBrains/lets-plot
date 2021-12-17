@@ -21,11 +21,11 @@ class CrosshairComponent : SvgComponent() {
     private val vOutline = SvgLineElement()
 
     init {
-        fun setStyle(inner: SvgLineElement, isOutline: Boolean = false){
+        fun setStyle(line: SvgLineElement, isOutline: Boolean = false){
             val color = Color.WHITE.takeIf { isOutline } ?: Color.GRAY
             val stroke = 1.5.takeIf { isOutline } ?: 1.0
-            inner.strokeColor().set(color)
-            inner.strokeWidth().set(stroke)
+            line.strokeColor().set(color)
+            line.strokeWidth().set(stroke)
         }
 
         setStyle(hLine)
