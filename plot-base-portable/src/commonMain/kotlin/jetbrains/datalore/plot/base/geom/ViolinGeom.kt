@@ -35,9 +35,6 @@ class ViolinGeom : GeomBase() {
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }
-
-        buildHints(aesthetics, pos, coord, ctx, -1.0)
-        buildHints(aesthetics, pos, coord, ctx, 1.0)
     }
 
     private fun buildViolin(
@@ -48,23 +45,45 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val paths = helper.createBands(dataPoints, toLocationBound(-1.0, ctx), toLocationBound(1.0, ctx))
+        val leftBound = toLocationBound(-1.0, ctx)
+        val rightBound = toLocationBound(1.0, ctx)
+
+        val paths = helper.createBands(dataPoints, leftBound, rightBound)
         paths.reverse()
         appendNodes(paths, root)
 
         helper.setAlphaEnabled(false)
-        appendNodes(helper.createLines(dataPoints, toLocationBound(-1.0, ctx)), root)
-        appendNodes(helper.createLines(dataPoints, toLocationBound(1.0, ctx)), root)
+        appendNodes(helper.createLines(dataPoints, leftBound), root)
+        appendNodes(helper.createLines(dataPoints, rightBound), root)
+
+        buildHints(dataPoints, ctx, helper, leftBound)
+        buildHints(dataPoints, ctx, helper, rightBound)
     }
 
-    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext, sign: Double) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
+    private fun toLocationBound(
+        sign: Double,
+        ctx: GeomContext
+    ): (p: DataPointAesthetics) -> DoubleVector {
+        return fun (p: DataPointAesthetics): DoubleVector {
+            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * WIDTH_SCALE * sign * p.violinwidth()!!
+            val y = p.y()!!
+            return DoubleVector(x, y)
+        }
+    }
+
+    private fun buildHints(
+        dataPoints: Iterable<DataPointAesthetics>,
+        ctx: GeomContext,
+        helper: GeomHelper,
+        bound: (p: DataPointAesthetics) -> DoubleVector
+    ) {
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-            GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH),
-            MultiPointDataConstructor.singlePointAppender { p -> toClient(geomHelper, p, sign, ctx) },
+            dataPoints,
+            MultiPointDataConstructor.singlePointAppender { p ->
+                bound(p).let { helper.toClient(it, p) }
+            },
             MultiPointDataConstructor.reducer(0.999, false)
         )
-
         val targetCollector = getGeomTargetCollector(ctx)
         for (multiPointData in multiPointDataList) {
             targetCollector.addPath(
@@ -77,19 +96,6 @@ class ViolinGeom : GeomBase() {
                     TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                 }
             )
-        }
-    }
-
-    private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics, sign: Double, ctx: GeomContext): DoubleVector {
-        val coord = toLocationBound(sign, ctx)(p)
-        return coord.let { geomHelper.toClient(it, p) }
-    }
-
-    private fun toLocationBound(sign: Double, ctx: GeomContext): (p: DataPointAesthetics) -> DoubleVector {
-        return fun (p: DataPointAesthetics): DoubleVector {
-            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * WIDTH_SCALE * sign * p.violinwidth()!!
-            val y = p.y()!!
-            return DoubleVector(x, y)
         }
     }
 
