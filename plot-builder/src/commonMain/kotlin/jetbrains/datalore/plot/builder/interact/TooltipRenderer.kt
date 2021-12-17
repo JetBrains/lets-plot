@@ -47,12 +47,14 @@ internal class TooltipRenderer(
     private val myTooltipLayer: SvgGElement
     private val myTileInfos = ArrayList<TileInfo>()
     private val tooltipStorage: RetainableComponents<TooltipBox>
+    private val crosshairStorage: RetainableComponents<CrosshairComponent>
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
         myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
         tooltipStorage = RetainableComponents(::TooltipBox, myTooltipLayer)
+        crosshairStorage = RetainableComponents(::CrosshairComponent, myTooltipLayer)
 
         regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltip() }))
@@ -130,28 +132,35 @@ internal class TooltipRenderer(
             }
     }
 
-    private fun hideTooltip() = tooltipStorage.provide(0)
-
+    private fun hideTooltip() {
+        tooltipStorage.provide(0)
+        crosshairStorage.provide(0)
+    }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
         val showVertical = tooltips.any { it.hintKind == X_AXIS_TOOLTIP }
         val showHorizontal = tooltips.any { it.hintKind == Y_AXIS_TOOLTIP }
         if (!showVertical && !showHorizontal) {
+            crosshairStorage.provide(0)
             return
         }
-        tooltips
+        val coords = tooltips
             .filter { tooltip -> tooltip.tooltipSpec.isCrosshairEnabled }
             .mapNotNull { tooltip -> tooltip.tooltipSpec.layoutHint.coord }
-            .forEach { coord ->
-                CrosshairComponent(
+            .toList()
+
+        val crosshariComponents = crosshairStorage.provide(coords.size)
+
+        coords.zip(crosshariComponents)
+            .forEach { (coord, crosshairComponent) ->
+                crosshairComponent.update(
                     coord = coord,
                     geomBounds = geomBounds,
                     showHorizontal = showHorizontal,
                     showVertical = showVertical
-                ).apply { myTooltipLayer.children().add(0, rootGroup) }
+                )
             }
     }
-
 
     fun addTileInfo(
         geomBounds: DoubleRectangle,
