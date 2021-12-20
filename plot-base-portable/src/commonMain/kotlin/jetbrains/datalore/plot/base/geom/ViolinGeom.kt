@@ -45,19 +45,18 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val leftBound = toLocationBound(-1.0, ctx)
-        val rightBound = toLocationBound(1.0, ctx)
+        val leftBoundTransform = toLocationBound(-1.0, ctx)
+        val rightBoundTransform = toLocationBound(1.0, ctx)
 
-        val paths = helper.createBands(dataPoints, leftBound, rightBound)
-        paths.reverse()
+        val paths = helper.createBands(dataPoints, leftBoundTransform, rightBoundTransform)
         appendNodes(paths, root)
 
         helper.setAlphaEnabled(false)
-        appendNodes(helper.createLines(dataPoints, leftBound), root)
-        appendNodes(helper.createLines(dataPoints, rightBound), root)
+        appendNodes(helper.createLines(dataPoints, leftBoundTransform), root)
+        appendNodes(helper.createLines(dataPoints, rightBoundTransform), root)
 
-        buildHints(dataPoints, ctx, helper, leftBound)
-        buildHints(dataPoints, ctx, helper, rightBound)
+        buildHints(dataPoints, ctx, helper, leftBoundTransform)
+        buildHints(dataPoints, ctx, helper, rightBoundTransform)
     }
 
     private fun toLocationBound(
@@ -75,12 +74,12 @@ class ViolinGeom : GeomBase() {
         dataPoints: Iterable<DataPointAesthetics>,
         ctx: GeomContext,
         helper: GeomHelper,
-        bound: (p: DataPointAesthetics) -> DoubleVector
+        boundTransform: (p: DataPointAesthetics) -> DoubleVector
     ) {
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
             dataPoints,
             MultiPointDataConstructor.singlePointAppender { p ->
-                bound(p).let { helper.toClient(it, p) }
+                boundTransform(p).let { helper.toClient(it, p) }
             },
             MultiPointDataConstructor.reducer(0.999, false)
         )

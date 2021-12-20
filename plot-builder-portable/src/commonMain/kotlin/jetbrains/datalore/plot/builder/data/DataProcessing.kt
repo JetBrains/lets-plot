@@ -149,15 +149,15 @@ object DataProcessing {
             // build DataFrame
             build()
         }
-        val dataAfterNormalizing = stat.normalize(dataAfterStat)
+        val normalizedData = stat.normalize(dataAfterStat)
 
         val groupingContextAfterStat = GroupingContext.withOrderedGroups(
-            dataAfterNormalizing,
+            normalizedData,
             groupSizeListAfterStat
         )
 
         return DataAndGroupingContext(
-            dataAfterNormalizing,
+            normalizedData,
             groupingContextAfterStat
         )
     }
