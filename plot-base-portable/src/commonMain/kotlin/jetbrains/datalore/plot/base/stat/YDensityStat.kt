@@ -59,9 +59,14 @@ class YDensityStat(
 
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
         val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
-        val densityMax = statDensity.maxOrNull() ?: 1.0
+        val statViolinWidth = if (statDensity.isEmpty()) {
+            emptyList<Double?>()
+        } else {
+            val densityMax = statDensity.maxOrNull()!!
+            statDensity.map { it / densityMax }
+        }
         return dataAfterStat.builder()
-            .putNumeric(Stats.VIOLIN_WIDTH, statDensity.map { it / densityMax })
+            .putNumeric(Stats.VIOLIN_WIDTH, statViolinWidth)
             .build()
     }
 
@@ -86,6 +91,7 @@ class YDensityStat(
             val (binY, binW) = (filteredY zip filteredW)
                 .sortedBy { it.first }
                 .unzip()
+            if (binY.isEmpty()) continue
             val ySummary = FiveNumberSummary(binY)
             val rangeY = ClosedRange(ySummary.min, ySummary.max)
             val binStatY = DensityStatUtil.createStepValues(rangeY, n)
