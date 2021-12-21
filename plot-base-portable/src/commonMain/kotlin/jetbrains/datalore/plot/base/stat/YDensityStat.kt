@@ -58,10 +58,10 @@ class YDensityStat(
     }
 
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
-        val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
-        val statViolinWidth = if (statDensity.isEmpty()) {
+        val statViolinWidth = if (dataAfterStat.rowCount() == 0) {
             emptyList<Double?>()
         } else {
+            val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
             val densityMax = statDensity.maxOrNull()!!
             statDensity.map { it / densityMax }
         }
