@@ -30,6 +30,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
+import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -97,6 +98,7 @@ object DefaultMapperProvider {
             this.put(WIDTH, NUMERIC_IDENTITY)
             this.put(HEIGHT, NUMERIC_IDENTITY)
             this.put(WEIGHT, NUMERIC_IDENTITY)
+            this.put(VIOLINWIDTH, NUMERIC_IDENTITY)
             this.put(INTERCEPT, NUMERIC_IDENTITY)
             this.put(SLOPE, NUMERIC_IDENTITY)
             this.put(XINTERCEPT, NUMERIC_IDENTITY)

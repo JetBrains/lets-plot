@@ -96,6 +96,8 @@ object StatProto {
                 )
             }
 
+            StatKind.YDENSITY -> return configureYDensityStat(options)
+
             StatKind.DENSITY -> return configureDensityStat(options)
 
             StatKind.DENSITY2D -> return configureDensity2dStat(options, false)
@@ -170,6 +172,31 @@ object StatProto {
         )
     }
 
+    private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
+        var bwValue: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
+        options[Density.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValue = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            }
+        }
+
+        val kernel = options.getString(Density.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+
+        return YDensityStat(
+            bandWidth = bwValue,
+            bandWidthMethod = bwMethod,
+            adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
+            kernel = kernel ?: DensityStat.DEF_KERNEL,
+            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
+        )
+    }
+
     private fun configureDensityStat(options: OptionsAccessor): DensityStat {
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
@@ -191,10 +218,9 @@ object StatProto {
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
-            fullScalMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
         )
     }
-
 
     private fun configureDensity2dStat(options: OptionsAccessor, filled: Boolean): AbstractDensity2dStat {
         var bwValueX: Double? = null

@@ -274,7 +274,8 @@ object GeomInteractionUtil {
             GeomKind.POINT,
             GeomKind.JITTER,
             GeomKind.CONTOUR,
-            GeomKind.DENSITY2D -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
+            GeomKind.DENSITY2D,
+            GeomKind.VIOLIN -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {
                 when (statKind) {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(

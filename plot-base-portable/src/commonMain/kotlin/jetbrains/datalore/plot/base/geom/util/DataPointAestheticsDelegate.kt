@@ -70,6 +70,10 @@ open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) :
         return p.height()
     }
 
+    override fun violinwidth(): Double? {
+        return p.violinwidth()
+    }
+
     override fun weight(): Double? {
         return p.weight()
     }

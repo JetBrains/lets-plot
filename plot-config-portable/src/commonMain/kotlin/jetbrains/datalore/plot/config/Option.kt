@@ -451,6 +451,7 @@ object Option {
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
         private const val BOX_PLOT = "boxplot"
+        private const val VIOLIN = "violin"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
         private const val RIBBON = "ribbon"
@@ -490,6 +491,7 @@ object Option {
             map[H_LINE] = GeomKind.H_LINE
             map[V_LINE] = GeomKind.V_LINE
             map[BOX_PLOT] = GeomKind.BOX_PLOT
+            map[VIOLIN] = GeomKind.VIOLIN
             map[LIVE_MAP] = GeomKind.LIVE_MAP
             map[POINT] = GeomKind.POINT
             map[RIBBON] = GeomKind.RIBBON
