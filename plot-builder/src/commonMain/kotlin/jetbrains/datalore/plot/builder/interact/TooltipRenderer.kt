@@ -52,13 +52,20 @@ internal class TooltipRenderer(
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
         myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
+
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
-        tooltipStorage = RetainableComponents(::TooltipBox, myTooltipLayer)
-        crosshairStorage = RetainableComponents(::CrosshairComponent, myTooltipLayer)
+        crosshairStorage = RetainableComponents(
+            itemFactory = ::CrosshairComponent,
+            parent = SvgGElement().also { myTooltipLayer.children().add(it) }
+        )
+        tooltipStorage = RetainableComponents(
+            itemFactory = ::TooltipBox,
+            parent = SvgGElement().also { myTooltipLayer.children().add(it) }
+        )
 
         regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltip() }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltip() }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltips() }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltips() }))
     }
 
     override fun dispose() {
@@ -67,13 +74,19 @@ internal class TooltipRenderer(
     }
 
     private fun showTooltips(cursor: DoubleVector) {
-        val tooltipSpecs = createTooltipSpecs(cursor)
-        val tooltipBounds = getTooltipBounds(cursor)
+        val tileInfo = findTileInfo(cursor)
+        if (tileInfo == null) {
+            hideTooltips()
+            return
+        }
 
+        val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin)
+        val tooltipBounds = tileInfo.tooltipBounds
         val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
-        tooltipSpecs.zip(tooltipComponents)
-            .filter { (spec, _) -> spec.lines.isNotEmpty() }
+        tooltipSpecs
+            .filter { it.lines.isNotEmpty() }
+            .zip(tooltipComponents)
             .map { (spec, tooltipBox) ->
 
                 val fillColor = when {
@@ -119,7 +132,7 @@ internal class TooltipRenderer(
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
-            .also { tooltips -> tooltipBounds?.let { showCrosshair(tooltips, it.handlingArea) } }
+            .also { tooltips -> showCrosshair(tooltips, tooltipBounds.handlingArea) }
             .forEach { arranged ->
                 arranged.tooltipBox.apply {
                     rootGroup.visibility().set(Visibility.VISIBLE) // show only tooltips that got their position
@@ -132,7 +145,7 @@ internal class TooltipRenderer(
             }
     }
 
-    private fun hideTooltip() {
+    private fun hideTooltips() {
         tooltipStorage.provide(0)
         crosshairStorage.provide(0)
     }
@@ -174,18 +187,6 @@ internal class TooltipRenderer(
             flippedAxis
         )
         myTileInfos.add(tileInfo)
-    }
-
-    private fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
-        val tileInfo = findTileInfo(plotCoord) ?: return emptyList()
-
-        val lookupResults = tileInfo.findTargets(plotCoord)
-        return createTooltipSpecs(lookupResults, tileInfo.axisOrigin)
-    }
-
-    private fun getTooltipBounds(plotCoord: DoubleVector): PlotTooltipBounds? {
-        val tileInfo = findTileInfo(plotCoord) ?: return null
-        return tileInfo.tooltipBounds
     }
 
     private fun findTileInfo(plotCoord: DoubleVector): TileInfo? {
