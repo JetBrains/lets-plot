@@ -42,10 +42,12 @@ class TooltipBoxTest {
                 fillColor = Color.BLACK,
                 textColor = Color.WHITE,
                 borderColor = Color.BLACK,
+                dataPointColor = null,
                 strokeWidth = 1.0,
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
                 style = "anyStyle",
-                rotate = false
+                rotate = false,
+                useRoundedCorners = false
             )
         }
     }

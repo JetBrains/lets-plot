@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
@@ -18,6 +19,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SIDE_CURVE_INDENT
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
@@ -40,12 +42,19 @@ class TooltipBox: SvgComponent() {
         UP,
         DOWN
     }
-
-    val contentRect get() = DoubleRectangle.span(DoubleVector.ZERO, myTextBox.dimension)
+    val contentRect get() = DoubleRectangle.span(
+        DoubleVector.ZERO,
+        myTextBox.dimension.add(DoubleVector(additionalIndentInContentRect, 0.0))
+    )
 
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
+    private val additionalIndentInContentRect get() = if (myPointerBox.addColorBar) {
+        H_CONTENT_PADDING + COLOR_BAR_WIDTH
+    } else {
+        0.0
+    }
 
     override fun buildComponent() {
         add(myPointerBox)
@@ -56,11 +65,13 @@ class TooltipBox: SvgComponent() {
         fillColor: Color,
         textColor: Color,
         borderColor: Color,
+        dataPointColor: Color?,
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         style: String,
         rotate: Boolean,
-        tooltipMinWidth: Double? = null
+        tooltipMinWidth: Double? = null,
+        useRoundedCorners: Boolean
     ) {
         addClassName(style)
         myTextBox.update(
@@ -70,27 +81,50 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth,
             rotate
         )
-        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth)
+        myPointerBox.updateStyle(fillColor, borderColor, dataPointColor, strokeWidth, useRoundedCorners)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
         myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
         moveTo(tooltipCoord.x, tooltipCoord.y)
+        myTextBox.moveTo(additionalIndentInContentRect, 0.0)
     }
 
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
+        private val myColorBar = SvgPathElement()
         internal var pointerDirection: PointerDirection? = null
+        internal var addColorBar = false
+        private var myUseRoundedCorners = false
 
         override fun buildComponent() {
             add(myPointerPath)
+            add(myColorBar)
         }
 
-        internal fun updateStyle(fillColor: Color, borderColor: Color, strokeWidth: Double) {
+        internal fun updateStyle(
+            fillColor: Color,
+            borderColor: Color,
+            dataPointColor: Color?,
+            strokeWidth: Double,
+            useRoundedCorners: Boolean
+        ) {
+            addColorBar = dataPointColor != null
+            myUseRoundedCorners = useRoundedCorners
+
             myPointerPath.apply {
                 strokeColor().set(borderColor)
                 strokeOpacity().set(strokeWidth)
                 fillColor().set(fillColor)
+            }
+            myColorBar.apply {
+                if (dataPointColor != null) {
+                    strokeOpacity().set(1.0)
+                    strokeColor().set(dataPointColor)
+                    strokeWidth().set(COLOR_BAR_WIDTH)
+                } else {
+                    strokeOpacity().set(0.0)
+                }
             }
         }
 
@@ -110,6 +144,7 @@ class TooltipBox: SvgComponent() {
 
             val vertFootingIndent = -calculatePointerFootingIndent(contentRect.height)
             val horFootingIndent = calculatePointerFootingIndent(contentRect.width)
+            val curveIndent = if (myUseRoundedCorners) SIDE_CURVE_INDENT else 0.0
 
             myPointerPath.d().set(
                 SvgPathDataBuilder().apply {
@@ -117,35 +152,79 @@ class TooltipBox: SvgComponent() {
 
                         fun lineToIf(p: DoubleVector, isTrue: Boolean) { if (isTrue) lineTo(p) }
 
+                        fun corner(controlStart: DoubleVector, controlEnd: DoubleVector, to: DoubleVector) {
+                            lineTo(controlStart)
+                            if (myUseRoundedCorners) {
+                                curveTo(controlStart, controlEnd, to)
+                            }
+                        }
+
                         // start point
-                        moveTo(right, bottom)
+                        moveTo(right - curveIndent, bottom)
+
+                        // right-bottom
+                        corner(
+                            DoubleVector(right - curveIndent, bottom),
+                            DoubleVector(right, bottom),
+                            DoubleVector(right, bottom - curveIndent)
+                        )
 
                         // right side
                         lineTo(right, bottom + vertFootingIndent)
                         lineToIf(pointerCoord, pointerDirection == RIGHT)
                         lineTo(right, top - vertFootingIndent)
-                        lineTo(right, top)
+
+                        // right-top corner
+                        corner(
+                            DoubleVector(right, top + curveIndent),
+                            DoubleVector(right, top),
+                            DoubleVector(right - curveIndent, top)
+                        )
 
                         // top side
                         lineTo(right - horFootingIndent, top)
-                        lineToIf (pointerCoord, pointerDirection == UP)
+                        lineToIf(pointerCoord, pointerDirection == UP)
                         lineTo(left + horFootingIndent, top)
-                        lineTo(left, top)
+
+                        // left-top corner
+                        corner(
+                            DoubleVector(left + curveIndent, top),
+                            DoubleVector(left, top),
+                            DoubleVector(left, top + curveIndent)
+                        )
 
                         // left side
                         lineTo(left, top - vertFootingIndent)
-                        lineToIf (pointerCoord, pointerDirection == LEFT)
+                        lineToIf(pointerCoord, pointerDirection == LEFT)
                         lineTo(left, bottom + vertFootingIndent)
-                        lineTo(left, bottom)
 
-                        // bottom
+                        // left-bottom corner
+                        corner(
+                            DoubleVector(left, bottom - curveIndent),
+                            DoubleVector(left, bottom),
+                            DoubleVector(left + curveIndent, bottom)
+                        )
+
+                        // bottom side
                         lineTo(left + horFootingIndent, bottom)
-                        lineToIf (pointerCoord, pointerDirection == DOWN)
+                        lineToIf(pointerCoord, pointerDirection == DOWN)
                         lineTo(right - horFootingIndent, bottom)
-                        lineTo(right, bottom)
+                        lineTo(right - curveIndent, bottom)
                     }
                 }.build()
             )
+            if (addColorBar) {
+                val vertOffset = V_CONTENT_PADDING
+                val horIndent = H_CONTENT_PADDING + COLOR_BAR_WIDTH / 2
+                myColorBar.d().set(
+                    SvgPathDataBuilder().apply {
+                        with(contentRect) {
+                            moveTo(left + horIndent, bottom - vertOffset)
+                            lineTo(left + horIndent, top + vertOffset)
+                        }
+                    }.build()
+                )
+            }
         }
 
         private fun calculatePointerFootingIndent(sideLength: Double): Double {
@@ -194,6 +273,7 @@ class TooltipBox: SvgComponent() {
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
                     labelComponent.textColor().set(labelTextColor)
+                    labelComponent.setFontWeight("bold")
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
             }

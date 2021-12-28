@@ -100,7 +100,7 @@ internal class TooltipRenderer(
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipTextColor()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipTextColor()
                     spec.isOutlier -> LIGHT_TEXT_COLOR.takeIf { fillColor.isReadableOnWhite() } ?: DARK_TEXT_COLOR
-                    else -> spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
+                    else -> Color.BLACK
                 }
 
                 val borderColor = when {
@@ -115,6 +115,15 @@ internal class TooltipRenderer(
                     else -> 1.0
                 }
 
+                val dataPointColor = if (!spec.isOutlier) {
+                    spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
+                } else {
+                    // not use data point color bar
+                    null
+                }
+
+                val useRoundedCorners = spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP)
+
                 tooltipBox
                     // not all tooltips will get position - overlapped axis toooltips likely won't.
                     // Hide and later show only ones with position
@@ -123,11 +132,13 @@ internal class TooltipRenderer(
                         fillColor = fillColor,
                         textColor = textColor,
                         borderColor = borderColor,
+                        dataPointColor = dataPointColor,
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         style = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
-                        tooltipMinWidth = spec.minWidth
+                        tooltipMinWidth = spec.minWidth,
+                        useRoundedCorners = useRoundedCorners
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }
