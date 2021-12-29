@@ -19,7 +19,6 @@ interface ContextualMappingProvider {
                     tooltipLines = emptyList(),
                     tooltipAnchor = null,
                     tooltipMinWidth = null,
-                    tooltipColor = null,
                     ignoreInvisibleTargets = false,
                     hasGeneralTooltip = false,
                     hasAxisTooltip = false,

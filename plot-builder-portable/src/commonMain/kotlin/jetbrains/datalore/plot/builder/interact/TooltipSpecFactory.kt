@@ -29,7 +29,6 @@ class TooltipSpecFactory(
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
-        private val myTooltipColor = contextualMapping.tooltipColor
         private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
@@ -94,19 +93,15 @@ class TooltipSpecFactory(
             val generalDataPoints = generalDataPoints()
             val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
             val aesHintColors = hintColors()
-                .filterKeys { aes -> aes in generalDataPoints.map { it.aes } }
+                .filterKeys { aes -> aes in generalDataPoints.map(DataPoint::aes) }
             val colorFromHints = aesHintColors[Aes.Y] ?: aesHintColors.mapNotNull { it.value }.lastOrNull()
-            val tooltipColor = when {
-                myTooltipColor != null -> myTooltipColor
-                colorFromHints != null -> colorFromHints
-                else -> tipLayoutHint().color!!
-            }
+            val fill = colorFromHints ?: tipLayoutHint().color!!
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(
                         tipLayoutHint(),
                         lines = generalLines,
-                        fill = tooltipColor,
+                        fill = fill,
                         isOutlier = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,

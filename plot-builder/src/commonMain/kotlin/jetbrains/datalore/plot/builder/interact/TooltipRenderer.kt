@@ -116,7 +116,7 @@ internal class TooltipRenderer(
                 }
 
                 val dataPointColor = if (!spec.isOutlier) {
-                    spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
+                    spec.fill // spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
                 } else {
                     // not use data point color bar
                     null

@@ -356,7 +356,7 @@ class TooltipBox: SvgComponent() {
 
             val textSize = components
                 .zip(lineBBoxes)
-                .fold(DoubleVector.ZERO) { textDimension, (lineInfo, bBoxes) ->
+                .fold(DoubleVector.ZERO, { textDimension, (lineInfo, bBoxes) ->
                     val (labelComponent,valueComponent) = lineInfo
                     val (labelBBox, valueBBox) = bBoxes
 
@@ -396,13 +396,14 @@ class TooltipBox: SvgComponent() {
                             labelBBox.height
                         ) + LINE_INTERVAL
                     )
-                }.let { textSize ->
+                }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                .let { textSize ->
                     if (rotate) {
                         components
                             .onEach { (labelComponent, valueComponent) ->
-                                labelComponent?.rotate(90.0)
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
                                 labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                labelComponent?.rotate(90.0)
 
                                 valueComponent.y().set(-valueComponent.y().get()!!)
                                 valueComponent.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
@@ -410,7 +411,7 @@ class TooltipBox: SvgComponent() {
                             }
                         textSize.flip()
                     } else {
-                        textSize.subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                        textSize
                     }
                 }
 

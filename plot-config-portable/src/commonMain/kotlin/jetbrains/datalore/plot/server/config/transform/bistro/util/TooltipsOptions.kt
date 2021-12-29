@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.config.Option
 class TooltipsOptions : Options<ThemeOptions>() {
     var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)
     var minWidth: String? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
-    var color: String? by map(Option.Layer.TOOLTIP_COLOR)
     var formats: List<Format>? by map(Option.Layer.TOOLTIP_FORMATS)
     var lines: List<String>? by map(Option.Layer.TOOLTIP_LINES)
 

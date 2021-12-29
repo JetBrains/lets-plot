@@ -73,8 +73,7 @@ class TooltipConfig(
                 allTooltipLines,
                 TooltipSpecification.TooltipProperties(
                     anchor = readAnchor(),
-                    minWidth = readMinWidth(),
-                    color = readColor()
+                    minWidth = readMinWidth()
                 )
             )
         }
@@ -266,14 +265,6 @@ class TooltipConfig(
         private fun readMinWidth(): Double? {
             if (has(Option.Layer.TOOLTIP_MIN_WIDTH)) {
                 return getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
-            }
-            return null
-        }
-
-        private fun readColor(): Color? {
-            if (has(Option.Layer.TOOLTIP_COLOR)) {
-                val colorName = getString(Option.Layer.TOOLTIP_COLOR)
-                return colorName?.let(Colors::parseColor)
             }
             return null
         }
