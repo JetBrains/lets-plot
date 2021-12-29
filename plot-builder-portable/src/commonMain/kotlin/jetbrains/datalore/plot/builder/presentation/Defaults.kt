@@ -61,7 +61,7 @@ object Defaults {
             const val V_CONTENT_PADDING = 6.0
             const val LABEL_VALUE_INTERVAL = 8.0
 
-            const val SIDE_CURVE_INDENT = 4.0
+            const val BORDER_RADIUS = 4.0
             const val COLOR_BAR_WIDTH = 4.0
             const val BORDER_WIDTH = 4.0
 

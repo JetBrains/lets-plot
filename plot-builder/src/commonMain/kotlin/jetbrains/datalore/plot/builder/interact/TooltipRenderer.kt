@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.BORDER_RADIUS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -122,7 +123,10 @@ internal class TooltipRenderer(
                     null
                 }
 
-                val useRoundedCorners = spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP)
+                val borderRadius = when {
+                    spec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) -> 0.0
+                    else -> BORDER_RADIUS
+                }
 
                 tooltipBox
                     // not all tooltips will get position - overlapped axis toooltips likely won't.
@@ -138,7 +142,7 @@ internal class TooltipRenderer(
                         style = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
-                        useRoundedCorners = useRoundedCorners
+                        borderRadius = borderRadius
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }

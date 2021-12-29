@@ -47,7 +47,7 @@ class TooltipBoxTest {
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
                 style = "anyStyle",
                 rotate = false,
-                useRoundedCorners = false
+                borderRadius = 0.0
             )
         }
     }
