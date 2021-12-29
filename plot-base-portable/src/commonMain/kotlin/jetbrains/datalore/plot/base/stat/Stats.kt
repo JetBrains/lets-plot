@@ -26,6 +26,7 @@ object Stats {
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
+    val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
 
     val CORR = DataFrame.Variable("..corr..", STAT, "corr")
     val CORR_ABS = DataFrame.Variable("..corr_abs..", STAT, "corr_abs")
@@ -50,6 +51,7 @@ object Stats {
             MIDDLE,
             UPPER,
             WIDTH,
+            VIOLIN_WIDTH,
             SCALED,
             GROUP,
             CORR,
@@ -180,7 +182,7 @@ object Stats {
         adjust: Double = DensityStat.DEF_ADJUST,
         kernel: DensityStat.Kernel = DensityStat.DEF_KERNEL,
         n: Int = DensityStat.DEF_N,
-        fullScalMax: Int = DensityStat.DEF_FULL_SCAN_MAX
+        fullScanMax: Int = DensityStat.DEF_FULL_SCAN_MAX
     ): DensityStat {
         return DensityStat(
             bandWidth = bandWidth,
@@ -188,7 +190,7 @@ object Stats {
             adjust = adjust,
             kernel = kernel,
             n = n,
-            fullScalMax = fullScalMax
+            fullScanMax = fullScanMax
         )
     }
 

@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
-import jetbrains.datalore.plot.base.data.Dummies
 import jetbrains.datalore.plot.config.Option.Meta
 
 object ConfigUtil {
@@ -103,6 +102,7 @@ object ConfigUtil {
                 }
             }
 
+        /* Deprecated. Handle such cases on front so series annotation could work.
         } else if (data is List<*>) {
             // check if this is a matrix - all elements are lists of the same size
             var matrix = true
@@ -127,7 +127,7 @@ object ConfigUtil {
                 // simple data vector
                 varNameMap[Dummies.dummyNames(1)[0]] = data
             }
-
+        */
         } else {
             throw IllegalArgumentException("Unsupported data structure: " + data::class.simpleName)
         }

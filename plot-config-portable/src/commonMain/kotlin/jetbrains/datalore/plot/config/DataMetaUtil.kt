@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.LABEL
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
 import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
@@ -39,10 +40,9 @@ object DataMetaUtil {
         return this
             .getMap(Option.Meta.DATA_META)
             ?.getMaps(MappingAnnotation.TAG)
-            ?.filter { it.read(ANNOTATION) == annotation}
+            ?.filter { it.read(ANNOTATION) == annotation }
             ?: emptyList()
     }
-
 
     /**
     @returns Set<aes> of discrete aes
@@ -69,7 +69,7 @@ object DataMetaUtil {
             .groupBy ({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
             .mapValues { (_, labels) -> labels.findLast { it != null } } // {aes: last_not_null_label}
             .map { (aes, label) ->
-                mutableMapOf<String, Any?>(
+                mutableMapOf(
                     Scale.AES to aes,
                     Scale.DISCRETE_DOMAIN to true,
                     Scale.NAME to label
@@ -176,6 +176,17 @@ object DataMetaUtil {
                     orderOptionForVar.getOrderDir()
                 )
             }
+    }
+
+    // Series Annotations
+
+    fun getDateTimeColumns(options: Map<*, *>): Set<String> {
+        return options
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE)!! }
+            ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
+            ?.keys
+            ?: emptySet()
     }
 }
 

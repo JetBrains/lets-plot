@@ -57,6 +57,17 @@ object Option {
             const val ORDER_BY = "order_by"
             const val ORDER = "order"
         }
+
+        object SeriesAnnotation {
+            const val TAG = "series_annotations"
+            const val COLUMN = "column"
+            const val TYPE = "type"
+
+            object DateTime {
+                const val DATE_TIME = "datetime"
+                const val TIME_ZONE = "time_zone"
+            }
+        }
     }
 
     object GGBunch {
@@ -440,6 +451,7 @@ object Option {
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
         private const val BOX_PLOT = "boxplot"
+        private const val VIOLIN = "violin"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
         private const val RIBBON = "ribbon"
@@ -479,6 +491,7 @@ object Option {
             map[H_LINE] = GeomKind.H_LINE
             map[V_LINE] = GeomKind.V_LINE
             map[BOX_PLOT] = GeomKind.BOX_PLOT
+            map[VIOLIN] = GeomKind.VIOLIN
             map[LIVE_MAP] = GeomKind.LIVE_MAP
             map[POINT] = GeomKind.POINT
             map[RIBBON] = GeomKind.RIBBON

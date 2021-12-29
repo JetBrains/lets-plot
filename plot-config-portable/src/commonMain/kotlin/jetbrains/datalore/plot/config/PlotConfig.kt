@@ -123,7 +123,7 @@ abstract class PlotConfig(
                 layerOptions,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
+                getMap(DATA_META),
                 DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING))
             )
             layerConfigs.add(layerConfig)
@@ -135,7 +135,7 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
+        plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig
 

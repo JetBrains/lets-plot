@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.GeomMeta
+import jetbrains.datalore.plot.base.geom.ViolinGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
@@ -45,6 +46,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
+            VIOLIN -> Samplings.NONE // DefaultSampling.VIOLIN
             RIBBON -> DefaultSampling.RIBBON
             AREA -> DefaultSampling.AREA
             DENSITY -> DefaultSampling.DENSITY
@@ -103,6 +105,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 crossBarDefaults()
             DEFAULTS[BOX_PLOT] =
                 boxplotDefaults()
+            DEFAULTS[VIOLIN] =
+                violinDefaults()
             DEFAULTS[AREA] =
                 areaDefaults()
             DEFAULTS[DENSITY] =
@@ -167,6 +171,13 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "boxplot"
             defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
+            return defaults
+        }
+
+        private fun violinDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "ydensity"
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to ViolinGeom.WIDTH_SCALE)
             return defaults
         }
 

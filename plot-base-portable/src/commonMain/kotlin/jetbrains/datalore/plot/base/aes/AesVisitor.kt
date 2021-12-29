@@ -29,6 +29,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
+import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -102,6 +103,9 @@ abstract class AesVisitor<T> {
         }
         if (aes == HEIGHT) {
             return height()
+        }
+        if (aes == VIOLINWIDTH) {
+            return violinwidth()
         }
         if (aes == WEIGHT) {
             return weight()
@@ -206,6 +210,8 @@ abstract class AesVisitor<T> {
     protected abstract fun width(): T
 
     protected abstract fun height(): T
+
+    protected abstract fun violinwidth(): T
 
     protected abstract fun weight(): T
 

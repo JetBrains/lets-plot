@@ -2,8 +2,9 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from .core import FeatureSpec
 from typing import List
+
+from lets_plot.plot.core import FeatureSpec, _filter_none
 
 #
 # Tooltips
@@ -115,7 +116,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_min_width'] = self._tooltip_min_width
         d['tooltip_color'] = self._tooltip_color
         d['tooltip_variables'] = self._tooltip_variables
-        return d
+        return _filter_none(d)
 
     def format(self, field=None, format=None):
         """

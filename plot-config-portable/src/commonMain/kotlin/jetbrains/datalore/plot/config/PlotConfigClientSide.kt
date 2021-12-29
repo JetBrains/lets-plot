@@ -51,7 +51,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
+        plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig {
 
@@ -61,7 +61,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             layerOptions,
             sharedData,
             plotMappings,
-            plotDiscreteAes,
+            plotDataMeta,
             plotOrderOptions,
             GeomProtoClientSide(geomKind),
             true
