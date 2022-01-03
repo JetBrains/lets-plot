@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.DataFrame.Builder
 import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
@@ -259,7 +258,8 @@ object DataProcessing {
                         inverseTransformedStatSeries.getValue(defaultStatVar)
                     } else {
                         val statSerie = statData.getNumeric(defaultStatVar)
-                        ScaleUtil.inverseTransform(statSerie, scaleMap[aes])
+                        val transform = scaleMap[aes].transform
+                        transform.applyInverse(statSerie)
                     }
                 newInputSeries[variable] = newInputSerie
             } else {
@@ -340,8 +340,8 @@ object DataProcessing {
 
                 if (scale != null) {
                     val statSerie = statData.getNumeric(statVar)
-                    val inverseTransformedStatSerie = ScaleUtil.inverseTransformToContinuousDomain(statSerie, scale)
-                    inverseTransformedStatSeries[statVar] = inverseTransformedStatSerie
+                    val transform = scale.transform as ContinuousTransform
+                    inverseTransformedStatSeries[statVar] = transform.applyInverse(statSerie)
                 }
             }
         }

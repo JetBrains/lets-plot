@@ -30,20 +30,6 @@ object ScaleUtil {
         }
     }
 
-    fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale<*>): List<Double?> {
-        check(scale.isContinuousDomain) { "Not continuous numeric domain: $scale" }
-        return (scale.transform as ContinuousTransform).applyInverse(l)
-    }
-
-    fun inverseTransform(l: List<Double?>, scale: Scale<*>): List<*> {
-        val transform = scale.transform
-        return if (transform is ContinuousTransform) {
-            transform.applyInverse(l)
-        } else {
-            l.map { transform.applyInverse(it) }
-        }
-    }
-
     fun transformedDefinedLimits(scale: Scale<*>): Pair<Double, Double> {
         scale as ContinuousScale
         val (lower, upper) = scale.continuousDomainLimits

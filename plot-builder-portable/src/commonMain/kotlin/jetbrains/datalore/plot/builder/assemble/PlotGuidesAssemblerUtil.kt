@@ -73,23 +73,6 @@ internal object PlotGuidesAssemblerUtil {
             } else if (transformedDataRange != null) {
                 transformedDomainByAes[aes] = transformedDataRange
             }
-
-
-//            if (transformedDataRange != null) {
-//
-//                val transformedDomain =
-//                    if (scale.isContinuousDomain && scale.hasDomainLimits()) {
-//                        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(scale)
-//                        val lowerEnd = if (scaleLower.isFinite()) scaleLower else transformedDataRange.lowerEnd
-//                        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else transformedDataRange.upperEnd
-//                        ClosedRange<Double>(lowerEnd, upperEnd)
-//                    } else {
-//                        transformedDataRange
-//                    }
-//
-//
-//                transformedDomainByAes[aes] = transformedDomain
-//            }
         }
 
         return transformedDomainByAes
