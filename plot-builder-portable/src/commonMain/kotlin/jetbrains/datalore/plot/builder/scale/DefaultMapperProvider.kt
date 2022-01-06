@@ -46,6 +46,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
@@ -147,9 +148,9 @@ object DefaultMapperProvider {
         }
 
         companion object {
-            // For most of numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
+            // For most numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
             private val NUMERIC_UNDEFINED: MapperProvider<Double> = object : MapperProvider<Double> {
-                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
+                override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
 
@@ -164,7 +165,7 @@ object DefaultMapperProvider {
             }
 
             private val NUMERIC_IDENTITY: MapperProvider<Double> = object : MapperProvider<Double> {
-                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
+                override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
 

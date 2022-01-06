@@ -67,11 +67,6 @@ interface Scale<T> {
          */
         fun upperLimit(v: Double): Builder<T>
 
-        /**
-         * Limits for scale with discrete domain
-         */
-        fun limits(domainValues: List<Any>): Builder<T>
-
         fun breaks(l: List<Any>): Builder<T>
 
         fun labels(l: List<String>): Builder<T>

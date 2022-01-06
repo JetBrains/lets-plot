@@ -7,10 +7,7 @@ package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -147,11 +144,11 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
-        private val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
         private val myAes: Aes<T> = b.aes
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
+        override val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         override val mapperProvider: MapperProvider<T> = b.mapperProvider
         override val breaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
         override val limits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
@@ -162,41 +159,21 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             return myName ?: variable.label
         }
 
-        override fun createScale(defaultName: String, discreteDomain: Collection<*>): Scale<T> {
-            val name = myName ?: defaultName
-            var scale: Scale<T>
-
-            // discrete domain
-            var domainValues = discreteDomain.filterNotNull()
-
-            val mapper = if (discreteDomain.isEmpty()) {
+        /**
+         * Discrete domain.
+         */
+        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale<T> {
+            val mapper: (Double?) -> T? = if (discreteTransform.effectiveDomain.isEmpty()) {
                 absentMapper(defaultName)
             } else {
-                mapperProvider.createDiscreteMapper(domainValues)::apply
+                mapperProvider.createDiscreteMapper(discreteTransform)::apply
             }
 
-            if (discreteDomainReverse) {
-                domainValues = domainValues.reversed()
-            }
-
-            scale = Scales.discreteDomain(
-                name,
-                domainValues,
+            var scale: Scale<T> = Scales.discreteDomain(
+                myName ?: defaultName,
+                discreteTransform,
                 mapper
             )
-
-            val discreteLimits = limits?.filterNotNull()?.let {
-                if (discreteDomainReverse) {
-                    it.reversed()
-                } else {
-                    it
-                }
-            }
-            if (discreteLimits != null) {
-                scale = scale.with()
-                    .limits(discreteLimits)
-                    .build()
-            }
 
             return completeScale(scale)
         }

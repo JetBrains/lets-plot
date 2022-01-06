@@ -66,7 +66,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             mapOf(
                 Aes.X to Scales.continuousDomainNumericRange(Iris.sepalLength.name),
                 Aes.Y to Scales.continuousDomainNumericRange(Iris.sepalWidth.name),
-                Aes.COLOR to Scales.pureDiscrete(
+                Aes.COLOR to Scales.DemoAndTest.pureDiscrete(
                     Iris.target.name,
                     Iris.targetSet,
                     listOf(Color.RED, Color.GREEN, Color.BLUE),
@@ -208,7 +208,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             mapOf(
                 Aes.X to Scales.continuousDomainNumericRange(Diamonds.carat.name),
                 Aes.Y to Scales.continuousDomainNumericRange(Diamonds.price.name),
-                Aes.COLOR to Scales.pureDiscrete(
+                Aes.COLOR to Scales.DemoAndTest.pureDiscrete(
                     Diamonds.cut.name,
                     Diamonds.cutSet,
                     listOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE),

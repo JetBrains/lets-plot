@@ -19,10 +19,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     constructor(
         name: String,
-        domainValues: Collection<Any>,
+        discreteTransform: DiscreteTransform,
         mapper: ((Double?) -> T?)
-    ) : super(name, mapper, breaks = domainValues.toList()) {
-        discreteTransform = DiscreteTransform(domainValues, emptyList())
+    ) : super(name, mapper, breaks = discreteTransform.domainValues.toList()) {
+        this.discreteTransform = discreteTransform
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for discrete scale.
@@ -31,7 +31,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     }
 
     private constructor(b: MyBuilder<T>) : super(b) {
-        discreteTransform = DiscreteTransform(b.myDomainValues, b.myDomainLimits)
+        discreteTransform = b.discreteTransform
     }
 
     override fun getBreaksGenerator(): BreaksGenerator {
@@ -77,8 +77,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     }
 
     private class MyBuilder<T>(scale: DiscreteScale<T>) : AbstractBuilder<Any, T>(scale) {
-        internal val myDomainValues: Collection<Any> = scale.discreteTransform.domainValues
-        internal var myDomainLimits: List<Any> = scale.discreteTransform.domainLimits
+        internal val discreteTransform: DiscreteTransform = scale.discreteTransform
 
         override fun breaksGenerator(v: BreaksGenerator): Scale.Builder<T> {
             throw IllegalStateException("Not applicable to scale with discrete domain")
@@ -90,11 +89,6 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
         override fun upperLimit(v: Double): Scale.Builder<T> {
             throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
-        override fun limits(domainValues: List<Any>): Scale.Builder<T> {
-            myDomainLimits = domainValues
-            return this
         }
 
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {

@@ -38,10 +38,10 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
         val coordProvider = CoordConfig.create(
             get(COORD),
-            scaleMap[Aes.X].transform,
-            scaleMap[Aes.Y].transform,
-            defaultCoordProvider)
-
+            transformByAes.getValue(Aes.X),
+            transformByAes.getValue(Aes.Y),
+            defaultCoordProvider
+        )
 
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))

@@ -5,32 +5,27 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.TreeMap
-import jetbrains.datalore.plot.base.scale.MapperUtil
-import kotlin.math.abs
+import kotlin.math.roundToInt
 
 final class DiscreteTransform(
-    val domainValues: Collection<Any>,
-    val domainLimits: List<Any>
+    val domainValues: Collection<Any>,  // ToDo: (?) should not be exposed.
+    val domainLimits: List<Any>   // ToDo: (?) only 'effectiveDomain' makes sence.
 ) : Transform {
 
-    private val numberByDomainValue = LinkedHashMap<Any, Double>()
-    private val domainValueByNumber: TreeMap<Double, Any> = TreeMap()
+    private val indexByDomainValue: Map<Any, Int>
+
+    val effectiveDomain: List<Any>
+    val effectiveDomainTransformed: List<Double>
 
     init {
-        val effectiveDomain = if (domainLimits.isEmpty()) {
-            domainValues
+        effectiveDomain = if (domainLimits.isEmpty()) {
+            domainValues.distinct()
         } else {
-            domainLimits.intersect(domainValues)
+            domainLimits.intersect(domainValues).toList().distinct()
         }
 
-        numberByDomainValue.putAll(
-            MapperUtil.mapDiscreteDomainValuesToNumbers(effectiveDomain)
-        )
-
-        for ((domainValue, number) in numberByDomainValue) {
-            domainValueByNumber.put(number, domainValue)
-        }
+        indexByDomainValue = effectiveDomain.mapIndexed { index, value -> value to index }.toMap()
+        effectiveDomainTransformed = effectiveDomain.map { indexByDomainValue.getValue(it).toDouble() }
     }
 
     fun hasDomainLimits(): Boolean {
@@ -38,7 +33,11 @@ final class DiscreteTransform(
     }
 
     fun isInDomain(v: Any?): Boolean {
-        return numberByDomainValue.containsKey(v)
+        return indexByDomainValue.containsKey(v)
+    }
+
+    fun indexOf(v: Any): Int {
+        return indexByDomainValue.getValue(v)
     }
 
     override fun apply(l: List<*>): List<Double?> {
@@ -53,39 +52,25 @@ final class DiscreteTransform(
         if (input == null) {
             return null
         }
-        if (numberByDomainValue.containsKey(input)) {
-            return numberByDomainValue[input]
+        if (indexByDomainValue.containsKey(input)) {
+            return indexByDomainValue.getValue(input).toDouble()
         }
 
         throw IllegalStateException(
-            "value $input is not in the domain: ${numberByDomainValue.keys}"
+            "value $input is not in the domain: ${effectiveDomain}"
         )
     }
 
     private fun fromNumber(v: Double?): Any? {
-        if (v == null) {
+        if (v == null || !v.isFinite()) {
             return null
         }
 
-        if (domainValueByNumber.containsKey(v)) {
-            return domainValueByNumber[v]
+        val i = v.roundToInt()
+        return if (i >= 0 && i < effectiveDomain.size) {
+            effectiveDomain[i]
+        } else {
+            null
         }
-
-        // look-up the closest key (number)
-        val ceilingKey = domainValueByNumber.ceilingKey(v)
-        val floorKey = domainValueByNumber.floorKey(v)
-        var keyNumber: Double? = null
-        if (ceilingKey != null || floorKey != null) {
-            keyNumber = when {
-                ceilingKey == null -> floorKey
-                floorKey == null -> ceilingKey
-                else -> {
-                    val ceilingDist = abs(ceilingKey - v)
-                    val floorDist = abs(floorKey - v)
-                    if (ceilingDist < floorDist) ceilingKey else floorKey
-                }
-            }
-        }
-        return if (keyNumber != null) domainValueByNumber[keyNumber] else null
     }
 }

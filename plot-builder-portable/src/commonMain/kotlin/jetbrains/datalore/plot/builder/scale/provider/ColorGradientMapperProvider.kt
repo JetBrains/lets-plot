@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
@@ -20,9 +21,9 @@ class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: Color) : M
     private val low: Color = low ?: ColorMapper.DEF_GRADIENT_LOW
     private val high: Color = high ?: ColorMapper.DEF_GRADIENT_HIGH
 
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
-        val domainValuesAsNumbers = MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
-        val mapperDomain = SeriesUtil.range(domainValuesAsNumbers.values)!!
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Color> {
+        val transformedDomain = discreteTransform.effectiveDomainTransformed
+        val mapperDomain = SeriesUtil.range(transformedDomain)!!
         val gradient = ColorMapper.gradient(mapperDomain, low, high, naValue)
         return GuideMappers.asNotContinuous(gradient)
     }

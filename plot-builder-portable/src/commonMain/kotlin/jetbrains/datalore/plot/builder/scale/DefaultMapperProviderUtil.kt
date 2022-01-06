@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.builder.scale.provider.ColorBrewerMapperProvider
@@ -21,8 +22,8 @@ object DefaultMapperProviderUtil {
         val discrete = ColorBrewerMapperProvider(null, null, null, Color.GRAY)
         val continuous = ColorGradientMapperProvider.DEFAULT
         return object : MapperProvider<Color> {
-            override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
-                return discrete.createDiscreteMapper(domainValues)
+            override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Color> {
+                return discrete.createDiscreteMapper(discreteTransform)
             }
 
             override fun createContinuousMapper(
@@ -38,8 +39,8 @@ object DefaultMapperProviderUtil {
 
     fun <T> createWithDiscreteOutput(outputValues: List<T>, naValue: T): MapperProvider<T> {
         return object : MapperProvider<T> {
-            override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
-                return GuideMappers.discreteToDiscrete(domainValues, outputValues, naValue)
+            override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<T> {
+                return GuideMappers.discreteToDiscrete(discreteTransform, outputValues, naValue)
             }
 
             override fun createContinuousMapper(

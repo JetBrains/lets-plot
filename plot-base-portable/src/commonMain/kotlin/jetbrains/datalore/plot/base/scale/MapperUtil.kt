@@ -17,21 +17,6 @@ object MapperUtil {
         return ClosedRange(min(a, b), max(a, b))
     }
 
-    fun mapDiscreteDomainValuesToNumbers(values: Collection<*>): Map<Any, Double> {
-        return mapDiscreteDomainValuesToIndices(values)
-    }
-
-    private fun mapDiscreteDomainValuesToIndices(values: Collection<*>): Map<Any, Double> {
-        val result = LinkedHashMap<Any, Double>()
-        var index = 0
-        for (v in values) {
-            if (v != null && !result.containsKey(v)) {
-                result[v] = index++.toDouble()
-            }
-        }
-        return result
-    }
-
     fun rangeWithLimitsAfterTransform(
         dataRange: ClosedRange<Double>,
         lowerLimit: Double?,

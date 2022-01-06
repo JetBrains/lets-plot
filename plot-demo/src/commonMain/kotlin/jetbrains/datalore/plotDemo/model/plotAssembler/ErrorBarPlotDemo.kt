@@ -10,7 +10,6 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotSvgComponent
@@ -82,10 +81,11 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                 .put(varCI, listOf(3.190283, 2.797727, 1.899314, 1.964824, 1.799343, 3.43209))
                 .build()
 
-            val colorScale = Scales.discreteDomain(
+            val colorScale = Scales.DemoAndTest.pureDiscrete(
                 "Supplement",
-                data[varSupp].filterNotNull(),
-                Mappers.discrete(listOf(Color.ORANGE, Color.DARK_GREEN), Color.GRAY)
+                domainValues = data[varSupp].filterNotNull(),
+                outputValues = listOf(Color.ORANGE, Color.DARK_GREEN),
+                defaultOutputValue = Color.GRAY
             )
 
 

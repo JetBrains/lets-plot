@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.builder.scale.DiscreteOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -14,17 +15,10 @@ open class IdentityDiscreteMapperProvider<T>(
     naValue: T
 ) : DiscreteOnlyMapperProvider<T>(naValue) {
 
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
-        val outputValues = ArrayList<T>()
-        for (inputValue in domainValues) {
-            if (inputValue == null) {
-                outputValues.add(naValue)
-            } else {
-                val outputValue = inputConverter(inputValue)
-                    ?: throw IllegalStateException("Can't map input value $inputValue to output type")
-                outputValues.add(outputValue)
-            }
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<T> {
+        val outputValues: List<T> = discreteTransform.effectiveDomain.map {
+            inputConverter(it) ?: throw IllegalStateException("Can't map input value $it to output type.")
         }
-        return GuideMappers.discreteToDiscrete(domainValues, outputValues, naValue)
+        return GuideMappers.discreteToDiscrete(discreteTransform, outputValues, naValue)
     }
 }

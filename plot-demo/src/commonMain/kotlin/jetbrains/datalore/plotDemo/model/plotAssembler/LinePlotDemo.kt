@@ -118,7 +118,12 @@ open class LinePlotDemo : SimpleDemoBase() {
             mapOf(
                 Aes.X to Scales.continuousDomainNumericRange("A"),
                 Aes.Y to Scales.continuousDomainNumericRange("B"),
-                Aes.COLOR to Scales.pureDiscrete("C", listOf("F", "M"), listOf(Color.RED, Color.BLUE), Color.GRAY)
+                Aes.COLOR to Scales.DemoAndTest.pureDiscrete(
+                    "C",
+                    listOf("F", "M"),
+                    listOf(Color.RED, Color.BLUE),
+                    Color.GRAY
+                )
             )
         )
 

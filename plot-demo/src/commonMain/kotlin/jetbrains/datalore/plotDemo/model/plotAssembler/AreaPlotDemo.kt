@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
-import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
@@ -38,7 +37,7 @@ open class AreaPlotDemo : SimpleDemoBase() {
             .put(varTarget, targetColumn.data.toList())
             .build()
 
-        var scaleTargetColor = Scales.pureDiscrete(
+        var scaleTargetColor = Scales.DemoAndTest.pureDiscrete(
             "Y",
             listOf("Iris-setosa", "Iris-versicolor", "Iris-virginica"),
             listOf(Color.RED, Color.GREEN, Color.BLUE),

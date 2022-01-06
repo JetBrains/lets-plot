@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.round
 
 object Mappers {
     val IDENTITY = { v: Double? -> v }
@@ -82,19 +82,26 @@ object Mappers {
     }
 
     fun discreteToContinuous(
-        domainValues: Collection<*>,
+        transformedDomain: List<Double>,
         outputRange: ClosedRange<Double>,
         naValue: Double
     ): (Double?) -> Double? {
-        val numberByDomainValue =
-            MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
-        val dataRange = SeriesUtil.range(numberByDomainValue.values) ?: return IDENTITY
+        val dataRange = SeriesUtil.range(transformedDomain) ?: return IDENTITY
         return linear(dataRange, outputRange, naValue)
     }
 
-    fun <T> discrete(outputValues: List<T?>, defaultOutputValue: T): (Double?) -> T? {
-        val f = DiscreteFun(outputValues, defaultOutputValue)
-        return { f.apply(it) }
+    fun <T> discrete(
+        discreteTransform: DiscreteTransform,
+        outputValues: List<T>,
+        defaultOutputValue: T
+    ): (Double?) -> T {
+        fun mapperFun(transformedValue: Double?): T {
+            val domainValue = discreteTransform.applyInverse(transformedValue)
+            val index: Int = domainValue?.let { discreteTransform.indexOf(it) } ?: return defaultOutputValue
+            return outputValues[index % outputValues.size]
+        }
+
+        return { v: Double? -> mapperFun(v) }
     }
 
     fun <T> quantized(
@@ -113,25 +120,6 @@ object Mappers {
 
         val f = QuantizedFun(quantizer, defaultOutputValue)
         return { f.apply(it) }
-    }
-
-    private class DiscreteFun<T>(
-        private val myOutputValues: List<T?>,
-        private val myDefaultOutputValue: T
-    ) : Function<Double?, T?> {
-
-        override fun apply(value: Double?): T? {
-            if (!SeriesUtil.isFinite(value)) {
-                return myDefaultOutputValue
-            }
-            // ToDo: index-based discrete fun won't work for discrete numeric onput (see: MapperUtil#mapDiscreteDomainValuesToNumbers())
-            var index = round(value!!).toInt()
-            index %= myOutputValues.size
-            if (index < 0) {
-                index += myOutputValues.size
-            }
-            return myOutputValues[index]
-        }
     }
 
     private class QuantizedFun<T> internal constructor(

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 
@@ -17,30 +17,14 @@ object GuideMappers {
         GuideMapperAdapter(Mappers.undefined(), false)
 
     fun <TargetT> discreteToDiscrete(
-        data: DataFrame,
-        variable: DataFrame.Variable,
+        discreteTransform: DiscreteTransform,
         outputValues: List<TargetT>,
         naValue: TargetT
     ): GuideMapper<TargetT> {
 
-        val domainValues = data.distinctValues(variable)
-        return discreteToDiscrete(
-            domainValues,
-            outputValues,
-            naValue
-        )
-    }
-
-    fun <TargetT> discreteToDiscrete(
-        domainValues: Collection<*>,
-        outputValues: List<TargetT>,
-        naValue: TargetT
-    ): GuideMapper<TargetT> {
-
-        val mapper = Mappers.discrete(outputValues, naValue)
         return GuideMapperWithGuideBreaks(
-            mapper,
-            domainValues.mapNotNull { it }
+            mapper = Mappers.discrete(discreteTransform, outputValues, naValue),
+            breaks = discreteTransform.effectiveDomain
         ) { v: Any -> v.toString() }
     }
 
@@ -55,15 +39,15 @@ object GuideMappers {
     }
 
     fun discreteToContinuous(
-        domainValues: Collection<*>,
+        discreteTransform: DiscreteTransform,
         outputRange: ClosedRange<Double>,
         naValue: Double
     ): GuideMapper<Double> {
 
-        val mapper = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
+        val mapper = Mappers.discreteToContinuous(discreteTransform.effectiveDomainTransformed, outputRange, naValue)
         return GuideMapperWithGuideBreaks(
             mapper,
-            domainValues.mapNotNull { it }
+            discreteTransform.effectiveDomain
         ) { v: Any -> v.toString() }
     }
 

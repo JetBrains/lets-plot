@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
-import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -19,19 +18,19 @@ import kotlin.math.abs
 abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color>(naValue) {
 
     protected fun createDiscreteMapper(
-        domainValues: Collection<*>,
+        transformedDomain: List<Double>,
         fromHSV: HSV,
         toHSV: HSV
     ): GuideMapper<Color> {
-        val domainValuesAsNumbers = MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
-        val mapperDomain = ensureApplicableRange(SeriesUtil.range(domainValuesAsNumbers.values))
+        val mapperDomain = ensureApplicableRange(SeriesUtil.range(transformedDomain))
+        val n = transformedDomain.size
 
         var newFromHue = fromHSV.h
         var newToHue = toHSV.h
-        if (domainValues.size > 1) {
+        if (n > 1) {
             // if 'from' and 'to' hue are too close - ajust the 'toHue'
             val hueDiff = abs(toHSV.h % 360 - fromHSV.h % 360)
-            val step = (toHSV.h - fromHSV.h) / domainValues.size
+            val step = (toHSV.h - fromHSV.h) / n
             if (hueDiff < abs(step) / 2) {
                 newFromHue = fromHSV.h + step / 2
                 newToHue = toHSV.h - step / 2

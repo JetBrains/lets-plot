@@ -100,10 +100,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
             return this
         }
 
-        override fun limits(domainValues: List<Any>): Scale.Builder<T> {
-            throw IllegalArgumentException("Can't apply discrete limits to scale with continuous domain")
-        }
-
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {
             myContinuousTransform = v
             return this

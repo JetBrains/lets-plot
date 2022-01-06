@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
@@ -51,7 +52,11 @@ class GeomLayerBuilderTest {
         val scaleByAes = TypedScaleMap(
             mapOf(
                 Aes.X to Scales.continuousDomain("x", Aes.X),
-                Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale("cat", data.distinctValues(cat))
+                Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL)
+                    .createScale(
+                        "cat",
+                        DiscreteTransform(data.distinctValues(cat), emptyList())
+                    )
             )
         )
 

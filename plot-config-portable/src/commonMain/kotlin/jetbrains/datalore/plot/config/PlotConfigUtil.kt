@@ -231,9 +231,23 @@ object PlotConfigUtil {
             val scaleBreaks = scaleProvider.breaks ?: emptyList()
             val domainValues = discreteDomainByAes.getValue(aes)
             val effectiveDomain = (scaleBreaks + domainValues).distinct()
+
+            val transformDomainValues = if (scaleProvider.discreteDomainReverse) {
+                effectiveDomain.reversed()
+            } else {
+                effectiveDomain
+            }
+            val transformDomainLimits = (scaleProvider.limits ?: emptyList()).filterNotNull().let {
+                if (scaleProvider.discreteDomainReverse) {
+                    it.reversed()
+                } else {
+                    it
+                }
+            }
+
             val transform = DiscreteTransform(
-                domainValues = effectiveDomain,
-                domainLimits = (scaleProvider.limits ?: emptyList()).filterNotNull()
+                domainValues = transformDomainValues,
+                domainLimits = transformDomainLimits
             )
             discreteTransformByAes[aes] = transform
         }
@@ -256,7 +270,7 @@ object PlotConfigUtil {
                     domainValues.addAll(transform.domainValues)
                     domainLimits.addAll(transform.domainLimits)
                 }
-                DiscreteTransform(domainValues, domainLimits.toList())
+                DiscreteTransform(domainValues.toList(), domainLimits.toList())
             } else if (axisAes.isEmpty()) {
                 Transforms.IDENTITY
             } else {
@@ -267,8 +281,7 @@ object PlotConfigUtil {
         val xAxisTransform = axisTransform(aesSet.filter { Aes.isPositionalX(it) }, discreteX)
         val yAxisTransform = axisTransform(aesSet.filter { Aes.isPositionalY(it) }, discreteY)
 
-        // Replace 'positional' transforms with 'axis' transform
-        // and make sure that the mpp contains Aes.X and Aes.Y keys.
+        // Replace all 'positional' transforms with the 'axis' transform.
         @Suppress("UnnecessaryVariable")
         val allTransformsByAes: Map<Aes<*>, Transform> = (discreteTransformByAes + continuousTransformByAes)
             .mapValues { (aes, trans) ->
@@ -278,6 +291,7 @@ object PlotConfigUtil {
                     else -> trans
                 }
             } + mapOf(
+            // Make sure that the mpp contains Aes.X and Aes.Y keys.
             Aes.X to xAxisTransform,
             Aes.Y to yAxisTransform,
         )
@@ -327,7 +341,7 @@ object PlotConfigUtil {
 
         val continuousDomainByAesRaw = HashMap<Aes<*>, ClosedRange<Double>?>()
 
-        // Continuois domains from 'data'
+        // Continuous domains from 'data'.
         for ((varBinding, data) in dataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
@@ -358,7 +372,8 @@ object PlotConfigUtil {
             val transform = transformByAes.getValue(aes)
 
             val scale = when (transform) {
-                is DiscreteTransform -> scaleProvider.createScale(defaultName, transform.domainValues)
+//                is DiscreteTransform -> scaleProvider.createScale(defaultName, transform.domainValues)
+                is DiscreteTransform -> scaleProvider.createScale(defaultName, transform)
                 else -> if (continuousDomainByAes.containsKey(aes)) {
                     val continuousDomain = continuousDomainByAes.getValue(aes)
                     scaleProvider.createScale(defaultName, continuousDomain)

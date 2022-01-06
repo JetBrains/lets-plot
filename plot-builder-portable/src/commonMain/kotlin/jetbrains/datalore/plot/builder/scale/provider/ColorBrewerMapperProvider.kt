@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -47,10 +48,11 @@ class ColorBrewerMapperProvider(
         }
     }
 
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
-        val colorScheme = colorScheme(true, domainValues.size)
-        val colors = colors(colorScheme, domainValues.size)
-        return GuideMappers.discreteToDiscrete(domainValues, colors, naValue)
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Color> {
+        val n = discreteTransform.effectiveDomain.size
+        val colorScheme = colorScheme(true, n)
+        val colors = colors(colorScheme, n)
+        return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
 
     override fun createContinuousMapper(

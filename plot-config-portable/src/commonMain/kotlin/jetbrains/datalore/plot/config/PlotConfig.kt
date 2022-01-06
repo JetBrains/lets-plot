@@ -7,10 +7,12 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
@@ -28,8 +30,12 @@ abstract class PlotConfig(
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
 
+    // ToDo: move to PlotConfigClientSide
     val scaleMap: TypedScaleMap
+
     protected val scaleConfigs: List<ScaleConfig<*>>
+    private val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>
+    protected val transformByAes: Map<Aes<*>, Transform>
 
     protected var sharedData: DataFrame
         private set
@@ -64,16 +70,16 @@ abstract class PlotConfig(
         // build all scales
         val excludeStatVariables = !isClientSide
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        val scaleProviderByAes = PlotConfigUtil.createScaleProviders(
+        scaleProviderByAes = PlotConfigUtil.createScaleProviders(
             layerConfigs, scaleConfigs, excludeStatVariables
         )
-        val transformsByAes = PlotConfigUtil.createTransforms(
+        transformByAes = PlotConfigUtil.createTransforms(
             layerConfigs, scaleProviderByAes, excludeStatVariables
         )
 
         // ToDo: First transform data then create scales.
         scaleMap = PlotConfigUtil.createScales(
-            layerConfigs, transformsByAes, scaleProviderByAes, excludeStatVariables
+            layerConfigs, transformByAes, scaleProviderByAes, excludeStatVariables
         )
 
         facets = if (has(FACET)) {

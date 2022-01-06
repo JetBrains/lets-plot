@@ -11,10 +11,10 @@ import jetbrains.datalore.base.values.Color.Companion.GREEN
 import jetbrains.datalore.base.values.Color.Companion.RED
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType.*
 import jetbrains.datalore.plot.base.render.point.NamedShape.STICK_SQUARE_TRIANGLE_UP
-import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
@@ -35,11 +35,12 @@ class ScaleConfigTest {
     }
 
     private fun checkMappingDiscrete(expected: List<*>, input: List<*>, mapperProvider: MapperProvider<*>) {
-        val inputTransformed = MapperUtil.mapDiscreteDomainValuesToNumbers(input)
+        val transform = DiscreteTransform(input.filterNotNull(), emptyList())
+        val inputTransformed = transform.apply(input)
 
-        val mapper = mapperProvider.createDiscreteMapper(input.distinct())
+        val mapper = mapperProvider.createDiscreteMapper(transform)
         for (i in input.indices) {
-            assertEquals(expected[i], mapper.apply(inputTransformed[input[i]]))
+            assertEquals(expected[i], mapper.apply(inputTransformed[i]))
         }
     }
 
@@ -126,7 +127,7 @@ class ScaleConfigTest {
 
             val scaleMapper = ScaleConfig<Color>(scaleSpec)
                 .createScaleProvider()
-                .createScale("a", listOf(1.0, 2.0, 3.0, 4.0))
+                .createScale("a", DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
                 .mapper
 
             val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }

@@ -41,7 +41,7 @@ class BarPlotResizeDemo private constructor(
 
         val categories = ArrayList(data.distinctValues(varCat))
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
-        val fillScale = Scales.pureDiscrete("C", categories, colors, Color.GRAY)
+        val fillScale = Scales.DemoAndTest.pureDiscrete("C", categories, colors, Color.GRAY)
 
         val scaleByAes = TypedScaleMap(
             mapOf(
@@ -116,7 +116,7 @@ class BarPlotResizeDemo private constructor(
             val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
             return BarPlotResizeDemo(
                 sclData,
-                Scales.discreteDomain<String>("", sclData.distinctXValues())
+                Scales.DemoAndTest.discreteDomain<String>("", sclData.distinctXValues().toList())
             )
         }
     }

@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 
@@ -32,8 +33,8 @@ class GreyscaleLightnessMapperProvider(
         myToHSV = HSV(0.0, 0.0, value1)
     }
 
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
-        return createDiscreteMapper(domainValues, myFromHSV, myToHSV)
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Color> {
+        return createDiscreteMapper(discreteTransform.effectiveDomainTransformed, myFromHSV, myToHSV)
     }
 
     override fun createContinuousMapper(
