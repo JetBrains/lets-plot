@@ -263,14 +263,7 @@ object PlotConfigUtil {
         fun axisTransform(axisAes: List<Aes<*>>, discrete: Boolean): Transform {
             @Suppress("CascadeIf")
             return if (discrete) {
-                val domainValues = LinkedHashSet<Any>()
-                val domainLimits = LinkedHashSet<Any>()
-                for (aes in axisAes) {
-                    val transform = discreteTransformByAes.getValue(aes)
-                    domainValues.addAll(transform.domainValues)
-                    domainLimits.addAll(transform.domainLimits)
-                }
-                DiscreteTransform(domainValues.toList(), domainLimits.toList())
+                DiscreteTransform.join(axisAes.map { discreteTransformByAes.getValue(it) })
             } else if (axisAes.isEmpty()) {
                 Transforms.IDENTITY
             } else {

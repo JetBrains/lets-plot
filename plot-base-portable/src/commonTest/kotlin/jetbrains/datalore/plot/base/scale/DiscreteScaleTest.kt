@@ -50,10 +50,12 @@ class DiscreteScaleTest {
         )
         assertTrue(scale.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
-        assertValuesNotInLimits(scale, "a", "d")
+//        assertValuesNotInLimits(scale, "a", "d")
+        assertValuesNotInLimits(scale, "a")
 
         assertTrue(scale.hasBreaks())
-        assertEquals(listOf("b", "c"), scale.getScaleBreaks().domainValues)
+//        assertEquals(listOf("b", "c"), scale.getScaleBreaks().domainValues)
+        assertEquals(listOf("b", "c", "d"), scale.getScaleBreaks().domainValues)
     }
 
     @Test
@@ -71,14 +73,16 @@ class DiscreteScaleTest {
     @Test
     fun withDomainLimits_SameInCopy() {
         var scale = Scales.DemoAndTest.discreteDomain<Any>(
-            "Test scale", listOf("a", "b", "c"),
+            "Test scale",
+            listOf("a", "b", "c"),
             domainLimits = listOf("b", "c", "d")
         )
 
         val copy = scale.with().build()
         assertTrue(copy.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
-        assertValuesNotInLimits(scale, "a", "d")
+//        assertValuesNotInLimits(scale, "a", "d")
+        assertValuesNotInLimits(scale, "a")
     }
 
     @Test
@@ -90,8 +94,10 @@ class DiscreteScaleTest {
 
         assertTrue(scale.hasBreaks())
         val actualBreaks = scale.getScaleBreaks().domainValues
-        assertEquals(listOf("b", "c"), actualBreaks)
-        assertEquals(listOf(0.0, 1.0), scale.transform.apply(actualBreaks))
+//        assertEquals(listOf("b", "c"), actualBreaks)
+        assertEquals(listOf("b", "c", "d"), actualBreaks)
+//        assertEquals(listOf(0.0, 1.0), scale.transform.apply(actualBreaks))
+        assertEquals(listOf(0.0, 1.0, 2.0), scale.transform.apply(actualBreaks))
     }
 
     @Test
@@ -106,8 +112,10 @@ class DiscreteScaleTest {
 
         assertTrue(scale.hasBreaks())
         val scaleBreaks = scale.getScaleBreaks()
-        assertEquals(listOf("b", "c"), scaleBreaks.domainValues)
-        assertEquals(listOf("b-lab", "c-lab"), scaleBreaks.labels)
+//        assertEquals(listOf("b", "c"), scaleBreaks.domainValues)
+        assertEquals(listOf("b", "c", "d"), scaleBreaks.domainValues)
+//        assertEquals(listOf("b-lab", "c-lab"), scaleBreaks.labels)
+        assertEquals(listOf("a-lab", "b-lab", "c-lab"), scaleBreaks.labels)
     }
 
     @Test
@@ -122,8 +130,11 @@ class DiscreteScaleTest {
 
         assertTrue(scale.hasBreaks())
         val scaleBreaks = scale.getScaleBreaks()
-        assertEquals(listOf("c", "b"), scaleBreaks.domainValues)
-        assertEquals(listOf("c-lab", "b-lab"), scaleBreaks.labels)
+//        assertEquals(listOf("c", "b"), scaleBreaks.domainValues)
+        assertEquals(listOf("d", "c", "b"), scaleBreaks.domainValues)
+//        assertEquals(listOf("c-lab", "b-lab"), scaleBreaks.labels)
+        // The order is only preserved when breaks are manually specified.
+        assertEquals(listOf("a-lab", "b-lab", "c-lab"), scaleBreaks.labels)
     }
 
     @Test
@@ -144,7 +155,11 @@ class DiscreteScaleTest {
         assertEquals("c", scale.transform.applyInverse(1.4))
 //        assertEquals("c", scale.transform.applyInverse(1.5))
 
-        assertNull(scale.transform.applyInverse(1.5))
+        assertEquals("d", scale.transform.applyInverse(1.5))
+        assertEquals("d", scale.transform.applyInverse(2.0))
+        assertEquals("d", scale.transform.applyInverse(2.4))
+
+        assertNull(scale.transform.applyInverse(2.5))
     }
 
     @Test

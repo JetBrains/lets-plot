@@ -50,10 +50,11 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         return definedBreaks != null
     }
 
-    protected open fun getBreaksIntern(): List<Any> {
-        check(hasBreaks()) { "No breaks defined for scale $name" }
-        @Suppress("UNCHECKED_CAST")
-        return definedBreaks as List<Any>
+    protected fun hasDefinedBreaks() = definedBreaks != null
+
+    protected open fun getBreaksIntern(): List<DomainT> {
+        check(definedBreaks != null) { "No breaks defined for scale $name" }
+        return definedBreaks
     }
 
     protected open fun getLabelsIntern(): List<String> {
@@ -96,26 +97,27 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             .filterNotNull()
             .toSet()
 
+        @Suppress("UNCHECKED_CAST")
         return ScaleBreaks(
-            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices },
+            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices } as List<Any>,
             transformedValues = transformed.filterNotNull(),
             labels = labels.filterIndexed { i, _ -> i in keepIndices }
         )
     }
 
-    private fun getLabels(breaks: List<Any>): List<String> {
+    private fun getLabels(breaks: List<DomainT>): List<String> {
         if (definedLabels != null) {
             val labels = getLabelsIntern()
             return when {
                 labels.isEmpty() -> List(breaks.size) { "" }
                 breaks.size <= labels.size -> labels.subList(0, breaks.size)
-                else -> List(breaks.size) { i -> labels[i % labels.size] }
+                else -> labels + List(breaks.size - labels.size) { "" }
             }
         }
 
         // generate labels
         val formatter: (Any) -> String = labelFormatter ?: { v: Any -> v.toString() }
-        return breaks.map { formatter(it) }
+        return breaks.map { formatter(it as Any) }
     }
 
     protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {

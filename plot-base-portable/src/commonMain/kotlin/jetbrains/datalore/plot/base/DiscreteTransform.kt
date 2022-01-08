@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base
 import kotlin.math.roundToInt
 
 final class DiscreteTransform(
-    val domainValues: Collection<Any>,  // ToDo: (?) should not be exposed.
-    val domainLimits: List<Any>   // ToDo: (?) only 'effectiveDomain' makes sence.
+    private val domainValues: Collection<Any>,
+    private val domainLimits: List<Any>
 ) : Transform {
 
     private val indexByDomainValue: Map<Any, Int>
@@ -21,7 +21,7 @@ final class DiscreteTransform(
         effectiveDomain = if (domainLimits.isEmpty()) {
             domainValues.distinct()
         } else {
-            domainLimits.intersect(domainValues).toList().distinct()
+            domainLimits.distinct()
         }
 
         indexByDomainValue = effectiveDomain.mapIndexed { index, value -> value to index }.toMap()
@@ -71,6 +71,18 @@ final class DiscreteTransform(
             effectiveDomain[i]
         } else {
             null
+        }
+    }
+
+    companion object {
+        fun join(l: List<DiscreteTransform>): DiscreteTransform {
+            val domainValues = LinkedHashSet<Any>()
+            val domainLimits = LinkedHashSet<Any>()
+            for (transform in l) {
+                domainValues.addAll(transform.domainValues)
+                domainLimits.addAll(transform.domainLimits)
+            }
+            return DiscreteTransform(domainValues.toList(), domainLimits.toList())
         }
     }
 }
