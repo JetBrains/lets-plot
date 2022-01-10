@@ -15,14 +15,12 @@ class TooltipSpecification(
 ) {
     class TooltipProperties(
         val anchor: TooltipAnchor?,
-        val minWidth: Double?,
-        val color: Color?
+        val minWidth: Double?
     ) {
         companion object {
             val NONE = TooltipProperties(
                 anchor = null,
-                minWidth = null,
-                color = null
+                minWidth = null
             )
         }
     }

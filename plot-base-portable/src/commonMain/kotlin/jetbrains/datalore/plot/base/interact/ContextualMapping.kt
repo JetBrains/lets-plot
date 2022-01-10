@@ -12,7 +12,6 @@ open class ContextualMapping(
     private val tooltipLines: List<TooltipLineSpec>,
     val tooltipAnchor: TooltipAnchor?,
     val tooltipMinWidth: Double?,
-    val tooltipColor: Color?,
     val ignoreInvisibleTargets: Boolean,
     val hasGeneralTooltip: Boolean,
     val hasAxisTooltip: Boolean,

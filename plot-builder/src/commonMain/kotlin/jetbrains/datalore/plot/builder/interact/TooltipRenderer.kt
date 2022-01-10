@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.BORDER_RADIUS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -100,7 +101,7 @@ internal class TooltipRenderer(
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipTextColor()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipTextColor()
                     spec.isOutlier -> LIGHT_TEXT_COLOR.takeIf { fillColor.isReadableOnWhite() } ?: DARK_TEXT_COLOR
-                    else -> spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
+                    else -> Color.BLACK
                 }
 
                 val borderColor = when {
@@ -115,6 +116,18 @@ internal class TooltipRenderer(
                     else -> 1.0
                 }
 
+                val markerFillColor = if (!spec.isOutlier) {
+                    spec.fill // spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
+                } else {
+                    // not use a color marker
+                    null
+                }
+
+                val borderRadius = when {
+                    spec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) -> 0.0
+                    else -> BORDER_RADIUS
+                }
+
                 tooltipBox
                     // not all tooltips will get position - overlapped axis toooltips likely won't.
                     // Hide and later show only ones with position
@@ -123,11 +136,13 @@ internal class TooltipRenderer(
                         fillColor = fillColor,
                         textColor = textColor,
                         borderColor = borderColor,
+                        markerFillColor = markerFillColor,
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         style = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
-                        tooltipMinWidth = spec.minWidth
+                        tooltipMinWidth = spec.minWidth,
+                        borderRadius = borderRadius
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }
