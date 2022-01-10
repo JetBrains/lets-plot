@@ -116,10 +116,10 @@ internal class TooltipRenderer(
                     else -> 1.0
                 }
 
-                val dataPointColor = if (!spec.isOutlier) {
+                val markerFillColor = if (!spec.isOutlier) {
                     spec.fill // spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
                 } else {
-                    // not use data point color bar
+                    // not use a color marker
                     null
                 }
 
@@ -136,7 +136,7 @@ internal class TooltipRenderer(
                         fillColor = fillColor,
                         textColor = textColor,
                         borderColor = borderColor,
-                        dataPointColor = dataPointColor,
+                        markerFillColor = markerFillColor,
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         style = spec.style,

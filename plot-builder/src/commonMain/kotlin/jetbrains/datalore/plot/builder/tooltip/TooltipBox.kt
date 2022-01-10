@@ -64,7 +64,7 @@ class TooltipBox: SvgComponent() {
         fillColor: Color,
         textColor: Color,
         borderColor: Color,
-        dataPointColor: Color?, // todo add fill and border color for the marker
+        markerFillColor: Color?, // todo add also the border color for the marker
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         style: String,
@@ -80,7 +80,7 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth,
             rotate
         )
-        myPointerBox.updateStyle(fillColor, borderColor, dataPointColor, strokeWidth, borderRadius)
+        myPointerBox.updateStyle(fillColor, borderColor, markerFillColor, strokeWidth, borderRadius)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -104,11 +104,11 @@ class TooltipBox: SvgComponent() {
         internal fun updateStyle(
             fillColor: Color,
             borderColor: Color,
-            dataPointColor: Color?,
+            markerFillColor: Color?,
             strokeWidth: Double,
             borderRadius: Double
         ) {
-            addColorBar = dataPointColor != null
+            addColorBar = markerFillColor != null
             myBorderRadius = borderRadius
 
             myPointerPath.apply {
@@ -117,9 +117,9 @@ class TooltipBox: SvgComponent() {
                 fillColor().set(fillColor)
             }
             myColorBar.apply {
-                if (dataPointColor != null) {
+                if (markerFillColor != null) {
                     strokeOpacity().set(1.0)
-                    strokeColor().set(dataPointColor)
+                    strokeColor().set(markerFillColor)
                     strokeWidth().set(COLOR_BAR_WIDTH)
                 } else {
                     strokeOpacity().set(0.0)
