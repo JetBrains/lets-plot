@@ -110,9 +110,9 @@ internal class ScaleConfigDiscreteScaleTest(
                 ),
                 testParams(
                     limits = listOf("B", "C", "A"),  // reorder
-                    labels = listOf("A-lab", "B-lab", "C-lab"),
+                    labels = listOf("A-lab", "B-lab", "C-lab"), // labels without "defined" breaks.
                     expectedBreaks = listOf("B", "C", "A"),
-                    expectedLabels = listOf("B-lab", "C-lab", "A-lab"),
+                    expectedLabels = listOf("A-lab", "B-lab", "C-lab"), // limits do not change the labels order
 //                    expectedBreakColors = // colors order is not affected
                     expectedDataPointColors = getColors(
                         CAT_DATA.size,
