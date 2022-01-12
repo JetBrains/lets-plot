@@ -55,17 +55,12 @@ class ColorBrewerMapperProvider(
         return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
 
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<Color> {
+    override fun createContinuousMapper2(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
         val colorScheme = colorScheme(false)
         val colors = colors(colorScheme, colorScheme.maxColors)
 
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
         return GuideMappers.continuousToDiscrete(domain, colors, naValue)
     }
 

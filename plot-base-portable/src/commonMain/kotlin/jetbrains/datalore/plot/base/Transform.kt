@@ -11,4 +11,8 @@ interface Transform {
     fun applyInverse(l: List<Double?>): List<Any?> {
         return l.map { applyInverse(it) }
     }
+
+    fun unwrapLimits(): Transform {
+        return this
+    }
 }

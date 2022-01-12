@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -55,8 +56,9 @@ open class BinDemo : SimpleDemoBase() {
 
         if (limits) {
             scaleX = scaleX.with()
-                .lowerLimit(-100.0)
-                .upperLimit(100.0)
+//                .lowerLimit(-100.0)
+//                .upperLimit(100.0)
+                .continuousTransform(Transforms.continuousWithLimits(Transforms.IDENTITY, Pair(-100.0, 100.0)))
                 .build()
         }
 

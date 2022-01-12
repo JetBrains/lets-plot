@@ -17,31 +17,24 @@ object MapperUtil {
         return ClosedRange(min(a, b), max(a, b))
     }
 
-    fun rangeWithLimitsAfterTransform(
+    fun rangeWithLimitsAfterTransform2(
         dataRange: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
         trans: ContinuousTransform
     ): ClosedRange<Double> {
-        val lower = if (lowerLimit != null && lowerLimit.isFinite()) {
-            lowerLimit
-        } else {
-            dataRange.lowerEnd
+        check(trans.isInDomain(dataRange.lowerEnd)) {
+            "[${trans::class.simpleName}] Lower end ${dataRange.lowerEnd} is outside of transform's domain."
         }
-        check(trans.isInDomain(lower)) {
-            "[${trans::class.simpleName}] Lower end $lower is outside of transform's domain."
+        check(trans.isInDomain(dataRange.upperEnd)) {
+            "[${trans::class.simpleName}] Upper end ${dataRange.upperEnd} is outside of transform's domain."
         }
 
-        val upper = if (upperLimit != null && upperLimit.isFinite()) {
-            upperLimit
-        } else {
-            dataRange.upperEnd
-        }
-        check(trans.isInDomain(upper)) {
-            "[${trans::class.simpleName}] Lower end $upper is outside of transform's domain."
-        }
+        val transformedLimits = listOf(
+            trans.apply(trans.definedLimits().first),
+            trans.apply(trans.definedLimits().second),
+            trans.apply(dataRange.lowerEnd),
+            trans.apply(dataRange.upperEnd),
+        ).filterNotNull()
 
-        val limits = listOf(lower, upper)
-        return ClosedRange.encloseAll(trans.apply(limits))
+        return ClosedRange.encloseAll(transformedLimits)
     }
 }

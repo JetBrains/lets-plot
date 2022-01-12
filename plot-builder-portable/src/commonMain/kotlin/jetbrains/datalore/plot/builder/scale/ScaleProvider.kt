@@ -26,5 +26,9 @@ interface ScaleProvider<T> {
     /**
      * Create scale for continuous (numeric) input (domain)
      */
-    fun createScale(defaultName: String, continuousDomain: ClosedRange<Double>): Scale<T>
+    fun createScale(
+        defaultName: String,
+        continuousTransform: ContinuousTransform,
+        continuousDomain: ClosedRange<Double>
+    ): Scale<T>
 }

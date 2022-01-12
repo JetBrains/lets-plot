@@ -91,14 +91,6 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 
-        override fun lowerLimit(v: Double): Scale.Builder<T> {
-            throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
-        override fun upperLimit(v: Double): Scale.Builder<T> {
-            throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {
             // ignore
             return this

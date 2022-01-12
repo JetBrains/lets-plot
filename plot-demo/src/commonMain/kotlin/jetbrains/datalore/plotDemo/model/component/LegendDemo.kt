@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.assemble.ColorBarAssembler
 import jetbrains.datalore.plot.builder.assemble.LegendAssembler
 import jetbrains.datalore.plot.builder.guide.ColorBarComponent
@@ -64,8 +65,14 @@ open class LegendDemo : SimpleDemoBase() {
         val mapper = ColorMapper.gradientDefault(domain)
         val scale = Scales.continuousDomain("color", mapper, true)
             .with()
-            .lowerLimit(domain.lowerEnd)
-            .upperLimit(domain.upperEnd)
+//            .lowerLimit(domain.lowerEnd)
+//            .upperLimit(domain.upperEnd)
+            .continuousTransform(
+                Transforms.continuousWithLimits(
+                    Transforms.IDENTITY,
+                    Pair(domain.lowerEnd, domain.upperEnd)
+                )
+            )
             .build()
 
         val breakValues = List(3) { i -> (i + 1).toDouble() }

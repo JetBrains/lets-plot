@@ -172,6 +172,7 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
+            // ToDo: move to PlotConfigUtil.
             val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
             val transform = when (transformName.lowercase()) {
                 TransformName.IDENTITY -> Transforms.IDENTITY

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
@@ -48,10 +49,12 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
                 Aes.Y to Scales.continuousDomainNumericRange("Y"),
                 Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
                     varFill.label,
+                    Transforms.IDENTITY,
                     df.range(varFill)!!
                 ),
                 Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).createScale(
                     varAlpha.label,
+                    Transforms.IDENTITY,
                     df.range(varAlpha)!!
                 )
             )

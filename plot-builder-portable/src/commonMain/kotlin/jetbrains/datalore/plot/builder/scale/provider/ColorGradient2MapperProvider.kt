@@ -33,14 +33,12 @@ class ColorGradient2MapperProvider(
         myMidpoint = midpoint ?: 0.0
     }
 
-    override fun createContinuousMapper(
+    override fun createContinuousMapper2(
         domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
         trans: ContinuousTransform
     ): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
 
         val lowDomain = ClosedRange(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
         val highDomain = ClosedRange(min(myMidpoint, domain.upperEnd), domain.upperEnd)

@@ -21,13 +21,8 @@ open class LinearNormalizingMapperProvider(
         return GuideMappers.discreteToContinuous(discreteTransform, outputRange, naValue)
     }
 
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<Double> {
-        val dataRange = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
+    override fun createContinuousMapper2(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Double> {
+        val dataRange = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
         return GuideMappers.continuousToContinuous(dataRange, outputRange, naValue)
     }
 }

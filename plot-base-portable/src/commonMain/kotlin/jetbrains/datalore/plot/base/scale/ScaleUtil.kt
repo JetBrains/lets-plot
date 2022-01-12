@@ -30,22 +30,19 @@ object ScaleUtil {
         }
     }
 
-    fun transformedDefinedLimits(scale: Scale<*>): Pair<Double, Double> {
-        scale as ContinuousScale
-        val (lower, upper) = scale.continuousDomainLimits
-        val transform = scale.transform as ContinuousTransform
-        val (transformedLower, transformedUpper) = Pair(
-            if (transform.isInDomain(lower)) transform.apply(lower)!! else Double.NaN,
-            if (transform.isInDomain(upper)) transform.apply(upper)!! else Double.NaN
+    fun transformedDefinedLimits(transform: ContinuousTransform): Pair<Double, Double> {
+        val (lower, upper) = Pair(
+            transform.apply(transform.definedLimits().first) ?: Double.NaN,
+            transform.apply(transform.definedLimits().second) ?: Double.NaN,
         )
 
-        return if (SeriesUtil.allFinite(transformedLower, transformedUpper)) {
+        return if (SeriesUtil.allFinite(lower, upper)) {
             Pair(
-                min(transformedLower, transformedUpper),
-                max(transformedLower, transformedUpper)
+                min(lower, upper),
+                max(lower, upper)
             )
         } else {
-            Pair(transformedLower, transformedUpper)
+            Pair(lower, upper)
         }
     }
 }

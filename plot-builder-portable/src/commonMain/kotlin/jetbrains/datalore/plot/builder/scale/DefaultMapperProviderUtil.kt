@@ -26,13 +26,11 @@ object DefaultMapperProviderUtil {
                 return discrete.createDiscreteMapper(discreteTransform)
             }
 
-            override fun createContinuousMapper(
+            override fun createContinuousMapper2(
                 domain: ClosedRange<Double>,
-                lowerLimit: Double?,
-                upperLimit: Double?,
                 trans: ContinuousTransform
             ): GuideMapper<Color> {
-                return continuous.createContinuousMapper(domain, lowerLimit, upperLimit, trans)
+                return continuous.createContinuousMapper2(domain, trans)
             }
         }
     }
@@ -43,14 +41,12 @@ object DefaultMapperProviderUtil {
                 return GuideMappers.discreteToDiscrete(discreteTransform, outputValues, naValue)
             }
 
-            override fun createContinuousMapper(
+            override fun createContinuousMapper2(
                 domain: ClosedRange<Double>,
-                lowerLimit: Double?,
-                upperLimit: Double?,
                 trans: ContinuousTransform
             ): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(
-                    MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans),
+                    MapperUtil.rangeWithLimitsAfterTransform2(domain, trans),
                     outputValues, naValue
                 )
             }
@@ -60,10 +56,8 @@ object DefaultMapperProviderUtil {
     @Suppress("UNUSED_PARAMETER")
     internal fun createObjectIdentity(aes: Aes<Any?>): MapperProvider<Any?> {
         return object : IdentityDiscreteMapperProvider<Any?>({ it }, null) {
-            override fun createContinuousMapper(
+            override fun createContinuousMapper2(
                 domain: ClosedRange<Double>,
-                lowerLimit: Double?,
-                upperLimit: Double?,
                 trans: ContinuousTransform
             ): GuideMapper<Any?> {
                 return GuideMappers.asContinuous { it }
@@ -92,10 +86,8 @@ object DefaultMapperProviderUtil {
         continuousMapper: ((Double?) -> T?)?
     ): MapperProvider<T> {
         return object : IdentityDiscreteMapperProvider<T>(converter, DefaultNaValue[aes]) {
-            override fun createContinuousMapper(
+            override fun createContinuousMapper2(
                 domain: ClosedRange<Double>,
-                lowerLimit: Double?,
-                upperLimit: Double?,
                 trans: ContinuousTransform
             ): GuideMapper<T> {
                 if (continuousMapper != null) {

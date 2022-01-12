@@ -178,36 +178,18 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             return completeScale(scale)
         }
 
-        override fun createScale(defaultName: String, continuousDomain: ClosedRange<Double>): Scale<T> {
+        override fun createScale(
+            defaultName: String,
+            continuousTransform: ContinuousTransform,
+            continuousDomain: ClosedRange<Double>
+        ): Scale<T> {
             val name = myName ?: defaultName
             var scale: Scale<T>
 
             // continuous (numeric) domain
             val dataRange = ensureApplicableRange(continuousDomain)
-
-            var lowerLimit: Double? = null
-            var upperLimit: Double? = null
-            if (limits != null) {
-                var lower = true
-                for (limit in limits) {
-                    if (limit is Number) {
-                        val v = limit.toDouble()
-                        if (v.isFinite()) {
-                            if (lower) {
-                                lowerLimit = v
-                            } else {
-                                upperLimit = v
-                            }
-                        }
-                    }
-                    lower = false
-                }
-            }
-
-            val mapper = mapperProvider.createContinuousMapper(
+            val mapper = mapperProvider.createContinuousMapper2(
                 dataRange,
-                lowerLimit,
-                upperLimit,
                 continuousTransform
             )
             val continuousRange = mapper.isContinuous || myAes.isNumeric
@@ -234,20 +216,8 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
                     .build()
             }
 
-            if (limits != null) {
-                val with = scale.with()
-                if (lowerLimit != null) {
-                    with.lowerLimit(lowerLimit)
-                }
-                if (upperLimit != null) {
-                    with.upperLimit(upperLimit)
-                }
-                scale = with.build()
-            }
-
             return completeScale(scale)
         }
-
 
         private fun completeScale(scale: Scale<T>): Scale<T> {
             val with = scale.with()

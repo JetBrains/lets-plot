@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -57,6 +58,7 @@ open class TilePlotDemo : SimpleDemoBase() {
                 Aes.Y to Scales.continuousDomainNumericRange("Y"),
                 Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
                     varV.label,
+                    Transforms.IDENTITY,
                     data.range(varV)!!
                 )
             )

@@ -18,10 +18,8 @@ interface MapperProvider<T> {
     /**
      * Create mapper with continuous (numeric) input (domain)
      */
-    fun createContinuousMapper(
+    fun createContinuousMapper2(
         domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
         trans: ContinuousTransform
     ): GuideMapper<T>
 }

@@ -69,7 +69,10 @@ internal object PlotGuidesAssemblerUtil {
             val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
             val scale = stitchedLayers.getScale(aes)
             if (scale.isContinuousDomain) {
-                transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(transformedDataRange, scale)
+                transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(
+                    transformedDataRange,
+                    scale.transform as ContinuousTransform
+                )
             } else if (transformedDataRange != null) {
                 transformedDomainByAes[aes] = transformedDataRange
             }
@@ -80,16 +83,13 @@ internal object PlotGuidesAssemblerUtil {
 
     private fun refineTransformedDataRangeForContinuousDomain(
         transformedDataRange: ClosedRange<Double>?,
-        scale: Scale<*>
+        transform: ContinuousTransform
     ): ClosedRange<Double> {
         val (dataLower, dataUpper) = when (transformedDataRange) {
             null -> Pair(Double.NaN, Double.NaN)
             else -> Pair(transformedDataRange.lowerEnd, transformedDataRange.upperEnd)
         }
-        val (scaleLower, scaleUpper) = when (scale.hasDomainLimits()) {
-            true -> ScaleUtil.transformedDefinedLimits(scale)
-            else -> Pair(Double.NaN, Double.NaN)
-        }
+        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(transform)
 
         val lowerEnd = if (scaleLower.isFinite()) scaleLower else dataLower
         val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
@@ -101,7 +101,7 @@ internal object PlotGuidesAssemblerUtil {
             else -> null
         }
 
-        return ensureApplicableDomain(newRange, scale.transform as ContinuousTransform)
+        return ensureApplicableDomain(newRange, transform)
     }
 
     fun createColorBarAssembler(
@@ -116,18 +116,8 @@ internal object PlotGuidesAssemblerUtil {
         val transformedDomain = transformedDomainByAes[aes]
         checkNotNull(transformedDomain) { "Domain for continuous data must not be null" }
 
-//        // ToDo: this duplicates implementation code in MapperProvider.createContinuousMapper()
-//        val trans = scale.transform as ContinuousTransform
-//        val domainWithLims = MapperUtil.rangeWithLimitsAfterTransform(
-//            ensureApplicableDomain(transformedDomain, trans),
-//            scale.domainLimits.first,
-//            scale.domainLimits.second,
-//            trans
-//        )
-
         val result = ColorBarAssembler(
             scaleName,
-//            ensureApplicableRange(domainWithLims),
             transformedDomain,
             scale,
             theme

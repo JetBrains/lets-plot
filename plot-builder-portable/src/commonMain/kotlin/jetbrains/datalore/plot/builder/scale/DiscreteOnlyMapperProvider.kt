@@ -10,12 +10,7 @@ import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.builder.scale.provider.MapperProviderBase
 
 abstract class DiscreteOnlyMapperProvider<T>(naValue: T) : MapperProviderBase<T>(naValue) {
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<T> {
+    override fun createContinuousMapper2(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<T> {
         throw IllegalStateException("[${this::class.simpleName}] Can't create mapper for continuous domain $domain")
     }
 }

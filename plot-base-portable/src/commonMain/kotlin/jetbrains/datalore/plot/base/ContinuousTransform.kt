@@ -15,4 +15,5 @@ interface ContinuousTransform : Transform {
     override fun applyInverse(l: List<Double?>): List<Double?>
     fun createApplicableDomain(middle: Double? = null): ClosedRange<Double>
     fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double>
+    fun definedLimits(): Pair<Double?, Double?> = null to null
 }

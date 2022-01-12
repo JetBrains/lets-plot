@@ -24,11 +24,12 @@ import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.AxisUtil
-import jetbrains.datalore.plot.builder.guide.AxisComponent
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
+import jetbrains.datalore.plot.builder.guide.AxisComponent
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
@@ -352,8 +353,10 @@ open class ScatterDemo : SimpleDemoBase() {
             .mapper(mapperX)
             .breaks(listOf(-100.0, 0.0, 100.0))
             .labels(listOf("-100", "0", "100"))
-            .lowerLimit(-100.0)
-            .upperLimit(100.0)
+            .continuousTransform(Transforms.continuousWithLimits(Transforms.IDENTITY, Pair(-100.0, 100.0)))
+//            .lowerLimit(-100.0)
+//            .upperLimit(100.0)
+
             .build()
 
         // Y scale

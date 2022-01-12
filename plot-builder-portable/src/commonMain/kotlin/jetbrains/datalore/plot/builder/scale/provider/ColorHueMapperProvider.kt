@@ -67,14 +67,9 @@ class ColorHueMapperProvider(
         return createDiscreteMapper(discreteTransform.effectiveDomainTransformed, myFromHSV, myToHSV)
     }
 
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<Color> {
+    override fun createContinuousMapper2(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
         return createContinuousMapper(domain, myHSVIntervals)
     }
 

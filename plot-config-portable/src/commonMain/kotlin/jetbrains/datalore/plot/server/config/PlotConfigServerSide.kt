@@ -166,7 +166,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
         for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
 
-            val statCtx = ConfiguredStatContext(dataByLayer, scaleMap)
+            val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
             for (tileIndex in inputDataByTileByLayer.indices) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
                 val varBindings = layerConfig.varBindings

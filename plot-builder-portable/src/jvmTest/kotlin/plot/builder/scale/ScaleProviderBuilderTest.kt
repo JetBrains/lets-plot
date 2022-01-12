@@ -27,15 +27,17 @@ internal class ScaleProviderBuilderTest {
                 return { "hi" }
             }
 
-            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) = labelFormatter(domain, targetCount)
+            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) =
+                labelFormatter(domain, targetCount)
         }
 
         val builder = ScaleProviderBuilder(Aes.X).breaksGenerator(bg)
 
         val scaleProvider = builder.build()
         // continuous scale
-        val scale = scaleProvider.createScale("X-scale", ClosedRange.singleton(0.0))
-
+        val scale = scaleProvider.createScale(
+            "X-scale", Transforms.IDENTITY, ClosedRange.singleton(0.0)
+        )
 
         fun actual(scale: Scale<*>): BreaksGenerator {
             assertTrue(

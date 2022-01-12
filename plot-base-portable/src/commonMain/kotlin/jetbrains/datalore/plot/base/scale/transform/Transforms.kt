@@ -18,11 +18,15 @@ object Transforms {
     val SQRT: ContinuousTransform = SqrtTransform()
     val LOG10: ContinuousTransform = Log10Transform()
 
+    fun continuousWithLimits(actual: ContinuousTransform, limits: Pair<Double?, Double?>): ContinuousTransform {
+        return ContinuousTransformWithLimits(actual, limits.first, limits.second)
+    }
+
     fun createBreaksGeneratorForTransformedDomain(
         transform: ContinuousTransform,
         labelFormatter: ((Any) -> String)? = null
     ): BreaksGenerator {
-        val breaksGenerator: BreaksGenerator = when (transform) {
+        val breaksGenerator: BreaksGenerator = when (transform.unwrapLimits()) {
             IDENTITY -> LinearBreaksGen(labelFormatter)
             REVERSE -> LinearBreaksGen(labelFormatter)
             SQRT -> NonlinearBreaksGen(SQRT, labelFormatter)
@@ -49,7 +53,6 @@ object Transforms {
                 domain
         }
     }
-
 
     class BreaksGeneratorForTransformedDomain(
         private val transform: ContinuousTransform,

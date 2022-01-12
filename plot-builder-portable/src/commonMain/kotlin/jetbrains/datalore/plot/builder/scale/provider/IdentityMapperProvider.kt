@@ -21,12 +21,7 @@ class IdentityMapperProvider<T>(
         return discreteMapperProvider.createDiscreteMapper(discreteTransform)
     }
 
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<T> {
+    override fun createContinuousMapper2(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<T> {
         return GuideMappers.asContinuous(continuousMapper)
     }
 }

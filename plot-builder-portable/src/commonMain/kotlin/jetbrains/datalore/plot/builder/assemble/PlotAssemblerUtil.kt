@@ -10,6 +10,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -276,7 +277,8 @@ internal object PlotAssemblerUtil {
             // - scales breaks if defined
             if (scale.isContinuousDomain) {
                 initialRange = updateRange(
-                    ScaleUtil.transformedDefinedLimits(scale).toList().filter { it.isFinite() },
+                    ScaleUtil.transformedDefinedLimits(scale.transform as ContinuousTransform).toList()
+                        .filter { it.isFinite() },
                     initialRange
                 )
             }

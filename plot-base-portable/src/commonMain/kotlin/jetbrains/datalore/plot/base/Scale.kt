@@ -57,16 +57,6 @@ interface Scale<T> {
 
     interface Builder<T> {
 
-        /**
-         * Lower limit for scale with continuous domain.
-         */
-        fun lowerLimit(v: Double): Builder<T>
-
-        /**
-         * Upper limit for scale with continuous domain.
-         */
-        fun upperLimit(v: Double): Builder<T>
-
         fun breaks(l: List<Any>): Builder<T>
 
         fun labels(l: List<String>): Builder<T>
