@@ -110,7 +110,7 @@ internal open class CoordTestBase {
 
         fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleX(
-                Scales.continuousDomainNumericRange("Test scale X"),
+                Scales.DemoAndTest.continuousDomainNumericRange("Test scale X"),
                 domain,
                 axisLength,
                 EMPTY_BREAKS
@@ -119,7 +119,7 @@ internal open class CoordTestBase {
 
         fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleY(
-                Scales.continuousDomainNumericRange("Test scale Y"),
+                Scales.DemoAndTest.continuousDomainNumericRange("Test scale Y"),
                 domain,
                 axisLength,
                 EMPTY_BREAKS

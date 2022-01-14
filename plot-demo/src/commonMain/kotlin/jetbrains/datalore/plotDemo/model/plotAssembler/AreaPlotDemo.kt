@@ -46,8 +46,8 @@ open class AreaPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(xColumn.name),
-                Aes.Y to Scales.continuousDomainNumericRange(""),
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(xColumn.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(""),
                 Aes.FILL to scaleTargetColor
             )
         )

@@ -46,7 +46,7 @@ class BarPlotResizeDemo private constructor(
         val scaleByAes = TypedScaleMap(
             mapOf(
                 Aes.X to xScale,
-                Aes.Y to Scales.continuousDomain("sin, cos, line", Aes.Y),
+                Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
                 Aes.FILL to fillScale
             )
         )
@@ -108,7 +108,7 @@ class BarPlotResizeDemo private constructor(
         fun continuousX(): BarPlotResizeDemo {
             return BarPlotResizeDemo(
                 SinCosLineData({ v -> v.toDouble() }, 6),
-                Scales.continuousDomain(" ", Aes.X)
+                Scales.DemoAndTest.continuousDomain(" ", Aes.X)
             )
         }
 

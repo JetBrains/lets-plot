@@ -49,7 +49,7 @@ open class BinDemo : SimpleDemoBase() {
         val x = DemoUtil.gauss(count, 32, 0.0, 100.0)
         val y = DemoUtil.gauss(count, 64, 0.0, 50.0)
 
-        var scaleX = Scales.continuousDomainNumericRange("A scale")
+        var scaleX = Scales.DemoAndTest.continuousDomainNumericRange("A scale")
             .with()
             .mapper(Mappers.mul(1.0))
             .build()
@@ -73,14 +73,14 @@ open class BinDemo : SimpleDemoBase() {
                 .putNumeric(varB, y)
                 .build()
 
-            val scaleY = Scales.continuousDomainNumericRange("bar height")
+            val scaleY = Scales.DemoAndTest.continuousDomainNumericRange("bar height")
                 .with()
                 .mapper(Mappers.mul(2.5))
                 .build()
 
             // transform must happen before stat
-            data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX)
-            data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY)
+            data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+            data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
 
             // stat uses transform vars
             val binCount = 10

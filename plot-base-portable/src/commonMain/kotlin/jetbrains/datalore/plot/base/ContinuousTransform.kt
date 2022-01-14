@@ -8,7 +8,10 @@ package jetbrains.datalore.plot.base
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 interface ContinuousTransform : Transform {
-    fun hasDomainLimits(): Boolean
+    override fun isInDomain(v: Any?): Boolean {
+        return if (v is Number) isInDomain(v.toDouble()) else false
+    }
+
     fun isInDomain(v: Double?): Boolean
     fun apply(v: Double?): Double?
     override fun applyInverse(v: Double?): Double?

@@ -38,7 +38,7 @@ class GeomLayerBuilder {
     private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
-    private var myDataPreprocessor: ((DataFrame, TypedScaleMap) -> DataFrame)? = null
+    private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
@@ -105,14 +105,18 @@ class GeomLayerBuilder {
     }
 
     fun build(data: DataFrame, scaleMap: TypedScaleMap): GeomLayer {
+        val transformByAes: Map<Aes<*>, Transform> = scaleMap.keySet().associateWith {
+            scaleMap[it].transform
+        }
+
         @Suppress("NAME_SHADOWING")
         var data = data
         if (myDataPreprocessor != null) {
-            data = myDataPreprocessor!!(data, scaleMap)
+            data = myDataPreprocessor!!(data, transformByAes)
         }
 
         // make sure 'original' series are transformed
-        data = DataProcessing.transformOriginals(data, myBindings, scaleMap)
+        data = DataProcessing.transformOriginals(data, myBindings, transformByAes)
 
         val replacementBindings = HashMap(
             // No 'origin' variables beyond this point.
@@ -133,8 +137,8 @@ class GeomLayerBuilder {
             val variable = binding.variable
             if (variable.isStat) {
                 val aes = binding.aes
-                val scale = scaleMap[aes]
-                data = DataFrameUtil.applyTransform(data, variable, aes, scale)
+                val transform = transformByAes.getValue(aes)
+                data = DataFrameUtil.applyTransform(data, variable, aes, transform)
                 bindingsToPut.add(VarBinding(TransformVar.forAes(aes), aes))
             }
         }
@@ -261,25 +265,24 @@ class GeomLayerBuilder {
 
         fun demoAndTest(): GeomLayerBuilder {
             val builder = GeomLayerBuilder()
-            builder.myDataPreprocessor = { data, scaleMap ->
-                val transformedData = DataProcessing.transformOriginals(data, builder.myBindings, scaleMap)
+            builder.myDataPreprocessor = { data, transformByAes ->
+                val transformedData = DataProcessing.transformOriginals(data, builder.myBindings, transformByAes)
                 when (val stat = builder.myStat) {
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-                        val groupingContext =
-                            GroupingContext(
-                                transformedData,
-                                builder.myBindings,
-                                builder.myGroupingVarName,
-                                builder.myPathIdVarName,
-                                true
-                            )
+                        val groupingContext = GroupingContext(
+                            transformedData,
+                            builder.myBindings,
+                            builder.myGroupingVarName,
+                            builder.myPathIdVarName,
+                            true
+                        )
                         val dataAndGroupingContext = DataProcessing.buildStatData(
                             transformedData,
                             stat,
                             builder.myBindings,
-                            scaleMap,
+                            transformByAes,
                             groupingContext,
                             PlotFacets.undefined(),
                             statCtx,

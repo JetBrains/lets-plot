@@ -51,7 +51,8 @@ class GeomLayerBuilderTest {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomain("x", Aes.X),
+                Aes.X to Scales.DemoAndTest.continuousDomain("x", Aes.X),
+                Aes.Y to Scales.DemoAndTest.continuousDomain("y", Aes.Y),
                 Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL)
                     .createScale(
                         "cat",

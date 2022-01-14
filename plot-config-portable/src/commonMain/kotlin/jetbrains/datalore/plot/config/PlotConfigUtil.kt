@@ -103,10 +103,8 @@ object PlotConfigUtil {
         // Append date-time scale provider
         val variablesByMappedAes = associateAesWithMappedVariables(varBindings)
         associateVarBindingsWithData(layerConfigs, excludeStatVariables).filter { (varBinding, df) ->
-                df.isDateTime(
-                    varBinding.variable
-                )
-            }.map { (varBinding, _) -> varBinding.aes }.filter { aes -> aes in setOf(Aes.X, Aes.Y) }
+            df.isDateTime(varBinding.variable)
+        }.map { (varBinding, _) -> varBinding.aes }.filter { aes -> aes in setOf(Aes.X, Aes.Y) }
             .filter { aes -> aes !in scaleProviderByAes }.forEach { aes ->
                 val name = defaultScaleName(aes, variablesByMappedAes)
                 scaleProviderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProvider(aes, name)
@@ -132,9 +130,9 @@ object PlotConfigUtil {
         layerConfigs: List<LayerConfig>, excludeStatVariables: Boolean
     ): Map<VarBinding, DataFrame> {
         val dataByVarBinding: Map<VarBinding, DataFrame> = layerConfigs.flatMap { layer ->
-                layer.varBindings.filter { !(excludeStatVariables && it.variable.isStat) }
-                    .map { it to layer.combinedData }
-            }.toMap()
+            layer.varBindings.filter { !(excludeStatVariables && it.variable.isStat) }
+                .map { it to layer.combinedData }
+        }.toMap()
 
         // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {
@@ -166,8 +164,9 @@ object PlotConfigUtil {
             getVarBindings(layerConfigs, excludeStatVariables)
         )
 
-        // All aes used in bindings.
-        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet()
+        // All aes used in bindings and x/y aes.
+        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet() +
+                setOf(Aes.X, Aes.Y)
 
         // Compute domains for all aes with discrete input.
 
@@ -220,7 +219,14 @@ object PlotConfigUtil {
         for (aes in discreteAesSet) {
             val scaleProvider = scaleProviderByAes.getValue(aes)
             val scaleBreaks = scaleProvider.breaks ?: emptyList()
-            val domainValues = discreteDomainByAes.getValue(aes)
+            val domainValues = if (discreteDomainByAes.containsKey(aes)) {
+                discreteDomainByAes.getValue(aes)
+            } else if (aes in setOf(Aes.X, Aes.Y)) {
+                // We always add x/y wherefore it's possible there is no data associated with x/y aes.
+                emptySet()
+            } else {
+                throw IllegalStateException("No discrete data found for aes $aes")
+            }
             val effectiveDomain = (scaleBreaks + domainValues).distinct()
 
             val transformDomainValues = if (scaleProvider.discreteDomainReverse) {
@@ -244,8 +250,7 @@ object PlotConfigUtil {
 
         // Create continuous transforms.
         val continuousTransformByAes = HashMap<Aes<*>, ContinuousTransform>()
-        // Make sure to include continuous transforms for x/y (if not discrete).
-        val continuousAesSet = aesSet + setOf(Aes.X, Aes.Y) - discreteAesSet
+        val continuousAesSet = aesSet - discreteAesSet
         for (aes in continuousAesSet) {
             if (Aes.isPositionalXY(aes) && !(aes == Aes.X || aes == Aes.Y)) {
                 // Exclude all 'positional' aes except X, Y.
@@ -275,8 +280,11 @@ object PlotConfigUtil {
         }
 
         // Replace all 'positional' transforms with the 'axis' transform.
-        val transformByPositionalAes: Map<Aes<*>, Transform> = aesSet.filter { Aes.isPositionalX(it) }
-            .associateWith { xAxisTransform } + aesSet.filter { Aes.isPositionalY(it) }.associateWith { yAxisTransform }
+        val transformByPositionalAes: Map<Aes<*>, Transform> =
+            aesSet.filter { Aes.isPositionalX(it) }
+                .associateWith { xAxisTransform } +
+                    aesSet.filter { Aes.isPositionalY(it) }
+                        .associateWith { yAxisTransform }
 
         return discreteTransformByAes + continuousTransformByAes + transformByPositionalAes
     }
@@ -326,15 +334,18 @@ object PlotConfigUtil {
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
         scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
-        excludeStatVariables: Boolean
     ): TypedScaleMap {
 
         val dataByVarBinding = associateVarBindingsWithData(
-            layerConfigs, excludeStatVariables
+            layerConfigs,
+            excludeStatVariables = false
         )
 
         val variablesByMappedAes = associateAesWithMappedVariables(
-            getVarBindings(layerConfigs, excludeStatVariables)
+            getVarBindings(
+                layerConfigs,
+                excludeStatVariables = false
+            )
         )
 
         // All aes used in bindings.

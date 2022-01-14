@@ -54,8 +54,8 @@ open class LinePlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
             )
         )
 
@@ -116,8 +116,8 @@ open class LinePlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B"),
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
                 Aes.COLOR to Scales.DemoAndTest.pureDiscrete(
                     "C",
                     listOf("F", "M"),

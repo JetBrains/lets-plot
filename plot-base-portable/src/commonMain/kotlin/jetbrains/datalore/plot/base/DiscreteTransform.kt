@@ -28,11 +28,11 @@ final class DiscreteTransform(
         effectiveDomainTransformed = effectiveDomain.map { indexByDomainValue.getValue(it).toDouble() }
     }
 
-    fun hasDomainLimits(): Boolean {
+    override fun hasDomainLimits(): Boolean {
         return domainLimits.isNotEmpty()
     }
 
-    fun isInDomain(v: Any?): Boolean {
+    override fun isInDomain(v: Any?): Boolean {
         return indexByDomainValue.containsKey(v)
     }
 

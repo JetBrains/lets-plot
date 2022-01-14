@@ -150,7 +150,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         val dataByLayer = ArrayList<DataFrame>()
         for (layerConfig in layerConfigs) {
             var layerData = layerConfig.combinedData
-            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, scaleMap)
+            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, transformByAes)
             dataByLayer.add(layerData)
         }
 
@@ -198,7 +198,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         tileLayerInputData,
                         stat,
                         varBindings,
-                        scaleMap,
+                        transformByAes,
                         groupingContext,
                         facets,
                         statCtx,

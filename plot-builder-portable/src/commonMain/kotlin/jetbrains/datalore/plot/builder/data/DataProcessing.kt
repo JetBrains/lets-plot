@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
@@ -24,7 +23,7 @@ object DataProcessing {
     fun transformOriginals(
         data: DataFrame,
         bindings: List<VarBinding>,
-        scaleMap: TypedScaleMap
+        transformByAes: Map<Aes<*>, Transform>
     ): DataFrame {
         @Suppress("NAME_SHADOWING")
         var data = data
@@ -36,7 +35,7 @@ object DataProcessing {
                     data,
                     variable,
                     binding.aes,
-                    scaleMap[binding.aes]
+                    transformByAes.getValue(binding.aes)
                 )
             }
         }
@@ -44,11 +43,14 @@ object DataProcessing {
         return data
     }
 
+    /**
+     * Backend-side only
+     */
     fun buildStatData(
         data: DataFrame,
         stat: Stat,
         bindings: List<VarBinding>,
-        scaleMap: TypedScaleMap,
+        transformByAes: Map<Aes<*>, Transform>,
         groupingContext: GroupingContext,
         facets: PlotFacets,
         statCtx: StatContext,
@@ -72,7 +74,7 @@ object DataProcessing {
                 data,
                 stat,
                 bindings,
-                scaleMap,
+                transformByAes,
                 facets,
                 statCtx,
                 varsWithoutBinding,
@@ -88,7 +90,7 @@ object DataProcessing {
                     d,
                     stat,
                     bindings,
-                    scaleMap,
+                    transformByAes,
                     facets,
                     statCtx,
                     varsWithoutBinding,
@@ -180,13 +182,13 @@ object DataProcessing {
     }
 
     /**
-     * Server-side only
+     * Backend-side only
      */
     private fun applyStat(
         data: DataFrame,
         stat: Stat,
         bindings: List<VarBinding>,
-        scaleMap: TypedScaleMap,
+        transformByAes: Map<Aes<*>, Transform>,
         facets: PlotFacets,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
@@ -207,7 +209,7 @@ object DataProcessing {
                 statData,
                 stat,
                 bindings,
-                scaleMap
+                transformByAes
             )
 
         // generate new series for facet variables
@@ -258,7 +260,7 @@ object DataProcessing {
                         inverseTransformedStatSeries.getValue(defaultStatVar)
                     } else {
                         val statSerie = statData.getNumeric(defaultStatVar)
-                        val transform = scaleMap[aes].transform
+                        val transform = transformByAes.getValue(aes)
                         transform.applyInverse(statSerie)
                     }
                 newInputSeries[variable] = newInputSerie
@@ -289,14 +291,21 @@ object DataProcessing {
         return b.build()
     }
 
+    /**
+     * Backend-side only
+     */
     private fun inverseTransformContinuousStatData(
         statData: DataFrame,
         stat: Stat,
         bindings: List<VarBinding>,
-        scaleMap: TypedScaleMap
+        transformByAes: Map<Aes<*>, Transform>
     ): Map<Variable, List<Double?>> {
+
+        // X,Y scale - allways.
+        check(transformByAes.containsKey(Aes.X))
+        check(transformByAes.containsKey(Aes.Y))
+
         // inverse transform stat data with continuous domain.
-        val continuousScaleByAes = HashMap<Aes<*>, Scale<*>>()
         val aesByMappedStatVar = HashMap<Variable, Aes<*>>()
         for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
@@ -310,17 +319,26 @@ object DataProcessing {
             val variable = binding.variable
             if (variable.isStat) {
                 aesByMappedStatVar[variable] = aes
-                // ignore 'stat' var becaue ..?
-                continue
             }
+        }
 
-            val scale = scaleMap[aes]
-            if (scale.isContinuousDomain) {
-                continuousScaleByAes[aes] = scale
-                if (Aes.isPositionalX(aes) && !continuousScaleByAes.containsKey(Aes.X)) {
-                    continuousScaleByAes[Aes.X] = scale
-                } else if (Aes.isPositionalY(aes) && !continuousScaleByAes.containsKey(Aes.Y)) {
-                    continuousScaleByAes[Aes.Y] = scale
+        fun transformForAes(aes: Aes<*>): Transform? {
+            return if (transformByAes.containsKey(aes)) {
+                transformByAes.getValue(aes)
+            } else {
+                // Stat could add 'bindings' which were not in the original mappings.
+                if (Aes.isPositionalX(aes)) {
+                    transformByAes.getValue(Aes.X)
+                } else if (Aes.isPositionalY(aes)) {
+                    transformByAes.getValue(Aes.Y)
+                } else {
+                    // We had some NOT positional mapping to stat var, for example:
+                    //    aes(x="time", "fill": "..count..")
+                    //
+                    // in a bar plot.
+                    // In this event we lust don't have 'transform' for this aes.
+                    // Possible solution: create missing 'transforms' for 'stat data'.
+                    null
                 }
             }
         }
@@ -329,18 +347,9 @@ object DataProcessing {
         for (statVar in statData.variables()) {
             if (aesByMappedStatVar.containsKey(statVar)) {
                 val aes = aesByMappedStatVar.getValue(statVar)
-                var scale: Scale<*>? = continuousScaleByAes[aes]
-                if (scale == null) {
-                    if (Aes.isPositionalX(aes)) {
-                        scale = continuousScaleByAes[Aes.X]
-                    } else if (Aes.isPositionalY(aes)) {
-                        scale = continuousScaleByAes[Aes.Y]
-                    }
-                }
-
-                if (scale != null) {
+                val transform = transformForAes(aes)
+                if (transform is ContinuousTransform) {
                     val statSerie = statData.getNumeric(statVar)
-                    val transform = scale.transform as ContinuousTransform
                     inverseTransformedStatSeries[statVar] = transform.applyInverse(statSerie)
                 }
             }

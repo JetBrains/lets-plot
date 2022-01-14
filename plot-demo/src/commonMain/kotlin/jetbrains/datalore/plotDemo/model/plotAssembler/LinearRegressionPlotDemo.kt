@@ -55,8 +55,8 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
             )
         )
 

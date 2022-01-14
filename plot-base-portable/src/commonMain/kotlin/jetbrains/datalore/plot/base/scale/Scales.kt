@@ -10,26 +10,6 @@ import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.Scale
 
 object Scales {
-    fun <T> continuousDomain(
-        name: String,
-        aes: Aes<T>
-    ): Scale<T> {
-        return ContinuousScale<T>(
-            name,
-            Mappers.undefined(),
-            aes.isNumeric
-        )
-    }
-
-    fun continuousDomainNumericRange(
-        name: String
-    ): Scale<Double> {
-        return ContinuousScale<Double>(
-            name,
-            Mappers.undefined(),
-            true
-        )
-    }
 
     fun <T> continuousDomain(
         name: String,
@@ -69,6 +49,22 @@ object Scales {
             val transform = DiscreteTransform(domainValues, emptyList())
             val mapper = Mappers.discrete(transform, outputValues, defaultOutputValue)
             return DiscreteScale(name, transform, mapper)
+        }
+
+        fun <T> continuousDomain(name: String, aes: Aes<T>): Scale<T> {
+            return ContinuousScale<T>(
+                name,
+                Mappers.undefined(),
+                aes.isNumeric
+            )
+        }
+
+        fun continuousDomainNumericRange(name: String): Scale<Double> {
+            return ContinuousScale<Double>(
+                name,
+                Mappers.undefined(),
+                true
+            )
         }
     }
 }

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.min
@@ -44,5 +45,17 @@ object ScaleUtil {
         } else {
             Pair(lower, upper)
         }
+    }
+
+    fun applyTransform(source: List<*>, transform: Transform): List<Double?> {
+        // Replace values outside 'transform limits' with null-s.
+        @Suppress("NAME_SHADOWING")
+        val source = if (transform.hasDomainLimits()) {
+            source.map { if (transform.isInDomain(it)) it else null }
+        } else {
+            source
+        }
+
+        return transform.apply(source)
     }
 }

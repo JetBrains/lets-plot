@@ -64,8 +64,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(Iris.sepalLength.name),
-                Aes.Y to Scales.continuousDomainNumericRange(Iris.sepalWidth.name),
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalLength.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalWidth.name),
                 Aes.COLOR to Scales.DemoAndTest.pureDiscrete(
                     Iris.target.name,
                     Iris.targetSet,
@@ -143,8 +143,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(AutoMpg.horsepower.name),
-                Aes.Y to Scales.continuousDomainNumericRange(AutoMpg.mpg.name)
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.horsepower.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.mpg.name)
             )
         )
 
@@ -206,8 +206,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(Diamonds.carat.name),
-                Aes.Y to Scales.continuousDomainNumericRange(Diamonds.price.name),
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.carat.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.price.name),
                 Aes.COLOR to Scales.DemoAndTest.pureDiscrete(
                     Diamonds.cut.name,
                     Diamonds.cutSet,
@@ -287,8 +287,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("x"),
-                Aes.Y to Scales.continuousDomainNumericRange("y")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("x"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("y")
             )
         )
 

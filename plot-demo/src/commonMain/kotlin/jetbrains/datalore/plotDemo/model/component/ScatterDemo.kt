@@ -91,8 +91,8 @@ open class ScatterDemo : SimpleDemoBase() {
         val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX)
-        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY)
+        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
 
@@ -208,7 +208,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // Color scale
         // see 'OutputColors'
-        var scaleColor = Scales.continuousDomain("C", Aes.COLOR)
+        var scaleColor = Scales.DemoAndTest.continuousDomain("C", Aes.COLOR)
         run {
             @Suppress("UNCHECKED_CAST")
             val rawC = data.getNumeric(varC) as List<Double>
@@ -251,9 +251,9 @@ open class ScatterDemo : SimpleDemoBase() {
         }
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX)
-        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY)
-        data = DataFrameUtil.applyTransform(data, varC, Aes.COLOR, scaleColor)
+        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varC, Aes.COLOR, scaleColor.transform)
 
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
@@ -373,8 +373,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX)
-        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY)
+        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
 
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
@@ -443,7 +443,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
     private companion object {
         fun continuousScale(name: String): Scale<Double> {
-            return Scales.continuousDomainNumericRange(name)
+            return Scales.DemoAndTest.continuousDomainNumericRange(name)
         }
 
         fun quantizedColorScale(

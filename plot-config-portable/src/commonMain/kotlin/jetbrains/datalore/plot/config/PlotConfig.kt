@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.Option.Meta
@@ -30,11 +29,8 @@ abstract class PlotConfig(
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
 
-    // ToDo: move to PlotConfigClientSide
-    val scaleMap: TypedScaleMap
-
     protected val scaleConfigs: List<ScaleConfig<*>>
-    private val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>
+    protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>
     protected val transformByAes: Map<Aes<*>, Transform>
 
     protected var sharedData: DataFrame
@@ -75,11 +71,6 @@ abstract class PlotConfig(
         )
         transformByAes = PlotConfigUtil.createTransforms(
             layerConfigs, scaleProviderByAes, excludeStatVariables
-        )
-
-        // ToDo: First transform data then create scales.
-        scaleMap = PlotConfigUtil.createScales(
-            layerConfigs, transformByAes, scaleProviderByAes, excludeStatVariables
         )
 
         facets = if (has(FACET)) {

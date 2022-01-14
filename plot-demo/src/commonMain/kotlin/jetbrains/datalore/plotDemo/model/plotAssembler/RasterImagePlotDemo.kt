@@ -45,8 +45,8 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
         val df = builder.build()
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("X"),
-                Aes.Y to Scales.continuousDomainNumericRange("Y"),
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("X"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Y"),
                 Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
                     varFill.label,
                     Transforms.IDENTITY,

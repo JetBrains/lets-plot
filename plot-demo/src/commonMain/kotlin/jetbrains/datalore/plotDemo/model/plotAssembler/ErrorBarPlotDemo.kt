@@ -106,10 +106,10 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
 
             val scaleByAes = TypedScaleMap(
                 mapOf(
-                    Aes.X to Scales.continuousDomainNumericRange("Dose (mg)"),
-                    Aes.Y to Scales.continuousDomainNumericRange("Tooth length"),
-                    Aes.YMIN to Scales.continuousDomainNumericRange("Y min"),
-                    Aes.YMAX to Scales.continuousDomainNumericRange("Y max"),
+                    Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("Dose (mg)"),
+                    Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Tooth length"),
+                    Aes.YMIN to Scales.DemoAndTest.continuousDomainNumericRange("Y min"),
+                    Aes.YMAX to Scales.DemoAndTest.continuousDomainNumericRange("Y max"),
                     Aes.COLOR to colorScale
                 )
             )
