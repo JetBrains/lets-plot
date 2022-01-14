@@ -28,11 +28,20 @@ def test_as_annotated_data_dataframe():
 
 
 def test_as_annotated_data_list():
-    data_list = [dt_value]
-    _, _, data_meta = as_annotated_data(data_list, None)
-    assert {} == data_meta['data_meta']
+    data = [dt_value]
+    assert {} == get_data_meta(data)
+
+
+def test_as_annotated_data_string():
+    data = {'x': 'foo', 'y': 'bar'}
+    assert {} == get_data_meta(data)
+
+
+def get_data_meta(data):
+    _, _, data_meta = as_annotated_data(data, None)
+    return data_meta['data_meta']
 
 
 def assert_series_annotations(data, expected):
-    _, _, data_meta = as_annotated_data(data, None)
-    assert expected == data_meta['data_meta']['series_annotations']
+    data_meta = get_data_meta(data)
+    assert expected == data_meta['series_annotations']
