@@ -7,10 +7,12 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
@@ -34,6 +36,7 @@ class ErrorBarGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
+        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
 
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),
@@ -56,12 +59,19 @@ class ErrorBarGeom : GeomBase() {
                 DoubleRectangle(r.left, r.center.y, r.width, 0.0),
                 p,
                 ctx,
-                geomHelper
+                geomHelper,
+                markerColorsByDataPoint
             )
         }
     }
 
-    private fun buildHints(rect: DoubleRectangle, p: DataPointAesthetics, ctx: GeomContext, geomHelper: GeomHelper) {
+    private fun buildHints(
+        rect: DoubleRectangle,
+        p: DataPointAesthetics,
+        ctx: GeomContext,
+        geomHelper: GeomHelper,
+        markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    ) {
         val clientRect = geomHelper.toClient(rect, p)
         val objectRadius = clientRect.run {
             if (ctx.flipped) {
@@ -92,7 +102,8 @@ class ErrorBarGeom : GeomBase() {
             clientRect,
             params()
                 .setTipLayoutHints(hints)
-                .setColor(fromColor(p)),
+                .setColor(fromColor(p))
+                .setMarkerColors(markerColorsByDataPoint(p)),
             tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             } else {

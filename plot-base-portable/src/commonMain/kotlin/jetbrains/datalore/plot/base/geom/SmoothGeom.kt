@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil.ordered_X
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.with_X_Y
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
@@ -45,17 +46,18 @@ class SmoothGeom : GeomBase() {
         val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
         appendNodes(bands, root)
 
-        buildHints(dataPoints, pos, coord, ctx)
+        buildHints(dataPoints, pos, coord, ctx, aesthetics)
     }
 
     private fun buildHints(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
-        ctx: GeomContext
+        ctx: GeomContext,
+        aesthetics: Aesthetics
     ) {
         val helper = GeomHelper(pos, coord, ctx)
-
+        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
         for (p in dataPoints) {
             val xCoord = p.x()!!
             val objectRadius = 0.0
@@ -81,6 +83,7 @@ class SmoothGeom : GeomBase() {
                 p.index(), clientCoord, objectRadius,
                 params()
                     .setTipLayoutHints(hintsCollection.hints)
+                    .setMarkerColors(markerColorsByDataPoint(p))
             )
         }
     }

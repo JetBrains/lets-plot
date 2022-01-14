@@ -9,11 +9,9 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.LinePathConstructor
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 
 open class PathGeom : GeomBase() {
 
@@ -42,7 +40,8 @@ open class PathGeom : GeomBase() {
             targetCollector,
             dataPoints,
             linesHelper,
-            false
+            false,
+            HintColorUtil.defaultMarkerColors(aesthetics)
         )
         appendNodes(
             geomConstructor.construct(),

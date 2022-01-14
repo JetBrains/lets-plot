@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
@@ -16,9 +17,9 @@ class LinePathConstructor(
     private val myTargetCollector: GeomTargetCollector,
     private val myDataPoints: Iterable<DataPointAesthetics>,
     private val myLinesHelper: LinesHelper,
-    private val myClosePath: Boolean
+    private val myClosePath: Boolean,
+    private val myMarkerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
 ) {
-
     fun construct(): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
         val multiPointDataList = createMultiPointDataByGroup()
@@ -34,21 +35,17 @@ class LinePathConstructor(
             myTargetCollector.addPolygon(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                params().setColor(
-                    HintColorUtil.fromFill(
-                        multiPointData.aes
-                    )
-                )
+                params()
+                    .setColor(HintColorUtil.fromFill(multiPointData.aes))
+                    .setMarkerColors(myMarkerColorsByDataPoint(multiPointData.aes))
             )
         } else {
             myTargetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                params().setColor(
-                    HintColorUtil.fromColor(
-                        multiPointData.aes
-                    )
-                )
+                params()
+                    .setColor(HintColorUtil.fromColor(multiPointData.aes))
+                    .setMarkerColors(myMarkerColorsByDataPoint(multiPointData.aes))
             )
         }
     }

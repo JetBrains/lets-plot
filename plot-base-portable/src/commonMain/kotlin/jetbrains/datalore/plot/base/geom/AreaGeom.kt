@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromFill
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
@@ -51,12 +52,14 @@ open class AreaGeom : GeomBase() {
             reducer(0.999, false)
         )
 
+        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
         val targetCollector = getGeomTargetCollector(ctx)
         for (multiPointData in multiPointDataList) {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                setupTooltipParams(multiPointData.aes),
+                setupTooltipParams(multiPointData.aes)
+                    .setMarkerColors(markerColorsByDataPoint(multiPointData.aes)),
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {
