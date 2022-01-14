@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from collections import Iterable
 from datetime import datetime
 from typing import Any, Tuple, Sequence
 
@@ -33,7 +34,6 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     # mapping
     mapping = {}
     mapping_meta = []
-    series_meta = []
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
@@ -53,15 +53,24 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
             if len(mapping_meta) > 0:
                 data_meta.update({'mapping_annotations': mapping_meta})
 
-    if data is not None:
-        for col_name in data:
-            if all(isinstance(val, datetime) for val in data[col_name]):
-                series_meta.append({
-                    'column': col_name,
-                    'type': "datetime"
-                })
-            if len(series_meta) > 0:
-                data_meta.update({'series_annotations': series_meta})
+    # series annotations
+    series_meta = []
+
+    data_column_names = []
+    if is_data_frame(data):
+        data_column_names = list(data)
+    elif isinstance(data, dict):
+        data_column_names = list(data.keys())
+
+    for column_name in data_column_names:
+        if isinstance(data[column_name], Iterable) and all(isinstance(val, datetime) for val in data[column_name]):
+            series_meta.append({
+                'column': column_name,
+                'type': "datetime"
+            })
+
+    if len(series_meta) > 0:
+        data_meta.update({'series_annotations': series_meta})
 
     return data, aes(**mapping), {'data_meta': data_meta}
 
