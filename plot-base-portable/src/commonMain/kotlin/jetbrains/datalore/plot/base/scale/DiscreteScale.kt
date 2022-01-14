@@ -38,14 +38,6 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         throw IllegalStateException("No breaks generator for discrete scale '$name'")
     }
 
-    override fun hasDomainLimits(): Boolean {
-        return discreteTransform.hasDomainLimits()
-    }
-
-    override fun isInDomainLimits(v: Any): Boolean {
-        return discreteTransform.isInDomain(v)
-    }
-
     override fun hasBreaks(): Boolean {
         // Discrete scale always has breaks: either "defined" or "effective domain".
         return true
@@ -63,7 +55,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     protected override fun getLabelsIntern(): List<String> {
         val labels = super.getLabelsIntern()
-        return if (!hasDomainLimits() || labels.isEmpty()) {
+        return if (!transform.hasDomainLimits() || labels.isEmpty()) {
             labels
         } else if (!hasDefinedBreaks()) {
             labels

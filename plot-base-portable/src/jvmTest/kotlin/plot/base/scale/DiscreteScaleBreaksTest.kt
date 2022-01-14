@@ -37,7 +37,7 @@ class DiscreteScaleBreaksTest(
 
         // ---
         limits?.run {
-            assertTrue(scale.hasDomainLimits())
+            assertTrue(scale.transform.hasDomainLimits())
         }
         assertTrue(scale.hasBreaks())
 

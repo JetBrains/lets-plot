@@ -63,7 +63,8 @@ internal class ScaleConfigDiscreteScaleTest(
         assertEquals(expectedBreakColors, mappedBreaks, "[Break Colors]")
         assertEquals(
             expectedDataPointColors,
-            ScaleUtil.map(scale.applyTransform(CAT_DATA, true), scale),
+//            ScaleUtil.map(scale.applyTransform(CAT_DATA, true), scale),
+            ScaleUtil.map(ScaleUtil.applyTransform(CAT_DATA, scale.transform), scale),
             "[Data Point Colors]"
         )
     }

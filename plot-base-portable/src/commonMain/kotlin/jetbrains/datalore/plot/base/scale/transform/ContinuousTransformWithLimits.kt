@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Transform
 
@@ -12,7 +13,10 @@ internal class ContinuousTransformWithLimits(
     private val actual: ContinuousTransform,
     private val lowerLimit: Double? = null,
     private val upperLimit: Double? = null,
-) : ContinuousTransform by actual {
+    // Delegating 'by' fails to call 'isInDomain(v: Double?)' (overridden here)
+    // from `isInDomain(v: Any?)` (in the parent class).
+//) : ContinuousTransform by actual {
+) : ContinuousTransform {
 
     init {
         check(!(lowerLimit == null && upperLimit == null)) {
@@ -44,10 +48,14 @@ internal class ContinuousTransformWithLimits(
         return actual.isInDomain(v)
     }
 
-    override fun unwrapLimits(): Transform {
-        return actual.unwrapLimits()
-    }
+    override fun apply(v: Double?): Double? = actual.apply(v)
+    override fun apply(l: List<*>): List<Double?> = actual.apply(l)
+    override fun applyInverse(v: Double?): Double? = actual.applyInverse(v)
+    override fun applyInverse(l: List<Double?>): List<Double?> = actual.applyInverse(l)
+    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> = actual.createApplicableDomain(middle)
+    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> = actual.toApplicableDomain(range)
 
+    override fun unwrap(): Transform = actual.unwrap()
     override fun definedLimits(): Pair<Double?, Double?> {
         return Pair(lowerLimit, upperLimit)
     }

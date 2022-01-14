@@ -385,7 +385,8 @@ object PlotConfigUtil {
             val defaultName = defaultScaleName(aes, variablesByMappedAes)
             val scaleProvider = scaleProviderByAes.getValue(aes)
 
-            @Suppress("MoveVariableDeclarationIntoWhen") val transform = transformByAes.getValue(aes)
+            @Suppress("MoveVariableDeclarationIntoWhen")
+            val transform = transformByAes.getValue(aes)
 
             val scale = when (transform) {
                 is DiscreteTransform -> scaleProvider.createScale(defaultName, transform)

@@ -50,18 +50,6 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         }
     }
 
-    override fun isInDomainLimits(v: Any): Boolean {
-        return if (v is Number) {
-            continuousTransform.isInDomain(v.toDouble())
-        } else {
-            false
-        }
-    }
-
-    override fun hasDomainLimits(): Boolean {
-        return continuousTransform.hasDomainLimits()
-    }
-
     override fun with(): Scale.Builder<T> {
         return MyBuilder(this)
     }

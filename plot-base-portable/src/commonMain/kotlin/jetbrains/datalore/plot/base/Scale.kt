@@ -43,15 +43,9 @@ interface Scale<T> {
 
     fun hasBreaks(): Boolean
 
-    fun hasDomainLimits(): Boolean
-
-    fun isInDomainLimits(v: Any): Boolean
-
     fun getBreaksGenerator(): BreaksGenerator
 
     fun getScaleBreaks(): ScaleBreaks
-
-    fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?>
 
     fun with(): Builder<T>
 

@@ -15,7 +15,7 @@ interface Transform {
         return l.map { applyInverse(it) }
     }
 
-    fun unwrapLimits(): Transform {
+    fun unwrap(): Transform {
         return this
     }
 }

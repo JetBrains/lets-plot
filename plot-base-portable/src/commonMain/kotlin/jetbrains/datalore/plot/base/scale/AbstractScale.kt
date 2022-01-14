@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT, T> : Scale<T> {
@@ -62,26 +61,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         return definedLabels
     }
 
-    override fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?> {
-        @Suppress("NAME_SHADOWING")
-        var source: List<Any?> = source
-
-        // Replace values outside 'scale limits' with null-s.
-        if (checkLimits && hasDomainLimits()) {
-            source = source.map { if (it == null || isInDomainLimits(it)) it else null }
-        }
-
-        // Replace values outside of domain of 'continuous transform' with null-s.
-        if (transform is ContinuousTransform) {
-            val continuousTransform = transform as ContinuousTransform
-            if (continuousTransform.hasDomainLimits()) {
-                source = source.map { if (continuousTransform.isInDomain(it as Double?)) it else null }
-            }
-        }
-
-        return transform.apply(source)
-    }
-
     override fun getScaleBreaks(): ScaleBreaks {
         if (!hasBreaks()) {
             return ScaleBreaks.EMPTY
@@ -89,7 +68,8 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
         val breakValuesIntern = getBreaksIntern()
         val labels = getLabels(breakValuesIntern)
-        val transformed = applyTransform(breakValuesIntern, checkLimits = false)
+        val transformCore = transform.unwrap() // make sure 'original' transform is used.
+        val transformed = ScaleUtil.applyTransform(breakValuesIntern, transformCore)
 
         // drop NULLs which can occure after transform.
         val keepIndices: Set<Int> = transformed

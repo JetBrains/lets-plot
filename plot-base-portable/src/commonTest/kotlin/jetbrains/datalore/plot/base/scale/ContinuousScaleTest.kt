@@ -132,7 +132,7 @@ class ContinuousScaleTest {
             .continuousTransform(transWithLims(-10.0, 10.0))
             .build()
 
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, -10, 0.0, 10.0)
         assertValuesNotInLimits(scale, -11, 11.0)
     }
@@ -145,7 +145,7 @@ class ContinuousScaleTest {
             .continuousTransform(transWithLims(lower = -10.0))
             .build()
 
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, -10, 0.0, 10.0, 11)
         assertValuesNotInLimits(scale, -11)
     }
@@ -158,7 +158,7 @@ class ContinuousScaleTest {
             .continuousTransform(transWithLims(upper = 10.0))
             .build()
 
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, -11, -10, 0.0, 10.0)
         assertValuesNotInLimits(scale, 11)
     }
@@ -177,7 +177,7 @@ class ContinuousScaleTest {
         val domainLimits = scale.transform.definedLimits()
 
         val copy = scale.with().build() as ContinuousScale
-        assertTrue(copy.hasDomainLimits())
+        assertTrue(copy.transform.hasDomainLimits())
         assertEquals(domainLimits, copy.transform.definedLimits())
     }
 

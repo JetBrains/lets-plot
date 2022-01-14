@@ -26,7 +26,7 @@ object Transforms {
         transform: ContinuousTransform,
         labelFormatter: ((Any) -> String)? = null
     ): BreaksGenerator {
-        val breaksGenerator: BreaksGenerator = when (transform.unwrapLimits()) {
+        val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
             IDENTITY -> LinearBreaksGen(labelFormatter)
             REVERSE -> LinearBreaksGen(labelFormatter)
             SQRT -> NonlinearBreaksGen(SQRT, labelFormatter)

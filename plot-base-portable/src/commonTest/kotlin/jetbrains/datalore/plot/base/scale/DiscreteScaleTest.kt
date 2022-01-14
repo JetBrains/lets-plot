@@ -48,7 +48,7 @@ class DiscreteScaleTest {
             "Test scale", listOf("a", "b", "c"),
             domainLimits = listOf("b", "c", "d")
         )
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
 //        assertValuesNotInLimits(scale, "a", "d")
         assertValuesNotInLimits(scale, "a")
@@ -65,7 +65,7 @@ class DiscreteScaleTest {
             domainLimits = emptyList()
         )
 
-        assertFalse(scale.hasDomainLimits())
+        assertFalse(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, "a", "b", "c")
         assertValuesNotInLimits(scale, "d")
     }
@@ -79,7 +79,7 @@ class DiscreteScaleTest {
         )
 
         val copy = scale.with().build()
-        assertTrue(copy.hasDomainLimits())
+        assertTrue(copy.transform.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
 //        assertValuesNotInLimits(scale, "a", "d")
         assertValuesNotInLimits(scale, "a")

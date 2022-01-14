@@ -39,19 +39,7 @@ internal class BogusScale : Scale<Double> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
-    override fun hasDomainLimits(): Boolean {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
-    override fun isInDomainLimits(v: Any): Boolean {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
     override fun getScaleBreaks(): ScaleBreaks {
-        throw IllegalStateException("Bogus scale is not supposed to be used.")
-    }
-
-    override fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
