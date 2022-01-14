@@ -192,11 +192,13 @@ class HorizontalTooltipExpanderTest {
         val spec = TooltipSpec(
             layoutHint = TipLayoutHint.cursorTooltip(
                 DoubleVector.ZERO,
-                Color.BLACK
+                Color.BLACK,
+                markerColors = emptyList()
             ),
             lines = listOf(TooltipSpec.Line.withValue(text)),
             fill = Color.BLACK,
-            isOutlier = true
+            isOutlier = true,
+            markerColors = emptyList()
         )
         return PositionedTooltip(
             MeasuredTooltip(spec, size, TooltipBox()),

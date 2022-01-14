@@ -64,13 +64,13 @@ class TooltipBox: SvgComponent() {
         fillColor: Color,
         textColor: Color,
         borderColor: Color,
-        markerFillColor: Color?, // todo add also the border color for the marker
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         style: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
-        borderRadius: Double
+        borderRadius: Double,
+        markerColors: List<Color>
     ) {
         addClassName(style)
         myTextBox.update(
@@ -80,7 +80,7 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth,
             rotate
         )
-        myPointerBox.updateStyle(fillColor, borderColor, markerFillColor, strokeWidth, borderRadius)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, markerColors)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -91,24 +91,24 @@ class TooltipBox: SvgComponent() {
 
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
-        private val myColorBar = SvgPathElement()
+        private val myColorBar = List(2) { SvgPathElement() }  // max two stacked bars
         internal var pointerDirection: PointerDirection? = null
         internal var addColorBar = false
         private var myBorderRadius = 0.0
 
         override fun buildComponent() {
             add(myPointerPath)
-            add(myColorBar)
+            myColorBar.forEach { add(it) }
         }
 
         internal fun updateStyle(
             fillColor: Color,
             borderColor: Color,
-            markerFillColor: Color?,
             strokeWidth: Double,
-            borderRadius: Double
+            borderRadius: Double,
+            markerColors: List<Color>
         ) {
-            addColorBar = markerFillColor != null
+            addColorBar = markerColors.isNotEmpty()
             myBorderRadius = borderRadius
 
             myPointerPath.apply {
@@ -116,13 +116,13 @@ class TooltipBox: SvgComponent() {
                 strokeOpacity().set(strokeWidth)
                 fillColor().set(fillColor)
             }
-            myColorBar.apply {
-                if (markerFillColor != null) {
-                    strokeOpacity().set(1.0)
-                    strokeColor().set(markerFillColor)
-                    strokeWidth().set(COLOR_BAR_WIDTH)
+            myColorBar.forEachIndexed { index, bar ->
+                bar.strokeWidth().set(0.0)
+                if (markerColors.size > index) {
+                    bar.fillOpacity().set(1.0)
+                    bar.fillColor().set(markerColors[index])
                 } else {
-                    strokeOpacity().set(0.0)
+                    bar.fillOpacity().set(0.0)
                 }
             }
         }
@@ -211,15 +211,27 @@ class TooltipBox: SvgComponent() {
                 }.build()
             )
             if (addColorBar) {
-                myColorBar.d().set(
-                    SvgPathDataBuilder().apply {
-                        with(contentRect) {
-                            val x = left + (H_CONTENT_PADDING + COLOR_BAR_WIDTH / 2)
-                            moveTo(x, bottom - V_CONTENT_PADDING)
-                            lineTo(x, top + V_CONTENT_PADDING)
-                        }
-                    }.build()
-                )
+                val colorBarRect = with(contentRect) {
+                    DoubleRectangle(
+                        left + H_CONTENT_PADDING,
+                        top + V_CONTENT_PADDING,
+                        COLOR_BAR_WIDTH,
+                        height - V_CONTENT_PADDING * 2
+                    )
+                }
+                val stackedBars = myColorBar.filter { it.fillOpacity().get()!! > 0 }
+                val barHeight = colorBarRect.height / stackedBars.size
+                stackedBars.forEachIndexed { index, bar ->
+                    bar.d().set(
+                        SvgPathDataBuilder().apply {
+                            moveTo(colorBarRect.left, colorBarRect.top + barHeight * index)
+                            horizontalLineTo(colorBarRect.right)
+                            verticalLineTo(colorBarRect.top + barHeight * (index + 1))
+                            horizontalLineTo(colorBarRect.left)
+                            verticalLineTo(colorBarRect.top + barHeight * index)
+                        }.build()
+                    )
+                }
             }
         }
 

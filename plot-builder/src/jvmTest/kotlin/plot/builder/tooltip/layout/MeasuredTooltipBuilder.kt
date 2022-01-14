@@ -55,21 +55,23 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
         val hint = createHint()
         return MeasuredTooltip(
             TooltipSpec(
-            layoutHint = hint,
-            lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
-            fill = myFill!!,
-            isOutlier = true,
-            anchor = myAnchor
-        ), mySize!!, TooltipBox())
+                layoutHint = hint,
+                lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
+                fill = myFill!!,
+                isOutlier = true,
+                anchor = myAnchor,
+                markerColors = emptyList()
+            ),
+            mySize!!, TooltipBox())
     }
 
     private fun createHint(): TipLayoutHint {
         return when (myLayoutHint) {
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!, myFill)
+            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!, myFill, markerColors = emptyList())
 
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!, myFill)
+            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!, myFill, markerColors = emptyList())
 
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill)
+            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill, markerColors = emptyList())
 
             Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, myFill)
 

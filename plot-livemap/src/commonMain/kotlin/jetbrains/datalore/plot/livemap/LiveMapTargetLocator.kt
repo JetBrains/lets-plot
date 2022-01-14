@@ -32,7 +32,11 @@ class LiveMapTargetLocator(
                    targets = listOf(
                        GeomTarget(
                            hitIndex = it.index,
-                           tipLayoutHint = cursorTooltip(coord, it.color),
+                           tipLayoutHint = cursorTooltip(
+                               coord,
+                               it.color,
+                               markerColors = listOfNotNull(it.color) // todo need to choose colors for the tooltip's colorBar
+                           ),
                            aesTipLayoutHints = emptyMap()
                        )
                    ),

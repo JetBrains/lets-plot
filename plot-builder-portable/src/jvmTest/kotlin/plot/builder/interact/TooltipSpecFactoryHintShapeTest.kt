@@ -73,7 +73,8 @@ class TooltipSpecFactoryHintShapeTest : jetbrains.datalore.plot.builder.interact
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR
+                        FILL_COLOR,
+                        markerColors = emptyList()
                     ))
                 .build())
 

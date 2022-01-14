@@ -31,6 +31,10 @@ class MappedAesthetics(
         return source.map { myPointAestheticsMapper(it) }
     }
 
+    override fun isConstant(aes: Aes<*>): Boolean {
+        return myAesthetics.isConstant(aes)
+    }
+
     override fun range(aes: Aes<Double>): ClosedRange<Double> {
         throw IllegalStateException("MappedAesthetics.range: not implemented $aes")
     }

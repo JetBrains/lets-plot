@@ -58,7 +58,8 @@ class TooltipSpecFactory(
                             layoutHint = hint,
                             lines = linesForAes,
                             fill = hint.color ?: tipLayoutHint().color!!,
-                            isOutlier = true
+                            isOutlier = true,
+                            markerColors = emptyList()
                         )
                     )
                 }
@@ -81,7 +82,8 @@ class TooltipSpecFactory(
                             layoutHint = layoutHint,
                             lines = lines,
                             fill = layoutHint.color!!,
-                            isOutlier = true
+                            isOutlier = true,
+                            markerColors = emptyList()
                         )
                     )
                 }
@@ -105,7 +107,8 @@ class TooltipSpecFactory(
                         isOutlier = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,
-                        isCrosshairEnabled = myIsCrosshairEnabled
+                        isCrosshairEnabled = myIsCrosshairEnabled,
+                        markerColors = tipLayoutHint().markerColors
                     )
                 )
             } else {

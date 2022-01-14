@@ -35,7 +35,8 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR
+                        FILL_COLOR,
+                        markerColors = emptyList()
                     ))
                 .build())
 
@@ -73,7 +74,11 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                 .withLayoutHint(
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
-                        OBJECT_RADIUS, hintFill))
+                        OBJECT_RADIUS,
+                        hintFill,
+                        markerColors = emptyList()
+                    )
+                )
                 .withFill(Color.RED)
                 .build())
 
@@ -90,7 +95,8 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR
+                        FILL_COLOR,
+                        markerColors = emptyList()
                     )
                 )
                 .build()
@@ -112,7 +118,8 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR
+                        FILL_COLOR,
+                        markerColors = emptyList()
                     )
                 )
                 .build(),

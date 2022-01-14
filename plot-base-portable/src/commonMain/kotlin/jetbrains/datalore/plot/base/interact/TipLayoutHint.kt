@@ -14,7 +14,8 @@ open class TipLayoutHint(
     open val coord: DoubleVector?,
     open val objectRadius: Double,
     open val color: Color?,
-    open val stemLength: StemLength
+    open val stemLength: StemLength,
+    open val markerColors: List<Color>
 ) {
 
     enum class StemLength(val value: Double) {
@@ -40,53 +41,58 @@ open class TipLayoutHint(
 
     companion object {
 
-        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL): TipLayoutHint {
+        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL, markerColors: List<Color>): TipLayoutHint {
             return TipLayoutHint(
                 Kind.VERTICAL_TOOLTIP,
                 coord,
                 objectRadius,
                 color,
-                stemLength
+                stemLength,
+                markerColors
             )
         }
 
-        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL): TipLayoutHint {
+        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL, markerColors: List<Color>): TipLayoutHint {
             return TipLayoutHint(
                 Kind.HORIZONTAL_TOOLTIP,
                 coord,
                 objectRadius,
                 color,
-                stemLength
+                stemLength,
+                markerColors
             )
         }
 
-        fun cursorTooltip(coord: DoubleVector?, color: Color?, stemLength: StemLength = StemLength.NORMAL): TipLayoutHint {
+        fun cursorTooltip(coord: DoubleVector?, color: Color?, stemLength: StemLength = StemLength.NORMAL, markerColors: List<Color>): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.CURSOR_TOOLTIP,
-                coord = coord,
+                coord,
                 objectRadius = 0.0,
-                color = color,
-                stemLength = stemLength
+                color,
+                stemLength,
+                markerColors
             )
         }
 
         fun xAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0, stemLength: StemLength = StemLength.NONE): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.X_AXIS_TOOLTIP,
-                coord = coord,
+                coord,
                 objectRadius = axisRadius,
-                color = color,
-                stemLength = stemLength
+                color,
+                stemLength,
+                markerColors = emptyList()
             )
         }
 
         fun yAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0, stemLength: StemLength = StemLength.NONE): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.Y_AXIS_TOOLTIP,
-                coord = coord,
+                coord,
                 objectRadius = axisRadius,
-                color = color,
-                stemLength = stemLength
+                color,
+                stemLength,
+                markerColors = emptyList()
             )
         }
 
@@ -96,7 +102,8 @@ open class TipLayoutHint(
                 coord,
                 objectRadius,
                 color,
-                stemLength
+                stemLength,
+                markerColors = emptyList()
             )
         }
     }
