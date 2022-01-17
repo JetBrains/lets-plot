@@ -40,7 +40,7 @@ object HintColorUtil {
             listOfNotNull(
                 fromFill(p).takeIf { isMappedFill },
                 fromColor(p).takeIf { isMappedColor },
-            )
+            ).distinct()
         }
     }
 }

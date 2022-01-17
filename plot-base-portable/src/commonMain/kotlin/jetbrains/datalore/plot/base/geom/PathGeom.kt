@@ -40,9 +40,9 @@ open class PathGeom : GeomBase() {
             targetCollector,
             dataPoints,
             linesHelper,
-            false,
-            HintColorUtil.defaultMarkerColors(aesthetics)
-        )
+            myClosePath = false
+        ) { p -> listOf(HintColorUtil.fromColor(p)) }
+
         appendNodes(
             geomConstructor.construct(),
             root
