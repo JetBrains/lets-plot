@@ -154,7 +154,7 @@ object DefaultMapperProvider {
                     return GuideMappers.UNDEFINED
                 }
 
-                override fun createContinuousMapper2(
+                override fun createContinuousMapper(
                     domain: ClosedRange<Double>,
                     trans: ContinuousTransform
                 ): GuideMapper<Double> {
@@ -167,7 +167,7 @@ object DefaultMapperProvider {
                     return GuideMappers.IDENTITY
                 }
 
-                override fun createContinuousMapper2(
+                override fun createContinuousMapper(
                     domain: ClosedRange<Double>,
                     trans: ContinuousTransform
                 ): GuideMapper<Double> {

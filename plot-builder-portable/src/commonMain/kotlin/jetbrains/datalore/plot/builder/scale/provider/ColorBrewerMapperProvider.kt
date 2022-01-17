@@ -55,7 +55,7 @@ class ColorBrewerMapperProvider(
         return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
 
-    override fun createContinuousMapper2(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
+    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
         val colorScheme = colorScheme(false)
         val colors = colors(colorScheme, colorScheme.maxColors)
 

@@ -56,7 +56,7 @@ class ScaleConfigTest {
         )
         val data = DataFrameUtil.fromMap(map)
         val datavar = DataFrameUtil.findVariableOrFail(data, "var")
-        val mapper = mapperProvider.createContinuousMapper2(
+        val mapper = mapperProvider.createContinuousMapper(
             data.range(datavar)!!,
             Transforms.IDENTITY
         )

@@ -188,7 +188,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
             // continuous (numeric) domain
             val dataRange = ensureApplicableRange(continuousDomain)
-            val mapper = mapperProvider.createContinuousMapper2(
+            val mapper = mapperProvider.createContinuousMapper(
                 dataRange,
                 continuousTransform
             )

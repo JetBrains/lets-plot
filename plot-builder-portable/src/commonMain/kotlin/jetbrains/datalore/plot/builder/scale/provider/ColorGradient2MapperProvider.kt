@@ -33,7 +33,7 @@ class ColorGradient2MapperProvider(
         myMidpoint = midpoint ?: 0.0
     }
 
-    override fun createContinuousMapper2(
+    override fun createContinuousMapper(
         domain: ClosedRange<Double>,
         trans: ContinuousTransform
     ): GuideMapper<Color> {
