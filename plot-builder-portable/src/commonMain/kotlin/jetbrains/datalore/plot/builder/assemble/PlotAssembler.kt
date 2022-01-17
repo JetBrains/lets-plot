@@ -132,13 +132,6 @@ class PlotAssembler private constructor(
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
-            @Suppress("NAME_SHADOWING")
-            val theme = if (layersByTile.size > 1) {
-                theme.multiTile()
-            } else {
-                theme
-            }
-
             return PlotAssembler(
                 scaleByAes,
                 layersByTile,
