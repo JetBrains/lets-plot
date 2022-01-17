@@ -130,9 +130,6 @@ class LayerConfig(
 
         // If layer has no mapping then no data is needed.
         val dropData: Boolean = (combinedMappingOptions.isEmpty() &&
-                // Exception: CorrelationStat doesn't "consume" aesthetics and this logic is not applicable.
-                // ToDo: Remove CorrelationStat
-                statKind != StatKind.CORR &&
                 // Do not touch GeoDataframe - empty mapping is OK in this case.
                 !GeoConfig.isGeoDataframe(layerOptions, DATA) &&
                 !GeoConfig.isApplicable(layerOptions, combinedMappingOptions)

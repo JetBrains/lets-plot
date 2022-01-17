@@ -19,8 +19,7 @@ enum class StatKind {
     YDENSITY,
     DENSITY,
     DENSITY2D,
-    DENSITY2DF,
-    CORR;
+    DENSITY2DF;
 
 
     companion object {
