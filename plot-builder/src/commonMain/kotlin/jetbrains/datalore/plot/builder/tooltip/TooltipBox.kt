@@ -88,14 +88,19 @@ class TooltipBox: SvgComponent() {
 
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
-        private val myColorBar = List(2) { SvgPathElement() }  // max two bars
+        private val myColorBars = List(2) { SvgPathElement() }  // max two bars
         internal var pointerDirection: PointerDirection? = null
         private var myBorderRadius = 0.0
         var colorBarIndent = 0.0
 
         override fun buildComponent() {
             add(myPointerPath)
-            myColorBar.forEach { add(it) }
+            myColorBars.forEach { add(it) }
+        }
+
+        private fun colorBarWidth(barsNum: Int): Double {
+            // make color bars wider if there are more than one
+            return COLOR_BAR_WIDTH * if (barsNum > 1) 1.4 else barsNum.toDouble()
         }
 
         internal fun updateStyle(
@@ -112,20 +117,24 @@ class TooltipBox: SvgComponent() {
                 strokeOpacity().set(strokeWidth)
                 fillColor().set(fillColor)
             }
-            myColorBar.forEachIndexed { index, bar ->
+            myColorBars.forEachIndexed { index, bar ->
                 if (markerColors.size > index) {
-                    bar.strokeOpacity().set(1.0)
-                    bar.strokeColor().set(markerColors[index])
-                    bar.strokeWidth().set(COLOR_BAR_WIDTH)
+                    bar.fillOpacity().set(1.0)
+                    bar.fillColor().set(markerColors[index])
                 } else {
-                    bar.strokeOpacity().set(0.0)
+                    bar.fillOpacity().set(0.0)
                 }
             }
-            colorBarIndent = if (markerColors.isNotEmpty()) {
-                    markerColors.size * COLOR_BAR_WIDTH + (markerColors.size - 1) * INTERVAL_BETWEEN_COLOR_BAR_STRIPES + H_CONTENT_PADDING
+
+            colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
+                if (colorBarNums > 0) {
+                    H_CONTENT_PADDING +
+                            colorBarNums * colorBarWidth(colorBarNums) +
+                            (colorBarNums - 1) * INTERVAL_BETWEEN_COLOR_BAR_STRIPES
                 } else {
                     0.0
                 }
+            }
         }
 
         internal fun update(pointerCoord: DoubleVector, orientation: Orientation) {
@@ -212,17 +221,20 @@ class TooltipBox: SvgComponent() {
                 }.build()
             )
 
-            myColorBar
-                .filter { it.strokeOpacity().get()!! > 0 }
+            val colorBars = myColorBars.filter { it.fillOpacity().get()!! > 0 }
+            val barWidth = colorBarWidth(colorBars.size)
+            colorBars
                 .forEachIndexed { index, bar ->
+                    // adjacent vertical bars
                     bar.d().set(
                         SvgPathDataBuilder().apply {
                             with(contentRect) {
-                                val x = left + H_CONTENT_PADDING +
-                                        COLOR_BAR_WIDTH / 2 +
-                                        index * (COLOR_BAR_WIDTH + INTERVAL_BETWEEN_COLOR_BAR_STRIPES)
-                                moveTo(x, bottom - V_CONTENT_PADDING)
-                                lineTo(x, top + V_CONTENT_PADDING)
+                                val x = left + H_CONTENT_PADDING + index * (barWidth + INTERVAL_BETWEEN_COLOR_BAR_STRIPES)
+                                moveTo(x, top + V_CONTENT_PADDING)
+                                horizontalLineTo(x + barWidth)
+                                verticalLineTo(bottom - V_CONTENT_PADDING)
+                                horizontalLineTo(x)
+                                verticalLineTo(top + V_CONTENT_PADDING)
                             }
                         }.build()
                     )
