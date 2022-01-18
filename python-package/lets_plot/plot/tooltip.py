@@ -81,6 +81,7 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_lines: List = None
         self._tooltip_anchor = None
         self._tooltip_min_width = None
+        self._tooltip_color = None
         self._tooltip_variables = variables
         super().__init__('tooltips', name=None)
 
@@ -113,6 +114,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_lines'] = self._tooltip_lines
         d['tooltip_anchor'] = self._tooltip_anchor
         d['tooltip_min_width'] = self._tooltip_min_width
+        d['tooltip_color'] = self._tooltip_color
         d['tooltip_variables'] = self._tooltip_variables
         return _filter_none(d)
 
@@ -378,4 +380,42 @@ class layer_tooltips(FeatureSpec):
 
         """
         self._tooltip_min_width = value
+        return self
+
+    def color(self, value):
+        """
+        Function `color(value)` is deprecated.
+
+        The color for the general tooltip.
+
+        Parameters
+        ----------
+        value : str
+            Color of the tooltip.
+
+        Returns
+        -------
+        `layer_tooltips`
+            Layer tooltips specification.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 10
+
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 100
+            np.random.seed(42)
+            x = np.random.normal(size=n)
+            y = np.random.normal(size=n)
+            ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+                geom_point(tooltips=layer_tooltips().line('(^x, ^y)')\\
+                                                    .color('magenta'))
+        """
+        print("WARN: The function color() is deprecated and is no longer supported.")
+
+        self._tooltip_color = value
         return self
