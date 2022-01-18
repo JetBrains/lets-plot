@@ -138,6 +138,10 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
+        object Violin {
+            const val DRAW_QUANTILES = "draw_quantiles"
+        }
+
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"

@@ -27,7 +27,8 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
-                "                 'alpha': 0.7" +
+                "                 'alpha': 0.7," +
+                "                 'draw_quantiles': [0.25, 0.5, 0.75]" +
                 "               }" +
                 "             ]" +
                 "}"
