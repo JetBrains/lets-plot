@@ -118,7 +118,7 @@ class LocatedTargetsPicker(
         }
 
         private fun filterResults(lookupResult: LookupResult, coord: DoubleVector?, flippedAxis: Boolean): LookupResult {
-            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, FREQPOLY, LINE, AREA, SEGMENT)) {
+            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT)) {
                 return lookupResult
             }
 
