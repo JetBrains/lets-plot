@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.theme.LegendTheme
 internal object LegendBoxesLayoutUtil {
     fun arrangeLegendBoxes(
         infos: List<LegendBoxInfo>,
-        theme: LegendTheme
+        @Suppress("UNUSED_PARAMETER") theme: LegendTheme
     ): LegendsBlockInfo {
         // ToDo: legend.box options in theme
         val legendArrangement = LegendArrangement.VERTICAL

@@ -18,7 +18,10 @@ import jetbrains.datalore.plot.config.Option.Stat.Smooth
 
 object StatProto {
 
-    internal fun defaultOptions(statName: String, geomKind: GeomKind): Map<String, Any> {
+    internal fun defaultOptions(
+        statName: String,
+        @Suppress("UNUSED_PARAMETER") geomKind: GeomKind
+    ): Map<String, Any> {
         return when (StatKind.safeValueOf(statName)) {
             else -> emptyMap()
         }

@@ -61,20 +61,24 @@ class PlotAssembler private constructor(
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         } else {
             val flipAxis = coordProvider.flipAxis
-            val (xAesRange, yAesRange) = PlotAssemblerUtil.computePlotDryRunXYRanges(layersByTile)
+            val scaleXProto = scaleByAes[Aes.X]
+            val scaleYProto = scaleByAes[Aes.Y]
+            val (xAesRange, yAesRange) = PositionalScalesUtil.computePlotXYDomains(
+                layersByTile,
+                scaleXProto,
+                scaleYProto
+            )
             val (hDomain, vDomain) = coordProvider.adjustDomains(
                 hDomain = if (flipAxis) yAesRange else xAesRange,
                 vDomain = if (flipAxis) xAesRange else yAesRange
             )
-            val (hAes, vAes) = when (flipAxis) {
-                true -> Aes.Y to Aes.X
-                else -> Aes.X to Aes.Y
+            val (hScaleProto, vScaleProto) = when (flipAxis) {
+                true -> scaleYProto to scaleXProto
+                else -> scaleXProto to scaleYProto
             }
             val fOrProvider = SquareFrameOfReferenceProvider(
-                scaleByAes[hAes],
-                scaleByAes[vAes],
-                hDomain,
-                vDomain,
+                hScaleProto, vScaleProto,
+                hDomain, vDomain,
                 flipAxis,
                 theme
             )

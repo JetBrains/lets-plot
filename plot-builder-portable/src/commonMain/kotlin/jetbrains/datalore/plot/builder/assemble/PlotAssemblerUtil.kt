@@ -6,16 +6,10 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PlotUtil
-import jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunXYRanges
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
@@ -25,7 +19,6 @@ import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRe
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal object PlotAssemblerUtil {
 
@@ -43,29 +36,6 @@ internal object PlotAssemblerUtil {
             }
             rangeByAes[aes] = range
         }
-    }
-
-    private fun updateRange(range: ClosedRange<Double>?, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
-        @Suppress("NAME_SHADOWING")
-        var range = range
-        if (range != null) {
-            if (wasRange != null) {
-                range = wasRange.span(range)
-            }
-            return range
-        }
-        return wasRange
-    }
-
-    private fun updateRange(values: Iterable<Double>, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
-        if (!Iterables.isEmpty(values)) {
-            var newRange = ClosedRange.encloseAll(values)
-            if (wasRange != null) {
-                newRange = wasRange.span(newRange)
-            }
-            return newRange
-        }
-        return wasRange
     }
 
     fun createLegends(
@@ -218,96 +188,5 @@ internal object PlotAssemblerUtil {
             tileLayout,
             facetsTheme.showStrip()
         )
-    }
-
-    fun computePlotDryRunXYRanges(layersByTile: List<List<GeomLayer>>): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        // 'dry run' aesthetics use 'identity' mappers for positional aes (because the plot size is not yet determined)
-        val dryRunAestheticsByTileLayer = HashMap<GeomLayer, Aesthetics>()
-        for (tileLayers in layersByTile) {
-            for (layer in tileLayers) {
-                val aesthetics = PlotUtil.createLayerDryRunAesthetics(layer)
-                dryRunAestheticsByTileLayer[layer] = aesthetics
-            }
-        }
-
-        // the "scale map" is shared by all layers.
-        val layers0 = layersByTile[0]
-        val scaleMap = layers0[0].scaleMap
-        val xScale = scaleMap[Aes.X]
-        val yScale = scaleMap[Aes.Y]
-        var xInitialRange: ClosedRange<Double>? = RangeUtil.initialRange(xScale)
-        var yInitialRange: ClosedRange<Double>? = RangeUtil.initialRange(yScale)
-
-        var xRangeOverall: ClosedRange<Double>? = null
-        var yRangeOverall: ClosedRange<Double>? = null
-        for (tileLayers in layersByTile) {
-            for (layer in tileLayers) {
-                // use dry-run aesthetics to estimate ranges
-                val aesthetics = dryRunAestheticsByTileLayer.getValue(layer)
-                // adjust X/Y range with 'pos adjustment' and 'expands'
-                val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
-
-                val xRangeLayer = updateRange(xInitialRange, xyRanges.first)
-                val yRangeLayer = updateRange(yInitialRange, xyRanges.second)
-
-                xRangeOverall = updateRange(xRangeLayer, xRangeOverall)
-                yRangeOverall = updateRange(yRangeLayer, yRangeOverall)
-            }
-        }
-
-        // 'expand' ranges and include '0' if necessary
-        xRangeOverall = RangeUtil.expandRange(xRangeOverall, Aes.X, xScale, layers0)
-        yRangeOverall = RangeUtil.expandRange(yRangeOverall, Aes.Y, yScale, layers0)
-
-        // validate XY ranges
-        xRangeOverall = SeriesUtil.ensureApplicableRange(xRangeOverall)
-        yRangeOverall = SeriesUtil.ensureApplicableRange(yRangeOverall)
-        return Pair(
-            xRangeOverall,
-            yRangeOverall
-        )
-    }
-
-    private object RangeUtil {
-        fun initialRange(scale: Scale<Double>): ClosedRange<Double>? {
-            var initialRange: ClosedRange<Double>? = null
-
-            // Take in account:
-            // - scales domain if defined
-            // - scales breaks if defined
-            if (scale.isContinuousDomain) {
-                initialRange = updateRange(
-                    ScaleUtil.transformedDefinedLimits(scale.transform as ContinuousTransform).toList()
-                        .filter { it.isFinite() },
-                    initialRange
-                )
-            }
-
-            if (scale.hasBreaks()) {
-                val scaleBreaks = scale.getScaleBreaks()
-                initialRange = updateRange(
-                    scaleBreaks.transformedValues,
-                    initialRange
-                )
-            }
-            return initialRange
-        }
-
-        fun expandRange(
-            range: ClosedRange<Double>?,
-            aes: Aes<Double>,
-            scale: Scale<*>,
-            layers: List<GeomLayer>
-        ): ClosedRange<Double>? {
-            val includeZero = layers.any { it.rangeIncludesZero(aes) }
-
-            @Suppress("NAME_SHADOWING")
-            val range = when (includeZero) {
-                true -> updateRange(ClosedRange.singleton(0.0), range)
-                false -> range
-            }
-
-            return PlotUtil.rangeWithExpand(range, scale, includeZero)
-        }
     }
 }
