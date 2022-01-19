@@ -103,16 +103,17 @@ class ViolinGeom : GeomBase() {
         // Draw quantiles
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
-        for (p in quantileDataPoints) {
-            val start = DoubleVector(p.xmin()!!, p.y()!!)
-            val end = DoubleVector(p.xmax()!!, p.y()!!)
-            val line = helper.createLine(start, end, p)
+        for (q in quantileDataPoints) {
+            val start = DoubleVector(q.xmin()!!, q.y()!!)
+            val end = DoubleVector(q.xmax()!!, q.y()!!)
+            val line = helper.createLine(start, end, q)
             root.add(line)
 
-            // Draw quantile tooltips
+            // Draw tooltips
+            val nearestDataPoint = dataPoints.first { p -> p.y()!! >= q.y()!! }
             buildQuantileHints(
                 DoubleRectangle(start.x, start.y, end.x - start.x, 0.0),
-                p,
+                nearestDataPoint,
                 ctx,
                 geomHelper
             )
@@ -177,7 +178,6 @@ class ViolinGeom : GeomBase() {
         geomHelper: GeomHelper
     ) {
         val clientRect = geomHelper.toClient(rect, p)
-        val objectRadius = if (ctx.flipped) clientRect.height / 2.0 else clientRect.width / 2.0
         val tooltipKind = if (ctx.flipped) {
             TipLayoutHint.Kind.ROTATED_TOOLTIP
         } else {
@@ -185,8 +185,8 @@ class ViolinGeom : GeomBase() {
         }
 
         val hint = HintsCollection.HintConfigFactory()
-            .defaultObjectRadius(objectRadius)
-            .defaultX(rect.left)
+            .defaultObjectRadius(0.0)
+            .defaultX(rect.center.x)
             .defaultKind(tooltipKind)
 
         val hints = HintsCollection(p, geomHelper)
