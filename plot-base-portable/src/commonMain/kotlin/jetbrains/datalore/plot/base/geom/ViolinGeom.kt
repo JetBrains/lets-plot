@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
@@ -107,9 +108,15 @@ class ViolinGeom : GeomBase() {
             val end = DoubleVector(p.xmax()!!, p.y()!!)
             val line = helper.createLine(start, end, p)
             root.add(line)
-        }
 
-        // TODO: Draw tooltips
+            // Draw quantile tooltips
+            buildQuantileHints(
+                DoubleRectangle(start.x, start.y, end.x - start.x, 0.0),
+                p,
+                ctx,
+                geomHelper
+            )
+        }
     }
 
     private fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
@@ -161,6 +168,39 @@ class ViolinGeom : GeomBase() {
                 }
             )
         }
+    }
+
+    private fun buildQuantileHints(
+        rect: DoubleRectangle,
+        p: DataPointAesthetics,
+        ctx: GeomContext,
+        geomHelper: GeomHelper
+    ) {
+        val clientRect = geomHelper.toClient(rect, p)
+        val objectRadius = if (ctx.flipped) clientRect.height / 2.0 else clientRect.width / 2.0
+        val tooltipKind = if (ctx.flipped) {
+            TipLayoutHint.Kind.ROTATED_TOOLTIP
+        } else {
+            TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+        }
+
+        val hint = HintsCollection.HintConfigFactory()
+            .defaultObjectRadius(objectRadius)
+            .defaultX(rect.left)
+            .defaultKind(tooltipKind)
+
+        val hints = HintsCollection(p, geomHelper)
+            .addHint(hint.create(Aes.Y))
+            .hints
+
+        ctx.targetCollector.addRectangle(
+            p.index(),
+            clientRect,
+            TooltipParams.params()
+                .setTipLayoutHints(hints)
+                .setColor(HintColorUtil.fromColor(p)),
+            tooltipKind = tooltipKind
+        )
     }
 
     companion object {
