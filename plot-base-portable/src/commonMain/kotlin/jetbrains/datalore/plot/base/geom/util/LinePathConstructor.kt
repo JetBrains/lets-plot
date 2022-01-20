@@ -18,7 +18,7 @@ class LinePathConstructor(
     private val myDataPoints: Iterable<DataPointAesthetics>,
     private val myLinesHelper: LinesHelper,
     private val myClosePath: Boolean,
-    private val myMarkerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    private val myColorsByDataPoint: (DataPointAesthetics) -> List<Color>
 ) {
     fun construct(): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
@@ -36,16 +36,16 @@ class LinePathConstructor(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
                 params()
-                    .setColor(HintColorUtil.fromFill(multiPointData.aes))
-                    .setMarkerColors(myMarkerColorsByDataPoint(multiPointData.aes))
+                    .setMainColor(HintColorUtil.fromFill(multiPointData.aes))
+                    .setColors(myColorsByDataPoint(multiPointData.aes))
             )
         } else {
             myTargetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
                 params()
-                    .setColor(HintColorUtil.fromColor(multiPointData.aes))
-                    .setMarkerColors(myMarkerColorsByDataPoint(multiPointData.aes))
+                    .setMainColor(HintColorUtil.fromColor(multiPointData.aes))
+                    .setColors(myColorsByDataPoint(multiPointData.aes))
             )
         }
     }

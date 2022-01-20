@@ -59,11 +59,11 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         }
 
         return when (hintConfig.kind) {
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(coord, objectRadius, color, markerColors = emptyList())
+            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(coord, objectRadius, mainColor = color, colors = emptyList())
 
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(coord, objectRadius, color, markerColors = emptyList())
+            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(coord, objectRadius, mainColor = color, colors = emptyList())
 
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(coord, color, markerColors = emptyList())
+            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(coord, mainColor = color, colors = emptyList())
 
             Kind.ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(coord, objectRadius, color)
 

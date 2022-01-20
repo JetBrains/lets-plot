@@ -46,18 +46,17 @@ class SmoothGeom : GeomBase() {
         val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
         appendNodes(bands, root)
 
-        buildHints(dataPoints, pos, coord, ctx, aesthetics)
+        buildHints(dataPoints, pos, coord, ctx)
     }
 
     private fun buildHints(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
-        ctx: GeomContext,
-        aesthetics: Aesthetics
+        ctx: GeomContext
     ) {
         val helper = GeomHelper(pos, coord, ctx)
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         for (p in dataPoints) {
             val xCoord = p.x()!!
             val objectRadius = 0.0
@@ -83,7 +82,7 @@ class SmoothGeom : GeomBase() {
                 p.index(), clientCoord, objectRadius,
                 params()
                     .setTipLayoutHints(hintsCollection.hints)
-                    .setMarkerColors(markerColorsByDataPoint(p))
+                    .setColors(colorsByDataPoint(p))
             )
         }
     }

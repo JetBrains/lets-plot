@@ -43,7 +43,7 @@ open class TileGeom : GeomBase() {
                 )
             },
             TipLayoutHint.Kind.CURSOR_TOOLTIP,
-            HintColorUtil.defaultMarkerColors(aesthetics)
+            HintColorUtil.fromMappedColors(ctx)
         )
             .collectTo(ctx.targetCollector)
     }

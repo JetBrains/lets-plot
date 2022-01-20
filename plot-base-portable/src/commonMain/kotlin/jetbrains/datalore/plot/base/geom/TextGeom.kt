@@ -37,6 +37,7 @@ class TextGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val sizeUnitRatio = getSizeUnitRatio(ctx)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
@@ -56,7 +57,8 @@ class TextGeom : GeomBase() {
                     loc,
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
-                        .setColor(HintColorUtil.fromColor(p)),
+                        .setMainColor(HintColorUtil.fromColor(p))
+                        .setColors(colorsByDataPoint(p)),
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

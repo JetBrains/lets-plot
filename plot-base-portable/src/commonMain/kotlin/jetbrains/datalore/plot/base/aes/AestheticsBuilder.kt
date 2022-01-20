@@ -240,10 +240,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             }
         }
 
-        override fun isConstant(aes: Aes<*>): Boolean {
-            return myConstantAes.contains(aes)
-        }
-
         override fun range(aes: Aes<Double>): ClosedRange<Double>? {
             if (!myRangeByNumericAes.containsKey(aes)) {
                 val r = when {

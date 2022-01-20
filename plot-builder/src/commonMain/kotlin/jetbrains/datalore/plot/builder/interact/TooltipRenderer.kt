@@ -135,7 +135,7 @@ internal class TooltipRenderer(
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
                         borderRadius = borderRadius,
-                        markerColors = spec.markerColors
+                        markerColors = spec.markerColors.distinct()
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }

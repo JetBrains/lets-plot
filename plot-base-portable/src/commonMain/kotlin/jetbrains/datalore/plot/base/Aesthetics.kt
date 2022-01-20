@@ -16,8 +16,6 @@ interface Aesthetics {
 
     fun dataPoints(): Iterable<DataPointAesthetics>
 
-    fun isConstant(aes: Aes<*>): Boolean
-
     /**
      * Numeric aes only (x,y)
      *

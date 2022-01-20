@@ -57,7 +57,7 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         FILL_COLOR,
-                        markerColors = emptyList()
+                        colors = emptyList()
                     )
                 )
                 .build()

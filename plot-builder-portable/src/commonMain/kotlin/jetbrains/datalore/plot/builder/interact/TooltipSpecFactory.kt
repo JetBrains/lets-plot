@@ -42,7 +42,7 @@ class TooltipSpecFactory(
         private fun hitIndex() = myGeomTarget.hitIndex
         private fun tipLayoutHint() = myGeomTarget.tipLayoutHint
         private fun outlierHints() = myGeomTarget.aesTipLayoutHints
-        private fun hintColors() = myGeomTarget.aesTipLayoutHints.map { it.key to it.value.color }.toMap()
+        private fun hintColors() = myGeomTarget.aesTipLayoutHints.map { it.key to it.value.mainColor }.toMap()
 
         private fun outlierTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -57,7 +57,7 @@ class TooltipSpecFactory(
                         TooltipSpec(
                             layoutHint = hint,
                             lines = linesForAes,
-                            fill = hint.color ?: tipLayoutHint().color!!,
+                            fill = hint.mainColor ?: tipLayoutHint().mainColor!!,
                             isOutlier = true,
                             markerColors = emptyList()
                         )
@@ -81,7 +81,7 @@ class TooltipSpecFactory(
                         TooltipSpec(
                             layoutHint = layoutHint,
                             lines = lines,
-                            fill = layoutHint.color!!,
+                            fill = layoutHint.mainColor!!,
                             isOutlier = true,
                             markerColors = emptyList()
                         )
@@ -97,7 +97,7 @@ class TooltipSpecFactory(
             val aesHintColors = hintColors()
                 .filterKeys { aes -> aes in generalDataPoints.map(DataPoint::aes) }
             val colorFromHints = aesHintColors[Aes.Y] ?: aesHintColors.mapNotNull { it.value }.lastOrNull()
-            val fill = colorFromHints ?: tipLayoutHint().color!!
+            val fill = colorFromHints ?: tipLayoutHint().mainColor!!
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(
@@ -108,7 +108,7 @@ class TooltipSpecFactory(
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,
                         isCrosshairEnabled = myIsCrosshairEnabled,
-                        markerColors = tipLayoutHint().markerColors
+                        markerColors = tipLayoutHint().colors
                     )
                 )
             } else {

@@ -44,7 +44,7 @@ open class PointGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
@@ -62,7 +62,7 @@ open class PointGeom : GeomBase() {
 
                 targetCollector.addPoint(
                     i, location, sizeUnitRatio * shape.size(p) / 2,
-                    tooltipParams(p, markerColorsByDataPoint)
+                    tooltipParams(p, colorsByDataPoint)
                 )
                 val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)
@@ -85,7 +85,7 @@ open class PointGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        fun tooltipParams(p: DataPointAesthetics, markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>): TooltipParams {
+        fun tooltipParams(p: DataPointAesthetics, colorsByDataPoint: (DataPointAesthetics) -> List<Color>): TooltipParams {
             var color = Color.TRANSPARENT
             if (p.shape() == TinyPointShape) {
                 color = p.color()!!
@@ -94,7 +94,7 @@ open class PointGeom : GeomBase() {
                 color = AestheticsUtil.fill(shape.isFilled, shape.isSolid, p)
             }
 
-            return params().setColor(fromColorValue(color, p.alpha()!!)).setMarkerColors(markerColorsByDataPoint(p))
+            return params().setMainColor(fromColorValue(color, p.alpha()!!)).setColors(colorsByDataPoint(p))
         }
     }
 }

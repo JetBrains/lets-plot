@@ -42,9 +42,9 @@ class RibbonGeom : GeomBase() {
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         for (p in aesthetics.dataPoints()) {
-            addTarget(p, ctx, GeomUtil.TO_LOCATION_X_YMAX, helper, markerColorsByDataPoint)
+            addTarget(p, ctx, GeomUtil.TO_LOCATION_X_YMAX, helper, colorsByDataPoint)
         }
     }
 
@@ -53,7 +53,7 @@ class RibbonGeom : GeomBase() {
         ctx: GeomContext,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
         helper: GeomHelper,
-        markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val coord = toLocation(p)
         if (coord != null) {
@@ -80,7 +80,7 @@ class RibbonGeom : GeomBase() {
                 p.index(),
                 helper.toClient(coord, p),
                 0.0,
-                params().setTipLayoutHints(hintsCollection.hints).setMarkerColors(markerColorsByDataPoint(p))
+                params().setTipLayoutHints(hintsCollection.hints).setColors(colorsByDataPoint(p))
             )
         }
     }

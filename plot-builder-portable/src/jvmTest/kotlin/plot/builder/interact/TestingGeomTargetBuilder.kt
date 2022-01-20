@@ -71,7 +71,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
                 myFill,
                 detectTipLayoutHint(myHintShape.kind),
                 TipLayoutHint.StemLength.NORMAL,
-                markerColors = emptyList()
+                colors = emptyList()
             ),
             myAesTipLayoutHints
         )

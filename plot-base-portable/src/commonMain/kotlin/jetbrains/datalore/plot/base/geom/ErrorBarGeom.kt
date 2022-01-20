@@ -36,7 +36,7 @@ class ErrorBarGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
 
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),
@@ -60,7 +60,7 @@ class ErrorBarGeom : GeomBase() {
                 p,
                 ctx,
                 geomHelper,
-                markerColorsByDataPoint
+                colorsByDataPoint
             )
         }
     }
@@ -70,7 +70,7 @@ class ErrorBarGeom : GeomBase() {
         p: DataPointAesthetics,
         ctx: GeomContext,
         geomHelper: GeomHelper,
-        markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val clientRect = geomHelper.toClient(rect, p)
         val objectRadius = clientRect.run {
@@ -102,8 +102,8 @@ class ErrorBarGeom : GeomBase() {
             clientRect,
             params()
                 .setTipLayoutHints(hints)
-                .setColor(fromColor(p))
-                .setMarkerColors(markerColorsByDataPoint(p)),
+                .setMainColor(fromColor(p))
+                .setColors(colorsByDataPoint(p)),
             tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             } else {

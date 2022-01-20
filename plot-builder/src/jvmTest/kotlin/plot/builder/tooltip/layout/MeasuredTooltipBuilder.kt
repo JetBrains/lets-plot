@@ -67,11 +67,11 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
 
     private fun createHint(): TipLayoutHint {
         return when (myLayoutHint) {
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!, myFill, markerColors = emptyList())
+            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!, myFill, colors = emptyList())
 
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!, myFill, markerColors = emptyList())
+            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!, myFill, colors = emptyList())
 
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill, markerColors = emptyList())
+            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill, colors = emptyList())
 
             Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, myFill)
 

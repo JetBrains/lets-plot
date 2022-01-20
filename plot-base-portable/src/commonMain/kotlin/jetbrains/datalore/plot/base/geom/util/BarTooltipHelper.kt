@@ -23,7 +23,7 @@ object BarTooltipHelper {
         defaultTooltipKind: TipLayoutHint.Kind? = null
     ) {
         val helper = GeomHelper(pos, coord, ctx)
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
 
         for (p in aesthetics.dataPoints()) {
             val rect = rectFactory(p) ?: continue
@@ -57,8 +57,8 @@ object BarTooltipHelper {
                 helper.toClient(rect, p),
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
-                    .setColor(colorFactory(p))
-                    .setMarkerColors(markerColorsByDataPoint(p)),
+                    .setMainColor(colorFactory(p))
+                    .setColors(colorsByDataPoint(p)),
                 tooltipKind = defaultTooltipKind ?: if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {

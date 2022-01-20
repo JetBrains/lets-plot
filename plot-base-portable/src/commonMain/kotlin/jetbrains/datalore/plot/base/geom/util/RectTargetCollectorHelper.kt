@@ -18,7 +18,7 @@ class RectTargetCollectorHelper(
     private val rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
     private val fillByDataPoint: (DataPointAesthetics) -> Color,
     private val tooltipKind: TipLayoutHint.Kind,
-    private val markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    private val colorsByDataPoint: (DataPointAesthetics) -> List<Color>
 ) {
     fun collectTo(targetCollector: GeomTargetCollector) {
         rectanglesHelper.iterateRectangleGeometry(rectangleByDataPoint)
@@ -29,7 +29,7 @@ class RectTargetCollectorHelper(
 
     private fun tooltipParams(p: DataPointAesthetics): TooltipParams {
         val params = params()
-        params.setColor(fillByDataPoint(p)).setMarkerColors(markerColorsByDataPoint(p))
+        params.setMainColor(fillByDataPoint(p)).setColors(colorsByDataPoint(p))
         return params
     }
 }

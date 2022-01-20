@@ -86,6 +86,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return mapper(1.0) as Double
         }
 
+        override fun isMappedAes(aes: Aes<*>): Boolean {
+            return myAestheticMappers?.containsKey(aes) ?: false
+        }
+
         override fun getAesBounds(): DoubleRectangle {
             check(myAesBounds != null) { "GeomContext: aesthetics bounds are not defined." }
             return myAesBounds

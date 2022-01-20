@@ -36,7 +36,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         FILL_COLOR,
-                        markerColors = emptyList()
+                        colors = emptyList()
                     ))
                 .build())
 
@@ -76,7 +76,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         hintFill,
-                        markerColors = emptyList()
+                        colors = emptyList()
                     )
                 )
                 .withFill(Color.RED)
@@ -96,7 +96,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         FILL_COLOR,
-                        markerColors = emptyList()
+                        colors = emptyList()
                     )
                 )
                 .build()
@@ -119,7 +119,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         FILL_COLOR,
-                        markerColors = emptyList()
+                        colors = emptyList()
                     )
                 )
                 .build(),

@@ -13,9 +13,9 @@ open class TipLayoutHint(
     open val kind: Kind,
     open val coord: DoubleVector?,
     open val objectRadius: Double,
-    open val color: Color?,
+    open val mainColor: Color?,
     open val stemLength: StemLength,
-    open val markerColors: List<Color>
+    open val colors: List<Color>
 ) {
 
     enum class StemLength(val value: Double) {
@@ -41,36 +41,36 @@ open class TipLayoutHint(
 
     companion object {
 
-        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL, markerColors: List<Color>): TipLayoutHint {
+        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, mainColor: Color?, stemLength: StemLength = StemLength.NORMAL, colors: List<Color>): TipLayoutHint {
             return TipLayoutHint(
                 Kind.VERTICAL_TOOLTIP,
                 coord,
                 objectRadius,
-                color,
+                mainColor,
                 stemLength,
-                markerColors
+                colors
             )
         }
 
-        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL, markerColors: List<Color>): TipLayoutHint {
+        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, mainColor: Color?, stemLength: StemLength = StemLength.NORMAL, colors: List<Color>): TipLayoutHint {
             return TipLayoutHint(
                 Kind.HORIZONTAL_TOOLTIP,
                 coord,
                 objectRadius,
-                color,
+                mainColor,
                 stemLength,
-                markerColors
+                colors
             )
         }
 
-        fun cursorTooltip(coord: DoubleVector?, color: Color?, stemLength: StemLength = StemLength.NORMAL, markerColors: List<Color>): TipLayoutHint {
+        fun cursorTooltip(coord: DoubleVector?, mainColor: Color?, stemLength: StemLength = StemLength.NORMAL, colors: List<Color>): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.CURSOR_TOOLTIP,
                 coord,
                 objectRadius = 0.0,
-                color,
+                mainColor,
                 stemLength,
-                markerColors
+                colors
             )
         }
 
@@ -81,7 +81,7 @@ open class TipLayoutHint(
                 objectRadius = axisRadius,
                 color,
                 stemLength,
-                markerColors = emptyList()
+                colors = emptyList()
             )
         }
 
@@ -92,7 +92,7 @@ open class TipLayoutHint(
                 objectRadius = axisRadius,
                 color,
                 stemLength,
-                markerColors = emptyList()
+                colors = emptyList()
             )
         }
 
@@ -103,7 +103,7 @@ open class TipLayoutHint(
                 objectRadius,
                 color,
                 stemLength,
-                markerColors = emptyList()
+                colors = emptyList()
             )
         }
     }

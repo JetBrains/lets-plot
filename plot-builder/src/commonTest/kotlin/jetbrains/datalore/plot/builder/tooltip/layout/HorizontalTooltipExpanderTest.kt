@@ -193,7 +193,7 @@ class HorizontalTooltipExpanderTest {
             layoutHint = TipLayoutHint.cursorTooltip(
                 DoubleVector.ZERO,
                 Color.BLACK,
-                markerColors = emptyList()
+                colors = emptyList()
             ),
             lines = listOf(TooltipSpec.Line.withValue(text)),
             fill = Color.BLACK,

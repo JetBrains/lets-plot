@@ -32,11 +32,11 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH)
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
-            .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx, markerColorsByDataPoint) }
+            .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx, colorsByDataPoint) }
     }
 
     private fun buildViolin(
@@ -45,7 +45,7 @@ class ViolinGeom : GeomBase() {
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext,
-        markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val helper = LinesHelper(pos, coord, ctx)
         val leftBoundTransform = toLocationBound(-1.0, ctx)
@@ -58,8 +58,8 @@ class ViolinGeom : GeomBase() {
         appendNodes(helper.createLines(dataPoints, leftBoundTransform), root)
         appendNodes(helper.createLines(dataPoints, rightBoundTransform), root)
 
-        buildHints(dataPoints, ctx, helper, leftBoundTransform, markerColorsByDataPoint)
-        buildHints(dataPoints, ctx, helper, rightBoundTransform, markerColorsByDataPoint)
+        buildHints(dataPoints, ctx, helper, leftBoundTransform, colorsByDataPoint)
+        buildHints(dataPoints, ctx, helper, rightBoundTransform, colorsByDataPoint)
     }
 
     private fun toLocationBound(
@@ -78,7 +78,7 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext,
         helper: GeomHelper,
         boundTransform: (p: DataPointAesthetics) -> DoubleVector,
-        markerColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
             dataPoints,
@@ -93,8 +93,8 @@ class ViolinGeom : GeomBase() {
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
                 TooltipParams.params()
-                    .setColor(HintColorUtil.fromFill(multiPointData.aes))
-                    .setMarkerColors(markerColorsByDataPoint(multiPointData.aes)),
+                    .setMainColor(HintColorUtil.fromFill(multiPointData.aes))
+                    .setColors(colorsByDataPoint(multiPointData.aes)),
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {

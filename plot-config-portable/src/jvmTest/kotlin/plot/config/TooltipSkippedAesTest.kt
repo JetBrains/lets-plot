@@ -202,7 +202,7 @@ class TooltipSkippedAesTest {
             return factory.create(
                 GeomTarget(
                     hitIndex = 0,
-                    tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, Color.BLACK, markerColors = emptyList()),
+                    tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, Color.BLACK, colors = emptyList()),
                     aesTipLayoutHints = emptyMap()
                 )
             )

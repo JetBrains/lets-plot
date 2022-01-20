@@ -39,7 +39,7 @@ class SegmentGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val helper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
-        val markerColorsByDataPoint = HintColorUtil.defaultMarkerColors(aesthetics)
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
 
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
@@ -52,8 +52,8 @@ class SegmentGeom : GeomBase() {
                     listOf(coord.toClient(start), coord.toClient(end)),
                     { p.index() },
                     GeomTargetCollector.TooltipParams.params()
-                        .setColor(HintColorUtil.fromColor(p))
-                        .setMarkerColors(markerColorsByDataPoint(p))
+                        .setMainColor(HintColorUtil.fromColor(p))
+                        .setColors(colorsByDataPoint(p))
                 )
 
                 if (arrowSpec != null) {
