@@ -11,7 +11,7 @@ import jetbrains.livemap.api.mapEntity
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.RenderableComponent

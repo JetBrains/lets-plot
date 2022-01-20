@@ -3,8 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.ui
+package jetbrains.livemap.core.layers
 
-expect object Clipboard {
-    fun copy(text: String)
+enum class RenderTarget {
+    SINGLE_SCREEN_CANVAS,
+    OWN_OFFSCREEN_CANVAS,
+    OWN_SCREEN_CANVAS
 }

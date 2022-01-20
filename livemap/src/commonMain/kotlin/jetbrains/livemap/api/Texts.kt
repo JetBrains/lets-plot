@@ -14,8 +14,8 @@ import jetbrains.livemap.chart.TextSpec
 import jetbrains.livemap.chart.TextSpecComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.TextMeasurer
-import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.core.graphics.TextMeasurer
+import jetbrains.livemap.core.layers.LayerGroup
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.*

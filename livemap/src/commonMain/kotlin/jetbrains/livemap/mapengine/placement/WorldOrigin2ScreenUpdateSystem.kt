@@ -7,7 +7,7 @@ package jetbrains.livemap.mapengine.placement
 
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.CenterChangedComponent
 

@@ -8,8 +8,8 @@ package jetbrains.livemap.ui
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
-import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
+import jetbrains.livemap.core.layers.CanvasLayerComponent
+import jetbrains.livemap.core.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 
 class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
@@ -22,7 +22,7 @@ class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSys
                 .get<CanvasLayerComponent>()
                 .canvasLayer
                 .addRenderTask { context2d ->
-                    getEntities(UiRenderComponent::class).forEach {
+                    getEntities(UiRenderComponent::class).toList().forEach {
                         val renderObject = it.get<UiRenderComponent>().renderBox
                         context.mapRenderContext.draw(context2d, renderObject.origin, renderObject)
                     }

@@ -11,12 +11,12 @@ import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent

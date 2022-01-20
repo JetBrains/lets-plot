@@ -12,8 +12,8 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.*
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
+import jetbrains.livemap.core.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
 import kotlin.math.sqrt

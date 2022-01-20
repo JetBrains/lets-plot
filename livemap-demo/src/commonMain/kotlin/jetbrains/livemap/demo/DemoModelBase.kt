@@ -15,9 +15,9 @@ import jetbrains.livemap.api.liveMapConfig
 import jetbrains.livemap.api.projection
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.config.LiveMapFactory
+import jetbrains.livemap.core.Clipboard
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.mapengine.basemap.Tilesets
-import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
     fun show(canvasControl: CanvasControl, block: LiveMapBuilder.() -> Unit = {}): Registration {

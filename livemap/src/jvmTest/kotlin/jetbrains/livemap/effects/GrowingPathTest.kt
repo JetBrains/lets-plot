@@ -25,7 +25,7 @@ import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.RenderableComponent

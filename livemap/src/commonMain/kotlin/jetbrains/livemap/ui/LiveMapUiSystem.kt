@@ -9,28 +9,25 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.LiveMapLocation
+import jetbrains.livemap.core.BusyStateComponent
+import jetbrains.livemap.core.Clipboard
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.input.EventListenerComponent
+import jetbrains.livemap.core.graphics.*
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
-import jetbrains.livemap.core.openLink
-import jetbrains.livemap.core.rendering.Alignment
-import jetbrains.livemap.core.rendering.controls.Button
-import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
-import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.core.rendering.primitives.Attribution
-import jetbrains.livemap.core.rendering.primitives.Image
-import jetbrains.livemap.core.rendering.primitives.Text
+import jetbrains.livemap.core.layers.CanvasLayerComponent
+import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
 import jetbrains.livemap.makegeometrywidget.createFormattedGeometryString
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.Camera
 import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.toDoubleVector
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_GET_CENTER
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MAKE_GEOMETRY
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MAKE_GEOMETRY_ACTIVE
@@ -41,7 +38,8 @@ import jetbrains.livemap.ui.ResourceManager.Companion.KEY_PLUS_DISABLED
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_RESET_POSITION
 
 class LiveMapUiSystem(
-    private val myUiService: UiService,
+    private val uiService: UiService,
+    private val myResourceManager: ResourceManager,
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
@@ -50,14 +48,10 @@ class LiveMapUiSystem(
     private val showResetPositionAction: Boolean,
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myCamera: Camera
-    private lateinit var myZoomPlusButton: Button
-    private lateinit var myZoomMinusButton: Button
-    private lateinit var myResetPositionButton: Button
-    private lateinit var myGetCenterButton: Button
     private lateinit var myMakeGeometryButton: Button
+    private lateinit var mySpinner: Spinner
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myViewport: Viewport
-    private var myDrawingGeometry = false
 
     private var myUiState: UiState = ResourcesLoading()
 
@@ -70,15 +64,6 @@ class LiveMapUiSystem(
         myViewport = context.mapRenderContext.viewport
         myCamera = context.camera
         myLiveMapLocation = LiveMapLocation(myViewport, context.mapProjection)
-    }
-
-    private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
-        val listeners = link.getComponent<EventListenerComponent>()
-
-        listeners.addClickListener {
-            it.stopPropagation()
-            hrefConsumer()
-        }
     }
 
     private fun finishDrawing() {
@@ -111,49 +96,57 @@ class LiveMapUiSystem(
 
     private inner class ResourcesLoading : UiState() {
         override fun update(context: LiveMapContext) {
-            if (myUiService.resourceManager.isReady()
-            ) {
+            if (myResourceManager.isReady()) {
                 myUiState = Processing().apply { initialize(context) }
             }
         }
     }
 
     private inner class Processing : UiState() {
+        private var shouldShowSpinner: Boolean = false
+        private var shouldShowResetPosition: Boolean = false
+        private val verticalPanel = mutableListOf<RenderBox>()
+        private lateinit var myZoomPlusButton: Button
+        private lateinit var myZoomMinusButton: Button
+        private lateinit var myResetPositionButton: Button
+        private lateinit var myGetCenterButton: Button
 
         fun initialize(context: LiveMapContext) {
+            mySpinner = newSpinner()
+
             myZoomPlusButton = newButton(
                 name = "zoom_plus",
-                enabledVisual = KEY_PLUS,
-                disabledVisual = KEY_PLUS_DISABLED
+                enabledVisualKey = KEY_PLUS,
+                disabledVisualKey = KEY_PLUS_DISABLED
             ) { _, _ ->
                 myCamera.animate(myCamera.zoom + 1.0, myViewport.position)
             }
 
             myZoomMinusButton = newButton(
                 name = "zoom_minus",
-                enabledVisual = KEY_MINUS,
-                disabledVisual = KEY_MINUS_DISABLED
+                enabledVisualKey = KEY_MINUS,
+                disabledVisualKey = KEY_MINUS_DISABLED
             ) { _, _ ->
                 myCamera.animate(myCamera.zoom - 1.0, myViewport.position)
             }
 
             myResetPositionButton = newButton(
                 name = "reset_position",
-                enabledVisual = KEY_RESET_POSITION
+                enabledVisualKey = KEY_RESET_POSITION
             ) { _, _ ->
                 myCamera.reset()
             }
 
             myGetCenterButton = newButton(
                 name = "get_map_position",
-                enabledVisual = KEY_GET_CENTER
+                enabledVisualKey = KEY_GET_CENTER
             ) { _, _ ->
                 myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
             }
 
             myMakeGeometryButton = newButton(
                 name = "path_painter",
-                enabledVisual = KEY_MAKE_GEOMETRY
+                enabledVisualKey = KEY_MAKE_GEOMETRY
             ) { source, _ ->
                 if (containsEntity(MakeGeometryWidgetComponent::class)) {
                     finishDrawing()
@@ -164,121 +157,114 @@ class LiveMapUiSystem(
                 }
             }
 
-            val buttons = mutableListOf<Button>().apply {
-                add(myZoomPlusButton)
-                add(myZoomMinusButton)
-                if (showResetPositionAction) {
-                    add(myResetPositionButton)
-                }
-                if (showAdvancedActions) {
-                    add(myGetCenterButton)
-                    add(myMakeGeometryButton)
-                }
-            }
-
-            fun layoutButtons(buttons: List<Button>) {
-                val step = DoubleVector(0.0, padding + iconSize.y)
-                var p = DoubleVector(padding, padding)
-                buttons.forEach {
-                    it.position = p
-                    p = p.add(step)
-                }
-            }
-
-            layoutButtons(buttons)
-            buttons.forEach(myUiService::addButton)
-
             if (myAttribution != null) {
-                val parts = AttributionParser(myAttribution).parse()
-                val texts = ArrayList<Text>()
-
-                for (part in parts) {
-                    val c = if (part is AttributionParts.SimpleLink) Color(26, 13, 171) else Color.BLACK
-
-                    val attributionText = Text().apply {
-                        color = c
-                        fontFamily = CONTRIBUTORS_FONT_FAMILY
-                        fontSize = 11.0
-                        text = listOf(part.text)
-                    }
-
-                    if (part is AttributionParts.SimpleLink) {
-                        myUiService.addLink(attributionText).let {
-                            addListenerToLink(it) {
-                                openLink(part.href)
-                            }
-                        }
-                    }
-
-                    texts.add(attributionText)
-                }
-
-                Attribution(DoubleVector(myViewport.size.x, myViewport.size.y), texts).apply {
+                val attribution = newAttribution().apply {
+                    text = myAttribution
+                    origin = myViewport.size.toDoubleVector()
                     background = Color(200, 200, 200, 179)
-                    this.padding = 2.0
-                    horizontalAlignment = Alignment.HorizontalAlignment.LEFT
-                    verticalAlignment = Alignment.VerticalAlignment.BOTTOM
-                }.run {
-                    myUiService.addRenderable(this)
+                    padding = 2.0
+                    horizontalAlignment = Attribution.Alignment.HorizontalAlignment.LEFT
+                    verticalAlignment = Attribution.Alignment.VerticalAlignment.BOTTOM
                 }
-            }
-            updateMakeGeometryButton(drawingGeometry = false)
-            updateZoomButtons(context.camera.zoom)
 
-            myUiService.repaint()
+                uiService.addToRenderer(attribution)
+            }
+
+            updateVerticalPanel()
+            updateZoomButtons(context.camera.zoom)
+        }
+
+        private fun updateVerticalPanel() {
+            verticalPanel.forEach(uiService::removeFromRenderer)
+            verticalPanel.clear()
+
+            verticalPanel.add(myZoomPlusButton)
+            verticalPanel.add(myZoomMinusButton)
+
+            if (showResetPositionAction && shouldShowResetPosition) {
+                verticalPanel.add(myResetPositionButton)
+            }
+
+            if (showAdvancedActions) {
+                verticalPanel.add(myGetCenterButton)
+                verticalPanel.add(myMakeGeometryButton)
+            }
+
+            if (shouldShowSpinner) {
+                mySpinner.runAnimation()
+                verticalPanel.add(mySpinner)
+            } else {
+                mySpinner.stopAnimation()
+            }
+            verticalPanel.forEach(uiService::addToRenderer)
+
+            // layout
+            val padding = 13.0
+            val step = DoubleVector(0.0, padding + iconSize.y)
+            var p = DoubleVector(padding, padding)
+            verticalPanel.forEach {
+                it.origin = p
+                p = p.add(step)
+            }
+            uiService.repaint()
         }
 
         override fun update(context: LiveMapContext) {
-            val drawingGeometry = containsEntity(MakeGeometryWidgetComponent::class)
-            if (myDrawingGeometry != drawingGeometry) {
-                updateMakeGeometryButton(drawingGeometry)
+            shouldShowResetPosition = context.camera.canReset
+            shouldShowSpinner = componentManager.containsEntity<BusyStateComponent>()
+            if (shouldShowResetPosition != (myResetPositionButton in verticalPanel)) {
+                updateVerticalPanel()
+            } else if (shouldShowSpinner != (mySpinner in verticalPanel)) {
+                updateVerticalPanel()
             }
 
-            if (context.camera.isZoomFractionChanged) {
-                updateZoomButtons(context.camera.zoom)
-            }
-        }
-
-        internal fun updateMakeGeometryButton(drawingGeometry: Boolean) {
-            myDrawingGeometry = drawingGeometry
+            updateZoomButtons(context.camera.zoom)
         }
 
         internal fun updateZoomButtons(zoom: Double) {
             myZoomPlusButton.enabled = zoom != myViewport.maxZoom.toDouble()
             myZoomMinusButton.enabled = zoom != myViewport.minZoom.toDouble()
         }
-    }
 
-    private fun loadIcon(key: String, dim: DoubleVector = iconSize): Image {
-        return myUiService.resourceManager[key].let {
-            Image().apply {
-                snapshot = it
-                size = dim
+        private fun loadIcon(key: String, dim: DoubleVector = iconSize): Image {
+            return myResourceManager[key].let {
+                Image().apply {
+                    attach(uiService)
+                    snapshot = it
+                    dimension = dim
+                }
             }
         }
-    }
 
-    private fun newButton(
-        name: String,
-        enabledVisual: String,
-        disabledVisual: String? = null,
-        clickHandler: (Button, InputMouseEvent) -> Unit = { _, _ -> },
-    ): Button = Button(name).apply {
-        this.enabledVisual = loadIcon(enabledVisual)
-        this.disabledVisual = disabledVisual?.let { loadIcon(disabledVisual) }
-        buttonSize = iconSize
-        onDoubleClick = InputMouseEvent::stopPropagation
-        onClick = { e ->
-            e.stopPropagation()
-            clickHandler(this, e)
+        private fun newButton(
+            name: String,
+            enabledVisualKey: String,
+            disabledVisualKey: String? = null,
+            clickHandler: (Button, InputMouseEvent) -> Unit = { _, _ -> },
+        ): Button = Button(name).apply {
+            attach(uiService)
+            enabledVisual = loadIcon(enabledVisualKey)
+            disabledVisual = disabledVisualKey?.let { loadIcon(disabledVisualKey) }
+            dimension = iconSize
+            onDoubleClick = InputMouseEvent::stopPropagation
+            onClick = { e ->
+                e.stopPropagation()
+                clickHandler(this, e)
+            }
+        }
+
+        private fun newSpinner(): Spinner = Spinner().apply {
+            attach(uiService)
+            size = iconSide
+        }
+
+        private fun newAttribution(): Attribution = Attribution().apply {
+            attach(uiService)
         }
     }
 
     companion object {
         private const val iconSide = 26.0
-        private const val padding = 13.0
         private val iconSize = DoubleVector(iconSide, iconSide)
-        private const val CONTRIBUTORS_FONT_FAMILY =
-            "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, " + "\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
     }
 }

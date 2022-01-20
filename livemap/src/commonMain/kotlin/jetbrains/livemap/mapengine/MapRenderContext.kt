@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.CanvasProvider
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.ClientPoint
-import jetbrains.livemap.core.rendering.primitives.RenderObject
+import jetbrains.livemap.core.graphics.RenderObject
 import jetbrains.livemap.mapengine.viewport.Viewport
 
 open class MapRenderContext internal constructor(

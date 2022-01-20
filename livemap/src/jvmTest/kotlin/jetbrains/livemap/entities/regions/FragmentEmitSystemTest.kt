@@ -12,9 +12,9 @@ import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
 import jetbrains.livemap.geometry.ScaleComponent

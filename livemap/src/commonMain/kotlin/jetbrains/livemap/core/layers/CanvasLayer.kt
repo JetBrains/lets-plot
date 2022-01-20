@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.rendering.layers
+package jetbrains.livemap.core.layers
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle

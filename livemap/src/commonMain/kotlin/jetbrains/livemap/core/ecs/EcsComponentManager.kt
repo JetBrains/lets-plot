@@ -27,8 +27,7 @@ class EcsComponentManager {
         }
     }
 
-    fun getEntityById(entityId: Int): EcsEntity =
-         myEntityById[entityId]?.takeIf { !it.hasRemoveFlag() }!!
+    fun getEntityById(entityId: Int): EcsEntity = findEntityById(entityId)!!
 
     fun getEntitiesById(ids: Collection<Int>): Sequence<EcsEntity> {
         return ids
@@ -36,6 +35,9 @@ class EcsComponentManager {
             .mapNotNull { myEntityById[it] }
             .notRemoved()
     }
+
+    fun findEntityById(entityId: Int): EcsEntity? =
+        myEntityById[entityId]?.takeIf { !it.hasRemoveFlag() }
 
     /**
      * Returns entities containing component with [componentType] or empty sequence
@@ -147,6 +149,8 @@ class EcsComponentManager {
 
     inline fun <reified ComponentT : EcsComponent> count(): Int = count(ComponentT::class)
 
+    inline fun <reified ComponentT : EcsComponent> containsEntity(): Boolean = containsEntity(ComponentT::class)
+
 
     /**
      * Mark [entity] as removed. This method can be safely used while iterating entites via [getEntities].
@@ -195,5 +199,9 @@ class EcsComponentManager {
 
     private fun Sequence<EcsEntity>.notRemoved(): Sequence<EcsEntity> {
         return filterNot { it.hasRemoveFlag() }
+    }
+
+    fun removeEntity(entityId: Int) {
+        findEntityById(entityId)?.let(this::removeEntity)
     }
 }

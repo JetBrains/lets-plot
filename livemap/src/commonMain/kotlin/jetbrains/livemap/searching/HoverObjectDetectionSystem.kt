@@ -13,6 +13,7 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.ui.UiService
 
 
 class HoverObjectComponent : EcsComponent {
@@ -21,7 +22,10 @@ class HoverObjectComponent : EcsComponent {
     var cursotPosition : Vec<Client>? = null
 }
 
-class HoverObjectDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
+class HoverObjectDetectionSystem(
+    private val uiService: UiService,
+    componentManager: EcsComponentManager
+) : AbstractSystem<LiveMapContext>(componentManager) {
     override fun initImpl(context: LiveMapContext) {
         super.initImpl(context)
         createEntity("hover_object")
@@ -57,6 +61,15 @@ class HoverObjectDetectionSystem(componentManager: EcsComponentManager) : Abstra
             if (mouseInputComponent.dragDistance != null) {
                 // On panning an object and a mouse are synchronized and there is no need to do a search again, only update cursor position
                 hoverObjectComponent.cursotPosition = mouseLocation
+                return
+            }
+
+            if (uiService.containsElementAtCoord(mouseLocation)) {
+                hoverObjectComponent.apply {
+                    cursotPosition = null
+                    zoom = null
+                    searchResult = null
+                }
                 return
             }
 

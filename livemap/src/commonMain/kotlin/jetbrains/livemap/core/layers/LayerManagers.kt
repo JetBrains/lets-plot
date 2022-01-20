@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.rendering.layers
+package jetbrains.livemap.core.layers
 
 import jetbrains.datalore.base.async.PlatformAsyncs
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -12,8 +12,8 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.SingleCanvasControl
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem.RenderingStrategy
-import jetbrains.livemap.core.rendering.layers.RenderTarget.*
+import jetbrains.livemap.core.layers.LayersRenderingSystem.RenderingStrategy
+import jetbrains.livemap.core.layers.RenderTarget.*
 
 object LayerManagers {
 
