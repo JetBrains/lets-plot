@@ -95,6 +95,7 @@ class ViolinGeom : GeomBase() {
             .xmin(AestheticsBuilder.list(quantXMin))
             .xmax(AestheticsBuilder.list(quantXMax))
             .y(AestheticsBuilder.list(quantY))
+            .quantile(AestheticsBuilder.list(drawQuantiles))
             .color(AestheticsBuilder.constant(quantilesColor))
             .size(AestheticsBuilder.constant(quantilesSize))
             .build()
@@ -190,7 +191,7 @@ class ViolinGeom : GeomBase() {
             .defaultKind(tooltipKind)
 
         val hints = HintsCollection(p, geomHelper)
-            .addHint(hint.create(Aes.Y))
+            .addHint(hint.create(Aes.QUANTILE))
             .hints
 
         ctx.targetCollector.addRectangle(

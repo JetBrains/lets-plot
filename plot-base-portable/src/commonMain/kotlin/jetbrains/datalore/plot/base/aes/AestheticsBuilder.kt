@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -183,6 +184,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun symY(v: (Int) -> Double?): AestheticsBuilder {
         return aes(SYM_Y, v)
+    }
+
+    fun quantile(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(QUANTILE, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T): AestheticsBuilder {
@@ -401,6 +406,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun violinwidth(): Double {
             return get(VIOLINWIDTH)
+        }
+
+        override fun quantile(): Double {
+            return get(QUANTILE)
         }
 
         override fun weight(): Double {

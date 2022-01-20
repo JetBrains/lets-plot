@@ -42,7 +42,6 @@ class LayerOptions : Options<PlotOptions>() {
     var size: Double? by map(Aes.SIZE)
     var width: Double? by map(Aes.WIDTH)
     var height: Double? by map(Aes.HEIGHT)
-    var violinwidth: Double? by map(Aes.VIOLINWIDTH)
     var weight: Double? by map(Aes.WEIGHT)
     var intercept: Double? by map(Aes.INTERCEPT)
     var slope: Double? by map(Aes.SLOPE)

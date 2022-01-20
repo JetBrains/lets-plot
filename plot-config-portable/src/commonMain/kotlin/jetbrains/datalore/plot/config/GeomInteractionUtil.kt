@@ -171,7 +171,7 @@ object GeomInteractionUtil {
         GeomKind.POINT_RANGE,
         GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
         GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
-        GeomKind.VIOLIN -> listOf(Aes.Y)
+        GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
         GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
         else -> emptyList()
     }
