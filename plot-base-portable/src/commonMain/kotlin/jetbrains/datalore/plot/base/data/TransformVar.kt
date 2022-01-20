@@ -25,7 +25,6 @@ object TransformVar {
     val WIDTH = DataFrame.Variable("transform.WIDTH", TRANSFORM)
     val HEIGHT = DataFrame.Variable("transform.HEIGHT", TRANSFORM)
     val VIOLINWIDTH = DataFrame.Variable("transform.VIOLINWIDTH", TRANSFORM)
-    val QUANTILE = DataFrame.Variable("transform.QUANTILE", TRANSFORM)
     val WEIGHT = DataFrame.Variable("transform.WEIGHT", TRANSFORM)
     val INTERCEPT = DataFrame.Variable("transform.INTERCEPT", TRANSFORM)
     val SLOPE = DataFrame.Variable("transform.SLOPE", TRANSFORM)
@@ -133,10 +132,6 @@ object TransformVar {
 
         override fun violinwidth(): DataFrame.Variable {
             return VIOLINWIDTH
-        }
-
-        override fun quantile(): DataFrame.Variable {
-            return QUANTILE
         }
 
         override fun weight(): DataFrame.Variable {

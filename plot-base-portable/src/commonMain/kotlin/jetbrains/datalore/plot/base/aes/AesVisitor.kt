@@ -22,7 +22,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
-import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -107,9 +106,6 @@ abstract class AesVisitor<T> {
         }
         if (aes == VIOLINWIDTH) {
             return violinwidth()
-        }
-        if (aes == QUANTILE) {
-            return quantile()
         }
         if (aes == WEIGHT) {
             return weight()
@@ -216,8 +212,6 @@ abstract class AesVisitor<T> {
     protected abstract fun height(): T
 
     protected abstract fun violinwidth(): T
-
-    protected abstract fun quantile(): T
 
     protected abstract fun weight(): T
 

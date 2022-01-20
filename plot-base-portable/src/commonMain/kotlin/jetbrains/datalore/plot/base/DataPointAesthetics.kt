@@ -40,8 +40,6 @@ interface DataPointAesthetics {
 
     fun violinwidth(): Double?
 
-    fun quantile(): Double?
-
     fun weight(): Double?
 
     fun intercept(): Double?

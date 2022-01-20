@@ -7,12 +7,14 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
+import kotlin.math.abs
 
 class ViolinGeom : GeomBase() {
     private var drawQuantiles = DEF_DRAW_QUANTILES
@@ -77,7 +79,27 @@ class ViolinGeom : GeomBase() {
     ) {
         if (drawQuantiles.isEmpty()) return
 
-        // Calculate quantiles
+        // Draw quantiles
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val helper = geomHelper.createSvgElementHelper()
+        val hintColor = HintColorUtil.fromFill(dataPoints.first())
+        for (q in calculateQuantiles(dataPoints, ctx)) {
+            val start = DoubleVector(q.xmin()!!, q.y()!!)
+            val end = DoubleVector(q.xmax()!!, q.y()!!)
+            val line = helper.createLine(start, end, q)
+            root.add(line)
+
+            // Add axis tooltip
+            val nearestDataPoint = dataPoints.minByOrNull { p -> abs(p.y()!! - q.y()!!) }!!
+            val rect = DoubleRectangle(start.x, start.y, end.x - start.x, 0.0)
+            buildQuantileHints(rect, nearestDataPoint, ctx, geomHelper, hintColor)
+        }
+    }
+
+    private fun calculateQuantiles(
+        dataPoints: Iterable<DataPointAesthetics>,
+        ctx: GeomContext
+    ): Iterable<DataPointAesthetics> {
         val vws = dataPoints.map { it.violinwidth()!! }
         val ys = dataPoints.map { it.y()!! }
         val xsMin = dataPoints.map { toLocationBound(-1.0, ctx)(it) }.map { it.x }
@@ -87,38 +109,17 @@ class ViolinGeom : GeomBase() {
         val quantY = drawQuantiles.map { pwLinInterp(dens, ys)(it) }
         val quantXMin = quantY.map { pwLinInterp(ys, xsMin)(it) }
         val quantXMax = quantY.map { pwLinInterp(ys, xsMax)(it) }
-
-        // Construct dataPoints by quantiles
         val quantilesColor = dataPoints.first().color()
         val quantilesSize = dataPoints.first().size()
-        val quantileDataPoints = AestheticsBuilder(quantY.size)
+
+        return AestheticsBuilder(quantY.size)
+            .y(AestheticsBuilder.list(quantY))
             .xmin(AestheticsBuilder.list(quantXMin))
             .xmax(AestheticsBuilder.list(quantXMax))
-            .y(AestheticsBuilder.list(quantY))
-            .quantile(AestheticsBuilder.list(drawQuantiles))
             .color(AestheticsBuilder.constant(quantilesColor))
             .size(AestheticsBuilder.constant(quantilesSize))
             .build()
             .dataPoints()
-
-        // Draw quantiles
-        val geomHelper = GeomHelper(pos, coord, ctx)
-        val helper = geomHelper.createSvgElementHelper()
-        for (q in quantileDataPoints) {
-            val start = DoubleVector(q.xmin()!!, q.y()!!)
-            val end = DoubleVector(q.xmax()!!, q.y()!!)
-            val line = helper.createLine(start, end, q)
-            root.add(line)
-
-            // Draw tooltips
-            val nearestDataPoint = dataPoints.first { p -> p.y()!! >= q.y()!! }
-            buildQuantileHints(
-                DoubleRectangle(start.x, start.y, end.x - start.x, 0.0),
-                nearestDataPoint,
-                ctx,
-                geomHelper
-            )
-        }
     }
 
     private fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
@@ -176,31 +177,18 @@ class ViolinGeom : GeomBase() {
         rect: DoubleRectangle,
         p: DataPointAesthetics,
         ctx: GeomContext,
-        geomHelper: GeomHelper
+        geomHelper: GeomHelper,
+        color: Color
     ) {
-        val clientRect = geomHelper.toClient(rect, p)
-        val tooltipKind = if (ctx.flipped) {
-            TipLayoutHint.Kind.ROTATED_TOOLTIP
-        } else {
-            TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-        }
-
-        val hint = HintsCollection.HintConfigFactory()
-            .defaultObjectRadius(0.0)
-            .defaultX(rect.center.x)
-            .defaultKind(tooltipKind)
-
-        val hints = HintsCollection(p, geomHelper)
-            .addHint(hint.create(Aes.QUANTILE))
-            .hints
-
         ctx.targetCollector.addRectangle(
             p.index(),
-            clientRect,
-            TooltipParams.params()
-                .setTipLayoutHints(hints)
-                .setColor(HintColorUtil.fromColor(p)),
-            tooltipKind = tooltipKind
+            geomHelper.toClient(rect, p),
+            TooltipParams.params().setColor(color),
+            tooltipKind = if (ctx.flipped) {
+                TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            } else {
+                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            }
         )
     }
 
