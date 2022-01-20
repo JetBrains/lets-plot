@@ -24,7 +24,7 @@ class TooltipSpec(
         return "TooltipSpec($layoutHint, lines=${lines.map(Line::toString)})"
     }
 
-    class Line(val label: String?, val value: String) {
+    class Line private constructor(val label: String?, val value: String, val isContinuationOfValue: Boolean = false) {
         override fun toString(): String {
             return if (label.isNullOrEmpty()) value else "${label}: $value"
         }
@@ -32,6 +32,7 @@ class TooltipSpec(
         companion object {
             fun withValue(value: String) = Line(label = null, value = value)
             fun withLabelAndValue(label: String?, value: String) = Line(label, value)
+            fun nextValueLine(value: String) = Line(label = "", value, isContinuationOfValue = true)
         }
     }
 }

@@ -204,10 +204,10 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
-            Line(null, "dodge"),
-            Line("", "dodge"),
-            Line("model name", "dodge"),
-            Line("the model", "dodge")
+            Line.withValue("dodge"),
+            Line.withLabelAndValue("", "dodge"),
+            Line.withLabelAndValue("model name", "dodge"),
+            Line.withLabelAndValue("the model", "dodge")
         )
         assertTooltipLines(expectedLines, getGeneralTooltipLines(geomLayer))
     }
@@ -863,7 +863,7 @@ class TooltipConfigTest {
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filterNot(DataPoint::isOutlier).map { Line(it.label, it.value) }
+            return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {

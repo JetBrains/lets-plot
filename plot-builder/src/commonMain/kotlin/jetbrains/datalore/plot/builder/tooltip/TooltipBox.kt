@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_LINE_VALUE_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
@@ -74,13 +75,27 @@ class TooltipBox: SvgComponent() {
     ) {
         addClassName(style)
         myTextBox.update(
-            lines,
+            splitLines(lines),
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
             tooltipMinWidth,
             rotate
         )
         myPointerBox.updateStyle(fillColor, borderColor, markerFillColor, strokeWidth, borderRadius)
+    }
+
+    private fun splitLines(originalLines: List<TooltipSpec.Line>): List<TooltipSpec.Line> {
+        return originalLines.flatMap { line ->
+            line.value
+                .chunkedBy(delimiter = " ", maxLength = MAX_LINE_VALUE_LENGTH)
+                .mapIndexed { index, newLine ->
+                    if (index == 0) {
+                        TooltipSpec.Line.withLabelAndValue(line.label, newLine)
+                    } else {
+                        TooltipSpec.Line.nextValueLine(newLine)
+                    }
+                }
+        }
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -257,6 +272,8 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean
         ) {
+            val useLeftAlignmentForValue = lines.any(TooltipSpec.Line::isContinuationOfValue)
+
             myLinesContainer.children().clear()
 
             val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
@@ -291,7 +308,14 @@ class TooltipBox: SvgComponent() {
                 val (labelComponent, valueComponent) = component
                 Pair(
                     getBBox(line.label, labelComponent),
-                    getBBox(line.value, valueComponent)
+                    getBBox(line.value, valueComponent)?.let {
+                        if (useLeftAlignmentForValue && !line.isContinuationOfValue) {
+                            // Increase the interval
+                            it.subtract(DoubleVector(0.0, 2 * LINE_INTERVAL))
+                        } else {
+                            it
+                        }
+                    }
                 )
             }
 
@@ -308,7 +332,7 @@ class TooltipBox: SvgComponent() {
                         // label null - the value component will be centered
                         0.0
                     }
-                    line.label!!.isEmpty() -> {
+                    line.label!!.isEmpty() && !line.isContinuationOfValue -> {
                         // label is not null, but empty - add space for the label, the value will be moved to the right
                         maxLabelWidth
                     }
@@ -353,7 +377,7 @@ class TooltipBox: SvgComponent() {
             val textSize = components
                 .zip(lineBBoxes)
                 .fold(DoubleVector.ZERO, { textDimension, (lineInfo, bBoxes) ->
-                    val (labelComponent,valueComponent) = lineInfo
+                    val (labelComponent, valueComponent) = lineInfo
                     val (labelBBox, valueBBox) = bBoxes
 
                     // bBox.top is negative baseline of the text.
@@ -371,8 +395,13 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            valueComponent.x().set(maxLineWidth)
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            if (useLeftAlignmentForValue) {
+                                valueComponent.x().set(maxLabelWidth + LABEL_VALUE_INTERVAL)
+                                valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.LEFT)
+                            } else {
+                                valueComponent.x().set(maxLineWidth)
+                                valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            }
                         }
                         valueBBox.dimension.x == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
@@ -422,6 +451,35 @@ class TooltipBox: SvgComponent() {
                 width().set(textSize.x + H_CONTENT_PADDING * 2)
                 height().set(textSize.y + V_CONTENT_PADDING * 2)
             }
+        }
+    }
+
+    companion object {
+
+        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
+            return split(delimiter)
+                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
+                .map { it.joinToString(delimiter) }
+        }
+
+        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
+            val result = mutableListOf<List<String>>()
+            var subList = mutableListOf<String>()
+            var subListSize = 0
+            forEach { item ->
+                val itemSize = item.size()
+                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
+                    result.add(subList)
+                    subList = mutableListOf()
+                    subListSize = 0
+                }
+                subList.add(item)
+                subListSize += itemSize
+            }
+            if (subList.isNotEmpty()) {
+                result += subList
+            }
+            return result
         }
     }
 }
