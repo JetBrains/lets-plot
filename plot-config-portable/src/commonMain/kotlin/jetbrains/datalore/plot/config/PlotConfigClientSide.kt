@@ -35,7 +35,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
     init {
 
         // ToDo: First transform data then create scales.
-        scaleMap = PlotConfigUtil.createScales(layerConfigs, transformByAes, scaleProviderByAes)
+        scaleMap = PlotConfigScales.createScales(layerConfigs, transformByAes, scaleProviderByAes)
 
         val preferredCoordProvider: CoordProvider? = layerConfigs
             .map { it.geomProto as GeomProtoClientSide }

@@ -61,8 +61,8 @@ class SquareFrameOfReferenceProvider(
             Orientation.LEFT
         )
 
-        val hDomain = hAxisSpec.aesRange
-        val vDomain = vAxisSpec.aesRange
+        val hDomain = hAxisSpec.domainTransformed
+        val vDomain = vAxisSpec.domainTransformed
 
         return XYPlotTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain)
     }
@@ -109,7 +109,7 @@ class SquareFrameOfReferenceProvider(
 
     private class AxisSpec(
         val breaksProviderFactory: AxisBreaksProviderFactory,
-        val aesRange: ClosedRange<Double>,
+        val domainTransformed: ClosedRange<Double>,
         val label: String?,
         val theme: AxisTheme
     )

@@ -66,10 +66,10 @@ abstract class PlotConfig(
         // build all scales
         val excludeStatVariables = !isClientSide
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        scaleProviderByAes = PlotConfigUtil.createScaleProviders(
+        scaleProviderByAes = PlotConfigScaleProviders.createScaleProviders(
             layerConfigs, scaleConfigs, excludeStatVariables
         )
-        transformByAes = PlotConfigUtil.createTransforms(
+        transformByAes = PlotConfigTransforms.createTransforms(
             layerConfigs, scaleProviderByAes, excludeStatVariables
         )
 

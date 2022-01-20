@@ -18,7 +18,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal object PositionalScalesUtil {
-    fun computePlotXYDomains(
+    /**
+     * Computers X/Y ranges of transformed input series.
+     */
+    fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
         xScaleProto: Scale<Double>,
         yScaleProto: Scale<Double>
