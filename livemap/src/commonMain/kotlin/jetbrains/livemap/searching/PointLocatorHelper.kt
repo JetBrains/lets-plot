@@ -16,7 +16,7 @@ import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 class PointLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<ChartElementComponent>().run { strokeColor ?: fillColor }
+        return target.get<ChartElementComponent>().run { fillColor ?: strokeColor }
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
