@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_LINE_VALUE_LENGTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_VALUE_LINE_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
@@ -273,7 +273,7 @@ class TooltipBox: SvgComponent() {
                 Pair(
                     line.label?.let(::TextLabel),
                     line.value.let { value ->
-                        val chunked = value.chunkedBy(delimiter = " ", MAX_LINE_VALUE_LENGTH)
+                        val chunked = value.chunkedBy(delimiter = " ", MAX_VALUE_LINE_LENGTH)
                         if (chunked.size == 1) {
                             TextLabel(chunked.single())
                         } else {
@@ -379,7 +379,7 @@ class TooltipBox: SvgComponent() {
             }
 
             // in case of multilines: increase the interval between text label and use left alignment
-            val hasMultiLines = lines.any { it.value.length > MAX_LINE_VALUE_LENGTH }
+            val hasMultiLines = lines.any { it.value.length > MAX_VALUE_LINE_LENGTH }
             val textInterval = if (hasMultiLines) 4 * LINE_INTERVAL else LINE_INTERVAL
 
             val textSize = components

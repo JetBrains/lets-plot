@@ -60,7 +60,7 @@ object Defaults {
             const val H_CONTENT_PADDING = 6.0
             const val V_CONTENT_PADDING = 6.0
             const val LABEL_VALUE_INTERVAL = 8.0
-            const val MAX_LINE_VALUE_LENGTH = 30
+            const val MAX_VALUE_LINE_LENGTH = 30
 
             const val BORDER_RADIUS = 4.0
             const val COLOR_BAR_WIDTH = 4.0
