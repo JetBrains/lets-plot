@@ -11,8 +11,8 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            titanic(),
-//            pointShape21(),
+//            titanic(),
+            airports(),
 //            georeference(),
 //            blankPoint(),
 //            blankMap(),
@@ -102,7 +102,7 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-    private fun pointShape21(): MutableMap<String, Any> {
+    private fun airports(): MutableMap<String, Any> {
         val spec = """
             |{
             |  'kind': 'plot',
