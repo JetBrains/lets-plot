@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.INTERVAL_BETWEEN_COLOR_BAR_STRIPES
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
@@ -130,7 +130,7 @@ class TooltipBox: SvgComponent() {
                 if (colorBarNums > 0) {
                     H_CONTENT_PADDING +
                             colorBarNums * colorBarWidth(colorBarNums) +
-                            (colorBarNums - 1) * INTERVAL_BETWEEN_COLOR_BAR_STRIPES
+                            (colorBarNums - 1) * COLOR_BARS_MARGIN
                 } else {
                     0.0
                 }
@@ -229,7 +229,7 @@ class TooltipBox: SvgComponent() {
                     bar.d().set(
                         SvgPathDataBuilder().apply {
                             with(contentRect) {
-                                val x = left + H_CONTENT_PADDING + index * (barWidth + INTERVAL_BETWEEN_COLOR_BAR_STRIPES)
+                                val x = left + H_CONTENT_PADDING + index * (barWidth + COLOR_BARS_MARGIN)
                                 moveTo(x, top + V_CONTENT_PADDING)
                                 horizontalLineTo(x + barWidth)
                                 verticalLineTo(bottom - V_CONTENT_PADDING)
