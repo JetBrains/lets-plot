@@ -116,13 +116,6 @@ internal class TooltipRenderer(
                     else -> 1.0
                 }
 
-                val markerFillColor = if (!spec.isOutlier) {
-                    spec.fill // spec.fill.takeIf { it.isReadableOnWhite() } ?: Colors.darker(spec.fill)!!
-                } else {
-                    // not use a color marker
-                    null
-                }
-
                 val borderRadius = when {
                     spec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) -> 0.0
                     else -> BORDER_RADIUS
@@ -136,13 +129,13 @@ internal class TooltipRenderer(
                         fillColor = fillColor,
                         textColor = textColor,
                         borderColor = borderColor,
-                        markerFillColor = markerFillColor,
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         style = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
-                        borderRadius = borderRadius
+                        borderRadius = borderRadius,
+                        markerColors = spec.markerColors.distinct()
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
             }

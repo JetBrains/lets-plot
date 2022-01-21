@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil.ordered_X
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.with_X_Y
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
@@ -55,7 +56,7 @@ class SmoothGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = GeomHelper(pos, coord, ctx)
-
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         for (p in dataPoints) {
             val xCoord = p.x()!!
             val objectRadius = 0.0
@@ -81,6 +82,7 @@ class SmoothGeom : GeomBase() {
                 p.index(), clientCoord, objectRadius,
                 params()
                     .setTipLayoutHints(hintsCollection.hints)
+                    .setColors(colorsByDataPoint(p))
             )
         }
     }

@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
@@ -49,11 +50,7 @@ class TooltipBox: SvgComponent() {
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
-    private val additionalIndentInContentRect get() = if (myPointerBox.addColorBar) {
-        H_CONTENT_PADDING + COLOR_BAR_WIDTH
-    } else {
-        0.0
-    }
+    private val additionalIndentInContentRect get() = myPointerBox.colorBarIndent
 
     override fun buildComponent() {
         add(myPointerBox)
@@ -64,13 +61,13 @@ class TooltipBox: SvgComponent() {
         fillColor: Color,
         textColor: Color,
         borderColor: Color,
-        markerFillColor: Color?, // todo add also the border color for the marker
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         style: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
-        borderRadius: Double
+        borderRadius: Double,
+        markerColors: List<Color>
     ) {
         addClassName(style)
         myTextBox.update(
@@ -80,7 +77,7 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth,
             rotate
         )
-        myPointerBox.updateStyle(fillColor, borderColor, markerFillColor, strokeWidth, borderRadius)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, markerColors)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -91,24 +88,28 @@ class TooltipBox: SvgComponent() {
 
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
-        private val myColorBar = SvgPathElement()
+        private val myColorBars = List(2) { SvgPathElement() }  // max two bars
         internal var pointerDirection: PointerDirection? = null
-        internal var addColorBar = false
         private var myBorderRadius = 0.0
+        var colorBarIndent = 0.0
 
         override fun buildComponent() {
             add(myPointerPath)
-            add(myColorBar)
+            myColorBars.forEach { add(it) }
+        }
+
+        private fun colorBarWidth(barsNum: Int): Double {
+            // make color bars wider if there are more than one
+            return COLOR_BAR_WIDTH * if (barsNum > 1) 1.4 else barsNum.toDouble()
         }
 
         internal fun updateStyle(
             fillColor: Color,
             borderColor: Color,
-            markerFillColor: Color?,
             strokeWidth: Double,
-            borderRadius: Double
+            borderRadius: Double,
+            markerColors: List<Color>
         ) {
-            addColorBar = markerFillColor != null
             myBorderRadius = borderRadius
 
             myPointerPath.apply {
@@ -116,13 +117,22 @@ class TooltipBox: SvgComponent() {
                 strokeOpacity().set(strokeWidth)
                 fillColor().set(fillColor)
             }
-            myColorBar.apply {
-                if (markerFillColor != null) {
-                    strokeOpacity().set(1.0)
-                    strokeColor().set(markerFillColor)
-                    strokeWidth().set(COLOR_BAR_WIDTH)
+            myColorBars.forEachIndexed { index, bar ->
+                if (markerColors.size > index) {
+                    bar.fillOpacity().set(1.0)
+                    bar.fillColor().set(markerColors[index])
                 } else {
-                    strokeOpacity().set(0.0)
+                    bar.fillOpacity().set(0.0)
+                }
+            }
+
+            colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
+                if (colorBarNums > 0) {
+                    H_CONTENT_PADDING +
+                            colorBarNums * colorBarWidth(colorBarNums) +
+                            (colorBarNums - 1) * COLOR_BARS_MARGIN
+                } else {
+                    0.0
                 }
             }
         }
@@ -210,17 +220,25 @@ class TooltipBox: SvgComponent() {
                     }
                 }.build()
             )
-            if (addColorBar) {
-                myColorBar.d().set(
-                    SvgPathDataBuilder().apply {
-                        with(contentRect) {
-                            val x = left + (H_CONTENT_PADDING + COLOR_BAR_WIDTH / 2)
-                            moveTo(x, bottom - V_CONTENT_PADDING)
-                            lineTo(x, top + V_CONTENT_PADDING)
-                        }
-                    }.build()
-                )
-            }
+
+            val colorBars = myColorBars.filter { it.fillOpacity().get()!! > 0 }
+            val barWidth = colorBarWidth(colorBars.size)
+            colorBars
+                .forEachIndexed { index, bar ->
+                    // adjacent vertical bars
+                    bar.d().set(
+                        SvgPathDataBuilder().apply {
+                            with(contentRect) {
+                                val x = left + H_CONTENT_PADDING + index * (barWidth + COLOR_BARS_MARGIN)
+                                moveTo(x, top + V_CONTENT_PADDING)
+                                horizontalLineTo(x + barWidth)
+                                verticalLineTo(bottom - V_CONTENT_PADDING)
+                                horizontalLineTo(x)
+                                verticalLineTo(top + V_CONTENT_PADDING)
+                            }
+                        }.build()
+                    )
+                }
         }
 
         private fun calculatePointerFootingIndent(sideLength: Double): Double {

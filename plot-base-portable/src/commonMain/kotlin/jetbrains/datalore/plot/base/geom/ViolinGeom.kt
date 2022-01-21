@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
@@ -31,10 +32,11 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH)
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
-            .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }
+            .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx, colorsByDataPoint) }
     }
 
     private fun buildViolin(
@@ -42,7 +44,8 @@ class ViolinGeom : GeomBase() {
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
-        ctx: GeomContext
+        ctx: GeomContext,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val helper = LinesHelper(pos, coord, ctx)
         val leftBoundTransform = toLocationBound(-1.0, ctx)
@@ -55,8 +58,8 @@ class ViolinGeom : GeomBase() {
         appendNodes(helper.createLines(dataPoints, leftBoundTransform), root)
         appendNodes(helper.createLines(dataPoints, rightBoundTransform), root)
 
-        buildHints(dataPoints, ctx, helper, leftBoundTransform)
-        buildHints(dataPoints, ctx, helper, rightBoundTransform)
+        buildHints(dataPoints, ctx, helper, leftBoundTransform, colorsByDataPoint)
+        buildHints(dataPoints, ctx, helper, rightBoundTransform, colorsByDataPoint)
     }
 
     private fun toLocationBound(
@@ -74,7 +77,8 @@ class ViolinGeom : GeomBase() {
         dataPoints: Iterable<DataPointAesthetics>,
         ctx: GeomContext,
         helper: GeomHelper,
-        boundTransform: (p: DataPointAesthetics) -> DoubleVector
+        boundTransform: (p: DataPointAesthetics) -> DoubleVector,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
             dataPoints,
@@ -88,7 +92,9 @@ class ViolinGeom : GeomBase() {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                TooltipParams.params().setColor(HintColorUtil.fromFill(multiPointData.aes)),
+                TooltipParams.params()
+                    .setMainColor(HintColorUtil.fromFill(multiPointData.aes))
+                    .setColors(colorsByDataPoint(multiPointData.aes)),
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {
