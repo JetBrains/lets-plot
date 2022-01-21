@@ -204,10 +204,10 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
-            Line.withValue("dodge"),
-            Line.withLabelAndValue("", "dodge"),
-            Line.withLabelAndValue("model name", "dodge"),
-            Line.withLabelAndValue("the model", "dodge")
+            Line(null, "dodge"),
+            Line("", "dodge"),
+            Line("model name", "dodge"),
+            Line("the model", "dodge")
         )
         assertTooltipLines(expectedLines, getGeneralTooltipLines(geomLayer))
     }

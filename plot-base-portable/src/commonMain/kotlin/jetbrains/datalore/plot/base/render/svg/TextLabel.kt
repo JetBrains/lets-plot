@@ -14,10 +14,12 @@ import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_ANCHOR_END
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_CENTER
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_TOP
+import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
+import jetbrains.datalore.vis.svg.SvgTextNode
 
-class TextLabel(text: String) : SvgComponent() {
-    private val myText: SvgTextElement = SvgTextElement(text)
+class TextLabel(text: String?) : SvgComponent() {
+    private val myText: SvgTextElement = if (text != null) SvgTextElement(text) else SvgTextElement()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -30,6 +32,10 @@ class TextLabel(text: String) : SvgComponent() {
 
     override fun buildComponent() {
 
+    }
+
+    constructor(lines: List<String>) : this(null) {
+        addTSpanElements(lines)
     }
 
     fun textColor(): WritableProperty<Color?> {
@@ -167,4 +173,31 @@ class TextLabel(text: String) : SvgComponent() {
         TOP, BOTTOM, CENTER
     }
 
+    fun addTSpanElements(lines: List<String>) {
+        lines.forEach { line ->
+            myText.addTSpan(line)
+        }
+    }
+
+    fun setTSpanDY(dy: Double) {
+        val hasTextNode = myText.children().filterIsInstance<SvgTextNode>().isNotEmpty()
+        myText.children()
+            .filterIsInstance<SvgTSpanElement>()
+            .forEachIndexed { index, tspan ->
+                val dyString = if (!hasTextNode && index == 0) {
+                    "0.0"
+                } else {
+                    dy.toString()
+                }
+                tspan.textDy().set(dyString)
+            }
+    }
+
+    fun setTSpanX(x: Double) {
+        myText.children()
+            .filterIsInstance<SvgTSpanElement>()
+            .forEach { tspan ->
+                tspan.x().set(x)
+            }
+    }
 }

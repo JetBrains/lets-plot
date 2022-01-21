@@ -75,27 +75,13 @@ class TooltipBox: SvgComponent() {
     ) {
         addClassName(style)
         myTextBox.update(
-            splitLines(lines),
+            lines,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
             tooltipMinWidth,
             rotate
         )
         myPointerBox.updateStyle(fillColor, borderColor, markerFillColor, strokeWidth, borderRadius)
-    }
-
-    private fun splitLines(originalLines: List<TooltipSpec.Line>): List<TooltipSpec.Line> {
-        return originalLines.flatMap { line ->
-            line.value
-                .chunkedBy(delimiter = " ", maxLength = MAX_LINE_VALUE_LENGTH)
-                .mapIndexed { index, newLine ->
-                    if (index == 0) {
-                        TooltipSpec.Line.withLabelAndValue(line.label, newLine)
-                    } else {
-                        TooltipSpec.Line.nextValueLine(newLine)
-                    }
-                }
-        }
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -272,14 +258,28 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean
         ) {
-            val useLeftAlignmentForValue = lines.any(TooltipSpec.Line::isContinuationOfValue)
-
             myLinesContainer.children().clear()
+
+            // bBoxes
+            fun getBBox(text: String?, textLabel: TextLabel?): DoubleRectangle? {
+                if (textLabel == null || text.isNullOrBlank()) {
+                    // also for blank string - Batik throws an exception for a text element with a blank string
+                    return null
+                }
+                return textLabel.rootGroup.bBox
+            }
 
             val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
-                    TextLabel(line.value)
+                    line.value.let { value ->
+                        val chunked = value.chunkedBy(delimiter = " ", MAX_LINE_VALUE_LENGTH)
+                        if (chunked.size == 1) {
+                            TextLabel(chunked.single())
+                        } else {
+                            TextLabel(chunked)
+                        }
+                    }
                 )
             }
             // for labels
@@ -293,29 +293,33 @@ class TooltipBox: SvgComponent() {
             // for values
             components.onEach { (_, valueComponent) ->
                 valueComponent.textColor().set(valueTextColor)
+                valueComponent.setTSpanX(0.0)
+                valueComponent.setTSpanDY(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
-            // bBoxes
-            fun getBBox(text: String?, textLabel: TextLabel?): DoubleRectangle? {
-                if (textLabel == null || text.isNullOrBlank()) {
-                    // also for blank string - Batik throws an exception for a text element with a blank string
-                    return null
+            // calculate heights of original value lines
+            val valueLineHeights = lines.map { line ->
+                val lineTextLabel = TextLabel(line.value)
+                with (myLinesContainer.children()) {
+                    add(lineTextLabel.rootGroup)
+                    val height = getBBox(line.value, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+                    remove(lineTextLabel.rootGroup)
+                    return@map height
                 }
-                return textLabel.rootGroup.bBox
             }
+            // sef vertical shifts for tspan elements
+            valueLineHeights.zip(components).onEach { (height, component) ->
+                val (_, valueComponent) = component
+                valueComponent.setTSpanDY(height + LINE_INTERVAL)
+            }
+
+            // bBoxes
             val rawBBoxes = lines.zip(components).map { (line, component) ->
                 val (labelComponent, valueComponent) = component
                 Pair(
                     getBBox(line.label, labelComponent),
-                    getBBox(line.value, valueComponent)?.let {
-                        if (useLeftAlignmentForValue && !line.isContinuationOfValue) {
-                            // Increase the interval
-                            it.subtract(DoubleVector(0.0, 2 * LINE_INTERVAL))
-                        } else {
-                            it
-                        }
-                    }
+                    getBBox(line.value, valueComponent)
                 )
             }
 
@@ -323,8 +327,8 @@ class TooltipBox: SvgComponent() {
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
-            val defaultLineHeight = rawBBoxes.flatMap { it.toList().filterNotNull() }
-                .maxOfOrNull(DoubleRectangle::height) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+            val defaultLineHeight = (valueLineHeights + rawBBoxes.mapNotNull { it.first?.height }).maxOrNull()
+                ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             val labelWidths = lines.map { line ->
                 when {
@@ -332,7 +336,7 @@ class TooltipBox: SvgComponent() {
                         // label null - the value component will be centered
                         0.0
                     }
-                    line.label!!.isEmpty() && !line.isContinuationOfValue -> {
+                    line.label!!.isEmpty() -> {
                         // label is not null, but empty - add space for the label, the value will be moved to the right
                         maxLabelWidth
                     }
@@ -374,6 +378,10 @@ class TooltipBox: SvgComponent() {
                 )
             }
 
+            // in case of multilines: increase the interval between text label and use left alignment
+            val hasMultiLines = lines.any { it.value.length > MAX_LINE_VALUE_LENGTH }
+            val textInterval = if (hasMultiLines) 4 * LINE_INTERVAL else LINE_INTERVAL
+
             val textSize = components
                 .zip(lineBBoxes)
                 .fold(DoubleVector.ZERO, { textDimension, (lineInfo, bBoxes) ->
@@ -395,9 +403,11 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            if (useLeftAlignmentForValue) {
+                            if (hasMultiLines) {
+                                // Use left alignment
                                 valueComponent.x().set(maxLabelWidth + LABEL_VALUE_INTERVAL)
                                 valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.LEFT)
+                                valueComponent.setTSpanX(maxLabelWidth + LABEL_VALUE_INTERVAL)
                             } else {
                                 valueComponent.x().set(maxLineWidth)
                                 valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
@@ -412,6 +422,7 @@ class TooltipBox: SvgComponent() {
                             // Move value to the center
                             valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
                             valueComponent.x().set(maxLineWidth / 2)
+                            valueComponent.setTSpanX(maxLineWidth / 2)
                         }
                     }
                     DoubleVector(
@@ -419,9 +430,9 @@ class TooltipBox: SvgComponent() {
                         y = valueComponent.y().get()!! + max(
                             valueBBox.height,
                             labelBBox.height
-                        ) + LINE_INTERVAL
+                        ) + textInterval
                     )
-                }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                }).subtract(DoubleVector(0.0, textInterval)) // remove LINE_INTERVAL from last line
                 .let { textSize ->
                     if (rotate) {
                         components
