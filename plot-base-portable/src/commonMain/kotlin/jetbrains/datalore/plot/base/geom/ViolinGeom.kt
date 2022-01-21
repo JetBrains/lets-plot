@@ -5,16 +5,13 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
-import kotlin.math.abs
 
 class ViolinGeom : GeomBase() {
     private var drawQuantiles = DEF_DRAW_QUANTILES
@@ -79,20 +76,13 @@ class ViolinGeom : GeomBase() {
     ) {
         if (drawQuantiles.isEmpty()) return
 
-        // Draw quantiles
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
-        val hintColor = HintColorUtil.fromFill(dataPoints.first())
-        for (q in calculateQuantiles(dataPoints, ctx)) {
-            val start = DoubleVector(q.xmin()!!, q.y()!!)
-            val end = DoubleVector(q.xmax()!!, q.y()!!)
-            val line = helper.createLine(start, end, q)
+        for (p in calculateQuantiles(dataPoints, ctx)) {
+            val start = DoubleVector(p.xmin()!!, p.y()!!)
+            val end = DoubleVector(p.xmax()!!, p.y()!!)
+            val line = helper.createLine(start, end, p)
             root.add(line)
-
-            // Add axis tooltip
-            val nearestDataPoint = dataPoints.minByOrNull { p -> abs(p.y()!! - q.y()!!) }!!
-            val rect = DoubleRectangle(start.x, start.y, end.x - start.x, 0.0)
-            buildQuantileHints(rect, nearestDataPoint, ctx, geomHelper, hintColor)
         }
     }
 
@@ -171,25 +161,6 @@ class ViolinGeom : GeomBase() {
                 }
             )
         }
-    }
-
-    private fun buildQuantileHints(
-        rect: DoubleRectangle,
-        p: DataPointAesthetics,
-        ctx: GeomContext,
-        geomHelper: GeomHelper,
-        color: Color
-    ) {
-        ctx.targetCollector.addRectangle(
-            p.index(),
-            geomHelper.toClient(rect, p),
-            TooltipParams.params().setColor(color),
-            tooltipKind = if (ctx.flipped) {
-                TipLayoutHint.Kind.VERTICAL_TOOLTIP
-            } else {
-                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-            }
-        )
     }
 
     companion object {
