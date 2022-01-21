@@ -6,6 +6,7 @@
 package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
@@ -23,6 +24,7 @@ class PointLocatorHelperTest {
         .addComponents {
             + SymbolComponent().apply { size = explicitVec(radius * 2, radius * 2) }
             + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
+            + ChartElementComponent().apply { scaleFactor = 1.0 }
         }
 
 
