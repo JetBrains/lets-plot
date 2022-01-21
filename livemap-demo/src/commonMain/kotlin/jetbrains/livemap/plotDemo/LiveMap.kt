@@ -11,10 +11,12 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            titanic(),
+//            pointShape21(),
 //            georeference(),
 //            blankPoint(),
 //            blankMap(),
-            barWithNanValuesInData(),
+//            barWithNanValuesInData(),
 //            pieWithNanValuesInData(),
 //            pieWithNullValuesInData(),
 //            barWithNullValuesInData()
@@ -29,6 +31,110 @@ class LiveMap {
 //            bunch(),
 //           facet()
         )
+    }
+
+    private fun titanic(): MutableMap<String, Any> {
+        val spec = """
+{
+    'ggsize': {'width': 800, 'height': 300},
+    'kind': 'plot',
+    'layers': [
+    {
+        'geom': 'livemap',
+        'map': {
+            'city': ['Southampton', 'Cherbourg', 'Cobh'],
+            'found name': ['Southampton', 'Cherbourg', 'Cobh'],
+            'geometry': [
+                '{\"type\": \"Point\", \"coordinates\": [-1.40253666522018, 50.9183686226606]}', 
+                '{\"type\": \"Point\", \"coordinates\": [-1.60901494773099, 49.6272752434015]}', 
+                '{\"type\": \"Point\", \"coordinates\": [-8.29427875578403, 51.8531472980976]}'
+            ]
+        },
+        'tiles': {'kind': 'raster_zxy',
+        'url': 'https://cartocdn_c.global.ssl.fastly.net/base-antique/{z}/{x}/{y}@2x.png',
+        'attribution': '<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a> <a href=\"https://carto.com/attributions#basemaps\">© CARTO</a>, <a href=\"https://carto.com/attributions\">© CARTO</a>'},
+        'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'},
+        'size': 7,
+        'shape': 21,
+        'color': 'black',
+        'fill': 'yellow',
+        'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
+    },
+   {
+        'geom': 'path',
+        'map': {
+            'geometry': [
+                '{\"type\": \"LineString\", \"coordinates\": [[-1.40253666522018, 50.9183686226606], [-1.60901494773099, 49.6272752434015], [-8.29427875578403, 51.8531472980976], [-38.056641, 46.920255]]}'
+            ]
+        },
+        'color': 'dark-blue',
+        'linetype': 'dotted',
+        'size': 1.2,
+        'map_data_meta': {'geodataframe': {'geometry': 'geometry'}}},
+  {
+        'geom': 'segment',
+        'x': -38.056641,
+        'y': 46.920255,
+        'xend': -73.8673749469137,
+        'yend': 40.6847005337477,
+        'color': 'gray',
+        'linetype': 'dotted',
+        'size': 1.2
+  },
+  {
+        'geom': 'point',
+        'x': -73.8673749469137,
+        'y': 40.6847005337477,
+        'size': 7,
+        'shape': 21,
+        'color': 'black',
+        'fill': 'white'
+  },
+  {
+        'geom': 'point',
+        'x': -38.056641,
+        'y': 46.920255,
+        'size': 10,
+        'shape': 9,
+        'color': 'red'
+  }
+]}"""
+        return parsePlotSpec(spec)
+    }
+
+    private fun pointShape21(): MutableMap<String, Any> {
+        val spec = """
+            |{
+            |  'kind': 'plot',
+            |  'layers': [
+            |    {
+            |      'geom': 'livemap',
+            |      'tiles': {'kind': 'vector_lets_plot',
+            |      'url': 'wss://tiles.datalore.jetbrains.com',
+            |      'theme': 'color',
+            |      'attribution': 'Map: <a href=\"https://github.com/JetBrains/lets-plot\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>.'},
+            |      'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'}
+            |    },
+            |    {
+            |      'geom': 'point',
+            |      'data': {
+            |        'x': [0.0, 4.0, 8.0],
+            |        'y': [0.0, 4.0, 8.0],
+            |        'z': ['a', 'b', 'c'],
+            |        'k': [1, 2, 3]
+            |      },
+            |      'mapping': {
+            |        'x': 'x', 
+            |        'y': 'y', 
+            |        'color': 'z', 
+            |        'size': 'k'
+            |      }
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
     }
 
     private fun georeference() : MutableMap<String, Any> {
