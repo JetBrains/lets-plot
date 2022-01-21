@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class YDensityStat(
+    private val scale: Scale,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -61,9 +62,26 @@ class YDensityStat(
         val statViolinWidth = if (dataAfterStat.rowCount() == 0) {
             emptyList<Double?>()
         } else {
-            val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
-            val densityMax = statDensity.maxOrNull()!!
-            statDensity.map { it / densityMax }
+            when (scale) {
+                Scale.AREA -> {
+                    val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
+                    val densityMax = statDensity.maxOrNull()!!
+                    statDensity.map { it / densityMax }
+                }
+                Scale.COUNT -> {
+                    val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
+                    val densityMax = statDensity.maxOrNull()!!
+                    val statCount = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+                    val widthsSumMax = statDensity.mapIndexed { i, d ->
+                        if (d > 0) statCount[i] / d else Double.NaN
+                    }.maxOrNull()!!
+                    val norm = densityMax * widthsSumMax
+                    statCount.map { it / norm }
+                }
+                Scale.WIDTH -> {
+                    dataAfterStat.getNumeric(Stats.SCALED).map { it!! }
+                }
+            }
         }
         return dataAfterStat.builder()
             .putNumeric(Stats.VIOLIN_WIDTH, statViolinWidth)
@@ -119,11 +137,18 @@ class YDensityStat(
         )
     }
 
+    enum class Scale {
+        AREA,
+        COUNT,
+        WIDTH
+    }
+
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH
         )
+        val DEF_SCALE = Scale.AREA
     }
 }

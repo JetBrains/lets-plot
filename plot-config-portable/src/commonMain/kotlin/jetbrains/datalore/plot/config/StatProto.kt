@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.config.Option.Stat.Corr
 import jetbrains.datalore.plot.config.Option.Stat.Density
 import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
+import jetbrains.datalore.plot.config.Option.Stat.YDensity
 
 object StatProto {
 
@@ -173,6 +174,18 @@ object StatProto {
     }
 
     private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
+        val scale = options.getString(YDensity.SCALE)?.let {
+            when (it.lowercase()) {
+                "area" -> YDensityStat.Scale.AREA
+                "count" -> YDensityStat.Scale.COUNT
+                "width" -> YDensityStat.Scale.WIDTH
+                else -> throw IllegalArgumentException(
+                    "Unsupported scale: '$it'\n" +
+                    "Use one of: area, count, width."
+                )
+            }
+        }
+
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
         options[Density.BAND_WIDTH]?.run {
@@ -188,6 +201,7 @@ object StatProto {
         }
 
         return YDensityStat(
+            scale = scale ?: YDensityStat.DEF_SCALE,
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

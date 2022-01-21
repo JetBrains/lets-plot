@@ -276,6 +276,10 @@ object Option {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
         }
+
+        object YDensity {
+            const val SCALE = "scale"
+        }
     }
 
     object Scale {
