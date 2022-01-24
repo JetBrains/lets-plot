@@ -8,7 +8,9 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
@@ -18,6 +20,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
@@ -277,10 +280,19 @@ class TooltipBox: SvgComponent() {
         ) {
             myLinesContainer.children().clear()
 
-            val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
+            // bBoxes
+            fun getBBox(text: String?, textLabel: SvgComponent?): DoubleRectangle? {
+                if (textLabel == null || text.isNullOrBlank()) {
+                    // also for blank string - Batik throws an exception for a text element with a blank string
+                    return null
+                }
+                return textLabel.rootGroup.bBox
+            }
+
+            val components: List<Pair<TextLabel?, MultilineLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
-                    TextLabel(line.value)
+                    MultilineLabel(line.value, VALUE_LINE_MAX_LENGTH)
                 )
             }
             // for labels
@@ -294,17 +306,27 @@ class TooltipBox: SvgComponent() {
             // for values
             components.onEach { (_, valueComponent) ->
                 valueComponent.textColor().set(valueTextColor)
+                valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
-            // bBoxes
-            fun getBBox(text: String?, textLabel: TextLabel?): DoubleRectangle? {
-                if (textLabel == null || text.isNullOrBlank()) {
-                    // also for blank string - Batik throws an exception for a text element with a blank string
-                    return null
+            // calculate heights of original value lines
+            val valueLineHeights = lines.map { line ->
+                val lineTextLabel = TextLabel(line.value)
+                with (myLinesContainer.children()) {
+                    add(lineTextLabel.rootGroup)
+                    val height = getBBox(line.value, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+                    remove(lineTextLabel.rootGroup)
+                    return@map height
                 }
-                return textLabel.rootGroup.bBox
             }
+            // sef vertical shifts for tspan elements
+            valueLineHeights.zip(components).onEach { (height, component) ->
+                val (_, valueComponent) = component
+                valueComponent.setLineVerticalMargin(height + LINE_INTERVAL)
+            }
+
+            // bBoxes
             val rawBBoxes = lines.zip(components).map { (line, component) ->
                 val (labelComponent, valueComponent) = component
                 Pair(
@@ -317,8 +339,8 @@ class TooltipBox: SvgComponent() {
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
-            val defaultLineHeight = rawBBoxes.flatMap { it.toList().filterNotNull() }
-                .maxOfOrNull(DoubleRectangle::height) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+            val defaultLineHeight = (valueLineHeights + rawBBoxes.mapNotNull { it.first?.height }).maxOrNull()
+                ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             val labelWidths = lines.map { line ->
                 when {
@@ -368,10 +390,14 @@ class TooltipBox: SvgComponent() {
                 )
             }
 
+            // in case of multilines: increase the interval between text label and use left alignment
+            val hasMultiLines = components.any { it.second.isWrapped }
+            val textInterval = if (hasMultiLines) 4 * LINE_INTERVAL else LINE_INTERVAL
+
             val textSize = components
                 .zip(lineBBoxes)
                 .fold(DoubleVector.ZERO, { textDimension, (lineInfo, bBoxes) ->
-                    val (labelComponent,valueComponent) = lineInfo
+                    val (labelComponent, valueComponent) = lineInfo
                     val (labelBBox, valueBBox) = bBoxes
 
                     // bBox.top is negative baseline of the text.
@@ -389,18 +415,24 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            valueComponent.x().set(maxLineWidth)
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            if (hasMultiLines) {
+                                // Use left alignment
+                                valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
+                                valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
+                            } else {
+                                valueComponent.setX(maxLineWidth)
+                                valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
+                            }
                         }
                         valueBBox.dimension.x == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            valueComponent.x().set(-valueBBox.left)
+                            valueComponent.setX(-valueBBox.left)
                         }
                         else -> {
                             // Move value to the center
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                            valueComponent.x().set(maxLineWidth / 2)
+                            valueComponent.setX(maxLineWidth / 2)
+                            valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                         }
                     }
                     DoubleVector(
@@ -408,19 +440,19 @@ class TooltipBox: SvgComponent() {
                         y = valueComponent.y().get()!! + max(
                             valueBBox.height,
                             labelBBox.height
-                        ) + LINE_INTERVAL
+                        ) + textInterval
                     )
-                }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                }).subtract(DoubleVector(0.0, textInterval)) // remove LINE_INTERVAL from last line
                 .let { textSize ->
                     if (rotate) {
                         components
                             .onEach { (labelComponent, valueComponent) ->
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
-                                labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                labelComponent?.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                                 labelComponent?.rotate(90.0)
 
                                 valueComponent.y().set(-valueComponent.y().get()!!)
-                                valueComponent.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                valueComponent.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()

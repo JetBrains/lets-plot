@@ -9,9 +9,10 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -270,17 +271,17 @@ class AxisComponent(
 
     class TickLabelAdjustments(
         orientation: Orientation,
-        horizontalAnchor: TextLabel.HorizontalAnchor? = null,
-        verticalAnchor: TextLabel.VerticalAnchor? = null,
+        horizontalAnchor: Text.HorizontalAnchor? = null,
+        verticalAnchor: Text.VerticalAnchor? = null,
         val rotationDegree: Double = 0.0,
         private val additionalOffsets: List<DoubleVector>? = null
     ) {
-        val horizontalAnchor: TextLabel.HorizontalAnchor = horizontalAnchor ?: when (orientation) {
+        val horizontalAnchor: Text.HorizontalAnchor = horizontalAnchor ?: when (orientation) {
             Orientation.LEFT -> RIGHT
             Orientation.RIGHT -> LEFT
             Orientation.TOP, Orientation.BOTTOM -> MIDDLE
         }
-        val verticalAnchor: TextLabel.VerticalAnchor = verticalAnchor ?: when (orientation) {
+        val verticalAnchor: Text.VerticalAnchor = verticalAnchor ?: when (orientation) {
             Orientation.LEFT, Orientation.RIGHT -> CENTER
             Orientation.TOP -> BOTTOM
             Orientation.BOTTOM -> TOP
