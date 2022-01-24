@@ -9,7 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextAnchor
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
@@ -27,16 +27,16 @@ internal class HorizontalTiltedLabelsLayout(
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
-    private val labelHorizontalAnchor: TextLabel.HorizontalAnchor
+    private val labelHorizontalAnchor: TextAnchor.HorizontalAnchor
         get() {
             if (orientation === BOTTOM) {
-                return TextLabel.HorizontalAnchor.RIGHT
+                return TextAnchor.HorizontalAnchor.RIGHT
             }
             throw RuntimeException("Not implemented")
         }
 
-    private val labelVerticalAnchor: TextLabel.VerticalAnchor
-        get() = TextLabel.VerticalAnchor.TOP
+    private val labelVerticalAnchor: TextAnchor.VerticalAnchor
+        get() = TextAnchor.VerticalAnchor.TOP
 
     override fun doLayout(
         axisLength: Double,
@@ -67,8 +67,8 @@ internal class HorizontalTiltedLabelsLayout(
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         // only works for RIGHT-TOP anchor ang angle 0...-90
         if (!(ROTATION_DEGREE >= -90 && ROTATION_DEGREE <= 0
-                    && labelHorizontalAnchor === TextLabel.HorizontalAnchor.RIGHT
-                    && labelVerticalAnchor === TextLabel.VerticalAnchor.TOP)
+                    && labelHorizontalAnchor === TextAnchor.HorizontalAnchor.RIGHT
+                    && labelVerticalAnchor === TextAnchor.VerticalAnchor.TOP)
         ) {
             throw RuntimeException("Not implemented")
         }

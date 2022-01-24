@@ -8,18 +8,14 @@ package jetbrains.datalore.plot.base.render.svg
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.TextAnchor.toDY
+import jetbrains.datalore.plot.base.render.svg.TextAnchor.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_ANCHOR_END
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_CENTER
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_TOP
-import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
-import jetbrains.datalore.vis.svg.SvgTextNode
 
-class TextLabel(text: String?) : SvgComponent() {
-    private val myText: SvgTextElement = if (text != null) SvgTextElement(text) else SvgTextElement()
+class TextLabel(text: String) : SvgComponent() {
+    private val myText: SvgTextElement = SvgTextElement(text)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -32,10 +28,6 @@ class TextLabel(text: String?) : SvgComponent() {
 
     override fun buildComponent() {
 
-    }
-
-    constructor(lines: List<String>) : this(null) {
-        addTSpanElements(lines)
     }
 
     fun textColor(): WritableProperty<Color?> {
@@ -63,11 +55,11 @@ class TextLabel(text: String?) : SvgComponent() {
         return myText.y()
     }
 
-    fun setHorizontalAnchor(anchor: HorizontalAnchor) {
+    fun setHorizontalAnchor(anchor: TextAnchor.HorizontalAnchor) {
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
     }
 
-    fun setVerticalAnchor(anchor: VerticalAnchor) {
+    fun setVerticalAnchor(anchor: TextAnchor.VerticalAnchor) {
         // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
         //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
         myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
@@ -103,101 +95,13 @@ class TextLabel(text: String?) : SvgComponent() {
     }
 
     private fun updateStyleAttribute() {
-        val sb = StringBuilder()
-        if (myTextColor != null) {
-            sb.append("fill:").append(myTextColor!!.toHexColor()).append(';')
-        }
-
-        if (myFontSize > 0 && myFontFamily != null) {
-            // use font shorthand because this format is expected by svg -> canvas mapper
-            // font: [style] [weight] size family;
-            val fnt = StringBuilder()
-            if (!myFontStyle.isNullOrEmpty()) {
-                fnt.append(myFontStyle!!).append(' ')
-            }
-            if (!myFontWeight.isNullOrEmpty()) {
-                fnt.append(myFontWeight!!).append(' ')
-            }
-            fnt.append(myFontSize).append("px ")
-            fnt.append(myFontFamily!!).append(";")
-
-            sb.append("font:").append(fnt)
-        } else {
-            // set each property separately
-            if (!myFontStyle.isNullOrBlank()) {
-                sb.append("font-style:").append(myFontStyle!!).append(';')
-            }
-            if (!myFontWeight.isNullOrEmpty()) {
-                sb.append("font-weight:").append(myFontWeight!!).append(';')
-            }
-            if (myFontSize > 0) {
-                sb.append("font-size:").append(myFontSize).append("px;")
-            }
-            if (!myFontFamily.isNullOrEmpty()) {
-                sb.append("font-family:").append(myFontFamily!!).append(';')
-            }
-        }
-
-        myText.setAttribute(SVG_STYLE_ATTRIBUTE, sb.toString())
-    }
-
-    private fun toTextAnchor(anchor: HorizontalAnchor): String? {
-        return when (anchor) {
-            HorizontalAnchor.LEFT -> null // default - "start";
-            HorizontalAnchor.MIDDLE -> SVG_TEXT_ANCHOR_MIDDLE
-            HorizontalAnchor.RIGHT -> SVG_TEXT_ANCHOR_END
-        }
-    }
-
-    private fun toDominantBaseline(anchor: VerticalAnchor): String? {
-        return when (anchor) {
-            VerticalAnchor.TOP -> "hanging"
-            VerticalAnchor.CENTER -> "central"
-            VerticalAnchor.BOTTOM -> null // default - "alphabetic";
-        }
-    }
-
-    private fun toDY(anchor: VerticalAnchor): String? {
-        return when (anchor) {
-            VerticalAnchor.TOP -> SVG_TEXT_DY_TOP
-            VerticalAnchor.CENTER -> SVG_TEXT_DY_CENTER
-            VerticalAnchor.BOTTOM -> null // default
-        }
-    }
-
-    enum class HorizontalAnchor {
-        LEFT, RIGHT, MIDDLE
-    }
-
-    enum class VerticalAnchor {
-        TOP, BOTTOM, CENTER
-    }
-
-    fun addTSpanElements(lines: List<String>) {
-        lines.forEach { line ->
-            myText.addTSpan(line)
-        }
-    }
-
-    fun setTSpanDY(dy: Double) {
-        val hasTextNode = myText.children().filterIsInstance<SvgTextNode>().isNotEmpty()
-        myText.children()
-            .filterIsInstance<SvgTSpanElement>()
-            .forEachIndexed { index, tspan ->
-                val dyString = if (!hasTextNode && index == 0) {
-                    "0.0"
-                } else {
-                    dy.toString()
-                }
-                tspan.textDy().set(dyString)
-            }
-    }
-
-    fun setTSpanX(x: Double) {
-        myText.children()
-            .filterIsInstance<SvgTSpanElement>()
-            .forEach { tspan ->
-                tspan.x().set(x)
-            }
+        val styleAttr = FontUtil.buildStyleAttribute(
+            myTextColor,
+            myFontSize,
+            myFontWeight,
+            myFontFamily,
+            myFontStyle
+        )
+        myText.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
     }
 }

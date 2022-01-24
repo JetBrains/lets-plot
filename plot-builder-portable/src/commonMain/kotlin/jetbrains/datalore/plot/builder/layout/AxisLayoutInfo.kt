@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextAnchor
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 
@@ -20,8 +20,8 @@ class AxisLayoutInfo private constructor(b: Builder) {
 
     val tickLabelsBounds: DoubleRectangle?
     val tickLabelRotationAngle: Double
-    val tickLabelHorizontalAnchor: TextLabel.HorizontalAnchor?    // optional
-    val tickLabelVerticalAnchor: TextLabel.VerticalAnchor?        // optional
+    val tickLabelHorizontalAnchor: TextAnchor.HorizontalAnchor?    // optional
+    val tickLabelVerticalAnchor: TextAnchor.VerticalAnchor?        // optional
     val tickLabelAdditionalOffsets: List<DoubleVector>?           // optional
     val tickLabelSmallFont: Boolean
     private val tickLabelsBoundsMax: DoubleRectangle?                     // debug
@@ -77,8 +77,8 @@ class AxisLayoutInfo private constructor(b: Builder) {
         var myMaxTickLabelsBounds: DoubleRectangle? = null
         var myTickLabelSmallFont = false
         var myLabelAdditionalOffsets: List<DoubleVector>? = null
-        var myLabelHorizontalAnchor: TextLabel.HorizontalAnchor? = null
-        var myLabelVerticalAnchor: TextLabel.VerticalAnchor? = null
+        var myLabelHorizontalAnchor: TextAnchor.HorizontalAnchor? = null
+        var myLabelVerticalAnchor: TextAnchor.VerticalAnchor? = null
         var myTickLabelRotationAngle = 0.0
         var myTickLabelsBounds: DoubleRectangle? = null
         var myAxisBreaks: ScaleBreaks? = null
@@ -117,12 +117,12 @@ class AxisLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun tickLabelHorizontalAnchor(labelHorizontalAnchor: TextLabel.HorizontalAnchor?): Builder {
+        fun tickLabelHorizontalAnchor(labelHorizontalAnchor: TextAnchor.HorizontalAnchor?): Builder {
             myLabelHorizontalAnchor = labelHorizontalAnchor
             return this
         }
 
-        fun tickLabelVerticalAnchor(labelVerticalAnchor: TextLabel.VerticalAnchor?): Builder {
+        fun tickLabelVerticalAnchor(labelVerticalAnchor: TextAnchor.VerticalAnchor?): Builder {
             myLabelVerticalAnchor = labelVerticalAnchor
             return this
         }

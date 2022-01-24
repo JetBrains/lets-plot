@@ -8,7 +8,9 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.TextAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
@@ -17,7 +19,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_VALUE_LINE_LENGTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
@@ -261,7 +263,7 @@ class TooltipBox: SvgComponent() {
             myLinesContainer.children().clear()
 
             // bBoxes
-            fun getBBox(text: String?, textLabel: TextLabel?): DoubleRectangle? {
+            fun getBBox(text: String?, textLabel: SvgComponent?): DoubleRectangle? {
                 if (textLabel == null || text.isNullOrBlank()) {
                     // also for blank string - Batik throws an exception for a text element with a blank string
                     return null
@@ -269,17 +271,10 @@ class TooltipBox: SvgComponent() {
                 return textLabel.rootGroup.bBox
             }
 
-            val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
+            val components: List<Pair<TextLabel?, MultilineLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
-                    line.value.let { value ->
-                        val chunked = value.chunkedBy(delimiter = " ", MAX_VALUE_LINE_LENGTH)
-                        if (chunked.size == 1) {
-                            TextLabel(chunked.single())
-                        } else {
-                            TextLabel(chunked)
-                        }
-                    }
+                    MultilineLabel(line.value, VALUE_LINE_MAX_LENGTH)
                 )
             }
             // for labels
@@ -293,8 +288,7 @@ class TooltipBox: SvgComponent() {
             // for values
             components.onEach { (_, valueComponent) ->
                 valueComponent.textColor().set(valueTextColor)
-                valueComponent.setTSpanX(0.0)
-                valueComponent.setTSpanDY(0.0)
+                valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
@@ -311,7 +305,7 @@ class TooltipBox: SvgComponent() {
             // sef vertical shifts for tspan elements
             valueLineHeights.zip(components).onEach { (height, component) ->
                 val (_, valueComponent) = component
-                valueComponent.setTSpanDY(height + LINE_INTERVAL)
+                valueComponent.setLineVerticalMargin(height + LINE_INTERVAL)
             }
 
             // bBoxes
@@ -379,7 +373,7 @@ class TooltipBox: SvgComponent() {
             }
 
             // in case of multilines: increase the interval between text label and use left alignment
-            val hasMultiLines = lines.any { it.value.length > MAX_VALUE_LINE_LENGTH }
+            val hasMultiLines = components.any { it.second.isWrapped }
             val textInterval = if (hasMultiLines) 4 * LINE_INTERVAL else LINE_INTERVAL
 
             val textSize = components
@@ -405,24 +399,22 @@ class TooltipBox: SvgComponent() {
 
                             if (hasMultiLines) {
                                 // Use left alignment
-                                valueComponent.x().set(maxLabelWidth + LABEL_VALUE_INTERVAL)
-                                valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.LEFT)
-                                valueComponent.setTSpanX(maxLabelWidth + LABEL_VALUE_INTERVAL)
+                                valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
+                                valueComponent.setHorizontalAnchor(TextAnchor.HorizontalAnchor.LEFT)
                             } else {
-                                valueComponent.x().set(maxLineWidth)
-                                valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                                valueComponent.setX(maxLineWidth)
+                                valueComponent.setHorizontalAnchor(TextAnchor.HorizontalAnchor.RIGHT)
                             }
                         }
                         valueBBox.dimension.x == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            valueComponent.x().set(-valueBBox.left)
+                            valueComponent.setX(-valueBBox.left)
                         }
                         else -> {
                             // Move value to the center
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                            valueComponent.x().set(maxLineWidth / 2)
-                            valueComponent.setTSpanX(maxLineWidth / 2)
+                            valueComponent.setX(maxLineWidth / 2)
+                            valueComponent.setHorizontalAnchor(TextAnchor.HorizontalAnchor.MIDDLE)
                         }
                     }
                     DoubleVector(
@@ -438,11 +430,11 @@ class TooltipBox: SvgComponent() {
                         components
                             .onEach { (labelComponent, valueComponent) ->
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
-                                labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                labelComponent?.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
                                 labelComponent?.rotate(90.0)
 
                                 valueComponent.y().set(-valueComponent.y().get()!!)
-                                valueComponent.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                valueComponent.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()
@@ -462,35 +454,6 @@ class TooltipBox: SvgComponent() {
                 width().set(textSize.x + H_CONTENT_PADDING * 2)
                 height().set(textSize.y + V_CONTENT_PADDING * 2)
             }
-        }
-    }
-
-    companion object {
-
-        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
-            return split(delimiter)
-                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
-                .map { it.joinToString(delimiter) }
-        }
-
-        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
-            val result = mutableListOf<List<String>>()
-            var subList = mutableListOf<String>()
-            var subListSize = 0
-            forEach { item ->
-                val itemSize = item.size()
-                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
-                    result.add(subList)
-                    subList = mutableListOf()
-                    subListSize = 0
-                }
-                subList.add(item)
-                subListSize += itemSize
-            }
-            if (subList.isNotEmpty()) {
-                result += subList
-            }
-            return result
         }
     }
 }

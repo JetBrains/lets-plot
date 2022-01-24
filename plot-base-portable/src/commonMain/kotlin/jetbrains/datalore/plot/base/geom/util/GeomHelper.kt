@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
+import jetbrains.datalore.plot.base.render.svg.TextAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -141,21 +142,21 @@ open class GeomHelper(
     }
 
     companion object {
-        val HJUST_MAP: Map<Any, TextLabel.HorizontalAnchor> = mapOf(
-            "right" to TextLabel.HorizontalAnchor.RIGHT,
-            "middle" to TextLabel.HorizontalAnchor.MIDDLE,
-            "left" to TextLabel.HorizontalAnchor.LEFT,
-            0.0 to TextLabel.HorizontalAnchor.RIGHT,
-            0.5 to TextLabel.HorizontalAnchor.MIDDLE,
-            1.0 to TextLabel.HorizontalAnchor.LEFT
+        val HJUST_MAP: Map<Any, TextAnchor.HorizontalAnchor> = mapOf(
+            "right" to TextAnchor.HorizontalAnchor.RIGHT,
+            "middle" to TextAnchor.HorizontalAnchor.MIDDLE,
+            "left" to TextAnchor.HorizontalAnchor.LEFT,
+            0.0 to TextAnchor.HorizontalAnchor.RIGHT,
+            0.5 to TextAnchor.HorizontalAnchor.MIDDLE,
+            1.0 to TextAnchor.HorizontalAnchor.LEFT
         )
-        val VJUST_MAP: Map<Any, TextLabel.VerticalAnchor> = mapOf(
-            "bottom" to TextLabel.VerticalAnchor.BOTTOM,
-            "center" to TextLabel.VerticalAnchor.CENTER,
-            "top" to TextLabel.VerticalAnchor.TOP,
-            0.0 to TextLabel.VerticalAnchor.BOTTOM,
-            0.5 to TextLabel.VerticalAnchor.CENTER,
-            1.0 to TextLabel.VerticalAnchor.TOP
+        val VJUST_MAP: Map<Any, TextAnchor.VerticalAnchor> = mapOf(
+            "bottom" to TextAnchor.VerticalAnchor.BOTTOM,
+            "center" to TextAnchor.VerticalAnchor.CENTER,
+            "top" to TextAnchor.VerticalAnchor.TOP,
+            0.0 to TextAnchor.VerticalAnchor.BOTTOM,
+            0.5 to TextAnchor.VerticalAnchor.CENTER,
+            1.0 to TextAnchor.VerticalAnchor.TOP
         )
         private val FONT_WEIGHT_SET = setOf(
             "bold", "bolder", "lighter"     // 'normal' is default
@@ -200,19 +201,19 @@ open class GeomHelper(
                 textLabelAnchor(
                     p.hjust(),
                     HJUST_MAP,
-                    TextLabel.HorizontalAnchor.MIDDLE
+                    TextAnchor.HorizontalAnchor.MIDDLE
                 )
             val vAnchor =
                 textLabelAnchor(
                     p.vjust(),
                     VJUST_MAP,
-                    TextLabel.VerticalAnchor.CENTER
+                    TextAnchor.VerticalAnchor.CENTER
                 )
 
-            if (hAnchor !== TextLabel.HorizontalAnchor.LEFT) {  // 'left' is default
+            if (hAnchor !== TextAnchor.HorizontalAnchor.LEFT) {  // 'left' is default
                 label.setHorizontalAnchor(hAnchor)
             }
-            if (vAnchor !== TextLabel.VerticalAnchor.BOTTOM) {  // 'bottom' is default
+            if (vAnchor !== TextAnchor.VerticalAnchor.BOTTOM) {  // 'bottom' is default
                 label.setVerticalAnchor(vAnchor)
             }
 

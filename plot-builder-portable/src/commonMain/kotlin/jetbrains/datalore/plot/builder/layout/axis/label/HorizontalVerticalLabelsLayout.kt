@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextAnchor
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
@@ -24,16 +24,16 @@ internal class HorizontalVerticalLabelsLayout(
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
-    val labelHorizontalAnchor: TextLabel.HorizontalAnchor
+    val labelHorizontalAnchor: TextAnchor.HorizontalAnchor
         get() {
             if (orientation === BOTTOM) {
-                return TextLabel.HorizontalAnchor.LEFT
+                return TextAnchor.HorizontalAnchor.LEFT
             }
             throw RuntimeException("Not implemented")
         }
 
-    val labelVerticalAnchor: TextLabel.VerticalAnchor
-        get() = TextLabel.VerticalAnchor.CENTER
+    val labelVerticalAnchor: TextAnchor.VerticalAnchor
+        get() = TextAnchor.VerticalAnchor.CENTER
 
     override fun doLayout(
         axisLength: Double,
@@ -63,8 +63,8 @@ internal class HorizontalVerticalLabelsLayout(
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         if (!(ROTATION_DEGREE == 90.0
-                    && labelHorizontalAnchor === TextLabel.HorizontalAnchor.LEFT
-                    && labelVerticalAnchor === TextLabel.VerticalAnchor.CENTER)
+                    && labelHorizontalAnchor === TextAnchor.HorizontalAnchor.LEFT
+                    && labelVerticalAnchor === TextAnchor.VerticalAnchor.CENTER)
         ) {
             throw RuntimeException("Not implemented")
         }

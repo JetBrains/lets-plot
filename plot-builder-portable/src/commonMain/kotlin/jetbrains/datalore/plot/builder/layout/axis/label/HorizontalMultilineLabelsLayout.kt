@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextAnchor
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
@@ -90,8 +90,8 @@ internal class HorizontalMultilineLabelsLayout(
             .smallFont(false)
             .overlap(linesCount > myMaxLines)
             .labelAdditionalOffsets(labelAdditionalOffsets)
-            .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-            .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
+            .labelHorizontalAnchor(TextAnchor.HorizontalAnchor.MIDDLE)
+            .labelVerticalAnchor(TextAnchor.VerticalAnchor.TOP)
             .build()
     }
 
