@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.render.svg.TextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -90,8 +90,8 @@ abstract class LegendBox : SvgComponent() {
 
     private fun createTitleLabel(
         origin: DoubleVector,
-        horizontalAnchor: TextAnchor.HorizontalAnchor,
-        verticalAnchor: TextAnchor.VerticalAnchor
+        horizontalAnchor: Text.HorizontalAnchor,
+        verticalAnchor: Text.VerticalAnchor
     ): TextLabel {
         val label = TextLabel(title)
         label.addClassName(Style.LEGEND_TITLE)

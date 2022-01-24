@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.base.render.svg
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.VerticalAnchor
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.toDY
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.toTextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.toDY
+import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
@@ -113,7 +113,7 @@ class MultilineLabel(
     }
 
     private fun updateStyleAttribute() {
-        val styleAttr = FontUtil.buildStyleAttribute(
+        val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
             myFontWeight,

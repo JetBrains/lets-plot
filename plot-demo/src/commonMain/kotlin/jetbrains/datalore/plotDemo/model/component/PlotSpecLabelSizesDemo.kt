@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.render.svg.TextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -134,8 +134,8 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             }
             label.textColor().set(Color.DARK_BLUE)
 
-            label.setHorizontalAnchor(TextAnchor.HorizontalAnchor.LEFT)
-            label.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
+            label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
+            label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
 
             return label
         }

@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.render.svg.TextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
@@ -400,10 +400,10 @@ class TooltipBox: SvgComponent() {
                             if (hasMultiLines) {
                                 // Use left alignment
                                 valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
-                                valueComponent.setHorizontalAnchor(TextAnchor.HorizontalAnchor.LEFT)
+                                valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
                             } else {
                                 valueComponent.setX(maxLineWidth)
-                                valueComponent.setHorizontalAnchor(TextAnchor.HorizontalAnchor.RIGHT)
+                                valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
                             }
                         }
                         valueBBox.dimension.x == maxLineWidth -> {
@@ -414,7 +414,7 @@ class TooltipBox: SvgComponent() {
                         else -> {
                             // Move value to the center
                             valueComponent.setX(maxLineWidth / 2)
-                            valueComponent.setHorizontalAnchor(TextAnchor.HorizontalAnchor.MIDDLE)
+                            valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                         }
                     }
                     DoubleVector(
@@ -430,11 +430,11 @@ class TooltipBox: SvgComponent() {
                         components
                             .onEach { (labelComponent, valueComponent) ->
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
-                                labelComponent?.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
+                                labelComponent?.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                                 labelComponent?.rotate(90.0)
 
                                 valueComponent.y().set(-valueComponent.y().get()!!)
-                                valueComponent.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
+                                valueComponent.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()

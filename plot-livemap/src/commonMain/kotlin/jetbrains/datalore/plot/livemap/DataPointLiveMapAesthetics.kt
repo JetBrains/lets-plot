@@ -20,8 +20,8 @@ import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.VerticalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.*

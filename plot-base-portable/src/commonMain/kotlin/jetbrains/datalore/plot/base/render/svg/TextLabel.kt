@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.render.svg
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.toDY
-import jetbrains.datalore.plot.base.render.svg.TextAnchor.toTextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.toDY
+import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svg.SvgTextElement
@@ -55,11 +55,11 @@ class TextLabel(text: String) : SvgComponent() {
         return myText.y()
     }
 
-    fun setHorizontalAnchor(anchor: TextAnchor.HorizontalAnchor) {
+    fun setHorizontalAnchor(anchor: Text.HorizontalAnchor) {
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
     }
 
-    fun setVerticalAnchor(anchor: TextAnchor.VerticalAnchor) {
+    fun setVerticalAnchor(anchor: Text.VerticalAnchor) {
         // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
         //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
         myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
@@ -95,7 +95,7 @@ class TextLabel(text: String) : SvgComponent() {
     }
 
     private fun updateStyleAttribute() {
-        val styleAttr = FontUtil.buildStyleAttribute(
+        val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
             myFontWeight,

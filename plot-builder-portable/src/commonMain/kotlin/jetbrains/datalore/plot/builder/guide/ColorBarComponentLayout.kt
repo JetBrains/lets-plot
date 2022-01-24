@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
@@ -48,8 +48,8 @@ abstract class ColorBarComponentLayout(
     internal class BreakInfo(
         val tickLocation: Double,
         val labelLocation: DoubleVector,
-        val labelHorizontalAnchor: TextAnchor.HorizontalAnchor,
-        val labelVerticalAnchor: TextAnchor.VerticalAnchor
+        val labelHorizontalAnchor: Text.HorizontalAnchor,
+        val labelVerticalAnchor: Text.VerticalAnchor
     )
 
     private class HorizontalLayout(
@@ -78,8 +78,8 @@ abstract class ColorBarComponentLayout(
             return BreakInfo(
                 tickLocation,
                 labelLocation,
-                TextAnchor.HorizontalAnchor.MIDDLE,
-                TextAnchor.VerticalAnchor.TOP
+                Text.HorizontalAnchor.MIDDLE,
+                Text.VerticalAnchor.TOP
             )
         }
     }
@@ -114,8 +114,8 @@ abstract class ColorBarComponentLayout(
             return BreakInfo(
                 tickLocation,
                 labelLocation,
-                TextAnchor.HorizontalAnchor.LEFT,
-                TextAnchor.VerticalAnchor.CENTER
+                Text.HorizontalAnchor.LEFT,
+                Text.VerticalAnchor.CENTER
             )
         }
     }

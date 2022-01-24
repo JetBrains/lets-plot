@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.render.svg.TextAnchor
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_H_PADDING
@@ -119,8 +119,8 @@ internal class PlotTile(
                 val lab = TextLabel(xLabel)
                 lab.moveTo(x, y)
                 lab.textColor().set(theme.stripTextColor())
-                lab.setHorizontalAnchor(TextAnchor.HorizontalAnchor.MIDDLE)
-                lab.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
+                lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+                lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                 add(lab)
 
                 labelBounds = labelBounds.add(DoubleVector(0.0, labelSize.y))
@@ -147,8 +147,8 @@ internal class PlotTile(
             val lab = TextLabel(tileLayoutInfo.facetYLabel)
             lab.moveTo(x, y)
             lab.textColor().set(theme.stripTextColor())
-            lab.setHorizontalAnchor(TextAnchor.HorizontalAnchor.MIDDLE)
-            lab.setVerticalAnchor(TextAnchor.VerticalAnchor.CENTER)
+            lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+            lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
             lab.rotate(90.0)
             add(lab)
         }
