@@ -86,7 +86,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
                 if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
-                    geom.setDrawQuantiles(opts.getList(Violin.DRAW_QUANTILES))
+                    geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
                 }
                 geom
             }

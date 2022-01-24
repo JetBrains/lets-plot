@@ -14,10 +14,10 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 class ViolinGeom : GeomBase() {
-    private var drawQuantiles = DEF_DRAW_QUANTILES
+    private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
 
-    fun setDrawQuantiles(quantiles: List<*>) {
-        drawQuantiles = quantiles.map { it.toString().toDouble() }
+    fun setDrawQuantiles(quantiles: List<Double>) {
+        drawQuantiles = quantiles
     }
 
     override fun buildIntern(
