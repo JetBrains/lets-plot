@@ -334,7 +334,14 @@ class TooltipBox: SvgComponent() {
                 valueComponent.setLineVerticalMargin(height + INTERVAL_BETWEEN_SUBSTRINGS)
             }
 
-            // bBoxes
+            // titles
+            lines.zip(components).map { (line, component) ->
+                if (line.isTitle) {
+                    val (_, valueComponent) = component
+                    valueComponent.setFontWeight("bold")
+                }
+            }
+
             val rawBBoxes = lines.zip(components).map { (line, component) ->
                 val (labelComponent, valueComponent) = component
                 Pair(

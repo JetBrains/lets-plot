@@ -45,6 +45,9 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     val tooltipProperties: TooltipSpecification.TooltipProperties
         get() = myUserTooltipSpec?.tooltipProperties ?: TooltipSpecification.TooltipProperties.NONE
 
+    val tooltipTitles: List<TooltipLine>
+        get() = myUserTooltipSpec?.tooltipTitles ?: emptyList()
+
     val isCrosshairEnabled: Boolean
         get() = myIsCrosshairEnabled
 

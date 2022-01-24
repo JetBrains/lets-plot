@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
@@ -33,14 +31,20 @@ class TooltipConfig(
                 null
             },
             tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS),
-            tooltipVariables = getStringList(Option.Layer.TOOLTIP_VARIABLES)
+            tooltipVariables = getStringList(Option.Layer.TOOLTIP_VARIABLES),
+            tooltipTitles = if (has(Option.Layer.TOOLTIP_TITLES)) {
+                getStringList(Option.Layer.TOOLTIP_TITLES)
+            } else {
+                null
+            }
         ).parse()
     }
 
     private inner class TooltipConfigParseHelper(
         private val tooltipLines: List<String>?,
         tooltipFormats: List<*>,
-        tooltipVariables: List<String>
+        tooltipVariables: List<String>,
+        private val tooltipTitles: List<String>?
     ) {
         private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(tooltipFormats)
             .let { specifiedFormats ->
@@ -68,13 +72,16 @@ class TooltipConfig(
                 myLinesForVariableList.isNotEmpty() -> myLinesForVariableList
                 else -> null
             }
+            val tooltipTitles = tooltipTitles?.map(::parseLine) ?: emptyList()
+
             return TooltipSpecification(
                 myValueSources.map { it.value },
                 allTooltipLines,
                 TooltipSpecification.TooltipProperties(
                     anchor = readAnchor(),
                     minWidth = readMinWidth()
-                )
+                ),
+                tooltipTitles
             )
         }
 

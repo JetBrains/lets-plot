@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_TITLES
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_VARIABLES
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
@@ -204,10 +205,10 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
-            Line(null, "dodge"),
-            Line("", "dodge"),
-            Line("model name", "dodge"),
-            Line("the model", "dodge")
+            Line.withLabelAndValue(label = null, "dodge"),
+            Line.withLabelAndValue("", "dodge"),
+            Line.withLabelAndValue("model name", "dodge"),
+            Line.withLabelAndValue("the model", "dodge")
         )
         assertTooltipLines(expectedLines, getGeneralTooltipLines(geomLayer))
     }
@@ -856,6 +857,45 @@ class TooltipConfigTest {
         }
     }
 
+    @Test
+    fun `add titles to default lines`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_TITLES to listOf(
+                "@{model name} car (@origin)",
+                "--"
+            )
+        )
+        val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "dodge car (US)",
+            "--",
+            "cty: 15.00"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
+    }
+
+    @Test
+    fun `add titles to users lines`() {
+        val tooltipConfig = mapOf(
+            TOOLTIP_LINES to listOf(
+                "^color (mpg)"
+            ),
+            TOOLTIP_TITLES to listOf(
+                "@{model name} car (@origin)",
+                "--"
+            )
+        )
+        val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "dodge car (US)",
+            "--",
+            "15.00 (mpg)"
+        )
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(expectedLines, lines)
+    }
+
     companion object {
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
             return getGeneralTooltipLines(geomLayer).map(Line::toString)
@@ -863,7 +903,8 @@ class TooltipConfigTest {
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
+            val titles = geomLayer.contextualMapping.getTitles(index = 0).map(Line.Companion::title)
+            return titles + dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {

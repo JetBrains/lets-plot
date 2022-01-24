@@ -22,7 +22,8 @@ interface ContextualMappingProvider {
                     ignoreInvisibleTargets = false,
                     hasGeneralTooltip = false,
                     hasAxisTooltip = false,
-                    isCrosshairEnabled = false
+                    isCrosshairEnabled = false,
+                    tooltipTitles = emptyList()
                 )
             }
         }
