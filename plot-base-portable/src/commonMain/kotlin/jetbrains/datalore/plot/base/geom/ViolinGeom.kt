@@ -61,7 +61,7 @@ class ViolinGeom : GeomBase() {
         appendNodes(helper.createLines(dataPoints, leftBoundTransform), root)
         appendNodes(helper.createLines(dataPoints, rightBoundTransform), root)
 
-        buildQuantiles(root, dataPoints, pos, coord, ctx)
+        // buildQuantiles(root, dataPoints, pos, coord, ctx)
 
         buildHints(dataPoints, ctx, helper, leftBoundTransform)
         buildHints(dataPoints, ctx, helper, rightBoundTransform)
