@@ -20,7 +20,7 @@ class BarsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
             zoom = 9
-            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
+            devParams = DevParams(mapOf(DevParams.ENABLE_SCALING.key to true))
             layers {
                 bars {
                     bar {

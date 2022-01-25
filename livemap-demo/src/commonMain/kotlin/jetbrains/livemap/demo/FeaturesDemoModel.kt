@@ -23,7 +23,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
             zoom = 5
-            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
+            devParams = DevParams(mapOf(DevParams.ENABLE_SCALING.key to true))
             geocodingService = Services.devGeocodingService()
             location { coordinate = explicitVec(96.37587535342406, 61.8742484121002) }
             layers {

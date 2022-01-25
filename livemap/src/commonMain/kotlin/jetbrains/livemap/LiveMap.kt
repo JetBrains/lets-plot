@@ -34,12 +34,13 @@ import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_ZOOM_IN_MULTIPLIER
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_ZOOM_OUT_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.SCALE_FUNCTION
 import jetbrains.livemap.config.DevParams.Companion.SHOW_RESET_POSITION_ACTION
 import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.ZOOM_IN_SCALE_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.ZOOM_OUT_SCALE_MULTIPLIER
 import jetbrains.livemap.config.DevParams.MicroTaskExecutor.*
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.graphics.Rectangle
@@ -263,8 +264,9 @@ class LiveMap(
 
                 // Charts
                 ChartElementScaleSystem(
-                    zoomInMultiplier = myDevParams.read(SCALABLE_SYMBOLS_ZOOM_IN_MULTIPLIER),
-                    zoomOutMultiplier = myDevParams.read(SCALABLE_SYMBOLS_ZOOM_OUT_MULTIPLIER),
+                    scaleFunction = myDevParams.read(SCALE_FUNCTION),
+                    zoomInMultiplier = myDevParams.read(ZOOM_IN_SCALE_MULTIPLIER),
+                    zoomOutMultiplier = myDevParams.read(ZOOM_OUT_SCALE_MULTIPLIER),
                     componentManager
                 ),
                 RenderingSystem(componentManager),
@@ -335,7 +337,7 @@ class LiveMap(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myDevParams.isSet(DevParams.SCALABLE_SYMBOLS),
+            myDevParams.isSet(DevParams.ENABLE_SCALING),
             myTextMeasurer
         )
 
