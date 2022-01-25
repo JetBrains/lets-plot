@@ -7,19 +7,18 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 
 object AxisUtil {
     fun breaksData(
-        scale: Scale<Double>,
+        scaleBreaks: ScaleBreaks,
+        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): AxisComponent.BreaksData {
-        val scaleBreaks = scale.getScaleBreaks()
-        val mappedBreaks = toAxisCoord(scaleBreaks, scale, coord, horizontal)
+        val mappedBreaks = toAxisCoord(scaleBreaks, scaleMapper, coord, horizontal)
         return AxisComponent.BreaksData(
             majorBreaks = mappedBreaks,
             majorLabels = scaleBreaks.labels
@@ -28,13 +27,13 @@ object AxisUtil {
 
     private fun toAxisCoord(
         scaleBreaks: ScaleBreaks,
-        scale: Scale<Double>,
+        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): List<Double> {
-        val breaksMapped = ScaleUtil.map(scaleBreaks.transformedValues, scale).map {
+        val breaksMapped = scaleBreaks.transformedValues.map {
             // Don't expect NULLs.
-            it as Double
+            scaleMapper(it) as Double
         }
         val axisBreaks = ArrayList<Double>()
         for (br in breaksMapped) {
@@ -51,8 +50,9 @@ object AxisUtil {
 
             axisBreaks.add(axisBr)
             if (!axisBr.isFinite()) {
+                val orient = if (horizontal) "horizontal" else "vertical"
                 throw IllegalStateException(
-                    "Illegal axis '" + scale.name + "' break position " + axisBr +
+                    "Illegal axis '" + orient + "' break position " + axisBr +
                             " at index " + (axisBreaks.size - 1) +
                             "\nsource breaks    : " + scaleBreaks.domainValues +
                             "\ntranslated breaks: " + breaksMapped +

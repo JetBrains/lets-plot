@@ -8,6 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -63,6 +64,10 @@ open class TilePlotDemo : SimpleDemoBase() {
                 )
             )
         )
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).mapperProvider
+                .createContinuousMapper(data.range(varV)!!, Transforms.IDENTITY),
+        )
 
 
         //
@@ -76,14 +81,17 @@ open class TilePlotDemo : SimpleDemoBase() {
             .addBinding(VarBinding(varX, Aes.X))
             .addBinding(VarBinding(varY, Aes.Y))
             .addBinding(VarBinding(varV, Aes.FILL))
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
         //
         // Plot
         //
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(tilesLayer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            scaleMappersNP,
             CoordProviders.cartesian(), theme
         )
         assembler.title = "Tile geometry"

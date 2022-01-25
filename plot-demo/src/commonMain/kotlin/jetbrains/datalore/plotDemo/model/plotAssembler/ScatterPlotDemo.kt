@@ -66,11 +66,14 @@ open class ScatterPlotDemo : SimpleDemoBase() {
                     Aes.Y
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            emptyMap(),
             CoordProviders.cartesian(), theme
         )
         assembler.title = "Scatter plot"

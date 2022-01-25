@@ -104,7 +104,11 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun build(data: DataFrame, scaleMap: TypedScaleMap): GeomLayer {
+    fun build(
+        data: DataFrame,
+        scaleMap: TypedScaleMap,
+        scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
+    ): GeomLayer {
         val transformByAes: Map<Aes<*>, Transform> = scaleMap.keySet().associateWith {
             scaleMap[it].transform
         }
@@ -162,6 +166,7 @@ class GeomLayerBuilder {
             replacementBindings.values,
             myConstantByAes,
             scaleMap,
+            scaleMapppersNP,
             dataAccess,
             myLocatorLookupSpec,
             myContextualMappingProvider.createContextualMapping(dataAccess, data),
@@ -183,6 +188,7 @@ class GeomLayerBuilder {
         varBindings: Collection<VarBinding>,
         constantByAes: TypedKeyHashMap,
         override val scaleMap: TypedScaleMap,
+        override val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val dataAccess: MappedDataAccess,
         override val locatorLookupSpec: LookupSpec,
         override val contextualMapping: ContextualMapping,

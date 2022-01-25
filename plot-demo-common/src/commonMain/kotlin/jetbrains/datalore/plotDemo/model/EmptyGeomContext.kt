@@ -32,7 +32,5 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
-    override fun isMappedAes(aes: Aes<*>): Boolean {
-        throw IllegalStateException("Not available in an empty geom context")
-    }
+    override fun isMappedAes(aes: Aes<*>): Boolean = false
 }

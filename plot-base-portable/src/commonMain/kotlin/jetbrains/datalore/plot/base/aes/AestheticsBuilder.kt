@@ -49,6 +49,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -185,7 +186,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(SYM_Y, v)
     }
 
-    fun <T> constantAes(aes: Aes<T>, v: T): AestheticsBuilder {
+    fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {
         myConstantAes.add(aes)
         myIndexFunctionMap[aes] = constant(v)
         return this
@@ -539,7 +540,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return { index -> v[index] }
         }
 
-        fun <T> listMapper(v: List<Double?>, f: (Double?) -> T?): (Int) -> T? {
+        fun <T> listMapper(v: List<Double?>, f: ScaleMapper<T>): (Int) -> T? {
             return { value -> f(v[value]) }
         }
     }

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -21,21 +22,29 @@ import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
 
-class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
+class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
+    PlotConfig(
+        opts,
+        isClientSide = true
+    ) {
 
     internal val theme: Theme = ThemeConfig(getMap(THEME)).theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
     val scaleMap: TypedScaleMap
-
-    override val isClientSide: Boolean
-        get() = true
+    val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>
 
     init {
 
         // ToDo: First transform data then create scales.
         scaleMap = PlotConfigScales.createScales(layerConfigs, transformByAes, scaleProviderByAes)
+        val mapperProviders = scaleProviderByAes.mapValues { it.value.mapperProvider }
+        scaleMappersNP = PlotConfigScaleMappers.createNotPositionalMappers(
+            layerConfigs,
+            transformByAes,
+            mapperProviders
+        )
 
         val preferredCoordProvider: CoordProvider? = layerConfigs
             .map { it.geomProto as GeomProtoClientSide }

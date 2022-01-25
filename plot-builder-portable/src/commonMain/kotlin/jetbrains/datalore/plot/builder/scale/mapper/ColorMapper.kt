@@ -90,18 +90,18 @@ object ColorMapper {
             }
         }
 
-        val mapperH = Mappers.linear(domain, lowHue, highHue, Double.NaN)
-        val mapperS = Mappers.linear(domain, lowS, highS, Double.NaN)
-        val mapperV = Mappers.linear(domain, lowHSV.v, highHSV.v, Double.NaN)
+        val mapperH = Mappers.linear(domain, lowHue, highHue, null)
+        val mapperS = Mappers.linear(domain, lowS, highS, null)
+        val mapperV = Mappers.linear(domain, lowHSV.v, highHSV.v, null)
 
         return { input ->
             if (input == null || !domain.contains(input)) {
                 naColor
             } else {
-                val hue = mapperH(input) % 360
+                val hue = mapperH(input)!! % 360
                 val H = if (hue >= 0) hue else 360 + hue
-                val S = mapperS(input)
-                val V = mapperV(input)
+                val S = mapperS(input)!!
+                val V = mapperV(input)!!
                 Colors.rgbFromHsv(H, S, V)
             }
         }

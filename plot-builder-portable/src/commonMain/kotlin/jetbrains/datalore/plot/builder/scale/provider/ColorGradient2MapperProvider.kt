@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.ContinuousOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.GuideMapper
@@ -52,33 +53,34 @@ class ColorGradient2MapperProvider(
         )
 
         fun getMapper(v: Double?): ((Double?) -> Color)? {
-            var f_: ((Double?) -> Color)? = null
+            var f: ((Double?) -> Color)? = null
             if (SeriesUtil.isFinite(v)) {
-                var f_span = Double.NaN
+                var fSpan = Double.NaN
                 for (range in rangeMap.keys) {
                     if (range.contains(v!!)) {
                         val span = range.upperEnd - range.lowerEnd
                         // try to avoid 0-length ranges
                         // but prefer shorter ranges
-                        if (f_ == null || f_span == 0.0) {
-                            f_ = rangeMap.get(range)
-                            f_span = span
-                        } else if (span < f_span && span > 0) {
-                            f_ = rangeMap.get(range)
-                            f_span = span
+                        if (f == null || fSpan == 0.0) {
+                            f = rangeMap.get(range)
+                            fSpan = span
+                        } else if (span < fSpan && span > 0) {
+                            f = rangeMap.get(range)
+                            fSpan = span
                         }
                     }
                 }
             }
-            return f_
+            return f
         }
 
-        val mapperFun: (Double?) -> Color = { input: Double? ->
-            val mapper = getMapper(input)
-            mapper?.invoke(input) ?: naValue
+        val scaleMapper = object : ScaleMapper<Color> {
+            override fun invoke(v: Double?): Color {
+                val mapper = getMapper(v)
+                return mapper?.invoke(v) ?: naValue
+            }
         }
-
-        return GuideMappers.asContinuous(mapperFun)
+        return GuideMappers.asContinuous(scaleMapper)
     }
 
     companion object {

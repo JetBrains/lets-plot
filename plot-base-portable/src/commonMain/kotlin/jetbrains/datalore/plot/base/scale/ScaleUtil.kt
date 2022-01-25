@@ -20,17 +20,6 @@ object ScaleUtil {
         return scaleBreaks.domainValues.zip(scaleBreaks.labels).toMap()
     }
 
-    fun map(range: ClosedRange<Double>, scale: Scale<Double>): ClosedRange<Double> {
-        return MapperUtil.map(range, scale.mapper)
-    }
-
-    fun <T> map(l: List<Double?>, scale: Scale<T>): List<T?> {
-        val mapper = scale.mapper
-        return l.map {
-            mapper(it)
-        }
-    }
-
     fun transformedDefinedLimits(transform: ContinuousTransform): Pair<Double, Double> {
         val (lower, upper) = Pair(
             transform.apply(transform.definedLimits().first) ?: Double.NaN,
@@ -57,5 +46,17 @@ object ScaleUtil {
         }
 
         return transform.apply(source)
+    }
+
+    fun applyTransform(r: ClosedRange<Double>, transform: ContinuousTransform): ClosedRange<Double> {
+        val a = transform.apply(r.lowerEnd)!!
+        val b = transform.apply(r.upperEnd)!!
+        return ClosedRange(min(a, b), max(a, b))
+    }
+
+    fun applyInverseTransform(r: ClosedRange<Double>, transform: ContinuousTransform): ClosedRange<Double> {
+        val a = transform.applyInverse(r.lowerEnd)!!
+        val b = transform.applyInverse(r.upperEnd)!!
+        return ClosedRange(min(a, b), max(a, b))
     }
 }

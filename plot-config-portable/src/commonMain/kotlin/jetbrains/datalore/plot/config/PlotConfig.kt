@@ -24,8 +24,10 @@ import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 abstract class PlotConfig(
-    opts: Map<String, Any>
+    opts: Map<String, Any>,
+    private val isClientSide: Boolean
 ) : OptionsAccessor(opts, DEF_OPTIONS) {
+
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
 
@@ -38,9 +40,6 @@ abstract class PlotConfig(
 
     val title: String?
         get() = getMap(TITLE)[TITLE_TEXT] as String?
-
-    protected open val isClientSide: Boolean
-        get() = false
 
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
@@ -88,11 +87,13 @@ abstract class PlotConfig(
 
     fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
         // merge options by 'aes'
-        val mergedOpts = HashMap<Aes<*>, MutableMap<String, Any>>()
+        val mergedOpts = HashMap<Aes<Any>, MutableMap<String, Any>>()
         for (opts in scaleOptionsList) {
             @Suppress("UNCHECKED_CAST")
             val optsMap = opts as Map<String, Any>
-            val aes = ScaleConfig.aesOrFail(optsMap)
+
+            @Suppress("UNCHECKED_CAST")
+            val aes = ScaleConfig.aesOrFail(optsMap) as Aes<Any>
             if (!mergedOpts.containsKey(aes)) {
                 mergedOpts[aes] = HashMap()
             }
@@ -100,11 +101,9 @@ abstract class PlotConfig(
             mergedOpts[aes]!!.putAll(optsMap)
         }
 
-        val result = ArrayList<ScaleConfig<Any>>()
-        for (scaleOptions in mergedOpts.values) {
-            result.add(ScaleConfig(scaleOptions))
+        return mergedOpts.map { (aes, options) ->
+            ScaleConfig(aes, options)
         }
-        return result
     }
 
     private fun createLayerConfigs(sharedData: DataFrame): List<LayerConfig> {

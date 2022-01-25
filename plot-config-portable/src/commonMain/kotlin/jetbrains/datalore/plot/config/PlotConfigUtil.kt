@@ -5,10 +5,13 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
 
 object PlotConfigUtil {
@@ -120,6 +123,25 @@ object PlotConfigUtil {
             }
         } else {
             aes.name
+        }
+    }
+
+    /**
+     * Front-end.
+     * ToDo: 'domans' should be computed on 'transformed' data.
+     */
+    internal fun computeContinuousDomain(
+        data: DataFrame,
+        variable: DataFrame.Variable,
+        transform: ContinuousTransform
+    ): ClosedRange<Double>? {
+        return if (!transform.hasDomainLimits()) {
+            data.range(variable)
+        } else {
+            val filtered = data.getNumeric(variable).filter {
+                transform.isInDomain(it)
+            }
+            SeriesUtil.range(filtered)
         }
     }
 }

@@ -10,6 +10,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -106,20 +107,18 @@ internal object PlotGuidesAssemblerUtil {
 
     fun createColorBarAssembler(
         scaleName: String,
-        aes: Aes<*>,
-        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>,
+        transformedDomain: ClosedRange<Double>,
         scale: Scale<Color>,
+        scaleMapper: ScaleMapper<Color>,
         options: ColorBarOptions?,
         theme: LegendTheme
     ): ColorBarAssembler {
-
-        val transformedDomain = transformedDomainByAes[aes]
-        checkNotNull(transformedDomain) { "Domain for continuous data must not be null" }
 
         val result = ColorBarAssembler(
             scaleName,
             transformedDomain,
             scale,
+            scaleMapper,
             theme
         )
         result.setOptions(options)

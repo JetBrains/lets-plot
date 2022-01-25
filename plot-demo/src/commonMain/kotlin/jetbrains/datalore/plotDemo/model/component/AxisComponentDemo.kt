@@ -10,17 +10,18 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.AxisUtil
-import jetbrains.datalore.plot.builder.guide.AxisComponent
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
+import jetbrains.datalore.plot.builder.guide.AxisComponent
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -47,8 +48,10 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val rangeX = ClosedRange(0.0, CENTER_SQUARE_SIZE.x)
         val rangeY = ClosedRange(0.0, CENTER_SQUARE_SIZE.y)
 
-        var scaleX = Scales.continuousDomain("X", Mappers.linear(domainX, rangeX), true)
-        var scaleY = Scales.continuousDomain("Y", Mappers.linear(domainY, rangeY), true)
+        val mapperX = Mappers.linear(domainX, rangeX)
+        val mapperY = Mappers.linear(domainY, rangeY)
+        var scaleX = Scales.continuousDomain<Double>("X", /*mapperX,*/ true)
+        var scaleY = Scales.continuousDomain<Double>("Y", /*mapperY,*/ true)
 
         scaleX = ScaleBreaksUtil.withBreaks(scaleX, domainX, 10)
         scaleY = ScaleBreaksUtil.withBreaks(scaleY, domainY, 10)
@@ -58,6 +61,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val leftAxis = createAxis(
             CENTER_SQUARE_SIZE.y,
             scaleY,
+            mapperY,
             coord,
             Orientation.LEFT
         )
@@ -67,6 +71,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val bottomAxis = createAxis(
             CENTER_SQUARE_SIZE.x,
             scaleX,
+            mapperX,
             coord,
             Orientation.BOTTOM
         )
@@ -76,6 +81,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val rightAxis = createAxis(
             CENTER_SQUARE_SIZE.y,
             scaleY,
+            mapperY,
             coord,
             Orientation.RIGHT
         )
@@ -85,6 +91,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val topAxis = createAxis(
             CENTER_SQUARE_SIZE.x,
             scaleX,
+            mapperX,
             coord,
             Orientation.TOP
         )
@@ -116,6 +123,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private fun createAxis(
             axisLength: Double,
             scale: Scale<Double>,
+            scaleMapper: ScaleMapper<Double>,
             coord: CoordinateSystem,
             orientation: Orientation
         ): AxisComponent {
@@ -135,7 +143,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val axis = AxisComponent(
                 length = axisLength,
                 orientation = orientation,
-                breaksData = AxisUtil.breaksData(scale, coord, orientation.isHorizontal),
+                breaksData = AxisUtil.breaksData(scale.getScaleBreaks(), scaleMapper, coord, orientation.isHorizontal),
                 gridLineLength = 100.0,
                 axisTheme = if (orientation.isHorizontal) theme.axisX() else theme.axisY(),
                 gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),

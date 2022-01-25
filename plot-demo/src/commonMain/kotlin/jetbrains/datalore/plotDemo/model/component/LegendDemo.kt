@@ -62,8 +62,8 @@ open class LegendDemo : SimpleDemoBase() {
     private fun colorBar(): GroupComponent {
         val domain = ClosedRange(0.0, 4.0)
 
-        val mapper = ColorMapper.gradientDefault(domain)
-        val scale = Scales.continuousDomain("color", mapper, true)
+        val mapper = jetbrains.datalore.plot.base.ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
+        val scale = Scales.continuousDomain<Color>("color", /*mapper,*/ true)
             .with()
 //            .lowerLimit(domain.lowerEnd)
 //            .upperLimit(domain.upperEnd)
@@ -78,7 +78,10 @@ open class LegendDemo : SimpleDemoBase() {
         val breakValues = List(3) { i -> (i + 1).toDouble() }
         val scaleBreaks = ScaleBreaks(breakValues, breakValues, breakValues.map { "$it" })
         val spec = ColorBarAssembler.createColorBarSpec(
-            "Color Bar", domain, scaleBreaks, scale, theme.legend()
+            "Color Bar", domain, scaleBreaks,
+//            scale,
+            mapper,
+            theme.legend()
         )
         val legendComponent = ColorBarComponent(spec)
         legendComponent.debug = DEBUG_DRAWING

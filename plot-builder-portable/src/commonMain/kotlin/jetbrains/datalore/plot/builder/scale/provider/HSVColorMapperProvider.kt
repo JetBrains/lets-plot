@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -21,7 +22,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
         transformedDomain: List<Double>,
         fromHSV: HSV,
         toHSV: HSV
-    ): GuideMapper<Color> {
+    ): ScaleMapper<Color> {
         val mapperDomain = ensureApplicableRange(SeriesUtil.range(transformedDomain))
         val n = transformedDomain.size
 
@@ -43,7 +44,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
             HSV(newToHue, toHSV.s, toHSV.v),
             false, naValue
         )
-        return GuideMappers.asNotContinuous(gradient)
+        return GuideMappers.asNotContinuous(ScaleMapper.wrap(gradient))
     }
 
     protected fun createContinuousMapper(
@@ -56,7 +57,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
             else -> createCompositeColorMapper(domain, hsvIntervals, false, naValue)
         }
 
-        return GuideMappers.asContinuous(gradientMapper)
+        return GuideMappers.asContinuous(ScaleMapper.wrap(gradientMapper))
     }
 
 

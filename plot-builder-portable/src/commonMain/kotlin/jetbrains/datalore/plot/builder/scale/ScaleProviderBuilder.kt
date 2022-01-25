@@ -163,16 +163,9 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
          * Discrete domain.
          */
         override fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale<T> {
-            val mapper: (Double?) -> T? = if (discreteTransform.effectiveDomain.isEmpty()) {
-                absentMapper(defaultName)
-            } else {
-                mapperProvider.createDiscreteMapper(discreteTransform)::apply
-            }
-
             var scale: Scale<T> = Scales.discreteDomain(
                 myName ?: defaultName,
                 discreteTransform,
-                mapper
             )
 
             return completeScale(scale)
@@ -194,9 +187,8 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             )
             val continuousRange = mapper.isContinuous || myAes.isNumeric
 
-            scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
+            scale = Scales.continuousDomain(name, continuousRange)
 
-            // ToDo: need to 'inverse transform' breaks.
             if (mapper is WithGuideBreaks<*>) {
                 @Suppress("UNCHECKED_CAST")
                 mapper as WithGuideBreaks<Any>
@@ -239,14 +231,24 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
             return with.build()
         }
 
-        private fun absentMapper(`var`: DataFrame.Variable): (Double?) -> T {
+        private fun absentMapper(`var`: DataFrame.Variable): ScaleMapper<T> {
             // mapper for empty data is a special case - should never be used
-            return { v -> throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v) }
+//            return { v -> throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v) }
+            return object : ScaleMapper<T> {
+                override fun invoke(v: Double?): T? {
+                    throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v)
+                }
+            }
         }
 
-        private fun absentMapper(label: String): (Double?) -> T {
-            // mapper for empty data is a special case - should never be used
-            return { v -> throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v) }
-        }
+//        private fun absentMapper(label: String): ScaleMapper<T> {
+//            // mapper for empty data is a special case - should never be used
+////            return { v -> throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v) }
+//            return object : ScaleMapper<T> {
+//                override fun invoke(v: Double?): T? {
+//                    throw throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v)
+//                }
+//            }
+//        }
     }
 }

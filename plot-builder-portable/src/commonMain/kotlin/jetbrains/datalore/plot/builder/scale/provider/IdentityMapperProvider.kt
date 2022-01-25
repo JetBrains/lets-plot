@@ -8,16 +8,17 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 
 class IdentityMapperProvider<T>(
     private val discreteMapperProvider: IdentityDiscreteMapperProvider<T>,
-    private val continuousMapper: (Double?) -> T?
+    private val continuousMapper: ScaleMapper<T>
 ) : MapperProvider<T> {
 
-    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<T> {
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<T> {
         return discreteMapperProvider.createDiscreteMapper(discreteTransform)
     }
 

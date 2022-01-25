@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
@@ -15,10 +16,10 @@ import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class PlotAssembler private constructor(
-//    private val scaleByAes: TypedScaleMap,
     val layersByTile: List<List<GeomLayer>>,
     private val scaleXProto: Scale<Double>,
     private val scaleYProto: Scale<Double>,
+    private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val coordProvider: CoordProvider,
     private val theme: Theme
 ) {
@@ -48,6 +49,7 @@ class PlotAssembler private constructor(
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
+                scaleMappers,
                 guideOptionsMap,
                 theme.legend()
             )
@@ -64,8 +66,6 @@ class PlotAssembler private constructor(
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         } else {
             val flipAxis = coordProvider.flipAxis
-//            val scaleXProto = scaleByAes[Aes.X]
-//            val scaleYProto = scaleByAes[Aes.Y]
             val (xDomain, yDomain) = PositionalScalesUtil.computePlotXYTransformedDomains(
                 layersByTile,
                 scaleXProto,
@@ -117,38 +117,40 @@ class PlotAssembler private constructor(
     }
 
     companion object {
-        // Note: 'singleTile' is onlu used in demos.
+        // Note: 'singleTile' is only used in demos.
         fun singleTile(
-            scaleByAes: TypedScaleMap,
             plotLayers: List<GeomLayer>,
+            scaleXProto: Scale<Double>,
+            scaleYProto: Scale<Double>,
+            scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
             val layersByTile = ArrayList<List<GeomLayer>>()
             layersByTile.add(plotLayers)
             return multiTile(
-//                scaleByAes,
                 layersByTile,
-                scaleXProto = scaleByAes.get(Aes.X),
-                scaleYProto = scaleByAes.get(Aes.Y),
+                scaleXProto,
+                scaleYProto,
+                scaleMappersNP,
                 coordProvider,
                 theme
             )
         }
 
         fun multiTile(
-//            scaleByAes: TypedScaleMap,
             layersByTile: List<List<GeomLayer>>,
             scaleXProto: Scale<Double>,
             scaleYProto: Scale<Double>,
+            scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
             return PlotAssembler(
-//                scaleByAes,
                 layersByTile,
                 scaleXProto,
                 scaleYProto,
+                scaleMappersNP,
                 coordProvider,
                 theme
             )

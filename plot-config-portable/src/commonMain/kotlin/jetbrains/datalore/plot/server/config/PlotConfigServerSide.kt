@@ -23,7 +23,11 @@ import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTrans
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
-open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
+open class PlotConfigServerSide(opts: Map<String, Any>) :
+    PlotConfig(
+        opts,
+        isClientSide = false
+    ) {
 
     override fun createLayerConfig(
         layerOptions: Map<String, Any>,

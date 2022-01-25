@@ -9,7 +9,7 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.DATETIME_FORMAT
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.scale.Mappers.nullable
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.plot.base.scale.transform.TimeBreaksGen
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -50,11 +50,10 @@ import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
 /**
  * @param <T> - target aesthetic type of the configured scale
  */
-class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
-
-    @Suppress("UNCHECKED_CAST")
-    val aes: Aes<T> = aesOrFail(options) as Aes<T>
-
+class ScaleConfig<T> constructor(
+    val aes: Aes<T>,
+    options: Map<String, Any>
+) : OptionsAccessor(options) {
 
     fun createScaleProvider(): ScaleProvider<T> {
         return createScaleProviderBuilder().build()
@@ -84,31 +83,30 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
                 )
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {
-            mapperProvider =
-                AlphaMapperProvider(getRange(RANGE), (naValue as Double))
+            mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
         } else if (aes == Aes.SIZE && has(RANGE)) {
-            mapperProvider =
-                SizeMapperProvider(getRange(RANGE), (naValue as Double))
+            mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
-        // used in scale_x_discrete, scale_y_discrete
+        // Discrete domain if
+        //   - aes mapping is annotated with 'is_discrete';
+        //   - scale_x_discrete, scale_y_discrete.
         val discreteDomain = getBoolean(Option.Scale.DISCRETE_DOMAIN)
         val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
 
-        val scaleMapperKind =
-            getString(SCALE_MAPPER_KIND) ?: if (!has(OUTPUT_VALUES) && discreteDomain && aes in setOf<Aes<*>>(
-                    Aes.FILL,
-                    Aes.COLOR
-                )
-            )
+        val scaleMapperKind = getString(SCALE_MAPPER_KIND) ?: if (
+            !has(OUTPUT_VALUES) &&
+            discreteDomain &&
+            Aes.isColor(aes)
+        ) {
             // Default palette type for discrete colors
-                COLOR_BREWER
-            else
-                null
+            COLOR_BREWER
+        } else {
+            null
+        }
 
         when (scaleMapperKind) {
-            null -> {
-            }
+            null -> {} // Nothing
             IDENTITY ->
                 mapperProvider = createIdentityMapperProvider(aes, naValue)
             COLOR_GRADIENT ->
@@ -172,7 +170,6 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
-            // ToDo: move to PlotConfigUtil.
             val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
             val transform = when (transformName.lowercase()) {
                 TransformName.IDENTITY -> Transforms.IDENTITY
@@ -254,14 +251,14 @@ class ScaleConfig<T>(options: Map<String, Any>) : OptionsAccessor(options) {
             // There is an option value converter for every AES (which can be used as discrete identity mapper)
             val cvt = AesOptionConversion.getConverter(aes)
             val discreteMapperProvider =
-                IdentityDiscreteMapperProvider(cvt, naValue)
+                IdentityDiscreteMapperProvider(cvt/*, naValue*/)
 
             // For some AES there is also a continuous identity mapper
             if (TypedContinuousIdentityMappers.contain(aes)) {
                 val continuousMapper = TypedContinuousIdentityMappers[aes]
                 return IdentityMapperProvider(
                     discreteMapperProvider,
-                    nullable(continuousMapper, naValue)
+                    ScaleMapper.wrap(continuousMapper, naValue)
                 )
             }
 

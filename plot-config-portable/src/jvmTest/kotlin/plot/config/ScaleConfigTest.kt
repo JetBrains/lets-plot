@@ -40,7 +40,7 @@ class ScaleConfigTest {
 
         val mapper = mapperProvider.createDiscreteMapper(transform)
         for (i in input.indices) {
-            assertEquals(expected[i], mapper.apply(inputTransformed[i]))
+            assertEquals(expected[i], mapper(inputTransformed[i]))
         }
     }
 
@@ -61,7 +61,7 @@ class ScaleConfigTest {
             Transforms.IDENTITY
         )
         for (v in input) {
-            assertEquals(v, mapper.apply(v))
+            assertEquals(v, mapper(v))
         }
     }
 
@@ -123,10 +123,10 @@ class ScaleConfigTest {
                 "aesthetic" to toOption(aes)
             )
 
-            val scaleMapper = ScaleConfig<Color>(scaleSpec)
+            val scaleMapper = ScaleConfig<Color>(aes, scaleSpec)
                 .createScaleProvider()
-                .createScale("a", DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
-                .mapper
+                .mapperProvider
+                .createDiscreteMapper(DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
 
             val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }
             assertEquals(expected[0], scaleMapper(0.0))

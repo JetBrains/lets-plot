@@ -37,7 +37,7 @@ abstract class ColorBarComponentLayout(
         val targetRange = ClosedRange(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
         val mapper = Mappers.linear(domain, targetRange, reverse)
         breakInfos = breaks.transformedValues.map {
-            val tickLocation = mapper(it)
+            val tickLocation = mapper(it)!!
             createBreakInfo(tickLocation)
         }
         barBounds = DoubleRectangle(DoubleVector.ZERO, guideBarSize)

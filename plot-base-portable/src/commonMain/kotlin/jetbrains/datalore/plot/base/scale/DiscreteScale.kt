@@ -17,11 +17,13 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     override val transform: Transform
         get() = discreteTransform
 
+    override val isContinuous: Boolean = false
+    override val isContinuousDomain: Boolean = false
+
     constructor(
         name: String,
         discreteTransform: DiscreteTransform,
-        mapper: ((Double?) -> T?)
-    ) : super(name, mapper, breaks = null) {
+    ) : super(name, breaks = null) {
         this.discreteTransform = discreteTransform
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html

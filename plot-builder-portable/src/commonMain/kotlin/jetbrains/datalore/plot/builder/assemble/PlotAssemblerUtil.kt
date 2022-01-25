@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
@@ -40,6 +41,7 @@ internal object PlotAssemblerUtil {
 
     fun createLegends(
         layersByPanel: List<List<GeomLayer>>,
+        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -81,6 +83,7 @@ internal object PlotAssemblerUtil {
         return createLegends(
             stitchedLayersList,
             transformedDomainByAes,
+            scaleMappers,
             guideOptionsMap,
             theme
         )
@@ -89,6 +92,7 @@ internal object PlotAssemblerUtil {
     private fun createLegends(
         stitchedLayersList: List<StitchedPlotLayers>,
         transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>,
+        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -114,22 +118,28 @@ internal object PlotAssemblerUtil {
                 if (guideOptionsMap.containsKey(aes)) {
                     val guideOptions = guideOptionsMap[aes]
                     if (guideOptions is ColorBarOptions) {
-                        checkFitsColorBar(binding.aes, scale)
+                        checkFitsColorBar(aes, scale)
                         colorBar = true
                         @Suppress("UNCHECKED_CAST")
-                        val colorScale = scale as Scale<Color>
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
-                            scaleName, binding.aes,
-                            transformedDomainByAes, colorScale, guideOptions, theme
+                            scaleName,
+                            transformedDomainByAes.getValue(aes),
+                            scale as Scale<Color>,
+                            scaleMappers.getValue(aes) as ScaleMapper<Color>,
+                            guideOptions,
+                            theme
                         )
                     }
-                } else if (fitsColorBar(binding.aes, scale)) {
+                } else if (fitsColorBar(aes, scale)) {
                     colorBar = true
                     @Suppress("UNCHECKED_CAST")
-                    val colorScale = scale as Scale<Color>
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
-                        scaleName, binding.aes,
-                        transformedDomainByAes, colorScale, null, theme
+                        scaleName,
+                        transformedDomainByAes.getValue(aes),
+                        scale as Scale<Color>,
+                        scaleMappers.getValue(aes) as ScaleMapper<Color>,
+                        null,
+                        theme
                     )
                 }
 
@@ -143,6 +153,7 @@ internal object PlotAssemblerUtil {
                     LegendAssembler(
                         scaleName,
                         guideOptionsMap,
+                        scaleMappers,
                         theme
                     )
                 }
@@ -152,7 +163,7 @@ internal object PlotAssemblerUtil {
                 val aestheticsDefaults = stitchedLayers.aestheticsDefaults
                 legendAssembler.addLayer(
                     legendKeyFactory,
-                    varBindings,
+                    varBindings.map { it.aes },
                     layerConstantByAes,
                     aestheticsDefaults,
                     stitchedLayers.getScaleMap(),

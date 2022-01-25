@@ -21,7 +21,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
  * @param <T> - type of target aesthetic
  *
  */
-interface Scale<T> {
+interface Scale<T> {   // ToDo: remove <T>: it only make sense for mapper.
     val name: String
 
     val labelFormatter: ((Any) -> String)?
@@ -39,8 +39,6 @@ interface Scale<T> {
 
     val transform: Transform
 
-    val mapper: (Double?) -> T?
-
     fun hasBreaks(): Boolean
 
     fun getBreaksGenerator(): BreaksGenerator
@@ -56,8 +54,6 @@ interface Scale<T> {
         fun labels(l: List<String>): Builder<T>
 
         fun labelFormatter(v: (Any) -> String): Builder<T>
-
-        fun mapper(m: (Double?) -> T?): Builder<T>
 
         fun multiplicativeExpand(v: Double): Builder<T>
 

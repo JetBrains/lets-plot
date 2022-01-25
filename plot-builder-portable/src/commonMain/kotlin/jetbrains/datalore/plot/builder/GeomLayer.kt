@@ -26,6 +26,8 @@ interface GeomLayer {
     // ToDo: move: positional scales -> tile, all other scales -> plot
     val scaleMap: TypedScaleMap
 
+    val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>
+
     val dataAccess: MappedDataAccess
 
     val legendKeyElementFactory: LegendKeyElementFactory

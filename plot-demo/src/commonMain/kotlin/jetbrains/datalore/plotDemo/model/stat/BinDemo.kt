@@ -49,9 +49,10 @@ open class BinDemo : SimpleDemoBase() {
         val x = DemoUtil.gauss(count, 32, 0.0, 100.0)
         val y = DemoUtil.gauss(count, 64, 0.0, 50.0)
 
+        val mapperX = Mappers.mul(1.0)
         var scaleX = Scales.DemoAndTest.continuousDomainNumericRange("A scale")
             .with()
-            .mapper(Mappers.mul(1.0))
+//            .mapper(Mappers.mul(1.0))
             .build()
 
         if (limits) {
@@ -73,9 +74,10 @@ open class BinDemo : SimpleDemoBase() {
                 .putNumeric(varB, y)
                 .build()
 
+            val mapperY = Mappers.mul(2.5)
             val scaleY = Scales.DemoAndTest.continuousDomainNumericRange("bar height")
                 .with()
-                .mapper(Mappers.mul(2.5))
+//                .mapper(Mappers.mul(2.5))
                 .build()
 
             // transform must happen before stat
@@ -97,8 +99,10 @@ open class BinDemo : SimpleDemoBase() {
             // build aesthetics for stat summary
             run {
                 val aes = AestheticsBuilder(statX.size)
-                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
-                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
+//                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
+//                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
+                    .x(AestheticsBuilder.listMapper(statX, mapperX))
+                    .y(AestheticsBuilder.listMapper(statY, mapperY))
                     .fill(constant(Color.LIGHT_BLUE))
                     .width(constant(.95))
                     .build()
@@ -117,8 +121,10 @@ open class BinDemo : SimpleDemoBase() {
             // add layer of stat points (for test)
             run {
                 val aes = AestheticsBuilder(statX.size)
-                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
-                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
+//                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
+//                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
+                    .x(AestheticsBuilder.listMapper(statX, mapperX))
+                    .y(AestheticsBuilder.listMapper(statY, mapperY))
                     .color(constant(Color.BLUE))
                     .shape(constant(NamedShape.STICK_CIRCLE))
                     .size(constant(3.0))
@@ -137,7 +143,8 @@ open class BinDemo : SimpleDemoBase() {
         // points layer
         run {
             val aes = AestheticsBuilder(count)
-                .x(AestheticsBuilder.listMapper(x, scaleX.mapper))
+//                .x(AestheticsBuilder.listMapper(x, scaleX.mapper))
+                .x(AestheticsBuilder.listMapper(x, mapperX))
                 .y(list(y))
                 .color(constant(Color.RED))
                 .shape(constant(NamedShape.STICK_CIRCLE))

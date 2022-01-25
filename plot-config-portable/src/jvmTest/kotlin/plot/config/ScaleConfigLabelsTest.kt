@@ -10,6 +10,7 @@ import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
@@ -18,7 +19,8 @@ import jetbrains.datalore.plot.config.Option.Scale.DISCRETE_DOMAIN
 import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.LABELS
 import jetbrains.datalore.plot.config.Option.Scale.LIMITS
-import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
+import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
+import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -105,7 +107,15 @@ class ScaleConfigLabelsTest {
             val xLabels = getScaleLabels(scaleMap[Aes.X])
             val yLabels = getScaleLabels(scaleMap[Aes.Y])
 
-            assertEquals(listOf("x = 0.3981071705534972", "x = 0.6309573444801932", "x = 1.0", "x = 1.5848931924611136", "x = 2.51188643150958"), xLabels)
+            assertEquals(
+                listOf(
+                    "x = 0.3981071705534972",
+                    "x = 0.6309573444801932",
+                    "x = 1.0",
+                    "x = 1.5848931924611136",
+                    "x = 2.51188643150958"
+                ), xLabels
+            )
             // todo {} should use the default formatted value:
             //      assertEquals(listOf("x = 0.4", "x = 0.6", "x = 1.0", "x = 1.0", "x = 2.5"), xLabels)
 
@@ -309,12 +319,77 @@ class ScaleConfigLabelsTest {
         assertEquals(listOf("is red", "is green", "is blue"), labels)
     }
 
+    @Test
+    fun `aes_label with discrete input`() {
+        val serie = listOf("one", "two", "three")
+        val data = mapOf("value" to serie)
+        val mapping = mapOf(
+            Aes.LABEL.name to "value",
+        )
+        val scaleMap = getScaleMap(data, mapping, emptyList(), Option.GeomName.TEXT)
+
+        val labels = scaleMap[Aes.LABEL].getScaleBreaks().labels
+        // identity expected
+        assertEquals(serie, labels)
+    }
+
+    @Test
+    fun `aes_label with continuous input`() {
+        val serie = listOf(1.0, 2.0, 3.0)
+        val data = mapOf("value" to serie)
+        val mapping = mapOf(
+            Aes.LABEL.name to "value",
+        )
+
+        val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, emptyList())
+
+        val labelTransform = geomLayer.scaleMap[Aes.LABEL].transform
+        val labelMapper = geomLayer.scaleMapppersNP.getValue(Aes.LABEL)
+
+        val inputs = listOf(null, 1.5, -1.5)
+        val outputs = labelTransform.apply(inputs).map {
+            labelMapper(it) as Double?
+        }
+
+        // continuous identity expected
+        assertEquals(inputs, outputs)
+    }
+
+    @Test
+    fun `aes_label with continuous input and format`() {
+        val serie = listOf(1.0, 2.0, 3.0)
+        val data = mapOf("value" to serie)
+        val mapping = mapOf(
+            Aes.LABEL.name to "value",
+        )
+        val scales = listOf(
+            mapOf(
+                Option.Scale.AES to Aes.LABEL.name,
+                FORMAT to "d"   // round to int.
+            )
+        )
+
+        val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, scales)
+
+        val labelTransform = geomLayer.scaleMap[Aes.LABEL].transform
+        val labelMapper = geomLayer.scaleMapppersNP.getValue(Aes.LABEL)
+
+        val inputs = listOf(null, 1.5, -1.5)
+        val outputs = labelTransform.apply(inputs).map {
+            (labelMapper(it) as Double?)?.roundToInt()?.toString() ?: "n/a"
+        }
+
+        // continuous identity expected (formatted to string).
+        assertEquals(listOf("n/a", "2", "-1"), outputs)
+    }
+
     companion object {
         private fun getScaleMap(
             data: Map<String, Any>,
             mapping: Map<String, Any>,
             scales: List<Map<String, Any>>,
-        ) = buildPointLayer(data, mapping, scales = scales).scaleMap
+            geom: String = Option.GeomName.POINT,
+        ) = buildGeomLayer(geom, data, mapping, scales = scales).scaleMap
 
         internal fun getScaleLabels(
             scale: Scale<Double>,

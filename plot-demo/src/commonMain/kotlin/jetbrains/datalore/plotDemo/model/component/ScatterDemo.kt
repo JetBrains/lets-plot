@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.base.coord.Coords
@@ -71,7 +72,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-            .mapper(mapperX)
+//            .mapper(mapperX)
             .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
             .labels(listOf("-200", "-100", "0", "100", "250"))
             .build()
@@ -82,7 +83,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
-            .mapper(mapperY)
+//            .mapper(mapperY)
             .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
             .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
             .build()
@@ -106,7 +107,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
-                breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
+                breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
                 axisTheme = theme.axisX(),
                 gridTheme = theme.panel().gridX(),
@@ -123,7 +124,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
-                breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
+                breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
                 axisTheme = theme.axisY(),
                 gridTheme = theme.panel().gridY(),
@@ -137,8 +138,10 @@ open class ScatterDemo : SimpleDemoBase() {
         // points layer
         run {
             val aes = AestheticsBuilder(count)
-                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+//                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
+//                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+                .x(AestheticsBuilder.listMapper(aesX, mapperX))
+                .y(AestheticsBuilder.listMapper(aesY, mapperY))
                 .color(constant(Color.RED))
                 .shape(constant(NamedShape.SOLID_CIRCLE))
                 .size(constant(10.0))
@@ -189,7 +192,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-            .mapper(mapperX)
+//            .mapper(mapperX)
             .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
             .labels(listOf("-200", "-100", "0", "100", "250"))
             .build()
@@ -200,7 +203,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
-            .mapper(mapperY)
+//            .mapper(mapperY)
             .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
             .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
             .build()
@@ -208,22 +211,23 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // Color scale
         // see 'OutputColors'
-        var scaleColor = Scales.DemoAndTest.continuousDomain("C", Aes.COLOR)
-        run {
+//        var scaleColor = Scales.DemoAndTest.continuousDomain("C", Aes.COLOR)
+
+        val (scaleColor, mapperColor) = let {
             @Suppress("UNCHECKED_CAST")
             val rawC = data.getNumeric(varC) as List<Double>
             val minC = Ordering.natural<Double>().min(rawC)
             val maxC = Ordering.natural<Double>().max(rawC)
 
             val colorScheme = ColorPalette.Diverging.RdYlBu
-            val colorScale = quantizedColorScale(
+            val quantizedColorScale = quantizedColorScale(
                 colorScheme,
                 3,
                 minC,
                 maxC
             )
-            val colors = colorScale.outputValues
-            val mappedValuesQuantized = colorScale.domainQuantized
+            val colors = quantizedColorScale.outputValues
+            val mappedValuesQuantized = quantizedColorScale.domainQuantized
             val mapperColor = { input: Double? ->
                 // todo: null color
                 var color: Color? = null
@@ -243,11 +247,19 @@ open class ScatterDemo : SimpleDemoBase() {
                 labels.add("" + br)
             }
 
-            scaleColor = scaleColor.with()
-                .mapper(mapperColor)
+//            scaleColor = scaleColor.with()
+////                .mapper(mapperColor)
+//                .breaks(breaks)
+//                .labels(labels)
+//                .build()
+
+            val scaleColor = Scales.DemoAndTest.continuousDomain("C", Aes.COLOR).with()
+//                .mapper(mapperColor)
                 .breaks(breaks)
                 .labels(labels)
                 .build()
+
+            Pair(scaleColor, ScaleMapper.wrap(mapperColor))
         }
 
         // transform and stat always in this order
@@ -273,7 +285,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
-                breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
+                breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
                 axisTheme = theme.axisX(),
                 gridTheme = theme.panel().gridX(),
@@ -290,7 +302,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
-                breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
+                breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
                 axisTheme = theme.axisY(),
                 gridTheme = theme.panel().gridY(),
@@ -304,9 +316,12 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // points layer
             val aes = AestheticsBuilder(count)
-                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
-                .color(AestheticsBuilder.listMapper(aesColor, scaleColor.mapper))
+//                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
+//                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+//                .color(AestheticsBuilder.listMapper(aesColor, scaleColor.mapper))
+                .x(AestheticsBuilder.listMapper(aesX, mapperX))
+                .y(AestheticsBuilder.listMapper(aesY, mapperY))
+                .color(AestheticsBuilder.listMapper(aesColor, mapperColor))
                 .shape(constant(NamedShape.SOLID_CIRCLE))
                 .size(constant(10.0))
                 .build()
@@ -350,7 +365,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-            .mapper(mapperX)
+//            .mapper(mapperX)
             .breaks(listOf(-100.0, 0.0, 100.0))
             .labels(listOf("-100", "0", "100"))
             .continuousTransform(Transforms.continuousWithLimits(Transforms.IDENTITY, Pair(-100.0, 100.0)))
@@ -366,7 +381,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val mapperY = Mappers.mul(domainY, rangeY)
 
         scaleY = scaleY.with()
-            .mapper(mapperY)
+//            .mapper(mapperY)
             .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
             .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
             .build()
@@ -390,7 +405,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
-                breaksData = AxisUtil.breaksData(scaleX, coord, horizontal = true),
+                breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
                 axisTheme = theme.axisX(),
                 gridTheme = theme.panel().gridX(),
@@ -407,7 +422,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
-                breaksData = AxisUtil.breaksData(scaleY, coord, horizontal = false),
+                breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
                 axisTheme = theme.axisY(),
                 gridTheme = theme.panel().gridY(),
@@ -421,8 +436,10 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // points layer
             val aes = AestheticsBuilder(count)
-                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+//                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
+//                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
+                .x(AestheticsBuilder.listMapper(aesX, mapperX))
+                .y(AestheticsBuilder.listMapper(aesY, mapperY))
                 .color(constant(Color.DARK_BLUE))
                 .shape(constant(NamedShape.SOLID_CIRCLE))
                 .size(constant(10.0))

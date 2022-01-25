@@ -39,10 +39,10 @@ object PlotConfigClientSideUtil {
     fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
         val assembler = PlotAssembler.multiTile(
-//            config.scaleMap,
             layersByTile,
             config.scaleMap.get(Aes.X),
             config.scaleMap.get(Aes.Y),
+            config.scaleMappersNP,
             config.coordProvider,
             config.theme
         )
@@ -87,7 +87,11 @@ object PlotConfigClientSideUtil {
                 }
 
                 val layerTileData = tileDataByLayer[layerIndex]
-                val layer = layerBuilders[layerIndex].build(layerTileData, plotConfig.scaleMap)
+                val layer = layerBuilders[layerIndex].build(
+                    layerTileData,
+                    plotConfig.scaleMap,
+                    plotConfig.scaleMappersNP,
+                )
                 panelLayers.add(layer)
             }
             layersByTile.add(panelLayers)

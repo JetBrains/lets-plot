@@ -9,11 +9,10 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
@@ -25,6 +24,7 @@ import kotlin.math.min
 class LegendAssembler(
     private val legendTitle: String,
     private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
+    private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
 
@@ -32,7 +32,7 @@ class LegendAssembler(
 
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
-        varBindings: List<VarBinding>,
+        aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleByAes: TypedScaleMap,
@@ -42,10 +42,11 @@ class LegendAssembler(
         legendLayers.add(
             LegendLayer(
                 keyFactory,
-                varBindings,
+                aesList,
                 constantByAes,
                 aestheticsDefaults,
                 scaleByAes,
+                scaleMappers,
                 transformedDomainByAes
             )
         )
@@ -106,23 +107,20 @@ class LegendAssembler(
 
     private class LegendLayer(
         internal val keyElementFactory: LegendKeyElementFactory,
-        private val varBindings: List<VarBinding>,
-        private val constantByAes: Map<Aes<*>, Any>,
-        private val aestheticsDefaults: AestheticsDefaults,
-        private val scaleMap: TypedScaleMap,
+        internal val aesList: List<Aes<*>>,
+        constantByAes: Map<Aes<*>, Any>,
+        aestheticsDefaults: AestheticsDefaults,
+        scaleMap: TypedScaleMap,
+        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
         transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>
     ) {
 
         internal val keyAesthetics: Aesthetics
         internal val keyLabels: List<String>
 
-        internal val aesList: List<Aes<*>>
-            get() = varBindings.map { it.aes }
-
         init {
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
-            for (varBinding in varBindings) {
-                val aes = varBinding.aes
+            for (aes in aesList) {
                 var scale = scaleMap[aes]
                 if (!scale.hasBreaks()) {
                     scale = ScaleBreaksUtil.withBreaks(scale, transformedDomainByAes.getValue(aes), 5)
@@ -130,10 +128,12 @@ class LegendAssembler(
                 check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
                 val scaleBreaks = scale.getScaleBreaks()
-                val aesValues = ScaleUtil.map(scaleBreaks.transformedValues, scale)
+                val aesValues = scaleBreaks.transformedValues.map {
+                    scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
+                }
                 val labels = scaleBreaks.labels
                 for ((label, aesValue) in labels.zip(aesValues)) {
-                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue!!
+                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
                 }
             }
 

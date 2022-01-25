@@ -10,6 +10,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import kotlin.math.max
@@ -63,7 +64,7 @@ class ColorHueMapperProvider(
         myToHSV = HSV(toHue, saturation, value)
     }
 
-    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Color> {
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         return createDiscreteMapper(discreteTransform.effectiveDomainTransformed, myFromHSV, myToHSV)
     }
 

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -17,7 +18,7 @@ open class LinearNormalizingMapperProvider(
     naValue: Double
 ) : MapperProviderBase<Double>(naValue) {
 
-    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): GuideMapper<Double> {
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Double> {
         return GuideMappers.discreteToContinuous(discreteTransform, outputRange, naValue)
     }
 

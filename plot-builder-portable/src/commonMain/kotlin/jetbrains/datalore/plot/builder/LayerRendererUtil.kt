@@ -13,8 +13,8 @@ object LayerRendererUtil {
 
     fun createLayerRendererData(
         layer: GeomLayer,
-        xAesMapper: (Double?) -> Double?,
-        yAesMapper: (Double?) -> Double?,
+        xAesMapper: ScaleMapper<Double>,
+        yAesMapper: ScaleMapper<Double>,
     ): LayerRendererData {
 
         val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(
@@ -37,7 +37,7 @@ object LayerRendererUtil {
     class LayerRendererData(
         layer: GeomLayer,
         val aesthetics: Aesthetics,
-        val aestheticMappers: Map<Aes<*>, (Double?) -> Any?>,
+        val aestheticMappers: Map<Aes<*>, ScaleMapper<*>>,
         val pos: PositionAdjustment
     ) {
         val geom: Geom = layer.geom

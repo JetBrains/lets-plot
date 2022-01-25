@@ -7,11 +7,12 @@ package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import kotlin.math.max
 import kotlin.math.min
 
 object MapperUtil {
-    fun map(r: ClosedRange<Double>, mapper: (Double?) -> Double?): ClosedRange<Double> {
+    fun map(r: ClosedRange<Double>, mapper: ScaleMapper<Double>): ClosedRange<Double> {
         val a = mapper(r.lowerEnd)!!
         val b = mapper(r.upperEnd)!!
         return ClosedRange(min(a, b), max(a, b))

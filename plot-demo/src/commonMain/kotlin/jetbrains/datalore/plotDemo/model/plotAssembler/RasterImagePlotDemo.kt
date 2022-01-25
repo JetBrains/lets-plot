@@ -8,7 +8,9 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
@@ -60,6 +62,14 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             )
         )
 
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).mapperProvider
+                .createContinuousMapper(df.range(varFill)!!, Transforms.IDENTITY),
+            Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).mapperProvider
+                .createContinuousMapper(df.range(varAlpha)!!, Transforms.IDENTITY),
+        )
+
+
         val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
             .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.raster())
@@ -69,11 +79,14 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             .addBinding(VarBinding(varY, Aes.Y))
             .addBinding(VarBinding(varFill, Aes.FILL))
             .addBinding(VarBinding(varAlpha, Aes.ALPHA))
-            .build(df, scaleByAes)
+            .build(df, scaleByAes, scaleMappersNP)
 
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            scaleMappersNP,
             CoordProviders.cartesian(),
             theme
         )

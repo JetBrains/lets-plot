@@ -7,26 +7,24 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
-import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 /**
  * Front-end.
  */
-internal object PlotConfigScales {
-
-    internal fun createScales(
+internal object PlotConfigScaleMappers {
+    internal fun createNotPositionalMappers(
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
-        scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
-    ): TypedScaleMap {
-
+        mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
+    ): Map<Aes<*>, ScaleMapper<*>> {
         val dataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(
             layerConfigs,
             excludeStatVariables = false
-        )
+        ).filterKeys { !Aes.isPositional(it.aes) }
 
         val variablesByMappedAes = PlotConfigUtil.associateAesWithMappedVariables(
             PlotConfigUtil.getVarBindings(
@@ -35,7 +33,7 @@ internal object PlotConfigScales {
             )
         )
 
-        // All aes used in bindings.
+        // All aes used in bindings, except positional.
         val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet()
 
         // Compute domains for 'continuous' data
@@ -52,7 +50,7 @@ internal object PlotConfigScales {
             val variable = varBinding.variable
             val transform = transformByAes.getValue(aes)
 
-            if (transform is ContinuousTransform && !Aes.isPositionalXY(aes)) {
+            if (transform is ContinuousTransform) {
                 continuousDomainByAesRaw[aes] = SeriesUtil.span(
                     continuousDomainByAesRaw[aes], PlotConfigUtil.computeContinuousDomain(data, variable, transform)
                 )
@@ -66,33 +64,35 @@ internal object PlotConfigScales {
             Transforms.ensureApplicableDomain(it.value, transform)
         }
 
-        // Create scales for all aes.
-        val scaleByAes = HashMap<Aes<*>, Scale<*>>()
-        for (aes in aesSet + setOf(Aes.X, Aes.Y)) {
+        // Create mappers for all aes.
+        val mappers = HashMap<Aes<*>, ScaleMapper<*>>()
+        for (aes in aesSet) {
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
-            val scaleProvider = scaleProviderByAes.getValue(aes)
+            val mapperProvider = mapperProviderByAes.getValue(aes)
 
             @Suppress("MoveVariableDeclarationIntoWhen")
             val transform = transformByAes.getValue(aes)
 
-            val scale = when (transform) {
-                is DiscreteTransform -> scaleProvider.createScale(defaultName, transform)
-                else -> {
-                    transform as ContinuousTransform
-                    if (continuousDomainByAes.containsKey(aes)) {
-                        val continuousDomain = continuousDomainByAes.getValue(aes)
-                        scaleProvider.createScale(defaultName, transform, continuousDomain)
+            val scaleMapper: ScaleMapper<*> = when (transform) {
+                is DiscreteTransform -> {
+                    if (transform.effectiveDomain.isEmpty()) {
+                        Mappers.emptyDataMapper(defaultName)
                     } else {
-                        // Positional aes & continuous domain.
-                        // The domain doesn't matter - it will be computed later (see: PlotAssemblerUtil.computePlotDryRunXYRanges())
-                        scaleProvider.createScale(defaultName, transform, ClosedRange.singleton(0.0))
+                        mapperProvider.createDiscreteMapper(transform)
                     }
+                }
+                else -> {
+                    val continuousDomain = continuousDomainByAes.getValue(aes)
+                    mapperProvider.createContinuousMapper(
+                        continuousDomain,
+                        transform as ContinuousTransform
+                    )
                 }
             }
 
-            scaleByAes[aes] = scale
+            mappers[aes] = scaleMapper
         }
 
-        return TypedScaleMap(scaleByAes)
+        return mappers
     }
 }

@@ -76,18 +76,26 @@ class SquareFrameOfReferenceProvider(
         val vAxisLayoutInfo = layoutInfo.yAxisInfo!!
 
         // Set-up scales and coordinate system.
+        val hScaleMapper = coordProvider.buildAxisXScaleMapper(
+            hAxisLayoutInfo.axisDomain,
+            hAxisLayoutInfo.axisLength,
+        )
+        val vScaleMapper = coordProvider.buildAxisYScaleMapper(
+            vAxisLayoutInfo.axisDomain,
+            vAxisLayoutInfo.axisLength,
+        )
+
         val hScale = coordProvider.buildAxisScaleX(
             hScaleProto,
             hAxisLayoutInfo.axisDomain,
-            hAxisLayoutInfo.axisLength,
             hAxisLayoutInfo.axisBreaks
         )
         val vScale = coordProvider.buildAxisScaleY(
             vScaleProto,
             vAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisLength,
             vAxisLayoutInfo.axisBreaks
         )
+
         val coord = coordProvider.createCoordinateSystem(
             hAxisLayoutInfo.axisDomain,
             hAxisLayoutInfo.axisLength,
@@ -97,6 +105,7 @@ class SquareFrameOfReferenceProvider(
 
         val tileFrameOfReference = SquareFrameOfReference(
             hScale, vScale,
+            hScaleMapper, vScaleMapper,
             coord,
             layoutInfo,
             theme,

@@ -29,19 +29,19 @@ object PlotUtil {
 
     internal fun prepareLayerAestheticMappers(
         layer: GeomLayer,
-        xAesMapper: (Double?) -> Double?,
-        yAesMapper: (Double?) -> Double?,
-    ): Map<Aes<*>, (Double?) -> Any?> {
+        xAesMapper: ScaleMapper<Double>,
+        yAesMapper: ScaleMapper<Double>,
+    ): Map<Aes<*>, ScaleMapper<*>> {
 
-        val mappers = HashMap<Aes<*>, (Double?) -> Any?>()
+        val mappers = HashMap<Aes<*>, ScaleMapper<*>>()
         val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
         for (aes in renderedAes) {
-            var mapper: ((Double?) -> Any?)? = when {
+            var mapper: ScaleMapper<*>? = when {
                 aes == Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
                 // positional aes share their mappers
                 Aes.isPositionalX(aes) -> xAesMapper
                 Aes.isPositionalY(aes) -> yAesMapper
-                layer.hasBinding(aes) -> layer.scaleMap[aes].mapper
+                layer.hasBinding(aes) -> layer.scaleMapppersNP.getValue(aes)
                 else -> null  // rendered but has no binding - just ignore.
             }
 
@@ -54,7 +54,7 @@ object PlotUtil {
 
     internal fun createLayerAesthetics(
         layer: GeomLayer,
-        sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
+        sharedMappers: Map<Aes<*>, ScaleMapper<*>>,
         affectingXYScalesOnly: Boolean = false
     ): Aesthetics {
 
@@ -87,7 +87,8 @@ object PlotUtil {
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)
-                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption))
+                @Suppress("UNCHECKED_CAST")
+                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption as? ScaleMapper<Any>))
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
@@ -115,9 +116,10 @@ object PlotUtil {
                 } else {
                     // apply default
                     val v = layer.getDefault(aes)
+                    @Suppress("UNCHECKED_CAST")
                     aesBuilder.constantAes(
                         aes,
-                        asAesValue(aes, v, mapperOption)
+                        asAesValue(aes, v, mapperOption as? ScaleMapper<Any>)
                     )
                 }
             }
@@ -133,10 +135,9 @@ object PlotUtil {
         return aesBuilder.build()
     }
 
-    private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ((Double?) -> T?)?): T {
+    private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ScaleMapper<T>?): T? {
         return if (aes.isNumeric && mapperOption != null) {
             mapperOption(dataValue as? Double)
-                ?: throw IllegalArgumentException("Can't map $dataValue to aesthetic $aes")
         } else dataValue
     }
 

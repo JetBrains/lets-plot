@@ -466,7 +466,7 @@ object Option {
         private const val STEP = "step"
         private const val RECT = "rect"
         private const val SEGMENT = "segment"
-        private const val TEXT = "text"
+        const val TEXT = "text"
         private const val RASTER = "raster"
         const val IMAGE = "image"
 

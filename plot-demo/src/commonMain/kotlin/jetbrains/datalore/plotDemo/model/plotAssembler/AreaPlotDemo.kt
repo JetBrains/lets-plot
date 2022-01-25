@@ -8,7 +8,10 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
@@ -37,9 +40,15 @@ open class AreaPlotDemo : SimpleDemoBase() {
             .put(varTarget, targetColumn.data.toList())
             .build()
 
-        var scaleTargetColor = Scales.DemoAndTest.pureDiscrete(
+        var scaleColor = Scales.DemoAndTest.pureDiscrete<Color>(
             "Y",
             listOf("Iris-setosa", "Iris-versicolor", "Iris-virginica"),
+//            listOf(Color.RED, Color.GREEN, Color.BLUE),
+//            Color.BLACK
+        )
+
+        var filleMapper = Mappers.discrete(
+            scaleColor.transform as DiscreteTransform,
             listOf(Color.RED, Color.GREEN, Color.BLUE),
             Color.BLACK
         )
@@ -48,8 +57,12 @@ open class AreaPlotDemo : SimpleDemoBase() {
             mapOf(
                 Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(xColumn.name),
                 Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(""),
-                Aes.FILL to scaleTargetColor
+                Aes.FILL to scaleColor
             )
+        )
+
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.FILL to filleMapper
         )
 
         val layer = GeomLayerBuilder.demoAndTest()
@@ -71,10 +84,17 @@ open class AreaPlotDemo : SimpleDemoBase() {
             )
             .addBinding(VarBinding(varTarget, Aes.FILL))
             .addConstantAes(Aes.ALPHA, 0.7)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
         val assembler =
-            PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), DefaultTheme.minimal2())
+            PlotAssembler.singleTile(
+//                scaleByAes,
+                listOf(layer),
+                scaleByAes.get(Aes.X),
+                scaleByAes.get(Aes.Y),
+                scaleMappersNP,
+                CoordProviders.cartesian(), DefaultTheme.minimal2()
+            )
         assembler.disableInteractions()
         return assembler.createPlot()
     }

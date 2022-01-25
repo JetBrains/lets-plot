@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.scale.transform
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object Transforms {
@@ -59,17 +59,17 @@ object Transforms {
         val breaksGenerator: BreaksGenerator
     ) : BreaksGenerator {
         override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-            val domainBeforeTransform = MapperUtil.map(domain, transform::applyInverse)
+            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.labelFormatter(domainBeforeTransform, targetCount)
         }
 
         override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-            val domainBeforeTransform = MapperUtil.map(domain, transform::applyInverse)
+            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)
         }
 
         override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-            val domainBeforeTransform = MapperUtil.map(domain, transform::applyInverse)
+            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             val scaleBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
             val originalBreaks = scaleBreaks.domainValues
             val transformedBreaks = transform.apply(originalBreaks).map {

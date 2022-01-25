@@ -13,14 +13,16 @@ object Scales {
 
     fun <T> continuousDomain(
         name: String,
-        mapper: (Double?) -> T?,
         continuousRange: Boolean
     ): Scale<T> {
-        return ContinuousScale<T>(name, mapper, continuousRange)
+        return ContinuousScale<T>(name, continuousRange)
     }
 
-    fun <T> discreteDomain(name: String, discreteTransform: DiscreteTransform, mapper: ((Double?) -> T?)): Scale<T> {
-        return DiscreteScale(name, discreteTransform, mapper)
+    fun <T> discreteDomain(
+        name: String,
+        discreteTransform: DiscreteTransform,
+    ): Scale<T> {
+        return DiscreteScale(name, discreteTransform)
     }
 
     /**
@@ -31,30 +33,24 @@ object Scales {
             name: String,
             domainValues: List<Any>,
             domainLimits: List<Any> = emptyList(),
-            mapper: ((Double?) -> T) = Mappers.undefined()
         ): Scale<T> {
             return DiscreteScale(
                 name,
                 DiscreteTransform(domainValues, domainLimits),
-                mapper
             )
         }
 
         fun <T> pureDiscrete(
             name: String,
             domainValues: List<Any>,
-            outputValues: List<T>,
-            defaultOutputValue: T
         ): Scale<T> {
             val transform = DiscreteTransform(domainValues, emptyList())
-            val mapper = Mappers.discrete(transform, outputValues, defaultOutputValue)
-            return DiscreteScale(name, transform, mapper)
+            return DiscreteScale(name, transform)
         }
 
         fun <T> continuousDomain(name: String, aes: Aes<T>): Scale<T> {
             return ContinuousScale<T>(
                 name,
-                Mappers.undefined(),
                 aes.isNumeric
             )
         }
@@ -62,7 +58,6 @@ object Scales {
         fun continuousDomainNumericRange(name: String): Scale<Double> {
             return ContinuousScale<Double>(
                 name,
-                Mappers.undefined(),
                 true
             )
         }

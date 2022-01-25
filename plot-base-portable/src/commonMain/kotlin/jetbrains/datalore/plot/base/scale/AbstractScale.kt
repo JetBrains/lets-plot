@@ -13,22 +13,17 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     private val definedLabels: List<String>?
 
     final override val name: String
-    final override val mapper: ((Double?) -> T?)
+
     final override var multiplicativeExpand = 0.0
         protected set
     final override var additiveExpand = 0.0
         protected set
     final override val labelFormatter: ((Any) -> String)?
 
-    override val isContinuous: Boolean
-        get() = false
+//    override val isContinuousDomain: Boolean = false
 
-    override val isContinuousDomain: Boolean
-        get() = false
-
-    protected constructor(name: String, mapper: ((Double?) -> T?), breaks: List<DomainT>? = null) {
+    protected constructor(name: String, breaks: List<DomainT>? = null) {
         this.name = name
-        this.mapper = mapper
         this.definedBreaks = breaks
         definedLabels = null
         labelFormatter = null
@@ -39,7 +34,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         definedBreaks = b.myBreaks
         definedLabels = b.myLabels
         labelFormatter = b.myLabelFormatter
-        mapper = b.myMapper
 
         multiplicativeExpand = b.myMultiplicativeExpand
         additiveExpand = b.myAdditiveExpand
@@ -106,7 +100,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         internal var myBreaks: List<DomainT>? = scale.definedBreaks
         internal var myLabels: List<String>? = scale.definedLabels
         internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
-        internal var myMapper: (Double?) -> T? = scale.mapper
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
@@ -126,11 +119,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
         override fun labelFormatter(v: (Any) -> String): Scale.Builder<T> {
             myLabelFormatter = v
-            return this
-        }
-
-        override fun mapper(m: (Double?) -> T?): Scale.Builder<T> {
-            myMapper = m
             return this
         }
 
