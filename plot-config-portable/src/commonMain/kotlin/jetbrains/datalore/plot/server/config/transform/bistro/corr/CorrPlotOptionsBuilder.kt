@@ -313,11 +313,6 @@ class CorrPlotOptionsBuilder private constructor(
         val plotX = varsInOrder.filter { it in xsSet }
         val plotY = varsInOrder.filter { it in ysSet }
 
-        val onlyTiles = tiles.added && !points.added && !labels.added
-
-        val xLim = Pair(-0.6, plotX.size - 1 + 0.6)
-        val yLim = Pair(-0.6, plotY.size - 1 + 0.6)
-
         return plot {
             size = plotSize(xs, ys, title != null, showLegend, adjustSize)
             title = title
@@ -353,17 +348,10 @@ class CorrPlotOptionsBuilder private constructor(
                 colorScaleOptions,
                 fillScaleOptions
             )
-            coord = when (onlyTiles) {
-                true -> coord {
-                    name = Option.CoordName.CARTESIAN
-                    this.xLim = xLim
-                    this.yLim = yLim
-                }
-                false -> coord {
-                    name = Option.CoordName.FIXED
-                    this.xLim = xLim
-                    this.yLim = yLim
-                }
+            coord = coord {
+                name = Option.CoordName.FIXED
+                xLim = Pair(-0.6, plotX.size - 1 + 0.6)
+                yLim = Pair(-0.6, plotY.size - 1 + 0.6)
             }
         }
     }
