@@ -129,7 +129,7 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ): (p: DataPointAesthetics) -> DoubleVector {
         return fun (p: DataPointAesthetics): DoubleVector {
-            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * WIDTH_SCALE * sign * p.violinwidth()!!
+            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * sign * p.violinwidth()!!
             val y = p.y()!!
             return DoubleVector(x, y)
         }
@@ -167,7 +167,6 @@ class ViolinGeom : GeomBase() {
         val DEF_DRAW_QUANTILES = emptyList<Double>()
 
         const val HANDLES_GROUPS = true
-        const val WIDTH_SCALE = 0.95
     }
 
 }

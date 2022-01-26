@@ -83,8 +83,10 @@ class YDensityStat(
                 }
             }
         }
+        // TODO: Calculate WIDTH properly
         return dataAfterStat.builder()
             .putNumeric(Stats.VIOLIN_WIDTH, statViolinWidth)
+            .putNumeric(Stats.WIDTH, List(statViolinWidth.size) { 1.0 })
             .build()
     }
 
