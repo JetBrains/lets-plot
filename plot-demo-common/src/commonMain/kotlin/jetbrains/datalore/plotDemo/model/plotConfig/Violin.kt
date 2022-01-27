@@ -11,7 +11,11 @@ import jetbrains.datalore.plotDemo.data.Iris
 class Violin {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+//            basic(),
+//            withNan(),
+//            withGroups(),
             data132Violin(),
+            data132ViolinDiscrete(),
             data132ViolinIdentity(),
             data132Boxplot(),
             data123Violin(),
@@ -25,6 +29,9 @@ class Violin {
                 "                'x': 'target'," +
                 "                'y': 'sepal length (cm)'," +
                 "                'fill': 'target'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Basic demo'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
@@ -51,6 +58,9 @@ class Violin {
                 "                'x': 'class'," +
                 "                'y': 'value'" +
                 "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'NaNs in data'" +
+                "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'" +
@@ -74,6 +84,9 @@ class Violin {
                 "                'y': 'value'," +
                 "                'fill': 'group'" +
                 "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Additional grouping'" +
+                "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
@@ -96,9 +109,42 @@ class Violin {
                 "                'x': 'x'," +
                 "                'y': 'y'" +
                 "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 3, 2]'" +
+                "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun data132ViolinDiscrete(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [1, 3, 2]," +
+                "             'y': [2, 0, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 3, 2] and discrete'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'" +
+                "               }" +
+                "             ]," +
+                "   'scales': [" +
+                "               {" +
+                "                 'aesthetic': 'x'," +
+                "                 'discrete': true" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -117,6 +163,9 @@ class Violin {
                 "   'mapping': {" +
                 "                'x': 'x'," +
                 "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 3, 2], stat=identity'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
@@ -140,6 +189,9 @@ class Violin {
                 "                'x': 'x'," +
                 "                'y': 'y'" +
                 "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 3, 2], geom=boxplot'" +
+                "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'boxplot'" +
@@ -160,6 +212,9 @@ class Violin {
                 "   'mapping': {" +
                 "                'x': 'x'," +
                 "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 2, 3]'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
