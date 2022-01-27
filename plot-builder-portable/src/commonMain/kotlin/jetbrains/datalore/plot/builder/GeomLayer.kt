@@ -23,7 +23,10 @@ interface GeomLayer {
 
     val geom: Geom
 
+    // ToDo: move: positional scales -> tile, all other scales -> plot
     val scaleMap: TypedScaleMap
+
+    val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>
 
     val dataAccess: MappedDataAccess
 

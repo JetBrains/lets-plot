@@ -7,7 +7,9 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.GeomContext
 
 object HintColorUtil {
     fun fromColor(p: DataPointAesthetics): Color {
@@ -29,6 +31,16 @@ object HintColorUtil {
         return if (solid(color)) {
             color.changeAlpha(intAlpha)
         } else color
+    }
 
+    fun fromMappedColors(ctx: GeomContext): (DataPointAesthetics) -> List<Color> {
+        val isMappedColor = ctx.isMappedAes(Aes.COLOR)
+        val isMappedFill = ctx.isMappedAes(Aes.FILL)
+        return { p ->
+            listOfNotNull(
+                fromFill(p).takeIf { isMappedFill },
+                fromColor(p).takeIf { isMappedColor },
+            )
+        }
     }
 }

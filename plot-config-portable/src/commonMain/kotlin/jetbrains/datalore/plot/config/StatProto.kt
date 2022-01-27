@@ -12,29 +12,17 @@ import jetbrains.datalore.plot.config.Option.Stat.Bin
 import jetbrains.datalore.plot.config.Option.Stat.Bin2d
 import jetbrains.datalore.plot.config.Option.Stat.Boxplot
 import jetbrains.datalore.plot.config.Option.Stat.Contour
-import jetbrains.datalore.plot.config.Option.Stat.Corr
 import jetbrains.datalore.plot.config.Option.Stat.Density
 import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
 
 object StatProto {
 
-    internal fun defaultOptions(statName: String, geomKind: GeomKind): Map<String, Any> {
+    internal fun defaultOptions(
+        statName: String,
+        @Suppress("UNUSED_PARAMETER") geomKind: GeomKind
+    ): Map<String, Any> {
         return when (StatKind.safeValueOf(statName)) {
-            StatKind.CORR -> {
-                when (geomKind) {
-                    GeomKind.TILE -> mapOf<String, Any>(
-                        "size" to 0.0   // 'corr' is mapped to the outline color 'color' - avoid on 'tiles'.
-                    )
-                    GeomKind.POINT,
-                    GeomKind.TEXT -> mapOf<String, Any>(
-                        "size" to 0.8,
-                        "size_unit" to "x",
-                        "label_format" to ".2f"
-                    )
-                    else -> emptyMap()
-                }
-            }
             else -> emptyMap()
         }
     }
@@ -86,8 +74,6 @@ object StatProto {
             }
 
             StatKind.SMOOTH -> return configureSmoothStat(options)
-
-            StatKind.CORR -> return configureCorrStat(options)
 
             StatKind.BOXPLOT -> {
                 return Stats.boxplot(
@@ -144,31 +130,6 @@ object StatProto {
             polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStat.DEF_DEG),
             loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_LOESS_CRITICAL_SIZE),
             samplingSeed = options.getLongDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_SAMPLING_SEED)
-        )
-    }
-
-    private fun configureCorrStat(options: OptionsAccessor): CorrelationStat {
-        val correlationMethod = options.getString(Corr.METHOD)?.let {
-            when (it.lowercase()) {
-                "pearson" -> CorrelationStat.Method.PEARSON
-                else -> throw IllegalArgumentException("Unsupported correlation method: '$it'. Must be: 'pearson'")
-            }
-        }
-
-        val type = options.getString(Corr.TYPE)?.let {
-            when (it.lowercase()) {
-                "full" -> CorrelationStat.Type.FULL
-                "upper" -> CorrelationStat.Type.UPPER
-                "lower" -> CorrelationStat.Type.LOWER
-                else -> throw IllegalArgumentException("Unsupported matrix type: '$it'. Expected: 'full', 'upper' or 'lower'.")
-            }
-        }
-
-        return CorrelationStat(
-            correlationMethod = correlationMethod ?: CorrelationStat.DEF_CORRELATION_METHOD,
-            type = type ?: CorrelationStat.DEF_TYPE,
-            fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL, CorrelationStat.DEF_FILL_DIAGONAL),
-            threshold = options.getDoubleDef(Corr.THRESHOLD, CorrelationStat.DEF_THRESHOLD)
         )
     }
 

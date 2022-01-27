@@ -7,10 +7,12 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import jetbrains.datalore.plot.builder.scale.MapperProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
@@ -23,22 +25,23 @@ import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 abstract class PlotConfig(
-    opts: Map<String, Any>
+    opts: Map<String, Any>,
+    private val isClientSide: Boolean
 ) : OptionsAccessor(opts, DEF_OPTIONS) {
+
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
 
-    val scaleMap: TypedScaleMap
     protected val scaleConfigs: List<ScaleConfig<*>>
+    protected val mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>
+    protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>
+    protected val transformByAes: Map<Aes<*>, Transform>
 
     protected var sharedData: DataFrame
         private set
 
     val title: String?
         get() = getMap(TITLE)[TITLE_TEXT] as String?
-
-    protected open val isClientSide: Boolean
-        get() = false
 
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
@@ -63,17 +66,26 @@ abstract class PlotConfig(
 
         // build all scales
         val excludeStatVariables = !isClientSide
+
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        val scaleProviderByAes = PlotConfigUtil.createScaleProviders(
-            layerConfigs, scaleConfigs, excludeStatVariables
-        )
-        val transformsByAes = PlotConfigUtil.createTransforms(
-            layerConfigs, scaleProviderByAes, excludeStatVariables
+
+        mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
+            layerConfigs,
+            scaleConfigs,
+            excludeStatVariables
         )
 
-        // ToDo: First transform data then create scales.
-        scaleMap = PlotConfigUtil.createScales(
-            layerConfigs, transformsByAes, scaleProviderByAes, excludeStatVariables
+        scaleProviderByAes = PlotConfigScaleProviders.createScaleProviders(
+            layerConfigs,
+            scaleConfigs,
+            excludeStatVariables
+        )
+
+        transformByAes = PlotConfigTransforms.createTransforms(
+            layerConfigs,
+            scaleProviderByAes,
+            mapperProviderByAes,
+            excludeStatVariables
         )
 
         facets = if (has(FACET)) {
@@ -91,11 +103,13 @@ abstract class PlotConfig(
 
     fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
         // merge options by 'aes'
-        val mergedOpts = HashMap<Aes<*>, MutableMap<String, Any>>()
+        val mergedOpts = HashMap<Aes<Any>, MutableMap<String, Any>>()
         for (opts in scaleOptionsList) {
             @Suppress("UNCHECKED_CAST")
             val optsMap = opts as Map<String, Any>
-            val aes = ScaleConfig.aesOrFail(optsMap)
+
+            @Suppress("UNCHECKED_CAST")
+            val aes = ScaleConfig.aesOrFail(optsMap) as Aes<Any>
             if (!mergedOpts.containsKey(aes)) {
                 mergedOpts[aes] = HashMap()
             }
@@ -103,11 +117,9 @@ abstract class PlotConfig(
             mergedOpts[aes]!!.putAll(optsMap)
         }
 
-        val result = ArrayList<ScaleConfig<Any>>()
-        for (scaleOptions in mergedOpts.values) {
-            result.add(ScaleConfig(scaleOptions))
+        return mergedOpts.map { (aes, options) ->
+            ScaleConfig(aes, options)
         }
-        return result
     }
 
     private fun createLayerConfigs(sharedData: DataFrame): List<LayerConfig> {

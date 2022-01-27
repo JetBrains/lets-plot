@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
@@ -37,7 +37,7 @@ abstract class ColorBarComponentLayout(
         val targetRange = ClosedRange(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
         val mapper = Mappers.linear(domain, targetRange, reverse)
         breakInfos = breaks.transformedValues.map {
-            val tickLocation = mapper(it)
+            val tickLocation = mapper(it)!!
             createBreakInfo(tickLocation)
         }
         barBounds = DoubleRectangle(DoubleVector.ZERO, guideBarSize)
@@ -46,8 +46,10 @@ abstract class ColorBarComponentLayout(
     internal abstract fun createBreakInfo(tickLocation: Double): BreakInfo
 
     internal class BreakInfo(
-        val tickLocation: Double, val labelLocation: DoubleVector,
-        val labelHorizontalAnchor: TextLabel.HorizontalAnchor, val labelVerticalAnchor: TextLabel.VerticalAnchor
+        val tickLocation: Double,
+        val labelLocation: DoubleVector,
+        val labelHorizontalAnchor: Text.HorizontalAnchor,
+        val labelVerticalAnchor: Text.VerticalAnchor
     )
 
     private class HorizontalLayout(
@@ -76,8 +78,8 @@ abstract class ColorBarComponentLayout(
             return BreakInfo(
                 tickLocation,
                 labelLocation,
-                TextLabel.HorizontalAnchor.MIDDLE,
-                TextLabel.VerticalAnchor.TOP
+                Text.HorizontalAnchor.MIDDLE,
+                Text.VerticalAnchor.TOP
             )
         }
     }
@@ -112,8 +114,8 @@ abstract class ColorBarComponentLayout(
             return BreakInfo(
                 tickLocation,
                 labelLocation,
-                TextLabel.HorizontalAnchor.LEFT,
-                TextLabel.VerticalAnchor.CENTER
+                Text.HorizontalAnchor.LEFT,
+                Text.VerticalAnchor.CENTER
             )
         }
     }

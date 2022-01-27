@@ -8,8 +8,11 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.point.NamedShape
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.SmoothStat.Method
 import jetbrains.datalore.plot.base.stat.Stats
@@ -41,8 +44,18 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
     private fun createPlot(): PlotSvgComponent {
         val (scaleByAes, layers) = getLayersMpg()
+        val scaleMappersNP = layers
+            .map { it.scaleMapppersNP }
+            .reduce { sum, el -> sum + el }
 
-        val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), theme)
+        val assembler = PlotAssembler.singleTile(
+//            scaleByAes,
+            layers,
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            scaleMappersNP,
+            CoordProviders.cartesian(), theme
+        )
         assembler.title = "Loess Regression"
         assembler.disableInteractions()
         return assembler.createPlot()
@@ -62,17 +75,27 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .put(varOrigTarget, Iris.target.data)
             .build()
 
+        val colorScale = Scales.DemoAndTest.pureDiscrete<Double>(
+            Iris.target.name,
+            Iris.targetSet,
+//                    listOf(Color.RED, Color.GREEN, Color.BLUE),
+//                    Color.GRAY
+        )
+        val colorMapper = Mappers.discrete(
+            colorScale.transform as DiscreteTransform,
+            listOf(Color.RED, Color.GREEN, Color.BLUE), Color.GRAY
+        )
+
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(Iris.sepalLength.name),
-                Aes.Y to Scales.continuousDomainNumericRange(Iris.sepalWidth.name),
-                Aes.COLOR to Scales.pureDiscrete(
-                    Iris.target.name,
-                    Iris.targetSet,
-                    listOf(Color.RED, Color.GREEN, Color.BLUE),
-                    Color.GRAY
-                )
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalLength.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalWidth.name),
+                Aes.COLOR to colorScale
             )
+        )
+
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.COLOR to colorMapper
         )
 
         val scatterLayer = GeomLayerBuilder.demoAndTest()
@@ -97,7 +120,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                     Aes.COLOR
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
 
         // Smooth stat (regression)
@@ -124,7 +147,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                     Aes.COLOR
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
@@ -143,8 +166,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(AutoMpg.horsepower.name),
-                Aes.Y to Scales.continuousDomainNumericRange(AutoMpg.mpg.name)
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.horsepower.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.mpg.name)
             )
         )
 
@@ -164,7 +187,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                     Aes.Y
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
 
         // Smooth stat (regression)
@@ -185,7 +208,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                     Aes.Y
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
@@ -204,17 +227,28 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .put(varOrigCut, Diamonds.cut.data)
             .build()
 
+        val colorScale = Scales.DemoAndTest.pureDiscrete<Double>(
+            Diamonds.cut.name,
+            Diamonds.cutSet,
+//                    listOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE),
+//                    Color.GRAY
+        )
+        val colorMapper = Mappers.discrete(
+            colorScale.transform as DiscreteTransform,
+            listOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE),
+            Color.GRAY
+        )
+
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange(Diamonds.carat.name),
-                Aes.Y to Scales.continuousDomainNumericRange(Diamonds.price.name),
-                Aes.COLOR to Scales.pureDiscrete(
-                    Diamonds.cut.name,
-                    Diamonds.cutSet,
-                    listOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE),
-                    Color.GRAY
-                )
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.carat.name),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.price.name),
+                Aes.COLOR to colorScale
             )
+        )
+
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.COLOR to colorMapper
         )
 
         val scatterLayer = GeomLayerBuilder.demoAndTest()
@@ -239,7 +273,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                     Aes.COLOR
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
 
         // Smooth stat (regression)
@@ -266,7 +300,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                     Aes.COLOR
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
@@ -287,8 +321,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("x"),
-                Aes.Y to Scales.continuousDomainNumericRange("y")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("x"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("y")
             )
         )
 
@@ -311,7 +345,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .addConstantAes(Aes.SHAPE, NamedShape.FILLED_CIRCLE)
             .addConstantAes(Aes.FILL, Color.parseHex("#ffffbf"))
             .addConstantAes(Aes.COLOR, Color.LIGHT_GRAY)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
 
         val regressionLayerBuilder = GeomLayerBuilder.demoAndTest()
@@ -334,16 +368,23 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         val defaultLoessLayer = regressionLayerBuilder
             .stat(Stats.smooth(smoothingMethod = Method.LOESS))
             .addConstantAes(Aes.COLOR, Color.BLUE)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         val accurateLoessLayer = regressionLayerBuilder
             .stat(Stats.smooth(smoothingMethod = Method.LOESS, span = 0.3))
             .addConstantAes(Aes.COLOR, Color.DARK_GREEN)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
 
         val layers = listOf(scatterLayer, defaultLoessLayer, accurateLoessLayer)
-        val assembler = PlotAssembler.singleTile(scaleByAes, layers, CoordProviders.cartesian(), theme)
+        val assembler = PlotAssembler.singleTile(
+//            scaleByAes,
+            layers,
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            emptyMap(),
+            CoordProviders.cartesian(), theme
+        )
         assembler.title = "loess span=0.5(blue) and span=0.3(green)"
         assembler.disableInteractions()
         return assembler.createPlot()

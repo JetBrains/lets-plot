@@ -53,17 +53,20 @@ internal class ScaleConfigDiscreteScaleTest(
             )
         )
 
-        val scaleMap = TestUtil.buildPointLayer(data, mapping, scales = scales).scaleMap
-        val scale = scaleMap[Aes.COLOR]
+        val geomLayer = TestUtil.buildPointLayer(data, mapping, scales = scales)
+        val scale = geomLayer.scaleMap[Aes.COLOR]
         val scaleBreaks = scale.getScaleBreaks()
-        val mappedBreaks = ScaleUtil.map(scaleBreaks.transformedValues, scale)
+//        val mappedBreaks = ScaleUtil.map(scaleBreaks.transformedValues, scale)
+        val scaleMapper = geomLayer.scaleMapppersNP.getValue(Aes.COLOR)
+        val mappedBreaks = scaleBreaks.transformedValues.map { scaleMapper(it) }
 
         assertEquals(expectedLabels, scaleBreaks.labels)
         assertEquals(expectedBreaks, scaleBreaks.domainValues)
         assertEquals(expectedBreakColors, mappedBreaks, "[Break Colors]")
         assertEquals(
             expectedDataPointColors,
-            ScaleUtil.map(scale.applyTransform(CAT_DATA, true), scale),
+//            ScaleUtil.map(scale.applyTransform(CAT_DATA, true), scale),
+            ScaleUtil.applyTransform(CAT_DATA, scale.transform).map { scaleMapper(it) },
             "[Data Point Colors]"
         )
     }
@@ -110,9 +113,9 @@ internal class ScaleConfigDiscreteScaleTest(
                 ),
                 testParams(
                     limits = listOf("B", "C", "A"),  // reorder
-                    labels = listOf("A-lab", "B-lab", "C-lab"),
+                    labels = listOf("A-lab", "B-lab", "C-lab"), // labels without "defined" breaks.
                     expectedBreaks = listOf("B", "C", "A"),
-                    expectedLabels = listOf("B-lab", "C-lab", "A-lab"),
+                    expectedLabels = listOf("A-lab", "B-lab", "C-lab"), // limits do not change the labels order
 //                    expectedBreakColors = // colors order is not affected
                     expectedDataPointColors = getColors(
                         CAT_DATA.size,

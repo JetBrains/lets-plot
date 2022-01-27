@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -17,7 +18,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var myFlipped: Boolean = false
     private var myAesthetics: Aesthetics? = null
-    private var myAestheticMappers: Map<Aes<*>, (Double?) -> Any?>? = null
+    private var myAestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
     private var myAesBounds: DoubleRectangle? = null
     private var myGeomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
 
@@ -41,7 +42,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
-    override fun aestheticMappers(aestheticMappers: Map<Aes<*>, (Double?) -> Any?>): ImmutableGeomContext.Builder {
+    override fun aestheticMappers(aestheticMappers: Map<Aes<*>, ScaleMapper<*>>): ImmutableGeomContext.Builder {
         myAestheticMappers = aestheticMappers
         return this
     }
@@ -84,6 +85,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override fun getUnitResolution(aes: Aes<Double>): Double {
             val mapper = myAestheticMappers?.get(aes) ?: Mappers.IDENTITY
             return mapper(1.0) as Double
+        }
+
+        override fun isMappedAes(aes: Aes<*>): Boolean {
+            return myAestheticMappers?.containsKey(aes) ?: false
         }
 
         override fun getAesBounds(): DoubleRectangle {

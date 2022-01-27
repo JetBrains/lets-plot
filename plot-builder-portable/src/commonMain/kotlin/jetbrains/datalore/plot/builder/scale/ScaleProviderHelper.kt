@@ -23,19 +23,6 @@ object ScaleProviderHelper {
         return ScaleProviderBuilder(aes).build()
     }
 
-    fun <T> createDefault(aes: Aes<T>, name: String): ScaleProvider<T> {
-        return ScaleProviderBuilder(aes)
-            .name(name)
-            .build()
-    }
-
-    fun <T> create(name: String, aes: Aes<T>, mapperProvider: MapperProvider<T>): ScaleProvider<T> {
-        return ScaleProviderBuilder(aes)
-            .mapperProvider(mapperProvider)
-            .name(name)
-            .build()
-    }
-
     fun <T> createDateTimeScaleProvider(aes: Aes<T>, name: String): ScaleProvider<T> {
         return ScaleProviderBuilder(aes)
             .name(name)

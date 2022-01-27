@@ -47,6 +47,7 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         myCamera.isZoomLevelChanged = false
         myCamera.isZoomFractionChanged = false
         myCamera.isMoved = false
+        myCamera.canReset = context.initialZoom?.toDouble() != myCamera.zoom || context.initialPosition != myCamera.position
 
         if (myCamera.requestedAnimation == true) {
             val zoomDelta = myCamera.requestedZoom?.let { it - myCamera.zoom } ?: 0.0

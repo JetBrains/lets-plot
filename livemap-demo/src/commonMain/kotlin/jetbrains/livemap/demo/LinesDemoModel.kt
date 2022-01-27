@@ -16,7 +16,7 @@ class LinesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
-            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
+            devParams = DevParams(mapOf(DevParams.ENABLE_SCALING.key to true))
             val points = listOf<LonLatPoint>(
                 explicitVec(-110.0, 55.0),
                 explicitVec(-100.0, 45.0),

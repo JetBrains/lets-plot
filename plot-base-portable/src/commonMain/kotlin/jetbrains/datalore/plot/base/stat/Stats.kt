@@ -28,9 +28,6 @@ object Stats {
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
 
-    val CORR = DataFrame.Variable("..corr..", STAT, "corr")
-    val CORR_ABS = DataFrame.Variable("..corr_abs..", STAT, "corr_abs")
-
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
     val GROUP = DataFrame.Variable("..group..", STAT, "group")
@@ -54,8 +51,6 @@ object Stats {
             VIOLIN_WIDTH,
             SCALED,
             GROUP,
-            CORR,
-            CORR_ABS
         )
 
         val result = HashMap<String, DataFrame.Variable>()
@@ -132,20 +127,6 @@ object Stats {
             polynomialDegree = polynomialDegree,
             loessCriticalSize = loessCriticalSize,
             samplingSeed = samplingSeed
-        )
-    }
-
-    fun corr(
-        correlationMethod: CorrelationStat.Method = CorrelationStat.DEF_CORRELATION_METHOD,
-        type: CorrelationStat.Type = CorrelationStat.DEF_TYPE,
-        fillDiagonal: Boolean = CorrelationStat.DEF_FILL_DIAGONAL,
-        threshold: Double = CorrelationStat.DEF_THRESHOLD
-    ): CorrelationStat {
-        return CorrelationStat(
-            correlationMethod = correlationMethod,
-            type = type,
-            fillDiagonal = fillDiagonal,
-            threshold = threshold
         )
     }
 

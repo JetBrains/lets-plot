@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.C
 class DensityGeom : AreaGeom() {
 
     override fun setupTooltipParams(aes: DataPointAesthetics): TooltipParams {
-        return params().setColor(fromColor(aes))
+        return params().setMainColor(fromColor(aes))
     }
 
     companion object {

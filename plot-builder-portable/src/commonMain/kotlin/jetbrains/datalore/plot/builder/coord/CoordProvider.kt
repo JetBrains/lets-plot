@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
@@ -30,16 +31,24 @@ interface CoordProvider {
     fun buildAxisScaleX(
         scaleProto: Scale<Double>,
         domain: ClosedRange<Double>,
-        axisLength: Double,
         breaks: ScaleBreaks
     ): Scale<Double>
 
     fun buildAxisScaleY(
         scaleProto: Scale<Double>,
         domain: ClosedRange<Double>,
-        axisLength: Double,
         breaks: ScaleBreaks
     ): Scale<Double>
+
+    fun buildAxisXScaleMapper(
+        domain: ClosedRange<Double>,
+        axisLength: Double,
+    ): ScaleMapper<Double>
+
+    fun buildAxisYScaleMapper(
+        domain: ClosedRange<Double>,
+        axisLength: Double,
+    ): ScaleMapper<Double>
 
     fun adjustDomains(
         hDomain: ClosedRange<Double>,

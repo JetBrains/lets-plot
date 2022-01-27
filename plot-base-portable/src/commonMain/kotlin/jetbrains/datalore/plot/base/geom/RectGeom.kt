@@ -25,7 +25,8 @@ class RectGeom : GeomBase() {
             rectanglesHelper = helper,
             rectangleByDataPoint = Companion::rectangleByDataPoint,
             fillByDataPoint = HintColorUtil::fromFill,
-            tooltipKind = CURSOR_TOOLTIP
+            tooltipKind = CURSOR_TOOLTIP,
+            colorsByDataPoint= HintColorUtil.fromMappedColors(ctx)
         ).collectTo(ctx.targetCollector)
     }
 

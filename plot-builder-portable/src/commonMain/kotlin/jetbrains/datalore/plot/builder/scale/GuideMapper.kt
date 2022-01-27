@@ -5,11 +5,14 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.function.Function
+import jetbrains.datalore.plot.base.ScaleMapper
 
-interface GuideMapper<T> : Function<Double?, T?> {
-    /**
-     * @return TRUE if both, domain and range are continuous
-     */
+/**
+ * `isContinuous` is TRUE if both, domain and range are continuous.
+ */
+open class GuideMapper<TargetT>(
+    private val mapper: ScaleMapper<TargetT>,
     val isContinuous: Boolean
+) : ScaleMapper<TargetT> {
+    override fun invoke(v: Double?): TargetT? = mapper(v)
 }

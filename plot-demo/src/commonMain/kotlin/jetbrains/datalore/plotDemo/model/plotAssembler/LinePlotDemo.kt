@@ -9,7 +9,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotSvgComponent
@@ -54,8 +57,8 @@ open class LinePlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
             )
         )
 
@@ -75,10 +78,15 @@ open class LinePlotDemo : SimpleDemoBase() {
                     Aes.Y
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         val assembler = PlotAssembler.singleTile(
-            scaleByAes, listOf(layer), CoordProviders.cartesian(), theme
+//            scaleByAes,
+            listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            emptyMap(),
+            CoordProviders.cartesian(), theme
         )
         assembler.disableInteractions()
         return assembler.createPlot()
@@ -114,12 +122,27 @@ open class LinePlotDemo : SimpleDemoBase() {
             .put(varC, c)
             .build()
 
+        val colorScale = Scales.DemoAndTest.pureDiscrete<Double>(
+            "C",
+            listOf("F", "M"),
+//                    listOf(Color.RED, Color.BLUE),
+//                    Color.GRAY
+        )
+        val colorMapper = Mappers.discrete(
+            colorScale.transform as DiscreteTransform,
+            listOf(Color.RED, Color.BLUE), Color.GRAY
+        )
+
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B"),
-                Aes.COLOR to Scales.pureDiscrete("C", listOf("F", "M"), listOf(Color.RED, Color.BLUE), Color.GRAY)
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
+                Aes.COLOR to colorScale
             )
+        )
+
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.COLOR to colorMapper
         )
 
         val layer = with(GeomLayerBuilder.demoAndTest()) {
@@ -147,12 +170,15 @@ open class LinePlotDemo : SimpleDemoBase() {
                     Aes.COLOR
                 )
             )
-            build(data, scaleByAes)
+            build(data, scaleByAes, scaleMappersNP)
         }
 
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            scaleMappersNP,
             CoordProviders.cartesian(),
             theme
         )

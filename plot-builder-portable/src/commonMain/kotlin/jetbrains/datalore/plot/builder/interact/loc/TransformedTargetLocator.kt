@@ -45,8 +45,9 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
             hint.kind,
             safeConvertToPlotCoord(hint.coord)!!,
             convertToPlotDistance(hint.objectRadius),
-            hint.color,
-            hint.stemLength
+            hint.mainColor,
+            hint.stemLength,
+            hint.colors
         )
     }
 

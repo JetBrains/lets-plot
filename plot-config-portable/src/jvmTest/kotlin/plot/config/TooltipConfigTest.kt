@@ -863,7 +863,7 @@ class TooltipConfigTest {
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filterNot(DataPoint::isOutlier).map { Line(it.label, it.value) }
+            return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {

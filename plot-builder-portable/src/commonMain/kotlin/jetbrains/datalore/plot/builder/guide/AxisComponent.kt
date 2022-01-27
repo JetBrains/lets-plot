@@ -9,9 +9,10 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -50,29 +51,24 @@ class AxisComponent(
             }
         }
 
-        val l = length
         val x1: Double
         val y1: Double
         val x2: Double
         val y2: Double
-        val start: Double
-        val end: Double
+        val start = 0.0
+        val end: Double = length
         when (orientation) {
             Orientation.LEFT, Orientation.RIGHT -> {
+                x1 = 0.0
                 x2 = 0.0
-                x1 = x2
-                start = 0.0
                 y1 = start
-                end = l
                 y2 = end
             }
             Orientation.TOP, Orientation.BOTTOM -> {
-                start = 0.0
                 x1 = start
-                end = l
                 x2 = end
+                y1 = 0.0
                 y2 = 0.0
-                y1 = y2
             }
         }
 
@@ -110,39 +106,27 @@ class AxisComponent(
                 val labelsCleaner = TickLabelsCleaner(orientation.isHorizontal)
 
                 for ((i, br) in breaksData.majorBreaks.withIndex()) {
-                    val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
-                    val labelOffset = tickLabelBaseOffset().add(labelAdjustments.additionalOffset(i))
-                    val group = buildTick(
-                        label,
-                        labelOffset,
-                        skipLabel = !labelsCleaner.beforeAddLabel(br, labelAdjustments.rotationDegree),
-                        axisTheme
-                    )
+                    if (br >= start && br <= end) {
+                        val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
+                        val labelOffset = tickLabelBaseOffset().add(labelAdjustments.additionalOffset(i))
+                        val group = buildTick(
+                            label,
+                            labelOffset,
+                            skipLabel = !labelsCleaner.beforeAddLabel(br, labelAdjustments.rotationDegree),
+                            axisTheme
+                        )
 
-                    when (orientation) {
-                        Orientation.LEFT, Orientation.RIGHT -> transformTranslate(group, 0.0, br)
-                        Orientation.TOP, Orientation.BOTTOM -> transformTranslate(group, br, 0.0)
+                        when (orientation) {
+                            Orientation.LEFT, Orientation.RIGHT -> transformTranslate(group, 0.0, br)
+                            Orientation.TOP, Orientation.BOTTOM -> transformTranslate(group, br, 0.0)
+                        }
+
+                        rootElement.children().add(group)
                     }
-
-                    rootElement.children().add(group)
                 }
             }
 
             // Axis line
-//        val axisLine: SvgLineElement? =
-//            if (!hideAxisBreaks && axisTheme.showLine()) {
-//                SvgLineElement(x1, y1, x2, y2).apply {
-//                    strokeWidth().set(axisTheme.lineWidth())
-//                    strokeColor().set(axisTheme.lineColor())
-//                }
-//            } else {
-//                null
-//            }
-//
-//        if (axisLine != null) {
-//            rootElement.children().add(axisLine)
-//        }
-
             if (!hideAxisBreaks && axisTheme.showLine()) {
                 val axisLine = SvgLineElement(x1, y1, x2, y2).apply {
                     strokeWidth().set(axisTheme.lineWidth())
@@ -241,11 +225,6 @@ class AxisComponent(
         return g
     }
 
-
-//    private fun tickLabelDistance(): Double {
-//        return tickMarkLength() + tickMarkPadding.get()
-//    }
-
     private fun tickLabelBaseOffset(): DoubleVector {
         val distance = axisTheme.tickLabelDistance()
         return when (orientation) {
@@ -257,9 +236,6 @@ class AxisComponent(
     }
 
 
-    companion object {
-    }
-
     class BreaksData constructor(
         val majorBreaks: List<Double>,
         val majorLabels: List<String>,
@@ -270,6 +246,7 @@ class AxisComponent(
                 emptyList()
             } else {
                 // Default minor grid: a minor line in the middle between each pair of major lines.
+                @Suppress("NAME_SHADOWING")
                 val minorBreaks: MutableList<Double> = majorBreaks.subList(0, majorBreaks.size - 1)
                     .zip(majorBreaks.subList(1, majorBreaks.size))
                     .fold(ArrayList()) { l, pair ->
@@ -294,17 +271,17 @@ class AxisComponent(
 
     class TickLabelAdjustments(
         orientation: Orientation,
-        horizontalAnchor: TextLabel.HorizontalAnchor? = null,
-        verticalAnchor: TextLabel.VerticalAnchor? = null,
+        horizontalAnchor: Text.HorizontalAnchor? = null,
+        verticalAnchor: Text.VerticalAnchor? = null,
         val rotationDegree: Double = 0.0,
         private val additionalOffsets: List<DoubleVector>? = null
     ) {
-        val horizontalAnchor: TextLabel.HorizontalAnchor = horizontalAnchor ?: when (orientation) {
+        val horizontalAnchor: Text.HorizontalAnchor = horizontalAnchor ?: when (orientation) {
             Orientation.LEFT -> RIGHT
             Orientation.RIGHT -> LEFT
             Orientation.TOP, Orientation.BOTTOM -> MIDDLE
         }
-        val verticalAnchor: TextLabel.VerticalAnchor = verticalAnchor ?: when (orientation) {
+        val verticalAnchor: Text.VerticalAnchor = verticalAnchor ?: when (orientation) {
             Orientation.LEFT, Orientation.RIGHT -> CENTER
             Orientation.TOP -> BOTTOM
             Orientation.BOTTOM -> TOP

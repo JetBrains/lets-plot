@@ -14,7 +14,7 @@ import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.onEachEntity
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.basemap.BasemapCellComponent
 import jetbrains.livemap.mapengine.basemap.BasemapTileComponent

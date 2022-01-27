@@ -53,13 +53,16 @@ class DiscreteScaleForContinuousVarTest {
         val plotConfigClientSide = assertClientWontFail(opts1)
         assertEquals(1, plotConfigClientSide.layerConfigs.size.toLong())
 
-        val scale = plotConfigClientSide.scaleMap[Aes.FILL]
+//        val scale = plotConfigClientSide.scaleMap[Aes.FILL]
+        val mapper = plotConfigClientSide.mappersByAesNP.getValue(Aes.FILL)
 
         // this is discrete scale so input value for mapper is index
         // ..count.. [0] = 2   (two lunched)
         // ..count.. [1] = 3   (three dinners)
-        val color0 = scale.mapper(0.0)
-        val color1 = scale.mapper(1.0)
+//        val color0 = scale.mapper(0.0)
+//        val color1 = scale.mapper(1.0)
+        val color0 = mapper(0.0)
+        val color1 = mapper(1.0)
 
         assertEquals(Color.BLACK, color0)
         assertEquals(Color.WHITE, color1)

@@ -36,7 +36,6 @@ class Corr {
                   "type": null,
                   "diag": null
                 },
-                "tile_params": null,
                 "label_params": {
                   "type": null,
                   "diag": null
@@ -61,8 +60,6 @@ class Corr {
     "e": [ 0.738, 0.171, -0.11, -0.30, -1.47, -0.71, -0.46, 1.057, 0.343, -1.76],
     "f": [ 0.324, -0.38, -0.67, 0.611, 1.030, 0.931, -0.83, -0.30, 0.331, 0.975]
   },
-  "layers": [],
-  "scales": [],
   "bistro": {
       "name": "corr",
       "show_legend": true,
@@ -75,7 +72,7 @@ class Corr {
 }            
         """.trimIndent()
 
-        return parsePlotSpec(spec).apply { put("data", AutoMpg.df) }
+        return parsePlotSpec(spec)
     }
 
     private fun withThreshold(): MutableMap<String, Any> {
@@ -91,20 +88,15 @@ class Corr {
     "e": [ 0.738, 0.171, -0.11, -0.30, -1.47, -0.71, -0.46, 1.057, 0.343, -1.76],
     "f": [ 0.324, -0.38, -0.67, 0.611, 1.030, 0.931, -0.83, -0.30, 0.331, 0.975]
   },
-  "layers": [],
-  "scales": [],
   "bistro": {
       "name": "corr",
       "show_legend": true,
       "flip": false,
       "threshold": 0.63,
-      "point_params": null,
       "tile_params": {
         "type": null,
         "diag": false
-      },
-      "label_params": null,
-      "labels_map_size": null
+      }
   }  
 }            
         """.trimIndent()
@@ -115,127 +107,18 @@ class Corr {
     private fun complexMpg(): MutableMap<String, Any> {
         val spec = """
             {
-              "coord": { "name": "cartesian" },
-              "theme": {
-                "axis_title": { "name": "blank" },
-                "axis_line_x": { "name": "blank" },
-                "axis_line_y": { "name": "blank" },
-                "legend_title": { "name": "blank" }
-              },
               "ggsize": { "width": 400, "height": 300.0 },
               "ggtitle": { "text": "Tiles, points and labels" },
               "kind": "plot",
-              "scales": [
-                {
-                  "name": "",
-                  "aesthetic": "size",
-                  "na_value": 0,
-                  "guide": "none",
-                  "scale_mapper_kind": "identity"
-                },
-                {
-                  "name": "Corr",
-                  "aesthetic": "color",
-                  "breaks": [-1.0, -0.5, 0.0, 0.5, 1.0],
-                  "limits": [-1.0, 1.0],
-                  "na_value": "rgba(0,0,0,0)",
-                  "low": "red",
-                  "mid": "light_gray",
-                  "high": "blue",
-                  "midpoint": 0,
-                  "scale_mapper_kind": "color_gradient2"
-                },
-                {
-                  "name": "Corr",
-                  "aesthetic": "fill",
-                  "breaks": [-1.0, -0.5, 0.0, 0.5, 1.0],
-                  "limits": [-1.0, 1.0],
-                  "na_value": "rgba(0,0,0,0)",
-                  "low": "red",
-                  "mid": "light_gray",
-                  "high": "blue",
-                  "midpoint": 0,
-                  "scale_mapper_kind": "color_gradient2"
-                },
-                {
-                  "aesthetic": "x",
-                  "expand": [0, 0.1],
-                  "discrete": true,
-                  "reverse": false
-                },
-                {
-                  "aesthetic": "y",
-                  "expand": [0, 0.1],
-                  "discrete": true,
-                  "reverse": true
-                }
-              ],
-              "layers": [
-                {
-                  "geom": "tile",
-                  "stat": "corr",
-                  "show_legend": true,
-                  "sampling": "none",
-                  "tooltips": {
-                    "tooltip_formats": [
-                      {
-                        "field": "@..corr..",
-                        "format": ".2f"
-                      }
-                    ],
-                    "tooltip_lines": ["@..corr.."]
-                  },
-                  "data_meta": {},
-                  "size": 0.0,
-                  "width": 1.002,
-                  "height": 1.002,
-                  "type": "upper",
-                  "diag": false
-                },
-                {
-                  "geom": "point",
-                  "stat": "corr",
-                  "mapping": { "size": "..corr_abs.." },
-                  "show_legend": true,
-                  "sampling": "none",
-                  "tooltips": {
-                    "tooltip_formats": [
-                      {
-                        "field": "@..corr..",
-                        "format": ".2f"
-                      }
-                    ],
-                    "tooltip_lines": ["@..corr.."]
-                  },
-                  "data_meta": {},
-                  "size_unit": "x",
-                  "type": "lower",
-                  "diag": false
-                },
-                {
-                  "geom": "text",
-                  "stat": "corr",
-                  "mapping": { "size": "..corr_abs.." },
-                  "show_legend": true,
-                  "sampling": "none",
-                  "tooltips": {
-                    "tooltip_formats": [
-                      {
-                        "field": "@..corr..",
-                        "format": ".2f"
-                      }
-                    ],
-                    "tooltip_lines": ["@..corr.."]
-                  },
-                  "data_meta": {},
-                  "label_format": ".2f",
-                  "na_text": "",
-                  "size_unit": "x",
-                  "type": "lower",
-                  "diag": false,
-                  "color": "white"
-                }
-              ]
+              "bistro": {
+                  "name": "corr",
+                  "show_legend": false,
+                  "flip": false,
+                  "point_params": {"type": "upper", "diag": false},
+                  "tile_params": {"type": "lower", "diag": false},
+                  "label_params": {"color": "black", "map_size": true, "diag": false},
+                  "labels_map_size": null
+              }
             }
         """.trimIndent()
 

@@ -9,10 +9,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.*
 

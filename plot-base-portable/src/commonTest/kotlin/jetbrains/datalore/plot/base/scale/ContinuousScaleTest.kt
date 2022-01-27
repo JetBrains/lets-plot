@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
 
 class ContinuousScaleTest {
     private fun createScale(): Scale<*> {
-        return Scales.continuousDomain("Test scale", Aes.X)
+        return Scales.DemoAndTest.continuousDomain("Test scale", Aes.X)
     }
 
     @Test
@@ -30,7 +30,8 @@ class ContinuousScaleTest {
         scale = scale.with()
             .multiplicativeExpand(multiplicativeExpand)
             .additiveExpand(additiveExpand)
-            .upperLimit(10.0)
+//            .upperLimit(10.0)
+            .continuousTransform(transWithLims(upper = 10.0))
             .build()
 
         assertEquals(multiplicativeExpand, scale.multiplicativeExpand, 0.0)
@@ -102,7 +103,8 @@ class ContinuousScaleTest {
                 return { "hi" }
             }
 
-            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) = labelFormatter(domain, targetCount)
+            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) =
+                labelFormatter(domain, targetCount)
         }
 
         fun actual(scale: Scale<*>): BreaksGenerator {
@@ -125,11 +127,12 @@ class ContinuousScaleTest {
     fun withDomainLimits() {
         var scale = createScale()
         scale = scale.with()
-            .lowerLimit(-10.0)
-            .upperLimit(10.0)
+//            .lowerLimit(-10.0)
+//            .upperLimit(10.0)
+            .continuousTransform(transWithLims(-10.0, 10.0))
             .build()
 
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, -10, 0.0, 10.0)
         assertValuesNotInLimits(scale, -11, 11.0)
     }
@@ -138,10 +141,11 @@ class ContinuousScaleTest {
     fun withDomainLimits_Lower() {
         var scale = createScale()
         scale = scale.with()
-            .lowerLimit(-10.0)
+//            .lowerLimit(-10.0)
+            .continuousTransform(transWithLims(lower = -10.0))
             .build()
 
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, -10, 0.0, 10.0, 11)
         assertValuesNotInLimits(scale, -11)
     }
@@ -150,10 +154,11 @@ class ContinuousScaleTest {
     fun withDomainLimits_Upper() {
         var scale = createScale()
         scale = scale.with()
-            .upperLimit(10.0)
+//            .upperLimit(10.0)
+            .continuousTransform(transWithLims(upper = 10.0))
             .build()
 
-        assertTrue(scale.hasDomainLimits())
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, -11, -10, 0.0, 10.0)
         assertValuesNotInLimits(scale, 11)
     }
@@ -162,15 +167,23 @@ class ContinuousScaleTest {
     fun withDomainLimits_SameInCopy() {
         var scale = createScale()
         scale = scale.with()
-            .lowerLimit(-10.0)
-            .upperLimit(10.0)
+//            .lowerLimit(-10.0)
+//            .upperLimit(10.0)
+            .continuousTransform(transWithLims(-10.0, 10.0))
             .build()
 
         scale as ContinuousScale
-        val domainLimits = scale.continuousDomainLimits
+//        val domainLimits = scale.continuousDomainLimits
+        val domainLimits = scale.transform.definedLimits()
 
         val copy = scale.with().build() as ContinuousScale
-        assertTrue(copy.hasDomainLimits())
-        assertEquals(domainLimits, copy.continuousDomainLimits)
+        assertTrue(copy.transform.hasDomainLimits())
+        assertEquals(domainLimits, copy.transform.definedLimits())
+    }
+
+    companion object {
+        private fun transWithLims(lower: Double? = null, upper: Double? = null): ContinuousTransform {
+            return Transforms.continuousWithLimits(Transforms.IDENTITY, Pair(lower, upper))
+        }
     }
 }

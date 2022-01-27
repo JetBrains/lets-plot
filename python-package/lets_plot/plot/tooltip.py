@@ -384,6 +384,8 @@ class layer_tooltips(FeatureSpec):
 
     def color(self, value):
         """
+        Function `color(value)` is deprecated.
+
         The color for the general tooltip.
 
         Parameters
@@ -413,5 +415,7 @@ class layer_tooltips(FeatureSpec):
                 geom_point(tooltips=layer_tooltips().line('(^x, ^y)')\\
                                                     .color('magenta'))
         """
+        print("WARN: The function color() is deprecated and is no longer supported.")
+
         self._tooltip_color = value
         return self

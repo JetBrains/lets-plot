@@ -15,7 +15,4 @@ class CanvasContainerPanel(size: Vector) : JLayeredPane() {
     }
 
     override fun isPaintingOrigin(): Boolean = true
-    override fun isOpaque(): Boolean {
-        return true
-    }
 }

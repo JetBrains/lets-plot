@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.assertion.assertEquals
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import jetbrains.datalore.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -16,7 +17,7 @@ class DiscreteScaleTest {
     fun withExpand() {
         val multiplicativeExpand = 0.777
         val additiveExpand = 777.0
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
+        var scale = Scales.DemoAndTest.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         scale = scale.with()
             .multiplicativeExpand(multiplicativeExpand)
             .additiveExpand(additiveExpand)
@@ -28,13 +29,13 @@ class DiscreteScaleTest {
 
     @Test
     fun withExpand_SameInCopy() {
-        val scale = Scales.discreteDomain<Any?>("Test scale", listOf("a", "b", "c"))
+        val scale = Scales.DemoAndTest.discreteDomain<Any?>("Test scale", listOf("a", "b", "c"))
         ScaleTestUtil.assertExpandValuesPreservedInCopy(scale)
     }
 
     @Test
     fun withTransform() {
-        val scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
+        val scale = Scales.DemoAndTest.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
         val t = Transforms.IDENTITY
 
         val scale1 = scale.with().continuousTransform(t).build()
@@ -43,117 +44,145 @@ class DiscreteScaleTest {
 
     @Test
     fun withDomainLimits() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
-        scale = scale.with()
-            .limits(listOf("b", "c", "d"))
-            .build()
-
-        assertTrue(scale.hasDomainLimits())
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale", listOf("a", "b", "c"),
+            domainLimits = listOf("b", "c", "d")
+        )
+        assertTrue(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
-        assertValuesNotInLimits(scale, "a", "d")
+//        assertValuesNotInLimits(scale, "a", "d")
+        assertValuesNotInLimits(scale, "a")
 
         assertTrue(scale.hasBreaks())
-        assertEquals(listOf("b", "c"), scale.getScaleBreaks().domainValues)
+//        assertEquals(listOf("b", "c"), scale.getScaleBreaks().domainValues)
+        assertEquals(listOf("b", "c", "d"), scale.getScaleBreaks().domainValues)
     }
 
     @Test
     fun withEmptyDomainLimits() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
-        scale = scale.with()
-            .limits(emptyList())
-            .build()
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale", listOf("a", "b", "c"),
+            domainLimits = emptyList()
+        )
 
-        assertFalse(scale.hasDomainLimits())
+        assertFalse(scale.transform.hasDomainLimits())
         assertValuesInLimits(scale, "a", "b", "c")
         assertValuesNotInLimits(scale, "d")
     }
 
     @Test
     fun withDomainLimits_SameInCopy() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
-        scale = scale.with()
-            .limits(listOf("b", "c", "d"))
-            .build()
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale",
+            listOf("a", "b", "c"),
+            domainLimits = listOf("b", "c", "d")
+        )
 
         val copy = scale.with().build()
-        assertTrue(copy.hasDomainLimits())
+        assertTrue(copy.transform.hasDomainLimits())
         assertValuesInLimits(scale, "b", "c")
-        assertValuesNotInLimits(scale, "a", "d")
+//        assertValuesNotInLimits(scale, "a", "d")
+        assertValuesNotInLimits(scale, "a")
     }
 
     @Test
     fun withDomainLimits_asNumbers() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
-        scale = scale.with()
-            .limits(listOf("b", "c", "d"))
-            .build()
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale", listOf("a", "b", "c"),
+            domainLimits = listOf("b", "c", "d")
+        )
 
         assertTrue(scale.hasBreaks())
         val actualBreaks = scale.getScaleBreaks().domainValues
-        assertEquals(listOf("b", "c"), actualBreaks)
-        assertEquals(listOf(0.0, 1.0), scale.transform.apply(actualBreaks))
+//        assertEquals(listOf("b", "c"), actualBreaks)
+        assertEquals(listOf("b", "c", "d"), actualBreaks)
+//        assertEquals(listOf(0.0, 1.0), scale.transform.apply(actualBreaks))
+        assertEquals(listOf(0.0, 1.0, 2.0), scale.transform.apply(actualBreaks))
     }
 
     @Test
     fun withDomainLimits_labels() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale", listOf("a", "b", "c"),
+            domainLimits = listOf("b", "c", "d")
+        )
         scale = scale.with()
-            .limits(listOf("b", "c", "d"))
             .labels(listOf("a-lab", "b-lab", "c-lab"))
             .build()
 
         assertTrue(scale.hasBreaks())
         val scaleBreaks = scale.getScaleBreaks()
-        assertEquals(listOf("b", "c"), scaleBreaks.domainValues)
-        assertEquals(listOf("b-lab", "c-lab"), scaleBreaks.labels)
+//        assertEquals(listOf("b", "c"), scaleBreaks.domainValues)
+        assertEquals(listOf("b", "c", "d"), scaleBreaks.domainValues)
+//        assertEquals(listOf("b-lab", "c-lab"), scaleBreaks.labels)
+        assertEquals(listOf("a-lab", "b-lab", "c-lab"), scaleBreaks.labels)
     }
 
     @Test
     fun withDomainLimits_reversed() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale", listOf("a", "b", "c"),
+            domainLimits = listOf("d", "c", "b")
+        )
         scale = scale.with()
-            .limits(listOf("d", "c", "b"))
             .labels(listOf("a-lab", "b-lab", "c-lab"))
             .build()
 
         assertTrue(scale.hasBreaks())
         val scaleBreaks = scale.getScaleBreaks()
-        assertEquals(listOf("c", "b"), scaleBreaks.domainValues)
-        assertEquals(listOf("c-lab", "b-lab"), scaleBreaks.labels)
+//        assertEquals(listOf("c", "b"), scaleBreaks.domainValues)
+        assertEquals(listOf("d", "c", "b"), scaleBreaks.domainValues)
+//        assertEquals(listOf("c-lab", "b-lab"), scaleBreaks.labels)
+        // The order is only preserved when breaks are manually specified.
+        assertEquals(listOf("a-lab", "b-lab", "c-lab"), scaleBreaks.labels)
     }
 
     @Test
     fun withDomainLimits_inverseTransform() {
-        var scale = Scales.discreteDomain<Any>("Test scale", listOf("a", "b", "c"))
-        scale = scale.with()
-            .limits(listOf("b", "c", "d"))
-            .build()
+        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+            "Test scale", listOf("a", "b", "c"),
+            domainLimits = listOf("b", "c", "d")
+        )
 
-        assertEquals("b", scale.transform.applyInverse(-1.0))
+//        assertEquals("b", scale.transform.applyInverse(-1.0))
+        assertNull(scale.transform.applyInverse(-0.6))
+        assertEquals("b", scale.transform.applyInverse(-0.5))
         assertEquals("b", scale.transform.applyInverse(0.0))
         assertEquals("b", scale.transform.applyInverse(0.4))
 
-        assertEquals("c", scale.transform.applyInverse(0.6))
+        assertEquals("c", scale.transform.applyInverse(0.5))
         assertEquals("c", scale.transform.applyInverse(1.0))
-        assertEquals("c", scale.transform.applyInverse(1.5))
+        assertEquals("c", scale.transform.applyInverse(1.4))
+//        assertEquals("c", scale.transform.applyInverse(1.5))
+
+        assertEquals("d", scale.transform.applyInverse(1.5))
+        assertEquals("d", scale.transform.applyInverse(2.0))
+        assertEquals("d", scale.transform.applyInverse(2.4))
+
+        assertNull(scale.transform.applyInverse(2.5))
     }
 
     @Test
     fun withDuplicatesInDomain() {
         val domainValues = listOf("a", "a", "b", "c")
-        val distinctDomainValues = ArrayList(LinkedHashSet(domainValues))
+        val scale = Scales.DemoAndTest.discreteDomain<String>("Test scale", domainValues)
 
-        var scale = Scales.discreteDomain<String>("Test scale", domainValues)
-        scale = scale.with()
-            .mapper(Mappers.discrete(distinctDomainValues, "?"))
+//        val outputValues = domainValues.distinct()
+//        val mapper = Mappers.discrete(
+//            discreteTransform = scale.transform as DiscreteTransform,
+//            outputValues, "?"
+//        )
+
+        val scale2 = scale.with()
+//            .mapper(mapper)
             .build()
 
-        val transform = scale.transform
+        val transform = scale2.transform
         val transformedValues = transform.apply(domainValues)
         assertEquals(listOf(0.0, 0.0, 1.0, 2.0), transformedValues)
 
-        val mapper = scale.mapper
-        val domainValues2 = transformedValues.map(mapper)
-        assertEquals(domainValues, domainValues2)
+//        val mapper2 = scale2.mapper
+//        val domainValues2 = transformedValues.map(mapper2)
+//        assertEquals(domainValues, domainValues2)
     }
 }

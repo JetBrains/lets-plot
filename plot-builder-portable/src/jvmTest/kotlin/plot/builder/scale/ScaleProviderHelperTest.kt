@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
 import kotlin.test.Test
 
 class ScaleProviderHelperTest {
@@ -18,6 +19,9 @@ class ScaleProviderHelperTest {
             .put(region, listOf("Europe", "Asia", null, "Australia"))
             .build()
 
-        ScaleProviderHelper.createDefault(Aes.HJUST).createScale("region", df.distinctValues(region))
+        ScaleProviderHelper.createDefault(Aes.HJUST).createScale(
+            "region",
+            DiscreteTransform(df.distinctValues(region), emptyList())
+        )
     }
 }

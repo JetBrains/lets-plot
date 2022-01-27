@@ -12,7 +12,7 @@ import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.PathRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerGroup
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedGeocodeLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent

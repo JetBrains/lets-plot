@@ -11,9 +11,9 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
-import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
-import jetbrains.livemap.core.rendering.primitives.RenderObject
+import jetbrains.livemap.core.graphics.RenderObject
+import jetbrains.livemap.core.layers.CanvasLayerComponent
+import jetbrains.livemap.core.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.mapengine.camera.CameraComponent
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent

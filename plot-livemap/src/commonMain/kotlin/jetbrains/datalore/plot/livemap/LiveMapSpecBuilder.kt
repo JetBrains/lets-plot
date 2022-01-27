@@ -129,6 +129,7 @@ internal class LiveMapSpecBuilder {
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
             attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
+            showAdvancedActions = myLiveMapOptions.showAdvancedActions,
             cursorService = myCursorService,
             minZoom = minZoom,
             maxZoom = maxZoom,

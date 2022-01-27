@@ -13,7 +13,7 @@ import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontStyle
 import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontWeight
 import jetbrains.livemap.Client
-import jetbrains.livemap.core.rendering.TextMeasurer
+import jetbrains.livemap.core.graphics.TextMeasurer
 import kotlin.math.abs
 import kotlin.math.max
 

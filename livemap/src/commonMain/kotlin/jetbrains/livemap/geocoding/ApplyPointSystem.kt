@@ -9,7 +9,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
+import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.MapProjection
 

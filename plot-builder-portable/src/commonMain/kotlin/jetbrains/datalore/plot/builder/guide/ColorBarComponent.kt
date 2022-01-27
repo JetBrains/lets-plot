@@ -9,9 +9,8 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -33,7 +32,7 @@ class ColorBarComponent(
         val horizontal = layout.isHorizontal
         addColorBar(
             guideBarGroup,
-            spec.domain, spec.scale, spec.binCount, barBounds,
+            spec.domain, spec.scaleMapper, spec.binCount, barBounds,
             layout.barLengthExpand,
             horizontal, spec.reverse
         )
@@ -95,7 +94,7 @@ class ColorBarComponent(
     private fun addColorBar(
         g: SvgGElement,
         domain: ClosedRange<Double>,
-        scale: Scale<Color>,
+        mapper: ScaleMapper<Color>,
         numBins: Int,
         barBounds: DoubleRectangle,
         barLengthExpand: Double,
@@ -115,7 +114,7 @@ class ColorBarComponent(
             domainValues.reverse()
         }
 
-        val colors = ScaleUtil.map(domainValues, scale)
+        val colors = domainValues.map { mapper(it) }
         val barLength = when {
             horizontal -> barBounds.width
             else -> barBounds.height

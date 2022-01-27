@@ -60,7 +60,7 @@ internal open class FixedRatioCoordProvider(
             } else {
                 // adjust geom width
                 val w = geomSize.y * targetWidthToHeightRatio
-                val hDelta = geomSize.x - w
+//                val hDelta = geomSize.x - w
                 DoubleVector(w, geomSize.y)
             }
 

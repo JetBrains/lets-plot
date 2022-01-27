@@ -9,6 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
@@ -82,10 +84,16 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                 .put(varCI, listOf(3.190283, 2.797727, 1.899314, 1.964824, 1.799343, 3.43209))
                 .build()
 
-            val colorScale = Scales.discreteDomain(
+            val colorScale = Scales.DemoAndTest.pureDiscrete<Color>(
                 "Supplement",
-                data[varSupp].filterNotNull(),
-                Mappers.discrete(listOf(Color.ORANGE, Color.DARK_GREEN), Color.GRAY)
+                domainValues = data[varSupp].filterNotNull(),
+//                outputValues = listOf(Color.ORANGE, Color.DARK_GREEN),
+//                defaultOutputValue = Color.GRAY
+            )
+            val colorMapper = Mappers.discrete(
+                colorScale.transform as DiscreteTransform,
+                listOf(Color.ORANGE, Color.DARK_GREEN),
+                Color.GRAY
             )
 
 
@@ -106,12 +114,16 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
 
             val scaleByAes = TypedScaleMap(
                 mapOf(
-                    Aes.X to Scales.continuousDomainNumericRange("Dose (mg)"),
-                    Aes.Y to Scales.continuousDomainNumericRange("Tooth length"),
-                    Aes.YMIN to Scales.continuousDomainNumericRange("Y min"),
-                    Aes.YMAX to Scales.continuousDomainNumericRange("Y max"),
+                    Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("Dose (mg)"),
+                    Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Tooth length"),
+                    Aes.YMIN to Scales.DemoAndTest.continuousDomainNumericRange("Y min"),
+                    Aes.YMAX to Scales.DemoAndTest.continuousDomainNumericRange("Y max"),
                     Aes.COLOR to colorScale
                 )
+            )
+
+            val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+                Aes.COLOR to colorMapper
             )
 
 
@@ -151,7 +163,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                     layerBuilder.groupingVar(varSupp)
                 }
             }
-            val errorBarsLayer = layerBuilder.build(data, scaleByAes)
+            val errorBarsLayer = layerBuilder.build(data, scaleByAes, scaleMappersNP)
 
             //
             // lines layer
@@ -173,7 +185,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                     )
                 )
                 .addBinding(VarBinding(varSupp, Aes.COLOR))
-                .build(data, scaleByAes)
+                .build(data, scaleByAes, scaleMappersNP)
 
             //
             // points layer
@@ -196,18 +208,21 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                 )
                 .addBinding(VarBinding(varSupp, Aes.COLOR))
                 .addConstantAes(Aes.SIZE, 5.0)
-                .build(data, scaleByAes)
+                .build(data, scaleByAes, scaleMappersNP)
 
             //
             // Plot
             //
             val assembler = PlotAssembler.singleTile(
-                scaleByAes,
+//                scaleByAes,
                 listOf(
                     errorBarsLayer,
                     linesLayer,
                     pointsLayer
                 ),
+                scaleByAes.get(Aes.X),
+                scaleByAes.get(Aes.Y),
+                scaleMappersNP,
                 CoordProviders.cartesian(),
                 theme
             )

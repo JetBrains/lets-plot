@@ -19,14 +19,8 @@ open class DirectlyProportionalMapperProvider(
     private val max: Double,
     naValue: Double
 ) : ContinuousOnlyMapperProvider<Double>(naValue) {
-
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<Double> {
-        val dataMax = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans).upperEnd
+    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Double> {
+        val dataMax = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans).upperEnd
         return GuideMappers.continuousToContinuous(ClosedRange(0.0, dataMax), ClosedRange(0.0, max), naValue)
     }
 }

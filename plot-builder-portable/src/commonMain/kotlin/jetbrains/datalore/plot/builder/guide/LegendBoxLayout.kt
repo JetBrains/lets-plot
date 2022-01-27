@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
 abstract class LegendBoxLayout(
@@ -18,11 +18,11 @@ abstract class LegendBoxLayout(
     abstract val graphSize: DoubleVector
 
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
-    val titleHorizontalAnchor = TextLabel.HorizontalAnchor.LEFT
+    val titleHorizontalAnchor = Text.HorizontalAnchor.LEFT
     val titleVerticalAnchor = if (isHorizontal) {
-        TextLabel.VerticalAnchor.CENTER
+        Text.VerticalAnchor.CENTER
     } else {
-        TextLabel.VerticalAnchor.TOP
+        Text.VerticalAnchor.TOP
     }
 
     val titleLocation: DoubleVector

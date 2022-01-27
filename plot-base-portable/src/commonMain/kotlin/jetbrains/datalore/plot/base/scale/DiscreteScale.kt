@@ -17,12 +17,14 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     override val transform: Transform
         get() = discreteTransform
 
+    override val isContinuous: Boolean = false
+    override val isContinuousDomain: Boolean = false
+
     constructor(
         name: String,
-        domainValues: Collection<Any>,
-        mapper: ((Double?) -> T?)
-    ) : super(name, mapper, breaks = domainValues.toList()) {
-        discreteTransform = DiscreteTransform(domainValues, emptyList())
+        discreteTransform: DiscreteTransform,
+    ) : super(name, breaks = null) {
+        this.discreteTransform = discreteTransform
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for discrete scale.
@@ -31,42 +33,42 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     }
 
     private constructor(b: MyBuilder<T>) : super(b) {
-        discreteTransform = DiscreteTransform(b.myDomainValues, b.myDomainLimits)
+        discreteTransform = b.discreteTransform
     }
 
     override fun getBreaksGenerator(): BreaksGenerator {
         throw IllegalStateException("No breaks generator for discrete scale '$name'")
     }
 
-    override fun hasDomainLimits(): Boolean {
-        return discreteTransform.hasDomainLimits()
-    }
-
-    override fun isInDomainLimits(v: Any): Boolean {
-        return discreteTransform.isInDomain(v)
+    override fun hasBreaks(): Boolean {
+        // Discrete scale always has breaks: either "defined" or "effective domain".
+        return true
     }
 
     protected override fun getBreaksIntern(): List<Any> {
-        return if (!hasDomainLimits()) {
-            super.getBreaksIntern()
-        } else {
-            // Filter and preserve the order defined by limits.
+        return if (hasDefinedBreaks()) {
+            // Intersect, preserve the order in the 'domain'.
             val breaksSet = super.getBreaksIntern().toSet()
-            discreteTransform.domainLimits.filter { it in breaksSet }
+            discreteTransform.effectiveDomain.filter { it in breaksSet }
+        } else {
+            discreteTransform.effectiveDomain
         }
     }
 
-    override fun getLabelsIntern(): List<String> {
+    protected override fun getLabelsIntern(): List<String> {
         val labels = super.getLabelsIntern()
-        return if (!hasDomainLimits() || labels.isEmpty()) {
+        return if (!transform.hasDomainLimits() || labels.isEmpty()) {
+            labels
+        } else if (!hasDefinedBreaks()) {
             labels
         } else {
-            val breaks = super.getBreaksIntern()
-            val breakLabels = breaks.mapIndexed { i, _ -> labels[i % labels.size] }
+            // Associate 'defined labels' with 'defined breaks', then re-order according to the domain order.
+            val breaks = super.getBreaksIntern()  // Defined breaks!
+            val breakLabels = List(breaks.size) { i -> if (i < labels.size) labels[i] else "" }
 
-            // Filter and preserve the order defined by limits.
+            // Filter and preserve the order.
             val labelByBreak = breaks.zip(breakLabels).toMap()
-            discreteTransform.domainLimits
+            discreteTransform.effectiveDomain
                 .filter { labelByBreak.containsKey(it) }
                 .map { labelByBreak.getValue(it) }
         }
@@ -77,24 +79,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     }
 
     private class MyBuilder<T>(scale: DiscreteScale<T>) : AbstractBuilder<Any, T>(scale) {
-        internal val myDomainValues: Collection<Any> = scale.discreteTransform.domainValues
-        internal var myDomainLimits: List<Any> = scale.discreteTransform.domainLimits
+        internal val discreteTransform: DiscreteTransform = scale.discreteTransform
 
         override fun breaksGenerator(v: BreaksGenerator): Scale.Builder<T> {
             throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
-        override fun lowerLimit(v: Double): Scale.Builder<T> {
-            throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
-        override fun upperLimit(v: Double): Scale.Builder<T> {
-            throw IllegalStateException("Not applicable to scale with discrete domain")
-        }
-
-        override fun limits(domainValues: List<Any>): Scale.Builder<T> {
-            myDomainLimits = domainValues
-            return this
         }
 
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {

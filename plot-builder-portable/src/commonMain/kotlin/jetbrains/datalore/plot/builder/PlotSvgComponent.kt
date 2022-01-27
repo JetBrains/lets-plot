@@ -17,8 +17,8 @@ import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation

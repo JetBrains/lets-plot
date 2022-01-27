@@ -6,8 +6,8 @@ import jetbrains.datalore.jetbrains.livemap.Mocks
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.maps.Utils.quad
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
 import jetbrains.livemap.mapengine.camera.CameraInputSystem

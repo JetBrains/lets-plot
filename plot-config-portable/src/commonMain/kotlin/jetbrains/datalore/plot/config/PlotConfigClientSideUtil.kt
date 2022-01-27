@@ -39,8 +39,10 @@ object PlotConfigClientSideUtil {
     fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
         val assembler = PlotAssembler.multiTile(
-            config.scaleMap,
             layersByTile,
+            config.scaleMap.get(Aes.X),
+            config.scaleMap.get(Aes.Y),
+            config.mappersByAesNP,
             config.coordProvider,
             config.theme
         )
@@ -81,11 +83,15 @@ object PlotConfigClientSideUtil {
                             plotConfig.theme
                         )
 
-                    layerBuilders.add(createLayerBuilder(layerConfig, /*scaleProvidersMap,*/ geomInteraction))
+                    layerBuilders.add(createLayerBuilder(layerConfig, geomInteraction))
                 }
 
                 val layerTileData = tileDataByLayer[layerIndex]
-                val layer = layerBuilders[layerIndex].build(layerTileData, plotConfig.scaleMap)
+                val layer = layerBuilders[layerIndex].build(
+                    layerTileData,
+                    plotConfig.scaleMap,
+                    plotConfig.mappersByAesNP,
+                )
                 panelLayers.add(layer)
             }
             layersByTile.add(panelLayers)

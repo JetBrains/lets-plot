@@ -29,7 +29,6 @@ class TooltipSpecFactory(
         private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
-        private val myTooltipColor = contextualMapping.tooltipColor
         private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
@@ -43,7 +42,7 @@ class TooltipSpecFactory(
         private fun hitIndex() = myGeomTarget.hitIndex
         private fun tipLayoutHint() = myGeomTarget.tipLayoutHint
         private fun outlierHints() = myGeomTarget.aesTipLayoutHints
-        private fun hintColors() = myGeomTarget.aesTipLayoutHints.map { it.key to it.value.color }.toMap()
+        private fun hintColors() = myGeomTarget.aesTipLayoutHints.map { it.key to it.value.mainColor }.toMap()
 
         private fun outlierTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -58,8 +57,9 @@ class TooltipSpecFactory(
                         TooltipSpec(
                             layoutHint = hint,
                             lines = linesForAes,
-                            fill = hint.color ?: tipLayoutHint().color!!,
-                            isOutlier = true
+                            fill = hint.mainColor ?: tipLayoutHint().mainColor!!,
+                            isOutlier = true,
+                            markerColors = emptyList()
                         )
                     )
                 }
@@ -81,8 +81,9 @@ class TooltipSpecFactory(
                         TooltipSpec(
                             layoutHint = layoutHint,
                             lines = lines,
-                            fill = layoutHint.color!!,
-                            isOutlier = true
+                            fill = layoutHint.mainColor!!,
+                            isOutlier = true,
+                            markerColors = emptyList()
                         )
                     )
                 }
@@ -94,23 +95,20 @@ class TooltipSpecFactory(
             val generalDataPoints = generalDataPoints()
             val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
             val aesHintColors = hintColors()
-                .filterKeys { aes -> aes in generalDataPoints.map { it.aes } }
+                .filterKeys { aes -> aes in generalDataPoints.map(DataPoint::aes) }
             val colorFromHints = aesHintColors[Aes.Y] ?: aesHintColors.mapNotNull { it.value }.lastOrNull()
-            val tooltipColor = when {
-                myTooltipColor != null -> myTooltipColor
-                colorFromHints != null -> colorFromHints
-                else -> tipLayoutHint().color!!
-            }
+            val fill = colorFromHints ?: tipLayoutHint().mainColor!!
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(
                         tipLayoutHint(),
                         lines = generalLines,
-                        fill = tooltipColor,
+                        fill = fill,
                         isOutlier = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,
-                        isCrosshairEnabled = myIsCrosshairEnabled
+                        isCrosshairEnabled = myIsCrosshairEnabled,
+                        markerColors = tipLayoutHint().colors
                     )
                 )
             } else {

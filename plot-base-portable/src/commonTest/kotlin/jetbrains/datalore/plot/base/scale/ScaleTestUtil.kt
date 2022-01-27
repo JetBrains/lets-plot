@@ -15,9 +15,9 @@ internal object ScaleTestUtil {
         @Suppress("NAME_SHADOWING")
         var scale = scale
         scale = scale.with()
-                .multiplicativeExpand(0.777)
-                .additiveExpand(777.0)
-                .build()
+            .multiplicativeExpand(0.777)
+            .additiveExpand(777.0)
+            .build()
 
         val copy = scale.with().build()
         assertEquals(scale.multiplicativeExpand, copy.multiplicativeExpand, 0.0)
@@ -26,13 +26,15 @@ internal object ScaleTestUtil {
 
     fun assertValuesInLimits(scale: Scale<*>, vararg domainValues: Any) {
         for (v in domainValues) {
-            assertTrue(scale.isInDomainLimits(v), "Not in limits: $v")
+//            assertTrue(scale.isInDomainLimits(v), "Not in limits: $v")
+            assertTrue(scale.transform.isInDomain(v), "Not in limits: $v")
         }
     }
 
     fun assertValuesNotInLimits(scale: Scale<*>, vararg values: Any) {
         for (v in values) {
-            assertFalse(scale.isInDomainLimits(v), "In limits: $v")
+//            assertFalse(scale.isInDomainLimits(v), "In limits: $v")
+            assertFalse(scale.transform.isInDomain(v), "In limits: $v")
         }
     }
 }

@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 class AxisLabelsLayoutInfo private constructor(b: Builder) {
@@ -15,8 +15,8 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val bounds: DoubleRectangle?
     val smallFont: Boolean
     val labelAdditionalOffsets: List<DoubleVector>?
-    val labelHorizontalAnchor: TextLabel.HorizontalAnchor?
-    val labelVerticalAnchor: TextLabel.VerticalAnchor?
+    val labelHorizontalAnchor: Text.HorizontalAnchor?
+    val labelVerticalAnchor: Text.VerticalAnchor?
     val labelRotationAngle: Double
     internal val isOverlap: Boolean
 
@@ -41,8 +41,8 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
         internal var mySmallFont: Boolean = false
         internal var myOverlap: Boolean = false
         internal var myLabelAdditionalOffsets: List<DoubleVector>? = null
-        internal var myLabelHorizontalAnchor: TextLabel.HorizontalAnchor? = null
-        internal var myLabelVerticalAnchor: TextLabel.VerticalAnchor? = null
+        internal var myLabelHorizontalAnchor: Text.HorizontalAnchor? = null
+        internal var myLabelVerticalAnchor: Text.VerticalAnchor? = null
         internal var myLabelRotationAngle = 0.0
 
         fun breaks(breaks: ScaleBreaks): Builder {
@@ -70,12 +70,12 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun labelHorizontalAnchor(anchor: TextLabel.HorizontalAnchor): Builder {
+        fun labelHorizontalAnchor(anchor: Text.HorizontalAnchor): Builder {
             myLabelHorizontalAnchor = anchor
             return this
         }
 
-        fun labelVerticalAnchor(anchor: TextLabel.VerticalAnchor): Builder {
+        fun labelVerticalAnchor(anchor: Text.VerticalAnchor): Builder {
             myLabelVerticalAnchor = anchor
             return this
         }

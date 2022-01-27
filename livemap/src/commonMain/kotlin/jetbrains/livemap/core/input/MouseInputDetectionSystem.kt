@@ -9,10 +9,10 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.rendering.layers.CanvasLayer
-import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
-import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.layers.CanvasLayer
+import jetbrains.livemap.core.layers.CanvasLayerComponent
+import jetbrains.livemap.core.layers.LayersOrderComponent
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.camera.CameraComponent
 
 class MouseInputDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
@@ -93,7 +93,7 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
                 .let {
                     it != null
                         && myListeners.contains(type)
-                        && myClickable.rect.contains(it.location.toDoubleVector())
+                        && it.location.inside(myClickable)
                 }
         }
 

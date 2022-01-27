@@ -8,14 +8,19 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
@@ -40,12 +45,15 @@ class TooltipBox: SvgComponent() {
         UP,
         DOWN
     }
-
-    val contentRect get() = DoubleRectangle.span(DoubleVector.ZERO, myTextBox.dimension)
+    val contentRect get() = DoubleRectangle.span(
+        DoubleVector.ZERO,
+        myTextBox.dimension.add(DoubleVector(additionalIndentInContentRect, 0.0))
+    )
 
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
+    private val additionalIndentInContentRect get() = myPointerBox.colorBarIndent
 
     override fun buildComponent() {
         add(myPointerBox)
@@ -60,7 +68,9 @@ class TooltipBox: SvgComponent() {
         lines: List<TooltipSpec.Line>,
         style: String,
         rotate: Boolean,
-        tooltipMinWidth: Double? = null
+        tooltipMinWidth: Double? = null,
+        borderRadius: Double,
+        markerColors: List<Color>
     ) {
         addClassName(style)
         myTextBox.update(
@@ -70,27 +80,63 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth,
             rotate
         )
-        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, markerColors)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
         myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
         moveTo(tooltipCoord.x, tooltipCoord.y)
+        myTextBox.moveTo(additionalIndentInContentRect, 0.0)
     }
 
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
+        private val myColorBars = List(2) { SvgPathElement() }  // max two bars
         internal var pointerDirection: PointerDirection? = null
+        private var myBorderRadius = 0.0
+        var colorBarIndent = 0.0
 
         override fun buildComponent() {
             add(myPointerPath)
+            myColorBars.forEach { add(it) }
         }
 
-        internal fun updateStyle(fillColor: Color, borderColor: Color, strokeWidth: Double) {
+        private fun colorBarWidth(barsNum: Int): Double {
+            // make color bars wider if there are more than one
+            return COLOR_BAR_WIDTH * if (barsNum > 1) 1.4 else barsNum.toDouble()
+        }
+
+        internal fun updateStyle(
+            fillColor: Color,
+            borderColor: Color,
+            strokeWidth: Double,
+            borderRadius: Double,
+            markerColors: List<Color>
+        ) {
+            myBorderRadius = borderRadius
+
             myPointerPath.apply {
                 strokeColor().set(borderColor)
                 strokeOpacity().set(strokeWidth)
                 fillColor().set(fillColor)
+            }
+            myColorBars.forEachIndexed { index, bar ->
+                if (markerColors.size > index) {
+                    bar.fillOpacity().set(1.0)
+                    bar.fillColor().set(markerColors[index])
+                } else {
+                    bar.fillOpacity().set(0.0)
+                }
+            }
+
+            colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
+                if (colorBarNums > 0) {
+                    H_CONTENT_PADDING +
+                            colorBarNums * colorBarWidth(colorBarNums) +
+                            (colorBarNums - 1) * COLOR_BARS_MARGIN
+                } else {
+                    0.0
+                }
             }
         }
 
@@ -117,35 +163,85 @@ class TooltipBox: SvgComponent() {
 
                         fun lineToIf(p: DoubleVector, isTrue: Boolean) { if (isTrue) lineTo(p) }
 
+                        fun corner(controlStart: DoubleVector, controlEnd: DoubleVector, to: DoubleVector) {
+                            // todo parameters: (x, y, radiusX, radiusY)
+                            lineTo(controlStart)
+                            curveTo(controlStart, controlEnd, to)
+                        }
+
                         // start point
-                        moveTo(right, bottom)
+                        moveTo(right - myBorderRadius, bottom)
+
+                        // right-bottom
+                        corner(
+                            DoubleVector(right - myBorderRadius, bottom),
+                            DoubleVector(right, bottom),
+                            DoubleVector(right, bottom - myBorderRadius)
+                        )
 
                         // right side
                         lineTo(right, bottom + vertFootingIndent)
                         lineToIf(pointerCoord, pointerDirection == RIGHT)
                         lineTo(right, top - vertFootingIndent)
-                        lineTo(right, top)
+
+                        // right-top corner
+                        corner(
+                            DoubleVector(right, top + myBorderRadius),
+                            DoubleVector(right, top),
+                            DoubleVector(right - myBorderRadius, top)
+                        )
 
                         // top side
                         lineTo(right - horFootingIndent, top)
-                        lineToIf (pointerCoord, pointerDirection == UP)
+                        lineToIf(pointerCoord, pointerDirection == UP)
                         lineTo(left + horFootingIndent, top)
-                        lineTo(left, top)
+
+                        // left-top corner
+                        corner(
+                            DoubleVector(left + myBorderRadius, top),
+                            DoubleVector(left, top),
+                            DoubleVector(left, top + myBorderRadius)
+                        )
 
                         // left side
                         lineTo(left, top - vertFootingIndent)
-                        lineToIf (pointerCoord, pointerDirection == LEFT)
+                        lineToIf(pointerCoord, pointerDirection == LEFT)
                         lineTo(left, bottom + vertFootingIndent)
-                        lineTo(left, bottom)
 
-                        // bottom
+                        // left-bottom corner
+                        corner(
+                            DoubleVector(left, bottom - myBorderRadius),
+                            DoubleVector(left, bottom),
+                            DoubleVector(left + myBorderRadius, bottom)
+                        )
+
+                        // bottom side
                         lineTo(left + horFootingIndent, bottom)
-                        lineToIf (pointerCoord, pointerDirection == DOWN)
+                        lineToIf(pointerCoord, pointerDirection == DOWN)
                         lineTo(right - horFootingIndent, bottom)
-                        lineTo(right, bottom)
+                        lineTo(right - myBorderRadius, bottom)
                     }
                 }.build()
             )
+
+            val colorBars = myColorBars.filter { it.fillOpacity().get()!! > 0 }
+            val barWidth = colorBarWidth(colorBars.size)
+            colorBars
+                .forEachIndexed { index, bar ->
+                    // adjacent vertical bars
+                    bar.d().set(
+                        SvgPathDataBuilder().apply {
+                            with(contentRect) {
+                                val x = left + H_CONTENT_PADDING + index * (barWidth + COLOR_BARS_MARGIN)
+                                moveTo(x, top + V_CONTENT_PADDING)
+                                horizontalLineTo(x + barWidth)
+                                verticalLineTo(bottom - V_CONTENT_PADDING)
+                                horizontalLineTo(x)
+                                verticalLineTo(top + V_CONTENT_PADDING)
+                            }
+                        }.build()
+                    )
+                }
         }
 
         private fun calculatePointerFootingIndent(sideLength: Double): Double {
@@ -184,33 +280,53 @@ class TooltipBox: SvgComponent() {
         ) {
             myLinesContainer.children().clear()
 
-            val components: List<Pair<TextLabel?, TextLabel>> = lines.map { line ->
-                Pair(
-                    line.label?.let(::TextLabel),
-                    TextLabel(line.value)
-                )
-            }
-            // for labels
-            components.onEach { (labelComponent, _) ->
-                if (labelComponent != null) {
-                    labelComponent.textColor().set(labelTextColor)
-                    myLinesContainer.children().add(labelComponent.rootGroup)
-                }
-            }
-            // for values
-            components.onEach { (_, valueComponent) ->
-                valueComponent.textColor().set(valueTextColor)
-                myLinesContainer.children().add(valueComponent.rootGroup)
-            }
-
             // bBoxes
-            fun getBBox(text: String?, textLabel: TextLabel?): DoubleRectangle? {
+            fun getBBox(text: String?, textLabel: SvgComponent?): DoubleRectangle? {
                 if (textLabel == null || text.isNullOrBlank()) {
                     // also for blank string - Batik throws an exception for a text element with a blank string
                     return null
                 }
                 return textLabel.rootGroup.bBox
             }
+
+            val components: List<Pair<TextLabel?, MultilineLabel>> = lines.map { line ->
+                Pair(
+                    line.label?.let(::TextLabel),
+                    MultilineLabel(line.value, VALUE_LINE_MAX_LENGTH)
+                )
+            }
+            // for labels
+            components.onEach { (labelComponent, _) ->
+                if (labelComponent != null) {
+                    labelComponent.textColor().set(labelTextColor)
+                    labelComponent.setFontWeight("bold")
+                    myLinesContainer.children().add(labelComponent.rootGroup)
+                }
+            }
+            // for values
+            components.onEach { (_, valueComponent) ->
+                valueComponent.textColor().set(valueTextColor)
+                valueComponent.setX(0.0)
+                myLinesContainer.children().add(valueComponent.rootGroup)
+            }
+
+            // calculate heights of original value lines
+            val valueLineHeights = lines.map { line ->
+                val lineTextLabel = TextLabel(line.value)
+                with (myLinesContainer.children()) {
+                    add(lineTextLabel.rootGroup)
+                    val height = getBBox(line.value, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+                    remove(lineTextLabel.rootGroup)
+                    return@map height
+                }
+            }
+            // sef vertical shifts for tspan elements
+            valueLineHeights.zip(components).onEach { (height, component) ->
+                val (_, valueComponent) = component
+                valueComponent.setLineVerticalMargin(height + LINE_INTERVAL)
+            }
+
+            // bBoxes
             val rawBBoxes = lines.zip(components).map { (line, component) ->
                 val (labelComponent, valueComponent) = component
                 Pair(
@@ -223,8 +339,8 @@ class TooltipBox: SvgComponent() {
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
-            val defaultLineHeight = rawBBoxes.flatMap { it.toList().filterNotNull() }
-                .maxOfOrNull(DoubleRectangle::height) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+            val defaultLineHeight = (valueLineHeights + rawBBoxes.mapNotNull { it.first?.height }).maxOrNull()
+                ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             val labelWidths = lines.map { line ->
                 when {
@@ -274,10 +390,14 @@ class TooltipBox: SvgComponent() {
                 )
             }
 
+            // in case of multilines: increase the interval between text label and use left alignment
+            val hasMultiLines = components.any { it.second.isWrapped }
+            val textInterval = if (hasMultiLines) 4 * LINE_INTERVAL else LINE_INTERVAL
+
             val textSize = components
                 .zip(lineBBoxes)
-                .fold(DoubleVector.ZERO) { textDimension, (lineInfo, bBoxes) ->
-                    val (labelComponent,valueComponent) = lineInfo
+                .fold(DoubleVector.ZERO, { textDimension, (lineInfo, bBoxes) ->
+                    val (labelComponent, valueComponent) = lineInfo
                     val (labelBBox, valueBBox) = bBoxes
 
                     // bBox.top is negative baseline of the text.
@@ -295,18 +415,24 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            valueComponent.x().set(maxLineWidth)
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                            if (hasMultiLines) {
+                                // Use left alignment
+                                valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
+                                valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
+                            } else {
+                                valueComponent.setX(maxLineWidth)
+                                valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
+                            }
                         }
                         valueBBox.dimension.x == maxLineWidth -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                            valueComponent.x().set(-valueBBox.left)
+                            valueComponent.setX(-valueBBox.left)
                         }
                         else -> {
                             // Move value to the center
-                            valueComponent.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                            valueComponent.x().set(maxLineWidth / 2)
+                            valueComponent.setX(maxLineWidth / 2)
+                            valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                         }
                     }
                     DoubleVector(
@@ -314,23 +440,24 @@ class TooltipBox: SvgComponent() {
                         y = valueComponent.y().get()!! + max(
                             valueBBox.height,
                             labelBBox.height
-                        ) + LINE_INTERVAL
+                        ) + textInterval
                     )
-                }.let { textSize ->
+                }).subtract(DoubleVector(0.0, textInterval)) // remove LINE_INTERVAL from last line
+                .let { textSize ->
                     if (rotate) {
                         components
                             .onEach { (labelComponent, valueComponent) ->
-                                labelComponent?.rotate(90.0)
                                 labelComponent?.y()?.set(-labelComponent.y().get()!!)
-                                labelComponent?.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                labelComponent?.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+                                labelComponent?.rotate(90.0)
 
                                 valueComponent.y().set(-valueComponent.y().get()!!)
-                                valueComponent.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                                valueComponent.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()
                     } else {
-                        textSize.subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                        textSize
                     }
                 }
 

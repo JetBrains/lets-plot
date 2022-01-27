@@ -234,17 +234,6 @@ object GeomInteractionUtil {
                 GeomKind.CONTOUR -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                 else -> {}
             }
-        } else if (statKind == StatKind.CORR) {
-            when (geomKind) {
-                GeomKind.POINT -> return builder
-                    .bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
-                    .ignoreInvisibleTargets(true)
-                GeomKind.TILE -> return builder
-                    .bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
-                    .showAxisTooltip(true)
-                    .ignoreInvisibleTargets(true)
-                else -> {}
-            }
         }
 
         when (geomKind) {

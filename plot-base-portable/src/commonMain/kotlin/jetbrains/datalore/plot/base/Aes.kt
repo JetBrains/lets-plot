@@ -62,7 +62,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val SPEED: Aes<Double> = Aes("speed")
         val FLOW: Aes<Double> = Aes("flow")
 
-        val LABEL: Aes<Any?> = Aes("label", false)
+        val LABEL: Aes<Any> = Aes("label", false)
         val FAMILY: Aes<String> = Aes("family", false)
         val FONTFACE: Aes<String> = Aes("fontface", false)
 
@@ -123,26 +123,25 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
             return aes == COLOR || aes == FILL
         }
 
-        fun isAffectingScaleX(aes: Aes<*>): Boolean {
-            return isPositionalX(aes) // && aes != XINTERCEPT
+        private fun affectingScaleX(aes: Aes<*>): Boolean {
+            return isPositionalX(aes)
         }
 
-        fun isAffectingScaleY(aes: Aes<*>): Boolean {
+        private fun affectingScaleY(aes: Aes<*>): Boolean {
             return isPositionalY(aes) &&
                     // "INTERCEPT" is "positional Y" because it must use the same 'mapper' as other "positional Y"-s,
                     // but its range of values is not taken in account when computing the Y-mapper.
-                    aes != INTERCEPT // &&
-//                    aes != YINTERCEPT
+                    aes != INTERCEPT
         }
 
         fun affectingScaleX(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             val numeric = numeric(unfiltered)
-            return numeric.filter { isAffectingScaleX(it) }
+            return numeric.filter { affectingScaleX(it) }
         }
 
         fun affectingScaleY(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             val numeric = numeric(unfiltered)
-            return numeric.filter { isAffectingScaleY(it) }
+            return numeric.filter { affectingScaleY(it) }
         }
 
         fun noGuideNeeded(aes: Aes<*>): Boolean {

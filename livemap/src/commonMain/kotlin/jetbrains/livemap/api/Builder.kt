@@ -21,12 +21,12 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.graphics.TextMeasurer
+import jetbrains.livemap.core.layers.LayerManager
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.projections.createArcPath
-import jetbrains.livemap.core.rendering.TextMeasurer
-import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
@@ -59,6 +59,8 @@ class LiveMapBuilder {
 
     var attribution: String? = null
 
+    var showAdvancedActions = false
+
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
 
@@ -84,6 +86,7 @@ class LiveMapBuilder {
             devParams = devParams,
 
             attribution = attribution,
+            showAdvancedActions = showAdvancedActions,
 
             // deprecated
             isClustering = false,

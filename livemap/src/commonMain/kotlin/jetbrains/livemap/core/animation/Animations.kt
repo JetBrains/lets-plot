@@ -40,7 +40,7 @@ object Animations {
         private var easingFunction = LINEAR
         private var loop = DISABLED
         private var direction = Direction.FORWARD
-        private var animators: ArrayList<Animator> = ArrayList()
+        private var animators: MutableList<Animator> = ArrayList()
 
         fun setEasingFunction(v: EasingFunction) = apply { easingFunction = v }
 
@@ -48,7 +48,7 @@ object Animations {
 
         fun setDirection(v: Direction) = apply { direction = v }
 
-        fun setAnimator(v: Animator) = apply { animators = listOf(v) as ArrayList<Animator> }
+        fun setAnimator(v: Animator) = apply { animators = mutableListOf(v) }
 
         fun setAnimators(v: Collection<Animator>) = apply { animators = ArrayList(v) }
 

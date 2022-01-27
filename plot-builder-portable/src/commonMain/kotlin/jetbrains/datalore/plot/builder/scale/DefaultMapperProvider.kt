@@ -46,9 +46,12 @@ import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
-import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
+//import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createWithDiscreteOutput
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -107,7 +110,7 @@ object DefaultMapperProvider {
             this.put(MIDDLE, NUMERIC_IDENTITY)
             this.put(UPPER, NUMERIC_IDENTITY)
 
-            this.put(MAP_ID, createObjectIdentityDiscrete(MAP_ID))
+            this.put(MAP_ID, createObjectIdentity(MAP_ID))
             this.put(FRAME, createStringIdentity(FRAME))
 
             this.put(SPEED, NUMERIC_IDENTITY)
@@ -123,10 +126,10 @@ object DefaultMapperProvider {
             this.put(FONTFACE, createStringIdentity(FONTFACE))
 
             // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)
-            this.put(HJUST, createObjectIdentityDiscrete(HJUST))
+            this.put(HJUST, createObjectIdentity(HJUST))
 
             // text vertical justification (numbers [0..1] or predefined strings, not positional)
-            this.put(VJUST, createObjectIdentityDiscrete(VJUST))
+            this.put(VJUST, createObjectIdentity(VJUST))
             this.put(ANGLE, NUMERIC_IDENTITY)
 
             this.put(SYM_X, NUMERIC_IDENTITY)
@@ -147,31 +150,27 @@ object DefaultMapperProvider {
         }
 
         companion object {
-            // For most of numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
+            // For most numeric (positional) aesthetics the initial mapper is UNDEFINED mapper as we don't yet know the range of positional aesthetics.
             private val NUMERIC_UNDEFINED: MapperProvider<Double> = object : MapperProvider<Double> {
-                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
-                    return GuideMappers.UNDEFINED
+                override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Double> {
+                    return Mappers.NUMERIC_UNDEFINED
                 }
 
                 override fun createContinuousMapper(
                     domain: ClosedRange<Double>,
-                    lowerLimit: Double?,
-                    upperLimit: Double?,
                     trans: ContinuousTransform
                 ): GuideMapper<Double> {
-                    return GuideMappers.UNDEFINED
+                    return GuideMappers.NUMERIC_UNDEFINED
                 }
             }
 
             private val NUMERIC_IDENTITY: MapperProvider<Double> = object : MapperProvider<Double> {
-                override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Double> {
-                    return GuideMappers.IDENTITY
+                override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Double> {
+                    return Mappers.IDENTITY
                 }
 
                 override fun createContinuousMapper(
                     domain: ClosedRange<Double>,
-                    lowerLimit: Double?,
-                    upperLimit: Double?,
                     trans: ContinuousTransform
                 ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY

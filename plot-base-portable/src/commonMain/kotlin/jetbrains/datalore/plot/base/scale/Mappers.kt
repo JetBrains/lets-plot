@@ -7,51 +7,62 @@ package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.round
 
 object Mappers {
-    val IDENTITY = { v: Double? -> v }
+    val IDENTITY = object : ScaleMapper<Double> {
+        override fun invoke(v: Double?): Double? = v
+    }
 
-    fun <T> undefined(): (Double?) -> T = { throw IllegalStateException("Undefined mapper") }
+    val NUMERIC_UNDEFINED: ScaleMapper<Double> = undefined<Double>()
 
-    fun <T> nullable(f: (Double?) -> T, ifNull: T): (Double?) -> T {
-        return { n ->
-            if (n == null) {
-                ifNull
-            } else {
-                f(n)
+    fun <T> undefined(): ScaleMapper<T> = object : ScaleMapper<T> {
+        override fun invoke(v: Double?): T? {
+            throw IllegalStateException("Undefined mapper")
+        }
+    }
+
+    fun <T> emptyDataMapper(label: String): ScaleMapper<T> {
+        // mapper for empty data is a special case - should never be used
+        return object : ScaleMapper<T> {
+            override fun invoke(v: Double?): T? {
+                throw throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v)
             }
         }
     }
 
-    fun constant(v: Double): (Double?) -> Double = { v }
+    fun <T> constant(constant: T): ScaleMapper<T> = object : ScaleMapper<T> {
+        override fun invoke(v: Double?): T? = constant
+    }
 
-    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): (Double?) -> Double? {
+    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): ScaleMapper<Double> {
         val factor = rangeSpan / (domain.upperEnd - domain.lowerEnd)
         check(!(factor.isInfinite() || factor.isNaN())) { "Can't create mapper with ratio: $factor" }
         return mul(factor)
     }
 
-    fun mul(factor: Double): (Double?) -> Double? {
-        return { v ->
-            if (v != null) {
-                factor * v
-            } else null
+    fun mul(factor: Double): ScaleMapper<Double> {
+        return object : ScaleMapper<Double> {
+            override fun invoke(v: Double?): Double? {
+                return if (v != null) factor * v
+                else null
+            }
         }
     }
 
-    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, reverse: Boolean = false): (Double?) -> Double {
+    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, reverse: Boolean = false): ScaleMapper<Double> {
         return linear(
             domain,
             rangeLow = if (reverse) range.upperEnd else range.lowerEnd,
             rangeHigh = if (reverse) range.lowerEnd else range.upperEnd,
-            Double.NaN
+            null
         )
     }
 
-    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, defaultValue: Double): (Double?) -> Double {
+    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, defaultValue: Double): ScaleMapper<Double> {
         return linear(
             domain,
             range.lowerEnd,
@@ -64,8 +75,8 @@ object Mappers {
         domain: ClosedRange<Double>,
         rangeLow: Double,
         rangeHigh: Double,
-        defaultValue: Double
-    ): (Double?) -> Double {
+        defaultValue: Double?
+    ): ScaleMapper<Double> {
         val slop = (rangeHigh - rangeLow) / (domain.upperEnd - domain.lowerEnd)
         if (!SeriesUtil.isFinite(slop)) {
             // no slop
@@ -73,37 +84,47 @@ object Mappers {
             return constant(v)
         }
         val intersect = rangeLow - domain.lowerEnd * slop
-        return { input ->
-            if (SeriesUtil.isFinite(input))
-                input!! * slop + intersect
-            else
-                defaultValue
+        return object : ScaleMapper<Double> {
+            override fun invoke(v: Double?): Double? {
+                return if (v != null && v.isFinite())
+                    v * slop + intersect
+                else
+                    defaultValue
+            }
         }
     }
 
     fun discreteToContinuous(
-        domainValues: Collection<*>,
+        transformedDomain: List<Double>,
         outputRange: ClosedRange<Double>,
         naValue: Double
-    ): (Double?) -> Double? {
-        val numberByDomainValue =
-            MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
-        val dataRange = SeriesUtil.range(numberByDomainValue.values) ?: return IDENTITY
+    ): ScaleMapper<Double> {
+        val dataRange = SeriesUtil.range(transformedDomain) ?: return IDENTITY
         return linear(dataRange, outputRange, naValue)
     }
 
-    fun <T> discrete(outputValues: List<T?>, defaultOutputValue: T): (Double?) -> T? {
-        val f = DiscreteFun(outputValues, defaultOutputValue)
-        return { f.apply(it) }
+    fun <T> discrete(
+        discreteTransform: DiscreteTransform,
+        outputValues: List<T>,
+        defaultOutputValue: T?
+    ): ScaleMapper<T> {
+        return object : ScaleMapper<T> {
+            override fun invoke(v: Double?): T? {
+                // The input is a transformed domain value.
+                val domainValue = discreteTransform.applyInverse(v)
+                val index: Int = domainValue?.let { discreteTransform.indexOf(it) } ?: return defaultOutputValue
+                return outputValues[index % outputValues.size]
+            }
+        }
     }
 
     fun <T> quantized(
         domain: ClosedRange<Double>?,
         outputValues: Collection<T>,
         defaultOutputValue: T
-    ): (Double?) -> T {
+    ): ScaleMapper<T> {
         if (domain == null) {
-            return { defaultOutputValue }
+            return constant(defaultOutputValue)
         }
 
         // todo: extract quantizer
@@ -112,25 +133,10 @@ object Mappers {
         quantizer.range(outputValues)
 
         val f = QuantizedFun(quantizer, defaultOutputValue)
-        return { f.apply(it) }
-    }
-
-    private class DiscreteFun<T>(
-        private val myOutputValues: List<T?>,
-        private val myDefaultOutputValue: T
-    ) : Function<Double?, T?> {
-
-        override fun apply(value: Double?): T? {
-            if (!SeriesUtil.isFinite(value)) {
-                return myDefaultOutputValue
+        return object : ScaleMapper<T> {
+            override fun invoke(v: Double?): T? {
+                return f.apply(v)
             }
-            // ToDo: index-based discrete fun won't work for discrete numeric onput (see: MapperUtil#mapDiscreteDomainValuesToNumbers())
-            var index = round(value!!).toInt()
-            index %= myOutputValues.size
-            if (index < 0) {
-                index += myOutputValues.size
-            }
-            return myOutputValues[index]
         }
     }
 

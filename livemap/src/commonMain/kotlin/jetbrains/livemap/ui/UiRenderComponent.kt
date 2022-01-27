@@ -6,6 +6,12 @@
 package jetbrains.livemap.ui
 
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.core.rendering.primitives.RenderBox
+import jetbrains.livemap.core.graphics.RenderBox
 
-class UiRenderComponent(internal val renderBox: RenderBox) : EcsComponent
+class UiRenderComponent(
+    internal val renderBox: RenderBox
+) : EcsComponent {
+    val origin get() = renderBox.origin
+    val dimension get() = renderBox.dimension
+
+}

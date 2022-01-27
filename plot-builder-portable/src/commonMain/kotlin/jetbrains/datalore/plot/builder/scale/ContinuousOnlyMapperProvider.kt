@@ -5,11 +5,12 @@
 
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.scale.provider.MapperProviderBase
 
 abstract class ContinuousOnlyMapperProvider<T>(naValue: T) : MapperProviderBase<T>(naValue) {
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<T> {
-        val domainRepr = domainValues.joinToString(limit = 3) { "'$it'" }
-        throw IllegalStateException("[${this::class.simpleName}] Can't create mapper for discrete domain: $domainRepr")
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<T> {
+        throw IllegalStateException("[${this::class.simpleName}] Can't create mapper for discrete domain")
     }
 }

@@ -7,16 +7,18 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
@@ -25,7 +27,7 @@ open class BarPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<jetbrains.datalore.plot.builder.PlotSvgComponent> {
+    fun createPlots(): List<PlotSvgComponent> {
         return listOf(
             simple(),
             grouped(false),         // grouped, dodged
@@ -33,7 +35,7 @@ open class BarPlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): jetbrains.datalore.plot.builder.PlotSvgComponent {
+    private fun simple(): PlotSvgComponent {
         val count = 10
         val a = xValues(count)
         val b = DemoUtil.gauss(count, 12, 0.0, 1.0)
@@ -47,14 +49,14 @@ open class BarPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
             )
         )
 
-        val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val layer = GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
+            .geom(GeomProvider.bar())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
 //                .groupingVar(null)
             .addBinding(
@@ -70,14 +72,22 @@ open class BarPlotDemo : SimpleDemoBase() {
                 )
             )
             .addConstantAes(Aes.WIDTH, 0.75)
-            .build(data, scaleByAes)
-        val assembler = PlotAssembler.singleTile(scaleByAes, listOf(layer), CoordProviders.cartesian(), theme)
+            .build(data, scaleByAes, emptyMap())
+
+        val assembler = PlotAssembler.singleTile(
+//            scaleByAes,
+            listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            emptyMap(),
+            CoordProviders.cartesian(), theme
+        )
 
         assembler.disableInteractions()
         return assembler.createPlot()
     }
 
-    private fun grouped(stacked: Boolean): jetbrains.datalore.plot.builder.PlotSvgComponent {
+    private fun grouped(stacked: Boolean): PlotSvgComponent {
         //    boolean stacked = false;
         val count = 10
         //    int groupCount = 2;
@@ -103,21 +113,29 @@ open class BarPlotDemo : SimpleDemoBase() {
         else
             PosProvider.dodge()
 
+        val scaleColor = colorScale(
+            "C",
+            listOf("F", "M"),
+//                    listOf(Color.RED, Color.BLUE)
+        )
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B"),
-                Aes.FILL to colorScale(
-                    "C",
-                    listOf("F", "M"),
-                    listOf(Color.RED, Color.BLUE)
-                )
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
+                Aes.FILL to scaleColor
+            )
+        )
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.FILL to Mappers.discrete(
+                scaleColor.transform as DiscreteTransform,
+                listOf(Color.RED, Color.BLUE),
+                Color.GRAY
             )
         )
 
-        val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val layer = GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
+            .geom(GeomProvider.bar())
             .pos(pos)
             .groupingVar(varC)
             .addBinding(
@@ -139,11 +157,14 @@ open class BarPlotDemo : SimpleDemoBase() {
                 )
             )
             .addConstantAes(Aes.WIDTH, if (stacked) 0.75 else 0.9)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            scaleMappersNP,
             CoordProviders.cartesian(),
             theme
         )
@@ -160,8 +181,8 @@ open class BarPlotDemo : SimpleDemoBase() {
             return values
         }
 
-        private fun colorScale(name: String, domain: List<Any>, colors: List<Color>): Scale<Color> {
-            return Scales.pureDiscrete(name, domain, colors, Color.GRAY)
+        private fun colorScale(name: String, domain: List<Any>/*, colors: List<Color>*/): Scale<Color> {
+            return Scales.DemoAndTest.pureDiscrete(name, domain/*, colors, Color.GRAY*/)
         }
     }
 }

@@ -32,11 +32,6 @@ class DefaultTheme(
 
     override fun plot(): PlotTheme = plot
 
-    override fun multiTile(): Theme {
-        // The same for now.
-        return this
-    }
-
     companion object {
         fun minimal2() = DefaultTheme(ThemeValuesLPMinimal2().values)
     }

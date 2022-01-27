@@ -8,6 +8,8 @@ package jetbrains.datalore.plot.builder.scale.provider
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -47,23 +49,19 @@ class ColorBrewerMapperProvider(
         }
     }
 
-    override fun createDiscreteMapper(domainValues: Collection<*>): GuideMapper<Color> {
-        val colorScheme = colorScheme(true, domainValues.size)
-        val colors = colors(colorScheme, domainValues.size)
-        return GuideMappers.discreteToDiscrete(domainValues, colors, naValue)
+    override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
+        val n = discreteTransform.effectiveDomain.size
+        val colorScheme = colorScheme(true, n)
+        val colors = colors(colorScheme, n)
+        return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
 
-    override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
-        lowerLimit: Double?,
-        upperLimit: Double?,
-        trans: ContinuousTransform
-    ): GuideMapper<Color> {
+    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
         val colorScheme = colorScheme(false)
         val colors = colors(colorScheme, colorScheme.maxColors)
 
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, lowerLimit, upperLimit, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
         return GuideMappers.continuousToDiscrete(domain, colors, naValue)
     }
 

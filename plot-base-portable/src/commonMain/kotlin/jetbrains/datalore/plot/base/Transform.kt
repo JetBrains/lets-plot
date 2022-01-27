@@ -6,7 +6,16 @@
 package jetbrains.datalore.plot.base
 
 interface Transform {
-    fun apply(l: List<*>): List<Double?>
+    fun hasDomainLimits(): Boolean
+    fun isInDomain(v: Any?): Boolean
 
+    fun apply(l: List<*>): List<Double?>
     fun applyInverse(v: Double?): Any?
+    fun applyInverse(l: List<Double?>): List<Any?> {
+        return l.map { applyInverse(it) }
+    }
+
+    fun unwrap(): Transform {
+        return this
+    }
 }

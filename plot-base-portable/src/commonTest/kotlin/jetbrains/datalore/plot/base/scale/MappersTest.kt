@@ -8,8 +8,6 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.fail
 
 class MappersTest {
     private fun checkWithZeroDomain(rangeLow: Double, rangeHigh: Double) {
@@ -41,19 +39,19 @@ class MappersTest {
         assertEquals(naValue, mapper(Double.POSITIVE_INFINITY), 0.0)
     }
 
-    @Test
-    fun nullable() {
-        val expected = Any()
-        val notNullable = { n: Double? ->
-            if (n == null) {
-                fail("null argument not expected")
-            }
-            n
-        }
-
-        val result = Mappers.nullable(
-                notNullable,
-                expected)(null)
-        assertEquals(expected, result)
-    }
+//    @Test
+//    fun nullable() {
+//        val expected = Any()
+//        val notNullable = { n: Double? ->
+//            if (n == null) {
+//                fail("null argument not expected")
+//            }
+//            n
+//        }
+//
+//        val result = Mappers.nullable(
+//                notNullable,
+//                expected)(null)
+//        assertEquals(expected, result)
+//    }
 }

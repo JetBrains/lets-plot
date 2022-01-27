@@ -19,7 +19,7 @@ import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerGroup
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent

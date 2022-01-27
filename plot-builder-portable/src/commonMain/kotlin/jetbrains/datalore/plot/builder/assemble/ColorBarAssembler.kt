@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
@@ -20,6 +21,7 @@ class ColorBarAssembler(
     private val legendTitle: String,
     private val transformedDomain: ClosedRange<Double>,
     private val scale: Scale<Color>,
+    private val scaleMapper: ScaleMapper<Color>,
     private val theme: LegendTheme
 ) {
 
@@ -40,7 +42,7 @@ class ColorBarAssembler(
             legendTitle,
             transformedDomain,
             scaleBreaks,
-            scale,
+            scaleMapper,
             theme,
             colorBarOptions
         )
@@ -65,7 +67,7 @@ class ColorBarAssembler(
             title: String,
             transformedDomain: ClosedRange<Double>,
             breaks: ScaleBreaks,
-            scale: Scale<Color>,
+            scaleMapper: ScaleMapper<Color>,
             theme: LegendTheme,
             options: ColorBarOptions? = null
         ): ColorBarComponentSpec {
@@ -94,7 +96,7 @@ class ColorBarAssembler(
                 title,
                 transformedDomain,
                 breaks,
-                scale,
+                scaleMapper,
                 binCount = options?.binCount ?: DEF_NUM_BIN,
                 theme,
                 layout,

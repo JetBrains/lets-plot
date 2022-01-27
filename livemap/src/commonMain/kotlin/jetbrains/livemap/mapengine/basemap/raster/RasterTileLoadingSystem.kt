@@ -13,10 +13,10 @@ import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.setMicroThread
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.viewport.CellKey
