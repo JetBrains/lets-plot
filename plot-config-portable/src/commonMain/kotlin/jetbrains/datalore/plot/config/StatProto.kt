@@ -135,31 +135,6 @@ object StatProto {
     }
 
     private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
-        var bwValue: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
-        options[Density.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValue = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            }
-        }
-
-        val kernel = options.getString(Density.KERNEL)?.let {
-            DensityStatUtil.toKernel(it)
-        }
-
-        return YDensityStat(
-            bandWidth = bwValue,
-            bandWidthMethod = bwMethod,
-            adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
-            kernel = kernel ?: DensityStat.DEF_KERNEL,
-            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
-            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
-        )
-    }
-
-    private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
         val scale = options.getString(YDensity.SCALE)?.let {
             when (it.lowercase()) {
                 "area" -> YDensityStat.Scale.AREA

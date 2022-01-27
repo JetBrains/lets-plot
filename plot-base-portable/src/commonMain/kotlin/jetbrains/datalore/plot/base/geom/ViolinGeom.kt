@@ -153,7 +153,7 @@ class ViolinGeom : GeomBase() {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                TooltipParams.params().setColor(HintColorUtil.fromFill(multiPointData.aes)),
+                TooltipParams.params().setColors(listOf(HintColorUtil.fromFill(multiPointData.aes))),
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {

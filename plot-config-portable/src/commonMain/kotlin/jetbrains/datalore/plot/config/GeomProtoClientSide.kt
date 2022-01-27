@@ -200,7 +200,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
-            PROVIDER[GeomKind.VIOLIN] = GeomProvider.violin()
+            // violin - special case
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()
             PROVIDER[GeomKind.DENSITY] = GeomProvider.density()
