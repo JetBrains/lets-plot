@@ -37,7 +37,7 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH)
+        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }
@@ -129,7 +129,7 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ): (p: DataPointAesthetics) -> DoubleVector {
         return fun (p: DataPointAesthetics): DoubleVector {
-            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * sign * p.violinwidth()!!
+            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * sign * p.width()!! * p.violinwidth()!!
             val y = p.y()!!
             return DoubleVector(x, y)
         }

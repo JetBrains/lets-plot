@@ -12,6 +12,7 @@ class Violin {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             data132Violin(),
+            data132ViolinIdentity(),
             data132Boxplot(),
             data123Violin(),
         )
@@ -98,6 +99,29 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun data132ViolinIdentity(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [1, 1, 1, 3, 3, 3, 2, 2, 2]," +
+                "             'y': [4, 3, 2, 5, 4, 3, 3, 2, 1]," +
+                "             'vw': [0, 1, 0, 0, 1, 0, 0, 1, 0]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'stat': 'identity'" +
                 "               }" +
                 "             ]" +
                 "}"
