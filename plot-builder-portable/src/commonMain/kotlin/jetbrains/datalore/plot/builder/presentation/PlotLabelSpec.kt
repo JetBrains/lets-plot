@@ -16,7 +16,7 @@ enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Bo
     AXIS_TICK_SMALL(Plot.Axis.TICK_FONT_SIZE_SMALL.toDouble()),
     AXIS_TITLE(Plot.Axis.TITLE_FONT_SIZE.toDouble()),
 
-    LEGEND_TITLE(Defaults.Common.Legend.TITLE_FONT_SIZE.toDouble(), true),
+    LEGEND_TITLE(Defaults.Common.Legend.TITLE_FONT_SIZE.toDouble()),
     LEGEND_ITEM(Defaults.Common.Legend.ITEM_FONT_SIZE.toDouble());
 
     private val myLabelMetrics: LabelMetrics

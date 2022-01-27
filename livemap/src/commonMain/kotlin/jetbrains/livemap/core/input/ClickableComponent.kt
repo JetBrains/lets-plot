@@ -6,10 +6,17 @@
 package jetbrains.livemap.core.input
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.Vector
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.core.rendering.primitives.RenderBox
+import jetbrains.livemap.core.graphics.RenderBox
+import jetbrains.livemap.core.util.Geometries
 
 class ClickableComponent(private val myRenderBox: RenderBox) : EcsComponent {
     val rect
         get() = DoubleRectangle(myRenderBox.origin, myRenderBox.dimension)
+
+    val origin get() = myRenderBox.origin
+    val dimension get() = myRenderBox.dimension
 }
+
+fun Vector.inside(box: ClickableComponent) = Geometries.inside(x, y, box.origin, box.dimension)

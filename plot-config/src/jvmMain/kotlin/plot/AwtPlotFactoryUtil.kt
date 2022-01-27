@@ -9,10 +9,7 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
@@ -127,14 +124,15 @@ internal object AwtPlotFactoryUtil {
         val bunchComponent = DisposableJPanel(null)
 
         bunchComponent.border = null
-        bunchComponent.background = Colors.parseColor(Defaults.BACKDROP_COLOR).let {
-            Color(
-                it.red,
-                it.green,
-                it.blue,
-                it.alpha
-            )
-        }
+//        bunchComponent.background = Colors.parseColor(Defaults.BACKDROP_COLOR).let {
+//            Color(
+//                it.red,
+//                it.green,
+//                it.blue,
+//                it.alpha
+//            )
+//        }
+        bunchComponent.isOpaque = false
 
         for (plotInfo in plotInfos) {
             val plotComponent = buildPlotComponent(
@@ -216,11 +214,6 @@ internal object AwtPlotFactoryUtil {
         plotContainer.ensureContentBuilt()
         val svg = plotContainer.svg
 
-        if (plotContainer.isLiveMap) {
-            // Plot transparent for live-map base layer to be visible.
-            svg.addClass(Style.PLOT_TRANSPARENT)
-        }
-
         val plotComponent: JComponent = svgComponentFactory(svg)
 
         plotComponent.addMouseMotionListener(object : MouseAdapter() {
@@ -263,7 +256,6 @@ internal object AwtPlotFactoryUtil {
                     plotContainer.mouseEventPeer.dispatch(event, AwtEventUtil.translate(e))
                 }
             }
-
 
 
             override fun mousePressed(e: MouseEvent) {

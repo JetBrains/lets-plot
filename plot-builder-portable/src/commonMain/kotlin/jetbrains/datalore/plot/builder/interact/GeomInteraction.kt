@@ -98,7 +98,6 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 mappedTooltipLines,
                 tooltipProperties.anchor,
                 tooltipProperties.minWidth,
-                tooltipProperties.color,
                 ignoreInvisibleTargets,
                 hasGeneralTooltip,
                 hasAxisTooltip,

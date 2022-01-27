@@ -16,7 +16,7 @@ import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.PolygonRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerGroup
 import jetbrains.livemap.fragment.RegionBBoxComponent
 import jetbrains.livemap.fragment.RegionFragmentsComponent
 import jetbrains.livemap.fragment.RegionRenderer

@@ -140,7 +140,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     val labelFormat = opts[Text.LABEL_FORMAT] as? String
 
                     if (labelFormat != null) {
-                        geom.formatter = StringFormat.forOneArg(labelFormat)
+                        geom.formatter = StringFormat.forOneArg(labelFormat)::format
                     } else {
                         throw IllegalArgumentException("Expected: label_format = 'format string'")
                     }
@@ -200,6 +200,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
+            PROVIDER[GeomKind.VIOLIN] = GeomProvider.violin()
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()
             PROVIDER[GeomKind.DENSITY] = GeomProvider.density()

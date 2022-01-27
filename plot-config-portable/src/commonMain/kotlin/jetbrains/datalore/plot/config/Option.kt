@@ -57,6 +57,17 @@ object Option {
             const val ORDER_BY = "order_by"
             const val ORDER = "order"
         }
+
+        object SeriesAnnotation {
+            const val TAG = "series_annotations"
+            const val COLUMN = "column"
+            const val TYPE = "type"
+
+            object DateTime {
+                const val DATE_TIME = "datetime"
+                const val TIME_ZONE = "time_zone"
+            }
+        }
     }
 
     object GGBunch {
@@ -103,7 +114,6 @@ object Option {
         const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
-        const val TOOLTIP_COLOR = "tooltip_color"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
     }
@@ -187,6 +197,7 @@ object Option {
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
+            const val SHOW_ADVANCEDS_ACTIONS = "show_advanced_actions"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -292,6 +303,7 @@ object Option {
         const val DISCRETE_DOMAIN = "discrete"
         const val DISCRETE_DOMAIN_REVERSE = "reverse"
         const val DATE_TIME = "datetime"
+        const val TIME = "time"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
         const val FORMAT = "format"
@@ -462,7 +474,7 @@ object Option {
         private const val STEP = "step"
         private const val RECT = "rect"
         private const val SEGMENT = "segment"
-        private const val TEXT = "text"
+        const val TEXT = "text"
         private const val RASTER = "raster"
         const val IMAGE = "image"
 

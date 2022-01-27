@@ -5,29 +5,54 @@
 
 package jetbrains.datalore.plot.builder.layout
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
+import kotlin.math.max
 
 internal object XYPlotLayoutUtil {
     const val GEOM_MARGIN = 0.0          // min space around geom area
     private const val CLIP_EXTEND = 5.0
     val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
 
-    fun geomBounds(xAxisThickness: Double, yAxisThickness: Double, plotSize: DoubleVector): DoubleRectangle {
-        val marginLeftTop = DoubleVector(yAxisThickness, GEOM_MARGIN)
-        val marginRightBottom = DoubleVector(GEOM_MARGIN, xAxisThickness)
-        var geomSize = plotSize
+    fun liveMapGeomBounds(plotSize: DoubleVector): DoubleRectangle {
+        return subtractMargins(0.0, 0.0, plotSize)
+    }
+
+    private fun subtractMargins(
+        hAxisThickness: Double,
+        vAxisThickness: Double,
+        plotSize: DoubleVector
+    ): DoubleRectangle {
+        val marginLeftTop = DoubleVector(vAxisThickness, GEOM_MARGIN)
+        val marginRightBottom = DoubleVector(GEOM_MARGIN, hAxisThickness)
+
+        val geomSize = plotSize
             .subtract(marginLeftTop)
             .subtract(marginRightBottom)
 
-        if (geomSize.x < GEOM_MIN_SIZE.x) {
-            geomSize = DoubleVector(GEOM_MIN_SIZE.x, geomSize.y)
-        }
-        if (geomSize.y < GEOM_MIN_SIZE.y) {
-            geomSize = DoubleVector(geomSize.x, GEOM_MIN_SIZE.y)
-        }
-        return DoubleRectangle(marginLeftTop, geomSize)
+        return DoubleRectangle(
+            marginLeftTop,
+            DoubleVector(
+                max(geomSize.x, GEOM_MIN_SIZE.x),
+                max(geomSize.y, GEOM_MIN_SIZE.y)
+            )
+        )
+    }
+
+    fun geomBounds(
+        hAxisThickness: Double,
+        vAxisThickness: Double,
+        plotSize: DoubleVector,
+        hDomain: ClosedRange<Double>,
+        vDomain: ClosedRange<Double>,
+        coordProvider: CoordProvider
+    ): DoubleRectangle {
+        val geomBounds = subtractMargins(hAxisThickness, vAxisThickness, plotSize)
+        val geomSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomBounds.dimension)
+        return DoubleRectangle(geomBounds.origin, geomSizeAdjusted)
     }
 
     fun clipBounds(geomBounds: DoubleRectangle): DoubleRectangle {

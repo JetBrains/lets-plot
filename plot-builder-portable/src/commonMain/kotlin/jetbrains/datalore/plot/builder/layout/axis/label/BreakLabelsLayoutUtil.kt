@@ -34,6 +34,10 @@ internal object BreakLabelsLayoutUtil {
         while (breaks.size > maxCount) {
             val delta = max(1, (breaks.size - maxCount) / 2)
             count -= delta
+            if (count <= 1) {
+                breaks = breaksProvider.getBreaks(1, axisLength)
+                break
+            }
             breaks = breaksProvider.getBreaks(count, axisLength)
         }
         return breaks
@@ -106,7 +110,7 @@ internal object BreakLabelsLayoutUtil {
     fun applyLabelsOffset(
         labelsBounds: DoubleRectangle,
         offset: Double,
-        orientation: jetbrains.datalore.plot.builder.guide.Orientation
+        orientation: Orientation
     ): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
         var labelsBounds = labelsBounds

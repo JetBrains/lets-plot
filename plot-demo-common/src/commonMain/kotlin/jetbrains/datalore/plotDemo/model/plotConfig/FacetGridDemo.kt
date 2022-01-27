@@ -29,6 +29,15 @@ class FacetGridDemo {
             "x" to AutoMpg.cylinders.name,
             "x_format" to "{d} cyl"
         )
+
+        plotSpec["coord"] = mapOf(
+            "name" to "fixed",
+            "xlim" to listOf(100, 150),
+//            "ylim" to listOf(0, 50),
+        )
+
+        plotSpec["ggtitle"] = mapOf("text" to "coord_fixed")
+
         return plotSpec
     }
 
@@ -98,7 +107,7 @@ class FacetGridDemo {
         return plotSpec
     }
 
-    private fun numericFacetVariable() : MutableMap<String, Any> {
+    private fun numericFacetVariable(): MutableMap<String, Any> {
         val rnd = Random(0)
         val n = 100
         val x = (1..n).map() { rnd.nextDouble() }.joinToString { it.toString() }

@@ -45,7 +45,9 @@ class TooltipBoxTest {
                 strokeWidth = 1.0,
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
                 style = "anyStyle",
-                rotate = false
+                rotate = false,
+                borderRadius = 0.0,
+                markerColors = emptyList()
             )
         }
     }
@@ -71,7 +73,7 @@ class TooltipBoxTest {
     @Test
     fun verticalDirectionCases() {
         tooltipBox.apply {
-            setPosition(ZERO, wordSize.add(p(0.0, 10.0)), VERTICAL)
+            setPosition(ZERO, wordSize.add(p(0.0, 20.0)), VERTICAL)
             assertEquals(
                 pointerDirection,
                 TooltipBox.PointerDirection.DOWN,
@@ -92,7 +94,7 @@ class TooltipBoxTest {
     @Test
     fun horizontalDirectionCases() {
         tooltipBox.apply {
-            setPosition(ZERO, wordSize.add(p(10.0, 0.0)), HORIZONTAL)
+            setPosition(ZERO, wordSize.add(p(20.0, 0.0)), HORIZONTAL)
             assertEquals(
                 pointerDirection,
                 TooltipBox.PointerDirection.RIGHT,

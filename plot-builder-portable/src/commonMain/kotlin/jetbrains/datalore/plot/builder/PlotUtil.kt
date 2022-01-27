@@ -6,16 +6,11 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
-import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sign
 
 object PlotUtil {
@@ -32,207 +27,21 @@ object PlotUtil {
         })
     }
 
-    fun computeLayerDryRunXYRanges(
-        layer: GeomLayer, aes: Aesthetics
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
-        val geomCtx = GeomContextBuilder().aesthetics(aes).build()
-
-        val rangesAfterPosAdjustment =
-            computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
-        val (xRangeAfterSizeExpand, yRangeAfterSizeExpand) =
-            computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
-
-        var rangeX = rangesAfterPosAdjustment.first
-        if (rangeX == null) {
-            rangeX = xRangeAfterSizeExpand
-        } else if (xRangeAfterSizeExpand != null) {
-            rangeX = rangeX.span(xRangeAfterSizeExpand)
-        }
-
-        var rangeY = rangesAfterPosAdjustment.second
-        if (rangeY == null) {
-            rangeY = yRangeAfterSizeExpand
-        } else if (yRangeAfterSizeExpand != null) {
-            rangeY = rangeY.span(yRangeAfterSizeExpand)
-        }
-
-        return Pair(rangeX, rangeY)
-    }
-
-    private fun combineRanges(aesList: List<Aes<Double>>, aesthetics: Aesthetics): ClosedRange<Double>? {
-        var result: ClosedRange<Double>? = null
-        for (aes in aesList) {
-            val range = aesthetics.range(aes)
-            if (range != null) {
-                result = result?.span(range) ?: range
-            }
-        }
-        return result
-    }
-
-    private fun computeLayerDryRunXYRangesAfterPosAdjustment(
-        layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
-        val posAesX = Aes.affectingScaleX(layer.renderedAes())
-        val posAesY = Aes.affectingScaleY(layer.renderedAes())
-
-        val pos = createLayerPos(layer, aes)
-        if (pos.isIdentity) {
-            // simplified ranges
-            val rangeX = combineRanges(posAesX, aes)
-            val rangeY = combineRanges(posAesY, aes)
-            return Pair(rangeX, rangeY)
-        }
-
-        var adjustedMinX = 0.0
-        var adjustedMaxX = 0.0
-        var adjustedMinY = 0.0
-        var adjustedMaxY = 0.0
-        var rangesInited = false
-
-        val cardinality = posAesX.size * posAesY.size
-        val px = arrayOfNulls<Double>(cardinality)
-        val py = arrayOfNulls<Double>(cardinality)
-        for (p in aes.dataPoints()) {
-            var i = -1
-            for (aesX in posAesX) {
-                val valX = p.numeric(aesX)
-                for (aesY in posAesY) {
-                    val valY = p.numeric(aesY)
-                    i++
-                    px[i] = valX
-                    py[i] = valY
-                }
-            }
-
-            while (i >= 0) {
-                if (px[i] != null && py[i] != null) {
-                    val x = px[i]
-                    val y = py[i]
-                    if (isFinite(x) && isFinite(y)) {
-                        val newLoc = pos.translate(DoubleVector(x!!, y!!), p, geomCtx)
-                        val adjustedX = newLoc.x
-                        val adjustedY = newLoc.y
-                        if (rangesInited) {
-                            adjustedMinX = min(adjustedX, adjustedMinX)
-                            adjustedMaxX = max(adjustedX, adjustedMaxX)
-                            adjustedMinY = min(adjustedY, adjustedMinY)
-                            adjustedMaxY = max(adjustedY, adjustedMaxY)
-                        } else {
-                            adjustedMaxX = adjustedX
-                            adjustedMinX = adjustedMaxX
-                            adjustedMaxY = adjustedY
-                            adjustedMinY = adjustedMaxY
-                            rangesInited = true
-                        }
-                    }
-                }
-                i--
-            }
-        }
-
-        // X range
-        val xRange = if (rangesInited)
-            ClosedRange(adjustedMinX, adjustedMaxX)
-        else
-            null
-
-        val yRange = if (rangesInited)
-            ClosedRange(adjustedMinY, adjustedMaxY)
-        else
-            null
-        return Pair(xRange, yRange)
-    }
-
-    private fun computeLayerDryRunXYRangesAfterSizeExpand(
-        layer: GeomLayer,
-        aesthetics: Aesthetics,
-        geomCtx: GeomContext
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
-        val renderedAes = layer.renderedAes()
-        val computeExpandX = renderedAes.contains(Aes.WIDTH)
-        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
-        val rangeX = if (computeExpandX)
-            computeLayerDryRunRangeAfterSizeExpand(
-                Aes.X,
-                Aes.WIDTH,
-                aesthetics,
-                geomCtx
-            )
-        else
-            null
-        val rangeY = if (computeExpandY)
-            computeLayerDryRunRangeAfterSizeExpand(
-                Aes.Y,
-                Aes.HEIGHT,
-                aesthetics,
-                geomCtx
-            )
-        else
-            null
-
-        return Pair(rangeX, rangeY)
-    }
-
-    private fun computeLayerDryRunRangeAfterSizeExpand(
-        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext
-    ): ClosedRange<Double>? {
-        val locations = aesthetics.numericValues(locationAes).iterator()
-        val sizes = aesthetics.numericValues(sizeAes).iterator()
-
-        val resolution = geomCtx.getResolution(locationAes)
-        val minMax = doubleArrayOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)
-
-        for (i in 0 until aesthetics.dataPointCount()) {
-            if (!locations.hasNext()) {
-                throw IllegalStateException("Index is out of bounds: $i for $locationAes")
-            }
-            if (!sizes.hasNext()) {
-                throw IllegalStateException("Index is out of bounds: $i for $sizeAes")
-            }
-            val loc = locations.next()
-            val size = sizes.next()
-            if (isFinite(loc) && isFinite(size)) {
-                val expand = resolution * (size!! / 2)
-                updateExpandedMinMax(loc!!, expand, minMax)
-            }
-        }
-
-        return if (minMax[0] <= minMax[1])
-            ClosedRange(minMax[0], minMax[1])
-        else
-            null
-    }
-
-    private fun updateExpandedMinMax(value: Double, expand: Double, expandedMinMax: DoubleArray) {
-        expandedMinMax[0] = min(value - expand, expandedMinMax[0])
-        expandedMinMax[1] = max(value + expand, expandedMinMax[1])
-    }
-
-    fun createLayerDryRunAesthetics(layer: GeomLayer): Aesthetics {
-        val mappers = prepareLayerAestheticMappers(
-            layer,
-            xAesMapper = Mappers.IDENTITY,
-            yAesMapper = Mappers.IDENTITY
-        )
-        return createLayerAesthetics(layer, mappers)
-    }
-
     internal fun prepareLayerAestheticMappers(
         layer: GeomLayer,
-        xAesMapper: (Double?) -> Double?,
-        yAesMapper: (Double?) -> Double?,
-    ): Map<Aes<*>, (Double?) -> Any?> {
+        xAesMapper: ScaleMapper<Double>,
+        yAesMapper: ScaleMapper<Double>,
+    ): Map<Aes<*>, ScaleMapper<*>> {
 
-        val mappers = HashMap<Aes<*>, (Double?) -> Any?>()
+        val mappers = HashMap<Aes<*>, ScaleMapper<*>>()
         val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
         for (aes in renderedAes) {
-            var mapper: ((Double?) -> Any?)? = when {
+            var mapper: ScaleMapper<*>? = when {
                 aes == Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
                 // positional aes share their mappers
                 Aes.isPositionalX(aes) -> xAesMapper
                 Aes.isPositionalY(aes) -> yAesMapper
-                layer.hasBinding(aes) -> layer.scaleMap[aes].mapper
+                layer.hasBinding(aes) -> layer.scaleMapppersNP.getValue(aes)
                 else -> null  // rendered but has no binding - just ignore.
             }
 
@@ -245,14 +54,23 @@ object PlotUtil {
 
     internal fun createLayerAesthetics(
         layer: GeomLayer,
-        sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
+        sharedMappers: Map<Aes<*>, ScaleMapper<*>>,
+        affectingXYScalesOnly: Boolean = false
     ): Aesthetics {
 
         val aesBuilder = AestheticsBuilder()
         aesBuilder.group(layer.group)
 
+        val renderedAes = if (affectingXYScalesOnly) {
+            val posAesX = Aes.affectingScaleX(layer.renderedAes())
+            val posAesY = Aes.affectingScaleY(layer.renderedAes())
+            posAesX + posAesY
+        } else {
+            layer.renderedAes()
+        }
+
         var hasPositionalConstants = false
-        for (aes in layer.renderedAes()) {
+        for (aes in renderedAes) {
             if (Aes.isPositional(aes) && layer.hasConstant(aes)) {
                 hasPositionalConstants = true
                 break
@@ -261,7 +79,7 @@ object PlotUtil {
 
         val data = layer.dataFrame
         var dataPointCount: Int? = null
-        for (aes in layer.renderedAes()) {
+        for (aes in renderedAes) {
             @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
             val aes = aes as Aes<Any>
 
@@ -269,7 +87,8 @@ object PlotUtil {
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)
-                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption))
+                @Suppress("UNCHECKED_CAST")
+                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption as? ScaleMapper<Any>))
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
@@ -297,9 +116,10 @@ object PlotUtil {
                 } else {
                     // apply default
                     val v = layer.getDefault(aes)
+                    @Suppress("UNCHECKED_CAST")
                     aesBuilder.constantAes(
                         aes,
-                        asAesValue(aes, v, mapperOption)
+                        asAesValue(aes, v, mapperOption as? ScaleMapper<Any>)
                     )
                 }
             }
@@ -315,10 +135,9 @@ object PlotUtil {
         return aesBuilder.build()
     }
 
-    private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ((Double?) -> T?)?): T {
+    private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ScaleMapper<T>?): T? {
         return if (aes.isNumeric && mapperOption != null) {
             mapperOption(dataValue as? Double)
-                ?: throw IllegalArgumentException("Can't map $dataValue to aesthetic $aes")
         } else dataValue
     }
 
@@ -380,5 +199,16 @@ object PlotUtil {
             }
         }
         return ClosedRange(lowerEndWithExpand, upperEndWithExpand)
+    }
+
+    object DemoAndTest {
+        fun layerAestheticsWithoutLayout(layer: GeomLayer): Aesthetics {
+            val mappers = prepareLayerAestheticMappers(
+                layer,
+                xAesMapper = Mappers.IDENTITY,
+                yAesMapper = Mappers.IDENTITY
+            )
+            return createLayerAesthetics(layer, mappers)
+        }
     }
 }

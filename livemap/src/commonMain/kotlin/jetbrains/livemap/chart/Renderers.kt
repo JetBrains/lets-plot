@@ -38,11 +38,7 @@ object Renderers {
             val chartElement = entity.get<ChartElementComponent>()
             val symbolData = entity.get<SymbolComponent>()
             val radius = symbolData.size.x * chartElement.scaleFactor / 2.0
-            println("PointRenderer.render() - radius: $radius")
 
-            ctx.translate(-radius, -radius)
-
-            ctx.translate(radius, radius)
             ctx.beginPath()
             drawPath(ctx, radius, shape)
             if (chartElement.fillColor != null) {
@@ -104,12 +100,12 @@ object Renderers {
             }
 
             val chartElement = entity.get<ChartElementComponent>()
-            ctx.setLineDash(chartElement.lineDash!!)
             ctx.setStrokeStyle(chartElement.strokeColor)
+            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scaleFactor }.toDoubleArray())
             ctx.setLineWidth(chartElement.strokeWidth * chartElement.scaleFactor)
             ctx.beginPath()
 
-            drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx) { it.stroke() }
+            drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx, Context2d::stroke)
         }
     }
 

@@ -20,25 +20,13 @@ internal class PointDataAccess(
     scaleMap: TypedScaleMap
 ) : MappedDataAccess {
 
-    override val mappedAes: Set<Aes<*>> = HashSet(bindings.keys)
-    override val scaleByAes: (Aes<*>) -> Scale<*> = { scaleMap[it] }
+    private val scaleByAes: (Aes<*>) -> Scale<*> = { scaleMap[it] }
     private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
     private val myFormatters = HashMap<Aes<*>, (Any?) -> String>()
 
     override fun isMapped(aes: Aes<*>) = myBindings.containsKey(aes)
 
-    override fun <T> getMappedData(aes: Aes<T>, index: Int): MappedDataAccess.MappedData<T> {
-        val originalValue = getOriginalValue(aes, index)
-        val scale = getScale(aes)
-        val value = formatter(aes).invoke(originalValue)
-        return MappedDataAccess.MappedData(
-            label = scale.name,
-            value = value,
-            isContinuous = scale.isContinuous
-        )
-    }
-
-    override fun <T> getOriginalValue(aes: Aes<T>, index: Int): Any? {
+    override fun getOriginalValue(aes: Aes<*>, index: Int): Any? {
         require(isMapped(aes)) { "Not mapped: $aes" }
 
         val binding = myBindings.getValue(aes)
@@ -49,15 +37,18 @@ internal class PointDataAccess(
             .let { value -> scale.transform.applyInverse(value) }
     }
 
-    override fun getMappedDataLabel(aes: Aes<*>): String = getScale(aes).name
+    override fun getMappedDataValue(aes: Aes<*>, index: Int): String {
+        val originalValue = getOriginalValue(aes, index)
+        return formatter(aes).invoke(originalValue)
+    }
 
-    override fun isMappedDataContinuous(aes: Aes<*>): Boolean = getScale(aes).isContinuous
+    override fun getMappedDataLabel(aes: Aes<*>): String = getScale(aes).name
 
     private fun getScale(aes: Aes<*>): Scale<*> {
         return scaleByAes(aes)
     }
 
-    private fun <T> formatter(aes: Aes<T>): (Any?) -> String {
+    private fun formatter(aes: Aes<*>): (Any?) -> String {
         val scale = getScale(aes)
         return myFormatters.getOrPut(aes, defaultValue = { createFormatter(aes, scale) })
     }
@@ -71,7 +62,8 @@ internal class PointDataAccess(
                 .run(data::range)
                 .run(::ensureApplicableRange)
 
-            val formatter = scale.getBreaksGenerator().labelFormatter(domain, 100)
+            // Use the scale's default formatter (the 'format' parameter does not apply to tooltips)
+            val formatter = scale.getBreaksGenerator().defaultFormatter(domain, 100)
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)

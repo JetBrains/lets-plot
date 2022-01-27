@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -16,12 +17,13 @@ import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 
-abstract class LegendBox(
-    val theme: LegendTheme
-) : SvgComponent() {
+abstract class LegendBox : SvgComponent() {
 
     var debug: Boolean = false
+
     abstract val spec: LegendBoxSpec
+
+    protected val theme: LegendTheme get() = spec.theme
 
     private val title: String
         get() = spec.title
@@ -36,9 +38,13 @@ abstract class LegendBox(
     override fun buildComponent() {
         addClassName(Style.LEGEND)
 
-        val outerBounds = DoubleRectangle(DoubleVector.ZERO, spec.size)
-        addRectangle(spec.innerBounds, spec.theme.backgroundFill())
-//        addBorder(spec.innerBounds, OUTLINE_COLOR, 1.0)
+        if (theme.showBackground()) {
+            add(SvgRectElement(spec.innerBounds).apply {
+                strokeColor().set(theme.backgroundColor())
+                strokeWidth().set(theme.backgroundStrokeWidth())
+                fillColor().set(theme.backgroundFill())
+            })
+        }
 
         val innerGroup = SvgGElement()
         innerGroup.transform().set(buildTransform(spec.contentOrigin, 0.0))
@@ -60,10 +66,9 @@ abstract class LegendBox(
         innerGroup.children().add(graphGroup)
 
         if (debug) {
-            run {
-                // outer bounds
-                addBorder(outerBounds, Color.CYAN, 1.0)
-            }
+            // outer bounds
+            val outerBounds = DoubleRectangle(DoubleVector.ZERO, spec.size)
+            add(createTransparentRect(outerBounds, Color.CYAN, 1.0))
             run {
                 // inner bounds
                 val rect = SvgRectElement(spec.innerBounds)
@@ -72,44 +77,21 @@ abstract class LegendBox(
                 rect.fillOpacity().set(0.1)
                 add(rect)
             }
-            run {
-                // content bounds
-                addBorder(spec.contentBounds, Color.DARK_MAGENTA, 1.0)
-            }
-            run {
-                // title bounds
-                addBorder(l.titleBounds.add(spec.contentOrigin), Color.MAGENTA, 1.0)
-            }
+            // content bounds
+            add(createTransparentRect(spec.contentBounds, Color.DARK_MAGENTA, 1.0))
+            // title bounds
+            add(createTransparentRect(l.titleBounds.add(spec.contentOrigin), Color.MAGENTA, 1.0))
         }
 
         add(innerGroup)
-    }
-
-    private fun addBorder(bounds: DoubleRectangle, strokeColor: Color, strokeWidth: Double) {
-        add(
-            createBorder(
-                bounds,
-                strokeColor,
-                strokeWidth
-            )
-        )
-    }
-
-    private fun addRectangle(bounds: DoubleRectangle, fillColor: Color) {
-        add(
-            createRectangle(
-                bounds,
-                fillColor
-            )
-        )
     }
 
     protected abstract fun appendGuideContent(contentRoot: SvgNode): DoubleVector
 
     private fun createTitleLabel(
         origin: DoubleVector,
-        horizontalAnchor: TextLabel.HorizontalAnchor,
-        verticalAnchor: TextLabel.VerticalAnchor
+        horizontalAnchor: Text.HorizontalAnchor,
+        verticalAnchor: Text.VerticalAnchor
     ): TextLabel {
         val label = TextLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
@@ -120,19 +102,15 @@ abstract class LegendBox(
     }
 
     companion object {
-        fun createBorder(bounds: DoubleRectangle, strokeColor: Color, strokeWidth: Double): SvgRectElement {
-            // ToDo: to util
+        fun createTransparentRect(
+            bounds: DoubleRectangle,
+            strokeColor: Color,
+            strokeWidth: Double
+        ): SvgRectElement {
             val rect = SvgRectElement(bounds)
             rect.strokeColor().set(strokeColor)
             rect.strokeWidth().set(strokeWidth)
             rect.fillOpacity().set(0.0)
-            return rect
-        }
-
-        protected fun createRectangle(bounds: DoubleRectangle, fillColor: Color): SvgRectElement {
-            // ToDo: to util
-            val rect = SvgRectElement(bounds)
-            rect.fillColor().set(fillColor)
             return rect
         }
     }

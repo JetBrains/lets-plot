@@ -7,6 +7,7 @@ package jetbrains.datalore.plotDemo.model.geom
 
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
@@ -61,7 +62,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         val clientH = demoInnerSize.y
         val ratioX = spanX / clientW
         val ratioY = spanY / clientH
-        val mapper: (Double?) -> Double?
+        val mapper: ScaleMapper<Double>
         val ratio: Double
         if (ratioX >= ratioY) {
             mapper = Mappers.mul(domainX, clientW)

@@ -9,9 +9,8 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -21,7 +20,7 @@ import kotlin.math.max
 
 class ColorBarComponent(
     override val spec: ColorBarComponentSpec
-) : LegendBox(spec.theme) {
+) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val layout = spec.layout
@@ -33,7 +32,7 @@ class ColorBarComponent(
         val horizontal = layout.isHorizontal
         addColorBar(
             guideBarGroup,
-            spec.domain, spec.scale, spec.binCount, barBounds,
+            spec.domain, spec.scaleMapper, spec.binCount, barBounds,
             layout.barLengthExpand,
             horizontal, spec.reverse
         )
@@ -76,20 +75,11 @@ class ColorBarComponent(
             guideBarGroup.children().add(label.rootGroup)
         }
 
-        // add white frame
-        guideBarGroup.children().add(
-            createBorder(
-                barBounds,
-                spec.theme.backgroundFill(),
-                1.0
-            )
-        )
-
         if (debug) {
             // frame bar and labels
             val graphBounds = DoubleRectangle(DoubleVector.ZERO, layout.graphSize)
             guideBarGroup.children().add(
-                createBorder(
+                createTransparentRect(
                     graphBounds,
                     Color.DARK_BLUE,
                     1.0
@@ -104,7 +94,7 @@ class ColorBarComponent(
     private fun addColorBar(
         g: SvgGElement,
         domain: ClosedRange<Double>,
-        scale: Scale<Color>,
+        mapper: ScaleMapper<Color>,
         numBins: Int,
         barBounds: DoubleRectangle,
         barLengthExpand: Double,
@@ -124,7 +114,7 @@ class ColorBarComponent(
             domainValues.reverse()
         }
 
-        val colors = ScaleUtil.map(domainValues, scale)
+        val colors = domainValues.map { mapper(it) }
         val barLength = when {
             horizontal -> barBounds.width
             else -> barBounds.height
@@ -167,7 +157,7 @@ class ColorBarComponent(
     private fun addTickMark(g: SvgGElement, p0: DoubleVector, p1: DoubleVector) {
         val line = SvgLineElement(p0.x, p0.y, p1.x, p1.y)
         line.strokeWidth().set(1.0)
-        line.strokeColor().set(spec.theme.backgroundFill());
+        line.strokeColor().set(theme.backgroundFill());
         g.children().add(line)
     }
 }

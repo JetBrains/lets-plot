@@ -19,7 +19,7 @@ import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapCanvasFigure
 import jetbrains.livemap.config.LiveMapFactory
-import jetbrains.livemap.ui.Clipboard
+import jetbrains.livemap.core.Clipboard
 import jetbrains.livemap.ui.CursorService
 
 object LiveMapUtil {

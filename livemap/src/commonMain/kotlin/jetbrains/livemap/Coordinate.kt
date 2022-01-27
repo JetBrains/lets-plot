@@ -43,3 +43,4 @@ fun newDoubleRectangle(origin: Vec<*>, dimension: Vec<*>): DoubleRectangle {
 
 fun Vector.toClientPoint() = ClientPoint(x, y)
 fun DoubleVector.toClientPoint() = explicitVec<Client>(x, y)
+fun Vec<*>.toDoubleVector() = DoubleVector(x, y)

@@ -6,9 +6,10 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
 
 
 class PlotTooltipBounds(
@@ -23,9 +24,5 @@ interface PlotInteractor : Disposable {
         targetLocators: List<GeomTargetLocator>
     )
 
-    fun onViewReset(function: () -> Unit)
-    fun onViewZoomArea(function: (DoubleRectangle) -> Unit)
-    fun onViewZoomIn(function: (DoubleVector) -> Unit)
-    fun onViewZoomOut(function: (DoubleVector) -> Unit)
-    fun onViewPanning(function: (DoubleVector) -> Unit)
+    fun startToolFeedback(toolFeedback: ToolFeedback): Registration
 }

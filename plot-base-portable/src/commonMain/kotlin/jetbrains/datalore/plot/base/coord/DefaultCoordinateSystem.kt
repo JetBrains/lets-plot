@@ -17,8 +17,8 @@ internal open class DefaultCoordinateSystem(
     val toClientOffsetY: (Double) -> Double,
     val fromClientOffsetX: (Double) -> Double,
     val fromClientOffsetY: (Double) -> Double,
-    val xLimits: ClosedRange<Double>?,
-    val yLimits: ClosedRange<Double>?
+    val clientLimitsX: ClosedRange<Double>?,
+    val clientLimitsY: ClosedRange<Double>?
 ) : CoordinateSystem {
 
     override fun toClient(p: DoubleVector): DoubleVector {
@@ -30,11 +30,12 @@ internal open class DefaultCoordinateSystem(
     }
 
     override fun applyClientLimits(clientBounds: DoubleRectangle): DoubleRectangle {
-        val hRange = xLimits?.let { lim -> convertRange(lim, toClientOffsetX) }
-            ?: clientBounds.xRange()
-        val vRange = yLimits?.let { lim -> convertRange(lim, toClientOffsetY) }
-            ?: clientBounds.yRange()
-        return DoubleRectangle(hRange, vRange)
+//        val hRange = clientLimitsX?.let { lim -> convertRange(lim, toClientOffsetX) }
+//            ?: clientBounds.xRange()
+//        val vRange = clientLimitsY?.let { lim -> convertRange(lim, toClientOffsetY) }
+//            ?: clientBounds.yRange()
+//        return DoubleRectangle(hRange, vRange)
+        return clientBounds
     }
 
     override fun flip(): CoordinateSystem {
@@ -43,9 +44,9 @@ internal open class DefaultCoordinateSystem(
 
 
     companion object {
-        private fun convertRange(range: ClosedRange<Double>, transform: (Double) -> Double): ClosedRange<Double> {
-            val l = transform(range.lowerEnd)
-            val u = transform(range.upperEnd)
+        private fun convertRange(range: ClosedRange<Double>, offset: (Double) -> Double): ClosedRange<Double> {
+            val l = offset(range.lowerEnd)
+            val u = offset(range.upperEnd)
             return ClosedRange(
                 min(l, u),
                 max(l, u),

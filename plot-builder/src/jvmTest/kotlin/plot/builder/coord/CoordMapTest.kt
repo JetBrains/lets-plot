@@ -12,6 +12,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 
+@org.junit.Ignore
 internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBase() {
 
     @BeforeTest

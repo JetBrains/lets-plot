@@ -25,7 +25,8 @@ open class PlotPanel(
         // GridBagLayout seem to work better than FlowLayout
         // whan re-sizing component.
         layout = GridBagLayout()
-        background = Color.WHITE
+//        background = Color.WHITE
+        isOpaque = false
 
         // Extra clean-up on 'dispose'.
         addContainerListener(object : ContainerAdapter() {

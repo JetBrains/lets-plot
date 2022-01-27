@@ -34,6 +34,12 @@ internal open class ThemeValuesAccess(
             ?: throw IllegalStateException("Theme value is not a number: $value. Key : $key.")
     }
 
+    protected fun getBoolean(key: List<String>): Boolean {
+        val value = getValue(key)
+        return (value as? Boolean)
+            ?: throw IllegalStateException("Theme value is not boolean: $value. Key : $key.")
+    }
+
     /**
      * @param key List of option names: the most specific - first.
      */

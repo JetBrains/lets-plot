@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.config.Option.Stat.Bin
 import jetbrains.datalore.plot.config.Option.Stat.Bin2d
 import jetbrains.datalore.plot.config.Option.Stat.Boxplot
 import jetbrains.datalore.plot.config.Option.Stat.Contour
-import jetbrains.datalore.plot.config.Option.Stat.Corr
 import jetbrains.datalore.plot.config.Option.Stat.Density
 import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
@@ -20,22 +19,11 @@ import jetbrains.datalore.plot.config.Option.Stat.YDensity
 
 object StatProto {
 
-    internal fun defaultOptions(statName: String, geomKind: GeomKind): Map<String, Any> {
+    internal fun defaultOptions(
+        statName: String,
+        @Suppress("UNUSED_PARAMETER") geomKind: GeomKind
+    ): Map<String, Any> {
         return when (StatKind.safeValueOf(statName)) {
-            StatKind.CORR -> {
-                when (geomKind) {
-                    GeomKind.TILE -> mapOf<String, Any>(
-                        "size" to 0.0   // 'corr' is mapped to the outline color 'color' - avoid on 'tiles'.
-                    )
-                    GeomKind.POINT,
-                    GeomKind.TEXT -> mapOf<String, Any>(
-                        "size" to 0.8,
-                        "size_unit" to "x",
-                        "label_format" to ".2f"
-                    )
-                    else -> emptyMap()
-                }
-            }
             else -> emptyMap()
         }
     }
@@ -87,8 +75,6 @@ object StatProto {
             }
 
             StatKind.SMOOTH -> return configureSmoothStat(options)
-
-            StatKind.CORR -> return configureCorrStat(options)
 
             StatKind.BOXPLOT -> {
                 return Stats.boxplot(
@@ -148,28 +134,28 @@ object StatProto {
         )
     }
 
-    private fun configureCorrStat(options: OptionsAccessor): CorrelationStat {
-        val correlationMethod = options.getString(Corr.METHOD)?.let {
-            when (it.lowercase()) {
-                "pearson" -> CorrelationStat.Method.PEARSON
-                else -> throw IllegalArgumentException("Unsupported correlation method: '$it'. Must be: 'pearson'")
+    private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
+        var bwValue: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
+        options[Density.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValue = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
             }
         }
 
-        val type = options.getString(Corr.TYPE)?.let {
-            when (it.lowercase()) {
-                "full" -> CorrelationStat.Type.FULL
-                "upper" -> CorrelationStat.Type.UPPER
-                "lower" -> CorrelationStat.Type.LOWER
-                else -> throw IllegalArgumentException("Unsupported matrix type: '$it'. Expected: 'full', 'upper' or 'lower'.")
-            }
+        val kernel = options.getString(Density.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
         }
 
-        return CorrelationStat(
-            correlationMethod = correlationMethod ?: CorrelationStat.DEF_CORRELATION_METHOD,
-            type = type ?: CorrelationStat.DEF_TYPE,
-            fillDiagonal = options.getBoolean(Corr.FILL_DIAGONAL, CorrelationStat.DEF_FILL_DIAGONAL),
-            threshold = options.getDoubleDef(Corr.THRESHOLD, CorrelationStat.DEF_THRESHOLD)
+        return YDensityStat(
+            bandWidth = bwValue,
+            bandWidthMethod = bwMethod,
+            adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
+            kernel = kernel ?: DensityStat.DEF_KERNEL,
+            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
         )
     }
 

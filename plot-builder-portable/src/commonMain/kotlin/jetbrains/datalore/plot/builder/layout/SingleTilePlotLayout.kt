@@ -6,23 +6,30 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 
-internal class SingleTilePlotLayout(private val myTileLayout: TileLayout) : PlotLayoutBase() {
+internal class SingleTilePlotLayout(
+    private val tileLayout: TileLayout
+) : PlotLayoutBase() {
 
     init {
         setPadding(10.0, 10.0, 0.0, 0.0)
     }
 
-    override fun doLayout(preferredSize: DoubleVector): PlotLayoutInfo {
-        val tilePreferredSize = DoubleVector(
-                preferredSize.x - (paddingLeft + paddingRight),
-                preferredSize.y - (paddingTop + paddingBottom))
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+        val paddingLeftTop = DoubleVector(paddingLeft, paddingTop)
+        val paddingRightBottom = DoubleVector(paddingRight, paddingBottom)
 
-        var tileInfo = myTileLayout.doLayout(tilePreferredSize)
-        tileInfo = tileInfo.withOffset(DoubleVector(paddingLeft, paddingTop))
+        val tilePreferredSize = preferredSize
+            .subtract(paddingLeftTop)
+            .subtract(paddingRightBottom)
 
-        var plotSize = tileInfo.bounds.dimension
-        plotSize = plotSize.add(DoubleVector(paddingRight, paddingBottom))
+        val tileInfo = tileLayout.doLayout(tilePreferredSize, coordProvider)
+            .withOffset(paddingLeftTop)
+
+        val plotSize = tileInfo.bounds.dimension
+            .add(paddingLeftTop)
+            .add(paddingRightBottom)
 
         return PlotLayoutInfo(listOf(tileInfo), plotSize)
     }

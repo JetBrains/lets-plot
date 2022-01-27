@@ -6,42 +6,27 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 
 object GuideMappers {
-    val IDENTITY: GuideMapper<Double> =
-        GuideMapperAdapter(Mappers.IDENTITY, isContinuous = false) // ToDo: why isContinuous = false?
-    val UNDEFINED: GuideMapper<Double> =
-        GuideMapperAdapter(Mappers.undefined(), false)
+    val IDENTITY: GuideMapper<Double> = GuideMapper(Mappers.IDENTITY, false)
+    val NUMERIC_UNDEFINED: GuideMapper<Double> = GuideMapper(Mappers.NUMERIC_UNDEFINED, false)
+
 
     fun <TargetT> discreteToDiscrete(
-        data: DataFrame,
-        variable: DataFrame.Variable,
+        discreteTransform: DiscreteTransform,
         outputValues: List<TargetT>,
-        naValue: TargetT
-    ): GuideMapper<TargetT> {
+        naValue: TargetT?
+    ): ScaleMapper<TargetT> {
 
-        val domainValues = data.distinctValues(variable)
-        return discreteToDiscrete(
-            domainValues,
-            outputValues,
-            naValue
-        )
-    }
-
-    fun <TargetT> discreteToDiscrete(
-        domainValues: Collection<*>,
-        outputValues: List<TargetT>,
-        naValue: TargetT
-    ): GuideMapper<TargetT> {
-
-        val mapper = Mappers.discrete(outputValues, naValue)
         return GuideMapperWithGuideBreaks(
-            mapper,
-            domainValues.mapNotNull { it }
-        ) { v: Any -> v.toString() }
+            mapper = Mappers.discrete(discreteTransform, outputValues, naValue),
+            breaks = discreteTransform.effectiveDomain,
+            formatter = { v: Any -> v.toString() }
+        )
     }
 
     fun <TargetT> continuousToDiscrete(
@@ -55,16 +40,17 @@ object GuideMappers {
     }
 
     fun discreteToContinuous(
-        domainValues: Collection<*>,
+        discreteTransform: DiscreteTransform,
         outputRange: ClosedRange<Double>,
         naValue: Double
-    ): GuideMapper<Double> {
+    ): ScaleMapper<Double> {
 
-        val mapper = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
+        val mapper = Mappers.discreteToContinuous(discreteTransform.effectiveDomainTransformed, outputRange, naValue)
         return GuideMapperWithGuideBreaks(
             mapper,
-            domainValues.mapNotNull { it }
-        ) { v: Any -> v.toString() }
+            discreteTransform.effectiveDomain,
+            formatter = { v: Any -> v.toString() }
+        )
     }
 
     fun continuousToContinuous(
@@ -81,11 +67,11 @@ object GuideMappers {
         )
     }
 
-    fun <T> asNotContinuous(mapper: (Double?) -> T): GuideMapper<T> {
-        return GuideMapperAdapter(mapper, false)
+    fun <T> asNotContinuous(mapper: ScaleMapper<T>): GuideMapper<T> {
+        return GuideMapper(mapper, false)
     }
 
-    fun <T> asContinuous(mapper: (Double?) -> T?): GuideMapper<T> {
-        return GuideMapperAdapter(mapper, true)
+    fun <T> asContinuous(mapper: ScaleMapper<T>): GuideMapper<T> {
+        return GuideMapper(mapper, true)
     }
 }

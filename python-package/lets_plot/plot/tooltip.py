@@ -2,8 +2,9 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from .core import FeatureSpec
 from typing import List
+
+from lets_plot.plot.core import FeatureSpec, _filter_none
 
 #
 # Tooltips
@@ -115,7 +116,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_min_width'] = self._tooltip_min_width
         d['tooltip_color'] = self._tooltip_color
         d['tooltip_variables'] = self._tooltip_variables
-        return d
+        return _filter_none(d)
 
     def format(self, field=None, format=None):
         """
@@ -130,8 +131,8 @@ class layer_tooltips(FeatureSpec):
             The field name starts with a '^' prefix for aesthetics,
             the variable name starts with a '@' prefix or without any prefix.
         format : str
-            Formatting specification. The format contains a number format ('1.f')
-            or a string template ('{.1f}').
+            Formatting specification. The format contains a number format ('1.f'),
+            a string template ('{.1f}') or a date/time format ('%d.%m.%y').
             The numeric format for non-numeric value will be ignored.
             If you need to include a brace character in the literal text,
             it can be escaped by doubling: `{{` and `}}`.
@@ -383,6 +384,8 @@ class layer_tooltips(FeatureSpec):
 
     def color(self, value):
         """
+        Function `color(value)` is deprecated.
+
         The color for the general tooltip.
 
         Parameters
@@ -412,5 +415,7 @@ class layer_tooltips(FeatureSpec):
                 geom_point(tooltips=layer_tooltips().line('(^x, ^y)')\\
                                                     .color('magenta'))
         """
+        print("WARN: The function color() is deprecated and is no longer supported.")
+
         self._tooltip_color = value
         return self

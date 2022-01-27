@@ -22,7 +22,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-swing-common')
 

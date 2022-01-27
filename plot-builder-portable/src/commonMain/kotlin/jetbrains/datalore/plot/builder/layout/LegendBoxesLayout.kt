@@ -7,102 +7,37 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import kotlin.math.max
 
-class LegendBoxesLayout(private val myPlotBounds: DoubleRectangle, private val myTheme: LegendTheme) {
+internal class LegendBoxesLayout(
+    private val outerBounds: DoubleRectangle,
+    private val innerBounds: DoubleRectangle,
+    private val theme: LegendTheme
+) {
 
-    fun doLayout(infos: List<LegendBoxInfo>): Result {
-        val legendPosition = myTheme.position()
-        val legendJustification = myTheme.justification()
+    fun doLayout(legendsBlockInfo: LegendsBlockInfo): LegendsBlockInfo {
+        val legendPosition = theme.position()
+        val legendJustification = theme.justification()
 
-        // ToDo: theme legend.box option
-        val legendArrangement = jetbrains.datalore.plot.builder.guide.LegendArrangement.VERTICAL
+        val blockSize = legendsBlockInfo.size()
+        val innerCenter = innerBounds.center
+        val sideLegendTop = max(outerBounds.top, innerCenter.y - blockSize.y / 2)
 
-        val plotCenter = myPlotBounds.center
-        var plotInnerBoundsWithoutLegendBoxes = myPlotBounds
-
-        val boxWithLocationList = if (legendArrangement === jetbrains.datalore.plot.builder.guide.LegendArrangement.VERTICAL)
-            LegendBoxesLayoutUtil.verticalStack(infos)
-        else
-            LegendBoxesLayoutUtil.horizontalStack(infos)
-
-        val boxesSize =
-            LegendBoxesLayoutUtil.size(boxWithLocationList)
-
-        // adjust plot bounds
-        if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.LEFT || legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.RIGHT) {
-            val plotWidth = max(0.0, plotInnerBoundsWithoutLegendBoxes.width - boxesSize.x)
-            if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.LEFT) {
-                plotInnerBoundsWithoutLegendBoxes =
-                    GeometryUtil.changeWidthKeepRight(
-                        plotInnerBoundsWithoutLegendBoxes,
-                        plotWidth
-                    )
-            } else {
-                plotInnerBoundsWithoutLegendBoxes =
-                    GeometryUtil.changeWidth(
-                        plotInnerBoundsWithoutLegendBoxes,
-                        plotWidth
-                    )
-            }
-        } else if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.TOP || legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.BOTTOM) {
-            val plotHeight = max(0.0, plotInnerBoundsWithoutLegendBoxes.height - boxesSize.y)
-            if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.TOP) {
-                plotInnerBoundsWithoutLegendBoxes =
-                    GeometryUtil.changeHeightKeepBottom(
-                        plotInnerBoundsWithoutLegendBoxes,
-                        plotHeight
-                    )
-            } else {
-                plotInnerBoundsWithoutLegendBoxes =
-                    GeometryUtil.changeHeight(
-                        plotInnerBoundsWithoutLegendBoxes,
-                        plotHeight
-                    )
-            }
-        }
-
-        val legendOrigin: DoubleVector
-        if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.LEFT) {
-            legendOrigin = DoubleVector(
-                    plotInnerBoundsWithoutLegendBoxes.left - boxesSize.x,
-                    plotCenter.y - boxesSize.y / 2)
-        } else if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.RIGHT) {
-            legendOrigin = DoubleVector(
-                    plotInnerBoundsWithoutLegendBoxes.right,
-                    plotCenter.y - boxesSize.y / 2)
-        } else if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.TOP) {
-            legendOrigin = DoubleVector(
-                    plotCenter.x - boxesSize.x / 2,
-                    plotInnerBoundsWithoutLegendBoxes.top - boxesSize.y)
-        } else if (legendPosition == jetbrains.datalore.plot.builder.guide.LegendPosition.BOTTOM) {
-            legendOrigin = DoubleVector(
-                    plotCenter.x - boxesSize.x / 2,
-                    plotInnerBoundsWithoutLegendBoxes.bottom)
-        } else {
-            legendOrigin =
-                LegendBoxesLayoutUtil.overlayLegendOrigin(
-                    plotInnerBoundsWithoutLegendBoxes,
-                    boxesSize,
-                    legendPosition,
-                    legendJustification
-                )
-        }
-
-        val resultBoxWithLocationList =
-            LegendBoxesLayoutUtil.moveAll(
-                legendOrigin,
-                boxWithLocationList
+        val legendOrigin: DoubleVector = when (legendPosition) {
+            LegendPosition.LEFT -> DoubleVector(outerBounds.left, sideLegendTop)
+            LegendPosition.RIGHT -> DoubleVector(outerBounds.right - blockSize.x, sideLegendTop)
+            LegendPosition.TOP -> DoubleVector(innerCenter.x - blockSize.x / 2, outerBounds.top)
+            LegendPosition.BOTTOM -> DoubleVector(innerCenter.x - blockSize.x / 2, outerBounds.bottom - blockSize.y)
+            else -> LegendBoxesLayoutUtil.overlayLegendOrigin(
+                innerBounds,
+                blockSize,
+                legendPosition,
+                legendJustification
             )
-        return Result(
-            plotInnerBoundsWithoutLegendBoxes,
-            resultBoxWithLocationList
-        )
-    }
-
-    class Result(val plotInnerBoundsWithoutLegendBoxes: DoubleRectangle, locations: List<BoxWithLocation>) {
-        val boxWithLocationList: List<BoxWithLocation> = ArrayList(locations)
+        }
+        return legendsBlockInfo.moveAll(legendOrigin)
     }
 
     class BoxWithLocation internal constructor(val legendBox: LegendBoxInfo, val location: DoubleVector) {

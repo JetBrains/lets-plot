@@ -14,7 +14,7 @@ import jetbrains.livemap.model.Cities.GERMANY
 class FragmentDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
-            devParams = DevParams(mapOf(DevParams.SCALABLE_SYMBOLS.key to true))
+            devParams = DevParams(mapOf(DevParams.ENABLE_SCALING.key to true))
             geocodingService = Services.devGeocodingService()
             layers {
 

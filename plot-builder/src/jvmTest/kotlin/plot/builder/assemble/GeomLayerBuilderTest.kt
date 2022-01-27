@@ -7,10 +7,13 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DiscreteTransform
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -48,11 +51,22 @@ class GeomLayerBuilderTest {
         val stat = Stats.bin()
         val posProvider = PosProvider.barStack()
 
+        val scaleProvider = ScaleProviderHelper.createDefault(Aes.FILL)
+        val scaleFill = scaleProvider.createScale(
+            "cat",
+            DiscreteTransform(data.distinctValues(cat), emptyList())
+        )
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomain("x", Aes.X),
-                Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale("cat", data.distinctValues(cat))
+                Aes.X to Scales.DemoAndTest.continuousDomain("x", Aes.X),
+                Aes.Y to Scales.DemoAndTest.continuousDomain("y", Aes.Y),
+                Aes.FILL to scaleFill
             )
+        )
+
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+//            Aes.FILL to scaleProvider.mapperProvider.createDiscreteMapper(scaleFill.transform as DiscreteTransform)
+            Aes.FILL to DefaultMapperProvider[Aes.FILL].createDiscreteMapper(scaleFill.transform as DiscreteTransform)
         )
 
         val bindings = ArrayList<VarBinding>()
@@ -66,7 +80,7 @@ class GeomLayerBuilderTest {
 //                .addConstantAes(Aes.ALPHA, 0.5)
             .addBinding(bindings[0])
             .addBinding(bindings[1])
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
 
         assertTrue(histogramLayer.hasBinding(Aes.X))

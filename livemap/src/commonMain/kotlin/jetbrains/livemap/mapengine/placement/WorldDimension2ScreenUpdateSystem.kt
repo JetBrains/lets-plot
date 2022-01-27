@@ -11,8 +11,8 @@ import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.onEachEntity3
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
 

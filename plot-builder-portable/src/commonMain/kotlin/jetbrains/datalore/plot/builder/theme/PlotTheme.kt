@@ -11,5 +11,9 @@ import jetbrains.datalore.base.values.Color
  * ToDo: subtitle, caption etc.
  */
 interface PlotTheme {
+    fun showBackground(): Boolean
+    fun backgroundColor(): Color
+    fun backgroundFill(): Color
+    fun backgroundStrokeWidth(): Double
     fun titleColor(): Color
 }

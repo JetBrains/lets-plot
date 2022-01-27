@@ -17,11 +17,11 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.fragment.Utils.RegionsIndex
 import jetbrains.livemap.fragment.Utils.entityName
 import jetbrains.livemap.geometry.GeometryTransform

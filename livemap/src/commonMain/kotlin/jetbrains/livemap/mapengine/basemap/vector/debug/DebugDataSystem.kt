@@ -7,7 +7,7 @@ package jetbrains.livemap.mapengine.basemap.vector.debug
 
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
+import jetbrains.livemap.core.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.basemap.BasemapCellComponent
 import jetbrains.livemap.mapengine.basemap.DebugCellLayerComponent

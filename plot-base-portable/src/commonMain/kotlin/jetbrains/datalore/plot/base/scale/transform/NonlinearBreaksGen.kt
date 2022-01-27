@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.scale.transform
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.abs
 import kotlin.math.min
@@ -32,7 +32,11 @@ internal class NonlinearBreaksGen(
     }
 
     override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
-        return formatter ?: createMultiFormatter(generateBreakValues(domain, targetCount, transform))
+        return formatter ?: defaultFormatter(domain, targetCount)
+    }
+
+    override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
     }
 
     companion object {
@@ -41,7 +45,7 @@ internal class NonlinearBreaksGen(
             targetCount: Int,
             transform: ContinuousTransform
         ): List<Double> {
-            val transformedDomain = MapperUtil.map(domain) { transform.apply(it) }
+            val transformedDomain = ScaleUtil.applyTransform(domain, transform)
             val transformedBreakValues: List<Double> =
                 LinearBreaksGen.generateBreakValues(transformedDomain, targetCount)
 

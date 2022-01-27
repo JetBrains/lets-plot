@@ -1,6 +1,6 @@
 # Lets-Plot  [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
-<a href="https://opensource.org/licenses/MIT">
+<a href="https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE">
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="Couldn't load MIT license svg"/>
 </a>
 
@@ -44,7 +44,7 @@ You can use this API to embed charts into Kotlin/JVM and Kotlin/JS applications 
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 [![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
 
-*Scientific mode* in PyCharm, DataSpell and in IntelliJ IDEA provides support for interactive scientific computing and data visualization.
+*Scientific mode* in PyCharm and in IntelliJ IDEA provides support for interactive scientific computing and data visualization.
 
 [*Lets-Plot in SciView*](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview) plugin adds 
 support for interactive plotting to IntelliJ-based IDEs with the *Scientific mode* enabled.
@@ -66,7 +66,7 @@ Also read:
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
                           
 
-- Improved plot appearance and `theme` support:
+- Improved plot appearance and better `theme` support:
 
   - Bigger fonts across the board;
   - Gridlines;

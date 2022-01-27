@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
@@ -41,7 +42,7 @@ abstract class AxisLayouter(
 
     protected abstract fun toAxisMapper(axisLength: Double): (Double?) -> Double?
 
-    protected fun toScaleMapper(axisLength: Double): (Double?) -> Double? {
+    protected fun toScaleMapper(axisLength: Double): ScaleMapper<Double> {
         return Mappers.mul(domainRange, axisLength)
     }
 

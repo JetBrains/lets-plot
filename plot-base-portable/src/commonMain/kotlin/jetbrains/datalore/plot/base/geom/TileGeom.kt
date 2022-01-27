@@ -42,7 +42,8 @@ open class TileGeom : GeomBase() {
                     p
                 )
             },
-            TipLayoutHint.Kind.CURSOR_TOOLTIP
+            TipLayoutHint.Kind.CURSOR_TOOLTIP,
+            HintColorUtil.fromMappedColors(ctx)
         )
             .collectTo(ctx.targetCollector)
     }

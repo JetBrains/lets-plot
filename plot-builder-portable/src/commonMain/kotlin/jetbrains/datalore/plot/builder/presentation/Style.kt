@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.plot.builder.presentation.Defaults.BACKDROP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
@@ -23,9 +22,6 @@ object Style {
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"
     const val PLOT_TITLE = "plt-plot-title"
-
-    const val PLOT_TRANSPARENT = "plt-transparent"
-    const val PLOT_BACKDROP = "plt-backdrop"
 
     const val AXIS = "plt-axis"
 
@@ -49,12 +45,6 @@ object Style {
         |	-webkit-user-select: none;
         |	-moz-user-select: none;
         |	-ms-user-select: none;
-        |}
-        |.$PLOT_BACKDROP {
-        |   fill: $BACKDROP_COLOR;
-        |}
-        |.$PLOT_TRANSPARENT .$PLOT_BACKDROP {
-        |   visibility: hidden;
         |}
         |text {
         |	font-size: ${FONT_MEDIUM}px;

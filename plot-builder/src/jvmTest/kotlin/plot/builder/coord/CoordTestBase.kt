@@ -8,9 +8,7 @@ package jetbrains.datalore.plot.builder.coord
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.base.scale.Scales
 import kotlin.test.assertEquals
 
 internal open class CoordTestBase {
@@ -30,9 +28,11 @@ internal open class CoordTestBase {
         val dataBounds = this.dataBounds
         val domainX = dataBounds.xRange()
         val domainY = dataBounds.yRange()
-        val displaySize = unitDisplaySize(ratio)
+//        val displaySize = unitDisplaySize(ratio)
 
-        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+//        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+        val domains = provider.adjustDomains(domainX, domainY)
+        // The `adjustDomains` has different meaning now!!!
 
         assertEquals(expectedX, domains.first, "X range")
         assertEquals(expectedY, domains.second, "Y range")
@@ -53,29 +53,27 @@ internal open class CoordTestBase {
         var domainX = dataBounds.xRange()
         var domainY = dataBounds.yRange()
         val displaySize = unitDisplaySize(ratio)
-        val domains = provider.adjustDomains(domainX, domainY, displaySize)
+        val domains = provider.adjustDomains(domainX, domainY)
         domainX = domains.first
         domainY = domains.second
 
-        val scaleX =
-            scaleX(provider, domainX, displaySize.x)
-        val scaleY =
-            scaleY(provider, domainY, displaySize.y)
+//        val scaleX = scaleX(provider, domainX, displaySize.x)
+//        val scaleY = scaleY(provider, domainY, displaySize.y)
+
+        val scaleXMapper = provider.buildAxisXScaleMapper(domainX, displaySize.x)
+        val scaleYMapper = provider.buildAxisYScaleMapper(domainY, displaySize.y)
 
         // adapts to display size
-        val actualMin =
-            applyScales(dataBounds.origin, scaleX, scaleY)
+        val actualMin = DoubleVector(scaleXMapper(dataBounds.origin.x)!!, scaleYMapper(dataBounds.origin.y)!!)
         assertEqualPoints(
             "min",
             expectedMin,
             actualMin,
             accuracy
         )
-        val actualMax = applyScales(
-            dataBounds.origin.add(dataBounds.dimension),
-            scaleX,
-            scaleY
-        )
+
+        val p = dataBounds.origin.add(dataBounds.dimension)
+        val actualMax = DoubleVector(scaleXMapper(p.x)!!, scaleYMapper(p.y)!!)
         assertEqualPoints(
             "max",
             expectedMax,
@@ -104,30 +102,23 @@ internal open class CoordTestBase {
             )
         }
 
-        fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
-            return provider.buildAxisScaleX(
-                Scales.continuousDomainNumericRange("Test scale X"),
-                domain,
-                axisLength,
-                EMPTY_BREAKS
-            )
-        }
+//        fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
+//            return provider.buildAxisScaleX(
+//                Scales.DemoAndTest.continuousDomainNumericRange("Test scale X"),
+//                domain,
+//                axisLength,
+//                EMPTY_BREAKS
+//            )
+//        }
 
-        fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
-            return provider.buildAxisScaleY(
-                Scales.continuousDomainNumericRange("Test scale Y"),
-                domain,
-                axisLength,
-                EMPTY_BREAKS
-            )
-        }
-
-        fun applyScales(p: DoubleVector, scaleX: Scale<Double>, scaleY: Scale<Double>): DoubleVector {
-            return DoubleVector(
-                scaleX.mapper(p.x)!!,
-                scaleY.mapper(p.y)!!
-            )
-        }
+//        fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
+//            return provider.buildAxisScaleY(
+//                Scales.DemoAndTest.continuousDomainNumericRange("Test scale Y"),
+//                domain,
+//                axisLength,
+//                EMPTY_BREAKS
+//            )
+//        }
 
         private fun assertEqualPoints(
             text: String,

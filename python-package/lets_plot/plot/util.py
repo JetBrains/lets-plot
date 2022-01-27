@@ -2,8 +2,11 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from collections import Iterable
+from datetime import datetime
 from typing import Any, Tuple, Sequence
 
+from lets_plot._type_utils import is_dict_or_dataframe
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
@@ -50,6 +53,20 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
             if len(mapping_meta) > 0:
                 data_meta.update({'mapping_annotations': mapping_meta})
+
+    # series annotations
+    series_meta = []
+
+    if is_dict_or_dataframe(data):
+        for column_name, values in data.items():
+            if isinstance(values, Iterable) and all(isinstance(val, datetime) for val in values):
+                series_meta.append({
+                    'column': column_name,
+                    'type': 'datetime'
+                })
+
+    if len(series_meta) > 0:
+        data_meta.update({'series_annotations': series_meta})
 
     return data, aes(**mapping), {'data_meta': data_meta}
 

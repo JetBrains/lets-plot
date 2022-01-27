@@ -16,7 +16,8 @@ class TooltipSpec(
     val isOutlier: Boolean,
     val anchor: TooltipAnchor? = null,
     val minWidth: Double? = null,
-    val isCrosshairEnabled: Boolean = false
+    val isCrosshairEnabled: Boolean = false,
+    val markerColors: List<Color>
 ) {
     val lines: List<Line> = ArrayList(lines)
 

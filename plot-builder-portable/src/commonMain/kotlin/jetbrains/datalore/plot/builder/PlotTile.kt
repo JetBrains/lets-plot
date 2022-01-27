@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_H_PADDING
@@ -32,8 +33,6 @@ internal class PlotTile(
     private val theme: Theme,
     private val frameOfReference: TileFrameOfReference,
 ) : SvgComponent() {
-
-    var isDebugDrawing: Boolean = false
 
     private val myTargetLocators = ArrayList<GeomTargetLocator>()
 
@@ -61,15 +60,6 @@ internal class PlotTile(
 
         val geomBounds = tileLayoutInfo.geomBounds
 
-//        if (theme.panel().shown()) {
-//            val rect = SvgRectElement(geomBounds).apply {
-//                strokeColor().set(theme.panel().color())
-//                strokeWidth().set(theme.panel().size())
-//                fillColor().set(theme.panel().fill())
-//            }
-//            add(rect)
-//        }
-
         addFacetLabels(geomBounds, theme.facets())
 
         // render geoms
@@ -85,9 +75,9 @@ internal class PlotTile(
         } else {
             // Normal plot tiles
 
-            frameOfReference.drawFoR(this)
-            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
+            frameOfReference.drawBeforeGeomLayer(this)
 
+            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
             for (layer in layers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
@@ -101,6 +91,8 @@ internal class PlotTile(
                 layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }
+
+            frameOfReference.drawAfterGeomLayer(this)
         }
     }
 
@@ -127,8 +119,8 @@ internal class PlotTile(
                 val lab = TextLabel(xLabel)
                 lab.moveTo(x, y)
                 lab.textColor().set(theme.stripTextColor())
-                lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-                lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+                lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+                lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                 add(lab)
 
                 labelBounds = labelBounds.add(DoubleVector(0.0, labelSize.y))
@@ -155,8 +147,8 @@ internal class PlotTile(
             val lab = TextLabel(tileLayoutInfo.facetYLabel)
             lab.moveTo(x, y)
             lab.textColor().set(theme.stripTextColor())
-            lab.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-            lab.setVerticalAnchor(TextLabel.VerticalAnchor.CENTER)
+            lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+            lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
             lab.rotate(90.0)
             add(lab)
         }

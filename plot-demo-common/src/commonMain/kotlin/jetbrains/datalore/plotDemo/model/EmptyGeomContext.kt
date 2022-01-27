@@ -31,4 +31,6 @@ class EmptyGeomContext : GeomContext {
     override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
+
+    override fun isMappedAes(aes: Aes<*>): Boolean = false
 }

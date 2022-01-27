@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 
 object ScaleProviderHelper {
     fun getOrCreateDefault(aes: Aes<*>, providers: Map<Aes<*>, ScaleProvider<*>>): ScaleProvider<*> {
@@ -22,16 +23,10 @@ object ScaleProviderHelper {
         return ScaleProviderBuilder(aes).build()
     }
 
-    fun <T> createDefault(aes: Aes<T>, name: String): ScaleProvider<T> {
+    fun <T> createDateTimeScaleProvider(aes: Aes<T>, name: String): ScaleProvider<T> {
         return ScaleProviderBuilder(aes)
             .name(name)
-            .build()
-    }
-
-    fun <T> create(name: String, aes: Aes<T>, mapperProvider: MapperProvider<T>): ScaleProvider<T> {
-        return ScaleProviderBuilder(aes)
-            .mapperProvider(mapperProvider)
-            .name(name)
+            .breaksGenerator(DateTimeBreaksGen())
             .build()
     }
 }

@@ -20,6 +20,7 @@ def theme(*,
           title=None,
           # ToDo: aspect.ratio
           axis=None,
+          axis_ontop=None, axis_ontop_x=None, axis_ontop_y=None,
           axis_title=None, axis_title_x=None, axis_title_y=None,
           # ToDo: axis.title.x.top, axis.title.x.bottom
           # ToDo: axis.title.y.left, axis.title.y.right
@@ -34,9 +35,10 @@ def theme(*,
           # ToDo: axis.line.x.top, axis.line.x.bottom
           # ToDo: axis.line.x.left, axis.line.x.right
 
+          legend_background=None,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
-          # ToDo: legend.background, etc...
+          # ToDo: other legend options...
 
           panel_background=None,
           # ToDo: panel.border, etc...
@@ -49,10 +51,10 @@ def theme(*,
           panel_grid_major_y=None,
           panel_grid_minor_y=None,
 
+          plot_background=None,
           plot_title=None,
           # ToDo: plot_subtitle=None,
-          # ToDo: plot_caption=None,
-          # ToDo: plot.background, etc...
+          # ToDo: plot_caption=None, , etc...
 
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
@@ -86,6 +88,8 @@ def theme(*,
         All axis elements: lines, ticks, texts, titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify axes parameters.
+    axis_ontop, axis_ontop_x, axis_ontop_y : bool, default=False
+        Option to place axis (lines, tickmarks and labels) over the data layers.
     axis_title, axis_title_x, axis_title_y : str or dict
         Labels of axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -108,6 +112,10 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify line parameters along all axes.
         `axis_line_*` inherits from `axis_line` which inherits from `line`.
+    legend_background : str or dict
+        Background of legend.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify legend background parameters, inherited from `rect`.
     legend_text : str or dict
         Legend item labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -137,6 +145,10 @@ def theme(*,
         Set `element_line()` to specify grid line parameters.
         `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
         which in turn inherits from `line`.
+    plot_background : str or dict
+        Background of the entire plot.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify plot background parameters, inherited from `rect`.
     plot_title : str or dict
         Plot title.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -204,7 +216,7 @@ def theme(*,
             facet_grid(y='class') + \\
             theme(axis_line_x='blank', \\
                   axis_ticks=element_line(color='white'), \\
-                  panel_grid_major_x='blank', \
+                  panel_grid_major_x='blank', \\
                   strip_background=element_rect(color='black', fill='white'), \\
                   axis_tooltip=element_rect(color='black', fill='white'), \\
                   legend_position='top')

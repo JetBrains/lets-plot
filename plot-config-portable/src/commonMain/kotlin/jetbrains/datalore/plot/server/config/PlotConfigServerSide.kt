@@ -23,13 +23,17 @@ import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTrans
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
-open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
+open class PlotConfigServerSide(opts: Map<String, Any>) :
+    PlotConfig(
+        opts,
+        isClientSide = false
+    ) {
 
     override fun createLayerConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
+        plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOption>
     ): LayerConfig {
 
@@ -39,7 +43,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             layerOptions,
             sharedData,
             plotMappings,
-            plotDiscreteAes,
+            plotDataMeta,
             plotOrderOptions,
             GeomProto(geomKind),
             false
@@ -150,7 +154,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         val dataByLayer = ArrayList<DataFrame>()
         for (layerConfig in layerConfigs) {
             var layerData = layerConfig.combinedData
-            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, scaleMap)
+            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, transformByAes)
             dataByLayer.add(layerData)
         }
 
@@ -166,7 +170,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
         for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
 
-            val statCtx = ConfiguredStatContext(dataByLayer, scaleMap)
+            val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
             for (tileIndex in inputDataByTileByLayer.indices) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
                 val varBindings = layerConfig.varBindings
@@ -198,7 +202,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         tileLayerInputData,
                         stat,
                         varBindings,
-                        scaleMap,
+                        transformByAes,
                         groupingContext,
                         facets,
                         statCtx,

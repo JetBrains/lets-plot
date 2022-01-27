@@ -21,7 +21,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
  * @param <T> - type of target aesthetic
  *
  */
-interface Scale<T> {
+interface Scale<T> {   // ToDo: remove <T>: it only make sense for mapper.
     val name: String
 
     val labelFormatter: ((Any) -> String)?
@@ -39,46 +39,21 @@ interface Scale<T> {
 
     val transform: Transform
 
-    val mapper: (Double?) -> T?
-
     fun hasBreaks(): Boolean
-
-    fun hasDomainLimits(): Boolean
-
-    fun isInDomainLimits(v: Any): Boolean
 
     fun getBreaksGenerator(): BreaksGenerator
 
     fun getScaleBreaks(): ScaleBreaks
 
-    fun applyTransform(source: List<*>, checkLimits: Boolean): List<Double?>
-
     fun with(): Builder<T>
 
     interface Builder<T> {
-
-        /**
-         * Lower limit for scale with continuous domain.
-         */
-        fun lowerLimit(v: Double): Builder<T>
-
-        /**
-         * Upper limit for scale with continuous domain.
-         */
-        fun upperLimit(v: Double): Builder<T>
-
-        /**
-         * Limits for scale with discrete domain
-         */
-        fun limits(domainValues: List<Any>): Builder<T>
 
         fun breaks(l: List<Any>): Builder<T>
 
         fun labels(l: List<String>): Builder<T>
 
         fun labelFormatter(v: (Any) -> String): Builder<T>
-
-        fun mapper(m: (Double?) -> T?): Builder<T>
 
         fun multiplicativeExpand(v: Double): Builder<T>
 

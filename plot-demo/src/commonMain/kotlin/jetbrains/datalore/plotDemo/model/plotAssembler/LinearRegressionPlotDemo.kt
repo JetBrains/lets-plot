@@ -55,8 +55,8 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
 
         val scaleByAes = TypedScaleMap(
             mapOf(
-                Aes.X to Scales.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.continuousDomainNumericRange("B")
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
             )
         )
 
@@ -76,7 +76,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                     Aes.Y,
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         //
         // true line
@@ -108,7 +108,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                 )
             )
             .addConstantAes(Aes.LINETYPE, NamedLineType.DASHED)
-            .build(line, scaleByAes)
+            .build(line, scaleByAes, emptyMap())
 
         //
         // Smooth stat (regression)
@@ -129,7 +129,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                     Aes.Y,
                 )
             )
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         //
         // Smooth stat - standard error
@@ -152,19 +152,23 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             )
             .addBinding(VarBinding(Stats.SE, Aes.Y))
             .addConstantAes(Aes.COLOR, Color.RED)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, emptyMap())
 
         //
         // Plot
         //
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(
                 scatterLayer,
                 trueLineLayer,
                 regressionLineLayer,
                 seLineLayer
-            ), CoordProviders.cartesian(), theme
+            ),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            emptyMap(),
+            CoordProviders.cartesian(), theme
         )
         assembler.title = "Linear Regression"
         assembler.disableInteractions()

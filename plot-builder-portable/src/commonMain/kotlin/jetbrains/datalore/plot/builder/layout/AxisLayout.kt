@@ -5,11 +5,15 @@
 
 package jetbrains.datalore.plot.builder.layout
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 
 interface AxisLayout {
     fun initialThickness(): Double
 
-    fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle?): AxisLayoutInfo
+    fun doLayout(
+        axisDomain: ClosedRange<Double>,
+        axisLength: Double,
+        maxTickLabelsBoundsStretched: DoubleRectangle?
+    ): AxisLayoutInfo
 }

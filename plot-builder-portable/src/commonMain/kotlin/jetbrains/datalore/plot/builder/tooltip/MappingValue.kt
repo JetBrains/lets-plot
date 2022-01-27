@@ -46,7 +46,7 @@ class MappingValue(
     override fun getDataPoint(index: Int): DataPoint {
         val originalValue = myDataAccess.getOriginalValue(aes, index)
         val formattedValue =
-            originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
+            originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedDataValue(aes, index)
         return DataPoint(
             label = myDataLabel,
             value = formattedValue,
@@ -65,10 +65,10 @@ class MappingValue(
         )
     }
 
-    fun toOutlier(): MappingValue {
+    fun withFlags(isOutlier: Boolean, isAxis: Boolean): MappingValue {
         return MappingValue(
             aes = aes,
-            isOutlier = true,
+            isOutlier = isOutlier,
             isAxis = isAxis,
             format = format
         )

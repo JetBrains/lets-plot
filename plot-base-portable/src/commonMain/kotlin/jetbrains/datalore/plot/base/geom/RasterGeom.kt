@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil.with_X_Y
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgImageElementEx
 import jetbrains.datalore.vis.svg.SvgImageElementEx.Bitmap

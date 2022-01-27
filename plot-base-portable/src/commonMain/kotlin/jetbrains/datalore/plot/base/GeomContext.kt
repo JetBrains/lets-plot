@@ -25,4 +25,6 @@ interface GeomContext {
     fun getAesBounds(): DoubleRectangle
 
     fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext
+
+    fun isMappedAes(aes: Aes<*>): Boolean
 }

@@ -7,7 +7,9 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
@@ -20,27 +22,51 @@ import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
 
-class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
+class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
+    PlotConfig(
+        opts,
+        isClientSide = true
+    ) {
 
-    //    internal val theme: Theme = when {
-//        USE_THEME2 -> ThemeConfig2(getMap(THEME)).theme
-//        else -> ThemeConfig(getMap(THEME)).theme
-//    }
     internal val theme: Theme = ThemeConfig(getMap(THEME)).theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
-    override val isClientSide: Boolean
-        get() = true
+    val scaleMap: TypedScaleMap
+    val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
 
     init {
+
+        val mappersByAes = PlotConfigScaleMappers.createMappers(
+            layerConfigs,
+            transformByAes,
+            mapperProviderByAes,
+            excludeStatVariables = false
+        )
+
+        // ToDo: First transform data then create scales.
+        scaleMap = PlotConfigScales.createScales(
+            layerConfigs,
+            transformByAes,
+            mappersByAes,
+            scaleProviderByAes
+        )
+
+        // Use only Non-positional mappers.
+        mappersByAesNP = mappersByAes.filterKeys { !Aes.isPositional(it) }
 
         val preferredCoordProvider: CoordProvider? = layerConfigs
             .map { it.geomProto as GeomProtoClientSide }
             .firstOrNull { it.hasPreferredCoordinateSystem() }
             ?.preferredCoordinateSystem()
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
-        val coordProvider = CoordConfig.create(get(COORD), defaultCoordProvider)
+        val coordProvider = CoordConfig.create(
+            get(COORD),
+            transformByAes.getValue(Aes.X),
+            transformByAes.getValue(Aes.Y),
+            defaultCoordProvider
+        )
+
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
     }
@@ -49,7 +75,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<*>,
+        plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>
     ): LayerConfig {
 
@@ -59,7 +85,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             layerOptions,
             sharedData,
             plotMappings,
-            plotDiscreteAes,
+            plotDataMeta,
             plotOrderOptions,
             GeomProtoClientSide(geomKind),
             true

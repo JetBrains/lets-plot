@@ -75,34 +75,6 @@ abstract class LiveMapTestBase {
         }
     }
 
-    protected fun createEntity(name: String, componentTypes: List<KClass<out EcsComponent>>): EcsEntity {
-        val entity = componentManager.createEntity(name)
-        componentTypes.forEach { aType ->
-            try {
-                entity.addComponents{ + aType.constructors.first().call() }
-            } catch (e: InstantiationException) {
-                throw IllegalStateException(e)
-            } catch (e: IllegalAccessException) {
-                throw IllegalStateException(e)
-            } catch (e: IllegalArgumentException) {
-                println(aType)
-                throw IllegalStateException(e)
-            }
-        }
-
-        return entity
-    }
-
-    protected fun createEntity(
-        name: String,
-        componentTypes: List<KClass<out EcsComponent>>,
-        vararg extraComponents: EcsComponent
-    ): EcsEntity {
-        return createEntity(name, componentTypes).apply {
-            listOf(*extraComponents).forEach { setComponent(it) }
-        }
-    }
-
     protected fun update(specs: Iterable<MockSpec>) {
         deltaTimeSpec().standard().apply()
         schedulerSpec().runAll().apply()

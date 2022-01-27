@@ -34,29 +34,28 @@ import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_MAX_FACTOR
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOLS_MIN_FACTOR
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOL_ZOOM_IN_EASING
-import jetbrains.livemap.config.DevParams.Companion.SCALABLE_SYMBOL_ZOOM_OUT_EASING
+import jetbrains.livemap.config.DevParams.Companion.SCALE_FUNCTION
+import jetbrains.livemap.config.DevParams.Companion.SHOW_RESET_POSITION_ACTION
 import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.ZOOM_IN_SCALE_MULTIPLIER
+import jetbrains.livemap.config.DevParams.Companion.ZOOM_OUT_SCALE_MULTIPLIER
 import jetbrains.livemap.config.DevParams.MicroTaskExecutor.*
-import jetbrains.livemap.core.BusyStateSystem
 import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.graphics.Rectangle
+import jetbrains.livemap.core.graphics.TextMeasurer
 import jetbrains.livemap.core.input.*
+import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerManager
+import jetbrains.livemap.core.layers.LayerManagers.createLayerManager
+import jetbrains.livemap.core.layers.LayersRenderingSystem
+import jetbrains.livemap.core.layers.RenderTarget
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.core.rendering.TextMeasurer
-import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.core.rendering.layers.LayerManagers.createLayerManager
-import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
-import jetbrains.livemap.core.rendering.layers.RenderTarget
-import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.ApplyPointSystem
 import jetbrains.livemap.geocoding.LocationCalculateSystem
@@ -97,6 +96,7 @@ class LiveMap(
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
     private val myAttribution: String?,
+    private val myShowAdnvancedActions: Boolean,
     private val myCursorService: CursorService
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
@@ -109,6 +109,7 @@ class LiveMap(
     private lateinit var myDiagnostics: Diagnostics
     private lateinit var mySchedulerSystem: SchedulerSystem
     private lateinit var myUiService: UiService
+    private lateinit var myTextMeasurer: TextMeasurer
 
     private val errorEvent = SimpleEventSource<Throwable>()
     val isLoading: Property<Boolean> = ValueProperty(true)
@@ -137,8 +138,8 @@ class LiveMap(
             errorHandler = { canvasControl.schedule { errorEvent.fire(it) } },
             camera = camera
         )
-
-        myUiService = UiService(myComponentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
+        myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+        myUiService = UiService(myComponentManager, myTextMeasurer)
 
         myLayerManager = createLayerManager(myComponentManager, myRenderTarget, canvasControl)
 
@@ -228,10 +229,13 @@ class LiveMap(
                 ViewportGridUpdateSystem(componentManager),
                 LiveMapUiSystem(
                     myUiService,
+                    ResourceManager(myContext.mapRenderContext.canvasProvider),
                     componentManager,
                     myMapLocationConsumer,
                     myLayerManager,
-                    myAttribution
+                    myAttribution,
+                    myShowAdnvancedActions,
+                    myDevParams.isSet(SHOW_RESET_POSITION_ACTION),
                 ),
 
                 BasemapCellLoadingSystem(componentManager),
@@ -256,21 +260,16 @@ class LiveMap(
                 WorldOrigin2ScreenUpdateSystem(componentManager),
                 WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 ScreenLoopsUpdateSystem(componentManager),
-                HoverObjectDetectionSystem(componentManager),
+                HoverObjectDetectionSystem(myUiService, componentManager),
 
                 // Charts
                 ChartElementScaleSystem(
-                    minScale = myDevParams.read(SCALABLE_SYMBOLS_MIN_FACTOR),
-                    maxScale = myDevParams.read(SCALABLE_SYMBOLS_MAX_FACTOR),
-                    zoomInEasing = myDevParams.read(SCALABLE_SYMBOL_ZOOM_IN_EASING).function,
-                    zoomOutEasing = myDevParams.read(SCALABLE_SYMBOL_ZOOM_OUT_EASING).function,
-                    minZoom = viewport.minZoom,
-                    maxZoom = viewport.maxZoom,
+                    scaleFunction = myDevParams.read(SCALE_FUNCTION),
+                    zoomInMultiplier = myDevParams.read(ZOOM_IN_SCALE_MULTIPLIER),
+                    zoomOutMultiplier = myDevParams.read(ZOOM_OUT_SCALE_MULTIPLIER),
                     componentManager
                 ),
                 RenderingSystem(componentManager),
-
-                BusyStateSystem(componentManager, myUiService),
 
                 UiRenderingTaskSystem(componentManager),
                 myLayerRenderingSystem,
@@ -279,8 +278,6 @@ class LiveMap(
                 // Effects
                 GrowingPathEffect.GrowingPathEffectSystem(componentManager),
                 CameraScale.CameraScaleEffectSystem(componentManager)
-
-                //LoadingStateSystem(componentManager, isLoading())
             )
         )
     }
@@ -293,10 +290,8 @@ class LiveMap(
             .addComponents {
                 + ClickableComponent(
                     Rectangle().apply {
-                        rect = newDoubleRectangle(
-                            Coordinates.ZERO_CLIENT_POINT,
-                            viewport.size
-                        )
+                        origin = Coordinates.ZERO_CLIENT_POINT.toDoubleVector()
+                        dimension = viewport.size.toDoubleVector()
                     }
                 )
                 + listeners
@@ -342,8 +337,8 @@ class LiveMap(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myDevParams.isSet(DevParams.SCALABLE_SYMBOLS),
-            TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+            myDevParams.isSet(DevParams.ENABLE_SCALING),
+            myTextMeasurer
         )
 
         layers.forEach(layersBuilder::apply)

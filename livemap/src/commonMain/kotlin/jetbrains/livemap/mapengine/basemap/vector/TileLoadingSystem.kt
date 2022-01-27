@@ -14,8 +14,8 @@ import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.BusyStateComponent
 import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.*
-import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.basemap.BasemapLayerKind.LABEL

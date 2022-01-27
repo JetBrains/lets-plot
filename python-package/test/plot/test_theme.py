@@ -6,7 +6,7 @@ from lets_plot import element_blank
 from lets_plot import element_rect
 from lets_plot.plot import theme
 from lets_plot.plot.geom import _geom
-from lets_plot.plot.theme_classic_ import theme_classic
+from lets_plot.plot.theme_set import theme_classic
 
 
 def test_theme_options_should_be_merged():

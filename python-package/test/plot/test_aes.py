@@ -8,7 +8,7 @@ import lets_plot as gg
 
 
 class TestWithListArgs:
-    result_empty = {'x': None, 'y': None}
+    result_empty = {}
     result_xy = {'x': 'xVar', 'y': 'yVar'}
 
     @pytest.mark.parametrize('args,expected', [

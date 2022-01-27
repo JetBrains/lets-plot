@@ -11,7 +11,7 @@ import jetbrains.livemap.chart.DonutChart
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerGroup
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent

@@ -8,8 +8,11 @@ package jetbrains.datalore.plotDemo.model.plotContainer
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotContainer
@@ -41,16 +44,23 @@ class BarPlotResizeDemo private constructor(
 
         val categories = ArrayList(data.distinctValues(varCat))
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
-        val fillScale = Scales.pureDiscrete("C", categories, colors, Color.GRAY)
+        val fillScale = Scales.DemoAndTest.pureDiscrete<Color>("C", categories/*, colors, Color.GRAY*/)
+        val fillMapper = Mappers.discrete(
+            fillScale.transform as DiscreteTransform,
+            colors, Color.GRAY
+        )
 
         val scaleByAes = TypedScaleMap(
             mapOf(
                 Aes.X to xScale,
-                Aes.Y to Scales.continuousDomain("sin, cos, line", Aes.Y),
+                Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
                 Aes.FILL to fillScale
             )
         )
 
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.FILL to fillMapper
+        )
 
         val layerBuilder = GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
@@ -77,10 +87,11 @@ class BarPlotResizeDemo private constructor(
         )
             .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             .build()
+
         val layer = layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
-            .build(data, scaleByAes)
+            .build(data, scaleByAes, scaleMappersNP)
 
 
         //Theme t = new DefaultTheme() {
@@ -95,8 +106,11 @@ class BarPlotResizeDemo private constructor(
         //  }
         //};
         val assembler = PlotAssembler.singleTile(
-            scaleByAes,
+//            scaleByAes,
             listOf(layer),
+            scaleByAes.get(Aes.X),
+            scaleByAes.get(Aes.Y),
+            scaleMappersNP,
             CoordProviders.cartesian(),
             DefaultTheme.minimal2()
         )
@@ -108,7 +122,7 @@ class BarPlotResizeDemo private constructor(
         fun continuousX(): BarPlotResizeDemo {
             return BarPlotResizeDemo(
                 SinCosLineData({ v -> v.toDouble() }, 6),
-                Scales.continuousDomain(" ", Aes.X)
+                Scales.DemoAndTest.continuousDomain(" ", Aes.X)
             )
         }
 
@@ -116,7 +130,7 @@ class BarPlotResizeDemo private constructor(
             val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
             return BarPlotResizeDemo(
                 sclData,
-                Scales.discreteDomain<String>("", sclData.distinctXValues())
+                Scales.DemoAndTest.discreteDomain<String>("", sclData.distinctXValues().toList())
             )
         }
     }

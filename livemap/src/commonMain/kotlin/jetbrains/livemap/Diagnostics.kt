@@ -10,20 +10,19 @@ import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.graphics.GraphicsService
+import jetbrains.livemap.core.graphics.Text
+import jetbrains.livemap.core.layers.CanvasLayer
+import jetbrains.livemap.core.layers.CanvasLayerComponent
+import jetbrains.livemap.core.layers.LayersOrderComponent
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.rendering.layers.CanvasLayer
-import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
-import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
-import jetbrains.livemap.core.rendering.primitives.Label
-import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.fragment.CachedFragmentsComponent
 import jetbrains.livemap.fragment.DownloadingFragmentsComponent
 import jetbrains.livemap.fragment.FragmentKey
 import jetbrains.livemap.fragment.StreamingFragmentsComponent
 import jetbrains.livemap.mapengine.basemap.raster.RasterTileLoadingSystem.HttpTileResponseComponent
 import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem.TileResponseComponent
-import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {
 
@@ -34,7 +33,7 @@ open class Diagnostics {
         private val dirtyLayers: List<Int>,
         private val schedulerSystem: SchedulerSystem,
         private val debugService: MetricsService,
-        private val uiService: UiService,
+        private val graphicsService: GraphicsService,
         private val registry: EcsComponentManager
     ) : Diagnostics() {
 
@@ -85,14 +84,10 @@ open class Diagnostics {
                 color = Color.DARK_GREEN
                 fontFamily = "Courier New"
                 fontSize = 12.0
+                origin = DoubleVector(4.0, 150.0)
             }
 
-            val metricsLabel = Label(DoubleVector(0.0, 150.0), metrics).apply {
-                padding = 4.0
-                background = Color.WHITE
-            }
-
-            uiService.addRenderable(metricsLabel)
+            graphicsService.addToRenderer(metrics)
         }
 
         override fun update(dt: Long) {
@@ -108,7 +103,7 @@ open class Diagnostics {
 
             if (metrics.text != debugService.values) {
                 metrics.text = debugService.values
-                uiService.repaint()
+                graphicsService.repaint()
             }
         }
 

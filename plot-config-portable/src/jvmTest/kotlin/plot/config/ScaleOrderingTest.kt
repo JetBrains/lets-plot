@@ -740,7 +740,8 @@ class ScaleOrderingTest {
             colorFactory: (DataPointAesthetics) -> Color?
         ): Map<Int, List<Any?>> {
             val colorInColumns = mutableMapOf<Int, ArrayList<Color>>()
-            val aesthetics = PlotUtil.createLayerDryRunAesthetics(geomLayer)
+//            val aesthetics = PlotUtil.createLayerDryRunAesthetics(geomLayer)
+            val aesthetics = PlotUtil.DemoAndTest.layerAestheticsWithoutLayout(geomLayer)
             for (index in 0 until aesthetics.dataPointCount()) {
                 val p = aesthetics.dataPointAt(index)
                 val x = p.x()!!

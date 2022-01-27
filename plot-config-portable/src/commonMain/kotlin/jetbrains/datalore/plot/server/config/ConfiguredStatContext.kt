@@ -6,17 +6,14 @@
 package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.StatContext
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ConfiguredStatContext(
     private val dataFrames: List<DataFrame>,
-    private val scaleByAes: TypedScaleMap
+    private val transformByAes: Map<Aes<*>, Transform>
 ) : StatContext {
 
     private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): ClosedRange<Double>? {
@@ -41,10 +38,10 @@ internal class ConfiguredStatContext(
         val transformVar = DataFrameUtil.transformVarFor(aes)
 
         val undefinedLimits = Pair(Double.NaN, Double.NaN)
-        val transformedLimits: Pair<Double, Double> = if (scaleByAes.containsKey(aes)) {
-            val scale = scaleByAes[aes]
-            if (scale.isContinuousDomain) {
-                ScaleUtil.transformedDefinedLimits(scale)
+        val transformedLimits: Pair<Double, Double> = if (transformByAes.containsKey(aes)) {
+            val transform = transformByAes.getValue(aes)
+            if (transform is ContinuousTransform) {
+                ScaleUtil.transformedDefinedLimits(transform)
             } else {
                 undefinedLimits
             }

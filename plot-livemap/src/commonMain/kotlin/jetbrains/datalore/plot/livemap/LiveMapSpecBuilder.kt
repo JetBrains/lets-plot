@@ -60,8 +60,8 @@ internal class LiveMapSpecBuilder {
 
     fun liveMapOptions(liveMapOptions: LiveMapOptions): LiveMapSpecBuilder {
         myLiveMapOptions = liveMapOptions
-        (myLiveMapOptions.tileProvider[Tile.MIN_ZOOM] as Int?)?.let { minZoom = it }
-        (myLiveMapOptions.tileProvider[Tile.MAX_ZOOM] as Int?)?.let { maxZoom = it }
+        (myLiveMapOptions.tileProvider[Tile.MIN_ZOOM] as? Number)?.let { minZoom = it.toInt() }
+        (myLiveMapOptions.tileProvider[Tile.MAX_ZOOM] as? Number)?.let { maxZoom = it.toInt() }
 
         return this
     }
@@ -129,6 +129,7 @@ internal class LiveMapSpecBuilder {
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
             attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
+            showAdvancedActions = myLiveMapOptions.showAdvancedActions,
             cursorService = myCursorService,
             minZoom = minZoom,
             maxZoom = maxZoom,
