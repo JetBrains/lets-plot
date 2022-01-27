@@ -42,7 +42,7 @@ object PlotConfigClientSideUtil {
             layersByTile,
             config.scaleMap.get(Aes.X),
             config.scaleMap.get(Aes.Y),
-            config.scaleMappersNP,
+            config.mappersByAesNP,
             config.coordProvider,
             config.theme
         )
@@ -90,7 +90,7 @@ object PlotConfigClientSideUtil {
                 val layer = layerBuilders[layerIndex].build(
                     layerTileData,
                     plotConfig.scaleMap,
-                    plotConfig.scaleMappersNP,
+                    plotConfig.mappersByAesNP,
                 )
                 panelLayers.add(layer)
             }

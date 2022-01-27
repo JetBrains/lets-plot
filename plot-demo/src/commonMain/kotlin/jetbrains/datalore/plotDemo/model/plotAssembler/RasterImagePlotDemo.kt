@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
@@ -20,6 +19,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plotDemo.model.SharedPieces
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -52,20 +52,24 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
                 Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
                     varFill.label,
                     Transforms.IDENTITY,
-                    df.range(varFill)!!
+                    continuousRange = false,
+                    guideBreaks = null,
                 ),
                 Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).createScale(
                     varAlpha.label,
                     Transforms.IDENTITY,
-                    df.range(varAlpha)!!
+                    continuousRange = false,
+                    guideBreaks = null,
                 )
             )
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
-            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).mapperProvider
+//            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).mapperProvider
+            Aes.FILL to DefaultMapperProvider[Aes.FILL]
                 .createContinuousMapper(df.range(varFill)!!, Transforms.IDENTITY),
-            Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).mapperProvider
+//            Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).mapperProvider
+            Aes.ALPHA to DefaultMapperProvider[Aes.ALPHA]
                 .createContinuousMapper(df.range(varAlpha)!!, Transforms.IDENTITY),
         )
 

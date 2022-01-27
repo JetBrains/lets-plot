@@ -36,7 +36,10 @@ internal class ScaleProviderBuilderTest {
         val scaleProvider = builder.build()
         // continuous scale
         val scale = scaleProvider.createScale(
-            "X-scale", Transforms.IDENTITY, ClosedRange.singleton(0.0)
+            "X-scale",
+            Transforms.IDENTITY,
+            continuousRange = false,
+            guideBreaks = null,
         )
 
         fun actual(scale: Scale<*>): BreaksGenerator {

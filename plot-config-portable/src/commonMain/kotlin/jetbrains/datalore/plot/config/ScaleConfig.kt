@@ -55,12 +55,15 @@ class ScaleConfig<T> constructor(
     options: Map<String, Any>
 ) : OptionsAccessor(options) {
 
-    fun createScaleProvider(): ScaleProvider<T> {
-        return createScaleProviderBuilder().build()
+    private fun enforceDiscreteDomain(): Boolean {
+        // Discrete domain if
+        //   - aes mapping is annotated with 'is_discrete';
+        //   - scale_x_discrete, scale_y_discrete.
+        return getBoolean(Option.Scale.DISCRETE_DOMAIN)
     }
 
-    private fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
-        var mapperProvider: MapperProvider<*>? = null
+    fun createMapperProvider(): MapperProvider<T> {
+        var mapperProvider: MapperProvider<*> = DefaultMapperProvider[aes]
 
         val naValue: T = when {
             has(NA_VALUE) -> getValue(aes, NA_VALUE)!!
@@ -88,15 +91,9 @@ class ScaleConfig<T> constructor(
             mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
-        // Discrete domain if
-        //   - aes mapping is annotated with 'is_discrete';
-        //   - scale_x_discrete, scale_y_discrete.
-        val discreteDomain = getBoolean(Option.Scale.DISCRETE_DOMAIN)
-        val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
-
         val scaleMapperKind = getString(SCALE_MAPPER_KIND) ?: if (
             !has(OUTPUT_VALUES) &&
-            discreteDomain &&
+            enforceDiscreteDomain() &&
             Aes.isColor(aes)
         ) {
             // Default palette type for discrete colors
@@ -152,12 +149,19 @@ class ScaleConfig<T> constructor(
                 throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + scaleMapperKind + "'")
         }
 
-        val b = ScaleProviderBuilder(aes)
-        if (mapperProvider != null) {
-            @Suppress("UNCHECKED_CAST")
-            b.mapperProvider(mapperProvider as MapperProvider<T>)
-        }
+        @Suppress("UNCHECKED_CAST")
+        return mapperProvider as MapperProvider<T>
+    }
 
+    fun createScaleProvider(): ScaleProvider<T> {
+        return createScaleProviderBuilder().build()
+    }
+
+    private fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
+        val discreteDomain = enforceDiscreteDomain()
+        val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
+
+        val b = ScaleProviderBuilder(aes)
         b.discreteDomain(discreteDomain)
         b.discreteDomainReverse(reverse)
 

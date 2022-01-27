@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
@@ -60,12 +61,14 @@ open class TilePlotDemo : SimpleDemoBase() {
                 Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
                     varV.label,
                     Transforms.IDENTITY,
-                    data.range(varV)!!
+                    continuousRange = false,
+                    guideBreaks = null,
                 )
             )
         )
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
-            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).mapperProvider
+//            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).mapperProvider
+            Aes.FILL to DefaultMapperProvider[Aes.FILL]
                 .createContinuousMapper(data.range(varV)!!, Transforms.IDENTITY),
         )
 

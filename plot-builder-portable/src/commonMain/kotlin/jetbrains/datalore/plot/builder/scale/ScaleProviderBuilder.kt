@@ -5,13 +5,11 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
@@ -28,22 +26,6 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
-
-    var mapperProvider: MapperProvider<T>
-        get() {
-            if (_mapperProvider == null) {
-                _mapperProvider = DefaultMapperProvider[aes]
-            }
-            return _mapperProvider ?: throw AssertionError("Set to null by another thread")
-        }
-        set(p: MapperProvider<T>) {
-            _mapperProvider = p
-        }
-
-    fun mapperProvider(mapperProvider: MapperProvider<T>): ScaleProviderBuilder<T> {
-        this.mapperProvider = mapperProvider
-        return this
-    }
 
     fun name(name: String): ScaleProviderBuilder<T> {
         myName = name
@@ -149,7 +131,7 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
         override val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
-        override val mapperProvider: MapperProvider<T> = b.mapperProvider
+
         override val breaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
         override val limits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
 
@@ -174,27 +156,22 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
         override fun createScale(
             defaultName: String,
             continuousTransform: ContinuousTransform,
-            continuousDomain: ClosedRange<Double>
+            continuousRange: Boolean,
+            guideBreaks: WithGuideBreaks<Any>?
         ): Scale<T> {
             val name = myName ?: defaultName
             var scale: Scale<T>
 
             // continuous (numeric) domain
-            val dataRange = ensureApplicableRange(continuousDomain)
-            val mapper = mapperProvider.createContinuousMapper(
-                dataRange,
-                continuousTransform
+            scale = Scales.continuousDomain(
+                name,
+                continuousRange = continuousRange || myAes.isNumeric
             )
-            val continuousRange = mapper.isContinuous || myAes.isNumeric
 
-            scale = Scales.continuousDomain(name, continuousRange)
-
-            if (mapper is WithGuideBreaks<*>) {
-                @Suppress("UNCHECKED_CAST")
-                mapper as WithGuideBreaks<Any>
+            guideBreaks?.let {
                 scale = scale.with()
-                    .breaks(mapper.breaks)
-                    .labelFormatter(mapper.formatter)
+                    .breaks(it.breaks)
+                    .labelFormatter(it.formatter)
                     .build()
             }
 
@@ -233,22 +210,11 @@ class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
 
         private fun absentMapper(`var`: DataFrame.Variable): ScaleMapper<T> {
             // mapper for empty data is a special case - should never be used
-//            return { v -> throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v) }
             return object : ScaleMapper<T> {
                 override fun invoke(v: Double?): T? {
                     throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v)
                 }
             }
         }
-
-//        private fun absentMapper(label: String): ScaleMapper<T> {
-//            // mapper for empty data is a special case - should never be used
-////            return { v -> throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v) }
-//            return object : ScaleMapper<T> {
-//                override fun invoke(v: Double?): T? {
-//                    throw throw IllegalStateException("Mapper for empty data series '$label' was invoked with arg " + v)
-//                }
-//            }
-//        }
     }
 }

@@ -48,8 +48,9 @@ object GuideMappers {
         val mapper = Mappers.discreteToContinuous(discreteTransform.effectiveDomainTransformed, outputRange, naValue)
         return GuideMapperWithGuideBreaks(
             mapper,
-            discreteTransform.effectiveDomain
-        ) { v: Any -> v.toString() }
+            discreteTransform.effectiveDomain,
+            formatter = { v: Any -> v.toString() }
+        )
     }
 
     fun continuousToContinuous(

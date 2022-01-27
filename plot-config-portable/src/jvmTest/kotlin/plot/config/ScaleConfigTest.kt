@@ -124,8 +124,9 @@ class ScaleConfigTest {
             )
 
             val scaleMapper = ScaleConfig<Color>(aes, scaleSpec)
-                .createScaleProvider()
-                .mapperProvider
+//                .createScaleProvider()
+//                .mapperProvider
+                .createMapperProvider()
                 .createDiscreteMapper(DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
 
             val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }

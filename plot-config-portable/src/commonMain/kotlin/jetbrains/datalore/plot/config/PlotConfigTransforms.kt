@@ -10,17 +10,21 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.scale.ContinuousOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.DiscreteOnlyMapperProvider
+import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
 internal object PlotConfigTransforms {
     internal fun createTransforms(
         layerConfigs: List<LayerConfig>,
         scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
+        mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
         excludeStatVariables: Boolean
     ): Map<Aes<*>, Transform> {
-        // X,Y scale - allways.
+        // X,Y scale - always.
         check(scaleProviderByAes.containsKey(Aes.X))
         check(scaleProviderByAes.containsKey(Aes.Y))
+        check(mapperProviderByAes.containsKey(Aes.X))
+        check(mapperProviderByAes.containsKey(Aes.Y))
 
         val dataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(
             layerConfigs, excludeStatVariables
@@ -47,7 +51,7 @@ internal object PlotConfigTransforms {
                 val anyNotNumericData = variables.any {
                     val data = dataByVarBinding.getValue(VarBinding(it, aes))
                     if (data.isEmpty(it)) {
-                        isDiscreteScaleForEmptyData(scaleProvider)
+                        isDiscreteScaleForEmptyData(scaleProvider, mapperProviderByAes.getValue(aes))
                     } else {
                         !data.isNumeric(it)
                     }
@@ -155,12 +159,14 @@ internal object PlotConfigTransforms {
         return discreteTransformByAes + continuousTransformByAes + transformByPositionalAes
     }
 
-    private fun isDiscreteScaleForEmptyData(scaleProvider: ScaleProvider<*>): Boolean {
+    private fun isDiscreteScaleForEmptyData(
+        scaleProvider: ScaleProvider<*>,
+        mapperProvider: MapperProvider<*>
+    ): Boolean {
         // Empty data is neither 'discrete' nor 'numeric'.
         // Which scale to build?
         if (scaleProvider.discreteDomain) return true
 
-        val mapperProvider = scaleProvider.mapperProvider
         if (mapperProvider is DiscreteOnlyMapperProvider) return true
         if (mapperProvider is ContinuousOnlyMapperProvider) return false
 

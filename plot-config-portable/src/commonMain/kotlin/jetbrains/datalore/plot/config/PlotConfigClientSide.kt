@@ -33,18 +33,27 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
     val scaleMap: TypedScaleMap
-    val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>
+    val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
 
     init {
 
-        // ToDo: First transform data then create scales.
-        scaleMap = PlotConfigScales.createScales(layerConfigs, transformByAes, scaleProviderByAes)
-        val mapperProviders = scaleProviderByAes.mapValues { it.value.mapperProvider }
-        scaleMappersNP = PlotConfigScaleMappers.createNotPositionalMappers(
+        val mappersByAes = PlotConfigScaleMappers.createMappers(
             layerConfigs,
             transformByAes,
-            mapperProviders
+            mapperProviderByAes,
+            excludeStatVariables = false
         )
+
+        // ToDo: First transform data then create scales.
+        scaleMap = PlotConfigScales.createScales(
+            layerConfigs,
+            transformByAes,
+            mappersByAes,
+            scaleProviderByAes
+        )
+
+        // Use only Non-positional mappers.
+        mappersByAesNP = mappersByAes.filterKeys { !Aes.isPositional(it) }
 
         val preferredCoordProvider: CoordProvider? = layerConfigs
             .map { it.geomProto as GeomProtoClientSide }

@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -64,7 +65,8 @@ class GeomLayerBuilderTest {
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
-            Aes.FILL to scaleProvider.mapperProvider.createDiscreteMapper(scaleFill.transform as DiscreteTransform)
+//            Aes.FILL to scaleProvider.mapperProvider.createDiscreteMapper(scaleFill.transform as DiscreteTransform)
+            Aes.FILL to DefaultMapperProvider[Aes.FILL].createDiscreteMapper(scaleFill.transform as DiscreteTransform)
         )
 
         val bindings = ArrayList<VarBinding>()

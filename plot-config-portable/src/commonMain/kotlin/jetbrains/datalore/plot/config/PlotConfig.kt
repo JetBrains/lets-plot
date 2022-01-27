@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
@@ -32,6 +33,7 @@ abstract class PlotConfig(
     val facets: PlotFacets
 
     protected val scaleConfigs: List<ScaleConfig<*>>
+    protected val mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>
     protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>
     protected val transformByAes: Map<Aes<*>, Transform>
 
@@ -64,12 +66,26 @@ abstract class PlotConfig(
 
         // build all scales
         val excludeStatVariables = !isClientSide
+
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
-        scaleProviderByAes = PlotConfigScaleProviders.createScaleProviders(
-            layerConfigs, scaleConfigs, excludeStatVariables
+
+        mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
+            layerConfigs,
+            scaleConfigs,
+            excludeStatVariables
         )
+
+        scaleProviderByAes = PlotConfigScaleProviders.createScaleProviders(
+            layerConfigs,
+            scaleConfigs,
+            excludeStatVariables
+        )
+
         transformByAes = PlotConfigTransforms.createTransforms(
-            layerConfigs, scaleProviderByAes, excludeStatVariables
+            layerConfigs,
+            scaleProviderByAes,
+            mapperProviderByAes,
+            excludeStatVariables
         )
 
         facets = if (has(FACET)) {

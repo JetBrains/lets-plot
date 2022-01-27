@@ -16,33 +16,55 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
  * Front-end.
  */
 internal object PlotConfigScaleMappers {
-    internal fun createNotPositionalMappers(
+
+    /**
+     * Note: 'positional' mappers do not yet know the output range (i.e. axis length).
+     */
+    internal fun createMappers(
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
         mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
+        excludeStatVariables: Boolean
     ): Map<Aes<*>, ScaleMapper<*>> {
+        // X,Y scale - always.
+        check(transformByAes.containsKey(Aes.X))
+        check(transformByAes.containsKey(Aes.Y))
+        check(mapperProviderByAes.containsKey(Aes.X))
+        check(mapperProviderByAes.containsKey(Aes.Y))
+
         val dataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(
             layerConfigs,
-            excludeStatVariables = false
-        ).filterKeys { !Aes.isPositional(it.aes) }
+            excludeStatVariables
+        )
 
         val variablesByMappedAes = PlotConfigUtil.associateAesWithMappedVariables(
             PlotConfigUtil.getVarBindings(
                 layerConfigs,
-                excludeStatVariables = false
+                excludeStatVariables
             )
         )
 
-        // All aes used in bindings, except positional.
-        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet()
+        // All aes used in bindings (an always X/Y)
+        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet() +
+                setOf(Aes.X, Aes.Y)
 
-        // Compute domains for 'continuous' data
-        // but exclude all 'positional' aes.
+        // Compute domains for 'continuous' data.
         //
-        // Domains for X, Y axis are computed later.
+        // Note: domains for positional Aes are not needed and not computed.
+        // Effective domains for X, Y axis are computed later.
         //      See: PlotAssemblerUtil.computePlotDryRunXYRanges()
 
-        val continuousDomainByAesRaw = HashMap<Aes<*>, ClosedRange<Double>?>()
+        val continuousDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+        transformByAes.getValue(Aes.X).let {
+            if (it is ContinuousTransform) {
+                continuousDomainByAes[Aes.X] = it.createApplicableDomain()
+            }
+        }
+        transformByAes.getValue(Aes.Y).let {
+            if (it is ContinuousTransform) {
+                continuousDomainByAes[Aes.Y] = it.createApplicableDomain()
+            }
+        }
 
         // Continuous domains from 'data'.
         for ((varBinding, data) in dataByVarBinding) {
@@ -51,17 +73,16 @@ internal object PlotConfigScaleMappers {
             val transform = transformByAes.getValue(aes)
 
             if (transform is ContinuousTransform) {
-                continuousDomainByAesRaw[aes] = SeriesUtil.span(
-                    continuousDomainByAesRaw[aes], PlotConfigUtil.computeContinuousDomain(data, variable, transform)
-                )
+                val domain = if (Aes.isPositionalXY(aes)) {
+                    transform.createApplicableDomain()
+                } else {
+                    val domainRaw = SeriesUtil.span(
+                        continuousDomainByAes[aes], PlotConfigUtil.computeContinuousDomain(data, variable, transform)
+                    )
+                    Transforms.ensureApplicableDomain(domainRaw, transform)
+                }
+                continuousDomainByAes[aes] = domain
             }
-        }
-
-        // make sure all continuous domains are 'applicable range' (not emprty and not null)
-        val continuousDomainByAes = continuousDomainByAesRaw.mapValues {
-            val aes = it.key
-            val transform: ContinuousTransform = transformByAes.getValue(aes) as ContinuousTransform
-            Transforms.ensureApplicableDomain(it.value, transform)
         }
 
         // Create mappers for all aes.
@@ -69,11 +90,7 @@ internal object PlotConfigScaleMappers {
         for (aes in aesSet) {
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
             val mapperProvider = mapperProviderByAes.getValue(aes)
-
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val transform = transformByAes.getValue(aes)
-
-            val scaleMapper: ScaleMapper<*> = when (transform) {
+            val scaleMapper: ScaleMapper<*> = when (val transform = transformByAes.getValue(aes)) {
                 is DiscreteTransform -> {
                     if (transform.effectiveDomain.isEmpty()) {
                         Mappers.emptyDataMapper(defaultName)
