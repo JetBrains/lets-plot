@@ -91,10 +91,10 @@ class SmoothStat constructor(
 
 
     override fun consumes(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.Y)
+        return listOf(Aes.X, Aes.Y)
     }
 
-    fun needSampling(rowCount: Int): Boolean {
+    private fun needSampling(rowCount: Int): Boolean {
         if (smoothingMethod != Method.LOESS) {
             return false
         }
@@ -135,7 +135,7 @@ class SmoothStat constructor(
             valuesX = data.getNumeric(TransformVar.X)
         } else {
             valuesX = ArrayList()
-            for (i in valuesY.indices) {
+            for (i in valuesY.indices) {   // ToDo: what indices to do with smoothing?
                 valuesX.add(i.toDouble())
             }
         }
