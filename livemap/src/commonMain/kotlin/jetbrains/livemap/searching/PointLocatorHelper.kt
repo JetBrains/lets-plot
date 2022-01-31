@@ -25,7 +25,7 @@ class PointLocatorHelper : LocatorHelper {
             return false
         }
 
-        val radius = target.get<SymbolComponent>().size.x / 2 * target.get<ChartElementComponent>().scaleFactor
+        val radius = target.get<SymbolComponent>().size.x / 2 * target.get<ChartElementComponent>().scaleSizeFactor
         return target.get<ScreenLoopComponent>().origins.any { distance(coord, it) <= radius }
     }
 

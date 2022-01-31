@@ -10,6 +10,7 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.Client
+import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScaleComponent
@@ -37,12 +38,12 @@ object Renderers {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElement = entity.get<ChartElementComponent>()
             val symbolData = entity.get<SymbolComponent>()
-            val radius = symbolData.size.x * chartElement.scaleFactor / 2.0
+            val radius = symbolData.size.x * chartElement.scaleSizeFactor / 2.0
 
             ctx.beginPath()
             drawPath(ctx, radius, shape)
             if (chartElement.fillColor != null) {
-                ctx.setFillStyle(chartElement.fillColor)
+                ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scaleAlphaValue))
                 ctx.fill()
             }
             if (chartElement.strokeColor != null && !chartElement.strokeWidth.isNaN()) {
@@ -78,13 +79,13 @@ object Renderers {
                 c.closePath()
 
                 if (chartElement.fillColor != null) {
-                    c.setFillStyle(chartElement.fillColor)
+                    c.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scaleAlphaValue))
                     c.fill()
                 }
 
                 if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
                     c.setStrokeStyle(chartElement.strokeColor)
-                    c.setLineWidth(chartElement.strokeWidth * chartElement.scaleFactor)
+                    c.setLineWidth(chartElement.strokeWidth * chartElement.scaleSizeFactor)
                     c.stroke()
                 }
             }
@@ -101,8 +102,8 @@ object Renderers {
 
             val chartElement = entity.get<ChartElementComponent>()
             ctx.setStrokeStyle(chartElement.strokeColor)
-            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scaleFactor }.toDoubleArray())
-            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scaleFactor)
+            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scaleSizeFactor }.toDoubleArray())
+            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scaleSizeFactor)
             ctx.beginPath()
 
             drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx, Context2d::stroke)
@@ -126,8 +127,5 @@ object Renderers {
             ctx.restore()
         }
     }
-
-
-
 }
 

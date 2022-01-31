@@ -5,19 +5,12 @@
 
 package jetbrains.livemap.config
 
-import jetbrains.livemap.chart.ScaleFunction
 import jetbrains.livemap.core.layers.RenderTarget
 
 class DevParams(private val devParams: Map<*, *>) {
 
     companion object {
         val ENABLE_SCALING = BoolParam("scalable_symbols", true)
-        val SCALE_FUNCTION = EnumParam<ScaleFunction>("scalaing_function", ScaleFunction.ZOOM, listOf(
-            "linear" to ScaleFunction.LINEAR,
-            "zoom" to ScaleFunction.ZOOM,
-        ))
-        val ZOOM_IN_SCALE_MULTIPLIER = DoubleParam("scalable_symbols_zoom_in_multiplier", 1.0)
-        val ZOOM_OUT_SCALE_MULTIPLIER = DoubleParam("scalable_symbols_zoom_out_multiplier", 1.0)
         val SHOW_RESET_POSITION_ACTION = BoolParam("show_reset_position_action", true)
 
         val PERF_STATS = BoolParam("perf_stats", false)
