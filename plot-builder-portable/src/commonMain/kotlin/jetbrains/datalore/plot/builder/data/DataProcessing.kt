@@ -150,6 +150,7 @@ object DataProcessing {
             // build DataFrame
             build()
         }
+
         val normalizedData = stat.normalize(dataAfterStat)
 
         val groupingContextAfterStat = GroupingContext.withOrderedGroups(

@@ -88,11 +88,16 @@ internal object PositionalScalesUtil {
     }
 
     private fun positionaDryRunAesthetics(layer: GeomLayer): Aesthetics {
-        val posAesX = Aes.affectingScaleX(layer.renderedAes())
-        val posAesY = Aes.affectingScaleY(layer.renderedAes())
-        val mappers = ((posAesX + posAesY) as List<Aes<*>>).associateWith { Mappers.IDENTITY }
+        val aesList = layer.renderedAes().filter {
+            Aes.affectingScaleX(it) ||
+                    Aes.affectingScaleY(it) ||
+                    it == Aes.HEIGHT ||
+                    it == Aes.WIDTH
+        }
 
-        return PlotUtil.createLayerAesthetics(layer, mappers, affectingXYScalesOnly = true)
+        val mappers = aesList.associateWith { Mappers.IDENTITY }
+
+        return PlotUtil.createLayerAesthetics(layer, aesList, mappers)
     }
 
     private fun computeLayerDryRunXYRanges(
