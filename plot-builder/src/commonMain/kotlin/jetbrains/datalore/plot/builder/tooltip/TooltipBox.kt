@@ -13,16 +13,19 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.INTERVAL_BETWEEN_SUBSTRINGS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_SEPARATOR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
@@ -54,6 +57,8 @@ class TooltipBox: SvgComponent() {
     private val myTextBox = TextBox()
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
     private val additionalIndentInContentRect get() = myPointerBox.colorBarIndent
+    private var myHorizontalContentPadding = H_CONTENT_PADDING
+    private var myVerticalContentPadding = V_CONTENT_PADDING
 
     override fun buildComponent() {
         add(myPointerBox)
@@ -73,6 +78,9 @@ class TooltipBox: SvgComponent() {
         markerColors: List<Color>
     ) {
         addClassName(style)
+        myHorizontalContentPadding = if (lines.size > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
+        myVerticalContentPadding = if (lines.size > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
+
         myTextBox.update(
             lines,
             labelTextColor = DARK_TEXT_COLOR,
@@ -131,7 +139,7 @@ class TooltipBox: SvgComponent() {
 
             colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
                 if (colorBarNums > 0) {
-                    H_CONTENT_PADDING +
+                    myHorizontalContentPadding +
                             colorBarNums * colorBarWidth(colorBarNums) +
                             (colorBarNums - 1) * COLOR_BARS_MARGIN
                 } else {
@@ -232,12 +240,12 @@ class TooltipBox: SvgComponent() {
                     bar.d().set(
                         SvgPathDataBuilder().apply {
                             with(contentRect) {
-                                val x = left + H_CONTENT_PADDING + index * (barWidth + COLOR_BARS_MARGIN)
-                                moveTo(x, top + V_CONTENT_PADDING)
+                                val x = left + myHorizontalContentPadding + index * (barWidth + COLOR_BARS_MARGIN)
+                                moveTo(x, top + myVerticalContentPadding)
                                 horizontalLineTo(x + barWidth)
-                                verticalLineTo(bottom - V_CONTENT_PADDING)
+                                verticalLineTo(bottom - myVerticalContentPadding)
                                 horizontalLineTo(x)
-                                verticalLineTo(top + V_CONTENT_PADDING)
+                                verticalLineTo(top + myVerticalContentPadding)
                             }
                         }.build()
                     )
@@ -323,7 +331,7 @@ class TooltipBox: SvgComponent() {
             // sef vertical shifts for tspan elements
             valueLineHeights.zip(components).onEach { (height, component) ->
                 val (_, valueComponent) = component
-                valueComponent.setLineVerticalMargin(height + LINE_INTERVAL)
+                valueComponent.setLineVerticalMargin(height + INTERVAL_BETWEEN_SUBSTRINGS)
             }
 
             // bBoxes
@@ -390,9 +398,7 @@ class TooltipBox: SvgComponent() {
                 )
             }
 
-            // in case of multilines: increase the interval between text label and use left alignment
-            val hasMultiLines = components.any { it.second.isWrapped }
-            val textInterval = if (hasMultiLines) 4 * LINE_INTERVAL else LINE_INTERVAL
+            val yPositionsBetweenLines = mutableListOf<Double>()
 
             val textSize = components
                 .zip(lineBBoxes)
@@ -415,8 +421,8 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            if (hasMultiLines) {
-                                // Use left alignment
+                            if (valueComponent.containsSubtext()) {
+                               // Use left alignment
                                 valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
                             } else {
@@ -435,14 +441,15 @@ class TooltipBox: SvgComponent() {
                             valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                         }
                     }
+
+                    val y = valueComponent.y().get()!! + max(valueBBox.height, labelBBox.height)
+                    yPositionsBetweenLines.add(y + LINE_INTERVAL / 2)
+
                     DoubleVector(
                         x = maxLineWidth,
-                        y = valueComponent.y().get()!! + max(
-                            valueBBox.height,
-                            labelBBox.height
-                        ) + textInterval
+                        y = y + LINE_INTERVAL
                     )
-                }).subtract(DoubleVector(0.0, textInterval)) // remove LINE_INTERVAL from last line
+                }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
                 .let { textSize ->
                     if (rotate) {
                         components
@@ -462,15 +469,31 @@ class TooltipBox: SvgComponent() {
                 }
 
             myLinesContainer.apply {
-                x().set(if (rotate) 0.0 else H_CONTENT_PADDING)
-                y().set(V_CONTENT_PADDING)
-                width().set(textSize.x + H_CONTENT_PADDING * 2)
+                x().set(if (rotate) 0.0 else myHorizontalContentPadding)
+                y().set(myVerticalContentPadding)
+                width().set(textSize.x + myHorizontalContentPadding * 2)
                 height().set(textSize.y)
             }
 
             myContent.apply {
-                width().set(textSize.x + H_CONTENT_PADDING * 2)
-                height().set(textSize.y + V_CONTENT_PADDING * 2)
+                width().set(textSize.x + myHorizontalContentPadding * 2)
+                height().set(textSize.y + myVerticalContentPadding * 2)
+            }
+
+            yPositionsBetweenLines.dropLast(1).forEach { y ->
+                val pathData = SvgPathDataBuilder().apply {
+                    with(myContent) {
+                        val padding = 2.0
+                        moveTo(x().get()!! + padding, y)
+                        lineTo(width().get()!! - myHorizontalContentPadding * 2 - padding, y)
+                    }
+                }.build()
+
+                val path = SvgPathElement(pathData);
+                path.strokeWidth().set(LINE_SEPARATOR_WIDTH);
+                path.strokeOpacity().set(1.0)
+                path.strokeColor().set(Color.VERY_LIGHT_GRAY)
+                myLinesContainer.children().add(path)
             }
         }
     }
