@@ -154,6 +154,10 @@ class MultilineLabel(
             }
     }
 
+    fun containsSubtext(): Boolean {
+        return myText.children().filterIsInstance<SvgTSpanElement>().isNotEmpty()
+    }
+
     companion object {
         private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
             return split(delimiter)
