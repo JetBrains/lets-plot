@@ -11,7 +11,6 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil.getButton
 import jetbrains.datalore.base.event.dom.DomEventUtil.getModifiers
-import jetbrains.datalore.base.event.dom.DomEventUtil.translateInPageCoord
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
@@ -129,6 +128,7 @@ class DomCanvasControl(
     class DomEventPeer (private val myEventTarget: Element, private val myTargetBounds: Rectangle) :
         EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
+        private var myLastDragEndEventTimestamp: Number = 0
         private var myWasDragged = false
         private var myButtonPressCoord: Vector? = null
         private val myDragToleranceDistance = 3.0
@@ -147,15 +147,15 @@ class DomCanvasControl(
             }
 
             handle(CLICK) {
-                if (!myWasDragged) {
-                    if (!isHitOnTarget(it)) return@handle
+                if (myLastDragEndEventTimestamp == it.timeStamp) return@handle
+                if (!isHitOnTarget(it)) return@handle
 
-                    dispatch(MouseEventSpec.MOUSE_CLICKED, translate(it))
-                }
+                dispatch(MouseEventSpec.MOUSE_CLICKED, translate(it))
                 myWasDragged = false
             }
 
             handle(DOUBLE_CLICK) {
+                if (myLastDragEndEventTimestamp == it.timeStamp) return@handle
                 if (!isHitOnTarget(it)) return@handle
 
                 dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, translate(it))
@@ -166,10 +166,14 @@ class DomCanvasControl(
 
                 myButtonPressed = true
                 myButtonPressCoord = Vector(it.x.toInt(), it.y.toInt())
-                dispatch(MouseEventSpec.MOUSE_PRESSED, translateInPageCoord(it))
+                dispatch(MouseEventSpec.MOUSE_PRESSED, translate(it))
             }
 
             handle(MOUSE_UP) {
+                if (myWasDragged) {
+                    myLastDragEndEventTimestamp = it.timeStamp
+                }
+                myWasDragged = false
                 myButtonPressed = false
                 myButtonPressCoord = null
                 dispatch(MouseEventSpec.MOUSE_RELEASED, translate(it))
@@ -177,13 +181,13 @@ class DomCanvasControl(
 
             handle(MOUSE_MOVE) {
                 if (myWasDragged) {
-                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
+                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translate(it))
                 }
                 else if (myButtonPressed && !myWasDragged) {
                     val distance = myButtonPressCoord?.sub(Vector(it.x.toInt(), it.y.toInt()))?.length() ?: 0.0
                     if (distance > myDragToleranceDistance) {
                         myWasDragged = true
-                        dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
+                        dispatch(MouseEventSpec.MOUSE_DRAGGED, translate(it))
                     } else {
                         // Just in case do not generate move event. Can be changed if needed.
                     }
@@ -191,20 +195,20 @@ class DomCanvasControl(
                     if (!isHitOnTarget(it)) return@handle
 
                     dispatch(MouseEventSpec.MOUSE_MOVED, translate(it))
+                } else {
+                    error("MOUSE_MOVE: unknown internal state")
                 }
             }
         }
 
         private fun handle(eventSpec: DomEventType<W3cMouseEvent>, handler: (W3cMouseEvent) -> Unit) {
-            targetNode(eventSpec).addEventListener(eventSpec.name, DomEventListener<W3cMouseEvent> {
+            when (eventSpec) {
+                MOUSE_MOVE, MOUSE_UP -> document
+                else -> myEventTarget
+            }.addEventListener(eventSpec.name, DomEventListener<W3cMouseEvent> {
                 handler(it)
                 false
             })
-        }
-
-        private fun targetNode(eventSpec: DomEventType<W3cMouseEvent>): Node = when (eventSpec) {
-            MOUSE_MOVE, MOUSE_UP -> document
-            else -> myEventTarget
         }
 
         override fun onSpecAdded(spec: MouseEventSpec) {}
@@ -212,7 +216,8 @@ class DomCanvasControl(
         override fun onSpecRemoved(spec: MouseEventSpec) {}
 
         private fun isHitOnTarget(event: DomMouseEvent): Boolean {
-            return myTargetBounds.contains(Vector(event.offsetX.toInt(), event.offsetY.toInt()))
+            val v = Vector(event.offsetX.toInt(), event.offsetY.toInt())
+            return myTargetBounds.contains(v)
         }
 
         private fun translate(event: DomMouseEvent): MouseEvent {
