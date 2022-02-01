@@ -11,9 +11,4 @@ object FeatureSwitch {
 
     const val PLOT_DEBUG_DRAWING = false
     const val LEGEND_DEBUG_DRAWING = false
-    private const val PRINT_DEBUG_LOGS = false
-
-    fun isDebugLogEnabled(): Boolean {
-        return PRINT_DEBUG_LOGS
-    }
 }

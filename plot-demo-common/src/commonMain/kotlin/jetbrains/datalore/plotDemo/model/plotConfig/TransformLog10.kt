@@ -8,6 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.math.pow
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 class TransformLog10 {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -16,6 +17,7 @@ class TransformLog10 {
             issue301(),
             issue284(),
             issue284_1(),
+            scale_y_log10()
         )
     }
 
@@ -155,6 +157,36 @@ class TransformLog10 {
    'size': 10}]
    }
          """.trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun scale_y_log10(): MutableMap<String, Any> {
+        // ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log10()
+
+        val rnd = Random(0)
+        val x = (1..100).map { rnd.nextInt(0..5) }.joinToString(transform = Int::toString)
+        val spec = """
+            {
+              "data": {
+                "x":  [$x]
+              },
+              "mapping": {
+                "x": "x"
+              },
+              "kind": "plot",
+              "scales": [
+                {
+                  "aesthetic": "y",
+                  "trans": "log10"
+                }
+              ],
+              "layers": [
+                {
+                  "geom": "histogram"
+                }
+              ]
+            }""".trimIndent()
 
         return parsePlotSpec(spec)
     }

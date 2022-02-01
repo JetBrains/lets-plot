@@ -7,6 +7,8 @@ package jetbrains.datalore.base.event.dom
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.dom.DomEventUtil.getButton
+import jetbrains.datalore.base.event.dom.DomEventUtil.getModifiers
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventListener
 import jetbrains.datalore.base.js.dom.DomEventType
@@ -80,7 +82,13 @@ class DomEventMapper(
     }
 
     private fun dispatch(eventSpec: MouseEventSpec, mouseEvent: DomMouseEvent) {
-        val translatedEvent = DomEventUtil.translateInTargetCoord(mouseEvent, myEventTarget)
+        val targetRect = myEventTarget.getBoundingClientRect()
+        val translatedEvent = MouseEvent(
+            mouseEvent.clientX - targetRect.x.toInt(),
+            mouseEvent.clientY - targetRect.y.toInt(),
+            getButton(mouseEvent),
+            getModifiers(mouseEvent)
+        )
         destMouseEventPeer.invoke(eventSpec, translatedEvent)
     }
 

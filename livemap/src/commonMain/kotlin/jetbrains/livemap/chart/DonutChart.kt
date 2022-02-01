@@ -9,6 +9,7 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
+import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.IndexComponent
@@ -48,11 +49,11 @@ object DonutChart {
             val chartElement = entity.get<ChartElementComponent>()
             val symbol = entity.get<SymbolComponent>()
 
-            splitSectors(symbol, chartElement.scaleFactor).forEach { sector ->
+            splitSectors(symbol, chartElement.scaleSizeFactor).forEach { sector ->
                 val holeRadius = floor(sector.radius * 0.55)
                 if (chartElement.strokeColor != null && chartElement.strokeWidth > 0.0) {
 
-                    ctx.setStrokeStyle(chartElement.strokeColor)
+                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scaleAlphaValue))
                     ctx.setLineWidth(chartElement.strokeWidth)
 
                     // draw inner arc
@@ -76,7 +77,7 @@ object DonutChart {
                     ctx.stroke()
                 }
                 // fill sector
-                ctx.setFillStyle(sector.color)
+                ctx.setFillStyle(changeAlphaWithMin(sector.color, chartElement.scaleAlphaValue))
                 ctx.beginPath()
                 ctx.arc(0.0, 0.0, holeRadius, sector.startAngle, sector.endAngle)
                 ctx.arc(0.0, 0.0, sector.radius, sector.endAngle, sector.startAngle, anticlockwise = true)
@@ -96,7 +97,7 @@ object DonutChart {
             val chartElement = target.get<ChartElementComponent>()
             val symbol = target.get<SymbolComponent>()
 
-            splitSectors(symbol, chartElement.scaleFactor).forEach { (index, radius, startAngle, endAngle, color) ->
+            splitSectors(symbol, chartElement.scaleSizeFactor).forEach { (index, radius, startAngle, endAngle, color) ->
                     target.get<ScreenLoopComponent>().origins.forEach { origin ->
                         if (isCoordinateInPieSector(coord, origin, radius, startAngle, endAngle)) {
                             return SearchResult(

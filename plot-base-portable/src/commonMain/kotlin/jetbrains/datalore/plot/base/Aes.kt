@@ -123,11 +123,11 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
             return aes == COLOR || aes == FILL
         }
 
-        private fun affectingScaleX(aes: Aes<*>): Boolean {
+        fun affectingScaleX(aes: Aes<*>): Boolean {
             return isPositionalX(aes)
         }
 
-        private fun affectingScaleY(aes: Aes<*>): Boolean {
+        fun affectingScaleY(aes: Aes<*>): Boolean {
             return isPositionalY(aes) &&
                     // "INTERCEPT" is "positional Y" because it must use the same 'mapper' as other "positional Y"-s,
                     // but its range of values is not taken in account when computing the Y-mapper.

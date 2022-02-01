@@ -9,7 +9,6 @@ import jetbrains.datalore.base.event.*
 import jetbrains.datalore.base.js.dom.DomKeyEvent
 import jetbrains.datalore.base.js.dom.DomMouseButtons
 import jetbrains.datalore.base.js.dom.DomMouseEvent
-import org.w3c.dom.Element
 
 object DomEventUtil {
     private fun toKeyEvent(e: DomKeyEvent): KeyEvent {
@@ -96,20 +95,6 @@ object DomEventUtil {
         val shiftKey = e.shiftKey
         val metaKey = e.metaKey
         return KeyModifiers(ctrlKey, altKey, shiftKey, metaKey)
-    }
-
-    fun translateInPageCoord(e: DomMouseEvent): MouseEvent {
-        return MouseEvent(e.pageX.toInt(), e.pageY.toInt(), getButton(e), getModifiers(e))
-    }
-
-    fun translateInTargetCoord(e: DomMouseEvent, target: Element): MouseEvent {
-        val targetRect = target.getBoundingClientRect()
-
-        return MouseEvent(
-            e.clientX - targetRect.x.toInt(),
-            e.clientY - targetRect.y.toInt(),
-            getButton(e),
-            getModifiers(e))
     }
 
 }

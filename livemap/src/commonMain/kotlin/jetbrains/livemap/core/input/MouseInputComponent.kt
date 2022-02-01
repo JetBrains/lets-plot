@@ -11,16 +11,17 @@ import jetbrains.livemap.core.input.MouseEventType.*
 
 class MouseInputComponent : EcsComponent {
     var location: Vector? = null
+    var moveEvent: InputMouseEvent? = null
+    var pressEvent: InputMouseEvent? = null
+    var clickEvent: InputMouseEvent? = null
+    var doubleClickEvent: InputMouseEvent? = null
     var dragDistance: Vector? = null
-    var press: InputMouseEvent? = null
-    var click: InputMouseEvent? = null
-    var doubleClick: InputMouseEvent? = null
 
     fun getEvent(type: MouseEventType): InputMouseEvent? {
         return when (type) {
-            PRESS -> press
-            CLICK -> click
-            DOUBLE_CLICK -> doubleClick
+            PRESS -> pressEvent
+            CLICK -> clickEvent
+            DOUBLE_CLICK -> doubleClickEvent
         }
     }
 }

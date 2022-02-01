@@ -23,6 +23,7 @@ object LayerRendererUtil {
         )
         val aesthetics = PlotUtil.createLayerAesthetics(
             layer,
+            layer.renderedAes(),
             aestheticMappers,
         )
         val pos = PlotUtil.createLayerPos(layer, aesthetics)

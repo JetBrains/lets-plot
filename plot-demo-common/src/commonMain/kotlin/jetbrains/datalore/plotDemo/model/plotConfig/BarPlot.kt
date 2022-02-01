@@ -11,7 +11,9 @@ open class BarPlot {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            fancy()
+            fancy(),
+            fancyWithWidth(0.5),
+            fancyWithWidth(5.0),
         )
     }
 
@@ -64,6 +66,38 @@ open class BarPlot {
                     "                  'scale_mapper_kind': 'color_hue'" +
                     "               }" +
                     "           ]" +
+                    "}"
+
+            return parsePlotSpec(spec)
+        }
+
+        fun fancyWithWidth(w: Double): MutableMap<String, Any> {
+            val spec = "{" +
+                    "   'kind': 'plot'," +
+                    "   'data': " + OUR_DATA +
+                    "           ," +
+                    "   'mapping': {" +
+                    "             'x': 'time'," +
+                    "             'y': '..count..'," +
+                    "             'fill': '..count..'," +
+                    "             'width': 'width_val'" +
+                    "           }," +
+                    "   'layers': [" +
+                    "               {" +
+                    "                  'geom': 'bar'," +
+                    "                  'width': $w" +
+                    "               }" +
+                    "           ]" +
+
+                    "   ," +
+                    "   'scales': [" +
+                    "               {" +
+                    "                  'aesthetic': 'fill'," +
+                    "                  'discrete': true," +
+                    "                  'scale_mapper_kind': 'color_hue'" +
+                    "               }" +
+                    "           ]," +
+                    "   'ggtitle': { 'text': 'width = $w' }" +
                     "}"
 
             return parsePlotSpec(spec)

@@ -56,11 +56,16 @@ object Defaults {
 
             const val MARGIN_BETWEEN_TOOLTIPS = 5.0
             const val DATA_TOOLTIP_FONT_SIZE = FONT_SMALL
-            const val LINE_INTERVAL = 3.0
+            const val LINE_INTERVAL = 6.0
+            const val INTERVAL_BETWEEN_SUBSTRINGS = 3.0
             const val H_CONTENT_PADDING = 6.0
             const val V_CONTENT_PADDING = 6.0
+            const val CONTENT_EXTENDED_PADDING = 10.0
+
             const val LABEL_VALUE_INTERVAL = 8.0
             const val VALUE_LINE_MAX_LENGTH = 30
+
+            const val LINE_SEPARATOR_WIDTH = 0.7
 
             const val BORDER_RADIUS = 4.0
             const val COLOR_BAR_WIDTH = 4.0
