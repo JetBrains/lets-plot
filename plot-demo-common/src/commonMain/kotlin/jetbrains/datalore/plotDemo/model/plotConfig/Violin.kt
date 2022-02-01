@@ -11,15 +11,18 @@ import jetbrains.datalore.plotDemo.data.Iris
 class Violin {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            basic(),
-            withNan(),
-            withGroups(),
+//            basic(),
+//            withNan(),
+//            withGroups(),
 
 //            data132Violin(),
 //            data132ViolinDiscrete(),
 //            data132ViolinIdentity(),
 //            data132Boxplot(),
 //            data123Violin(),
+
+            data132ViolinN49(),
+            data132ViolinN50(),
         )
     }
 
@@ -226,6 +229,56 @@ class Violin {
                 "               {" +
                 "                 'geom': 'violin'," +
                 "                 'n': 3" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun data132ViolinN49(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [1, 3, 2]," +
+                "             'y': [2, 0, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 3, 2], n=49'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'n': 49" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun data132ViolinN50(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [1, 3, 2]," +
+                "             'y': [2, 0, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'x=[1, 3, 2], n=50'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'n': 50" +
                 "               }" +
                 "             ]" +
                 "}"
