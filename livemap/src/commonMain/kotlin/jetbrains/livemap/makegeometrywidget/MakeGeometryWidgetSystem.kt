@@ -70,7 +70,7 @@ class MakeGeometryWidgetSystem(
     }
 
     private fun getWidgetLayer(): EcsEntity? = myComponentManager.tryGetSingletonEntity(WIDGET_COMPONENTS)
-    private fun EcsEntity.click(): InputMouseEvent? = get<MouseInputComponent>().click
+    private fun EcsEntity.click(): InputMouseEvent? = get<MouseInputComponent>().clickEvent
     private fun EcsEntity.count(): Int = get<MakeGeometryWidgetComponent>().points.count()
     private fun EcsEntity.last(): LonLatPoint = get<MakeGeometryWidgetComponent>().points.last()
     private fun EcsEntity.add(point: LonLatPoint) = get<MakeGeometryWidgetComponent>().points.add(point)

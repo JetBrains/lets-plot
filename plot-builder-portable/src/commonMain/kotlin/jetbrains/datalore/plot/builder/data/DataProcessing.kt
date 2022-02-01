@@ -150,6 +150,7 @@ object DataProcessing {
             // build DataFrame
             build()
         }
+
         val normalizedData = stat.normalize(dataAfterStat)
 
         val groupingContextAfterStat = GroupingContext.withOrderedGroups(
@@ -202,50 +203,34 @@ object DataProcessing {
             return statData
         }
 
-        // generate new 'input' series to match stat series
+        statData = inverseTransformStatData(
+            statData,
+            stat,
+            bindings,
+            transformByAes
+        )
 
-        val inverseTransformedStatSeries =
-            inverseTransformContinuousStatData(
-                statData,
-                stat,
-                bindings,
-                transformByAes
-            )
+        val statDataSize = statData.rowCount()
 
         // generate new series for facet variables
-
-        val statDataSize = statData[statVariables.iterator().next()].size
-        val facetVars = HashSet<Variable>()
-        for (facetVarName in facets.variables) {
-            val facetVar = DataFrameUtil.findVariableOrFail(data, facetVarName)
-            facetVars.add(facetVar)
-            if (data[facetVar].isNotEmpty()) {
-                val facetLevel = data[facetVar][0]
-                // generate series for 'facet' variable
-                statData = statData
-                    .builder()
-                    .put(facetVar, List(statDataSize) { facetLevel })
-                    .build()
-            }
+        val facetVars = facets.variables.map {
+            DataFrameUtil.findVariableOrFail(data, it)
+        }
+        val inputSeriesForFacetVars: Map<Variable, List<Any?>> = run {
+            val facetLevelByFacetVar = facetVars.associateWith { data[it][0] }
+            facetLevelByFacetVar.mapValues { (_, facetLevel) -> List(statDataSize) { facetLevel } }
         }
 
         // generate new series for input variables
-
-        if (bindings.isEmpty()) {
-            return statData
-        }
-
-        val newInputSeries = HashMap<Variable, List<*>>()
-
-        fun addSeriesForVariable(variable: Variable) {
+        fun newSerieForVariable(variable: Variable): List<Any?> {
             val value = when (data.isNumeric(variable)) {
                 true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
                 false -> SeriesUtil.firstNotNull(data[variable], defaultValue = null)
             }
-            val newInputSerie = List(statDataSize) { value }
-            newInputSeries[variable] = newInputSerie
+            return List(statDataSize) { value }
         }
 
+        val newInputSeries = HashMap<Variable, List<Any?>>()
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isStat || facetVars.contains(variable)) {
@@ -255,106 +240,89 @@ object DataProcessing {
             val aes = binding.aes
             if (stat.hasDefaultMapping(aes)) {
                 val defaultStatVar = stat.getDefaultMapping(aes)
-                val newInputSerie: List<*> =
-                    if (inverseTransformedStatSeries.containsKey(defaultStatVar)) {
-                        inverseTransformedStatSeries.getValue(defaultStatVar)
-                    } else {
-                        val statSerie = statData.getNumeric(defaultStatVar)
-                        val transform = transformByAes.getValue(aes)
-                        transform.applyInverse(statSerie)
-                    }
-                newInputSeries[variable] = newInputSerie
+                newInputSeries[variable] = statData.get(defaultStatVar)
             } else {
                 // Do not override series obtained via 'default stat var'
                 if (!newInputSeries.containsKey(variable)) {
-                    addSeriesForVariable(variable)
+                    newInputSeries[variable] = newSerieForVariable(variable)
                 }
             }
         }
+
         // series for variables without bindings
         for (varName in varsWithoutBinding.filterNot(Stats::isStatVar)) {
             val variable = DataFrameUtil.findVariableOrFail(data, varName)
             if (!newInputSeries.containsKey(variable)) {
-                addSeriesForVariable(variable)
+                newInputSeries[variable] = newSerieForVariable(variable)
             }
         }
 
         val b = statData.builder()
-        for (variable in newInputSeries.keys) {
-            b.put(variable, newInputSeries.getValue(variable))
+        (newInputSeries + inputSeriesForFacetVars).forEach { (variable, serie) ->
+            b.put(variable, serie)
         }
-        // also update stat series
-        for (variable in inverseTransformedStatSeries.keys) {
-            b.putNumeric(variable, inverseTransformedStatSeries.getValue(variable))
-        }
-
         return b.build()
     }
 
     /**
      * Backend-side only
      */
-    private fun inverseTransformContinuousStatData(
+    private fun inverseTransformStatData(
         statData: DataFrame,
         stat: Stat,
         bindings: List<VarBinding>,
         transformByAes: Map<Aes<*>, Transform>
-    ): Map<Variable, List<Double?>> {
+    ): DataFrame {
 
-        // X,Y scale - allways.
+        // X,Y scale - always.
         check(transformByAes.containsKey(Aes.X))
         check(transformByAes.containsKey(Aes.Y))
 
-        // inverse transform stat data with continuous domain.
-        val aesByMappedStatVar = HashMap<Variable, Aes<*>>()
-        for (aes in Aes.values()) {
-            if (stat.hasDefaultMapping(aes)) {
-                val defaultStatVar = stat.getDefaultMapping(aes)
-                aesByMappedStatVar[defaultStatVar] = aes
+        fun transformForAes(aes: Aes<*>): Transform {
+            return when {
+                Aes.isPositionalX(aes) -> transformByAes.getValue(Aes.X)
+                Aes.isPositionalY(aes) -> transformByAes.getValue(Aes.Y)
+                else -> throw IllegalStateException("Positional aes expected but was $aes.")
             }
         }
 
-        for (binding in bindings) {
-            val aes = binding.aes
-            val variable = binding.variable
-            if (variable.isStat) {
-                aesByMappedStatVar[variable] = aes
-            }
+        val needTransformX = stat.consumes().any { Aes.isPositionalX(it) }
+        val needTransformY = stat.consumes().any { Aes.isPositionalY(it) }
+
+        fun needInverseTransform(aes: Aes<*>): Boolean {
+            if (Aes.isPositionalX(aes)) return needTransformX
+            if (Aes.isPositionalY(aes)) return needTransformY
+            return false
         }
 
-        fun transformForAes(aes: Aes<*>): Transform? {
-            return if (transformByAes.containsKey(aes)) {
-                transformByAes.getValue(aes)
-            } else {
-                // Stat could add 'bindings' which were not in the original mappings.
-                if (Aes.isPositionalX(aes)) {
-                    transformByAes.getValue(Aes.X)
-                } else if (Aes.isPositionalY(aes)) {
-                    transformByAes.getValue(Aes.Y)
-                } else {
-                    // We had some NOT positional mapping to stat var, for example:
-                    //    aes(x="time", "fill": "..count..")
-                    //
-                    // in a bar plot.
-                    // In this event we lust don't have 'transform' for this aes.
-                    // Possible solution: create missing 'transforms' for 'stat data'.
-                    null
-                }
-            }
+        val aesByStatVar: Map<Variable, Aes<*>> = run {
+            val aesByStatVarDefault = Aes.values()
+                .filter { stat.hasDefaultMapping(it) }.associateBy { stat.getDefaultMapping(it) }
+
+            val aesByStatVarMapped = bindings
+                .filterNot { it.variable.isStat }.associate { it.variable to it.aes }
+
+            aesByStatVarDefault + aesByStatVarMapped
         }
 
-        val inverseTransformedStatSeries = HashMap<Variable, List<Double?>>()
-        for (statVar in statData.variables()) {
-            if (aesByMappedStatVar.containsKey(statVar)) {
-                val aes = aesByMappedStatVar.getValue(statVar)
+        val inverseTransformedSeries = statData.variables()
+            .filter { aesByStatVar.containsKey(it) }
+            .filter {
+                val aes = aesByStatVar.getValue(it)
+                needInverseTransform(aes)
+            }.associateWith {
+                val aes = aesByStatVar.getValue(it)
                 val transform = transformForAes(aes)
-                if (transform is ContinuousTransform) {
-                    val statSerie = statData.getNumeric(statVar)
-                    inverseTransformedStatSeries[statVar] = transform.applyInverse(statSerie)
-                }
+                val statSerie = statData.getNumeric(it)
+                transform.applyInverse(statSerie)
             }
+
+        // Replace series in the stat data.
+        val builder = statData.builder()
+        inverseTransformedSeries.forEach { (variable, serie) ->
+            builder.put(variable, serie)
         }
-        return inverseTransformedStatSeries
+        return builder.build()
     }
 
     internal fun computeGroups(

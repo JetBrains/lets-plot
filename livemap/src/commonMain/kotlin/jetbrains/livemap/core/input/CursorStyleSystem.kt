@@ -18,7 +18,7 @@ class CursorStyleSystem(componentManager: EcsComponentManager, private val myCur
     }
 
     override fun updateImpl(context: EcsContext, dt: Double) {
-        myInput.location?.let { location ->
+        myInput.moveEvent?.location?.let { location ->
             getEntities(COMPONENT_TYPES).find { entity ->
                 location.inside(entity.get<ClickableComponent>())
             }?.let { entity ->

@@ -23,6 +23,7 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
     private var myDragCurrentLocation: Vector? = null
     private var myDragDelta: Vector? = null
     private var myPressEvent: InputMouseEvent? = null
+    private var myMoveEvent: InputMouseEvent? = null
     private var myClickEvent: InputMouseEvent? = null
     private var myDoubleClickEvent: InputMouseEvent? = null
 
@@ -46,14 +47,26 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
         for (entity in getEntities(MouseInputComponent::class)) {
             entity.getComponent<MouseInputComponent>().apply {
                 location = myLocation
+                moveEvent = myMoveEvent
+                pressEvent = myPressEvent
+                clickEvent = myClickEvent
+                doubleClickEvent = myDoubleClickEvent
                 dragDistance = myDragDelta
-                press = myPressEvent
-                click = myClickEvent
-                doubleClick = myDoubleClickEvent
+
+                if (
+                    moveEvent != null ||
+                    pressEvent != null ||
+                    clickEvent != null ||
+                    doubleClickEvent != null ||
+                    dragDistance != null
+                ) {
+                    check(location != null)
+                }
             }
         }
 
         myLocation = null
+        myMoveEvent = null
         myPressEvent = null
         myClickEvent = null
         myDoubleClickEvent = null
@@ -65,6 +78,7 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
     }
 
     private fun onMouseClicked(mouseEvent: MouseEvent) {
+        myLocation = mouseEvent.location
         if (mouseEvent.button === Button.LEFT) {
             myClickEvent = InputMouseEvent(mouseEvent.location)
             myDragCurrentLocation = null
@@ -73,13 +87,14 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
     }
 
     private fun onMousePressed(mouseEvent: MouseEvent) {
+        myLocation = mouseEvent.location
         if (mouseEvent.button === Button.LEFT) {
             myPressEvent = InputMouseEvent(mouseEvent.location)
-            myDragStartLocation = mouseEvent.location
         }
     }
 
     private fun onMouseReleased(mouseEvent: MouseEvent) {
+        myLocation = mouseEvent.location
         if (mouseEvent.button === Button.LEFT) {
             myDragCurrentLocation = null
             myDragStartLocation = null
@@ -87,12 +102,15 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
     }
 
     private fun onMouseDragged(mouseEvent: MouseEvent) {
-        if (myDragStartLocation != null) {
-            myDragCurrentLocation = mouseEvent.location
+        myLocation = mouseEvent.location
+        if (myDragStartLocation == null) {
+          myDragStartLocation = mouseEvent.location
         }
+        myDragCurrentLocation = mouseEvent.location
     }
 
     private fun onMouseDoubleClicked(mouseEvent: MouseEvent) {
+        myLocation = mouseEvent.location
         if (mouseEvent.button === Button.LEFT) {
             myDoubleClickEvent = InputMouseEvent(mouseEvent.location)
         }
@@ -100,5 +118,6 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
 
     private fun onMouseMoved(mouseEvent: MouseEvent) {
         myLocation = mouseEvent.location
+        myMoveEvent = InputMouseEvent(mouseEvent.location)
     }
 }

@@ -9,6 +9,7 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
+import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.fillRect
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
@@ -57,13 +58,13 @@ object BarChart {
             val chartElement = entity.get<ChartElementComponent>()
             val symbol = entity.get<SymbolComponent>()
 
-            splitColumns(symbol, chartElement.scaleFactor).forEach { column ->
-                ctx.setFillStyle(column.color)
+            splitColumns(symbol, chartElement.scaleSizeFactor).forEach { column ->
+                ctx.setFillStyle(changeAlphaWithMin(column.color, chartElement.scaleAlphaValue))
 
                 ctx.fillRect(column.rect)
 
                 if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-                    ctx.setStrokeStyle(chartElement.strokeColor)
+                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scaleAlphaValue))
                     ctx.setLineWidth(chartElement.strokeWidth)
                     ctx.strokeRect(column.rect)
                 }
@@ -81,7 +82,7 @@ object BarChart {
             val chartElement = target.get<ChartElementComponent>()
             val symbol = target.get<SymbolComponent>()
 
-            splitColumns(symbol, chartElement.scaleFactor).forEach { column ->
+            splitColumns(symbol, chartElement.scaleSizeFactor).forEach { column ->
                 target.get<ScreenLoopComponent>().origins.forEach {
                     if(column.rect.contains(coord - it)) {
                         return SearchResult(

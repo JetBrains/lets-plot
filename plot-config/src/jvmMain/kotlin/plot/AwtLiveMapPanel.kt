@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.builder.PlotContainer
@@ -20,8 +18,6 @@ import java.awt.Cursor
 import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
 
@@ -35,19 +31,8 @@ class AwtLiveMapPanel(
     private val awtContainerDisposer = AwtContainerDisposer(this)
     private val mappers: MutableList<() -> Unit> = ArrayList()
     private val registrations: MutableList<Registration> = ArrayList()
-    private val mouseMoutionListener = object : MouseAdapter() {
-        override fun mouseDragged(e: MouseEvent) {
-            super.mouseDragged(e)
-            executor {
-                plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
-            }
-        }
-    }
 
     init {
-        // Move tooltip when map moved
-        plotOverlayComponent.addMouseMotionListener(mouseMoutionListener)
-
         cursorServiceConfig.defaultSetter { plotOverlayComponent.cursor = Cursor.getDefaultCursor() }
         cursorServiceConfig.pointerSetter { plotOverlayComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
 
@@ -101,7 +86,6 @@ class AwtLiveMapPanel(
     override fun dispose() {
         awtContainerDisposer.dispose()
         registrations.forEach(Disposable::dispose)
-        plotOverlayComponent.removeMouseMotionListener(mouseMoutionListener)
         plotContainer.clearContent()
         cursorServiceConfig.defaultSetter { }
         cursorServiceConfig.pointerSetter { }

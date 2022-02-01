@@ -15,17 +15,12 @@ class ChartElementComponent : EcsComponent {
     var lineDash: DoubleArray? = null
 
     var scalable: Boolean = false
-    var scaleFactor: Double = 1.0
+    var scaleSizeFactor: Double = 1.0
+    var scaleAlphaValue: Double? = null
 }
 
 class TextSpecComponent : EcsComponent {
     lateinit var textSpec: TextSpec
-}
-
-class PieSectorComponent : EcsComponent {
-    var radius = 0.0
-    var startAngle = 0.0
-    var endAngle = 0.0
 }
 
 // Pie/Bar chart data

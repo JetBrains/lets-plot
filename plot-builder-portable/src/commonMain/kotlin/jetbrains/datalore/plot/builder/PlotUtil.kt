@@ -54,23 +54,15 @@ object PlotUtil {
 
     internal fun createLayerAesthetics(
         layer: GeomLayer,
-        sharedMappers: Map<Aes<*>, ScaleMapper<*>>,
-        affectingXYScalesOnly: Boolean = false
+        aesList: List<Aes<*>>,
+        mapperByAes: Map<Aes<*>, ScaleMapper<*>>,
     ): Aesthetics {
 
         val aesBuilder = AestheticsBuilder()
         aesBuilder.group(layer.group)
 
-        val renderedAes = if (affectingXYScalesOnly) {
-            val posAesX = Aes.affectingScaleX(layer.renderedAes())
-            val posAesY = Aes.affectingScaleY(layer.renderedAes())
-            posAesX + posAesY
-        } else {
-            layer.renderedAes()
-        }
-
         var hasPositionalConstants = false
-        for (aes in renderedAes) {
+        for (aes in aesList) {
             if (Aes.isPositional(aes) && layer.hasConstant(aes)) {
                 hasPositionalConstants = true
                 break
@@ -79,11 +71,11 @@ object PlotUtil {
 
         val data = layer.dataFrame
         var dataPointCount: Int? = null
-        for (aes in renderedAes) {
+        for (aes in aesList) {
             @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
             val aes = aes as Aes<Any>
 
-            val mapperOption = sharedMappers[aes]
+            val mapperOption = mapperByAes[aes]
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)
@@ -208,7 +200,7 @@ object PlotUtil {
                 xAesMapper = Mappers.IDENTITY,
                 yAesMapper = Mappers.IDENTITY
             )
-            return createLayerAesthetics(layer, mappers)
+            return createLayerAesthetics(layer, layer.renderedAes(), mappers)
         }
     }
 }
