@@ -19,8 +19,8 @@ import jetbrains.datalore.vis.svg.SvgTextNode
 
 
 class MultilineLabel(
-    text: String,
-    lineMaxLength: Int,
+    text: String?,
+    lines: List<String>?,
     lineVerticalMargin: Double? = null
 ) : SvgComponent() {
     private val myText = SvgTextElement()
@@ -30,20 +30,33 @@ class MultilineLabel(
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
 
-    val isWrapped: Boolean
-
     init {
-        if (text.length > lineMaxLength) {
-            isWrapped = true
-            addTSpanElements(text.chunkedBy(delimiter = " ", lineMaxLength))
-            lineVerticalMargin?.let { setLineVerticalMargin(it) }
-        } else {
-            isWrapped = false
+        if (text != null) {
             myText.addTextNode(text)
         }
-
+        if (lines != null) {
+            addTSpanElements(lines)
+        }
         rootGroup.children().add(myText)
+
+        lineVerticalMargin?.let { setLineVerticalMargin(it) }
     }
+
+    constructor(lines: List<String>, lineVerticalMargin: Double? = null) : this(text = null, lines, lineVerticalMargin)
+
+    constructor(
+        text: String,
+        lineMaxLength: Int,
+        lineVerticalMargin: Double? = null
+    ) : this(
+        text = text.takeIf { text.length <= lineMaxLength },
+        lines = if (text.length > lineMaxLength) {
+            text.chunkedBy(delimiter = " ", lineMaxLength)
+        } else {
+            null
+        },
+        lineVerticalMargin
+    )
 
     override fun buildComponent() {
     }

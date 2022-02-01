@@ -20,29 +20,40 @@ internal object PlotLayoutUtil {
     private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
-    fun titleDimensions(text: String): DoubleVector {
+    private fun labelDimensions(text: String, labelSpec: PlotLabelSpec): DoubleVector {
         if (text.isEmpty()) {
             return DoubleVector.ZERO
         }
-
-        val labelSpec = PlotLabelSpec.PLOT_TITLE
-        return DoubleVector(
-            labelSpec.width(text.length),
-            labelSpec.height() + 2 * TITLE_V_MARGIN
-        )
-    }
-
-    private fun axisTitleDimensions(text: String): DoubleVector {
-        if (text.isEmpty()) {
-            return DoubleVector.ZERO
-        }
-
-        val labelSpec = PlotLabelSpec.AXIS_TITLE
         return DoubleVector(
             labelSpec.width(text.length),
             labelSpec.height()
         )
     }
+
+    private fun titleLineDimensions(text: String) = labelDimensions(text, PlotLabelSpec.PLOT_TITLE)
+
+    internal fun titleLinesDimensions(textLines: List<String>): List<DoubleVector> {
+        return textLines.map(this::titleLineDimensions)
+    }
+
+    fun titleDimensions(textLines: List<String>): DoubleVector {
+        val linesDimensions = titleLinesDimensions(textLines)
+        if (linesDimensions.isEmpty()) {
+            return DoubleVector.ZERO
+        }
+
+        fun DoubleVector.union(p: DoubleVector): DoubleVector {
+            return DoubleVector(
+                x = max(x, p.x),
+                y = y + p.y
+            )
+        }
+        return linesDimensions
+            .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
+            .add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
+    }
+
+    private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
@@ -67,7 +78,7 @@ internal object PlotLayoutUtil {
 
     fun subtractTitlesAndLegends(
         baseSize: DoubleVector,
-        title: String?,
+        titleLines: List<String>?,
         axisTitleLeft: String?,
         axisTitleBottom: String?,
         axisEnabled: Boolean,
@@ -75,7 +86,7 @@ internal object PlotLayoutUtil {
         theme: Theme,
     ): DoubleVector {
         val delta = titlesAndLegendsSizeDelta(
-            title,
+            titleLines,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
@@ -91,7 +102,7 @@ internal object PlotLayoutUtil {
 
     fun addTitlesAndLegends(
         base: DoubleVector,
-        title: String?,
+        title: List<String>?,
         axisTitleLeft: String?,
         axisTitleBottom: String?,
         axisEnabled: Boolean,
@@ -110,22 +121,22 @@ internal object PlotLayoutUtil {
     }
 
     private fun titlesAndLegendsSizeDelta(
-        title: String?,
+        titleLines: List<String>?,
         axisTitleLeft: String?,
         axisTitleBottom: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
     ): DoubleVector {
-        val titleDelta = titleSizeDelta(title)
+        val titleDelta = titleSizeDelta(titleLines)
         val axisTitlesDelta = axisTitleSizeDelta(axisTitleLeft, axisTitleBottom, axisEnabled)
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta)
     }
 
-    fun titleSizeDelta(title: String?): DoubleVector {
-        return if (title != null) {
-            val titleSize = titleDimensions(title)
+    fun titleSizeDelta(titleLines: List<String>?): DoubleVector {
+        return if (titleLines != null) {
+            val titleSize = titleDimensions(titleLines)
             DoubleVector(0.0, titleSize.y)
         } else {
             DoubleVector.ZERO
