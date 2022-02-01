@@ -43,18 +43,26 @@ class YDensityStat(
         } else {
             List(ys.size) { 0.0 }
         }
-        val ws = if (data.has(TransformVar.WEIGHT)) {
+        val weights = if (data.has(TransformVar.WEIGHT)) {
             data.getNumeric(TransformVar.WEIGHT)
         } else {
             List(ys.size) { 1.0 }
         }
+        // width is constant through all data
+        val width = if (data.has(TransformVar.WIDTH)) {
+            data.getNumeric(TransformVar.WIDTH)[0] ?: DEF_WIDTH
+        } else {
+            DEF_WIDTH
+        }
 
-        val statData = buildStat(xs, ys, ws)
+        val statData = buildStat(xs, ys, weights)
+        val widths = List(statData[Stats.X]!!.size) { width }
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
         }
+        builder.putNumeric(Stats.WIDTH, widths)
         return builder.build()
     }
 
@@ -83,10 +91,8 @@ class YDensityStat(
                 }
             }
         }
-        // TODO: Calculate WIDTH properly
         return dataAfterStat.builder()
             .putNumeric(Stats.VIOLIN_WIDTH, statViolinWidth)
-            .putNumeric(Stats.WIDTH, List(statViolinWidth.size) { 1.0 })
             .build()
     }
 
@@ -146,6 +152,8 @@ class YDensityStat(
     }
 
     companion object {
+        val DEF_WIDTH = 1.0
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,

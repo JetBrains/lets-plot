@@ -14,6 +14,7 @@ class Violin {
 //            basic(),
 //            withNan(),
 //            withGroups(),
+
             data132Violin(),
             data132ViolinDiscrete(),
             data132ViolinIdentity(),
@@ -114,7 +115,8 @@ class Violin {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'violin'" +
+                "                 'geom': 'violin'," +
+                "                 'n': 3" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -138,7 +140,8 @@ class Violin {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'violin'" +
+                "                 'geom': 'violin'," +
+                "                 'n': 3" +
                 "               }" +
                 "             ]," +
                 "   'scales': [" +
@@ -218,7 +221,8 @@ class Violin {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'violin'" +
+                "                 'geom': 'violin'," +
+                "                 'n': 3" +
                 "               }" +
                 "             ]" +
                 "}"
