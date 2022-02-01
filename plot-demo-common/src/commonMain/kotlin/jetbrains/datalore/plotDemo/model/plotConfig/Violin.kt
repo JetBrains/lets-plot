@@ -11,15 +11,15 @@ import jetbrains.datalore.plotDemo.data.Iris
 class Violin {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            basic(),
-//            withNan(),
-//            withGroups(),
+            basic(),
+            withNan(),
+            withGroups(),
 
-            data132Violin(),
-            data132ViolinDiscrete(),
-            data132ViolinIdentity(),
-            data132Boxplot(),
-            data123Violin(),
+//            data132Violin(),
+//            data132ViolinDiscrete(),
+//            data132ViolinIdentity(),
+//            data132Boxplot(),
+//            data123Violin(),
         )
     }
 
@@ -173,6 +173,9 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
+                "                 'mapping': {" +
+                "                    'violinwidth': 'vw'" +
+                "                  }," +
                 "                 'stat': 'identity'" +
                 "               }" +
                 "             ]" +

@@ -48,7 +48,7 @@ class YDensityStat(
         } else {
             List(ys.size) { 1.0 }
         }
-        // width is constant through all data
+        // width should be constant through all data
         val width = if (data.has(TransformVar.WIDTH)) {
             data.getNumeric(TransformVar.WIDTH)[0] ?: DEF_WIDTH
         } else {
