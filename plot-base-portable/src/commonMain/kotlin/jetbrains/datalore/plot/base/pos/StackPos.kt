@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
-import jetbrains.datalore.plot.base.util.MutableDouble
+import jetbrains.datalore.plot.common.util.MutableDouble
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal abstract class StackPos(aes: Aesthetics) :
