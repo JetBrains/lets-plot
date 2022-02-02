@@ -1,22 +1,22 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.util
+package jetbrains.datalore.plot.common.util
 
-class MutableInteger(private var myValue: Int) {
+class MutableInteger(private var value: Int) {
 
     val andIncrement: Int
         get() = getAndAdd(1)
 
     fun get(): Int {
-        return myValue
+        return value
     }
 
     fun getAndAdd(v: Int): Int {
-        val prevValue = myValue
-        myValue = prevValue + v
+        val prevValue = value
+        value = prevValue + v
         return prevValue
     }
 
