@@ -57,35 +57,35 @@ class SeriesUtilResolutionTest(
                     expected = 0.5
                 ),
                 args(
-                    serie = genGrid(xs = orderedEqualSpace).x,
+                    serie = genGrid(xs = orderedEqualSpace).columns,
                     expected = 1.0
                 ),
                 args(
-                    serie = genGrid(xs = orderedEqualSpace).y,
+                    serie = genGrid(xs = orderedEqualSpace).rows,
                     expected = 10.0
                 ),
                 args(
-                    serie = genGrid(xs = orderedVarSpace).x,
+                    serie = genGrid(xs = orderedVarSpace).columns,
                     expected = 0.5
                 ),
                 args(
-                    serie = genGrid(xs = orderedVarSpace).y,
+                    serie = genGrid(xs = orderedVarSpace).rows,
                     expected = 10.0
                 ),
                 args(
-                    serie = genGrid(xs = unOrderedEqualSpace).x,
+                    serie = genGrid(xs = unOrderedEqualSpace).columns,
                     expected = 1.0
                 ),
                 args(
-                    serie = genGrid(xs = unOrderedEqualSpace).y,
+                    serie = genGrid(xs = unOrderedEqualSpace).rows,
                     expected = 10.0
                 ),
                 args(
-                    serie = genGrid(xs = unOrderedVarSpace).x,
+                    serie = genGrid(xs = unOrderedVarSpace).columns,
                     expected = 0.5
                 ),
                 args(
-                    serie = genGrid(xs = unOrderedVarSpace).y,
+                    serie = genGrid(xs = unOrderedVarSpace).rows,
                     expected = 10.0
                 ),
             )

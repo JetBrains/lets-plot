@@ -11,22 +11,23 @@ internal object MeshGen {
      */
     fun genGrid(
         xs: List<Double>,
-        rows: Int = RegularMeshDetector.GRID_THRESHOLD,
         yStep: Double = 10.0,
     ): XYSeries {
-        val xSerie = xs.map {
-            List(rows) { i -> it }
+        // columns: 1, 1, 1, 1...2, 2, 2, 2...3, 3, 3, 3...
+        val columns = xs.map {
+            List(RegularMeshDetector.COLUMN_THRESHOLD) { i -> it }
         }.flatten()
 
-        val ySerie = xs.map {
-            List(rows) { i -> i * yStep }
+        // rows: 1, 2, 3, 4...1, 2, 3, 4...1, 2, 3, 4...
+        val rows = xs.map {
+            List(RegularMeshDetector.ROW_THRESHOLD) { i -> i * yStep }
         }.flatten()
 
-        return XYSeries(xSerie, ySerie)
+        return XYSeries(columns, rows)
     }
 
     internal class XYSeries(
-        val x: List<Double>,
-        val y: List<Double>,
+        val columns: List<Double>,
+        val rows: List<Double>,
     )
 }
