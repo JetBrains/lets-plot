@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.sampling.method
 import jetbrains.datalore.base.algorithms.isClosed
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.util.MutableInteger
+import jetbrains.datalore.plot.common.util.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingIndex

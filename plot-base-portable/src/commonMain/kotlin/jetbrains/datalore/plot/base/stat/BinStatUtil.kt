@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.util.MutableDouble
+import jetbrains.datalore.plot.common.util.MutableDouble
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.ceil
 import kotlin.math.floor
