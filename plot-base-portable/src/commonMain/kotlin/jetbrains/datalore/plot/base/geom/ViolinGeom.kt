@@ -61,7 +61,7 @@ class ViolinGeom : GeomBase() {
         appendNodes(helper.createLines(dataPoints, leftBoundTransform), root)
         appendNodes(helper.createLines(dataPoints, rightBoundTransform), root)
 
-        // buildQuantiles(root, dataPoints, pos, coord, ctx)
+        buildQuantiles(root, dataPoints, pos, coord, ctx)
 
         buildHints(dataPoints, ctx, helper, leftBoundTransform)
         buildHints(dataPoints, ctx, helper, rightBoundTransform)
@@ -78,34 +78,37 @@ class ViolinGeom : GeomBase() {
 
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
-        for (p in calculateQuantiles(dataPoints, ctx)) {
-            val start = DoubleVector(p.xmin()!!, p.y()!!)
-            val end = DoubleVector(p.xmax()!!, p.y()!!)
-            val line = helper.createLine(start, end, p)
-            root.add(line)
+        for ((group, dataPointsGroup) in dataPoints.groupBy { it.group() }) {
+            for (p in calculateQuantiles(dataPointsGroup, group)) {
+                val xmin = toLocationBound(-1.0, ctx)(p).x
+                val xmax = toLocationBound(1.0, ctx)(p).x
+                val start = DoubleVector(xmin, p.y()!!)
+                val end = DoubleVector(xmax, p.y()!!)
+                val line = helper.createLine(start, end, p)
+                root.add(line)
+            }
         }
     }
 
     private fun calculateQuantiles(
         dataPoints: Iterable<DataPointAesthetics>,
-        ctx: GeomContext
+        group: Int?
     ): Iterable<DataPointAesthetics> {
+        val x = dataPoints.first().x()!!
         val vws = dataPoints.map { it.violinwidth()!! }
         val ys = dataPoints.map { it.y()!! }
-        val xsMin = dataPoints.map { toLocationBound(-1.0, ctx)(it) }.map { it.x }
-        val xsMax = dataPoints.map { toLocationBound(1.0, ctx)(it) }.map { it.x }
         val vwsSum = vws.sum()
         val dens = vws.runningReduce { cumSum, elem -> cumSum + elem }.map { it / vwsSum }
         val quantY = drawQuantiles.map { pwLinInterp(dens, ys)(it) }
-        val quantXMin = quantY.map { pwLinInterp(ys, xsMin)(it) }
-        val quantXMax = quantY.map { pwLinInterp(ys, xsMax)(it) }
+        val quantViolinWidth = quantY.map { pwLinInterp(ys, vws)(it) }
         val quantilesColor = dataPoints.first().color()
         val quantilesSize = dataPoints.first().size()
 
         return AestheticsBuilder(quantY.size)
+            .x(AestheticsBuilder.constant(x))
             .y(AestheticsBuilder.list(quantY))
-            .xmin(AestheticsBuilder.list(quantXMin))
-            .xmax(AestheticsBuilder.list(quantXMax))
+            .violinwidth(AestheticsBuilder.list(quantViolinWidth))
+            .group(AestheticsBuilder.constant(group ?: 0))
             .color(AestheticsBuilder.constant(quantilesColor))
             .size(AestheticsBuilder.constant(quantilesSize))
             .build()

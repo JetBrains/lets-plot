@@ -113,6 +113,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(WIDTH, v)
     }
 
+    fun violinwidth(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(VIOLINWIDTH, v)
+    }
+
     fun weight(v: (Int) -> Double?): AestheticsBuilder {
         return aes(WEIGHT, v)
     }
