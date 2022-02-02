@@ -14,7 +14,7 @@ class ChartElementComponent : EcsComponent {
     var strokeColor: Color? = null
     var lineDash: DoubleArray? = null
 
-    var scalable: Boolean = false
+    var scaleRange: ClosedRange<Int>? = null
     var scaleSizeFactor: Double = 1.0
     var scaleAlphaValue: Double? = null
 }

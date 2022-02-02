@@ -329,7 +329,6 @@ class LiveMap(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myDevParams.isSet(DevParams.ENABLE_SCALING),
             myTextMeasurer
         )
 

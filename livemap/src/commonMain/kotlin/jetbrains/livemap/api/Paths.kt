@@ -38,8 +38,7 @@ import jetbrains.livemap.searching.PathLocatorHelper
 @LiveMapDsl
 class Paths(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection,
-    val zoomable: Boolean
+    val mapProjection: MapProjection
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
@@ -52,13 +51,12 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
 
     Paths(
         MapEntityFactory(layerEntity),
-        mapProjection,
-        zoomable
+        mapProjection
     ).apply(block)
 }
 
 fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder(factory, mapProjection, zoomable)
+    PathBuilder(factory, mapProjection)
         .apply(block)
         .build(nonInteractive = false)
 }
@@ -66,9 +64,9 @@ fun Paths.path(block: PathBuilder.() -> Unit) {
 @LiveMapDsl
 class PathBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection,
-    private val zoomable: Boolean
+    private val myMapProjection: MapProjection
 ) {
+    var scaleRange: ClosedRange<Int>? = null
     var layerIndex: Int? = null
     var index: Int? = null
     var regionId: String = ""
@@ -97,7 +95,7 @@ class PathBuilder(
                         renderer = PathRenderer()
                     }
                     +ChartElementComponent().apply {
-                        scalable = this@PathBuilder.zoomable
+                        scaleRange = this@PathBuilder.scaleRange
                         strokeColor = this@PathBuilder.strokeColor
                         strokeWidth = this@PathBuilder.strokeWidth
                         lineDash = this@PathBuilder.lineDash.toDoubleArray()

@@ -36,7 +36,7 @@ object LayerRendererUtil {
     }
 
     class LayerRendererData(
-        layer: GeomLayer,
+        private val layer: GeomLayer,
         val aesthetics: Aesthetics,
         val aestheticMappers: Map<Aes<*>, ScaleMapper<*>>,
         val pos: PositionAdjustment
@@ -45,5 +45,6 @@ object LayerRendererUtil {
         val geomKind: GeomKind = layer.geomKind
         val dataAccess: MappedDataAccess = layer.dataAccess
         val contextualMapping: ContextualMapping = layer.contextualMapping
+        val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
     }
 }

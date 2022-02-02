@@ -24,11 +24,8 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 @LiveMapDsl
-class Pies(
-    zoomable: Boolean,
-    factory: MapEntityFactory
-) {
-    val piesFactory = PiesFactory(zoomable, factory)
+class Pies(factory: MapEntityFactory) {
+    val piesFactory = PiesFactory(factory)
 }
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
@@ -39,7 +36,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Pies(zoomable, MapEntityFactory(layerEntity)).apply {
+    Pies(MapEntityFactory(layerEntity)).apply {
         block()
         piesFactory.produce()
     }
@@ -51,7 +48,6 @@ fun Pies.pie(block: Symbol.() -> Unit) {
 
 @LiveMapDsl
 class PiesFactory(
-    private val zoomable: Boolean,
     private val myFactory: MapEntityFactory
 ) {
     private val mySymbols = ArrayList<Symbol>()
@@ -77,7 +73,7 @@ class PiesFactory(
                 renderer = DonutChart.Renderer()
             }
             + ChartElementComponent().apply {
-                scalable = this@PiesFactory.zoomable
+                scaleRange = symbol.scaleRange
                 strokeColor = symbol.strokeColor
                 strokeWidth = symbol.strokeWidth
             }

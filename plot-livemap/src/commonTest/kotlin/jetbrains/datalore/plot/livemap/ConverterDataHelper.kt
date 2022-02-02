@@ -82,9 +82,10 @@ internal object ConverterDataHelper {
         private lateinit var myAes: Aesthetics
         private val myAesBuilder: AestheticsBuilder = AestheticsBuilder()
 
-        fun buildConverter(): LayerDataPointAestheticsProcessor.DataPointsConverter {
+        fun buildConverter(): DataPointsConverter {
             val aesthetics = build()
-            return LayerDataPointAestheticsProcessor.DataPointsConverter(
+            return DataPointsConverter(
+                0,
                 aesthetics,
                 true
             )

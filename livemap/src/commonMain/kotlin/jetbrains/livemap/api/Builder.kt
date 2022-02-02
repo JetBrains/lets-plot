@@ -16,8 +16,10 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapSpec
+import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -27,6 +29,10 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.projections.createArcPath
+import jetbrains.livemap.geocoding.LonLatComponent
+import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.geocoding.NeedLocationComponent
+import jetbrains.livemap.geocoding.PointInitializerComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
@@ -64,39 +70,37 @@ class LiveMapBuilder {
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
 
-    fun build(): LiveMapSpec {
-        return LiveMapSpec(
-            size = size,
-            zoom = zoom,
-            isInteractive = interactive,
-            layers = layers,
+    fun build(): LiveMapSpec = LiveMapSpec(
+        size = size,
+        zoom = zoom,
+        isInteractive = interactive,
+        layers = layers,
 
-            location = mapLocation,
+        location = mapLocation,
 
-            geoProjection = projection,
-            isLoopX = isLoopX,
-            isLoopY = isLoopY,
+        geoProjection = projection,
+        isLoopX = isLoopX,
+        isLoopY = isLoopY,
 
-            geocodingService = geocodingService,
+        geocodingService = geocodingService,
 
-            mapLocationConsumer = mapLocationConsumer,
+        mapLocationConsumer = mapLocationConsumer,
 
-            basemapTileSystemProvider = tileSystemProvider,
+        basemapTileSystemProvider = tileSystemProvider,
 
-            devParams = devParams,
+        devParams = devParams,
 
-            attribution = attribution,
-            showAdvancedActions = showAdvancedActions,
+        attribution = attribution,
+        showAdvancedActions = showAdvancedActions,
 
-            // deprecated
-            isClustering = false,
-            isLabels = true,
-            isScaled = false,
-            isTiles = true,
-            isUseFrame = true,
-            cursorService = CursorService()
-        )
-    }
+        // deprecated
+        isClustering = false,
+        isLabels = true,
+        isScaled = false,
+        isTiles = true,
+        isUseFrame = true,
+        cursorService = CursorService()
+    )
 }
 
 @LiveMapDsl
@@ -104,12 +108,12 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
-    val zoomable: Boolean,
     val textMeasurer: TextMeasurer
 )
 
 @LiveMapDsl
 class Symbol {
+    var scaleRange: ClosedRange<Int>? = null
     var layerIndex: Int? = null
     var radius: Double = 0.0
     var point: Vec<LonLat>? = null
@@ -190,14 +194,8 @@ class Location {
 
     var coordinate: Vec<LonLat>? = null
         set(v) {
-            field = v; mapLocation = v?.let { MapLocation.create(
-                GeoRectangle(
-                    it.x,
-                    it.y,
-                    it.x,
-                    it.y
-                )
-            ) }
+            field = v;
+            mapLocation = v?.let { MapLocation.create(GeoRectangle(it.x, it.y, it.x, it.y)) }
         }
 
     internal var mapLocation: MapLocation? = null
@@ -261,6 +259,16 @@ class MapEntityFactory(layerEntity: EcsEntity) {
         return mapEntity(myComponentManager, myParentLayerComponent, name)
             .also { myLayerEntityComponent.add(it.id) }
     }
+
+    fun createStaticEntityWithLocation(name: String, point: LonLatPoint): EcsEntity =
+        createStaticEntity(name, point).addComponents {
+            + NeedLocationComponent
+            + NeedCalculateLocationComponent
+        }
+
+    fun createStaticEntity(name: String, point: LonLatPoint): EcsEntity =
+        createMapEntity(name)
+            .add(LonLatComponent(point))
 }
 
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
@@ -294,4 +302,8 @@ fun liveMapVectorTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
 
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
     return LiveMapGeocodingServiceBuilder().apply(block).build()
+}
+
+internal fun EcsEntity.setInitializer(block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsEntity {
+    return add(PointInitializerComponent(block))
 }
