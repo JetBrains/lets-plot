@@ -48,27 +48,21 @@ class YDensityStat(
         } else {
             List(ys.size) { 1.0 }
         }
-        // width should be constant through all data
-        val width = if (data.has(TransformVar.WIDTH)) {
-            data.getNumeric(TransformVar.WIDTH)[0] ?: DEF_WIDTH
-        } else {
-            DEF_WIDTH
-        }
 
         val statData = buildStat(xs, ys, weights)
-        val widths = List(statData[Stats.X]!!.size) { width }
+        val statWidth = List(statData.getValue(Stats.X).size) { DEF_WIDTH }
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
         }
-        builder.putNumeric(Stats.WIDTH, widths)
+        builder.putNumeric(Stats.WIDTH, statWidth)
         return builder.build()
     }
 
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
         val statViolinWidth = if (dataAfterStat.rowCount() == 0) {
-            emptyList<Double?>()
+            emptyList()
         } else {
             when (scale) {
                 Scale.AREA -> {
@@ -87,7 +81,7 @@ class YDensityStat(
                     statCount.map { it / norm }
                 }
                 Scale.WIDTH -> {
-                    dataAfterStat.getNumeric(Stats.SCALED).map { it!! }
+                    dataAfterStat.getNumeric(Stats.SCALED)
                 }
             }
         }
