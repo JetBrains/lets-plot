@@ -47,6 +47,7 @@ import kotlin.math.max
 
 class PlotSvgComponent constructor(
     title: String?,
+    subtitle: String?,
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
     private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
@@ -57,6 +58,7 @@ class PlotSvgComponent constructor(
 ) : SvgComponent() {
 
     private val titleLines: List<String>? = title?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty)
+    private val subtitleLines: List<String>? = subtitle?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty)
     val flippedAxis = frameOfReferenceProvider.flipAxis
     val mouseEventPeer = MouseEventPeer()
 
@@ -175,6 +177,7 @@ class PlotSvgComponent constructor(
         val plotInnerSizeAvailable = subtractTitlesAndLegends(
             baseSize = entirePlot.dimension,
             titleLines,
+            subtitleLines,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
@@ -192,6 +195,7 @@ class PlotSvgComponent constructor(
         val plotOuterSize = addTitlesAndLegends(
             plotInnerSize,
             titleLines,
+            subtitleLines,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
@@ -213,7 +217,7 @@ class PlotSvgComponent constructor(
         }
 
         val plotOuterBoundsWithoutTitle = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(titleLines)
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(titleLines, subtitleLines)
             DoubleRectangle(
                 plotOuterBounds.origin.add(titleSizeDelta),
                 plotOuterBounds.dimension.subtract(titleSizeDelta)
@@ -289,6 +293,17 @@ class PlotSvgComponent constructor(
                 color = theme.plot().titleColor()
             )
         }
+        // add plot subtitle
+        if (!subtitleLines.isNullOrEmpty()) {
+            val titleSize = titleLines?.let { PlotLayoutUtil.titleDimensions(it, PlotLabelSpec.PLOT_TITLE) } ?: DoubleVector.ZERO
+            addTitle(
+                subtitleLines,
+                leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
+                className = Style.PLOT_SUBTITLE,
+                labelSpec = PlotLabelSpec.PLOT_SUBTITLE,
+                color = theme.plot().subtitleColor()
+            )
+        }
 
         val overallTileBounds = PlotLayoutUtil.overallTileBounds(plotInfo)
             .add(plotInnerOrigin)
@@ -350,15 +365,15 @@ class PlotSvgComponent constructor(
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
 
-        val titleSize = PlotLayoutUtil.titleDimensions(titleLines)
+        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
 
-        titleLabel.moveTo(titleBounds.left, titleLineHeight)
+        titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
         add(titleLabel)
 
         if (DEBUG_DRAWING) {
             var h = 0.0
-            PlotLayoutUtil.titleLinesDimensions(titleLines).forEach { sz ->
+            PlotLayoutUtil.titleLinesDimensions(titleLines, labelSpec).forEach { sz ->
                 val bounds = DoubleRectangle(
                     leftTop.add(DoubleVector(0.0, h)),
                     sz
