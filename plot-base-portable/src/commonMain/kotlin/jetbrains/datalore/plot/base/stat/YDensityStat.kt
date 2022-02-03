@@ -50,13 +50,11 @@ class YDensityStat(
         }
 
         val statData = buildStat(xs, ys, weights)
-        val statWidth = List(statData.getValue(Stats.X).size) { DEF_WIDTH }
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
         }
-        builder.putNumeric(Stats.WIDTH, statWidth)
         return builder.build()
     }
 
