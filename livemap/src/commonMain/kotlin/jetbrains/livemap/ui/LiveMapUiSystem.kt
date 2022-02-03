@@ -44,7 +44,7 @@ class LiveMapUiSystem(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
     private val myAttribution: String?,
-    private val showAdvancedActions: Boolean,
+    private val showCoordPickTools: Boolean,
     private val showResetPositionAction: Boolean,
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myCamera: Camera
@@ -185,7 +185,7 @@ class LiveMapUiSystem(
                 verticalPanel.add(myResetPositionButton)
             }
 
-            if (showAdvancedActions) {
+            if (showCoordPickTools) {
                 verticalPanel.add(myGetCenterButton)
                 verticalPanel.add(myMakeGeometryButton)
             }

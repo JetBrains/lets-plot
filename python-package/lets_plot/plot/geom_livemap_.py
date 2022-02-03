@@ -32,7 +32,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  projection=None,
                  geodesic=None,
                  tiles=None,
-                 show_advanced_actions=None,
+                 show_coord_pick_tools=None,
                  **other_args):
     """
     Display an interactive map.
@@ -82,8 +82,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
         or the result of a call to a `maptiles_xxx()` functions.
 
-    show_advanced_actions : bool, defafult=False
-        Show buttons with actions "copy location" and "draw geometry"
+    show_coord_pick_tools : bool, defafult=False
+        Show buttons "copy location" and "draw geometry"
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -225,7 +225,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  geodesic=geodesic,
                  tiles=tiles,
                  geocoding=geocoding,
-                 show_advanced_actions=show_advanced_actions,
+                 show_coord_pick_tools=show_coord_pick_tools,
                  **other_args)
 
 

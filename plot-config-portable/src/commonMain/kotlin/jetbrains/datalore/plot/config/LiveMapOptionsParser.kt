@@ -39,7 +39,7 @@ class LiveMapOptionsParser {
             labels = opts.getBoolean(LiveMap.LABELS, true),
             projection = opts.getString(LiveMap.PROJECTION)?.let(::parseProjection) ?: Projection.EPSG3857,
             geodesic = opts.getBoolean(LiveMap.GEODESIC, true),
-            showAdvancedActions = opts.getBoolean(LiveMap.SHOW_ADVANCEDS_ACTIONS, false),
+            showCoordPickTools = opts.getBoolean(LiveMap.SHOW_COORD_PICK_TOOLS, false),
             geocodingService = opts.getMap(LiveMap.GEOCODING),
             tileProvider = opts.getMap(LiveMap.TILES),
             devParams = opts.getMap(LiveMap.DEV_PARAMS)

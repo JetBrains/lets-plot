@@ -93,7 +93,7 @@ class LiveMap(
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
     private val myAttribution: String?,
-    private val myShowAdnvancedActions: Boolean,
+    private val myShowCoordPickTools: Boolean,
     private val myCursorService: CursorService
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
@@ -231,7 +231,7 @@ class LiveMap(
                     myMapLocationConsumer,
                     myLayerManager,
                     myAttribution,
-                    myShowAdnvancedActions,
+                    myShowCoordPickTools,
                     myDevParams.isSet(SHOW_RESET_POSITION_ACTION),
                 ),
 

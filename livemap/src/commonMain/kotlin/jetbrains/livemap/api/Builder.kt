@@ -65,7 +65,7 @@ class LiveMapBuilder {
 
     var attribution: String? = null
 
-    var showAdvancedActions = false
+    var showCoordPickTools = false
 
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
@@ -91,7 +91,7 @@ class LiveMapBuilder {
         devParams = devParams,
 
         attribution = attribution,
-        showAdvancedActions = showAdvancedActions,
+        showCoordPickTools = showCoordPickTools,
 
         // deprecated
         isClustering = false,
