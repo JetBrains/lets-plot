@@ -35,8 +35,7 @@ internal object PlotLayoutUtil {
         return textLines.map { line -> labelDimensions(line, labelSpec) }
     }
 
-    internal fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
-        val linesDimensions = titleLinesDimensions(textLines, labelSpec)
+    fun titleDimensions(linesDimensions: List<DoubleVector>): DoubleVector {
         if (linesDimensions.isEmpty()) {
             return DoubleVector.ZERO
         }
@@ -50,6 +49,10 @@ internal object PlotLayoutUtil {
         return linesDimensions
             .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
             .add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
+    }
+
+    fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
+        return titleDimensions(titleLinesDimensions(textLines, labelSpec))
     }
 
     private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)

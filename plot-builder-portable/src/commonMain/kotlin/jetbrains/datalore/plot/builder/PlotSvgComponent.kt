@@ -358,14 +358,15 @@ class PlotSvgComponent constructor(
         labelSpec: LabelSpec,
         color: Color
     ) {
-        val titleLineHeight = labelSpec.height()
+        val titleLineSizes = PlotLayoutUtil.titleLinesDimensions(titleLines, labelSpec)
+        val titleLineHeight = titleLineSizes.maxOf(DoubleVector::y) // now it equals to labelSpec.height()
         val titleLabel = MultilineLabel(titleLines, lineVerticalMargin = titleLineHeight)
         titleLabel.addClassName(className)
         titleLabel.textColor().set(color)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
 
-        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
+        val titleSize = PlotLayoutUtil.titleDimensions(titleLineSizes)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
 
         titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
@@ -373,7 +374,7 @@ class PlotSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             var h = 0.0
-            PlotLayoutUtil.titleLinesDimensions(titleLines, labelSpec).forEach { sz ->
+            titleLineSizes.forEach { sz ->
                 val bounds = DoubleRectangle(
                     leftTop.add(DoubleVector(0.0, h)),
                     sz
