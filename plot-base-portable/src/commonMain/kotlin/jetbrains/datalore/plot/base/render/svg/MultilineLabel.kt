@@ -17,8 +17,9 @@ import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
 
 
-class MultilineLabel private constructor(
-    lines: List<String>
+class MultilineLabel(
+    text: String,
+    lineMaxLength: Int? = null
 ) : SvgComponent() {
     private val myText = SvgTextElement()
     private var myTextColor: Color? = null
@@ -28,6 +29,16 @@ class MultilineLabel private constructor(
     private var myFontStyle: String? = null
 
     init {
+        val lines = text
+            .split('\n')
+            .flatMap { line ->
+                if (lineMaxLength != null) {
+                    line.chunkedBy(delimiter = " ", lineMaxLength)
+                } else {
+                    listOf(line)
+                }
+            }
+
         addTSpanElements(lines)
         rootGroup.children().add(myText)
     }
@@ -145,19 +156,6 @@ class MultilineLabel private constructor(
     }
 
     companion object {
-        fun create(lines: List<String>) = MultilineLabel(lines)
-
-        fun create(text: String, lineMaxLength: Int?): MultilineLabel {
-            val lines = text.split('\n').flatMap { line ->
-                if (lineMaxLength != null) {
-                    line.chunkedBy(delimiter = " ", lineMaxLength)
-                } else {
-                    listOf(line)
-                }
-            }
-            return MultilineLabel(lines)
-        }
-
         private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
             return split(delimiter)
                 .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }

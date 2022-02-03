@@ -300,7 +300,7 @@ class TooltipBox: SvgComponent() {
             val components: List<Pair<TextLabel?, MultilineLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
-                    MultilineLabel.create(line.value, lineMaxLength = VALUE_LINE_MAX_LENGTH)
+                    MultilineLabel(line.value, VALUE_LINE_MAX_LENGTH)
                 )
             }
             // for labels
