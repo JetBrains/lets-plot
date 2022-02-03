@@ -16,4 +16,5 @@ interface PlotTheme {
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
     fun titleColor(): Color
+    fun subtitleColor(): Color
 }
