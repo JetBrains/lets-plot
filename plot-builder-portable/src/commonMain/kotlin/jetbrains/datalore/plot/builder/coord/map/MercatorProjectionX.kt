@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.coord.map
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorX
 import jetbrains.datalore.plot.base.coord.Projection
 
@@ -17,7 +17,7 @@ class MercatorProjectionX : Projection {
         return getMercatorX(v)
     }
 
-    override fun toValidDomain(domain: ClosedRange<Double>): ClosedRange<Double> {
+    override fun toValidDomain(domain: DoubleSpan): DoubleSpan {
         return domain
     }
 }

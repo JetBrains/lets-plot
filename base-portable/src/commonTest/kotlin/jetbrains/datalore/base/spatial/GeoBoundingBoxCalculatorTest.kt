@@ -7,7 +7,7 @@ package jetbrains.datalore.base.spatial
 
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
@@ -154,8 +154,8 @@ class GeoBoundingBoxCalculatorTest {
 
     @Test
     fun calculateLoopLimitRangeForSingleRange() {
-        val mapRange = ClosedRange(0.0, 255.99999999999997)
-        val range = ClosedRange(100.0, 100.0)
+        val mapRange = DoubleSpan(0.0, 255.99999999999997)
+        val range = DoubleSpan(100.0, 100.0)
         val segments = sequenceOf(
             Segment(
                 range.lowerEnd,
