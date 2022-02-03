@@ -144,8 +144,6 @@ class YDensityStat(
     }
 
     companion object {
-        val DEF_WIDTH = 1.0
-
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
