@@ -60,6 +60,12 @@ class TooltipBox: SvgComponent() {
     private var myHorizontalContentPadding = H_CONTENT_PADDING
     private var myVerticalContentPadding = V_CONTENT_PADDING
 
+    // draw tooltip content rectangles in DEBUG_DRAWING mode
+    private val myDebugRectangles = RetainableComponents(
+        itemFactory = ::RectangleComponent,
+        parent = this.rootGroup
+    )
+
     override fun buildComponent() {
         add(myPointerBox)
         add(myContentBox)
@@ -95,6 +101,10 @@ class TooltipBox: SvgComponent() {
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
         myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
         moveTo(tooltipCoord.x, tooltipCoord.y)
+
+        if (DEBUG_DRAWING) {
+            myContentBox.drawDebugRect()
+        }
     }
 
     private inner class PointerBox : SvgComponent() {
@@ -265,7 +275,7 @@ class TooltipBox: SvgComponent() {
             val rawTitleBBoxes = titleLines.zip(titleComponents).map { (titleLine, component) ->
                 getBBox(titleLine, component)
             }
-             val titleHeights = rawTitleBBoxes.map { bBox ->
+            val titleHeights = rawTitleBBoxes.map { bBox ->
                 bBox?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
             }
 
@@ -306,7 +316,7 @@ class TooltipBox: SvgComponent() {
                 x().set(if (rotate) 0.0 else myHorizontalContentPadding + colorBarIndent)
                 y().set(titleTextSize.y + myVerticalContentPadding)
                 width().set(totalTooltipWidth - myHorizontalContentPadding)
-                height().set(textSize.y + titleTextSize.y + myVerticalContentPadding )
+                height().set(textSize.y + titleTextSize.y + myVerticalContentPadding)
             }
 
             myContent.apply {
@@ -378,7 +388,7 @@ class TooltipBox: SvgComponent() {
         private fun initTitleComponents(
             titleLines: List<String>,
             titleColor: Color
-        ) : List<MultilineLabel> {
+        ): List<MultilineLabel> {
             val titleComponents = titleLines.map { titleLine ->
                 MultilineLabel(titleLine, VALUE_LINE_MAX_LENGTH)
             }
@@ -394,7 +404,7 @@ class TooltipBox: SvgComponent() {
             // set interval between substrings
             val titleLineHeights = titleLines.map { titleLine ->
                 val lineTextLabel = TextLabel(titleLine)
-                with (myTitlesContainer.children()) {
+                with(myTitlesContainer.children()) {
                     add(lineTextLabel.rootGroup)
                     val height = getBBox(titleLine, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
                     remove(lineTextLabel.rootGroup)
@@ -417,7 +427,7 @@ class TooltipBox: SvgComponent() {
                 return DoubleVector.ZERO
             }
 
-            val titleSize =  titleComponents
+            val titleSize = titleComponents
                 .zip(lineHeights)
                 .fold(DoubleVector(0.0, myVerticalContentPadding), { textDimension, (component, height) ->
                     val yPosition = textDimension.y
@@ -474,7 +484,7 @@ class TooltipBox: SvgComponent() {
             // calculate heights of original value lines
             val valueLineHeights = lines.map { line ->
                 val lineTextLabel = TextLabel(line.value)
-                with (myLinesContainer.children()) {
+                with(myLinesContainer.children()) {
                     add(lineTextLabel.rootGroup)
                     val height = getBBox(line.value, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
                     remove(lineTextLabel.rootGroup)
@@ -642,26 +652,50 @@ class TooltipBox: SvgComponent() {
         }
 
         fun drawDebugRect() {
-            fun drawRect(svgElem: SvgSvgElement, color: Color) {
-                val r = SvgPathDataBuilder().apply {
-                    with(svgElem) {
-                        moveTo(x().get()!!, y().get()!!)
-                        horizontalLineTo(width().get()!!)
-                        verticalLineTo(height().get()!!)
-                        horizontalLineTo(x().get()!!)
-                        verticalLineTo(y().get()!!)
-                    }
-                }.build()
-                val path = SvgPathElement(r)
-                path.strokeWidth().set(1.0);
-                path.fillOpacity().set(0.0)
-                path.strokeColor().set(color)
-                add(path)
+            fun drawRect(rectComponent: RectangleComponent, svgElem: SvgSvgElement, color: Color) {
+                rectComponent.update(
+                    svgElem.x().get()!!,
+                    svgElem.y().get()!!,
+                    svgElem.width().get()!!,
+                    svgElem.height().get()!!,
+                    color
+                )
             }
 
-            drawRect(myContent, Color.RED)
-            drawRect(myTitlesContainer, Color.DARK_GREEN)
-            drawRect(myLinesContainer, Color.ORANGE)
+            val rectangles = myDebugRectangles.provide(3)
+            drawRect(rectangles[0], myContent, Color.RED)
+            drawRect(rectangles[1], myTitlesContainer, Color.DARK_GREEN)
+            drawRect(rectangles[2], myLinesContainer, Color.ORANGE)
         }
+    }
+
+    companion object {
+
+        class RectangleComponent : SvgComponent() {
+            private val myRect = SvgPathElement()
+
+            init {
+                myRect.strokeWidth().set(1.0);
+                myRect.fillOpacity().set(0.0)
+            }
+
+            override fun buildComponent() {
+                add(myRect)
+            }
+
+            fun update(x: Double, y: Double, w: Double, h: Double, color: Color) {
+                val pathData = SvgPathDataBuilder().apply {
+                    moveTo(x, y)
+                    horizontalLineTo(w)
+                    verticalLineTo(h)
+                    horizontalLineTo(x)
+                    verticalLineTo(y)
+                }.build()
+                myRect.d().set(pathData)
+                myRect.strokeColor().set(color)
+            }
+        }
+
+        private const val DEBUG_DRAWING = true
     }
 }
