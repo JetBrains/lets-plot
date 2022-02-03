@@ -302,7 +302,9 @@ class TooltipBox: SvgComponent() {
                     line.label?.let(::TextLabel),
                     MultilineLabel(
                         line.value
-                            .chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH)
+                            .split("\n")
+                            .map(String::trim)
+                            .flatMap { it.chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH) }
                             .joinToString("\n")
                     )
                 )
@@ -354,14 +356,15 @@ class TooltipBox: SvgComponent() {
             val defaultLineHeight = (valueLineHeights + rawBBoxes.mapNotNull { it.first?.height }).maxOrNull()
                 ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
-            val labelWidths = lines.map { line ->
+            val labelWidths = lines.zip(components).map { (line, component) ->
                 when {
                     line.label == null -> {
                         // label null - the value component will be centered
                         0.0
                     }
-                    line.label!!.isEmpty() -> {
-                        // label is not null, but empty - add space for the label, the value will be moved to the right
+                    line.label!!.isEmpty() && component.second.linesCount() == 1 -> {
+                        // label is not null, but empty - add space for the label, the value will be moved to the right;
+                        // also value should not be multiline for right alignment
                         maxLabelWidth
                     }
                     else -> {
