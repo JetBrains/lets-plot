@@ -156,7 +156,7 @@ def theme(*,
     plot_subtitle : str or dict
         Plot subtitle.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify plot subtitle parameters, inherited from `title`.
+        Set `element_text()` to specify plot subtitle parameters, inherited from `plot_title` or `title`.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
