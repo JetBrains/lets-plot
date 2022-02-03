@@ -300,7 +300,11 @@ class TooltipBox: SvgComponent() {
             val components: List<Pair<TextLabel?, MultilineLabel>> = lines.map { line ->
                 Pair(
                     line.label?.let(::TextLabel),
-                    MultilineLabel(line.value, VALUE_LINE_MAX_LENGTH)
+                    MultilineLabel(
+                        line.value
+                            .chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH)
+                            .joinToString("\n")
+                    )
                 )
             }
             // for labels
@@ -495,6 +499,34 @@ class TooltipBox: SvgComponent() {
                 path.strokeColor().set(Color.VERY_LIGHT_GRAY)
                 myLinesContainer.children().add(path)
             }
+        }
+    }
+
+    companion object {
+        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
+            return split(delimiter)
+                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
+                .map { it.joinToString(delimiter) }
+        }
+
+        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
+            val result = mutableListOf<List<String>>()
+            var subList = mutableListOf<String>()
+            var subListSize = 0
+            forEach { item ->
+                val itemSize = item.size()
+                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
+                    result.add(subList)
+                    subList = mutableListOf()
+                    subListSize = 0
+                }
+                subList.add(item)
+                subListSize += itemSize
+            }
+            if (subList.isNotEmpty()) {
+                result += subList
+            }
+            return result
         }
     }
 }

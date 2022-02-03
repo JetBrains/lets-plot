@@ -17,10 +17,7 @@ import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
 
 
-class MultilineLabel(
-    text: String,
-    lineMaxLength: Int? = null
-) : SvgComponent() {
+class MultilineLabel(text: String) : SvgComponent() {
     private val myText = SvgTextElement()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
@@ -29,17 +26,7 @@ class MultilineLabel(
     private var myFontStyle: String? = null
 
     init {
-        val lines = text
-            .split('\n')
-            .flatMap { line ->
-                if (lineMaxLength != null) {
-                    line.chunkedBy(delimiter = " ", lineMaxLength)
-                } else {
-                    listOf(line)
-                }
-            }
-
-        addTSpanElements(lines)
+        addTSpanElements(text.split('\n'))
         rootGroup.children().add(myText)
     }
 
@@ -153,33 +140,5 @@ class MultilineLabel(
 
     fun containsSubtext(): Boolean {
         return myText.children().filterIsInstance<SvgTSpanElement>().size > 1
-    }
-
-    companion object {
-        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
-            return split(delimiter)
-                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
-                .map { it.joinToString(delimiter) }
-        }
-
-        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
-            val result = mutableListOf<List<String>>()
-            var subList = mutableListOf<String>()
-            var subListSize = 0
-            forEach { item ->
-                val itemSize = item.size()
-                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
-                    result.add(subList)
-                    subList = mutableListOf()
-                    subListSize = 0
-                }
-                subList.add(item)
-                subListSize += itemSize
-            }
-            if (subList.isNotEmpty()) {
-                result += subList
-            }
-            return result
-        }
     }
 }
