@@ -138,7 +138,7 @@ class MultilineLabel(text: String) : SvgComponent() {
             }
     }
 
-    fun containsSubtext(): Boolean {
-        return myText.children().filterIsInstance<SvgTSpanElement>().size > 1
+    fun linesCount(): Int {
+        return myText.children().filterIsInstance<SvgTSpanElement>().size
     }
 }

@@ -425,7 +425,7 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            if (valueComponent.containsSubtext()) {
+                            if (valueComponent.linesCount() > 1) {
                                // Use left alignment
                                 valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
