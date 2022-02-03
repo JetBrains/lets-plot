@@ -361,11 +361,12 @@ class PlotSvgComponent constructor(
         color: Color
     ) {
         val titleLineHeight = labelSpec.height()
-        val titleLabel = MultilineLabel(titleLines, lineVerticalMargin = titleLineHeight)
+        val titleLabel = MultilineLabel.create(titleLines)
         titleLabel.addClassName(className)
         titleLabel.textColor().set(color)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
+        titleLabel.setLineVerticalMargin(titleLineHeight)
 
         val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)

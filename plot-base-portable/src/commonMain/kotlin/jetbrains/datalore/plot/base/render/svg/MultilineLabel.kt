@@ -15,13 +15,10 @@ import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
-import jetbrains.datalore.vis.svg.SvgTextNode
 
 
-class MultilineLabel(
-    text: String?,
-    lines: List<String>?,
-    lineVerticalMargin: Double? = null
+class MultilineLabel private constructor(
+    lines: List<String>
 ) : SvgComponent() {
     private val myText = SvgTextElement()
     private var myTextColor: Color? = null
@@ -31,32 +28,9 @@ class MultilineLabel(
     private var myFontStyle: String? = null
 
     init {
-        if (text != null) {
-            myText.addTextNode(text)
-        }
-        if (lines != null) {
-            addTSpanElements(lines)
-        }
+        addTSpanElements(lines)
         rootGroup.children().add(myText)
-
-        lineVerticalMargin?.let { setLineVerticalMargin(it) }
     }
-
-    constructor(lines: List<String>, lineVerticalMargin: Double? = null) : this(text = null, lines, lineVerticalMargin)
-
-    constructor(
-        text: String,
-        lineMaxLength: Int,
-        lineVerticalMargin: Double? = null
-    ) : this(
-        text = text.takeIf { text.length <= lineMaxLength },
-        lines = if (text.length > lineMaxLength) {
-            text.chunkedBy(delimiter = " ", lineMaxLength)
-        } else {
-            null
-        },
-        lineVerticalMargin
-    )
 
     override fun buildComponent() {
     }
@@ -154,11 +128,10 @@ class MultilineLabel(
     }
 
     fun setLineVerticalMargin(margin: Double) {
-        val hasTextNode = myText.children().filterIsInstance<SvgTextNode>().isNotEmpty()
         myText.children()
             .filterIsInstance<SvgTSpanElement>()
             .forEachIndexed { index, tspan ->
-                val dyString = if (!hasTextNode && index == 0) {
+                val dyString = if (index == 0) {
                     "0.0"
                 } else {
                     margin.toString()
@@ -168,10 +141,23 @@ class MultilineLabel(
     }
 
     fun containsSubtext(): Boolean {
-        return myText.children().filterIsInstance<SvgTSpanElement>().isNotEmpty()
+        return myText.children().filterIsInstance<SvgTSpanElement>().size > 1
     }
 
     companion object {
+        fun create(lines: List<String>) = MultilineLabel(lines)
+
+        fun create(text: String, lineMaxLength: Int?): MultilineLabel {
+            val lines = text.split('\n').flatMap { line ->
+                if (lineMaxLength != null) {
+                    line.chunkedBy(delimiter = " ", lineMaxLength)
+                } else {
+                    listOf(line)
+                }
+            }
+            return MultilineLabel(lines)
+        }
+
         private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
             return split(delimiter)
                 .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
