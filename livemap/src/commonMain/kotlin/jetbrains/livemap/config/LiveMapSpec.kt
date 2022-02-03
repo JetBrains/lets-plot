@@ -32,7 +32,7 @@ class LiveMapSpec(
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
     val basemapTileSystemProvider: BasemapTileSystemProvider,
     val attribution: String?,
-    val showAdvancedActions: Boolean,
+    val showCoordPickTools: Boolean,
     val cursorService: CursorService,
     val minZoom: Int = MIN_ZOOM,
     val maxZoom: Int = MAX_ZOOM,

@@ -193,7 +193,7 @@ object Option {
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
-            const val SHOW_ADVANCEDS_ACTIONS = "show_advanced_actions"
+            const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"

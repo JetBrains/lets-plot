@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 class Generic
 
@@ -92,8 +92,8 @@ fun <TypeT> Rect<TypeT>.intersects(rect: Rect<TypeT>): Boolean {
     return r2.x >= t1.x && t2.x >= r1.x && r2.y >= t1.y && t2.y >= r1.y
 }
 
-fun Rect<*>.xRange() = ClosedRange(origin.x, origin.x + dimension.x)
-fun Rect<*>.yRange() = ClosedRange(origin.y, origin.y + dimension.y)
+fun Rect<*>.xRange() = DoubleSpan(origin.x, origin.x + dimension.x)
+fun Rect<*>.yRange() = DoubleSpan(origin.y, origin.y + dimension.y)
 
 fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> {
     return map { polygon -> polygon.limit() }

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -32,55 +31,60 @@ abstract class RegularMeshDetector protected constructor(
     }
 
 
+    /**
+     * Detects likely "rows": 1, 2, 3, 4...1, 2, 3, 4...1, 2, 3, 4...
+     */
     private class MyRowDetector internal constructor(
-        private val myMinRowSize: Int,
+        private val minRowSize: Int,
         error: Double,
         values: Iterable<Double?>
     ) : RegularMeshDetector(error) {
 
         init {
-            init(values)
+            resOrNull(values)?.let {
+                isMesh = true
+                resolution = it
+            }
         }
 
-        private fun init(values: Iterable<Double?>) {
-            // check if first N elements are equally spaced
-            isMesh = false
-            var distance = 0.0
-            var distanceInitialized = false
-            var prevValue: Double? = null
-            var count = myMinRowSize
+        private fun resOrNull(values: Iterable<Double?>): Double? {
+            // Just check whether first N elements are equally spaced.
+            @Suppress("NAME_SHADOWING")
+            val values = values.take(minRowSize)
+            if (values.size < minRowSize) {
+                return null   // not a grid.
+            }
+
+            var firstDistance: Double = Double.NaN
+            var prevValue: Double = Double.NaN
             for (value in values) {
-                if (!isFinite(value)) {
-                    return
+                if (value == null || !value.isFinite()) {
+                    return null   // not a grid.
                 }
-                if (prevValue != null) {
-                    val dist = value!! - prevValue
+
+                if (prevValue.isFinite()) {
+                    val dist = value - prevValue
                     if (nearZero(dist)) {
-                        return
+                        return null // not a grid.
                     }
-                    if (distanceInitialized) {
-                        if (!equalsEnough(dist, distance)) {
-                            return
-                        }
-                    } else {
-                        distance = dist
-                        distanceInitialized = true
+                    if (firstDistance.isNaN()) {
+                        firstDistance = dist
+                    } else if (!equalsEnough(dist, firstDistance)) {
+                        return null // not a grid.
                     }
                 }
 
                 prevValue = value
-                if (--count == 0) {
-                    break
-                }
             }
 
-            if (distanceInitialized && count == 0) {
-                resolution = abs(distance)
-                isMesh = true
-            }
+            check(firstDistance.isFinite())
+            return abs(firstDistance)
         }
     }
 
+    /**
+     * Detects likely "columns": 1, 1, 1, 1...2, 2, 2, 2...3, 3, 3, 3...
+     */
     private class MyColumnDetector internal constructor(
         private val minColSize: Int,
         error: Double,
@@ -164,7 +168,8 @@ abstract class RegularMeshDetector protected constructor(
     }
 
     companion object {
-        const val GRID_THRESHOLD = 50
+        const val ROW_THRESHOLD = 50
+        const val COLUMN_THRESHOLD = 10
 
         private val NO_MESH: RegularMeshDetector = object : RegularMeshDetector(0.0) {
             override var isMesh: Boolean
@@ -187,7 +192,7 @@ abstract class RegularMeshDetector protected constructor(
                 return NO_MESH
             }
             val error = delta / 10000.0
-            return tryRow(GRID_THRESHOLD, error, values)
+            return tryRow(ROW_THRESHOLD, error, values)
         }
 
         fun tryRow(minRowSize: Int, error: Double, values: Iterable<Double?>): RegularMeshDetector {
@@ -196,7 +201,7 @@ abstract class RegularMeshDetector protected constructor(
 
         fun tryColumn(values: Iterable<Double?>): RegularMeshDetector {
             return tryColumn(
-                GRID_THRESHOLD,
+                COLUMN_THRESHOLD,
                 SeriesUtil.TINY,
                 values
             )

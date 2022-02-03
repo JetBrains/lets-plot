@@ -19,7 +19,7 @@ class LiveMapOptions(
     val labels: Boolean,
     val projection: Projection,
     val geodesic: Boolean,
-    val showAdvancedActions: Boolean,
+    val showCoordPickTools: Boolean,
     val geocodingService: Map<*, *>,
     val tileProvider: Map<*, *>,
     val devParams: Map<*, *>

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.interact.ContextualMapping
@@ -27,9 +28,8 @@ object LiveMapUtil {
     fun injectLiveMapProvider(
         plotTiles: List<List<GeomLayer>>,
         liveMapOptions: LiveMapOptions,
-        cursorServiceConfig: CursorServiceConfig
+        cursorServiceConfig: CursorServiceConfig,
     ) {
-
         plotTiles.forEach { tileLayers ->
             if (tileLayers.any(GeomLayer::isLiveMap)) {
                 require(tileLayers.count(GeomLayer::isLiveMap) == 1)
@@ -45,49 +45,160 @@ object LiveMapUtil {
         }
     }
 
-    internal fun createLayersConfigurator(
+    internal fun createLayerBuilder(
         layerKind: MapLayerKind,
-        liveMapDataPoints: List<DataPointLiveMapAesthetics>
+        liveMapDataPoints: List<DataPointLiveMapAesthetics>,
+        mappedAes: Set<Aes<*>>,
     ): LayersBuilder.() -> Unit = {
+        fun getScaleRange(scalableStroke: Boolean): ClosedRange<Int>? {
+            val dimensionAes = Aes.SIZE
+            return when {
+                scalableStroke -> when {
+                    dimensionAes in mappedAes -> -1..0
+                    dimensionAes !in mappedAes -> -1..1
+                    else -> null
+                }
+                else -> when {
+                    dimensionAes in mappedAes -> -2..0
+                    dimensionAes !in mappedAes -> -2..2
+                    else -> null
+                }
+            }
+        }
+
         when (layerKind) {
             MapLayerKind.POINT -> points {
-                liveMapDataPoints.forEach { it.toPointBuilder().run(::point) }
+                liveMapDataPoints.forEach {
+                    point {
+                        scaleRange = getScaleRange(scalableStroke = false)
+                        layerIndex = it.layerIndex
+                        index = it.index
+                        point = it.point
+                        label = it.label
+                        animation = it.animation
+                        shape = it.shape
+                        radius = it.radius
+                        fillColor = it.fillColor
+                        strokeColor = it.strokeColor
+                        strokeWidth = it.strokeWidth
+                    }
+                }
             }
             MapLayerKind.POLYGON -> polygons {
-                liveMapDataPoints.forEach { polygon(it.createPolygonConfigurator()) }
+                liveMapDataPoints.forEach {
+                    polygon {
+                        scaleRange = getScaleRange(scalableStroke = true)
+                        layerIndex = it.layerIndex
+                        index = it.index
+                        multiPolygon = it.geometry
+                        geoObject = it.geoObject
+                        lineDash = it.lineDash
+                        fillColor = it.fillColor
+                        strokeColor = it.strokeColor
+                        strokeWidth = it.strokeWidth
+                    }
+                }
             }
             MapLayerKind.PATH -> paths {
-                liveMapDataPoints.forEach { it.toPathBuilder()?.let(::path) }
+                liveMapDataPoints.forEach {
+                    if (it.geometry != null) {
+                        path {
+                            scaleRange = getScaleRange(scalableStroke = true)
+                            layerIndex = it.layerIndex
+                            index = it.index
+                            multiPolygon = it.geometry!!
+                            lineDash = it.lineDash
+                            strokeColor = it.strokeColor
+                            strokeWidth = it.strokeWidth
+                            animation = it.animation
+                            speed = it.speed
+                            flow = it.flow
+                        }
+                    }
+                }
             }
 
             MapLayerKind.V_LINE -> vLines {
-                liveMapDataPoints.forEach { it.toLineBuilder().let(::line) }
+                liveMapDataPoints.forEach {
+                    line {
+                        scaleRange = getScaleRange(scalableStroke = true)
+                        point = it.point
+                        lineDash = it.lineDash
+                        strokeColor = it.strokeColor
+                        strokeWidth = it.strokeWidth
+                    }
+                }
             }
 
             MapLayerKind.H_LINE -> hLines {
-                liveMapDataPoints.forEach { it.toLineBuilder().let(::line) }
+                liveMapDataPoints.forEach {
+                    line {
+                        scaleRange = getScaleRange(scalableStroke = true)
+                        point = it.point
+                        lineDash = it.lineDash
+                        strokeColor = it.strokeColor
+                        strokeWidth = it.strokeWidth
+                    }
+                }
             }
 
             MapLayerKind.TEXT -> texts {
-                liveMapDataPoints.forEach { it.toTextBuilder().let(::text) }
+                liveMapDataPoints.forEach {
+                    text {
+                        index = it.index
+                        point = it.point
+                        fillColor = it.strokeColor // Text is filled by strokeColor
+                        strokeColor = it.strokeColor
+                        strokeWidth = 0.0
+                        label = it.label
+                        size = it.size
+                        family = it.family
+                        fontface = it.fontface
+                        hjust = it.hjust
+                        vjust = it.vjust
+                        angle = it.angle
+                    }
+                }
             }
 
             MapLayerKind.PIE -> pies {
-                liveMapDataPoints.forEach { it.toChartBuilder().let(::pie) }
+                liveMapDataPoints.forEach {
+                    pie {
+                        scaleRange = getScaleRange(scalableStroke = false)
+                        fromDataPoint(it)
+                    }
+                }
             }
 
             MapLayerKind.BAR -> bars {
-                liveMapDataPoints.forEach { it.toChartBuilder().let(::bar) }
+                liveMapDataPoints.forEach {
+                    bar {
+                        scaleRange = getScaleRange(scalableStroke = false)
+                        fromDataPoint(it)
+                    }
+                }
             }
 
             else -> error("Unsupported layer kind: $layerKind")
         }
     }
 
+    private fun Symbol.fromDataPoint(p: DataPointLiveMapAesthetics) {
+        layerIndex = p.layerIndex
+        point = p.point
+        radius = p.radius
+        strokeColor = p.strokeColor
+        strokeWidth = 1.0
+        indices = p.indices
+        values = p.valueArray
+        colors = p.colorArray
+    }
+
+
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
         private val myLiveMapOptions: LiveMapOptions,
-        cursorService: CursorService
+        cursorService: CursorService,
     ) : LiveMapProvider {
 
         private val liveMapSpecBuilder: LiveMapSpecBuilder
@@ -123,7 +234,8 @@ object LiveMapUtil {
                         LiveMapLayerData(
                             geom,
                             geomKind,
-                            aesthetics
+                            aesthetics,
+                            mappedAes
                         )
                     }
                 }
@@ -133,6 +245,7 @@ object LiveMapUtil {
                 liveMapSpecBuilder = LiveMapSpecBuilder()
                     .liveMapOptions(myLiveMapOptions)
                     .aesthetics(it.aesthetics)
+                    .mappedAes(it.mappedAes)
                     .dataAccess(it.dataAccess)
                     .layers(layers)
                     .devParams(DevParams(myLiveMapOptions.devParams))

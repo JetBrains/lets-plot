@@ -12,41 +12,44 @@ import jetbrains.livemap.core.ecs.onEachEntity2
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
-import kotlin.math.min
+import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 class ChartElementScaleSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
+        if (context.initialZoom == null) {
+            return
+        }
+
         onEachEntity2<ZoomLevelChangedComponent, ChartElementComponent> { entity, _, chartElementComponent ->
+            val zoomDelta = context.camera.zoom.roundToInt() - context.initialZoom!!
             with(chartElementComponent) {
-                if (scalable && context.initialZoom != null) {
-                    scaleSizeFactor = zoomScale(context.camera.zoom, context.initialZoom!!.toDouble())
-                    scaleAlphaValue = when(context.camera.zoom - context.initialZoom!!.toDouble()) {
-                        1.0, -1.0 -> 0.7
-                        2.0, -2.0 -> 0.5
+                if (scaleRange != null) {
+                    scaleSizeFactor = computeSizeFactor(zoomDelta.coerceIn(scaleRange!!))
+                    scaleAlphaValue = when {
+                        abs(zoomDelta) == 1 -> 0.7
+                        abs(zoomDelta) >= 2 -> 0.5
                         else -> null
                     }
-
-                    entity.tryGet<SymbolComponent>()?.let {
-                        entity.provide(::ScreenDimensionComponent).dimension = it.size * scaleSizeFactor
-                    }
+                } else {
+                    scaleSizeFactor = 1.0
+                    scaleAlphaValue = null
+                }
+                entity.tryGet<SymbolComponent>()?.let {
+                    entity.provide(::ScreenDimensionComponent).dimension = it.size * scaleSizeFactor
                 }
             }
         }
     }
 
-    private fun zoomScale(currentZoom: Double, baseZoom: Double): Double = when {
-        currentZoom == baseZoom -> 1.0
-        currentZoom > baseZoom -> 2.0.pow(min(MAX_ZOOM_IN_FACTOR, currentZoom - baseZoom))
-        currentZoom < baseZoom -> 1.0 / 2.0.pow(min(MAX_ZOOM_OUT_FACTOR, baseZoom - currentZoom))
-        else -> error("Unexpected")
-    }
-
-    companion object {
-        const val MAX_ZOOM_IN_FACTOR = 2.0
-        const val MAX_ZOOM_OUT_FACTOR = 2.0
+    private fun computeSizeFactor(zoomDelta: Int): Double = when {
+        zoomDelta == 0 -> 1.0
+        zoomDelta > 0 -> 2.0.pow(zoomDelta)
+        zoomDelta < 0 -> 1.0 / 2.0.pow(abs(zoomDelta))
+        else -> error("Unknown")
     }
 }
