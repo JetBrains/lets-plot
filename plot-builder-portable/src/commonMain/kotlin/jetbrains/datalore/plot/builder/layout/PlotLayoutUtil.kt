@@ -35,7 +35,8 @@ internal object PlotLayoutUtil {
         return textLines.map { line -> labelDimensions(line, labelSpec) }
     }
 
-    fun titleDimensions(linesDimensions: List<DoubleVector>): DoubleVector {
+    internal fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
+        val linesDimensions = titleLinesDimensions(textLines, labelSpec)
         if (linesDimensions.isEmpty()) {
             return DoubleVector.ZERO
         }
@@ -49,10 +50,6 @@ internal object PlotLayoutUtil {
         return linesDimensions
             .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
             .add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
-    }
-
-    fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
-        return titleDimensions(titleLinesDimensions(textLines, labelSpec))
     }
 
     private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)
@@ -80,8 +77,8 @@ internal object PlotLayoutUtil {
 
     fun subtractTitlesAndLegends(
         baseSize: DoubleVector,
-        titleLines: List<String>?,
-        subtitleLines: List<String>?,
+        titleLines: List<String>,
+        subtitleLines: List<String>,
         axisTitleLeft: String?,
         axisTitleBottom: String?,
         axisEnabled: Boolean,
@@ -106,8 +103,8 @@ internal object PlotLayoutUtil {
 
     fun addTitlesAndLegends(
         base: DoubleVector,
-        titleLines: List<String>?,
-        subtitleLines: List<String>?,
+        titleLines: List<String>,
+        subtitleLines: List<String>,
         axisTitleLeft: String?,
         axisTitleBottom: String?,
         axisEnabled: Boolean,
@@ -127,8 +124,8 @@ internal object PlotLayoutUtil {
     }
 
     private fun titlesAndLegendsSizeDelta(
-        titleLines: List<String>?,
-        subtitleLines: List<String>?,
+        titleLines: List<String>,
+        subtitleLines: List<String>,
         axisTitleLeft: String?,
         axisTitleBottom: String?,
         axisEnabled: Boolean,
@@ -141,15 +138,12 @@ internal object PlotLayoutUtil {
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta)
     }
 
-    fun titleSizeDelta(titleLines: List<String>?, subtitleLines: List<String>?): DoubleVector {
-        var h = 0.0
-        if (titleLines != null) {
-            h += titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y
-        }
-        if (subtitleLines != null) {
-            h += titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
-        }
-        return DoubleVector(0.0, h)
+    fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>): DoubleVector {
+        return DoubleVector(
+            0.0,
+            titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
+                    titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
+        )
     }
 
     fun axisTitleSizeDelta(

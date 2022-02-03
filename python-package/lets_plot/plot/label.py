@@ -111,7 +111,7 @@ def ylab(label):
 
 def labs(**kwargs):
     """
-    Change plot title, axis labels and legend titles.
+    Change plot title, plot subtitle, axis labels and legend titles.
 
     Parameters
     ----------
@@ -139,15 +139,16 @@ def labs(**kwargs):
 
     """
     specs = []
-    titles = {'text': None, 'subtitle': None}
+
+    # handle ggtitle
+    title = kwargs.pop('title', None)
+    subtitle = kwargs.pop('subtitle', None)
+    if title is not None or subtitle is not None:
+        specs.append(FeatureSpec('ggtitle', name=None, text=title, subtitle=subtitle))
+
+    # scales
     for k, v in kwargs.items():
-        if k == 'title':
-            titles['text'] = v
-        elif k == 'subtitle':
-            titles['subtitle'] = v
-        else:
-            specs.append(_scale(aesthetic=k, name=v))
-    specs.append(FeatureSpec('ggtitle', name=None, text=titles['text'], subtitle=titles['subtitle']))
+        specs.append(_scale(aesthetic=k, name=v))
 
     if len(specs) == 1:
         return specs[0]
