@@ -43,13 +43,13 @@ class YDensityStat(
         } else {
             List(ys.size) { 0.0 }
         }
-        val weights = if (data.has(TransformVar.WEIGHT)) {
+        val ws = if (data.has(TransformVar.WEIGHT)) {
             data.getNumeric(TransformVar.WEIGHT)
         } else {
             List(ys.size) { 1.0 }
         }
 
-        val statData = buildStat(xs, ys, weights)
+        val statData = buildStat(xs, ys, ws)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
