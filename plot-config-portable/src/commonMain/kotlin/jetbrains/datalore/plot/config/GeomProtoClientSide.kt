@@ -177,6 +177,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
             PROVIDER[GeomKind.BAR] = GeomProvider.bar()
             PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
+            PROVIDER[GeomKind.DOTPLOT] = GeomProvider.dotplot()
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()

@@ -113,6 +113,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { HistogramGeom() }.build()
         }
 
+        fun dotplot(): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.DOTPLOT,
+                AestheticsDefaults.dotplot(),
+                DotplotGeom.HANDLES_GROUPS
+            ) { DotplotGeom() }.build()
+        }
+
         fun tile(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.TILE,

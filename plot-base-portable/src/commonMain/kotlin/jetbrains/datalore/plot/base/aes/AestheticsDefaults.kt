@@ -98,6 +98,10 @@ open class AestheticsDefaults {
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
+        fun dotplot(): AestheticsDefaults {
+            return AestheticsDefaults()
+        }
+
         fun tile(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)

@@ -439,6 +439,7 @@ object Option {
         private const val SMOOTH = "smooth"
         private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
+        private const val DOTPLOT = "dotplot"
         private const val TILE = "tile"
         private const val BIN_2D = "bin2d"
         private const val MAP = "map"
@@ -479,6 +480,7 @@ object Option {
             map[SMOOTH] = GeomKind.SMOOTH
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
+            map[DOTPLOT] = GeomKind.DOTPLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP

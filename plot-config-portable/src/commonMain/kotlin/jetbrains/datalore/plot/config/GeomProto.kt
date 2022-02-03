@@ -32,6 +32,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             SMOOTH -> DefaultSampling.SMOOTH
             BAR -> DefaultSampling.BAR
             HISTOGRAM -> DefaultSampling.HISTOGRAM
+            DOTPLOT -> Samplings.NONE // Dotplot is only for small datasets, sampling has no sense
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
             ERROR_BAR -> DefaultSampling.ERROR_BAR
@@ -97,6 +98,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 barDefaults()
             DEFAULTS[HISTOGRAM] =
                 histogramDefaults()
+            DEFAULTS[DOTPLOT] =
+                dotplotDefaults()
             DEFAULTS[CONTOUR] =
                 contourDefaults()
             DEFAULTS[CONTOURF] =
@@ -141,6 +144,13 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         }
 
         private fun histogramDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "bin"
+            defaults["position"] = "stack"
+            return defaults
+        }
+
+        private fun dotplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "bin"
             defaults["position"] = "stack"
