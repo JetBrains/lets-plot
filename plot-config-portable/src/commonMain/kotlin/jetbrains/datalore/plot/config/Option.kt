@@ -148,6 +148,10 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
+        object Violin {
+            const val DRAW_QUANTILES = "draw_quantiles"
+        }
+
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"
@@ -282,6 +286,10 @@ object Option {
             const val IS_CONTOUR = "contour"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+        }
+
+        object YDensity {
+            const val SCALE = "scale"
         }
     }
 
