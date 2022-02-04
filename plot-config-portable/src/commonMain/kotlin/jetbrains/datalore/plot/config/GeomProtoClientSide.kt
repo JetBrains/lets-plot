@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
 import jetbrains.datalore.plot.config.Option.Geom.Step
 import jetbrains.datalore.plot.config.Option.Geom.Text
+import jetbrains.datalore.plot.config.Option.Geom.Violin
 
 
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
@@ -79,6 +80,14 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 geom.outlierShape = opts.getShape(BoxplotOutlier.SHAPE)
                 geom.outlierSize = opts.getDouble(BoxplotOutlier.SIZE)
+                geom
+            }
+
+            GeomKind.VIOLIN -> return GeomProvider.violin {
+                val geom = ViolinGeom()
+                if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
+                    geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
+                }
                 geom
             }
 
@@ -191,7 +200,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
-            PROVIDER[GeomKind.VIOLIN] = GeomProvider.violin()
+            // violin - special case
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()
             PROVIDER[GeomKind.DENSITY] = GeomProvider.density()

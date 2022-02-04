@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.config.Option.Meta.Kind
 import jetbrains.datalore.plot.config.Option.Plot.FACET
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
+import jetbrains.datalore.plot.config.Option.Plot.SUBTITLE_TEXT
 import jetbrains.datalore.plot.config.Option.Plot.TITLE
 import jetbrains.datalore.plot.config.Option.Plot.TITLE_TEXT
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
@@ -42,6 +43,8 @@ abstract class PlotConfig(
 
     val title: String?
         get() = getMap(TITLE)[TITLE_TEXT] as String?
+    val subtitle: String?
+        get() = getMap(TITLE)[SUBTITLE_TEXT] as String?
 
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)

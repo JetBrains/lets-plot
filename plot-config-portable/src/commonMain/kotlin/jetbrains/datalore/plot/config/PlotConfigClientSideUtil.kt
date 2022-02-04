@@ -47,6 +47,7 @@ object PlotConfigClientSideUtil {
             config.theme
         )
         assembler.title = config.title
+        assembler.subtitle = config.subtitle
         assembler.guideOptionsMap = config.guideOptionsMap
         assembler.facets = config.facets
         return assembler

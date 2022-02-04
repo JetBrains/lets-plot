@@ -28,6 +28,7 @@ class PlotAssembler private constructor(
 
     var facets: PlotFacets = PlotFacets.undefined()
     var title: String? = null
+    var subtitle: String? = null
     var guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
 
     private var legendsEnabled = true
@@ -111,6 +112,7 @@ class PlotAssembler private constructor(
 
         return PlotSvgComponent(
             title = title,
+            subtitle = subtitle,
             layersByTile = layersByTile,
             plotLayout = plotLayout,
             frameOfReferenceProvider = frameOfReferenceProvider,

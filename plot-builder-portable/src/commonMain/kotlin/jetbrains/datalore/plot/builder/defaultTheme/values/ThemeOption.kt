@@ -137,6 +137,7 @@ object ThemeOption {
         // Actually, text sizes are defined in "theme values".
         val elemWithColorOnly = listOf(
             PLOT_TITLE,
+            PLOT_SUBTITLE,
             AXIS_TITLE_X,
             AXIS_TITLE_Y,
             AXIS_TEXT_X,

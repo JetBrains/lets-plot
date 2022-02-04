@@ -228,12 +228,13 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
-        fun violin(): GeomProvider {
+        fun violin(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.VIOLIN,
                 AestheticsDefaults.violin(),
-                ViolinGeom.HANDLES_GROUPS
-            ) { ViolinGeom() }.build()
+                ViolinGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
         }
 
         fun livemap(

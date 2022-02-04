@@ -143,6 +143,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private fun labelSpecToString(plotLabelSpec: PlotLabelSpec): String {
             return when (plotLabelSpec) {
                 PlotLabelSpec.PLOT_TITLE -> "PLOT_TITLE"
+                PlotLabelSpec.PLOT_SUBTITLE -> "PLOT_SUBTITLE"
                 PlotLabelSpec.AXIS_TICK -> "AXIS_TICK"
                 PlotLabelSpec.AXIS_TICK_SMALL -> "AXIS_TICK_SMALL"
                 PlotLabelSpec.AXIS_TITLE -> "AXIS_TITLE"
