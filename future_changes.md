@@ -5,10 +5,11 @@
 - geom_livemap: button for position reset
 - Plot subtitle: `subtitle` parameter in `ggtitle()` and `labs()`, `plot_subtitle` parameter in `theme()` [[#417](https://github.com/JetBrains/lets-plot/issues/417)].
 - Multi-line title: a title and subtitle can be split into multiple lines using `\n` as a text separator.
+- geom_livemap: objects scale on zoom
 
 ### Changed
 
-- geom_livemap: new parameter `show_advanced_actions` to show "copy location" and "draw geometry" buttons
+- geom_livemap: new parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons
 
 - New tooltip style: rounded corners, bold label, colored marker inside the tooltip.
 
