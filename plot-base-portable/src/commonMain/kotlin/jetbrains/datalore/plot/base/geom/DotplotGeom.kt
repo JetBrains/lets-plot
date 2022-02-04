@@ -5,11 +5,16 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 class DotplotGeom : GeomBase() {
     override fun buildIntern(
@@ -19,7 +24,48 @@ class DotplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        // TODO
+        val dotHelper = DotHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val pointsWithWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.WIDTH)
+        if (!pointsWithWidth.any()) return
+        val dotWidth = GeomUtil.widthPx(pointsWithWidth.first(), ctx, 2.0)
+        val dotHeight = max(ctx.getResolution(Aes.Y), 2.0)
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
+            for (y in 0 until (p.y()!! / dotHeight).roundToInt()) {
+                val center = DoubleVector(p.x()!!, (y + 0.5) * dotHeight)
+                val path = dotHelper.createDot(
+                    p,
+                    geomHelper.toClient(center, p),
+                    dotWidth / 2,
+                    dotHeight / 2
+                )
+                root.add(path.rootGroup)
+            }
+        }
+    }
+
+    private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
+        LinesHelper(pos, coord, ctx) {
+            fun createDot(
+                p: DataPointAesthetics,
+                center: DoubleVector,
+                rx: Double,
+                ry: Double
+            ): LinePath {
+                val leftBound = center.add(DoubleVector(-rx, 0.0))
+                val rightBound = center.add(DoubleVector(rx, 0.0))
+
+                val builder = SvgPathDataBuilder(true)
+                builder.moveTo(leftBound)
+                builder.ellipticalArc(rx, ry, 0.0, false, false, rightBound)
+                builder.ellipticalArc(rx, ry, 0.0, false, false, leftBound)
+                builder.closePath()
+
+                val path = LinePath(builder)
+                decorate(path, p, true)
+
+                return path
+            }
     }
 
     companion object {

@@ -23,7 +23,16 @@ class Dotplot {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'dotplot'" +
+                "                 'geom': 'histogram'," +
+                "                 'binwidth': 0.2," +
+                "                 'color': 'black'," +
+                "                 'fill': '#08519c'" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'dotplot'," +
+                "                 'binwidth': 0.2," +
+                "                 'color': 'black'," +
+                "                 'fill': '#de2d26'" +
                 "               }" +
                 "             ]" +
                 "}"
