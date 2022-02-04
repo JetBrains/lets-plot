@@ -24,36 +24,41 @@ import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
-import jetbrains.livemap.api.*
+import jetbrains.livemap.api.GeoObject
+import jetbrains.livemap.api.geometry
+import jetbrains.livemap.api.limitCoord
 import kotlin.math.ceil
 
 internal class DataPointLiveMapAesthetics {
-    constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
+    constructor(p: DataPointAesthetics, layerIndex: Int, layerKind: MapLayerKind) {
+        this.layerIndex = layerIndex
         myLayerKind = layerKind
         myP = p
+        indices = emptyList<Int>()
+        valueArray = emptyList()
     }
 
-    constructor(p: MultiDataPointHelper.MultiDataPoint, layerKind: MapLayerKind) {
+    constructor(p: MultiDataPointHelper.MultiDataPoint, layerIndex: Int, layerKind: MapLayerKind) {
+        this.layerIndex = layerIndex
         myLayerKind = layerKind
         myP = p.aes
         indices = p.indices
-        myValueArray = p.values
+        valueArray = p.values
         myColorArray = p.colors
     }
 
     private val myP: DataPointAesthetics
-    private var indices = emptyList<Int>()
     private var myArrowSpec: ArrowSpec? = null
-    private var myValueArray: List<Double> = emptyList()
     private var myColorArray: List<Color> = emptyList()
+    val layerIndex: Int
+    val indices: List<Int>
+    val valueArray: List<Double>
 
     val myLayerKind: MapLayerKind
 
     var geometry: MultiPolygon<LonLat>? = null
     var point: Vec<LonLat>? = null
     var animation = 0
-    var geodesic: Boolean = false
-    var layerIndex: Int? = null
 
     val index get() = myP.index()
     val shape get() = myP.shape()!!.code
@@ -130,104 +135,15 @@ internal class DataPointLiveMapAesthetics {
             return lineType.dashArray.map { it * width }
         }
 
-    private val colorArray: List<Color>
-        get() = if (myLayerKind === PIE && myValueArray.all(0.0::equals)) {
-            List(myValueArray.size) { DefaultNaValue[COLOR] }
+    val colorArray: List<Color>
+        get() = if (myLayerKind === PIE && valueArray.all(0.0::equals)) {
+            List(valueArray.size) { DefaultNaValue[COLOR] }
         } else {
             myColorArray
         }
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
-    }
-
-    fun toPointBuilder(): PointBuilder.() -> Unit {
-        return {
-            layerIndex = this@DataPointLiveMapAesthetics.layerIndex
-            index = this@DataPointLiveMapAesthetics.index
-            point = this@DataPointLiveMapAesthetics.point
-            label = this@DataPointLiveMapAesthetics.label
-            animation = this@DataPointLiveMapAesthetics.animation
-            shape = this@DataPointLiveMapAesthetics.shape
-            radius = this@DataPointLiveMapAesthetics.radius
-            fillColor = this@DataPointLiveMapAesthetics.fillColor
-            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
-            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
-        }
-    }
-
-    fun createPolygonConfigurator(): PolygonsBuilder.() -> Unit {
-        return {
-            layerIndex = this@DataPointLiveMapAesthetics.layerIndex
-            index = this@DataPointLiveMapAesthetics.index
-            multiPolygon = this@DataPointLiveMapAesthetics.geometry
-            geoObject = this@DataPointLiveMapAesthetics.geoObject
-            lineDash = this@DataPointLiveMapAesthetics.lineDash
-            fillColor = this@DataPointLiveMapAesthetics.fillColor
-            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
-            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
-        }
-    }
-
-    fun toPathBuilder(): (PathBuilder.() -> Unit)? {
-        return geometry?.let {
-            {
-                layerIndex = this@DataPointLiveMapAesthetics.layerIndex
-                index = this@DataPointLiveMapAesthetics.index
-
-                multiPolygon = it
-
-                lineDash = this@DataPointLiveMapAesthetics.lineDash
-                strokeColor = this@DataPointLiveMapAesthetics.strokeColor
-                strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
-
-                animation = this@DataPointLiveMapAesthetics.animation
-                speed = this@DataPointLiveMapAesthetics.speed
-                flow = this@DataPointLiveMapAesthetics.flow
-            }
-        }
-    }
-
-    fun toLineBuilder(): LineBuilder.() -> Unit {
-        return {
-            point = this@DataPointLiveMapAesthetics.point
-            lineDash = this@DataPointLiveMapAesthetics.lineDash
-            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
-            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
-        }
-    }
-
-    fun toChartBuilder(): Symbol.() -> Unit {
-        return {
-            layerIndex = this@DataPointLiveMapAesthetics.layerIndex
-            point = this@DataPointLiveMapAesthetics.point
-
-            radius = this@DataPointLiveMapAesthetics.radius
-
-            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
-            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
-
-            indices = this@DataPointLiveMapAesthetics.indices
-            values = this@DataPointLiveMapAesthetics.myValueArray
-            colors = this@DataPointLiveMapAesthetics.colorArray
-        }
-    }
-
-    fun toTextBuilder(): TextBuilder.() -> Unit {
-        return {
-            index = this@DataPointLiveMapAesthetics.index
-            point = this@DataPointLiveMapAesthetics.point
-            fillColor = this@DataPointLiveMapAesthetics.strokeColor // Text is filled by strokeColor
-            strokeColor = this@DataPointLiveMapAesthetics.strokeColor
-            strokeWidth = this@DataPointLiveMapAesthetics.strokeWidth
-            label = this@DataPointLiveMapAesthetics.label
-            size = this@DataPointLiveMapAesthetics.size
-            family = this@DataPointLiveMapAesthetics.family
-            fontface = this@DataPointLiveMapAesthetics.fontface
-            hjust = this@DataPointLiveMapAesthetics.hjust
-            vjust = this@DataPointLiveMapAesthetics.vjust
-            angle = this@DataPointLiveMapAesthetics.angle
-        }
     }
 
     private fun hjust(hjust: Any): Double {

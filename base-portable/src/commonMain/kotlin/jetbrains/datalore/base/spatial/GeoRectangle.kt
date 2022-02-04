@@ -5,19 +5,19 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 
 class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Double, maxLatitude: Double) {
     private val myLongitudeSegment: LongitudeSegment
-    private val myLatitudeRange: ClosedRange<Double>
+    private val myLatitudeRange: DoubleSpan
 
     val isEmpty: Boolean
         get() = myLongitudeSegment.isEmpty && latitudeRangeIsEmpty(myLatitudeRange)
 
-    private fun latitudeRangeIsEmpty(range: ClosedRange<Double>): Boolean {
+    private fun latitudeRangeIsEmpty(range: DoubleSpan): Boolean {
         return range.upperEnd == range.lowerEnd
     }
 
@@ -25,7 +25,7 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
         require(minLatitude <= maxLatitude) { "Invalid latitude range: [$minLatitude..$maxLatitude]" }
 
         myLongitudeSegment = LongitudeSegment(startLongitude, endLongitude)
-        myLatitudeRange = ClosedRange(minLatitude, maxLatitude)
+        myLatitudeRange = DoubleSpan(minLatitude, maxLatitude)
     }
 
     fun startLongitude(): Double = myLongitudeSegment.start()

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.GeomKind
@@ -12,5 +13,6 @@ import jetbrains.datalore.plot.base.GeomKind
 class LiveMapLayerData(
     val geom: Geom,
     val geomKind: GeomKind,
-    val aesthetics: Aesthetics
+    val aesthetics: Aesthetics,
+    val mappedAes: Set<Aes<*>>
 )

@@ -93,6 +93,7 @@ object Option {
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
         const val TITLE_TEXT = "text"
+        const val SUBTITLE_TEXT = "subtitle"
         const val COORD = "coord"
         const val FACET = "facet"
         const val THEME = "theme"
@@ -149,6 +150,10 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
+        object Violin {
+            const val DRAW_QUANTILES = "draw_quantiles"
+        }
+
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"
@@ -194,7 +199,7 @@ object Option {
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
-            const val SHOW_ADVANCEDS_ACTIONS = "show_advanced_actions"
+            const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -283,6 +288,10 @@ object Option {
             const val IS_CONTOUR = "contour"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+        }
+
+        object YDensity {
+            const val SCALE = "scale"
         }
     }
 

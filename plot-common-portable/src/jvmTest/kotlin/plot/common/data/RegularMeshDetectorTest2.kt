@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,16 +10,25 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
-class SeriesUtilResolutionTest(
+class RegularMeshDetectorTest2(
     private val serie: List<Double?>,
     private val expected: Double,
+    private val colomns: Boolean,
 ) {
 
     @Test
     fun test() {
-        assertEquals(expected, SeriesUtil.resolution(serie, naValue = 0.0))
+        val detector = if (colomns) {
+            RegularMeshDetector.tryColumn(serie)
+        } else {
+            RegularMeshDetector.tryRow(serie)
+        }
+
+        assertTrue(detector.isMesh)
+        assertEquals(expected, detector.resolution)
     }
 
 
@@ -27,8 +36,9 @@ class SeriesUtilResolutionTest(
         private fun args(
             serie: List<Double?>,
             expected: Double,
+            coloumns: Boolean
         ): Array<Any?> {
-            return arrayOf(serie, expected)
+            return arrayOf(serie, expected, coloumns)
         }
 
         @JvmStatic
@@ -41,52 +51,44 @@ class SeriesUtilResolutionTest(
 
             return arrayOf(
                 args(
-                    serie = orderedEqualSpace,
-                    expected = 1.0
-                ),
-                args(
-                    serie = orderedVarSpace,
-                    expected = 0.5
-                ),
-                args(
-                    serie = unOrderedEqualSpace,
-                    expected = 1.0
-                ),
-                args(
-                    serie = unOrderedVarSpace,
-                    expected = 0.5
-                ),
-                args(
                     serie = genGrid(xs = orderedEqualSpace).columns,
-                    expected = 1.0
+                    expected = 1.0,
+                    coloumns = true
                 ),
                 args(
                     serie = genGrid(xs = orderedEqualSpace).rows,
-                    expected = 10.0
+                    expected = 10.0,
+                    coloumns = false
                 ),
                 args(
                     serie = genGrid(xs = orderedVarSpace).columns,
-                    expected = 0.5
+                    expected = 0.5,
+                    coloumns = true
                 ),
                 args(
                     serie = genGrid(xs = orderedVarSpace).rows,
-                    expected = 10.0
+                    expected = 10.0,
+                    coloumns = false
                 ),
                 args(
                     serie = genGrid(xs = unOrderedEqualSpace).columns,
-                    expected = 1.0
+                    expected = 1.0,
+                    coloumns = true
                 ),
                 args(
                     serie = genGrid(xs = unOrderedEqualSpace).rows,
-                    expected = 10.0
+                    expected = 10.0,
+                    coloumns = false
                 ),
                 args(
                     serie = genGrid(xs = unOrderedVarSpace).columns,
-                    expected = 0.5
+                    expected = 0.5,
+                    coloumns = true
                 ),
                 args(
                     serie = genGrid(xs = unOrderedVarSpace).rows,
-                    expected = 10.0
+                    expected = 10.0,
+                    coloumns = false
                 ),
             )
         }

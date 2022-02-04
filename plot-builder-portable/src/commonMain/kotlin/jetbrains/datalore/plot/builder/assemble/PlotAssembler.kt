@@ -28,6 +28,7 @@ class PlotAssembler private constructor(
 
     var facets: PlotFacets = PlotFacets.undefined()
     var title: String? = null
+    var subtitle: String? = null
     var guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
 
     private var legendsEnabled = true
@@ -66,41 +67,55 @@ class PlotAssembler private constructor(
             createPlot(fOrProvider, plotLayout, legendsBoxInfos)
         } else {
             val flipAxis = coordProvider.flipAxis
-            val (xDomain, yDomain) = PositionalScalesUtil.computePlotXYTransformedDomains(
+            val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
                 layersByTile,
                 scaleXProto,
-                scaleYProto
-            )
-            val (hDomain, vDomain) = coordProvider.adjustDomains(
-                hDomain = if (flipAxis) yDomain else xDomain,
-                vDomain = if (flipAxis) xDomain else yDomain
+                scaleYProto,
+                freeX = false,
+                freeY = false
             )
             val (hScaleProto, vScaleProto) = when (flipAxis) {
                 true -> scaleYProto to scaleXProto
                 else -> scaleXProto to scaleYProto
             }
-            val fOrProvider = SquareFrameOfReferenceProvider(
-                hScaleProto, vScaleProto,
-                hDomain, vDomain,
-                flipAxis,
-                theme
-            )
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(fOrProvider.createTileLayout(), facets, theme.facets())
-            createPlot(fOrProvider, plotLayout, legendsBoxInfos)
+
+            // Create frame of reference provider for each tile.
+            val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider> =
+                domainsXYByTile.map { (xDomain, yDomain) ->
+                    val (hDomain, vDomain) = coordProvider.adjustDomains(
+                        hDomain = if (flipAxis) yDomain else xDomain,
+                        vDomain = if (flipAxis) xDomain else yDomain
+                    )
+                    SquareFrameOfReferenceProvider(
+                        hScaleProto, vScaleProto,
+                        hDomain, vDomain,
+                        flipAxis,
+                        theme
+                    )
+                }
+
+            // ToDo: different tile layouts (per plot tile)
+            val tileLayout = frameOfReferenceProviderByTile[0].createTileLayout()
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(tileLayout, facets, theme.facets())
+
+            // ToDo: frame of reference per tile.
+            val frameOfReferenceProvider = frameOfReferenceProviderByTile[0]
+            createPlot(frameOfReferenceProvider, plotLayout, legendsBoxInfos)
         }
     }
 
     private fun createPlot(
-        fOrProvider: TileFrameOfReferenceProvider,
+        frameOfReferenceProvider: TileFrameOfReferenceProvider,
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>
     ): PlotSvgComponent {
 
         return PlotSvgComponent(
             title = title,
+            subtitle = subtitle,
             layersByTile = layersByTile,
             plotLayout = plotLayout,
-            frameOfReferenceProvider = fOrProvider,
+            frameOfReferenceProvider = frameOfReferenceProvider,
             coordProvider = coordProvider,
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,

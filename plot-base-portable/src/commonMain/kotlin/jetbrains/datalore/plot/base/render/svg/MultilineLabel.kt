@@ -15,14 +15,9 @@ import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgTSpanElement
 import jetbrains.datalore.vis.svg.SvgTextElement
-import jetbrains.datalore.vis.svg.SvgTextNode
 
 
-class MultilineLabel(
-    text: String,
-    lineMaxLength: Int,
-    lineVerticalMargin: Double? = null
-) : SvgComponent() {
+class MultilineLabel(text: String) : SvgComponent() {
     private val myText = SvgTextElement()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
@@ -30,18 +25,8 @@ class MultilineLabel(
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
 
-    val isWrapped: Boolean
-
     init {
-        if (text.length > lineMaxLength) {
-            isWrapped = true
-            addTSpanElements(text.chunkedBy(delimiter = " ", lineMaxLength))
-            lineVerticalMargin?.let { setLineVerticalMargin(it) }
-        } else {
-            isWrapped = false
-            myText.addTextNode(text)
-        }
-
+        addTSpanElements(text.split('\n'))
         rootGroup.children().add(myText)
     }
 
@@ -141,11 +126,10 @@ class MultilineLabel(
     }
 
     fun setLineVerticalMargin(margin: Double) {
-        val hasTextNode = myText.children().filterIsInstance<SvgTextNode>().isNotEmpty()
         myText.children()
             .filterIsInstance<SvgTSpanElement>()
             .forEachIndexed { index, tspan ->
-                val dyString = if (!hasTextNode && index == 0) {
+                val dyString = if (index == 0) {
                     "0.0"
                 } else {
                     margin.toString()
@@ -154,35 +138,7 @@ class MultilineLabel(
             }
     }
 
-    fun containsSubtext(): Boolean {
-        return myText.children().filterIsInstance<SvgTSpanElement>().isNotEmpty()
-    }
-
-    companion object {
-        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
-            return split(delimiter)
-                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
-                .map { it.joinToString(delimiter) }
-        }
-
-        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
-            val result = mutableListOf<List<String>>()
-            var subList = mutableListOf<String>()
-            var subListSize = 0
-            forEach { item ->
-                val itemSize = item.size()
-                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
-                    result.add(subList)
-                    subList = mutableListOf()
-                    subListSize = 0
-                }
-                subList.add(item)
-                subListSize += itemSize
-            }
-            if (subList.isNotEmpty()) {
-                result += subList
-            }
-            return result
-        }
+    fun linesCount(): Int {
+        return myText.children().filterIsInstance<SvgTSpanElement>().size
     }
 }

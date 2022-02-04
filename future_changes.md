@@ -3,6 +3,8 @@
 ### Added
 
 - geom_livemap: button for position reset
+- Plot subtitle: `subtitle` parameter in `ggtitle()` and `labs()`, `plot_subtitle` parameter in `theme()` [[#417](https://github.com/JetBrains/lets-plot/issues/417)].
+- Multi-line title: a title and subtitle can be split into multiple lines using `\n` as a text separator.
 
 ### Changed
 

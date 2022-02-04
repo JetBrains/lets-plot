@@ -39,8 +39,7 @@ import jetbrains.livemap.searching.PolygonLocatorHelper
 @LiveMapDsl
 class Polygons(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection,
-    val zoomable: Boolean
+    val mapProjection: MapProjection
 )
 
 fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
@@ -54,13 +53,12 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
     Polygons(
         MapEntityFactory(layerEntity),
-        mapProjection,
-        zoomable
+        mapProjection
     ).apply(block)
 }
 
 fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    PolygonsBuilder(factory, mapProjection, zoomable)
+    PolygonsBuilder(factory, mapProjection)
         .apply(block)
         .build()
 }
@@ -68,9 +66,9 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
 @LiveMapDsl
 class PolygonsBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection,
-    private val zoomable: Boolean
+    private val myMapProjection: MapProjection
 ) {
+    var scaleRange: ClosedRange<Int>? = null
     var layerIndex: Int? = null
     var index: Int? = null
 
@@ -108,7 +106,7 @@ class PolygonsBuilder(
                     renderer = PolygonRenderer()
                 }
                 + ChartElementComponent().apply {
-                    scalable = this@PolygonsBuilder.zoomable
+                    scaleRange = this@PolygonsBuilder.scaleRange
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor
                     strokeWidth = this@PolygonsBuilder.strokeWidth
@@ -135,7 +133,7 @@ class PolygonsBuilder(
                     renderer = RegionRenderer()
                 }
                 + ChartElementComponent().apply {
-                    scalable = this@PolygonsBuilder.zoomable
+                    scaleRange = this@PolygonsBuilder.scaleRange
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor
                     strokeWidth = this@PolygonsBuilder.strokeWidth

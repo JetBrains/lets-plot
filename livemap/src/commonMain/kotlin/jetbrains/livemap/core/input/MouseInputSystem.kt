@@ -60,7 +60,7 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
                     doubleClickEvent != null ||
                     dragDistance != null
                 ) {
-                    check(location != null)
+                    //check(location != null) // sometimes fails
                 }
             }
         }

@@ -76,7 +76,7 @@ class LiveMapFactory(
                     ),
                 myZoom = myLiveMapSpec.zoom,
                 myAttribution = myLiveMapSpec.attribution,
-                myShowAdnvancedActions = myLiveMapSpec.showAdvancedActions,
+                myShowCoordPickTools = myLiveMapSpec.showCoordPickTools,
                 myCursorService = myLiveMapSpec.cursorService
             )
         )

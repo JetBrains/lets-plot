@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.viewport
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
 import jetbrains.datalore.base.spatial.calculateQuadKeys
 import jetbrains.datalore.base.spatial.union
@@ -47,7 +47,7 @@ class ViewportHelper(
     }
 
 
-    private fun length(mapRange: ClosedRange<Double>): Double {
+    private fun length(mapRange: DoubleSpan): Double {
         return mapRange.upperEnd - mapRange.lowerEnd
     }
 
@@ -81,9 +81,9 @@ class ViewportHelper(
 
     internal fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint> {
         fun getOrigins(
-            objRange: ClosedRange<Double>,
-            mapRange: ClosedRange<Double>,
-            viewRange: ClosedRange<Double>,
+            objRange: DoubleSpan,
+            mapRange: DoubleSpan,
+            viewRange: DoubleSpan,
             loop: Boolean
         ): List<Double> {
             if (!loop) {
@@ -127,18 +127,18 @@ class ViewportHelper(
 
     private fun splitRect(rect: WorldRectangle): List<Rect<World>> {
         fun splitRange(
-            range: ClosedRange<Double>,
-            mapRange: ClosedRange<Double>,
+            range: DoubleSpan,
+            mapRange: DoubleSpan,
             loop: Boolean
-        ): List<ClosedRange<Double>> {
-            val xRanges = ArrayList<ClosedRange<Double>>()
+        ): List<DoubleSpan> {
+            val xRanges = ArrayList<DoubleSpan>()
             var lower = range.lowerEnd
             var upper = range.upperEnd
 
             if (lower < mapRange.lowerEnd) {
                 if (loop && upper < mapRange.upperEnd) {
                     val newLeft = max(lower + length(mapRange), upper)
-                    xRanges.add(ClosedRange(newLeft, mapRange.upperEnd))
+                    xRanges.add(DoubleSpan(newLeft, mapRange.upperEnd))
                 }
                 lower = mapRange.lowerEnd
             }
@@ -146,12 +146,12 @@ class ViewportHelper(
             if (mapRange.upperEnd < upper) {
                 if (loop && mapRange.lowerEnd < lower) {
                     val newRight = min(upper - length(mapRange), lower)
-                    xRanges.add(ClosedRange(mapRange.lowerEnd, newRight))
+                    xRanges.add(DoubleSpan(mapRange.lowerEnd, newRight))
                 }
                 upper = mapRange.upperEnd
             }
 
-            xRanges.add(ClosedRange(lower, upper))
+            xRanges.add(DoubleSpan(lower, upper))
             return xRanges
         }
 

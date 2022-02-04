@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
@@ -38,6 +39,7 @@ import jetbrains.livemap.ui.CursorService
 
 internal class LiveMapSpecBuilder {
     private lateinit var myAesthetics: Aesthetics
+    private lateinit var myMappedAes: Set<Aes<*>>
     private lateinit var myLayers: List<LiveMapLayerData>
     private lateinit var myLiveMapOptions: LiveMapOptions
     private lateinit var myDataAccess: MappedDataAccess
@@ -50,6 +52,11 @@ internal class LiveMapSpecBuilder {
 
     fun aesthetics(aesthetics: Aesthetics): LiveMapSpecBuilder {
         myAesthetics = aesthetics
+        return this
+    }
+
+    fun mappedAes(mappedAes: Set<Aes<*>>): LiveMapSpecBuilder {
+        myMappedAes = mappedAes
         return this
     }
 
@@ -100,11 +107,15 @@ internal class LiveMapSpecBuilder {
             LivemapConstants.Projection.CONIC -> Projections.conicEqualArea() to false
         }
 
-        val liveMapLayerProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
+        val liveMapLayerProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics,
+            myMappedAes,
+            myLiveMapOptions.displayMode)
         val geomLayersProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
 
         val layersConfigurators: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
-        layersConfigurators.addAll(myLayers.mapIndexed(geomLayersProcessor::createConfigurator))
+        layersConfigurators.addAll(myLayers.mapIndexed { layerIndex, layerData ->
+            geomLayersProcessor.createLayerBuilder(layerIndex + 1, layerData)
+        })
         layersConfigurators.add(liveMapLayerProcessor.createConfigurator())
 
         return LiveMapSpec(
@@ -129,7 +140,7 @@ internal class LiveMapSpecBuilder {
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
             attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
-            showAdvancedActions = myLiveMapOptions.showAdvancedActions,
+            showCoordPickTools = myLiveMapOptions.showCoordPickTools,
             cursorService = myCursorService,
             minZoom = minZoom,
             maxZoom = maxZoom,

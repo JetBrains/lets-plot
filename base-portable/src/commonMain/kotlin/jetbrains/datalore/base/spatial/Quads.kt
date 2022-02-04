@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.math.ipow
 import jetbrains.datalore.base.typedGeometry.*
 import kotlin.math.max
@@ -24,7 +24,7 @@ fun <GeometryT, QuadT> calculateQuadKeys(
     val quadKeys = HashSet<QuadT>()
     val tileCount = calulateQuadsCount(zoom)
 
-    fun calcQuadNum(value: Double, range: ClosedRange<Double>, tileCount: Int): Int {
+    fun calcQuadNum(value: Double, range: DoubleSpan, tileCount: Int): Int {
         val position = (value - range.lowerEnd) / (range.upperEnd - range.lowerEnd)
         return max(0.0, min(position * tileCount, (tileCount - 1).toDouble())).toInt()
     }

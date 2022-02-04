@@ -463,7 +463,13 @@ class TooltipBox: SvgComponent() {
                 .map { line ->
                     Pair(
                         line.label?.let(::TextLabel),
-                        MultilineLabel(line.value, VALUE_LINE_MAX_LENGTH)
+                        MultilineLabel(
+                        line.value
+                            .split("\n")
+                            .map(String::trim)
+                            .flatMap { it.chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH) }
+                            .joinToString("\n")
+                    )
                     )
                 }
             // for labels
@@ -512,14 +518,15 @@ class TooltipBox: SvgComponent() {
             val defaultLineHeight = (valueLineHeights + rawBBoxes.mapNotNull { it.first?.height }).maxOrNull()
                 ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
-            val labelWidths = lines.map { line ->
+            val labelWidths = lines.zip(components).map { (line, component) ->
                 when {
                     line.label == null -> {
                         // label null - the value component will be centered
                         0.0
                     }
-                    line.label!!.isEmpty() -> {
-                        // label is not null, but empty - add space for the label, the value will be moved to the right
+                    line.label!!.isEmpty() && component.second.linesCount() == 1 -> {
+                        // label is not null, but empty - add space for the label, the value will be moved to the right;
+                        // also value should not be multiline for right alignment
                         maxLabelWidth
                     }
                     else -> {
@@ -583,8 +590,8 @@ class TooltipBox: SvgComponent() {
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             labelComponent.x().set(-labelBBox.left)
 
-                            if (valueComponent.containsSubtext()) {
-                                // Use left alignment
+                            if (valueComponent.linesCount() > 1) {
+                               // Use left alignment
                                 valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
                             } else {
@@ -670,6 +677,7 @@ class TooltipBox: SvgComponent() {
     }
 
     companion object {
+        private const val DEBUG_DRAWING = true
 
         class RectangleComponent : SvgComponent() {
             private val myRect = SvgPathElement()
@@ -696,6 +704,31 @@ class TooltipBox: SvgComponent() {
             }
         }
 
-        private const val DEBUG_DRAWING = true
+
+        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
+            return split(delimiter)
+                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
+                .map { it.joinToString(delimiter) }
+        }
+
+        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
+            val result = mutableListOf<List<String>>()
+            var subList = mutableListOf<String>()
+            var subListSize = 0
+            forEach { item ->
+                val itemSize = item.size()
+                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
+                    result.add(subList)
+                    subList = mutableListOf()
+                    subListSize = 0
+                }
+                subList.add(item)
+                subListSize += itemSize
+            }
+            if (subList.isNotEmpty()) {
+                result += subList
+            }
+            return result
+        }
     }
 }
