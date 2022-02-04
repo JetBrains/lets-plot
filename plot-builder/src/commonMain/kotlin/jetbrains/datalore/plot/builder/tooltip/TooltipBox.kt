@@ -313,7 +313,7 @@ class TooltipBox: SvgComponent() {
             }
 
             myLinesContainer.apply {
-                x().set(if (rotate) 0.0 else myHorizontalContentPadding + colorBarIndent)
+                x().set(myHorizontalContentPadding + colorBarIndent)
                 y().set(titleTextSize.y + myVerticalContentPadding)
                 width().set(totalTooltipWidth - myHorizontalContentPadding)
                 height().set(textSize.y + titleTextSize.y + myVerticalContentPadding)
@@ -389,9 +389,7 @@ class TooltipBox: SvgComponent() {
             titleLines: List<String>,
             titleColor: Color
         ): List<MultilineLabel> {
-            val titleComponents = titleLines.map { titleLine ->
-                MultilineLabel(titleLine, VALUE_LINE_MAX_LENGTH)
-            }
+            val titleComponents = titleLines.map(::MultilineLabel)
 
             titleComponents.onEach { component ->
                 component.textColor().set(titleColor)
@@ -623,12 +621,10 @@ class TooltipBox: SvgComponent() {
                     if (rotate) {
                         components
                             .onEach { (labelComponent, valueComponent) ->
-                                labelComponent?.y()?.set(-labelComponent.y().get()!!)
-                                labelComponent?.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+                                labelComponent?.y()?.set(-textSize.y + labelComponent.y().get()!!)
                                 labelComponent?.rotate(90.0)
 
-                                valueComponent.y().set(-valueComponent.y().get()!!)
-                                valueComponent.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+                                valueComponent.y().set(-textSize.y + valueComponent.y().get()!!)
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()
@@ -651,7 +647,7 @@ class TooltipBox: SvgComponent() {
         }
 
         private fun drawLineSeparator(path: SvgPathElement, toSvgElem: SvgSvgElement) {
-            path.strokeWidth().set(LINE_SEPARATOR_WIDTH);
+            path.strokeWidth().set(LINE_SEPARATOR_WIDTH)
             path.strokeOpacity().set(1.0)
             path.strokeColor().set(Color.VERY_LIGHT_GRAY)
 
@@ -677,13 +673,13 @@ class TooltipBox: SvgComponent() {
     }
 
     companion object {
-        private const val DEBUG_DRAWING = true
+        private const val DEBUG_DRAWING = false
 
         class RectangleComponent : SvgComponent() {
             private val myRect = SvgPathElement()
 
             init {
-                myRect.strokeWidth().set(1.0);
+                myRect.strokeWidth().set(1.0)
                 myRect.fillOpacity().set(0.0)
             }
 
