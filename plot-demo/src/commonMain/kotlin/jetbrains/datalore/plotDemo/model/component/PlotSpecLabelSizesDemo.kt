@@ -34,6 +34,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                     'I' -> EXTRA_NARROW
                     'f', 't', '(', ')', '[', ']', '{', '}', '!' -> NARROW
                     'm', 'M', 'W', '%' -> EXTRA_WIDE
+                    'E','F','J','L','X','Z' -> NORMAL
                     'w', in 'A'..'Z', '+', '&' -> WIDE
                     else -> NORMAL
                 }
