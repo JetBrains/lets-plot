@@ -24,14 +24,13 @@ class DotplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dotHelper = DotHelper(pos, coord, ctx)
-        val geomHelper = GeomHelper(pos, coord, ctx)
         val pointsWithWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.WIDTH)
         if (!pointsWithWidth.any()) return
-        val dotWidth = pointsWithWidth.first().let {
-            GeomUtil.widthPx(it, ctx, 2.0)
-        }
-        val dotHeight = max(ctx.getResolution(Aes.Y), 2.0)
+
+        val dotHelper = DotHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val dotWidth = dotWidthPx(pointsWithWidth.first(), ctx, 2.0)
+        val dotHeight = dotHeightPx(ctx, 2.0)
         val yResolution = ctx.getUnitResolution(Aes.Y)
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.WIDTH)) {
             for (y in 0 until (p.y()!! / yResolution).roundToInt()) {
@@ -45,6 +44,16 @@ class DotplotGeom : GeomBase() {
                 root.add(path.rootGroup)
             }
         }
+    }
+
+    private fun dotWidthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double): Double {
+        val resolution = ctx.getResolution(if (ctx.flipped) Aes.Y else Aes.X)
+        return max(p.width()!! * resolution, minWidth)
+    }
+
+    private fun dotHeightPx(ctx: GeomContext, minHeight: Double): Double {
+        val resolution = ctx.getResolution(if (ctx.flipped) Aes.X else Aes.Y)
+        return max(resolution, minHeight)
     }
 
     private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
