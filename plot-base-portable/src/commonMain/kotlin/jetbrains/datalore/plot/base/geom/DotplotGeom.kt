@@ -28,11 +28,14 @@ class DotplotGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val pointsWithWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.WIDTH)
         if (!pointsWithWidth.any()) return
-        val dotWidth = GeomUtil.widthPx(pointsWithWidth.first(), ctx, 2.0)
+        val dotWidth = pointsWithWidth.first().let {
+            GeomUtil.widthPx(it, ctx, 2.0)
+        }
         val dotHeight = max(ctx.getResolution(Aes.Y), 2.0)
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
-            for (y in 0 until (p.y()!! / dotHeight).roundToInt()) {
-                val center = DoubleVector(p.x()!!, (y + 0.5) * dotHeight)
+        val yResolution = ctx.getUnitResolution(Aes.Y)
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.WIDTH)) {
+            for (y in 0 until (p.y()!! / yResolution).roundToInt()) {
+                val center = DoubleVector(p.x()!!, (y + 0.5) * yResolution)
                 val path = dotHelper.createDot(
                     p,
                     geomHelper.toClient(center, p),

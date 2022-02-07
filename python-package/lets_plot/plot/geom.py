@@ -3,6 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
+
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84, get_geo_data_frame_meta
 
@@ -11,7 +12,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84,
 #
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
-           'geom_histogram', 'geom_bin2d',
+           'geom_histogram', 'geom_dotplot', 'geom_bin2d',
            'geom_tile', 'geom_raster',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
@@ -838,6 +839,27 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     """
     return _geom('histogram',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 center=center,
+                 boundary=boundary,
+                 **other_args)
+
+
+def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 bins=None,
+                 binwidth=None,
+                 center=None,
+                 boundary=None,
+                 **other_args):
+    return _geom('dotplot',
                  mapping=mapping,
                  data=data,
                  stat=stat,
