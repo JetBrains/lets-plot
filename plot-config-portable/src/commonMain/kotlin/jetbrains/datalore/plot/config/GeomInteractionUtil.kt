@@ -240,6 +240,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY,
             GeomKind.FREQPOLY,
             GeomKind.HISTOGRAM,
+            GeomKind.DOTPLOT,
             GeomKind.LINE,
             GeomKind.AREA,
             GeomKind.BAR,

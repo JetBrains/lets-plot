@@ -7,9 +7,7 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.LinesHelper
+import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
@@ -44,6 +42,13 @@ class DotplotGeom : GeomBase() {
                 root.add(path.rootGroup)
             }
         }
+
+        BarTooltipHelper.collectRectangleTargets(
+            emptyList(),
+            aesthetics, pos, coord, ctx,
+            BarGeom.rectangleByDataPoint(ctx, isHintRect = true),
+            { HintColorUtil.fromFill(it) }
+        )
     }
 
     private fun dotWidthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double) : Double {

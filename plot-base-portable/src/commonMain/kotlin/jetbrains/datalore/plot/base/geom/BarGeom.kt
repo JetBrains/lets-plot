@@ -43,7 +43,7 @@ open class BarGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun rectangleByDataPoint(ctx: GeomContext, isHintRect: Boolean): (DataPointAesthetics) -> DoubleRectangle? {
+        internal fun rectangleByDataPoint(ctx: GeomContext, isHintRect: Boolean): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val x = p.x()
                 val y = p.y()
