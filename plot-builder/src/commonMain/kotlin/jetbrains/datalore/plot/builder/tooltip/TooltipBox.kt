@@ -437,7 +437,7 @@ class TooltipBox: SvgComponent() {
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
                             }
                         }
-                        valueBBox.dimension.x == maxLineWidth -> {
+                        valueBBox.dimension.x == maxLineWidth && valueComponent.linesCount() == 1 -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             valueComponent.setX(-valueBBox.left)
