@@ -46,13 +46,21 @@ class DotplotGeom : GeomBase() {
         }
     }
 
-    private fun dotWidthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double): Double {
-        val resolution = ctx.getResolution(if (ctx.flipped) Aes.Y else Aes.X)
+    private fun dotWidthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double) : Double {
+        val resolution = if (ctx.flipped) {
+            ctx.getUnitResolution(Aes.Y)
+        } else {
+            ctx.getResolution(Aes.X)
+        }
         return max(p.width()!! * resolution, minWidth)
     }
 
-    private fun dotHeightPx(ctx: GeomContext, minHeight: Double): Double {
-        val resolution = ctx.getResolution(if (ctx.flipped) Aes.X else Aes.Y)
+    private fun dotHeightPx(ctx: GeomContext, minHeight: Double) : Double {
+        val resolution = if (ctx.flipped) {
+            ctx.getResolution(Aes.X)
+        } else {
+            ctx.getUnitResolution(Aes.Y)
+        }
         return max(resolution, minHeight)
     }
 
