@@ -7,12 +7,12 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.*
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import kotlin.math.max
-import kotlin.math.roundToInt
 
 class DotplotGeom : GeomBase() {
     override fun buildIntern(
@@ -27,46 +27,29 @@ class DotplotGeom : GeomBase() {
 
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val dotWidth = dotWidthPx(pointsWithWidth.first(), ctx, 2.0)
-        val dotHeight = dotHeightPx(ctx, 2.0)
-        val yResolution = ctx.getUnitResolution(Aes.Y)
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.WIDTH)) {
-            for (y in 0 until (p.y()!! / yResolution).roundToInt()) {
-                val center = DoubleVector(p.x()!!, (y + 0.5) * yResolution)
+        val binWidthPx = GeomUtil.widthPx(pointsWithWidth.first(), ctx, 2.0)
+        for (p in GeomUtil.withDefined(pointsWithWidth, Aes.X, Aes.STACKSIZE)) {
+            for (i in 0 until p.stacksize()!!.toInt()) {
+                val center = DoubleVector(p.x()!!, (i + 0.5) * binWidthPx)
                 val path = dotHelper.createDot(
                     p,
                     geomHelper.toClient(center, p),
-                    dotWidth / 2,
-                    dotHeight / 2
+                    binWidthPx / 2,
+                    binWidthPx / 2
                 )
                 root.add(path.rootGroup)
             }
         }
 
+        // TODO: Fix hints
+        /*
         BarTooltipHelper.collectRectangleTargets(
             emptyList(),
             aesthetics, pos, coord, ctx,
             BarGeom.rectangleByDataPoint(ctx, isHintRect = true),
             { HintColorUtil.fromFill(it) }
         )
-    }
-
-    private fun dotWidthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double) : Double {
-        val resolution = if (ctx.flipped) {
-            ctx.getUnitResolution(Aes.Y)
-        } else {
-            ctx.getResolution(Aes.X)
-        }
-        return max(p.width()!! * resolution, minWidth)
-    }
-
-    private fun dotHeightPx(ctx: GeomContext, minHeight: Double) : Double {
-        val resolution = if (ctx.flipped) {
-            ctx.getResolution(Aes.X)
-        } else {
-            ctx.getUnitResolution(Aes.Y)
-        }
-        return max(resolution, minHeight)
+        */
     }
 
     private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :

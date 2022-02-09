@@ -80,11 +80,11 @@ class Dotplot {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'x': [0.5, 1.5]," +
-                "             'count': [2, 1]" +
+                "             'stacksize': [2, 1]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
-                "                'y': 'count'" +
+                "                'stacksize': 'stacksize'" +
                 "              }," +
                 "   'ggtitle': {" +
                 "                'text': 'stat=identity'" +
@@ -105,11 +105,11 @@ class Dotplot {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'x': [0.5, 1.5, 2.5, null]," +
-                "             'count': [0, 2, null, 0]" +
+                "             'stacksize': [0, 2, null, 0]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
-                "                'y': 'count'" +
+                "                'stacksize': 'stacksize'" +
                 "              }," +
                 "   'ggtitle': {" +
                 "                'text': 'stat=identity'" +

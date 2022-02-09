@@ -142,7 +142,8 @@ class BinStat(
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.COUNT
+            Aes.Y to Stats.COUNT,
+            Aes.STACKSIZE to Stats.COUNT
         )
     }
 }

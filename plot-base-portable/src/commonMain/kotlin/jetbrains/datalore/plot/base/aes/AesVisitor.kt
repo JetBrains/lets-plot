@@ -26,6 +26,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
@@ -94,6 +95,9 @@ abstract class AesVisitor<T> {
         }
         if (aes == SIZE) {
             return size()
+        }
+        if (aes == STACKSIZE) {
+            return stacksize()
         }
         if (aes == LINETYPE) {
             return lineType()
@@ -206,6 +210,8 @@ abstract class AesVisitor<T> {
     protected abstract fun lineType(): T
 
     protected abstract fun size(): T
+
+    protected abstract fun stacksize(): T
 
     protected abstract fun width(): T
 

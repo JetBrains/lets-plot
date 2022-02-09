@@ -62,6 +62,10 @@ open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) :
         return p.size()
     }
 
+    override fun stacksize(): Double? {
+        return p.stacksize()
+    }
+
     override fun width(): Double? {
         return p.width()
     }

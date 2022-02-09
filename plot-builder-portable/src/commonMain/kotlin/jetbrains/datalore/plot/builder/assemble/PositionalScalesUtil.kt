@@ -124,7 +124,8 @@ internal object PositionalScalesUtil {
             Aes.affectingScaleX(it) ||
                     Aes.affectingScaleY(it) ||
                     it == Aes.HEIGHT ||
-                    it == Aes.WIDTH
+                    it == Aes.WIDTH ||
+                    it == Aes.STACKSIZE
         }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
@@ -257,7 +258,12 @@ internal object PositionalScalesUtil {
                 aesthetics,
                 geomCtx
             )
-        else
+        else if (renderedAes.contains(Aes.STACKSIZE)) {
+            computeLayerDryRunRangeByStackSizeAfterSizeExpand(
+                Aes.STACKSIZE,
+                aesthetics
+            )
+        } else
             null
 
         return Pair(rangeX, rangeY)
@@ -296,6 +302,20 @@ internal object PositionalScalesUtil {
     private fun updateExpandedMinMax(value: Double, expand: Double, expandedMinMax: DoubleArray) {
         expandedMinMax[0] = min(value - expand, expandedMinMax[0])
         expandedMinMax[1] = max(value + expand, expandedMinMax[1])
+    }
+
+    private fun computeLayerDryRunRangeByStackSizeAfterSizeExpand(
+        countAes: Aes<Double>, aesthetics: Aesthetics
+    ): ClosedRange<Double>? {
+        val maxCount = aesthetics.numericValues(countAes)
+            .filter(SeriesUtil::isFinite)
+            .map { it!! }
+            .maxOrNull()
+
+        return if (maxCount == null)
+            null
+        else
+            ClosedRange(0.0, maxCount!!)
     }
 
 

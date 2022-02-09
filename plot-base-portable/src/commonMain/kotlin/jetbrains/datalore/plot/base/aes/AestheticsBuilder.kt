@@ -29,6 +29,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
@@ -390,6 +391,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun size(): Double {
             return get(SIZE)
+        }
+
+        override fun stacksize(): Double {
+            return get(STACKSIZE)
         }
 
         override fun width(): Double {

@@ -102,7 +102,8 @@ object GeomMeta {
             )
 
             GeomKind.DOTPLOT -> listOf(
-                Aes.X, Aes.Y,
+                Aes.X,
+                Aes.STACKSIZE,
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
