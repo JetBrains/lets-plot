@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColo
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.guideTransformedDomainByAes
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
@@ -189,15 +190,24 @@ internal object PlotAssemblerUtil {
         return legendBoxInfos
     }
 
-    fun createPlotLayout(tileLayout: TileLayout, facets: PlotFacets, facetsTheme: FacetsTheme): PlotLayout {
+    fun createPlotLayout(
+        layoutProviderByTile: List<TileLayoutProvider>,
+        facets: PlotFacets,
+        facetsTheme: FacetsTheme,
+        hAxisTheme: AxisTheme,
+        vAxisTheme: AxisTheme,
+    ): PlotLayout {
         if (!facets.isDefined) {
-            return SingleTilePlotLayout(tileLayout)
+            val topDownLayout = layoutProviderByTile[0].createTopDownTileLayout()
+            return SingleTilePlotLayout(topDownLayout)
         }
 
-        return FacetGridPlotLayout(
+        return FacetedPlotLayout(
             facets,
-            tileLayout,
-            facetsTheme.showStrip()
+            layoutProviderByTile,
+            facetsTheme.showStrip(),
+            hAxisTheme,
+            vAxisTheme,
         )
     }
 }

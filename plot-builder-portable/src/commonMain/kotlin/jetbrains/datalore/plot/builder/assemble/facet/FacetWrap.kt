@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble.facet
 
+import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import kotlin.math.ceil
@@ -28,6 +29,12 @@ class FacetWrap(
     override val colCount: Int = shape.first
     override val rowCount: Int = shape.second
     override val variables: List<String> = facets
+
+    override val freeHScale: Boolean
+        get() = FeatureSwitch.FACET_FREE_X
+
+    override val freeVScale: Boolean
+        get() = FeatureSwitch.FACET_FREE_Y
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
@@ -90,17 +97,16 @@ class FacetWrap(
         for ((i, tileLabelTuple) in tileLabels.withIndex()) {
             val col = toCol(i)
             val row = toRow(i)
-//            val nextRowIndex = toIndex(col, row + 1)
-//            val hasXAxis = nextRowIndex >= numTiles
-            val hasXAxis = isBottom(col, row)
-            val hasYAxis = col == 0
+            val hasHAxis = isBottom(col, row) || freeHScale
+            val hasVAxis = col == 0 || freeVScale
 
             infos.add(
                 FacetTileInfo(
                     col, row,
                     colLabs = tileLabelTuple,
                     null,
-                    hasXAxis, hasYAxis,
+                    hasHAxis = hasHAxis,
+                    hasVAxis = hasVAxis,
                     trueIndex = i
                 )
             )

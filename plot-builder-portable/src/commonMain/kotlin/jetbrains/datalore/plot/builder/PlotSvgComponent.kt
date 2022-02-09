@@ -50,18 +50,20 @@ class PlotSvgComponent constructor(
     subtitle: String?,
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
-    private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
+    private val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme
 ) : SvgComponent() {
 
-    private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty) ?: emptyList()
+    private fun splitToLines(text: String?) =
+        text?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty) ?: emptyList()
+
     private val titleLines: List<String> = splitToLines(title)
     private val subtitleLines: List<String> = splitToLines(subtitle)
 
-    val flippedAxis = frameOfReferenceProvider.flipAxis
+    val flippedAxis = frameOfReferenceProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
     var interactor: PlotInteractor? = null
@@ -77,10 +79,10 @@ class PlotSvgComponent constructor(
         private set
 
     // ToDo: remove
-    private val axisTitleLeft: String? = frameOfReferenceProvider.vAxisLabel
+    private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel
 
     // ToDo: remove
-    private val axisTitleBottom: String? = frameOfReferenceProvider.hAxisLabel
+    private val axisTitleBottom: String? = frameOfReferenceProviderByTile[0].hAxisLabel
 
     private val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -242,7 +244,7 @@ class PlotSvgComponent constructor(
         @Suppress("UnnecessaryVariable")
         val tilesOrigin = plotInnerOrigin
         for (tileLayoutInfo in plotInfo.tiles) {
-            val tileLayersIndex = tileLayoutInfo.trueIndex
+            val tileIndex = tileLayoutInfo.trueIndex
 
 //            println("plot offset: " + tileInfo.plotOffset)
 //            println("     bounds: " + tileInfo.bounds)
@@ -250,12 +252,12 @@ class PlotSvgComponent constructor(
 //            println("clip bounds: " + tileInfo.clipBounds)
 
             // Create a plot tile.
-            val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
+            val frameOfReference = frameOfReferenceProviderByTile[tileIndex].createFrameOfReference(
                 tileLayoutInfo,
                 coordProvider,
                 DEBUG_DRAWING
             )
-            val tileLayers = tileLayers(tileLayersIndex)
+            val tileLayers = tileLayers(tileIndex)
             val tile = PlotTile(tileLayers, tilesOrigin, tileLayoutInfo, theme, frameOfReference)
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)

@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 
 interface TileFrameOfReferenceProvider {
     val hAxisLabel: String?
@@ -15,7 +15,7 @@ interface TileFrameOfReferenceProvider {
 
     val flipAxis: Boolean
 
-    fun createTileLayout(): TileLayout
+    fun createTileLayoutProvider(): TileLayoutProvider
 
     fun createFrameOfReference(
         layoutInfo: TileLayoutInfo,

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.LegendPosition
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -96,8 +97,8 @@ internal object PlotLayoutUtil {
         )
         val reduced = baseSize.subtract(delta)
         return DoubleVector(
-            max(reduced.x, XYPlotLayoutUtil.GEOM_MIN_SIZE.x),
-            max(reduced.y, XYPlotLayoutUtil.GEOM_MIN_SIZE.y)
+            max(reduced.x, TileLayoutUtil.GEOM_MIN_SIZE.x),
+            max(reduced.y, TileLayoutUtil.GEOM_MIN_SIZE.y)
         )
     }
 

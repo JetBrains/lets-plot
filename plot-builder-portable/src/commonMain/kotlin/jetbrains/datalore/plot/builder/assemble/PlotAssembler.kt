@@ -11,8 +11,10 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
-import jetbrains.datalore.plot.builder.layout.LiveMapTileLayout
 import jetbrains.datalore.plot.builder.layout.PlotLayout
+import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
+import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
+import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class PlotAssembler private constructor(
@@ -62,17 +64,28 @@ class PlotAssembler private constructor(
             //  - skip X/Y scale training
             //  - ignore coord provider
             //  - plot layout without axes
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(LiveMapTileLayout(), facets, theme.facets())
-            val fOrProvider = BogusFrameOfReferenceProvider()
-            createPlot(fOrProvider, plotLayout, legendsBoxInfos)
+            val layoutProviderByTile = layersByTile.map {
+                LiveMapTileLayoutProvider()
+            }
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(
+                layoutProviderByTile,
+                facets,
+                theme.facets(),
+                hAxisTheme = LiveMapAxisTheme(),
+                vAxisTheme = LiveMapAxisTheme(),
+            )
+            val frameOfReferenceProviderByTile = layersByTile.map {
+                BogusFrameOfReferenceProvider()
+            }
+            createPlot(frameOfReferenceProviderByTile, plotLayout, legendsBoxInfos)
         } else {
             val flipAxis = coordProvider.flipAxis
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
                 layersByTile,
                 scaleXProto,
                 scaleYProto,
-                freeX = false,
-                freeY = false
+                freeX = facets.freeHScale,
+                freeY = facets.freeVScale
             )
             val (hScaleProto, vScaleProto) = when (flipAxis) {
                 true -> scaleYProto to scaleXProto
@@ -94,18 +107,23 @@ class PlotAssembler private constructor(
                     )
                 }
 
-            // ToDo: different tile layouts (per plot tile)
-            val tileLayout = frameOfReferenceProviderByTile[0].createTileLayout()
-            val plotLayout = PlotAssemblerUtil.createPlotLayout(tileLayout, facets, theme.facets())
+            val layoutProviderByTile: List<TileLayoutProvider> = frameOfReferenceProviderByTile.map {
+                it.createTileLayoutProvider()
+            }
+            val plotLayout = PlotAssemblerUtil.createPlotLayout(
+                layoutProviderByTile,
+                facets,
+                theme.facets(),
+                hAxisTheme = theme.axisX(flipAxis),
+                vAxisTheme = theme.axisY(flipAxis),
+            )
 
-            // ToDo: frame of reference per tile.
-            val frameOfReferenceProvider = frameOfReferenceProviderByTile[0]
-            createPlot(frameOfReferenceProvider, plotLayout, legendsBoxInfos)
+            createPlot(frameOfReferenceProviderByTile, plotLayout, legendsBoxInfos)
         }
     }
 
     private fun createPlot(
-        frameOfReferenceProvider: TileFrameOfReferenceProvider,
+        frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>
     ): PlotSvgComponent {
@@ -115,7 +133,7 @@ class PlotAssembler private constructor(
             subtitle = subtitle,
             layersByTile = layersByTile,
             plotLayout = plotLayout,
-            frameOfReferenceProvider = frameOfReferenceProvider,
+            frameOfReferenceProviderByTile = frameOfReferenceProviderByTile,
             coordProvider = coordProvider,
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,

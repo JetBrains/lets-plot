@@ -17,6 +17,8 @@ abstract class PlotFacets {
     abstract val rowCount: Int
     abstract val numTiles: Int
     abstract val variables: List<String>
+    abstract val freeHScale: Boolean
+    abstract val freeVScale: Boolean
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
@@ -32,7 +34,6 @@ abstract class PlotFacets {
      *          the index is computed like: row * nCols + col
      */
     abstract fun tileInfos(): List<FacetTileInfo>
-
 
     companion object {
         const val DEF_ORDER_DIR = 0 // no ordering
@@ -182,13 +183,13 @@ abstract class PlotFacets {
         }
     }
 
-    class FacetTileInfo(
+    class FacetTileInfo constructor(
         val col: Int,
         val row: Int,
         val colLabs: List<String>,
         val rowLab: String?,
-        val xAxis: Boolean,
-        val yAxis: Boolean,
+        val hasHAxis: Boolean,
+        val hasVAxis: Boolean,
         val trueIndex: Int     // tile index before re-ordering (in facet wrap)
     ) {
         override fun toString(): String {
