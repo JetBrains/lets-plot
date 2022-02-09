@@ -43,7 +43,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             myTooltipProperties,
             myIgnoreInvisibleTargets,
             myIsCrosshairEnabled,
-            myTooltipTitles
+            myTooltipTitles.map(::TooltipLine)
         )
     }
 
