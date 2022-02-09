@@ -3,6 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
+
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84, get_geo_data_frame_meta
 
@@ -2647,6 +2648,136 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  **other_args):
+    """
+    A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='ydensity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    draw_quantiles : list of float
+        Draw horizontal lines at the given quantiles of the density estimate.
+    scale : {'area', 'count', 'width'}, default='area'
+        If 'area', all violins have the same area.
+        If 'count', areas are scaled proportionally to the number of observations.
+        If 'width', all violins have the same maximum width.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..violinwidth.. : density scaled for the violin plot, according to area, counts or to a constant maximum width (mapped by default).
+    - ..density.. : density estimate.
+    - ..count.. : density * number of points.
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+
+    `geom_violin()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : y-axis coordinates.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+    - size : lines width.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - weight : used by 'ydensity' stat to compute weighted density.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_violin()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_violin(scale='count', draw_quantiles=[.25, .5, .75])
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 3
+        np.random.seed(42)
+        x = ['a'] * n + ['b'] * n + ['c'] * n
+        y = 3 * list(range(n))
+        vw = np.random.uniform(size=3*n)
+        ggplot({'x': x, 'y': y, 'vw': vw}, aes('x', 'y')) + \\
+            geom_violin(aes(violinwidth='vw', fill='x'), stat='identity')
+
+    |
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 100, 5
+        np.random.seed(42)
+        df = pd.DataFrame({'x%s' % i: np.random.normal(size=n) \\
+                           for i in range(1, m + 1)})
+        ggplot(df.melt(), aes('variable', 'value')) + \\
+            geom_violin(aes(color='variable', fill='variable'), \\
+                        size=2, alpha=.5, scale='width') + \\
+            geom_boxplot(aes(fill='variable'), width=.2)
+
+    """
     return _geom('violin',
                  mapping=mapping,
                  data=data,
