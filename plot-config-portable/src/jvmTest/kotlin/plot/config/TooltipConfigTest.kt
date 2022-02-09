@@ -871,7 +871,7 @@ class TooltipConfigTest {
             "--",
             "cty: 15.00"
         )
-        val lines = getGeneralTooltipStrings(geomLayer)
+        val lines = getTitleStrings(geomLayer) + getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(expectedLines, lines)
     }
 
@@ -892,19 +892,22 @@ class TooltipConfigTest {
             "--",
             "15.00 (mpg)"
         )
-        val lines = getGeneralTooltipStrings(geomLayer)
+        val lines = getTitleStrings(geomLayer) + getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(expectedLines, lines)
     }
 
     companion object {
+        private fun getTitleStrings(geomLayer: GeomLayer): List<String> {
+            return geomLayer.contextualMapping.getTitles(index = 0)
+        }
+
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
             return getGeneralTooltipLines(geomLayer).map(Line::toString)
         }
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            val titles = geomLayer.contextualMapping.getTitles(index = 0).map(Line.Companion::title)
-            return titles + dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
+            return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {

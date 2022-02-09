@@ -17,25 +17,21 @@ class TooltipSpec(
     val anchor: TooltipAnchor? = null,
     val minWidth: Double? = null,
     val isCrosshairEnabled: Boolean = false,
-    val markerColors: List<Color>
+    val markerColors: List<Color>,
+    val titles: List<String> = emptyList()
 ) {
     override fun toString(): String {
         return "TooltipSpec($layoutHint, lines=${lines.map(Line::toString)})"
     }
 
-    class Line private constructor(
-        val label: String?,
-        val value: String,
-        val isTitle: Boolean
-    ) {
+    class Line private constructor(val label: String?, val value: String) {
         override fun toString(): String {
             return if (label.isNullOrEmpty()) value else "${label}: $value"
         }
 
         companion object {
-            fun withValue(value: String) = Line(label = null, value, isTitle = false)
-            fun withLabelAndValue(label: String?, value: String) = Line(label, value, isTitle = false)
-            fun title(value: String) = Line(label = null, value, isTitle = true)
+            fun withValue(value: String) = Line(label = null, value)
+            fun withLabelAndValue(label: String?, value: String) = Line(label, value)
         }
     }
 }

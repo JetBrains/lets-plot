@@ -77,6 +77,7 @@ class TooltipBox: SvgComponent() {
         borderColor: Color,
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
+        titles: List<String>,
         style: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
@@ -84,11 +85,13 @@ class TooltipBox: SvgComponent() {
         markerColors: List<Color>
     ) {
         addClassName(style)
-        myHorizontalContentPadding = if (lines.size > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
-        myVerticalContentPadding = if (lines.size > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
+
+        myHorizontalContentPadding = if ((lines + titles).size > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
+        myVerticalContentPadding = if ((lines + titles).size > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
 
         myContentBox.update(
             lines,
+            titles,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
             tooltipMinWidth,
@@ -256,6 +259,7 @@ class TooltipBox: SvgComponent() {
 
         internal fun update(
             lines: List<TooltipSpec.Line>,
+            titles: List<String>,
             labelTextColor: Color,
             valueTextColor: Color,
             tooltipMinWidth: Double?,
@@ -267,12 +271,9 @@ class TooltipBox: SvgComponent() {
 
             calculateColorBarIndent(markerColors)
 
-            val titleLines = lines.filter(TooltipSpec.Line::isTitle).map(TooltipSpec.Line::value)
-            val labelValueLines = lines.filterNot(TooltipSpec.Line::isTitle)
-
             // title components
-            val titleComponents = initTitleComponents(titleLines, valueTextColor)
-            val rawTitleBBoxes = titleLines.zip(titleComponents).map { (titleLine, component) ->
+            val titleComponents = initTitleComponents(titles, valueTextColor)
+            val rawTitleBBoxes = titles.zip(titleComponents).map { (titleLine, component) ->
                 getBBox(titleLine, component)
             }
             val titleHeights = rawTitleBBoxes.map { bBox ->
@@ -285,7 +286,7 @@ class TooltipBox: SvgComponent() {
 
             // lines (label: value)
             val textSize = placeLines(
-                labelValueLines,
+                lines,
                 labelTextColor,
                 valueTextColor,
                 minWidthWithTitle,
@@ -462,12 +463,12 @@ class TooltipBox: SvgComponent() {
                     Pair(
                         line.label?.let(::TextLabel),
                         MultilineLabel(
-                        line.value
-                            .split("\n")
-                            .map(String::trim)
-                            .flatMap { it.chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH) }
-                            .joinToString("\n")
-                    )
+                            line.value
+                                .split("\n")
+                                .map(String::trim)
+                                .flatMap { it.chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH) }
+                                .joinToString("\n")
+                        )
                     )
                 }
             // for labels
@@ -589,7 +590,7 @@ class TooltipBox: SvgComponent() {
                             labelComponent.x().set(-labelBBox.left)
 
                             if (valueComponent.linesCount() > 1) {
-                               // Use left alignment
+                                // Use left alignment
                                 valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
                             } else {
