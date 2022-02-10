@@ -23,6 +23,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
 import jetbrains.livemap.api.geometry
@@ -38,7 +39,7 @@ internal class DataPointLiveMapAesthetics {
         valueArray = emptyList()
     }
 
-    constructor(p: MultiDataPointHelper.MultiDataPoint, layerIndex: Int, layerKind: MapLayerKind) {
+    constructor(p: MultiDataPoint, layerIndex: Int, layerKind: MapLayerKind) {
         this.layerIndex = layerIndex
         myLayerKind = layerKind
         myP = p.aes
@@ -61,9 +62,15 @@ internal class DataPointLiveMapAesthetics {
     var animation = 0
 
     val index get() = myP.index()
+    val flow get() = myP.flow()!!
+    val speed get() = myP.speed()!!
+    val family get() = myP.family()
+    val angle get() = myP.angle()!!
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
-    val speed get() = myP.speed()!!
+    val fillColor get() = colorWithAlpha(myP.fill()!!)
+    val label get() = myP.label()?.toString() ?: "n/a"
+
     val geoObject
         get(): GeoObject? {
             if (myP.mapId() != DefaultNaValue.get(MAP_ID)) {
@@ -89,19 +96,24 @@ internal class DataPointLiveMapAesthetics {
             return null
         }
 
-    val flow get() = myP.flow()!!
-    val fillColor get() = colorWithAlpha(myP.fill()!!)
     val strokeColor
         get() = when (myLayerKind) {
             POLYGON -> myP.color()!!
             else -> colorWithAlpha(myP.color()!!)
         }
 
-    val label get() = myP.label()?.toString() ?: "n/a"
-    val family get() = myP.family()
-    val hjust get() = hjust(myP.hjust())
-    val vjust get() = vjust(myP.vjust())
-    val angle get() = myP.angle()!!
+    val hjust
+        get() = when (GeomHelper.textLabelAnchor(myP.hjust(), GeomHelper.HJUST_MAP, MIDDLE)) {
+            LEFT -> 0.0
+            RIGHT -> 1.0
+            MIDDLE -> 0.5
+        }
+    val vjust
+        get() = when (GeomHelper.textLabelAnchor(myP.vjust(), GeomHelper.VJUST_MAP, CENTER)) {
+            TOP -> 0.0
+            BOTTOM -> 1.0
+            CENTER -> 0.5
+        }
 
     val fontface
         get() = when (val fontface = myP.fontface()) {
@@ -144,22 +156,6 @@ internal class DataPointLiveMapAesthetics {
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
-    }
-
-    private fun hjust(hjust: Any): Double {
-        return when (GeomHelper.textLabelAnchor(hjust, GeomHelper.HJUST_MAP, MIDDLE)) {
-            LEFT -> 0.0
-            RIGHT -> 1.0
-            MIDDLE -> 0.5
-        }
-    }
-
-    private fun vjust(vjust: Any): Double {
-        return when (GeomHelper.textLabelAnchor(vjust, GeomHelper.VJUST_MAP, CENTER)) {
-            TOP -> 0.0
-            BOTTOM -> 1.0
-            CENTER -> 0.5
-        }
     }
 
     fun setGeometryPoint(lonlat: Vec<LonLat>): DataPointLiveMapAesthetics {

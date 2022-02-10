@@ -5,51 +5,68 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
-import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects.*
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.LayerRendererUtil
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.getMap
-import jetbrains.livemap.LiveMapLocation
+import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.livemap.api.*
-import jetbrains.livemap.config.DevParams
-import jetbrains.livemap.config.LiveMapCanvasFigure
-import jetbrains.livemap.config.LiveMapFactory
-import jetbrains.livemap.core.Clipboard
-import jetbrains.livemap.ui.CursorService
 
-object LiveMapUtil {
 
-    fun injectLiveMapProvider(
-        plotTiles: List<List<GeomLayer>>,
-        liveMapOptions: Map<*, *>,
-        cursorServiceConfig: CursorServiceConfig,
-    ) {
-        plotTiles.forEach { tileLayers ->
-            if (tileLayers.any(GeomLayer::isLiveMap)) {
-                require(tileLayers.count(GeomLayer::isLiveMap) == 1)
-                require(tileLayers.first().isLiveMap)
-                tileLayers.first().setLiveMapProvider(
-                    MyLiveMapProvider(
-                        tileLayers,
-                        liveMapOptions,
-                        cursorServiceConfig.cursorService
-                    )
-                )
+object LayerConverter {
+    fun convert(
+        letsPlotLayers: List<LayerRendererData>,
+        scaleObjects: ScaleObjects,
+        scaleZooms: Int,
+        geodesic: Boolean
+    ): List<LayersBuilder.() -> Unit> {
+        return letsPlotLayers.mapIndexed { index, layer ->
+            val dataPointsConverter = DataPointsConverter(
+                layerIndex = index,
+                aesthetics = layer.aesthetics,
+                geodesic = geodesic
+            )
+
+            val (layerKind, dataPointLiveMapAesthetics) = when (layer.geomKind) {
+                POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
+                H_LINE -> MapLayerKind.H_LINE to dataPointsConverter.toHorizontalLine()
+                V_LINE -> MapLayerKind.V_LINE to dataPointsConverter.toVerticalLine()
+                SEGMENT -> MapLayerKind.PATH to dataPointsConverter.toSegment(layer.geom)
+                RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
+                TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
+                DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
+                TEXT -> MapLayerKind.TEXT to dataPointsConverter.toText()
+                DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
+                LIVE_MAP -> {
+                    val layerKind = when ((layer.geom as LiveMapGeom).displayMode) {
+                        DisplayMode.POINT -> MapLayerKind.POINT
+                        DisplayMode.PIE -> MapLayerKind.PIE
+                        DisplayMode.BAR -> MapLayerKind.BAR
+                    }
+                    val dataPointLiveMapAesthetics = when (layerKind) {
+                        MapLayerKind.PIE -> dataPointsConverter.toPie()
+                        MapLayerKind.BAR -> dataPointsConverter.toBar()
+                        MapLayerKind.POINT -> dataPointsConverter.toPoint(layer.geom)
+                        else -> error("Unexpected")
+                    }
+
+                    layerKind to dataPointLiveMapAesthetics
+                }
+                else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
+
+            createLayerBuilder(
+                layerKind,
+                dataPointLiveMapAesthetics,
+                layer.mappedAes,
+                scaleObjects,
+                scaleZooms
+            )
         }
     }
 
-    internal fun createLayerBuilder(
+    private fun createLayerBuilder(
         layerKind: MapLayerKind,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         mappedAes: Set<Aes<*>>,
@@ -59,10 +76,10 @@ object LiveMapUtil {
         fun getScaleRange(scalableStroke: Boolean): ClosedRange<Int>? {
             val negativeZoom = (-1).takeIf { scalableStroke } ?: -2
             val isStatic = Aes.SIZE !in mappedAes
-            if (scaleObjects == NONE) return null
-            if (scaleObjects == BOTH) return negativeZoom..scaleZooms
-            if (scaleObjects == STATIC && isStatic) return negativeZoom..scaleZooms
-            if (scaleObjects == STATIC && !isStatic) return negativeZoom..0
+            if (scaleObjects == ScaleObjects.NONE) return null
+            if (scaleObjects == ScaleObjects.BOTH) return negativeZoom..scaleZooms
+            if (scaleObjects == ScaleObjects.STATIC && isStatic) return negativeZoom..scaleZooms
+            if (scaleObjects == ScaleObjects.STATIC && !isStatic) return negativeZoom..0
             error("getScaleRange() - unexpected state. scaleObject: $scaleObjects, isStatic: $isStatic")
         }
 
@@ -194,80 +211,5 @@ object LiveMapUtil {
         indices = p.indices
         values = p.valueArray
         colors = p.colorArray
-    }
-
-
-    private class MyLiveMapProvider internal constructor(
-        geomLayers: List<GeomLayer>,
-        private val myLiveMapOptions: Map<*, *>,
-        cursorService: CursorService,
-    ) : LiveMapProvider {
-
-        private val liveMapSpecBuilder: LiveMapSpecBuilder
-        private val myTargetSource = HashMap<Pair<Int, Int>, ContextualMapping>()
-
-        init {
-            require(geomLayers.isNotEmpty())
-            require(geomLayers.first().isLiveMap) { "geom_livemap have to be the very first geom after ggplot()" }
-
-            // liveMap uses raw positions, so no mappings needed
-            val newLiveMapRendererData = { layer: GeomLayer ->
-                LayerRendererUtil.createLayerRendererData(
-                    layer = layer,
-                    Mappers.IDENTITY,   // Not used with "livemap".
-                    Mappers.IDENTITY,
-                )
-            }
-
-            geomLayers
-                .map(newLiveMapRendererData)
-                .forEachIndexed { layerIndex, rendererData ->
-                    rendererData.aesthetics.dataPoints().forEach {
-                        myTargetSource[layerIndex to it.index()] = rendererData.contextualMapping
-                    }
-                }
-
-            // feature geom layers
-            val layers = geomLayers
-                .drop(1) // skip geom_livemap
-                .map(newLiveMapRendererData)
-
-            // LiveMap geom layer
-            newLiveMapRendererData(geomLayers.first()).let {
-                liveMapSpecBuilder = LiveMapSpecBuilder()
-                    .displayMode((it.geom as LiveMapGeom).displayMode)
-                    .liveMapOptions(myLiveMapOptions)
-                    .aesthetics(it.aesthetics)
-                    .mappedAes(it.mappedAes)
-                    .dataAccess(it.dataAccess)
-                    .layers(layers)
-                    .devParams(DevParams(myLiveMapOptions.getMap(Option.Geom.LiveMap.DEV_PARAMS) ?: emptyMap<Any, Any>()))
-                    .mapLocationConsumer { locationRect ->
-                        Clipboard.copy(LiveMapLocation.getLocationString(locationRect))
-                    }
-                    .cursorService(cursorService)
-            }
-        }
-
-        override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
-            return liveMapSpecBuilder.size(bounds.dimension).build()
-                .let { liveMapSpec -> LiveMapFactory(liveMapSpec).createLiveMap() }
-                .let { liveMapAsync ->
-                    LiveMapData(
-                        LiveMapCanvasFigure(liveMapAsync)
-                            .apply {
-                                setBounds(
-                                    Rectangle(
-                                        bounds.origin.x.toInt(),
-                                        bounds.origin.y.toInt(),
-                                        bounds.dimension.x.toInt(),
-                                        bounds.dimension.y.toInt()
-                                    )
-                                )
-                            },
-                        LiveMapTargetLocator(liveMapAsync, myTargetSource)
-                    )
-                }
-        }
     }
 }

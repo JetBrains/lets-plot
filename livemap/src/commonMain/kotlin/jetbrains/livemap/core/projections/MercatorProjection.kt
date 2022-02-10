@@ -27,6 +27,7 @@ internal class MercatorProjection : GeoProjection {
         )
 
     override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
+    override val cylindrical: Boolean = false
 
     companion object {
         private val VALID_RECTANGLE = newSpanRectangle(
