@@ -83,6 +83,7 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_min_width = None
         self._tooltip_color = None
         self._tooltip_variables = variables
+        self._tooltip_title = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -116,6 +117,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_min_width'] = self._tooltip_min_width
         d['tooltip_color'] = self._tooltip_color
         d['tooltip_variables'] = self._tooltip_variables
+        d['tooltip_title'] = self._tooltip_title
         return _filter_none(d)
 
     def format(self, field=None, format=None):
@@ -418,4 +420,30 @@ class layer_tooltips(FeatureSpec):
         print("WARN: The function color() is deprecated and is no longer supported.")
 
         self._tooltip_color = value
+        return self
+
+    def title(self, value):
+        """
+        Line with title to show in the tooltip.
+        Adds a title template to the tooltip.
+
+        Parameters
+        ----------
+        value : str
+            Enriched string which becomes one title line of the tooltip.
+
+        Returns
+        -------
+        `layer_tooltips`
+            Layer tooltips specification.
+
+        Notes
+        -----
+        The specification rules are the same as for the `lines()` function:
+        variables and aesthetics can be used in the template.
+        The resulting string will be at the beginning of the general tooltip, centered and highlighted in bold.
+        """
+        if self._tooltip_title is None:
+            self._tooltip_title = []
+        self._tooltip_title.append(value)
         return self
