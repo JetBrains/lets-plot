@@ -9,18 +9,37 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.livemap.LiveMapOptions
-import jetbrains.datalore.plot.base.livemap.LivemapConstants
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection.*
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects
+import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
+import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CLUSTERING
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.GEOCODING
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.GEODESIC
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.INTERACTIVE
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LABELS
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LOCATION
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.PROJECTION
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.SCALED
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.SCALE_OBJECTS
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.SCALE_ZOOMS
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.SHOW_COORD_PICK_TOOLS
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TILES
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_CHESSBOARD
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_RASTER_ZXY
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_SOLID
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT
-import jetbrains.datalore.plot.config.getString
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.ZOOM
+import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayerBuilder
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
@@ -38,10 +57,11 @@ import jetbrains.livemap.ui.CursorService
 
 
 internal class LiveMapSpecBuilder {
+    private lateinit var myDisplayMode: DisplayMode
     private lateinit var myAesthetics: Aesthetics
     private lateinit var myMappedAes: Set<Aes<*>>
-    private lateinit var myLayers: List<LiveMapLayerData>
-    private lateinit var myLiveMapOptions: LiveMapOptions
+    private lateinit var myLetsPlotLayers: List<LayerRendererData>
+    private lateinit var myLiveMapOptions: Map<*, *>
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var mySize: DoubleVector
     private lateinit var myDevParams: DevParams
@@ -49,6 +69,11 @@ internal class LiveMapSpecBuilder {
     private lateinit var myCursorService: CursorService
     private var minZoom: Int = MIN_ZOOM
     private var maxZoom: Int = MAX_ZOOM
+
+    fun displayMode(displayMode: DisplayMode): LiveMapSpecBuilder {
+        myDisplayMode = displayMode
+        return this
+    }
 
     fun aesthetics(aesthetics: Aesthetics): LiveMapSpecBuilder {
         myAesthetics = aesthetics
@@ -60,15 +85,15 @@ internal class LiveMapSpecBuilder {
         return this
     }
 
-    fun layers(layers: List<LiveMapLayerData>): LiveMapSpecBuilder {
-        myLayers = layers
+    fun layers(layers: List<LayerRendererData>): LiveMapSpecBuilder {
+        myLetsPlotLayers = layers
         return this
     }
 
-    fun liveMapOptions(liveMapOptions: LiveMapOptions): LiveMapSpecBuilder {
+    fun liveMapOptions(liveMapOptions: Map<*, *>): LiveMapSpecBuilder {
         myLiveMapOptions = liveMapOptions
-        (myLiveMapOptions.tileProvider[Tile.MIN_ZOOM] as? Number)?.let { minZoom = it.toInt() }
-        (myLiveMapOptions.tileProvider[Tile.MAX_ZOOM] as? Number)?.let { maxZoom = it.toInt() }
+        myLiveMapOptions.getInt(TILES, Tile.MIN_ZOOM)?.let { minZoom = it }
+        myLiveMapOptions.getInt(TILES, Tile.MAX_ZOOM)?.let { maxZoom = it }
 
         return this
     }
@@ -99,48 +124,100 @@ internal class LiveMapSpecBuilder {
     }
 
     fun build(): LiveMapSpec {
-        // loopX <-> cylindrical
-        val (geoProjection, loopX) = when (myLiveMapOptions.projection) {
-            LivemapConstants.Projection.EPSG3857 -> Projections.mercator() to true
-            LivemapConstants.Projection.EPSG4326 -> Projections.geographic() to true
-            LivemapConstants.Projection.AZIMUTHAL -> Projections.azimuthalEqualArea() to false
-            LivemapConstants.Projection.CONIC -> Projections.conicEqualArea() to false
-        }
+        val layerBuilders: MutableList<LayersBuilder.() -> Unit> = mutableListOf()
 
-        val liveMapLayerProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics,
-            myMappedAes,
-            myLiveMapOptions.displayMode)
-        val geomLayersProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
+        val scaleObjects = myLiveMapOptions.getEnum(SCALE_OBJECTS) ?: ScaleObjects.STATIC
+        val scaleZooms = myLiveMapOptions.getInt(SCALE_ZOOMS) ?: 2
 
-        val layersConfigurators: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
-        layersConfigurators.addAll(myLayers.mapIndexed { layerIndex, layerData ->
-            geomLayersProcessor.createLayerBuilder(layerIndex + 1, layerData)
+        // livemap layer
+        layerBuilders.add(run {
+            val myLayerKind = when (myDisplayMode) {
+                DisplayMode.POINT -> MapLayerKind.POINT
+                DisplayMode.PIE -> MapLayerKind.PIE
+                DisplayMode.BAR -> MapLayerKind.BAR
+            }
+            val sortingMode = when (myLayerKind) {
+                MapLayerKind.PIE -> SortingMode.PIE_CHART
+                MapLayerKind.BAR -> SortingMode.BAR
+                else -> null
+            }
+            val dataPointLiveMapAesthetics = when (myLayerKind) {
+                MapLayerKind.PIE, MapLayerKind.BAR ->
+                    MultiDataPointHelper.getPoints(myAesthetics, sortingMode!!)
+                        .map {
+                            DataPointLiveMapAesthetics(it, 0, myLayerKind)
+                                .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
+                        }
+                else ->
+                    myAesthetics.dataPoints()
+                        .map {
+                            DataPointLiveMapAesthetics(it, 0, myLayerKind)
+                                .setGeometryPoint(explicitVec(it.x()!!, it.y()!!))
+                        }
+            }
+
+            createLayerBuilder(myLayerKind,
+                dataPointLiveMapAesthetics,
+                myMappedAes,
+                scaleObjects,
+                scaleZooms
+            )
         })
-        layersConfigurators.add(liveMapLayerProcessor.createConfigurator())
+
+        // other layers
+        layerBuilders.addAll(
+            myLetsPlotLayers.mapIndexed { layerIndex, layerData ->
+                val dataPointsConverter = DataPointsConverter(
+                    layerIndex = layerIndex + 1,
+                    aesthetics = layerData.aesthetics,
+                    geodesic = myLiveMapOptions.getBool(GEODESIC) ?: true
+                )
+                val (layerKind, dataPointLiveMapAesthetics) = when (layerData.geomKind) {
+                    POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layerData.geom)
+                    H_LINE -> MapLayerKind.H_LINE to dataPointsConverter.toHorizontalLine()
+                    V_LINE -> MapLayerKind.V_LINE to dataPointsConverter.toVerticalLine()
+                    SEGMENT -> MapLayerKind.PATH to dataPointsConverter.toSegment(layerData.geom)
+                    RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
+                    TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
+                    DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layerData.geom)
+                    TEXT -> MapLayerKind.TEXT to dataPointsConverter.toText()
+                    DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
+                    else -> throw IllegalArgumentException("Layer '" + layerData.geomKind.name + "' is not supported on Live Map.")
+                }
+                createLayerBuilder(layerKind, dataPointLiveMapAesthetics, layerData.mappedAes, scaleObjects, scaleZooms)
+            })
+
+        // loopX <-> cylindrical
+        val (geoProjection, loopX) = when (myLiveMapOptions.getEnum(PROJECTION) ?: EPSG3857) {
+            EPSG3857 -> Projections.mercator() to true
+            EPSG4326 -> Projections.geographic() to true
+            AZIMUTHAL -> Projections.azimuthalEqualArea() to false
+            CONIC -> Projections.conicEqualArea() to false
+        }
 
         return LiveMapSpec(
             size = mySize,
-            isScaled = myLiveMapOptions.scaled,
-            isInteractive = myLiveMapOptions.interactive,
-            isClustering = myLiveMapOptions.clustering,
-            isLabels = myLiveMapOptions.labels,
+            isScaled = myLiveMapOptions.getBool(SCALED) ?: false,
+            isInteractive = myLiveMapOptions.getBool(INTERACTIVE) ?: true,
+            isClustering = myLiveMapOptions.getBool(CLUSTERING) ?: false,
+            isLabels = myLiveMapOptions.getBool(LABELS) ?: true,
             isTiles = DEFAULT_SHOW_TILES,
             isUseFrame = false, //liveMapProcessor.heatMapWithFrame(),
             geoProjection = geoProjection,
-            location = createMapLocation(myLiveMapOptions.location),
-            zoom = checkZoom(myLiveMapOptions.zoom),
-            layers = layersConfigurators,
+            location = createMapLocation(myLiveMapOptions.read(LOCATION)),
+            zoom = checkZoom(myLiveMapOptions.getInt(ZOOM)),
+            layers = layerBuilders,
             isLoopX = loopX,
             isLoopY = DEFAULT_LOOP_Y,
             mapLocationConsumer = myMapLocationConsumer,
-            geocodingService = createGeocodingService(myLiveMapOptions.geocodingService),
+            geocodingService = createGeocodingService(myLiveMapOptions.getMap(GEOCODING) ?: error("Geocoding service must be configured")),
             basemapTileSystemProvider = createTileSystemProvider(
-                myLiveMapOptions.tileProvider,
+                myLiveMapOptions.getMap(TILES) ?: error("Tiles must be condigured"),
                 myDevParams.isSet(DEBUG_TILES),
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
-            attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
-            showCoordPickTools = myLiveMapOptions.showCoordPickTools,
+            attribution = myLiveMapOptions.getString(TILES, Tile.ATTRIBUTION),
+            showCoordPickTools = myLiveMapOptions.getBool(SHOW_COORD_PICK_TOOLS) ?: false,
             cursorService = myCursorService,
             minZoom = minZoom,
             maxZoom = maxZoom,
@@ -361,7 +438,7 @@ internal class LiveMapSpecBuilder {
             minXCoords: List<Double>,
             minYCoords: List<Double>,
             maxXCoords: List<Double>,
-            maxYCoords: List<Double>
+            maxYCoords: List<Double>,
         ): Rect<LonLat> {
             val count = minXCoords.size
             require(minYCoords.size == count && maxXCoords.size == count && maxYCoords.size == count)

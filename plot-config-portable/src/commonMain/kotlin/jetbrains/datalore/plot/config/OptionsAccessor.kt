@@ -46,7 +46,6 @@ open class OptionsAccessor(
             defaultOptions[option]
         }
     }
-
     fun getSafe(option: String): Any {
         return get(option) ?: throw IllegalStateException("Option `$option` not found.")
     }

@@ -73,7 +73,7 @@ class PiesFactory(
                 renderer = DonutChart.Renderer()
             }
             + ChartElementComponent().apply {
-                scaleRange = symbol.scaleRange
+                scalingRange = symbol.scalingRange
                 strokeColor = symbol.strokeColor
                 strokeWidth = symbol.strokeWidth
             }

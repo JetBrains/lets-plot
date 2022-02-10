@@ -24,4 +24,10 @@ interface LivemapConstants {
         AZIMUTHAL,
         CONIC
     }
+
+    enum class ScaleObjects {
+        NONE,
+        STATIC,
+        BOTH
+    }
 }

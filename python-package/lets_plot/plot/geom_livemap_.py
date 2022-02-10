@@ -33,6 +33,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  geodesic=None,
                  tiles=None,
                  show_coord_pick_tools=None,
+                 scale_zooms=None,
+                 scale_objects=None,
                  **other_args):
     """
     Display an interactive map.
@@ -81,9 +83,16 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Tiles provider, either as a string - URL for a standard raster ZXY tile provider
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
         or the result of a call to a `maptiles_xxx()` functions.
-
     show_coord_pick_tools : bool, defafult=False
         Show buttons "copy location" and "draw geometry"
+    scale_zooms : int, defafult=2
+        Number of zoom-ins when map objects will get scaled.
+    scale_objects : str
+        Kind of objects to be scaled on zoom-in. There are two kind of objects - constant and mapped.
+        Values:
+         - 'constant' - objects with static size will be scaled on zoom-in, mapped objects will keep initial size
+         - 'none' - constant and mapped objects will keep their initial size
+         - 'both' - constant and mapped objects will be scaled on zoom-in
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -141,6 +150,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     Examples
     --------
     .. jupyter-execute::
+        :param scale_objects:
         :linenos:
         :emphasize-lines: 3
 
@@ -226,6 +236,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  tiles=tiles,
                  geocoding=geocoding,
                  show_coord_pick_tools=show_coord_pick_tools,
+                 scale_zooms=scale_zooms,
+                 scale_objects=scale_objects,
                  **other_args)
 
 

@@ -14,6 +14,7 @@ import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.ui.CursorService
 
+// TODO: REMOVE (dup of LiveMapBuilder)
 class LiveMapSpec(
     val geocodingService: GeocodingService,
     val size: DoubleVector,

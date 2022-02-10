@@ -58,13 +58,13 @@ object BarChart {
             val chartElement = entity.get<ChartElementComponent>()
             val symbol = entity.get<SymbolComponent>()
 
-            splitColumns(symbol, chartElement.scaleSizeFactor).forEach { column ->
-                ctx.setFillStyle(changeAlphaWithMin(column.color, chartElement.scaleAlphaValue))
+            splitColumns(symbol, chartElement.scalingSizeFactor).forEach { column ->
+                ctx.setFillStyle(changeAlphaWithMin(column.color, chartElement.scalingAlphaValue))
 
                 ctx.fillRect(column.rect)
 
                 if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scaleAlphaValue))
+                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
                     ctx.setLineWidth(chartElement.strokeWidth)
                     ctx.strokeRect(column.rect)
                 }
@@ -82,7 +82,7 @@ object BarChart {
             val chartElement = target.get<ChartElementComponent>()
             val symbol = target.get<SymbolComponent>()
 
-            splitColumns(symbol, chartElement.scaleSizeFactor).forEach { column ->
+            splitColumns(symbol, chartElement.scalingSizeFactor).forEach { column ->
                 target.get<ScreenLoopComponent>().origins.forEach {
                     if(column.rect.contains(coord - it)) {
                         return SearchResult(

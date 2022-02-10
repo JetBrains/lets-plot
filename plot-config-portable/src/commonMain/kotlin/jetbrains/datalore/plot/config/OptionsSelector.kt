@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
+
 fun Map<*, *>.read(vararg query: String): Any? {
     return read(query.dropLast(1), query.last())
 }
@@ -53,6 +55,22 @@ fun Map<*, *>.getDouble(path: List<String>, item: String): Double? {
     return getMap(path)?.get(item) as? Double
 }
 
+fun Map<*, *>.getInt(vararg query: String): Int? {
+    return getInt(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getInt(path: List<String>, item: String): Int? {
+    return getMap(path)?.get(item) as? Int
+}
+
+fun Map<*, *>.getNumber(vararg query: String): Number? {
+    return getNumber(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getNumber(path: List<String>, item: String): Number? {
+    return getMap(path)?.get(item) as? Number
+}
+
 fun Map<*, *>.getBool(vararg query: String): Boolean? {
     return getBool(query.dropLast(1), query.last())
 }
@@ -68,6 +86,20 @@ fun Map<*, *>.getBool(path: List<String>, item: String): Boolean? {
         is Boolean -> v
         else -> null
     }
+}
+
+inline fun <reified EnumT: Enum<EnumT>>Map<*, *>.getEnum(path: List<String>, item: String): EnumT? {
+    val name = getString(path, item) ?: return null
+    val enumInfo = EnumInfoFactory.createEnumInfo<EnumT>()
+    val value = enumInfo.safeValueOf(name)
+    require(value != null) {
+        "Unknown value \'$name\'. Expected: " + enumInfo.originalNames.joinToString(prefix = " [", separator = "|", postfix = "]") { "'${it.lowercase()}'"}
+    }
+    return value
+}
+
+inline fun <reified EnumT: Enum<EnumT>>Map<*, *>.getEnum(vararg query: String): EnumT? {
+    return getEnum<EnumT>(query.dropLast(1), query.last())
 }
 
 fun Map<*, *>.getMap(vararg query: String): Map<String, Any>? {

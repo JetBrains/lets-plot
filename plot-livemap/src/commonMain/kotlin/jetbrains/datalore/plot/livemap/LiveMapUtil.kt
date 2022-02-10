@@ -8,13 +8,17 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.livemap.LiveMapOptions
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects.*
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
+import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.getMap
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
@@ -27,7 +31,7 @@ object LiveMapUtil {
 
     fun injectLiveMapProvider(
         plotTiles: List<List<GeomLayer>>,
-        liveMapOptions: LiveMapOptions,
+        liveMapOptions: Map<*, *>,
         cursorServiceConfig: CursorServiceConfig,
     ) {
         plotTiles.forEach { tileLayers ->
@@ -49,28 +53,24 @@ object LiveMapUtil {
         layerKind: MapLayerKind,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         mappedAes: Set<Aes<*>>,
+        scaleObjects: ScaleObjects,
+        scaleZooms: Int,
     ): LayersBuilder.() -> Unit = {
         fun getScaleRange(scalableStroke: Boolean): ClosedRange<Int>? {
-            val dimensionAes = Aes.SIZE
-            return when {
-                scalableStroke -> when {
-                    dimensionAes in mappedAes -> -1..0
-                    dimensionAes !in mappedAes -> -1..1
-                    else -> null
-                }
-                else -> when {
-                    dimensionAes in mappedAes -> -2..0
-                    dimensionAes !in mappedAes -> -2..2
-                    else -> null
-                }
-            }
+            val negativeZoom = (-1).takeIf { scalableStroke } ?: -2
+            val isStatic = Aes.SIZE !in mappedAes
+            if (scaleObjects == NONE) return null
+            if (scaleObjects == BOTH) return negativeZoom..scaleZooms
+            if (scaleObjects == STATIC && isStatic) return negativeZoom..scaleZooms
+            if (scaleObjects == STATIC && !isStatic) return negativeZoom..0
+            error("getScaleRange() - unexpected state. scaleObject: $scaleObjects, isStatic: $isStatic")
         }
 
         when (layerKind) {
             MapLayerKind.POINT -> points {
                 liveMapDataPoints.forEach {
                     point {
-                        scaleRange = getScaleRange(scalableStroke = false)
+                        scalingRange = getScaleRange(scalableStroke = false)
                         layerIndex = it.layerIndex
                         index = it.index
                         point = it.point
@@ -84,10 +84,11 @@ object LiveMapUtil {
                     }
                 }
             }
+
             MapLayerKind.POLYGON -> polygons {
                 liveMapDataPoints.forEach {
                     polygon {
-                        scaleRange = getScaleRange(scalableStroke = true)
+                        scalingRange = getScaleRange(scalableStroke = true)
                         layerIndex = it.layerIndex
                         index = it.index
                         multiPolygon = it.geometry
@@ -99,11 +100,12 @@ object LiveMapUtil {
                     }
                 }
             }
+
             MapLayerKind.PATH -> paths {
                 liveMapDataPoints.forEach {
                     if (it.geometry != null) {
                         path {
-                            scaleRange = getScaleRange(scalableStroke = true)
+                            scalingRange = getScaleRange(scalableStroke = true)
                             layerIndex = it.layerIndex
                             index = it.index
                             multiPolygon = it.geometry!!
@@ -121,7 +123,7 @@ object LiveMapUtil {
             MapLayerKind.V_LINE -> vLines {
                 liveMapDataPoints.forEach {
                     line {
-                        scaleRange = getScaleRange(scalableStroke = true)
+                        scalingRange = getScaleRange(scalableStroke = true)
                         point = it.point
                         lineDash = it.lineDash
                         strokeColor = it.strokeColor
@@ -133,7 +135,7 @@ object LiveMapUtil {
             MapLayerKind.H_LINE -> hLines {
                 liveMapDataPoints.forEach {
                     line {
-                        scaleRange = getScaleRange(scalableStroke = true)
+                        scalingRange = getScaleRange(scalableStroke = true)
                         point = it.point
                         lineDash = it.lineDash
                         strokeColor = it.strokeColor
@@ -164,7 +166,7 @@ object LiveMapUtil {
             MapLayerKind.PIE -> pies {
                 liveMapDataPoints.forEach {
                     pie {
-                        scaleRange = getScaleRange(scalableStroke = false)
+                        scalingRange = getScaleRange(scalableStroke = false)
                         fromDataPoint(it)
                     }
                 }
@@ -173,7 +175,7 @@ object LiveMapUtil {
             MapLayerKind.BAR -> bars {
                 liveMapDataPoints.forEach {
                     bar {
-                        scaleRange = getScaleRange(scalableStroke = false)
+                        scalingRange = getScaleRange(scalableStroke = false)
                         fromDataPoint(it)
                     }
                 }
@@ -197,7 +199,7 @@ object LiveMapUtil {
 
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
-        private val myLiveMapOptions: LiveMapOptions,
+        private val myLiveMapOptions: Map<*, *>,
         cursorService: CursorService,
     ) : LiveMapProvider {
 
@@ -229,26 +231,17 @@ object LiveMapUtil {
             val layers = geomLayers
                 .drop(1) // skip geom_livemap
                 .map(newLiveMapRendererData)
-                .map {
-                    with(it) {
-                        LiveMapLayerData(
-                            geom,
-                            geomKind,
-                            aesthetics,
-                            mappedAes
-                        )
-                    }
-                }
 
             // LiveMap geom layer
             newLiveMapRendererData(geomLayers.first()).let {
                 liveMapSpecBuilder = LiveMapSpecBuilder()
+                    .displayMode((it.geom as LiveMapGeom).displayMode)
                     .liveMapOptions(myLiveMapOptions)
                     .aesthetics(it.aesthetics)
                     .mappedAes(it.mappedAes)
                     .dataAccess(it.dataAccess)
                     .layers(layers)
-                    .devParams(DevParams(myLiveMapOptions.devParams))
+                    .devParams(DevParams(myLiveMapOptions.getMap(Option.Geom.LiveMap.DEV_PARAMS) ?: emptyMap<Any, Any>()))
                     .mapLocationConsumer { locationRect ->
                         Clipboard.copy(LiveMapLocation.getLocationString(locationRect))
                     }

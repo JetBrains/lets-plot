@@ -67,40 +67,39 @@ class LiveMapBuilder {
 
     var showCoordPickTools = false
 
-    var devParams: DevParams =
-        DevParams(HashMap<String, Any>())
+    var devParams: DevParams = DevParams(HashMap<String, Any>())
 
     fun build(): LiveMapSpec = LiveMapSpec(
-        size = size,
-        zoom = zoom,
-        isInteractive = interactive,
-        layers = layers,
+            size = size,
+            zoom = zoom,
+            isInteractive = interactive,
+            layers = layers,
 
-        location = mapLocation,
+            location = mapLocation,
 
-        geoProjection = projection,
-        isLoopX = isLoopX,
-        isLoopY = isLoopY,
+            geoProjection = projection,
+            isLoopX = isLoopX,
+            isLoopY = isLoopY,
 
-        geocodingService = geocodingService,
+            geocodingService = geocodingService,
 
-        mapLocationConsumer = mapLocationConsumer,
+            mapLocationConsumer = mapLocationConsumer,
 
-        basemapTileSystemProvider = tileSystemProvider,
+            basemapTileSystemProvider = tileSystemProvider,
 
-        devParams = devParams,
+            devParams = devParams,
 
-        attribution = attribution,
-        showCoordPickTools = showCoordPickTools,
+            attribution = attribution,
+            showCoordPickTools = showCoordPickTools,
 
-        // deprecated
-        isClustering = false,
-        isLabels = true,
-        isScaled = false,
-        isTiles = true,
-        isUseFrame = true,
-        cursorService = CursorService()
-    )
+            // deprecated
+            isClustering = false,
+            isLabels = true,
+            isScaled = false,
+            isTiles = true,
+            isUseFrame = true,
+            cursorService = CursorService()
+        )
 }
 
 @LiveMapDsl
@@ -113,7 +112,7 @@ class LayersBuilder(
 
 @LiveMapDsl
 class Symbol {
-    var scaleRange: ClosedRange<Int>? = null
+    var scalingRange: ClosedRange<Int>? = null
     var layerIndex: Int? = null
     var radius: Double = 0.0
     var point: Vec<LonLat>? = null

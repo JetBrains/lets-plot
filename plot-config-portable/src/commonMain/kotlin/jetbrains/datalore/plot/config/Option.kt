@@ -200,6 +200,8 @@ object Option {
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
+            const val SCALE_ZOOMS = "scale_zooms"
+            const val SCALE_OBJECTS = "scale_objects"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"

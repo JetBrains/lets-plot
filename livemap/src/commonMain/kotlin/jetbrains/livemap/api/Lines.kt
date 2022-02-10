@@ -64,7 +64,7 @@ class LineBuilder(
     private val factory: MapEntityFactory,
     private val mapProjection: MapProjection,
 ) {
-    var scaleRange: ClosedRange<Int>? = null
+    var scalingRange: ClosedRange<Int>? = null
     var point: Vec<LonLat>? = null
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
@@ -81,7 +81,7 @@ class LineBuilder(
             renderer = PathRenderer()
         }
         +ChartElementComponent().apply {
-            scaleRange = this@LineBuilder.scaleRange
+            scalingRange = this@LineBuilder.scalingRange
             strokeColor = this@LineBuilder.strokeColor
             strokeWidth = this@LineBuilder.strokeWidth
             lineDash = this@LineBuilder.lineDash.toDoubleArray()

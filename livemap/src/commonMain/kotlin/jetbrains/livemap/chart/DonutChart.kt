@@ -49,11 +49,11 @@ object DonutChart {
             val chartElement = entity.get<ChartElementComponent>()
             val symbol = entity.get<SymbolComponent>()
 
-            splitSectors(symbol, chartElement.scaleSizeFactor).forEach { sector ->
+            splitSectors(symbol, chartElement.scalingSizeFactor).forEach { sector ->
                 val holeRadius = floor(sector.radius * 0.55)
                 if (chartElement.strokeColor != null && chartElement.strokeWidth > 0.0) {
 
-                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scaleAlphaValue))
+                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
                     ctx.setLineWidth(chartElement.strokeWidth)
 
                     // draw inner arc
@@ -77,7 +77,7 @@ object DonutChart {
                     ctx.stroke()
                 }
                 // fill sector
-                ctx.setFillStyle(changeAlphaWithMin(sector.color, chartElement.scaleAlphaValue))
+                ctx.setFillStyle(changeAlphaWithMin(sector.color, chartElement.scalingAlphaValue))
                 ctx.beginPath()
                 ctx.arc(0.0, 0.0, holeRadius, sector.startAngle, sector.endAngle)
                 ctx.arc(0.0, 0.0, sector.radius, sector.endAngle, sector.startAngle, anticlockwise = true)
@@ -97,7 +97,7 @@ object DonutChart {
             val chartElement = target.get<ChartElementComponent>()
             val symbol = target.get<SymbolComponent>()
 
-            splitSectors(symbol, chartElement.scaleSizeFactor).forEach { (index, radius, startAngle, endAngle, color) ->
+            splitSectors(symbol, chartElement.scalingSizeFactor).forEach { (index, radius, startAngle, endAngle, color) ->
                     target.get<ScreenLoopComponent>().origins.forEach { origin ->
                         if (isCoordinateInPieSector(coord, origin, radius, startAngle, endAngle)) {
                             return SearchResult(
