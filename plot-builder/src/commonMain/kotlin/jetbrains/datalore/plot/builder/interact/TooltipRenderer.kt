@@ -131,7 +131,7 @@ internal class TooltipRenderer(
                         borderColor = borderColor,
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
-                        titles = spec.titles,
+                        title = spec.title,
                         style = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,

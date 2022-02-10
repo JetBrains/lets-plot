@@ -25,7 +25,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
     private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
     private val myIsCrosshairEnabled: Boolean = builder.isCrosshairEnabled
-    private val myTooltipTitles: List<TooltipLine> = builder.tooltipTitles
+    private val myTooltipTitle: List<TooltipLine> = builder.tooltipTitle
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -43,7 +43,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             myTooltipProperties,
             myIgnoreInvisibleTargets,
             myIsCrosshairEnabled,
-            myTooltipTitles.map(::TooltipLine)
+            myTooltipTitle.map(::TooltipLine)
         )
     }
 
@@ -70,7 +70,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 TooltipProperties.NONE,
                 ignoreInvisibleTargets = false,
                 isCrosshairEnabled = false,
-                tooltipTitles = emptyList()
+                tooltipTitle = emptyList()
             )
         }
 
@@ -81,7 +81,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean,
             isCrosshairEnabled: Boolean,
-            tooltipTitles: List<TooltipLine>
+            tooltipTitle: List<TooltipLine>
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
 
@@ -98,7 +98,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 line.fields.any(ValueSource::isAxis)
             }
 
-            tooltipTitles.forEach { it.initDataContext(dataContext) }
+            tooltipTitle.forEach { it.initDataContext(dataContext) }
 
             return ContextualMapping(
                 mappedTooltipLines,
@@ -108,7 +108,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 hasGeneralTooltip,
                 hasAxisTooltip,
                 isCrosshairEnabled,
-                tooltipTitles
+                tooltipTitle
             )
         }
     }

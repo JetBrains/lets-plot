@@ -23,7 +23,7 @@ interface ContextualMappingProvider {
                     hasGeneralTooltip = false,
                     hasAxisTooltip = false,
                     isCrosshairEnabled = false,
-                    tooltipTitles = emptyList()
+                    tooltipTitle = emptyList()
                 )
             }
         }

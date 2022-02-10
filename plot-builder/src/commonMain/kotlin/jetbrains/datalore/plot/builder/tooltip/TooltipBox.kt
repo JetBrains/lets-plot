@@ -77,7 +77,7 @@ class TooltipBox: SvgComponent() {
         borderColor: Color,
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
-        titles: List<String>,
+        title: List<String>,
         style: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
@@ -86,12 +86,12 @@ class TooltipBox: SvgComponent() {
     ) {
         addClassName(style)
 
-        myHorizontalContentPadding = if ((lines + titles).size > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
-        myVerticalContentPadding = if ((lines + titles).size > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
+        myHorizontalContentPadding = if ((lines + title).size > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
+        myVerticalContentPadding = if ((lines + title).size > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
 
         myContentBox.update(
             lines,
-            titles,
+            title,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
             tooltipMinWidth,
@@ -226,7 +226,7 @@ class TooltipBox: SvgComponent() {
     }
 
     private inner class ContentBox : SvgComponent() {
-        private val myTitlesContainer = SvgSvgElement().apply {
+        private val myTitleContainer = SvgSvgElement().apply {
             x().set(0.0)
             y().set(0.0)
             width().set(0.0)
@@ -252,14 +252,14 @@ class TooltipBox: SvgComponent() {
 
         override fun buildComponent() {
             add(myContent)
-            myContent.children().add(myTitlesContainer)
+            myContent.children().add(myTitleContainer)
             myContent.children().add(myLinesContainer)
             myColorBars.forEach { add(it) }
         }
 
         internal fun update(
             lines: List<TooltipSpec.Line>,
-            titles: List<String>,
+            title: List<String>,
             labelTextColor: Color,
             valueTextColor: Color,
             tooltipMinWidth: Double?,
@@ -267,13 +267,13 @@ class TooltipBox: SvgComponent() {
             markerColors: List<Color>
         ) {
             myLinesContainer.children().clear()
-            myTitlesContainer.children().clear()
+            myTitleContainer.children().clear()
 
             calculateColorBarIndent(markerColors)
 
             // title components
-            val titleComponents = initTitleComponents(titles, valueTextColor)
-            val rawTitleBBoxes = titles.zip(titleComponents).map { (titleLine, component) ->
+            val titleComponents = initTitleComponents(title, valueTextColor)
+            val rawTitleBBoxes = title.zip(titleComponents).map { (titleLine, component) ->
                 getBBox(titleLine, component)
             }
             val titleHeights = rawTitleBBoxes.map { bBox ->
@@ -281,11 +281,11 @@ class TooltipBox: SvgComponent() {
             }
 
             // detect min tooltip width
-            val maxTitleWidth = rawTitleBBoxes.map { bBox -> bBox?.width ?: 0.0 }.maxOrNull()
-            val minWidthWithTitle = listOfNotNull(tooltipMinWidth, maxTitleWidth).maxOrNull()
+            val titleWidth = rawTitleBBoxes.map { bBox -> bBox?.width ?: 0.0 }.maxOrNull()
+            val minWidthWithTitle = listOfNotNull(tooltipMinWidth, titleWidth).maxOrNull()
 
             // lines (label: value)
-            val textSize = placeLines(
+            val textSize = layoutLines(
                 lines,
                 labelTextColor,
                 valueTextColor,
@@ -295,8 +295,8 @@ class TooltipBox: SvgComponent() {
 
             val totalTooltipWidth = textSize.x + colorBarIndent + myHorizontalContentPadding * 2
 
-            // titles
-            val titleTextSize = placeTitles(
+            // title
+            val titleTextSize = layoutTitle(
                 titleComponents,
                 totalTooltipWidth,
                 titleHeights
@@ -304,7 +304,7 @@ class TooltipBox: SvgComponent() {
 
             // container sizes
 
-            myTitlesContainer.apply {
+            myTitleContainer.apply {
                 if (titleComponents.isNotEmpty()) {
                     x().set(0.0)
                     y().set(myVerticalContentPadding)
@@ -326,7 +326,7 @@ class TooltipBox: SvgComponent() {
             }
 
             // draw color bars
-            placeColorBars(markerColors)
+            layoutColorBars(markerColors)
         }
 
         private fun colorBarWidth(barsNum: Int): Double {
@@ -346,7 +346,7 @@ class TooltipBox: SvgComponent() {
             }
         }
 
-        private fun placeColorBars(markerColors: List<Color>) {
+        private fun layoutColorBars(markerColors: List<Color>) {
             myColorBars.forEachIndexed { index, bar ->
                 if (markerColors.size > index) {
                     bar.fillOpacity().set(1.0)
@@ -397,13 +397,13 @@ class TooltipBox: SvgComponent() {
                 component.setX(0.0)
                 component.setFontWeight("bold")
                 component.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-                myTitlesContainer.children().add(component.rootGroup)
+                myTitleContainer.children().add(component.rootGroup)
             }
 
             // set interval between substrings
             val titleLineHeights = titleLines.map { titleLine ->
                 val lineTextLabel = TextLabel(titleLine)
-                with(myTitlesContainer.children()) {
+                with(myTitleContainer.children()) {
                     add(lineTextLabel.rootGroup)
                     val height = getBBox(titleLine, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
                     remove(lineTextLabel.rootGroup)
@@ -417,7 +417,7 @@ class TooltipBox: SvgComponent() {
             return titleComponents
         }
 
-        private fun placeTitles(
+        private fun layoutTitle(
             titleComponents: List<MultilineLabel>,
             totalTooltipWidth: Double,
             lineHeights: List<Double>
@@ -445,12 +445,12 @@ class TooltipBox: SvgComponent() {
                 moveTo(myHorizontalContentPadding, y)
                 lineTo(totalTooltipWidth - myHorizontalContentPadding, y)
             }.build()
-            drawLineSeparator(SvgPathElement(pathData), myTitlesContainer)
+            drawLineSeparator(SvgPathElement(pathData), myTitleContainer)
 
             return titleSize
         }
 
-        private fun placeLines(
+        private fun layoutLines(
             lines: List<TooltipSpec.Line>,
             labelTextColor: Color,
             valueTextColor: Color,
@@ -668,7 +668,7 @@ class TooltipBox: SvgComponent() {
 
             val rectangles = myDebugRectangles.provide(3)
             drawRect(rectangles[0], myContent, Color.RED)
-            drawRect(rectangles[1], myTitlesContainer, Color.DARK_GREEN)
+            drawRect(rectangles[1], myTitleContainer, Color.DARK_GREEN)
             drawRect(rectangles[2], myLinesContainer, Color.ORANGE)
         }
     }

@@ -18,7 +18,7 @@ class TooltipSpec(
     val minWidth: Double? = null,
     val isCrosshairEnabled: Boolean = false,
     val markerColors: List<Color>,
-    val titles: List<String> = emptyList()
+    val title: List<String> = emptyList()
 ) {
     override fun toString(): String {
         return "TooltipSpec($layoutHint, lines=${lines.map(Line::toString)})"

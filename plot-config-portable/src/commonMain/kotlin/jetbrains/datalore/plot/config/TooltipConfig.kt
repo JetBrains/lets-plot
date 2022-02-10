@@ -32,8 +32,8 @@ class TooltipConfig(
             },
             tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS),
             tooltipVariables = getStringList(Option.Layer.TOOLTIP_VARIABLES),
-            tooltipTitles = if (has(Option.Layer.TOOLTIP_TITLES)) {
-                getStringList(Option.Layer.TOOLTIP_TITLES)
+            tooltipTitleLines = if (has(Option.Layer.TOOLTIP_TITLE)) {
+                getStringList(Option.Layer.TOOLTIP_TITLE)
             } else {
                 null
             }
@@ -44,7 +44,7 @@ class TooltipConfig(
         private val tooltipLines: List<String>?,
         tooltipFormats: List<*>,
         tooltipVariables: List<String>,
-        private val tooltipTitles: List<String>?
+        private val tooltipTitleLines: List<String>?
     ) {
         private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(tooltipFormats)
             .let { specifiedFormats ->
@@ -72,7 +72,7 @@ class TooltipConfig(
                 myLinesForVariableList.isNotEmpty() -> myLinesForVariableList
                 else -> null
             }
-            val tooltipTitles = tooltipTitles?.map(::parseLine) ?: emptyList()
+            val tooltipTitle = tooltipTitleLines?.map(::parseLine) ?: emptyList()
 
             return TooltipSpecification(
                 myValueSources.map { it.value },
@@ -81,7 +81,7 @@ class TooltipConfig(
                     anchor = readAnchor(),
                     minWidth = readMinWidth()
                 ),
-                tooltipTitles
+                tooltipTitle
             )
         }
 

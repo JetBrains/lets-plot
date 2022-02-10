@@ -11,7 +11,7 @@ class TooltipSpecification(
     val valueSources: List<ValueSource>,
     val tooltipLinePatterns: List<TooltipLine>?,
     val tooltipProperties: TooltipProperties,
-    val tooltipTitles: List<TooltipLine>
+    val tooltipTitle: List<TooltipLine>
 ) {
     class TooltipProperties(
         val anchor: TooltipAnchor?,
@@ -30,14 +30,14 @@ class TooltipSpecification(
             valueSources = emptyList(),
             tooltipLinePatterns = emptyList(),
             tooltipProperties = TooltipProperties.NONE,
-            tooltipTitles = emptyList()
+            tooltipTitle = emptyList()
         )
 
         fun defaultTooltip() = TooltipSpecification(
             valueSources = emptyList(),
             tooltipLinePatterns = null,
             tooltipProperties = TooltipProperties.NONE,
-            tooltipTitles = emptyList()
+            tooltipTitle = emptyList()
         )
     }
 }

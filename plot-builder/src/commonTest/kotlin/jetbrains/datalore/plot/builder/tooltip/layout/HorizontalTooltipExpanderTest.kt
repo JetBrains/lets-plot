@@ -196,7 +196,7 @@ class HorizontalTooltipExpanderTest {
                 colors = emptyList()
             ),
             lines = listOf(TooltipSpec.Line.withValue(text)),
-            titles = emptyList(),
+            title = emptyList(),
             fill = Color.BLACK,
             isOutlier = true,
             markerColors = emptyList()

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_TITLES
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_TITLE
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_VARIABLES
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
@@ -860,7 +860,7 @@ class TooltipConfigTest {
     @Test
     fun `add titles to default lines`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_TITLES to listOf(
+            TOOLTIP_TITLE to listOf(
                 "@{model name} car (@origin)",
                 "--"
             )
@@ -881,7 +881,7 @@ class TooltipConfigTest {
             TOOLTIP_LINES to listOf(
                 "^color (mpg)"
             ),
-            TOOLTIP_TITLES to listOf(
+            TOOLTIP_TITLE to listOf(
                 "@{model name} car (@origin)",
                 "--"
             )
@@ -898,7 +898,7 @@ class TooltipConfigTest {
 
     companion object {
         private fun getTitleStrings(geomLayer: GeomLayer): List<String> {
-            return geomLayer.contextualMapping.getTitles(index = 0)
+            return geomLayer.contextualMapping.getTitle(index = 0)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
