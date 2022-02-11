@@ -16,6 +16,7 @@ data class TextSettings(
    val fontSize: Int,
    val isBold: Boolean,
    val isItalic: Boolean,
+   val isMonospaced: Boolean,
    val fontWeightRatio: Double
 )
 
@@ -33,7 +34,14 @@ class TextSizesDemoWindow(
 
     private val myCharCount = JSpinner()
     private val myFontWeightRatio = JSpinner(SpinnerNumberModel(0.67, 0.1, 2.0, 0.01))
-    private val myFont = JTextField("sans-serif")
+    private val myFontList = JComboBox(
+        arrayOf(
+            "Lucida Grande", "Helvetica", "Arial", "Verdana", "Geneva",
+            "Times", "Times New Roman", "Georgia",
+            "Courier", "Courier New"
+        )
+    )
+
     private val myFontSize = JSpinner()
     private val myIsBold = JCheckBox("bold")
     private val myIsItalic = JCheckBox("italic")
@@ -43,17 +51,23 @@ class TextSizesDemoWindow(
     private val mySplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myInputPanel, myOutputPanel)
 
     private fun rebuild() {
-        if (myFont.text.isNullOrBlank()) {
-            myFont.text = "sans-serif"
+        val font = myFontList.selectedItem?.toString().let {
+            if (it.isNullOrEmpty()) {
+                myFontList.selectedIndex = 0
+                myFontList.getItemAt(0).toString()
+            } else {
+                it
+            }
         }
         val plotComponent = svgComponentFactory(
             Dimension(size.width / 2 , size.height),
             TextSettings(
                 lines = myTextArea.text.split("\n").filter(String::isNotEmpty),
-                fontName = myFont.text,
+                fontName = "\"$font\"",
                 fontSize = myFontSize.value.toString().toInt(),
                 isBold = myIsBold.isSelected,
                 isItalic = myIsItalic.isSelected,
+                isMonospaced = font in listOf("Courier New", "Courier", "monospace"), // todo
                 fontWeightRatio = myFontWeightRatio.value.toString().toDouble()
             )
         )
@@ -65,7 +79,7 @@ class TextSizesDemoWindow(
         myFontSize.addChangeListener { rebuild() }
         myCharCategories.addActionListener { categoryChanged() }
         myFontWeightRatio.addChangeListener { rebuild() }
-        myFont.addActionListener { rebuild() }
+        myFontList.addActionListener { rebuild() }
         myIsBold.addChangeListener { rebuild() }
         myIsItalic.addChangeListener { rebuild() }
         myTextArea.addCaretListener { rebuild() }
@@ -91,17 +105,18 @@ class TextSizesDemoWindow(
         val gridLayout = GridLayout(5, 2)
         grid.layout = gridLayout
 
-        grid.add(JLabel("Char count to generate: "))
+        grid.add(JLabel("Char count to generate:"))
         myCharCount.value = 15
         grid.add(myCharCount)
 
-        grid.add(JLabel("Ratio: "))
+        grid.add(JLabel("Ratio:"))
         grid.add(myFontWeightRatio)
 
-        grid.add(JLabel("Font family: "))
-        grid.add(myFont)
+        grid.add(JLabel("Font:"))
+        myFontList.isEditable = true;
+        grid.add(myFontList)
 
-        grid.add(JLabel("Font size: "))
+        grid.add(JLabel("Font size:"))
         myFontSize.value = 19
         grid.add(myFontSize)
 

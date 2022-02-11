@@ -29,6 +29,7 @@ fun main() {
             settings.fontSize,
             settings.isBold,
             settings.isItalic,
+            settings.isMonospaced,
             settings.fontWeightRatio
         )
         return svgRoot?.let(::createPlotComponent)
@@ -36,7 +37,7 @@ fun main() {
 
     SwingUtilities.invokeLater {
         TextSizesDemoWindow(
-            "Text size estimation (Batik)",
+            "Text size estimation",
             Dimension(1200, 1000),
             ::buildPlotComponent,
             categoryNames = TextSizesEstimationDemo.CharCategory.getCharCategoryNamesWithRatios(),

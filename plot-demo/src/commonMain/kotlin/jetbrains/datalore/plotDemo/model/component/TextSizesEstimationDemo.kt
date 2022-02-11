@@ -73,20 +73,18 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
         }
     }
 
-    fun width(text: String, font: Font, weightRatio: Double): Double {
-/*
+    fun width(text: String, font: Font, isMonospaced: Boolean, weightRatio: Double): Double {
+
         val ratioFunc: (Char) -> Double = when {
-            isMonospaced -> { { FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED } }
+            isMonospaced -> { { 1.0 } }
             else -> CharCategory::getCharRatio
         }
-        val width = text.map(ratioFunc).sum() * font.size * FONT_WEIGHT_TO_NORMAL_WIDTH_RATIO
+        val width = text.map(ratioFunc).sum() * font.size * weightRatio
         return if (font.isBold) {
-            width * FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
+            width //* FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
         } else {
             width
         }
-*/
-        return text.map(CharCategory::getCharRatio).sum() * font.size * weightRatio
     }
 
     private fun titleDimensions(spec: LabelSpec, weightRatio: Double): DoubleVector {
@@ -94,17 +92,17 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
             return DoubleVector.ZERO
         }
         return DoubleVector(
-            width(spec.text, spec.font, weightRatio),
+            width(spec.text, spec.font, spec.isMonospaced, weightRatio),
             spec.font.size.toDouble()
         )
     }
 
-    fun createModel(lines: List<String>, font: Font, fontWeightRatio: Double): GroupComponent {
+    fun createModel(lines: List<String>, font: Font, isMonospaced: Boolean, fontWeightRatio: Double): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
         var y = 20.0
         lines
-            .map { line -> LabelSpec(line, font) }
+            .map { line -> LabelSpec(line, font, isMonospaced) }
             .forEachIndexed { index, spec ->
                 val textLabel = createTextLabel(spec)
 
@@ -139,7 +137,8 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
 
         private class LabelSpec(
             val text: String,
-            val font: Font
+            val font: Font,
+            val isMonospaced: Boolean
         )
 
         private fun createTextLabel(spec: LabelSpec): TextLabel {
@@ -168,6 +167,7 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
+            isMonospaced: Boolean,
             fontWeightRatio: Double
         ): SvgSvgElement? {
             return with(TextSizesEstimationDemo(demoInnerSize)) {
@@ -181,6 +181,7 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
                                 isBold,
                                 isItalic
                             ),
+                            isMonospaced,
                             fontWeightRatio
                         )
                     )
