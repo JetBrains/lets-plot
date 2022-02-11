@@ -50,6 +50,11 @@ object Defaults {
             val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
+        object Caption {
+            const val FONT_SIZE = FONT_SMALL
+            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+        }
+
         object Legend {
             const val TITLE_FONT_SIZE = FONT_MEDIUM
             const val ITEM_FONT_SIZE = FONT_SMALL

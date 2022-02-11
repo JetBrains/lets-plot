@@ -54,7 +54,8 @@ class PlotSvgComponent constructor(
     private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
-    val theme: Theme
+    val theme: Theme,
+    caption: String?
 ) : SvgComponent() {
 
     private fun splitToLines(text: String?) =
@@ -62,6 +63,7 @@ class PlotSvgComponent constructor(
 
     private val titleLines: List<String> = splitToLines(title)
     private val subtitleLines: List<String> = splitToLines(subtitle)
+    private val captionLines: List<String> = splitToLines(caption)
 
     val flippedAxis = frameOfReferenceProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
@@ -185,7 +187,9 @@ class PlotSvgComponent constructor(
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
-            legendsBlockInfo, theme
+            legendsBlockInfo,
+            theme,
+            captionLines
         )
 
         // Layout plot inners
@@ -203,7 +207,9 @@ class PlotSvgComponent constructor(
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
-            legendsBlockInfo, theme
+            legendsBlockInfo,
+            theme,
+            captionLines
         )
 
         // Position the "entire" plot rect in the center of the "overall" rect.
@@ -351,6 +357,31 @@ class PlotSvgComponent constructor(
                 val legendBox = boxWithLocation.legendBox.createLegendBox()
                 legendBox.moveTo(boxWithLocation.location)
                 add(legendBox)
+            }
+        }
+
+        // add caption
+        if (captionLines.isNotEmpty()) {
+            val captionLineHeight = PlotLabelSpec.PLOT_CAPTION.height()
+            val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
+            captionLabel.addClassName(Style.PLOT_CAPTION)
+            captionLabel.textColor().set(theme.plot().captionColor())
+            captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
+            captionLabel.setX(0.0)
+            captionLabel.setLineVerticalMargin(captionLineHeight)
+
+            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
+            val captionBounds = DoubleRectangle(
+                geomAreaBounds.right - captionSize.x,
+                plotOuterBounds.bottom - captionSize.y,
+                captionSize.x,
+                captionSize.y
+            )
+            captionLabel.moveTo(captionBounds.right, captionBounds.top + captionLineHeight)
+            add(captionLabel)
+
+            if (DEBUG_DRAWING) {
+                drawDebugRect(captionBounds, Color.BLUE)
             }
         }
     }
