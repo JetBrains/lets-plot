@@ -6,8 +6,8 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plotDemo.model.component.TextSizesEstimationDemo
-import jetbrains.datalore.vis.demoUtils.swing.TextSizesDemoWindow
+import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
+import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
@@ -22,7 +22,7 @@ fun main() {
             component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
             return component
         }
-        val svgRoot = TextSizesEstimationDemo.createSvgElement(
+        val svgRoot = TextSizeEstimationDemo.createSvgElement(
             DoubleVector(demoInnerSize.width.toDouble(), demoInnerSize.height.toDouble()),
             settings.lines,
             settings.fontName,
@@ -30,18 +30,18 @@ fun main() {
             settings.isBold,
             settings.isItalic,
             settings.isMonospaced,
-            settings.fontWeightRatio
+            settings.fontWidthRatio
         )
         return svgRoot?.let(::createPlotComponent)
     }
 
     SwingUtilities.invokeLater {
-        TextSizesDemoWindow(
+        TextSizeDemoWindow(
             "Text size estimation",
             Dimension(1200, 1000),
             ::buildPlotComponent,
-            categoryNames = TextSizesEstimationDemo.CharCategory.getCharCategoryNamesWithRatios(),
-            categoryToChars = TextSizesEstimationDemo.CharCategory::getCharsForCategory
+            categoryNames = TextSizeEstimationDemo.CharCategory.getCharCategoryNamesWithRatios(),
+            categoryToChars = TextSizeEstimationDemo.CharCategory::getCharsForCategory
         ).run()
     }
 }

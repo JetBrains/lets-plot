@@ -17,10 +17,10 @@ data class TextSettings(
    val isBold: Boolean,
    val isItalic: Boolean,
    val isMonospaced: Boolean,
-   val fontWeightRatio: Double
+   val fontWidthRatio: Double
 )
 
-class TextSizesDemoWindow(
+class TextSizeDemoWindow(
     title: String,
     windowSize: Dimension,
     private val svgComponentFactory: (Dimension, TextSettings) -> JComponent?,
@@ -33,7 +33,7 @@ class TextSizesDemoWindow(
     private val myCharCategories = JComboBox(categoryNames.toTypedArray())
 
     private val myCharCount = JSpinner()
-    private val myFontWeightRatio = JSpinner(SpinnerNumberModel(0.67, 0.1, 2.0, 0.01))
+    private val myFontWidthRatio = JSpinner(SpinnerNumberModel(0.67, 0.1, 2.0, 0.01))
     private val myFontList = JComboBox(
         arrayOf(
             "Lucida Grande", "Helvetica", "Arial", "Verdana", "Geneva",
@@ -68,7 +68,7 @@ class TextSizesDemoWindow(
                 isBold = myIsBold.isSelected,
                 isItalic = myIsItalic.isSelected,
                 isMonospaced = font in listOf("Courier New", "Courier", "monospace"), // todo
-                fontWeightRatio = myFontWeightRatio.value.toString().toDouble()
+                fontWidthRatio = myFontWidthRatio.value.toString().toDouble()
             )
         )
         mySplitPane.rightComponent = plotComponent
@@ -78,7 +78,7 @@ class TextSizesDemoWindow(
         myCharCount.addChangeListener { categoryChanged() }
         myFontSize.addChangeListener { rebuild() }
         myCharCategories.addActionListener { categoryChanged() }
-        myFontWeightRatio.addChangeListener { rebuild() }
+        myFontWidthRatio.addChangeListener { rebuild() }
         myFontList.addActionListener { rebuild() }
         myIsBold.addChangeListener { rebuild() }
         myIsItalic.addChangeListener { rebuild() }
@@ -110,7 +110,7 @@ class TextSizesDemoWindow(
         grid.add(myCharCount)
 
         grid.add(JLabel("Ratio:"))
-        grid.add(myFontWeightRatio)
+        grid.add(myFontWidthRatio)
 
         grid.add(JLabel("Font:"))
         myFontList.isEditable = true;

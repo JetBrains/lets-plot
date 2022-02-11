@@ -18,7 +18,7 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgUtils
 
-class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
+class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
 
     // todo experimental rule for text width calculating
     enum class CharCategory(val value: Double) {
@@ -73,13 +73,15 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
         }
     }
 
-    fun width(text: String, font: Font, isMonospaced: Boolean, weightRatio: Double): Double {
-
+    fun width(text: String, font: Font, isMonospaced: Boolean, widthRatio: Double): Double {
+        val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 1.0
+        val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
+        
         val ratioFunc: (Char) -> Double = when {
-            isMonospaced -> { { 1.0 } }
+            isMonospaced -> { { FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED } }
             else -> CharCategory::getCharRatio
         }
-        val width = text.map(ratioFunc).sum() * font.size * weightRatio
+        val width = text.map(ratioFunc).sum() * font.size * widthRatio
         return if (font.isBold) {
             width //* FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
         } else {
@@ -87,17 +89,17 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
         }
     }
 
-    private fun titleDimensions(spec: LabelSpec, weightRatio: Double): DoubleVector {
+    private fun titleDimensions(spec: LabelSpec, widthRatio: Double): DoubleVector {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
         return DoubleVector(
-            width(spec.text, spec.font, spec.isMonospaced, weightRatio),
+            width(spec.text, spec.font, spec.isMonospaced, widthRatio),
             spec.font.size.toDouble()
         )
     }
 
-    fun createModel(lines: List<String>, font: Font, isMonospaced: Boolean, fontWeightRatio: Double): GroupComponent {
+    fun createModel(lines: List<String>, font: Font, isMonospaced: Boolean, fontWidthRatio: Double): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
         var y = 20.0
@@ -110,7 +112,7 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
                 SvgUtils.transformTranslate(element, x, y)
                 groupComponent.add(element)
 
-                val titleSize = titleDimensions(spec, fontWeightRatio)
+                val titleSize = titleDimensions(spec, fontWidthRatio)
                 val rectNew = DoubleRectangle(x, y - titleSize.y / 2, titleSize.x, titleSize.y)
 
                 groupComponent.add(svgRect(rectNew, Color.MAGENTA, strokeWidth = 1.5))
@@ -168,9 +170,9 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
             isBold: Boolean,
             isItalic: Boolean,
             isMonospaced: Boolean,
-            fontWeightRatio: Double
+            fontwidthRatio: Double
         ): SvgSvgElement? {
-            return with(TextSizesEstimationDemo(demoInnerSize)) {
+            return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
                     listOf(
                         createModel(
@@ -182,7 +184,7 @@ class TextSizesEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demo
                                 isItalic
                             ),
                             isMonospaced,
-                            fontWeightRatio
+                            fontwidthRatio
                         )
                     )
                 ).firstOrNull()
