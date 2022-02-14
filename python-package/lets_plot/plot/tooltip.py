@@ -442,8 +442,7 @@ class layer_tooltips(FeatureSpec):
         The specification rules are the same as for the `lines()` function:
         variables and aesthetics can be used in the template.
         The resulting string will be at the beginning of the general tooltip, centered and highlighted in bold.
+        A long title can be split into multiple lines using `\n` as a text separator.
         """
-        if self._tooltip_title is None:
-            self._tooltip_title = []
-        self._tooltip_title.append(value)
+        self._tooltip_title = value
         return self

@@ -77,7 +77,7 @@ class TooltipBox: SvgComponent() {
         borderColor: Color,
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
-        title: List<String>,
+        title: String?,
         style: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
@@ -86,8 +86,9 @@ class TooltipBox: SvgComponent() {
     ) {
         addClassName(style)
 
-        myHorizontalContentPadding = if ((lines + title).size > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
-        myVerticalContentPadding = if ((lines + title).size > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
+        val totalLines = lines.size + if (title != null) 1 else 0
+        myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
+        myVerticalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
 
         myContentBox.update(
             lines,
@@ -259,7 +260,7 @@ class TooltipBox: SvgComponent() {
 
         internal fun update(
             lines: List<TooltipSpec.Line>,
-            title: List<String>,
+            title: String?,
             labelTextColor: Color,
             valueTextColor: Color,
             tooltipMinWidth: Double?,
@@ -271,18 +272,13 @@ class TooltipBox: SvgComponent() {
 
             calculateColorBarIndent(markerColors)
 
-            // title components
-            val titleComponents = initTitleComponents(title, valueTextColor)
-            val rawTitleBBoxes = title.zip(titleComponents).map { (titleLine, component) ->
-                getBBox(titleLine, component)
-            }
-            val titleHeights = rawTitleBBoxes.map { bBox ->
-                bBox?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
-            }
+            // title component
+            val titleComponent = title?.let { initTitleComponent(it, valueTextColor) }
+            val rawTitleBBox = getBBox(title, titleComponent)
+            val titleHeight = rawTitleBBox?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             // detect min tooltip width
-            val titleWidth = rawTitleBBoxes.map { bBox -> bBox?.width ?: 0.0 }.maxOrNull()
-            val minWidthWithTitle = listOfNotNull(tooltipMinWidth, titleWidth).maxOrNull()
+            val minWidthWithTitle = listOfNotNull(tooltipMinWidth, rawTitleBBox?.width ?: 0.0).maxOrNull()
 
             // lines (label: value)
             val textSize = layoutLines(
@@ -297,15 +293,15 @@ class TooltipBox: SvgComponent() {
 
             // title
             val titleTextSize = layoutTitle(
-                titleComponents,
+                titleComponent,
                 totalTooltipWidth,
-                titleHeights
+                titleHeight
             )
 
             // container sizes
 
             myTitleContainer.apply {
-                if (titleComponents.isNotEmpty()) {
+                if (titleComponent != null) {
                     x().set(0.0)
                     y().set(myVerticalContentPadding)
                     width().set(totalTooltipWidth)
@@ -386,64 +382,51 @@ class TooltipBox: SvgComponent() {
             return textLabel.rootGroup.bBox
         }
 
-        private fun initTitleComponents(
-            titleLines: List<String>,
+        private fun initTitleComponent(
+            titleLine: String,
             titleColor: Color
-        ): List<MultilineLabel> {
-            val titleComponents = titleLines.map(::MultilineLabel)
+        ): MultilineLabel {
 
-            titleComponents.onEach { component ->
-                component.textColor().set(titleColor)
-                component.setX(0.0)
-                component.setFontWeight("bold")
-                component.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-                myTitleContainer.children().add(component.rootGroup)
-            }
+            val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
+
+            titleComponent.textColor().set(titleColor)
+            titleComponent.setX(0.0)
+            titleComponent.setFontWeight("bold")
+            titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+            myTitleContainer.children().add(titleComponent.rootGroup)
 
             // set interval between substrings
-            val titleLineHeights = titleLines.map { titleLine ->
+            val lineHeight = with(myTitleContainer.children()) {
                 val lineTextLabel = TextLabel(titleLine)
-                with(myTitleContainer.children()) {
-                    add(lineTextLabel.rootGroup)
-                    val height = getBBox(titleLine, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
-                    remove(lineTextLabel.rootGroup)
-                    return@map height
-                }
+                add(lineTextLabel.rootGroup)
+                val height = getBBox(titleLine, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+                remove(lineTextLabel.rootGroup)
+                height
             }
-            titleLineHeights.zip(titleComponents).onEach { (height, component) ->
-                component.setLineVerticalMargin(height + INTERVAL_BETWEEN_SUBSTRINGS)
-            }
+            titleComponent.setLineVerticalMargin(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
 
-            return titleComponents
+            return titleComponent
         }
 
         private fun layoutTitle(
-            titleComponents: List<MultilineLabel>,
+            titleComponent: MultilineLabel?,
             totalTooltipWidth: Double,
-            lineHeights: List<Double>
+            lineHeight: Double
         ): DoubleVector {
-            if (titleComponents.isEmpty()) {
+            if (titleComponent == null) {
                 return DoubleVector.ZERO
             }
 
-            val titleSize = titleComponents
-                .zip(lineHeights)
-                .fold(DoubleVector(0.0, myVerticalContentPadding), { textDimension, (component, height) ->
-                    val yPosition = textDimension.y
-                    component.y().set(yPosition)
-                    component.setX(totalTooltipWidth / 2)
+            val yPosition = myVerticalContentPadding
+            titleComponent.y().set(yPosition)
+            titleComponent.setX(totalTooltipWidth / 2)
 
-                    DoubleVector(
-                        x = totalTooltipWidth,
-                        y = yPosition + height + LINE_INTERVAL
-                    )
-                }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+            val titleSize = DoubleVector(totalTooltipWidth, yPosition + lineHeight)
 
             // add line separator
             val pathData = SvgPathDataBuilder().apply {
-                val y = titleSize.y - myVerticalContentPadding / 2
-                moveTo(myHorizontalContentPadding, y)
-                lineTo(totalTooltipWidth - myHorizontalContentPadding, y)
+                moveTo(myHorizontalContentPadding, titleSize.y - myVerticalContentPadding / 2)
+                horizontalLineTo(totalTooltipWidth - myHorizontalContentPadding)
             }.build()
             drawLineSeparator(SvgPathElement(pathData), myTitleContainer)
 
@@ -462,13 +445,7 @@ class TooltipBox: SvgComponent() {
                 .map { line ->
                     Pair(
                         line.label?.let(::TextLabel),
-                        MultilineLabel(
-                            line.value
-                                .split("\n")
-                                .map(String::trim)
-                                .flatMap { it.chunkedBy(delimiter = " ", VALUE_LINE_MAX_LENGTH) }
-                                .joinToString("\n")
-                        )
+                        MultilineLabel(prepareMultiline(line.value, maxLength = VALUE_LINE_MAX_LENGTH))
                     )
                 }
             // for labels
@@ -488,13 +465,17 @@ class TooltipBox: SvgComponent() {
 
             // calculate heights of original value lines
             val valueLineHeights = lines.map { line ->
-                val lineTextLabel = TextLabel(line.value)
-                with(myLinesContainer.children()) {
-                    add(lineTextLabel.rootGroup)
-                    val height = getBBox(line.value, lineTextLabel)?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
-                    remove(lineTextLabel.rootGroup)
-                    return@map height
-                }
+                line.value.split("\n")
+                    .map { it to TextLabel(it) }
+                    .mapNotNull { (value, lineTextLabel) ->
+                        with(myLinesContainer.children()) {
+                            add(lineTextLabel.rootGroup)
+                            val height = getBBox(value, lineTextLabel)?.height
+                            remove(lineTextLabel.rootGroup)
+                            height
+                        }
+                    }
+                    .maxOrNull() ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
             }
             // sef vertical shifts for tspan elements
             valueLineHeights.zip(components).onEach { (height, component) ->
@@ -639,7 +620,7 @@ class TooltipBox: SvgComponent() {
                     with(myContent) {
                         val padding = 2.0
                         moveTo(x().get()!! + padding, y)
-                        lineTo(width().get()!! - myHorizontalContentPadding * 2 - colorBarIndent - padding, y)
+                        horizontalLineTo(width().get()!! - myHorizontalContentPadding * 2 - colorBarIndent - padding)
                     }
                 }.build()
             }.forEach { pathData -> drawLineSeparator(SvgPathElement(pathData), myLinesContainer) }
@@ -701,6 +682,18 @@ class TooltipBox: SvgComponent() {
             }
         }
 
+        private fun prepareMultiline(value: String, maxLength: Int?) =
+            value
+                .split("\n")
+                .map(String::trim)
+                .flatMap { line ->
+                    if (maxLength != null) {
+                        line.chunkedBy(delimiter = " ", maxLength)
+                    } else {
+                        listOf(line)
+                    }
+                }
+                .joinToString("\n")
 
         private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
             return split(delimiter)

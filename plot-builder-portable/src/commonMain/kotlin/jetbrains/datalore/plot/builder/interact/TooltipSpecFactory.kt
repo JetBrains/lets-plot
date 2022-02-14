@@ -30,7 +30,7 @@ class TooltipSpecFactory(
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
         private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
-        private val myTooltipTitleLines = contextualMapping.getTitle(hitIndex())
+        private val myTooltipTitle = contextualMapping.getTitle(hitIndex())
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -58,7 +58,7 @@ class TooltipSpecFactory(
                         TooltipSpec(
                             layoutHint = hint,
                             lines = linesForAes,
-                            title = emptyList(),
+                            title = null,
                             fill = hint.mainColor ?: tipLayoutHint().mainColor!!,
                             isOutlier = true,
                             markerColors = emptyList()
@@ -83,7 +83,7 @@ class TooltipSpecFactory(
                         TooltipSpec(
                             layoutHint = layoutHint,
                             lines = lines,
-                            title = emptyList(),
+                            title = null,
                             fill = layoutHint.mainColor!!,
                             isOutlier = true,
                             markerColors = emptyList()
@@ -106,7 +106,7 @@ class TooltipSpecFactory(
                     TooltipSpec(
                         tipLayoutHint(),
                         lines = generalLines,
-                        title = myTooltipTitleLines,
+                        title = myTooltipTitle,
                         fill = fill,
                         isOutlier = false,
                         anchor = myTooltipAnchor,

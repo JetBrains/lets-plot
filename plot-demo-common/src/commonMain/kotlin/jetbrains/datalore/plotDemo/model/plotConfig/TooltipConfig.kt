@@ -58,9 +58,7 @@ class TooltipConfig {
                                     { 'field' : '$aesY', 'format' : '.2f' }, 
                                     { 'field' : 'model year', 'format' : '19{.0f}' }
                                ],                           
-                               'tooltip_title': [ 
-                                    'car \'$vehicleName\' ($originCar)'
-                                ]
+                               'tooltip_title': 'car \'$vehicleName\' ($originCar)'
                            }
                         }
                      ]

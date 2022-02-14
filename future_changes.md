@@ -15,8 +15,10 @@
 - geom_livemap: objects scale on zoom.
 - In tooltip customization API:
   - The `title()` option defines the line, which will be at the beginning of the general tooltip, centered and highlighted in bold.
-    
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_and_subtitle.ipynb).
+  - Word wrap:
+      - use `\n` as a text separator to split the original string into multiple lines;
+      - the value is limited by the number of characters in it.
+  - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/tooltip_title.ipynb.ipynb).
     
 
 ### Changed

@@ -25,7 +25,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
     private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
     private val myIsCrosshairEnabled: Boolean = builder.isCrosshairEnabled
-    private val myTooltipTitle: List<TooltipLine> = builder.tooltipTitle
+    private val myTooltipTitle: TooltipLine? = builder.tooltipTitle
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -43,7 +43,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             myTooltipProperties,
             myIgnoreInvisibleTargets,
             myIsCrosshairEnabled,
-            myTooltipTitle.map(::TooltipLine)
+            myTooltipTitle?.let(::TooltipLine)
         )
     }
 
@@ -70,7 +70,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 TooltipProperties.NONE,
                 ignoreInvisibleTargets = false,
                 isCrosshairEnabled = false,
-                tooltipTitle = emptyList()
+                tooltipTitle = null
             )
         }
 
@@ -81,7 +81,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean,
             isCrosshairEnabled: Boolean,
-            tooltipTitle: List<TooltipLine>
+            tooltipTitle: TooltipLine?
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
 
@@ -98,7 +98,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 line.fields.any(ValueSource::isAxis)
             }
 
-            tooltipTitle.forEach { it.initDataContext(dataContext) }
+            tooltipTitle?.initDataContext(dataContext)
 
             return ContextualMapping(
                 mappedTooltipLines,
