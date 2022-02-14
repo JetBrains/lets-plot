@@ -18,7 +18,7 @@
   - Word wrap:
       - use `\n` as a text separator to split the original string into multiple lines;
       - the value is limited by the number of characters in it.
-  - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/tooltip_title.ipynb.ipynb).
+  - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/tooltip_title.ipynb).
     
 
 ### Changed
