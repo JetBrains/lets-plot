@@ -90,6 +90,7 @@ object GeomInteractionUtil {
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
+            GeomKind.DOTPLOT -> listOf(Aes.BINWIDTH)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)

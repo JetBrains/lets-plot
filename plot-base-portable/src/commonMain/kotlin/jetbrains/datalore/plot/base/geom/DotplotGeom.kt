@@ -8,14 +8,10 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.max
 
@@ -43,31 +39,34 @@ class DotplotGeom : GeomBase() {
                 )
                 root.add(path.rootGroup)
             }
-            // TODO: buildHint(p, binWidthPx, geomHelper, ctx)
         }
+        buildHints(aesthetics, pos, coord, ctx, binWidthPx)
     }
 
-    private fun buildHint(
-        p: DataPointAesthetics,
+    private fun buildHints(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext,
         binWidthPx: Double,
-        geomHelper: GeomHelper,
-        ctx: GeomContext
     ) {
-        val origin = geomHelper.toClient(DoubleVector(
-            p.x()!! - binWidthPx / 2,
-            binWidthPx * (if (p.stacksize()!! > 0) 1.0 else 0.0)
-        ), p)
-        val dimension = DoubleVector(binWidthPx, binWidthPx)
-        val rect = DoubleRectangle(origin, dimension)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
+        val rectFactory = fun (p: DataPointAesthetics) : DoubleRectangle? {
+            if (!isFinite(p.x()) || !isFinite(p.stacksize()))
+                return null
 
-        ctx.targetCollector.addRectangle(
-            p.index(),
-            rect,
-            GeomTargetCollector.TooltipParams.params()
-                .setMainColor(HintColorUtil.fromFill(p))
-                .setColors(colorsByDataPoint(p)),
-            TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            return DoubleRectangle(
+                p.x()!! - binWidthPx / 2,
+                binWidthPx * p.stacksize()!!,
+                binWidthPx,
+                0.0
+            )
+        }
+
+        BarTooltipHelper.collectRectangleTargets(
+            emptyList(),
+            aesthetics, pos, coord, ctx,
+            rectFactory,
+            { HintColorUtil.fromFill(it) }
         )
     }
 
