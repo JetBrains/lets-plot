@@ -233,6 +233,7 @@ object Option {
         object Bin {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+            const val METHOD = "method"
             const val CENTER = "center"
             const val BOUNDARY = "boundary"
         }

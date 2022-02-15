@@ -31,6 +31,7 @@ import kotlin.math.abs
 class BinStat(
     binCount: Int,
     binWidth: Double?,
+    private val method: Method,
     private val xPosKind: XPosKind,
     private val xPos: Double
 ) : BaseStat(DEF_MAPPING) {
@@ -48,23 +49,29 @@ class BinStat(
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
+        val statBinWidth = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
-            val binsData = computeStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
+            val binsData = when(method) {
+                Method.HISTOGRAM -> computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
+                Method.DOTDENSITY -> computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X))
+            }
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
             statDensity.addAll(binsData.density)
+            statBinWidth.addAll(binsData.binWidth)
         }
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.COUNT, statCount)
             .putNumeric(Stats.DENSITY, statDensity)
+            .putNumeric(Stats.BIN_WIDTH, statBinWidth)
             .build()
     }
 
-    private fun computeStatSeries(
+    private fun computeHistogramStatSeries(
         data: DataFrame,
         rangeX: ClosedRange<Double>,
         valuesX: List<Double?>
@@ -119,7 +126,7 @@ class BinStat(
 
         // compute bins
 
-        val binsData = BinStatUtil.computeBins(
+        val binsData = BinStatUtil.computeHistogramBins(
             valuesX,
             startX,
             binCount,
@@ -133,17 +140,37 @@ class BinStat(
         return binsData
     }
 
+    private fun computeDotdensityStatSeries(
+        rangeX: ClosedRange<Double>,
+        valuesX: List<Double?>
+    ): BinStatUtil.BinsData {
+        val spanX = SeriesUtil.span(rangeX)
+        val b = BinStatUtil.binCountAndWidth(spanX, binOptions)
+
+        return BinStatUtil.computeDotdensityBins(
+            valuesX,
+            b.width
+        )
+    }
+
     enum class XPosKind {
         NONE, CENTER, BOUNDARY
+    }
+
+    enum class Method {
+        HISTOGRAM, DOTDENSITY
     }
 
     companion object {
         const val DEF_BIN_COUNT = 30
 
+        val DEF_METHOD = Method.HISTOGRAM
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.COUNT,
-            Aes.STACKSIZE to Stats.COUNT
+            Aes.STACKSIZE to Stats.COUNT,
+            Aes.BINWIDTH to Stats.BIN_WIDTH
         )
     }
 }

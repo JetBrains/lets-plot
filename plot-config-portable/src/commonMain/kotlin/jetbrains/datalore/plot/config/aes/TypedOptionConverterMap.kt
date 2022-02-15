@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config.aes
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -67,6 +68,7 @@ internal class TypedOptionConverterMap {
         this.put(STACKSIZE, DOUBLE_CVT)
         this.put(WIDTH, DOUBLE_CVT)
         this.put(HEIGHT, DOUBLE_CVT)
+        this.put(BINWIDTH, DOUBLE_CVT)
         this.put(VIOLINWIDTH, DOUBLE_CVT)
         this.put(WEIGHT, DOUBLE_CVT)
         this.put(INTERCEPT, DOUBLE_CVT)

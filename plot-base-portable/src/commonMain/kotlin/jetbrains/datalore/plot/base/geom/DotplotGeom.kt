@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import kotlin.math.max
 
 class DotplotGeom : GeomBase() {
     override fun buildIntern(
@@ -26,19 +27,18 @@ class DotplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val pointsWithWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.WIDTH)
-        if (!pointsWithWidth.any()) return
+        val pointsWithBinWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.BINWIDTH)
+        if (!pointsWithBinWidth.any()) return
 
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val binWidthPx = GeomUtil.widthPx(pointsWithWidth.first(), ctx, 2.0)
-        for (p in GeomUtil.withDefined(pointsWithWidth, Aes.X, Aes.STACKSIZE)) {
+        val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
+        for (p in GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)) {
             for (i in 0 until p.stacksize()!!.toInt()) {
                 val center = DoubleVector(p.x()!!, (i + 0.5) * binWidthPx)
                 val path = dotHelper.createDot(
                     p,
                     geomHelper.toClient(center, p),
-                    binWidthPx / 2,
                     binWidthPx / 2
                 )
                 root.add(path.rootGroup)
@@ -76,16 +76,15 @@ class DotplotGeom : GeomBase() {
             fun createDot(
                 p: DataPointAesthetics,
                 center: DoubleVector,
-                rx: Double,
-                ry: Double
+                r: Double
             ): LinePath {
-                val leftBound = center.add(DoubleVector(-rx, 0.0))
-                val rightBound = center.add(DoubleVector(rx, 0.0))
+                val leftBound = center.add(DoubleVector(-r, 0.0))
+                val rightBound = center.add(DoubleVector(r, 0.0))
 
                 val builder = SvgPathDataBuilder(true)
                 builder.moveTo(leftBound)
-                builder.ellipticalArc(rx, ry, 0.0, false, false, rightBound)
-                builder.ellipticalArc(rx, ry, 0.0, false, false, leftBound)
+                builder.ellipticalArc(r, r, 0.0, false, false, rightBound)
+                builder.ellipticalArc(r, r, 0.0, false, false, leftBound)
                 builder.closePath()
 
                 val path = LinePath(builder)

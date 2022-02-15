@@ -10,6 +10,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -103,6 +104,7 @@ object DefaultMapperProvider {
             this.put(WIDTH, NUMERIC_IDENTITY)
             this.put(HEIGHT, NUMERIC_IDENTITY)
             this.put(WEIGHT, NUMERIC_IDENTITY)
+            this.put(BINWIDTH, NUMERIC_IDENTITY)
             this.put(VIOLINWIDTH, NUMERIC_IDENTITY)
             this.put(INTERCEPT, NUMERIC_IDENTITY)
             this.put(SLOPE, NUMERIC_IDENTITY)

@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -70,6 +71,7 @@ object AesInitValue {
         VALUE_MAP[STACKSIZE] = 0.0
         VALUE_MAP[WIDTH] = 1.0
         VALUE_MAP[HEIGHT] = 1.0
+        VALUE_MAP[BINWIDTH] = 0.0
         VALUE_MAP[VIOLINWIDTH] = 0.0
         VALUE_MAP[WEIGHT] = 1.0
         VALUE_MAP[INTERCEPT] = 0.0

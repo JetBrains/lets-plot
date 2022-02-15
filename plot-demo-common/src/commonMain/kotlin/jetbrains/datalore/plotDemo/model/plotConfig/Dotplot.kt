@@ -12,13 +12,37 @@ class Dotplot {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            comparisonWithHistogram(),
             coordFlip(),
             statIdentity(),
             withNan(),
+            withNanIdentity(),
         )
     }
 
     private fun basic(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "                'x': 'sepal length (cm)'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Default dotplot'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'dotplot'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun comparisonWithHistogram(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
@@ -36,6 +60,7 @@ class Dotplot {
                 "               }," +
                 "               {" +
                 "                 'geom': 'dotplot'," +
+                "                 'method': 'histodot'," +
                 "                 'binwidth': 0.2," +
                 "                 'color': 'black'," +
                 "                 'fill': '#de2d26'" +
@@ -80,11 +105,13 @@ class Dotplot {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'x': [0.5, 1.5]," +
-                "             'stacksize': [2, 1]" +
+                "             'count': [2, 1]," +
+                "             'binwidth': [1, 1]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
-                "                'stacksize': 'stacksize'" +
+                "                'stacksize': 'count'," +
+                "                'binwidth': 'binwidth'" +
                 "              }," +
                 "   'ggtitle': {" +
                 "                'text': 'stat=identity'" +
@@ -104,15 +131,40 @@ class Dotplot {
     private fun withNan(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
+                "   'data' : {'x': [0.0, 1.0, 3.0, null]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'NaNs in data'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'dotplot'," +
+                "                 'binwidth': 2.0" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withNanIdentity(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data' : {'x': [0.5, 1.5, 2.5, null]," +
-                "             'stacksize': [0, 2, null, 0]" +
+                "             'count': [0, 2, null, 0]," +
+                "             'binwidth': [1, 1, 1, 1]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
-                "                'stacksize': 'stacksize'" +
+                "                'stacksize': 'count'," +
+                "                'binwidth': 'binwidth'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'stat=identity'" +
+                "                'text': 'NaNs in data, stat=identity'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +

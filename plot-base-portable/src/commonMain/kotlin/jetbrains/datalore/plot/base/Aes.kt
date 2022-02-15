@@ -40,6 +40,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val STACKSIZE: Aes<Double> = Aes("stacksize")
         val WIDTH: Aes<Double> = Aes("width")
         val HEIGHT: Aes<Double> = Aes("height")
+        val BINWIDTH: Aes<Double> = Aes("binwidth")
         val VIOLINWIDTH: Aes<Double> = Aes("violinwidth")
         val WEIGHT: Aes<Double> = Aes("weight")
         val INTERCEPT: Aes<Double> = Aes("intercept")
@@ -155,6 +156,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == STACKSIZE ||
                     aes == WIDTH ||
                     aes == HEIGHT ||
+                    aes == BINWIDTH ||
                     aes == VIOLINWIDTH ||
                     aes == HJUST ||
                     aes == VJUST ||

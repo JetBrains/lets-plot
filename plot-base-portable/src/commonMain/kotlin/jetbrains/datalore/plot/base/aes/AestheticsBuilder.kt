@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -403,6 +404,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun height(): Double {
             return get(HEIGHT)
+        }
+
+        override fun binwidth(): Double {
+            return get(BINWIDTH)
         }
 
         override fun violinwidth(): Double {

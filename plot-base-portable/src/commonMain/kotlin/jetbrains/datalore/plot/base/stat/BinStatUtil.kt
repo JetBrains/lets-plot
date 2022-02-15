@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.util.MutableDouble
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.util.MutableDouble
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -49,7 +49,7 @@ object BinStatUtil {
         return CountAndWidth(binCount, binWidth)
     }
 
-    fun computeBins(
+    fun computeHistogramBins(
         valuesX: List<Double?>,
         startX: Double,
         binCount: Int,
@@ -101,7 +101,39 @@ object BinStatUtil {
         }
 
 //        return BinsData(x, counts, densities, dataIndicesByBinIndex)
-        return BinsData(x, counts, densities)
+        return BinsData(x, counts, densities, List(x.size) { binWidth })
+    }
+
+    fun computeDotdensityBins(
+        valuesX: List<Double?>,
+        binWidth: Double
+    ): BinsData {
+        val sortedX = valuesX.filter { SeriesUtil.isFinite(it) }
+            .map { it!! }
+            .sorted()
+        val updateBinsData: (BinsData, MutableList<Double>) -> BinsData = { binsData, stack ->
+            val v = (stack.last() - stack.first()) / 2.0
+            BinsData(
+                binsData.x + listOf(stack.first() + v),
+                binsData.count + listOf(stack.size.toDouble()),
+                binsData.density + listOf(stack.size.toDouble() / sortedX.size),
+                binsData.binWidth + listOf(binWidth)
+            )
+        }
+
+        var binsData = BinsData(emptyList(), emptyList(), emptyList(), emptyList())
+        var stack = mutableListOf(sortedX.first())
+        for (i in 1 until sortedX.size) {
+            if (sortedX[i] - stack.first() < binWidth) {
+                stack.add(sortedX[i])
+                continue
+            }
+            binsData = updateBinsData(binsData, stack)
+            stack = mutableListOf(sortedX[i])
+        }
+        binsData = updateBinsData(binsData, stack)
+
+        return binsData
     }
 
     class BinOptions(
@@ -119,6 +151,7 @@ object BinStatUtil {
     class BinsData(
         internal val x: List<Double>,
         internal val count: List<Double>,
-        internal val density: List<Double>
+        internal val density: List<Double>,
+        internal val binWidth: List<Double>
     )
 }

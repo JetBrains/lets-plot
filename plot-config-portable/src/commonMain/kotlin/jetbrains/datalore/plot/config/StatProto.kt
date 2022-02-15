@@ -31,14 +31,7 @@ object StatProto {
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
-            StatKind.BIN -> {
-                return Stats.bin(
-                    binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
-                    binWidth = options.getDouble(Bin.BINWIDTH),
-                    center = options.getDouble(Bin.CENTER),
-                    boundary = options.getDouble(Bin.BOUNDARY)
-                )
-            }
+            StatKind.BIN -> return configureBinStat(options)
 
             StatKind.BIN2D -> {
                 val (binCountX, binCountY) = options.getNumPairDef(
@@ -92,6 +85,28 @@ object StatProto {
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
+    }
+
+    private fun configureBinStat(options: OptionsAccessor): BinStat {
+
+        val method = options.getString(Bin.METHOD)?.let {
+            when (it.lowercase()) {
+                "histogram", "histodot" -> BinStat.Method.HISTOGRAM
+                "dotdensity" -> BinStat.Method.DOTDENSITY
+                else -> throw IllegalArgumentException(
+                    "Unsupported method: '$it'\n" +
+                    "Use one of: histogram (histodot), dotdensity."
+                )
+            }
+        }
+
+        return Stats.bin(
+            binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
+            binWidth = options.getDouble(Bin.BINWIDTH),
+            method = method ?: BinStat.DEF_METHOD,
+            center = options.getDouble(Bin.CENTER),
+            boundary = options.getDouble(Bin.BOUNDARY)
+        )
     }
 
     private fun configureSmoothStat(options: OptionsAccessor): SmoothStat {

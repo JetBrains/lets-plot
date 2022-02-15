@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -70,6 +71,7 @@ object DefaultNaValue {
         VALUE_MAP.put(STACKSIZE, 0.0)
         VALUE_MAP.put(WIDTH, 1.0)
         VALUE_MAP.put(HEIGHT, 1.0)
+        VALUE_MAP.put(BINWIDTH, 0.0)
         VALUE_MAP.put(VIOLINWIDTH, 0.0)
         VALUE_MAP.put(WEIGHT, 1.0)
         VALUE_MAP.put(INTERCEPT, 0.0)

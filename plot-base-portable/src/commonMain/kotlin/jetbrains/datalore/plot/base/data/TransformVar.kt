@@ -25,6 +25,7 @@ object TransformVar {
     val STACKSIZE = DataFrame.Variable("transform.STACKSIZE", TRANSFORM)
     val WIDTH = DataFrame.Variable("transform.WIDTH", TRANSFORM)
     val HEIGHT = DataFrame.Variable("transform.HEIGHT", TRANSFORM)
+    val BINWIDTH = DataFrame.Variable("transform.BINWIDTH", TRANSFORM)
     val VIOLINWIDTH = DataFrame.Variable("transform.VIOLINWIDTH", TRANSFORM)
     val WEIGHT = DataFrame.Variable("transform.WEIGHT", TRANSFORM)
     val INTERCEPT = DataFrame.Variable("transform.INTERCEPT", TRANSFORM)
@@ -133,6 +134,10 @@ object TransformVar {
 
         override fun height(): DataFrame.Variable {
             return HEIGHT
+        }
+
+        override fun binwidth(): DataFrame.Variable {
+            return BINWIDTH
         }
 
         override fun violinwidth(): DataFrame.Variable {
