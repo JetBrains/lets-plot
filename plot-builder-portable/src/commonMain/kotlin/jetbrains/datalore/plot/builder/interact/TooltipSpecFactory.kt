@@ -34,9 +34,9 @@ class TooltipSpecFactory(
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
+            tooltipSpecs += axisTooltipSpec()
             tooltipSpecs += outlierTooltipSpec()
             tooltipSpecs += generalTooltipSpec()
-            tooltipSpecs += axisTooltipSpec()
             return tooltipSpecs
         }
 
