@@ -5,11 +5,13 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.base.geom.GeomBase
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.ContextualMapping
@@ -252,6 +254,10 @@ class GeomLayerBuilder {
 
         override fun <T> getDefault(aes: Aes<T>): T {
             return aestheticsDefaults.defaultValue(aes)
+        }
+
+        override fun preferableNullDomain(aes: Aes<*>): ClosedRange<Double> {
+            return (geom as GeomBase).preferableNullDomain(aes)
         }
 
         override fun rangeIncludesZero(aes: Aes<*>): Boolean {

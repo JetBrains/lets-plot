@@ -125,6 +125,10 @@ object Option {
 
     object Geom {
 
+        object Dotplot {
+            const val STACKDIR = "stackdir"
+        }
+
         object Choropleth {
             const val GEO_POSITIONS = "map"
         }

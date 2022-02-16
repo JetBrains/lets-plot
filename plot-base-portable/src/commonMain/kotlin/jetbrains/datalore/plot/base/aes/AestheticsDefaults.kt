@@ -99,11 +99,7 @@ open class AestheticsDefaults {
         }
 
         fun dotplot(): AestheticsDefaults {
-            return object : AestheticsDefaults() {
-                override fun rangeIncludesZero(aes: Aes<*>): Boolean {
-                    return aes == Aes.Y || super.rangeIncludesZero(aes)
-                }
-            }
+            return AestheticsDefaults()
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 

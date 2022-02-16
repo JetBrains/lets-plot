@@ -82,10 +82,13 @@ internal object PositionalScalesUtil {
                 val domainOverall = domains.reduceOrNull { r0, r1 ->
                     RangeUtil.updateRange(r0, r1)!!
                 }
+                val preferableNullDomainOverall = layersByTile[0]
+                    .map { it.preferableNullDomain(aes) }
+                    .reduceOrNull { r0, r1 -> RangeUtil.updateRange(r0, r1)!! }
 
                 // 'expand' ranges and include '0' if necessary
                 val domainExpanded = RangeUtil.expandRange(domainOverall, aes, scaleProto, layersByTile[0])
-                val domain = SeriesUtil.ensureApplicableRange(domainExpanded)
+                val domain = SeriesUtil.ensureApplicableRange(domainExpanded, preferableNullDomainOverall)
 
                 layersByTile.map { domain }
             }
@@ -252,19 +255,14 @@ internal object PositionalScalesUtil {
         else
             null
         val rangeY = if (computeExpandY)
-            computeLayerDryRunRangeAfterSizeExpand(
-                Aes.Y,
-                Aes.HEIGHT,
-                aesthetics,
-                geomCtx
-            )
-        else if (renderedAes.contains(Aes.STACKSIZE)) {
-            computeLayerDryRunRangeByStackSizeAfterSizeExpand(
-                Aes.STACKSIZE,
-                aesthetics
-            )
-        } else
-            null
+                computeLayerDryRunRangeAfterSizeExpand(
+                    Aes.Y,
+                    Aes.HEIGHT,
+                    aesthetics,
+                    geomCtx
+                )
+            else
+                null
 
         return Pair(rangeX, rangeY)
     }
@@ -302,20 +300,6 @@ internal object PositionalScalesUtil {
     private fun updateExpandedMinMax(value: Double, expand: Double, expandedMinMax: DoubleArray) {
         expandedMinMax[0] = min(value - expand, expandedMinMax[0])
         expandedMinMax[1] = max(value + expand, expandedMinMax[1])
-    }
-
-    private fun computeLayerDryRunRangeByStackSizeAfterSizeExpand(
-        countAes: Aes<Double>, aesthetics: Aesthetics
-    ): ClosedRange<Double>? {
-        val maxCount = aesthetics.numericValues(countAes)
-            .filter(SeriesUtil::isFinite)
-            .map { it!! }
-            .maxOrNull()
-
-        return if (maxCount == null)
-            null
-        else
-            ClosedRange(0.0, maxCount!!)
     }
 
 

@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLa
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
+import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
@@ -50,6 +51,14 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
+            GeomKind.DOTPLOT -> return GeomProvider.dotplot {
+                val geom = DotplotGeom()
+                if (opts.hasOwn(Dotplot.STACKDIR)) {
+                    geom.setStackdir(opts.getString(Dotplot.STACKDIR))
+                }
+                geom
+            }
+
             GeomKind.CROSS_BAR -> return GeomProvider.crossBar {
                 val geom = CrossBarGeom()
                 if (opts.hasOwn(CrossBar.FATTEN)) {
@@ -177,7 +186,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
             PROVIDER[GeomKind.BAR] = GeomProvider.bar()
             PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
-            PROVIDER[GeomKind.DOTPLOT] = GeomProvider.dotplot()
+            // dotplot - special case
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
