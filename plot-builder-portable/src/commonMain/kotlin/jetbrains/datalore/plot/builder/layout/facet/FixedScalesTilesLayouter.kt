@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.layout.facet
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
@@ -14,6 +13,7 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.tilesAreaSize
 import jetbrains.datalore.plot.builder.layout.PlotAxisLayoutUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
 
@@ -85,6 +85,11 @@ internal object FixedScalesTilesLayouter {
             coordProvider
         )
 
-        return facetTiles.map { tileLayoutInfo2 }
+        return facetTiles.map {
+            tileLayoutInfo2.withAxisShown(
+                it.hasHAxis,
+                it.hasVAxis
+            )
+        }
     }
 }

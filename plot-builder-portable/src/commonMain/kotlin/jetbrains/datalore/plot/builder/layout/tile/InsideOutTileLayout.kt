@@ -32,8 +32,8 @@ internal class InsideOutTileLayout(
             hDomain, vDomain,
         )
 
-        val hAxisThickness = hAxisInfo.axisBounds().dimension.y
-        val vAxisThickness = vAxisInfo.axisBounds().dimension.x
+//        val hAxisThickness = hAxisInfo.axisBounds().dimension.y
+//        val vAxisThickness = vAxisInfo.axisBounds().dimension.x
 
         val geomBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
 

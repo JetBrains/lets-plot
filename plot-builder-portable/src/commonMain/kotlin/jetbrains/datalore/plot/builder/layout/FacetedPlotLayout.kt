@@ -107,7 +107,7 @@ internal class FacetedPlotLayout(
             }
 
             var height = geomHeight
-            if (facetTile.hasHAxis && facetTile.row == facets.rowCount - 1) {   // bottom row only
+            if (facetTile.hasHAxis /*&& facetTile.row == facets.rowCount - 1*/) {   // bottom row only
                 height += axisThicknessX
             }
 
