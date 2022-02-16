@@ -17,6 +17,7 @@ import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.max
 
 class DotplotGeom : GeomBase() {
+    var dotsize: Double = DEF_DOTSIZE
     var stackratio: Double = DEF_STACKRATIO
     private var stackdir: Stackdir = DEF_STACKDIR
 
@@ -64,7 +65,7 @@ class DotplotGeom : GeomBase() {
                 val path = dotHelper.createDot(
                     p,
                     geomHelper.toClient(center, p),
-                    binWidthPx / 2
+                    dotsize * binWidthPx / 2
                 )
                 root.add(path.rootGroup)
             }
@@ -83,9 +84,11 @@ class DotplotGeom : GeomBase() {
             if (!isFinite(p.x()) || !isFinite(p.stacksize()))
                 return null
 
+            val dotRadius = dotsize * binWidthPx
+            val yShiftSign = if (stackdir == Stackdir.DOWN) -1 else 1
             val origin = getDotCenter(p, p.stacksize()!!.toInt() - 1, binWidthPx)
-                .add(DoubleVector(-binWidthPx / 2, binWidthPx / 2))
-            val dimension = DoubleVector(binWidthPx, 0.0)
+                .add(DoubleVector(-dotRadius / 2, yShiftSign * dotRadius / 2))
+            val dimension = DoubleVector(dotRadius, 0.0)
 
             return DoubleRectangle(origin, dimension)
         }
@@ -114,7 +117,7 @@ class DotplotGeom : GeomBase() {
             }
         }
 
-        return DoubleVector(x, shiftedDotId * stackratio * binWidthPx)
+        return DoubleVector(x, shiftedDotId * dotsize * stackratio * binWidthPx)
     }
 
     private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
@@ -145,6 +148,7 @@ class DotplotGeom : GeomBase() {
     }
 
     companion object {
+        val DEF_DOTSIZE = 1.0
         val DEF_STACKDIR = Stackdir.UP
         val DEF_STACKRATIO = 1.0
 

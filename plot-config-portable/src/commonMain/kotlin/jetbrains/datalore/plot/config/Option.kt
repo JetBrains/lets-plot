@@ -126,6 +126,7 @@ object Option {
     object Geom {
 
         object Dotplot {
+            const val DOTSIZE = "dotsize"
             const val STACKDIR = "stackdir"
             const val STACKRATIO = "stackratio"
         }

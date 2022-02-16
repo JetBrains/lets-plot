@@ -53,6 +53,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
         when (geomKind) {
             GeomKind.DOTPLOT -> return GeomProvider.dotplot {
                 val geom = DotplotGeom()
+                if (opts.hasOwn(Dotplot.DOTSIZE)) {
+                    geom.dotsize = opts.getDouble(Dotplot.DOTSIZE)!!
+                }
                 if (opts.hasOwn(Dotplot.STACKDIR)) {
                     geom.setStackdir(opts.getString(Dotplot.STACKDIR))
                 }

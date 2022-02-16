@@ -107,7 +107,8 @@ class Dotplot {
                 "               {" +
                 "                 'geom': 'dotplot'," +
                 "                 'stackdir': 'centerwhole'," +
-                "                 'stackratio': 2" +
+                "                 'stackratio': 0.5," +
+                "                 'dotsize': 2" +
                 "               }" +
                 "             ]" +
                 "}"
