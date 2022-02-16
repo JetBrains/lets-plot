@@ -56,6 +56,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Dotplot.STACKDIR)) {
                     geom.setStackdir(opts.getString(Dotplot.STACKDIR))
                 }
+                if (opts.hasOwn(Dotplot.STACKRATIO)) {
+                    geom.stackratio = opts.getDouble(Dotplot.STACKRATIO)!!
+                }
                 geom
             }
 

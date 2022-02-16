@@ -17,6 +17,7 @@ import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.max
 
 class DotplotGeom : GeomBase() {
+    var stackratio: Double = DEF_STACKRATIO
     private var stackdir: Stackdir = DEF_STACKDIR
 
     fun setStackdir(v: String?) {
@@ -104,16 +105,16 @@ class DotplotGeom : GeomBase() {
     ) : DoubleVector {
         val x = p.x()!!
         val shiftedDotId = when (stackdir) {
-            Stackdir.UP -> dotId + 0.5
-            Stackdir.DOWN -> -dotId - 0.5
+            Stackdir.UP -> dotId + 1 / (2 * stackratio)
+            Stackdir.DOWN -> -dotId - 1 / (2 * stackratio)
             Stackdir.CENTER -> dotId + 0.5 - p.stacksize()!! / 2
             Stackdir.CENTERWHOLE -> {
-                val parityShift = if (p.stacksize()!!.toInt() % 2 == 0) 0.5 else 1.0
-                dotId + parityShift - p.stacksize()!! / 2
+                val parityShift = if (p.stacksize()!!.toInt() % 2 == 0) 0.0 else 0.5
+                dotId + parityShift - p.stacksize()!! / 2 + 1 / (2 * stackratio)
             }
         }
 
-        return DoubleVector(x, shiftedDotId * binWidthPx)
+        return DoubleVector(x, shiftedDotId * stackratio * binWidthPx)
     }
 
     private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
@@ -145,6 +146,7 @@ class DotplotGeom : GeomBase() {
 
     companion object {
         val DEF_STACKDIR = Stackdir.UP
+        val DEF_STACKRATIO = 1.0
 
         const val HANDLES_GROUPS = false
     }

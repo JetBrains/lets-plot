@@ -127,6 +127,7 @@ object Option {
 
         object Dotplot {
             const val STACKDIR = "stackdir"
+            const val STACKRATIO = "stackratio"
         }
 
         object Choropleth {
