@@ -55,6 +55,10 @@ Text {
     -fx-font-size: 15.0px;
 }
 
+.plt-plot-caption {
+    -fx-font-size: 13.0px;
+}
+
 .plt-axis .tick Text {
     -fx-font-size: 13.0px;
 }
