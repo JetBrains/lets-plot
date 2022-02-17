@@ -52,7 +52,7 @@ fun Map<*, *>.getDouble(vararg query: String): Double? {
 }
 
 fun Map<*, *>.getDouble(path: List<String>, item: String): Double? {
-    return getMap(path)?.get(item) as? Double
+    return getNumber(path, item)?.toDouble()
 }
 
 fun Map<*, *>.getInt(vararg query: String): Int? {
@@ -60,7 +60,7 @@ fun Map<*, *>.getInt(vararg query: String): Int? {
 }
 
 fun Map<*, *>.getInt(path: List<String>, item: String): Int? {
-    return getMap(path)?.get(item) as? Int
+    return getNumber(path, item)?.toInt()
 }
 
 fun Map<*, *>.getNumber(vararg query: String): Number? {

@@ -66,7 +66,8 @@ class PathBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
-    var scalingRange: ClosedRange<Int>? = null
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var index: Int? = null
     var regionId: String = ""
@@ -95,7 +96,8 @@ class PathBuilder(
                         renderer = PathRenderer()
                     }
                     +ChartElementComponent().apply {
-                        scalingRange = this@PathBuilder.scalingRange
+                        sizeScalingRange = this@PathBuilder.sizeScalingRange
+                        alphaScalingEnabled = this@PathBuilder.alphaScalingEnabled
                         strokeColor = this@PathBuilder.strokeColor
                         strokeWidth = this@PathBuilder.strokeWidth
                         lineDash = this@PathBuilder.lineDash.toDoubleArray()

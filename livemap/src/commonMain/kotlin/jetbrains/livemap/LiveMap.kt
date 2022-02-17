@@ -23,7 +23,7 @@ import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.chart.ChartElementScaleSystem
+import jetbrains.livemap.chart.ChartElementScalingSystem
 import jetbrains.livemap.chart.GrowingPathEffect
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
@@ -260,7 +260,7 @@ class LiveMap(
                 HoverObjectDetectionSystem(myUiService, componentManager),
 
                 // Charts
-                ChartElementScaleSystem(componentManager),
+                ChartElementScalingSystem(componentManager),
                 RenderingSystem(componentManager),
 
                 UiRenderingTaskSystem(componentManager),

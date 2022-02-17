@@ -123,7 +123,8 @@ class LayersBuilder(
 
 @LiveMapDsl
 class Symbol {
-    var scalingRange: ClosedRange<Int>? = null
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 0.0
     var point: Vec<LonLat>? = null
@@ -204,7 +205,7 @@ class Location {
 
     var coordinate: Vec<LonLat>? = null
         set(v) {
-            field = v;
+            field = v
             mapLocation = v?.let { MapLocation.create(GeoRectangle(it.x, it.y, it.x, it.y)) }
         }
 

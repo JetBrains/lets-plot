@@ -17,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-class ChartElementScaleSystem(
+class ChartElementScalingSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -29,14 +29,21 @@ class ChartElementScaleSystem(
         onEachEntity2<ZoomLevelChangedComponent, ChartElementComponent> { entity, _, chartElementComponent ->
             val zoomDelta = context.camera.zoom.roundToInt() - context.initialZoom!!
             with(chartElementComponent) {
-                if (scalingRange != null) {
-                    val scalingLevel = zoomDelta.coerceIn(scalingRange!!)
-                    scalingSizeFactor = computeSizeFactor(scalingLevel)
-                    scalingAlphaValue = computeAlphaValue(zoomDelta)
-                } else {
-                    scalingSizeFactor = 1.0
-                    scalingAlphaValue = null
+                scalingSizeFactor = sizeScalingRange?.let {
+                    val scalingLevel = zoomDelta.coerceIn(it)
+                    when {
+                        scalingLevel == 0 -> 1.0
+                        scalingLevel > 0 -> 2.0.pow(scalingLevel)
+                        scalingLevel < 0 -> 1.0 / 2.0.pow(abs(scalingLevel))
+                        else -> error("Unknown")
+                    }
+                } ?: 1.0
+
+                scalingAlphaValue = when {
+                    alphaScalingEnabled && zoomDelta > 2 -> max(0.1, 1.0 - 0.2 * (zoomDelta - 2))
+                    else -> null
                 }
+
                 entity.tryGet<SymbolComponent>()?.let {
                     entity.provide(::ScreenDimensionComponent).dimension = it.size * scalingSizeFactor
                 }
@@ -44,15 +51,4 @@ class ChartElementScaleSystem(
         }
     }
 
-    private fun computeSizeFactor(scalingLevel: Int): Double = when {
-        scalingLevel == 0 -> 1.0
-        scalingLevel > 0 -> 2.0.pow(scalingLevel)
-        scalingLevel < 0 -> 1.0 / 2.0.pow(abs(scalingLevel))
-        else -> error("Unknown")
-    }
-
-    private fun computeAlphaValue(scalingLevel: Int): Double? = when {
-        scalingLevel <= 2 -> null
-        else -> max(0.1, 1.0 - 0.2 * (scalingLevel - 2))
-    }
 }

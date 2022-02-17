@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.livemap.api.*
 
@@ -18,8 +17,8 @@ import jetbrains.livemap.api.*
 object LayerConverter {
     fun convert(
         letsPlotLayers: List<LayerRendererData>,
-        scaleObjects: ScaleObjects,
-        scaleZooms: Int,
+        mappingsScaleLimit: Int,
+        constantsScaleLimit: Int,
         geodesic: Boolean
     ): List<LayersBuilder.() -> Unit> {
         return letsPlotLayers.mapIndexed { index, layer ->
@@ -57,13 +56,22 @@ object LayerConverter {
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
+            val positiveScaleLimit = when (Aes.SIZE !in layer.mappedAes) {
+                true -> mappingsScaleLimit
+                false -> constantsScaleLimit
+            }
+
+            val sizeScalingRange = when (positiveScaleLimit) {
+                -1 -> -2..Int.MAX_VALUE
+                else -> -2..positiveScaleLimit
+            }
+
             createLayerBuilder(
                 index,
                 layerKind,
                 dataPointLiveMapAesthetics,
-                layer.mappedAes,
-                scaleObjects,
-                scaleZooms
+                sizeScalingRange,
+                alphaScalingEnabled = sizeScalingRange.last != 0
             )
         }
     }
@@ -72,25 +80,15 @@ object LayerConverter {
         layerIdx: Int,
         layerKind: MapLayerKind,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
-        mappedAes: Set<Aes<*>>,
-        scaleObjects: ScaleObjects,
-        scaleZooms: Int,
+        sizeScalingRange: IntRange?,
+        alphaScalingEnabled: Boolean,
     ): LayersBuilder.() -> Unit = {
-        fun getScaleRange(scalableStroke: Boolean): ClosedRange<Int>? {
-            val negativeZoom = (-1).takeIf { scalableStroke } ?: -2
-            val isStatic = Aes.SIZE !in mappedAes
-            if (scaleObjects == ScaleObjects.NONE) return null
-            if (scaleObjects == ScaleObjects.BOTH) return negativeZoom..scaleZooms
-            if (scaleObjects == ScaleObjects.STATIC && isStatic) return negativeZoom..scaleZooms
-            if (scaleObjects == ScaleObjects.STATIC && !isStatic) return negativeZoom..0
-            error("getScaleRange() - unexpected state. scaleObject: $scaleObjects, isStatic: $isStatic")
-        }
-
         when (layerKind) {
             MapLayerKind.POINT -> points {
                 liveMapDataPoints.forEach {
                     point {
-                        scalingRange = getScaleRange(scalableStroke = false)
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
                         index = it.index
                         point = it.point
@@ -108,7 +106,8 @@ object LayerConverter {
             MapLayerKind.POLYGON -> polygons {
                 liveMapDataPoints.forEach {
                     polygon {
-                        scalingRange = getScaleRange(scalableStroke = true)
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
                         index = it.index
                         multiPolygon = it.geometry
@@ -125,7 +124,8 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     if (it.geometry != null) {
                         path {
-                            scalingRange = getScaleRange(scalableStroke = true)
+                            this.sizeScalingRange = sizeScalingRange
+                            this.alphaScalingEnabled = alphaScalingEnabled
                             layerIndex = layerIdx
                             index = it.index
                             multiPolygon = it.geometry!!
@@ -143,7 +143,8 @@ object LayerConverter {
             MapLayerKind.V_LINE -> vLines {
                 liveMapDataPoints.forEach {
                     line {
-                        scalingRange = getScaleRange(scalableStroke = true)
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         point = it.point
                         lineDash = it.lineDash
                         strokeColor = it.strokeColor
@@ -155,7 +156,8 @@ object LayerConverter {
             MapLayerKind.H_LINE -> hLines {
                 liveMapDataPoints.forEach {
                     line {
-                        scalingRange = getScaleRange(scalableStroke = true)
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         point = it.point
                         lineDash = it.lineDash
                         strokeColor = it.strokeColor
@@ -186,7 +188,8 @@ object LayerConverter {
             MapLayerKind.PIE -> pies {
                 liveMapDataPoints.forEach {
                     pie {
-                        scalingRange = getScaleRange(scalableStroke = false)
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
                         fromDataPoint(it)
                     }
@@ -196,14 +199,13 @@ object LayerConverter {
             MapLayerKind.BAR -> bars {
                 liveMapDataPoints.forEach {
                     bar {
-                        scalingRange = getScaleRange(scalableStroke = false)
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
                         fromDataPoint(it)
                     }
                 }
             }
-
-            else -> error("Unsupported layer kind: $layerKind")
         }
     }
 

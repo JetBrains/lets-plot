@@ -35,6 +35,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=None,
                  scale_zooms=None,
                  scale_objects=None,
+                 mappings_scaling_limit=None,
+                 constants_scaling_limit=None,
                  **other_args):
     """
     Display an interactive map.
@@ -238,7 +240,10 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=show_coord_pick_tools,
                  scale_zooms=scale_zooms,
                  scale_objects=scale_objects,
-                 **other_args)
+                 mappings_scaling_limit=mappings_scaling_limit,
+                 constants_scaling_limit=constants_scaling_limit,
+                 **other_args
+    )
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}

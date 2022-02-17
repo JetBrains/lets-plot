@@ -68,7 +68,8 @@ class PolygonsBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
-    var scalingRange: ClosedRange<Int>? = null
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var index: Int? = null
 
@@ -106,7 +107,8 @@ class PolygonsBuilder(
                     renderer = PolygonRenderer()
                 }
                 + ChartElementComponent().apply {
-                    scalingRange = this@PolygonsBuilder.scalingRange
+                    sizeScalingRange = this@PolygonsBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PolygonsBuilder.alphaScalingEnabled
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor
                     strokeWidth = this@PolygonsBuilder.strokeWidth
@@ -133,7 +135,7 @@ class PolygonsBuilder(
                     renderer = RegionRenderer()
                 }
                 + ChartElementComponent().apply {
-                    scalingRange = this@PolygonsBuilder.scalingRange
+                    sizeScalingRange = this@PolygonsBuilder.sizeScalingRange
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor
                     strokeWidth = this@PolygonsBuilder.strokeWidth

@@ -61,7 +61,7 @@ class MakeGeometryWidgetSystem(
         if (widgetLayer.count() > 0) {
             PathBuilder(factory, myMapProjection)
                 .apply {
-                    scalingRange = null
+                    sizeScalingRange = null
                     strokeColor = DARK_ORANGE
                     strokeWidth = 1.5
                     geometry(listOf(widgetLayer.last(), lonlat), false)
