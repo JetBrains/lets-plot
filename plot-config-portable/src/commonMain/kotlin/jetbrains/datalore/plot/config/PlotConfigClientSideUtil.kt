@@ -48,6 +48,7 @@ object PlotConfigClientSideUtil {
         )
         assembler.title = config.title
         assembler.subtitle = config.subtitle
+        assembler.caption = config.caption
         assembler.guideOptionsMap = config.guideOptionsMap
         assembler.facets = config.facets
         return assembler

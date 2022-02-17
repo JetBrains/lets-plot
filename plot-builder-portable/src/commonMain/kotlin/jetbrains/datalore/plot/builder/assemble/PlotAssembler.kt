@@ -31,6 +31,7 @@ class PlotAssembler private constructor(
     var facets: PlotFacets = PlotFacets.undefined()
     var title: String? = null
     var subtitle: String? = null
+    var caption: String? = null
     var guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
 
     private var legendsEnabled = true
@@ -137,7 +138,8 @@ class PlotAssembler private constructor(
             coordProvider = coordProvider,
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
-            theme = theme
+            theme = theme,
+            caption = caption
         )
     }
 

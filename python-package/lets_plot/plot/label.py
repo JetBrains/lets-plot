@@ -134,8 +134,8 @@ def labs(**kwargs):
         LetsPlot.setup_html()
         data = {'x': list(range(10)), 'y': list(range(10))}
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
-            labs(title='New plot title', subtitle='The plot subtitle', x='New x axis label', \\
-                 y='New y axis label', size='New legend title')
+            labs(title='New plot title', subtitle='The plot subtitle', caption='The plot caption', \\
+                 x='New x axis label', y='New y axis label', size='New legend title')
 
     """
     specs = []
@@ -145,6 +145,11 @@ def labs(**kwargs):
     subtitle = kwargs.pop('subtitle', None)
     if title is not None or subtitle is not None:
         specs.append(FeatureSpec('ggtitle', name=None, text=title, subtitle=subtitle))
+
+    # plot caption
+    caption = kwargs.pop('caption', None)
+    if caption is not None:
+        specs.append(FeatureSpec('caption', name=None, text=caption))
 
     # scales
     for k, v in kwargs.items():

@@ -4,13 +4,16 @@
 
 - geom_livemap: button for position reset.
 
-- Plot subtitle: `subtitle` parameter in `ggtitle()` and `labs()`, `plot_subtitle` parameter in `theme()` [[#417](https://github.com/JetBrains/lets-plot/issues/417)]. 
-  
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_and_subtitle.ipynb).
+- Plot subtitle and caption   [[#417](https://github.com/JetBrains/lets-plot/issues/417)]: 
+  `subtitle` parameter in `ggtitle()` and `labs()`, 
+  `caption` parameter in `labs()`, 
+  `plot_subtitle` and `plot_caption` parameters in `theme()`. 
 
-- Multi-line title: a title and subtitle can be split into multiple lines using `\n` as a text separator.
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
+
+- Multi-line title: title, subtitle, caption can be split into multiple lines using `\n` as a text separator.
     
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_and_subtitle.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
 
 - geom_livemap: objects scale on zoom.
 - In tooltip customization API:

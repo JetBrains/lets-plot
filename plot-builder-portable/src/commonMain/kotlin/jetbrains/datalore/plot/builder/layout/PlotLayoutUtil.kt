@@ -32,12 +32,12 @@ internal object PlotLayoutUtil {
         )
     }
 
-    internal fun titleLinesDimensions(textLines: List<String>, labelSpec: LabelSpec): List<DoubleVector> {
+    internal fun textLinesDimensions(textLines: List<String>, labelSpec: LabelSpec): List<DoubleVector> {
         return textLines.map { line -> labelDimensions(line, labelSpec) }
     }
 
-    internal fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
-        val linesDimensions = titleLinesDimensions(textLines, labelSpec)
+    internal fun textDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
+        val linesDimensions = textLinesDimensions(textLines, labelSpec)
         if (linesDimensions.isEmpty()) {
             return DoubleVector.ZERO
         }
@@ -85,6 +85,7 @@ internal object PlotLayoutUtil {
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
+        captionLines: List<String>
     ): DoubleVector {
         val delta = titlesAndLegendsSizeDelta(
             titleLines,
@@ -93,7 +94,8 @@ internal object PlotLayoutUtil {
             axisTitleBottom,
             axisEnabled,
             legendsBlockInfo,
-            theme
+            theme,
+            captionLines
         )
         val reduced = baseSize.subtract(delta)
         return DoubleVector(
@@ -111,6 +113,7 @@ internal object PlotLayoutUtil {
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
+        captionLines: List<String>
     ): DoubleVector {
         val delta = titlesAndLegendsSizeDelta(
             titleLines,
@@ -119,7 +122,8 @@ internal object PlotLayoutUtil {
             axisTitleBottom,
             axisEnabled,
             legendsBlockInfo,
-            theme
+            theme,
+            captionLines
         )
         return base.add(delta)
     }
@@ -132,18 +136,20 @@ internal object PlotLayoutUtil {
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
+        captionLines: List<String>,
     ): DoubleVector {
         val titleDelta = titleSizeDelta(titleLines, subtitleLines)
         val axisTitlesDelta = axisTitleSizeDelta(axisTitleLeft, axisTitleBottom, axisEnabled)
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        return titleDelta.add(axisTitlesDelta).add(legendBlockDelta)
+        val captionDelta = DoubleVector(0.0, textDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION).y)
+        return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
     fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
-                    titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
+            textDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
+                    textDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
         )
     }
 

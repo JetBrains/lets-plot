@@ -94,6 +94,8 @@ object Option {
         const val TITLE = "ggtitle"
         const val TITLE_TEXT = "text"
         const val SUBTITLE_TEXT = "subtitle"
+        const val CAPTION = "caption"
+        const val CAPTION_TEXT = "text"
         const val COORD = "coord"
         const val FACET = "facet"
         const val THEME = "theme"
