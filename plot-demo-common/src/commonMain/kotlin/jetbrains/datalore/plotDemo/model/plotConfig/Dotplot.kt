@@ -13,8 +13,9 @@ class Dotplot {
         return listOf(
             basic(),
             coordFlip(),
+            withGroups(),
+            dotplotParams(),
             statIdentity(),
-            dotplotParams()
         )
     }
 
@@ -67,30 +68,27 @@ class Dotplot {
 
     }
 
-    private fun statIdentity(): MutableMap<String, Any> {
+    private fun withGroups(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [0.5, 1.5, 2.5, null]," +
-                "             'count': [0, 2, null, 0]," +
-                "             'binwidth': [1, 1, 1, 1]" +
-                "            }," +
                 "   'mapping': {" +
-                "                'x': 'x'," +
-                "                'stacksize': 'count'," +
-                "                'binwidth': 'binwidth'" +
+                "                'x': 'sepal length (cm)'," +
+                "                'fill': 'target'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'NaNs in data, stat=identity'" +
+                "                'text': 'Dotplot with groups'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'dotplot'," +
-                "                 'stat': 'identity'" +
+                "                 'binwidth': 0.2" +
                 "               }" +
                 "             ]" +
                 "}"
 
-        return HashMap(parsePlotSpec(spec))
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
 
     }
 
@@ -116,6 +114,33 @@ class Dotplot {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
+
+    }
+
+    private fun statIdentity(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [0.5, 1.5, 2.5, null]," +
+                "             'count': [0, 2, null, 0]," +
+                "             'binwidth': [1, 1, 1, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'stacksize': 'count'," +
+                "                'binwidth': 'binwidth'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'NaNs in data, stat=identity'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'dotplot'," +
+                "                 'stat': 'identity'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
 
     }
 }
