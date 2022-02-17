@@ -108,19 +108,24 @@ object BinStatUtil {
         valuesX: List<Double?>,
         binWidth: Double
     ): BinsData {
-        val sortedX = valuesX.filter { SeriesUtil.isFinite(it) }
-            .map { it!! }
-            .sorted()
-        val updateBinsData: (BinsData, MutableList<Double>) -> BinsData = { binsData, stack ->
+        fun updateBinsData(
+            binsData: BinsData,
+            stack: MutableList<Double>,
+            dataSize: Int
+        ): BinsData {
             val v = (stack.last() - stack.first()) / 2.0
-            BinsData(
+
+            return BinsData(
                 binsData.x + listOf(stack.first() + v),
                 binsData.count + listOf(stack.size.toDouble()),
-                binsData.density + listOf(stack.size.toDouble() / sortedX.size),
+                binsData.density + listOf(stack.size.toDouble() / dataSize),
                 binsData.binWidth + listOf(binWidth)
             )
         }
 
+        val sortedX = valuesX.filter { SeriesUtil.isFinite(it) }
+            .map { it!! }
+            .sorted()
         var binsData = BinsData(emptyList(), emptyList(), emptyList(), emptyList())
         var stack = mutableListOf(sortedX.first())
         for (i in 1 until sortedX.size) {
@@ -128,10 +133,10 @@ object BinStatUtil {
                 stack.add(sortedX[i])
                 continue
             }
-            binsData = updateBinsData(binsData, stack)
+            binsData = updateBinsData(binsData, stack, sortedX.size)
             stack = mutableListOf(sortedX[i])
         }
-        binsData = updateBinsData(binsData, stack)
+        binsData = updateBinsData(binsData, stack, sortedX.size)
 
         return binsData
     }

@@ -44,6 +44,7 @@ object DefaultSampling {
     // bars
     val BAR = pick(50)
     val HISTOGRAM = systematic(500)
+    val DOTPLOT = random(500, SEED)
 
     // lines
     val LINE = systematic(5000)

@@ -32,7 +32,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             SMOOTH -> DefaultSampling.SMOOTH
             BAR -> DefaultSampling.BAR
             HISTOGRAM -> DefaultSampling.HISTOGRAM
-            DOTPLOT -> Samplings.NONE // Dotplot is only for small datasets, sampling has no sense
+            DOTPLOT -> DefaultSampling.DOTPLOT
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
             ERROR_BAR -> DefaultSampling.ERROR_BAR

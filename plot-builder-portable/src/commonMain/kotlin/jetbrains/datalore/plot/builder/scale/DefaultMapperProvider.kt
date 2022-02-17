@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-//import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
@@ -54,6 +53,7 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColorMapperProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
+//import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createWithDiscreteOutput
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
