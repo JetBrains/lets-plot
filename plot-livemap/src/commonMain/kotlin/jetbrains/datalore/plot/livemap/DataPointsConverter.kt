@@ -37,13 +37,13 @@ internal class DataPointsConverter(
     private val aesthetics: Aesthetics,
     private val geodesic: Boolean
 ) {
-    private val pointFeatureConverter get() = PointFeatureConverter(layerIndex, aesthetics)
-    private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(layerIndex, aesthetics, geodesic)
-    private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(layerIndex, aesthetics, geodesic)
+    private val pointFeatureConverter get() = PointFeatureConverter(aesthetics)
+    private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics, geodesic)
+    private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics, geodesic)
     private fun symbolConverter(mapLayerKind: MapLayerKind, sortingMode: SortingMode): List<DataPointLiveMapAesthetics> {
         return MultiDataPointHelper.getPoints(aesthetics, sortingMode)
             .map {
-                DataPointLiveMapAesthetics(it, layerIndex, mapLayerKind)
+                DataPointLiveMapAesthetics(it, mapLayerKind)
                     .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
             }
     }
@@ -61,7 +61,6 @@ internal class DataPointsConverter(
     fun toBar(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.BAR, BAR)
 
     private abstract class PathFeatureConverterBase internal constructor(
-        private val layerIndex: Int,
         internal val aesthetics: Aesthetics,
         private val myGeodesic: Boolean
     ) {
@@ -83,7 +82,6 @@ internal class DataPointsConverter(
         internal fun pathToBuilder(p: DataPointAesthetics, points: List<Vec<LonLat>>, isClosed: Boolean) =
             DataPointLiveMapAesthetics(
                 p = p,
-                layerIndex = layerIndex,
                 layerKind = when {
                     isClosed -> MapLayerKind.POLYGON
                     else -> MapLayerKind.PATH
@@ -104,10 +102,9 @@ internal class DataPointsConverter(
     }
 
     private inner class MultiPathFeatureConverter(
-        val layerIndex: Int,
         aes: Aesthetics,
         geodesic: Boolean
-    ) : PathFeatureConverterBase(layerIndex, aes, geodesic) {
+    ) : PathFeatureConverterBase(aes, geodesic) {
 
         internal fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
             setAnimation((geom as? PathGeom)?.animation)
@@ -146,10 +143,9 @@ internal class DataPointsConverter(
     }
 
     private inner class SinglePathFeatureConverter(
-        val layerIndex: Int,
         aesthetics: Aesthetics,
         geodesic: Boolean
-    ) : PathFeatureConverterBase(layerIndex, aesthetics, geodesic) {
+    ) : PathFeatureConverterBase(aesthetics, geodesic) {
         internal fun tile(): List<DataPointLiveMapAesthetics> {
             val d = getMinXYNonZeroDistance(aesthetics)
             return process(isClosed = true, dataPointToGeometry = { p ->
@@ -248,7 +244,6 @@ internal class DataPointsConverter(
     }
 
     private class PointFeatureConverter(
-        val layerIndex: Int,
         private val myAesthetics: Aesthetics
     ) {
         private var myAnimation: Int? = null
@@ -300,7 +295,7 @@ internal class DataPointsConverter(
             val mapObjects = ArrayList<DataPointLiveMapAesthetics>(myAesthetics.dataPointCount())
             for (p in myAesthetics.dataPoints()) {
                 dataPointToGeometry(p)?.let { v ->
-                    DataPointLiveMapAesthetics(p, layerIndex, layerKind)
+                    DataPointLiveMapAesthetics(p, layerKind)
                         .setGeometryPoint(v)
                         .setAnimation(myAnimation)
                 }?.let(mapObjects::add)

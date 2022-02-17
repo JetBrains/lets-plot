@@ -31,16 +31,14 @@ import jetbrains.livemap.api.limitCoord
 import kotlin.math.ceil
 
 internal class DataPointLiveMapAesthetics {
-    constructor(p: DataPointAesthetics, layerIndex: Int, layerKind: MapLayerKind) {
-        this.layerIndex = layerIndex
+    constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
         myLayerKind = layerKind
         myP = p
         indices = emptyList<Int>()
         valueArray = emptyList()
     }
 
-    constructor(p: MultiDataPoint, layerIndex: Int, layerKind: MapLayerKind) {
-        this.layerIndex = layerIndex
+    constructor(p: MultiDataPoint, layerKind: MapLayerKind) {
         myLayerKind = layerKind
         myP = p.aes
         indices = p.indices
@@ -48,10 +46,9 @@ internal class DataPointLiveMapAesthetics {
         myColorArray = p.colors
     }
 
-    private val myP: DataPointAesthetics
+    val myP: DataPointAesthetics
     private var myArrowSpec: ArrowSpec? = null
     private var myColorArray: List<Color> = emptyList()
-    val layerIndex: Int
     val indices: List<Int>
     val valueArray: List<Double>
 
@@ -70,6 +67,37 @@ internal class DataPointLiveMapAesthetics {
     val size get() = AestheticsUtil.textSize(myP)
     val fillColor get() = colorWithAlpha(myP.fill()!!)
     val label get() = myP.label()?.toString() ?: "n/a"
+
+    val hjust
+        get() = when (GeomHelper.textLabelAnchor(myP.hjust(), GeomHelper.HJUST_MAP, MIDDLE)) {
+            LEFT -> 0.0
+            RIGHT -> 1.0
+            MIDDLE -> 0.5
+        }
+    val vjust
+        get() = when (GeomHelper.textLabelAnchor(myP.vjust(), GeomHelper.VJUST_MAP, CENTER)) {
+            TOP -> 0.0
+            BOTTOM -> 1.0
+            CENTER -> 0.5
+        }
+
+    val fontface
+        get() = when (val fontface = myP.fontface()) {
+            AesInitValue[Aes.FONTFACE] -> ""
+            else -> fontface
+        }
+
+    val lineDash: List<Double>
+        get() {
+            val lineType = myP.lineType()
+
+            if (lineType.isSolid || lineType.isBlank) {
+                return emptyList()
+            }
+
+            val width = AestheticsUtil.strokeWidth(myP)
+            return lineType.dashArray.map { it * width }
+        }
 
     val geoObject
         get(): GeoObject? {
@@ -102,29 +130,10 @@ internal class DataPointLiveMapAesthetics {
             else -> colorWithAlpha(myP.color()!!)
         }
 
-    val hjust
-        get() = when (GeomHelper.textLabelAnchor(myP.hjust(), GeomHelper.HJUST_MAP, MIDDLE)) {
-            LEFT -> 0.0
-            RIGHT -> 1.0
-            MIDDLE -> 0.5
-        }
-    val vjust
-        get() = when (GeomHelper.textLabelAnchor(myP.vjust(), GeomHelper.VJUST_MAP, CENTER)) {
-            TOP -> 0.0
-            BOTTOM -> 1.0
-            CENTER -> 0.5
-        }
-
-    val fontface
-        get() = when (val fontface = myP.fontface()) {
-            AesInitValue[Aes.FONTFACE] -> ""
-            else -> fontface
-        }
 
     val radius: Double
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
-            HEATMAP -> myP.size()!!
             TEXT -> 0.0
         }
 
@@ -132,20 +141,9 @@ internal class DataPointLiveMapAesthetics {
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
             POINT, PIE, BAR -> 1.0
-            TEXT, HEATMAP -> 0.0
+            TEXT -> 0.0
         }
 
-    val lineDash: List<Double>
-        get() {
-            val lineType = myP.lineType()
-
-            if (lineType.isSolid || lineType.isBlank) {
-                return emptyList()
-            }
-
-            val width = AestheticsUtil.strokeWidth(myP)
-            return lineType.dashArray.map { it * width }
-        }
 
     val colorArray: List<Color>
         get() = if (myLayerKind === PIE && valueArray.all(0.0::equals)) {

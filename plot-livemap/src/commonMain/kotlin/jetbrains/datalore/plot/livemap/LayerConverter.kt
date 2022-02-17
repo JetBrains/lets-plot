@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind.*
+import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.ScaleObjects
@@ -57,6 +58,7 @@ object LayerConverter {
             }
 
             createLayerBuilder(
+                index,
                 layerKind,
                 dataPointLiveMapAesthetics,
                 layer.mappedAes,
@@ -67,6 +69,7 @@ object LayerConverter {
     }
 
     private fun createLayerBuilder(
+        layerIdx: Int,
         layerKind: MapLayerKind,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         mappedAes: Set<Aes<*>>,
@@ -88,7 +91,7 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     point {
                         scalingRange = getScaleRange(scalableStroke = false)
-                        layerIndex = it.layerIndex
+                        layerIndex = layerIdx
                         index = it.index
                         point = it.point
                         label = it.label
@@ -97,7 +100,7 @@ object LayerConverter {
                         radius = it.radius
                         fillColor = it.fillColor
                         strokeColor = it.strokeColor
-                        strokeWidth = it.strokeWidth
+                        strokeWidth = 1.0
                     }
                 }
             }
@@ -106,14 +109,14 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     polygon {
                         scalingRange = getScaleRange(scalableStroke = true)
-                        layerIndex = it.layerIndex
+                        layerIndex = layerIdx
                         index = it.index
                         multiPolygon = it.geometry
                         geoObject = it.geoObject
                         lineDash = it.lineDash
                         fillColor = it.fillColor
                         strokeColor = it.strokeColor
-                        strokeWidth = it.strokeWidth
+                        strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                     }
                 }
             }
@@ -123,12 +126,12 @@ object LayerConverter {
                     if (it.geometry != null) {
                         path {
                             scalingRange = getScaleRange(scalableStroke = true)
-                            layerIndex = it.layerIndex
+                            layerIndex = layerIdx
                             index = it.index
                             multiPolygon = it.geometry!!
                             lineDash = it.lineDash
                             strokeColor = it.strokeColor
-                            strokeWidth = it.strokeWidth
+                            strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                             animation = it.animation
                             speed = it.speed
                             flow = it.flow
@@ -144,7 +147,7 @@ object LayerConverter {
                         point = it.point
                         lineDash = it.lineDash
                         strokeColor = it.strokeColor
-                        strokeWidth = it.strokeWidth
+                        strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                     }
                 }
             }
@@ -156,7 +159,7 @@ object LayerConverter {
                         point = it.point
                         lineDash = it.lineDash
                         strokeColor = it.strokeColor
-                        strokeWidth = it.strokeWidth
+                        strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                     }
                 }
             }
@@ -184,6 +187,7 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     pie {
                         scalingRange = getScaleRange(scalableStroke = false)
+                        layerIndex = layerIdx
                         fromDataPoint(it)
                     }
                 }
@@ -193,6 +197,7 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     bar {
                         scalingRange = getScaleRange(scalableStroke = false)
+                        layerIndex = layerIdx
                         fromDataPoint(it)
                     }
                 }
@@ -203,7 +208,6 @@ object LayerConverter {
     }
 
     private fun Symbol.fromDataPoint(p: DataPointLiveMapAesthetics) {
-        layerIndex = p.layerIndex
         point = p.point
         radius = p.radius
         strokeColor = p.strokeColor
