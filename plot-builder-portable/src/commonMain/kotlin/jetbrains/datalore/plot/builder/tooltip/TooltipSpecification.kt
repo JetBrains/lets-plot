@@ -25,6 +25,10 @@ class TooltipSpecification(
         }
     }
 
+    fun useDefaultTooltips() = tooltipLinePatterns == null
+
+    fun hideTooltips() = tooltipLinePatterns?.isEmpty() ?: false
+
     companion object {
         fun withoutTooltip() = TooltipSpecification(
             valueSources = emptyList(),

@@ -68,19 +68,22 @@ object PlotConfigClientSideUtil {
         for (tileDataByLayer in layersDataByTile) {
             val panelLayers = ArrayList<GeomLayer>()
 
-            val isMultilayer = tileDataByLayer.size > 1
             val isLiveMap = plotConfig.layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
 
             for (layerIndex in tileDataByLayer.indices) {
                 check(layerBuilders.size >= layerIndex)
 
                 if (layerBuilders.size == layerIndex) {
+                    val otherLayerWithTooltips = plotConfig.layerConfigs
+                        .filterIndexed { index, _ -> index != layerIndex }
+                        .any { !it.tooltips.hideTooltips() }
+
                     val layerConfig = plotConfig.layerConfigs[layerIndex]
                     val geomInteraction =
                         GeomInteractionUtil.configGeomTargets(
                             layerConfig,
                             plotConfig.scaleMap,
-                            isMultilayer,
+                            otherLayerWithTooltips,
                             isLiveMap,
                             plotConfig.theme
                         )
