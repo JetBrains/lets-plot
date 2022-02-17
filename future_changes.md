@@ -41,3 +41,5 @@
 - tooltip on livemap: hide tooltip when the cursor is over the controls [[#335](https://github.com/JetBrains/lets-plot/issues/335)].
 - Automatic detection of DateTime series [[#99](https://github.com/JetBrains/lets-plot-kotlin/issues/99)].
 - Fix tooltips for `geom_histogram(stat='density')`.
+- The axis tooltip overlaps the general tooltip [[#515](https://github.com/JetBrains/lets-plot/issues/515)].
+- The multi-layer tooltip detection strategy will only be used if more than one layer provides tooltips.
