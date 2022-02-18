@@ -127,8 +127,10 @@ object Option {
 
         object Dotplot {
             const val DOTSIZE = "dotsize"
-            const val STACKDIR = "stackdir"
             const val STACKRATIO = "stackratio"
+            const val STACKGROUPS = "stackgroups"
+            const val STACKDIR = "stackdir"
+            const val METHOD = "method"
         }
 
         object Choropleth {

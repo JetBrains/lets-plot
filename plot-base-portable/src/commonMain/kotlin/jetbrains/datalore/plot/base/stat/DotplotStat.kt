@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -36,7 +37,7 @@ class DotplotStat(
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
             val binsData = when(method) {
-                Method.HISTOGRAM -> computeStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
+                Method.HISTODOT -> computeStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
                 Method.DOTDENSITY -> computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X))
             }
             statX.addAll(binsData.x)
@@ -67,7 +68,20 @@ class DotplotStat(
     }
 
     enum class Method {
-        HISTOGRAM, DOTDENSITY
+        HISTODOT, DOTDENSITY;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Method>()
+
+            fun safeValueOf(v: String): Method {
+                return ENUM_INFO.safeValueOf(v) ?:
+                throw IllegalArgumentException(
+                    "Unsupported method: '$v'\n" +
+                    "Use one of: histodot, dotdensity."
+                )
+            }
+        }
     }
 
     companion object {

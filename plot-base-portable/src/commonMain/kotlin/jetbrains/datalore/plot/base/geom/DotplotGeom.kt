@@ -5,13 +5,20 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.*
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.geom.util.LinesHelper
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.plot.base.stat.DotplotStat.Method
 import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.max
@@ -19,20 +26,9 @@ import kotlin.math.max
 class DotplotGeom : GeomBase() {
     var dotsize: Double = DEF_DOTSIZE
     var stackratio: Double = DEF_STACKRATIO
-    private var stackdir: Stackdir = DEF_STACKDIR
-
-    fun setStackdir(v: String?) {
-        stackdir = when (v?.lowercase()) {
-            "up" -> Stackdir.UP
-            "down" -> Stackdir.DOWN
-            "center" -> Stackdir.CENTER
-            "centerwhole" -> Stackdir.CENTERWHOLE
-            else -> throw IllegalArgumentException(
-                "Unsupported stackdir: '$v'\n" +
-                "Use one of: up, down, center, centerwhole."
-            )
-        }
-    }
+    var stackgroups: Boolean = DEF_STACKGROUPS
+    var stackdir: Stackdir = DEF_STACKDIR
+    var method: Method = DEF_METHOD
 
     override fun preferableNullDomain(aes: Aes<*>): ClosedRange<Double> {
         return if (aes == Aes.Y)
@@ -56,12 +52,31 @@ class DotplotGeom : GeomBase() {
         val pointsWithBinWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.BINWIDTH)
         if (!pointsWithBinWidth.any()) return
 
+        val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
+        GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
+            .groupBy { p -> p.x()!! }
+            .forEach { (_, dataPointStack) ->
+                buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx)
+            }
+    }
+
+    private fun buildStack(
+        root: SvgRoot,
+        dataPoints: Iterable<DataPointAesthetics>,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext,
+        binWidthPx: Double
+    ) {
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
-        for (p in GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)) {
-            for (i in 0 until p.stacksize()!!.toInt()) {
-                val center = getDotCenter(p, i, binWidthPx)
+        var stackSize = 0
+        for (p in dataPoints) {
+            val groupStackSize = p.stacksize()!!.toInt()
+            var dotId = -1
+            for (i in 0 until groupStackSize) {
+                dotId = if (stackgroups && method == Method.HISTODOT) stackSize + i else i
+                val center = getDotCenter(p, dotId, binWidthPx)
                 val path = dotHelper.createDot(
                     p,
                     geomHelper.toClient(center, p),
@@ -69,35 +84,39 @@ class DotplotGeom : GeomBase() {
                 )
                 root.add(path.rootGroup)
             }
+            buildHint(p, dotId, ctx, geomHelper, binWidthPx)
+            stackSize += groupStackSize
         }
-        buildHints(aesthetics, pos, coord, ctx, binWidthPx)
     }
 
-    private fun buildHints(
-        aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
+    private fun buildHint(
+        p: DataPointAesthetics,
+        dotId: Int,
         ctx: GeomContext,
-        binWidthPx: Double,
+        geomHelper: GeomHelper,
+        binWidthPx: Double
     ) {
-        val rectFactory = fun (p: DataPointAesthetics) : DoubleRectangle? {
-            if (!isFinite(p.x()) || !isFinite(p.stacksize()))
-                return null
+        if (!isFinite(p.x()) || !isFinite(p.stacksize()))
+            return
 
-            val dotRadius = dotsize * binWidthPx
-            val yShiftSign = if (stackdir == Stackdir.DOWN) -1 else 1
-            val origin = getDotCenter(p, p.stacksize()!!.toInt() - 1, binWidthPx)
-                .add(DoubleVector(-dotRadius / 2, yShiftSign * dotRadius / 2))
-            val dimension = DoubleVector(dotRadius, 0.0)
+        val dotRadius = dotsize * binWidthPx
+        val yShiftSign = if (stackdir == Stackdir.DOWN) -1 else 1
+        val origin = getDotCenter(p, dotId, binWidthPx)
+            .add(DoubleVector(-dotRadius / 2, yShiftSign * dotRadius / 2))
+        val dimension = DoubleVector(dotRadius, 0.0)
+        val rect = DoubleRectangle(origin, dimension)
 
-            return DoubleRectangle(origin, dimension)
-        }
-
-        BarTooltipHelper.collectRectangleTargets(
-            emptyList(),
-            aesthetics, pos, coord, ctx,
-            rectFactory,
-            { HintColorUtil.fromFill(it) }
+        ctx.targetCollector.addRectangle(
+            p.index(),
+            geomHelper.toClient(rect, p),
+            GeomTargetCollector.TooltipParams.params()
+                .setMainColor(HintColorUtil.fromFill(p))
+                .setColors(HintColorUtil.fromMappedColors(ctx)(p)),
+            tooltipKind = if (ctx.flipped) {
+                TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            } else {
+                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            }
         )
     }
 
@@ -144,13 +163,28 @@ class DotplotGeom : GeomBase() {
     }
 
     enum class Stackdir {
-        UP, DOWN, CENTER, CENTERWHOLE
+        UP, DOWN, CENTER, CENTERWHOLE;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Stackdir>()
+
+            fun safeValueOf(v: String): Stackdir {
+                return ENUM_INFO.safeValueOf(v) ?:
+                throw IllegalArgumentException(
+                    "Unsupported stackdir: '$v'\n" +
+                    "Use one of: up, down, center, centerwhole."
+                )
+            }
+        }
     }
 
     companion object {
         val DEF_DOTSIZE = 1.0
-        val DEF_STACKDIR = Stackdir.UP
         val DEF_STACKRATIO = 1.0
+        val DEF_STACKGROUPS = false
+        val DEF_STACKDIR = Stackdir.UP
+        val DEF_METHOD = Method.DOTDENSITY
 
         const val HANDLES_GROUPS = false
     }

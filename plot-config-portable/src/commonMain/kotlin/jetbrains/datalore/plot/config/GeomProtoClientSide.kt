@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
+import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
@@ -56,11 +57,17 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Dotplot.DOTSIZE)) {
                     geom.dotsize = opts.getDouble(Dotplot.DOTSIZE)!!
                 }
-                if (opts.hasOwn(Dotplot.STACKDIR)) {
-                    geom.setStackdir(opts.getString(Dotplot.STACKDIR))
-                }
                 if (opts.hasOwn(Dotplot.STACKRATIO)) {
                     geom.stackratio = opts.getDouble(Dotplot.STACKRATIO)!!
+                }
+                if (opts.hasOwn(Dotplot.STACKGROUPS)) {
+                    geom.stackgroups = opts.getBoolean(Dotplot.STACKGROUPS)!!
+                }
+                if (opts.hasOwn(Dotplot.STACKDIR)) {
+                    geom.stackdir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
+                }
+                if (opts.hasOwn(Dotplot.METHOD)) {
+                    geom.method = DotplotStat.Method.safeValueOf(opts.getString(Dotplot.METHOD)!!)
                 }
                 geom
             }

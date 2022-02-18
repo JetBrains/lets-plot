@@ -105,7 +105,9 @@ class Dotplot {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'dotplot'," +
-                "                 'binwidth': 0.2" +
+                "                 'method': 'histodot'," +
+                "                 'bins': 20," +
+                "                 'stackgroups': true" +
                 "               }" +
                 "             ]" +
                 "}"

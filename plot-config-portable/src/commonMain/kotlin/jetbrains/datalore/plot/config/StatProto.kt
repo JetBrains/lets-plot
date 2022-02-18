@@ -99,14 +99,7 @@ object StatProto {
     private fun configureDotplotStat(options: OptionsAccessor): BinStat {
 
         val method = options.getString(Bin.METHOD)?.let {
-            when (it.lowercase()) {
-                "histodot" -> DotplotStat.Method.HISTOGRAM
-                "dotdensity" -> DotplotStat.Method.DOTDENSITY
-                else -> throw IllegalArgumentException(
-                    "Unsupported method: '$it'\n" +
-                    "Use one of: histogram (histodot), dotdensity."
-                )
-            }
+            DotplotStat.Method.safeValueOf(it!!)
         }
 
         return Stats.dotplot(
