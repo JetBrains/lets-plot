@@ -876,9 +876,6 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'bin' (depends on `method` parameter).
-    position : str or `FeatureSpec`, default='identity'
-        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
-        or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
