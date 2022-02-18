@@ -12,6 +12,7 @@ class Dotplot {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            histodot(),
             coordFlip(),
             withGroups(),
             dotplotParams(),
@@ -31,6 +32,29 @@ class Dotplot {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'dotplot'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun histodot(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "                'x': 'sepal length (cm)'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'method=histodot'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'dotplot'," +
+                "                 'method': 'histodot'" +
                 "               }" +
                 "             ]" +
                 "}"

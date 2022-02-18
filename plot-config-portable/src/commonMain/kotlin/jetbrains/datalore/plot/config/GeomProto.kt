@@ -152,8 +152,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
 
         private fun dotplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
-            defaults["stat"] = "bin"
-            defaults["method"] = "dotdensity"
+            defaults["stat"] = "dotplot"
             defaults["position"] = "identity"
             return defaults
         }

@@ -19,7 +19,6 @@ class BinStatTest {
         val stat = BinStat(
             binCount,
             null,
-            BinStat.Method.HISTOGRAM,
             BinStat.XPosKind.NONE,
             0.0
         )

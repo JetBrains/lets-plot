@@ -31,7 +31,14 @@ object StatProto {
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
-            StatKind.BIN -> return configureBinStat(options)
+            StatKind.BIN -> {
+                return Stats.bin(
+                    binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
+                    binWidth = options.getDouble(Bin.BINWIDTH),
+                    center = options.getDouble(Bin.CENTER),
+                    boundary = options.getDouble(Bin.BOUNDARY)
+                )
+            }
 
             StatKind.BIN2D -> {
                 val (binCountX, binCountY) = options.getNumPairDef(
@@ -51,6 +58,8 @@ object StatProto {
                     drop = options.getBoolean(Bin2d.DROP, def = Bin2dStat.DEF_DROP)
                 )
             }
+
+            StatKind.DOTPLOT -> return configureDotplotStat(options)
 
             StatKind.CONTOUR -> {
                 return ContourStat(
@@ -87,12 +96,12 @@ object StatProto {
         }
     }
 
-    private fun configureBinStat(options: OptionsAccessor): BinStat {
+    private fun configureDotplotStat(options: OptionsAccessor): BinStat {
 
         val method = options.getString(Bin.METHOD)?.let {
             when (it.lowercase()) {
-                "histogram", "histodot" -> BinStat.Method.HISTOGRAM
-                "dotdensity" -> BinStat.Method.DOTDENSITY
+                "histodot" -> DotplotStat.Method.HISTOGRAM
+                "dotdensity" -> DotplotStat.Method.DOTDENSITY
                 else -> throw IllegalArgumentException(
                     "Unsupported method: '$it'\n" +
                     "Use one of: histogram (histodot), dotdensity."
@@ -100,12 +109,12 @@ object StatProto {
             }
         }
 
-        return Stats.bin(
+        return Stats.dotplot(
             binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
             binWidth = options.getDouble(Bin.BINWIDTH),
-            method = method ?: BinStat.DEF_METHOD,
             center = options.getDouble(Bin.CENTER),
-            boundary = options.getDouble(Bin.BOUNDARY)
+            boundary = options.getDouble(Bin.BOUNDARY),
+            method = method ?: DotplotStat.DEF_METHOD
         )
     }
 

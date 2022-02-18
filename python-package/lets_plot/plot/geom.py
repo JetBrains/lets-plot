@@ -762,7 +762,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     center : float
         Specifies x-value to align bin centers to.
     boundary : float
-        Specifies x-value to align bin boundary (i.e. point berween bins) to.
+        Specifies x-value to align bin boundary (i.e. point between bins) to.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -782,6 +782,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Computed variables:
 
     - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..binwidth..: width of each bin.
 
     `geom_histogram()` understands the following aesthetics mappings:
 
@@ -853,7 +854,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
                  bins=None,
                  binwidth=None,
                  center=None,
@@ -872,10 +873,10 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='bin'
+    stat : str, default='dotplot'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'bin' (depends on `method` parameter).
+        'dotplot' (depends on `method` parameter).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -887,6 +888,8 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     binwidth : float
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
+    bins : int, default=30
+        When method is 'histodot', this specifies number of bins. Overridden by `binwidth`.
     method : {'dotdensity', 'histodot'}, default='dotdensity'
         Use 'dotdensity' for dot-density binning,
         or 'histodot' for fixed bin widths (like in geom_histogram).
@@ -925,12 +928,11 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     `geom_dotplot()` understands the following aesthetics mappings:
 
-    - x : x-axis value (this values will produce cases or bins for bars).
+    - x : x-axis value.
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - weight : used by 'bin' stat to compute weighted sum instead of simple count, if method is 'histodot'.
 
     Examples
     --------
@@ -980,7 +982,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  mapping=mapping,
                  data=data,
                  stat=stat,
-                 position=position,
+                 position=None,
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,

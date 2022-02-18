@@ -28,14 +28,13 @@ import kotlin.math.abs
  * ncount - count, scaled to maximum of 1
  * ndensity - density, scaled to maximum of 1
  */
-class BinStat(
+open class BinStat(
     binCount: Int,
     binWidth: Double?,
-    private val method: Method,
     private val xPosKind: XPosKind,
     private val xPos: Double
 ) : BaseStat(DEF_MAPPING) {
-    private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
+    protected val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.WEIGHT)
@@ -53,10 +52,7 @@ class BinStat(
 
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
-            val binsData = when(method) {
-                Method.HISTOGRAM -> computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
-                Method.DOTDENSITY -> computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X))
-            }
+            val binsData = computeStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
             statDensity.addAll(binsData.density)
@@ -71,7 +67,7 @@ class BinStat(
             .build()
     }
 
-    private fun computeHistogramStatSeries(
+    protected fun computeStatSeries(
         data: DataFrame,
         rangeX: ClosedRange<Double>,
         valuesX: List<Double?>
@@ -140,31 +136,12 @@ class BinStat(
         return binsData
     }
 
-    private fun computeDotdensityStatSeries(
-        rangeX: ClosedRange<Double>,
-        valuesX: List<Double?>
-    ): BinStatUtil.BinsData {
-        val spanX = SeriesUtil.span(rangeX)
-        val b = BinStatUtil.binCountAndWidth(spanX, binOptions)
-
-        return BinStatUtil.computeDotdensityBins(
-            valuesX,
-            b.width
-        )
-    }
-
     enum class XPosKind {
         NONE, CENTER, BOUNDARY
     }
 
-    enum class Method {
-        HISTOGRAM, DOTDENSITY
-    }
-
     companion object {
         const val DEF_BIN_COUNT = 30
-
-        val DEF_METHOD = Method.HISTOGRAM
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

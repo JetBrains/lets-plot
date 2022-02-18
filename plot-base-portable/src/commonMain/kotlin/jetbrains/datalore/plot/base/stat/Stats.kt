@@ -89,13 +89,37 @@ object Stats {
     fun bin(
         binCount: Int = BinStat.DEF_BIN_COUNT,
         binWidth: Double? = null,
-        method: BinStat.Method = BinStat.DEF_METHOD,
         center: Double? = null,
         boundary: Double? = null
     ): BinStat {
         var xPosKind = BinStat.XPosKind.NONE
         var xPosValue = 0.0
-        if (method != BinStat.Method.DOTDENSITY) {
+        if (boundary != null) {
+            xPosKind = BinStat.XPosKind.BOUNDARY
+            xPosValue = boundary
+        } else if (center != null) {
+            xPosKind = BinStat.XPosKind.CENTER
+            xPosValue = center
+        }
+
+        return BinStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue
+        )
+    }
+
+    fun dotplot(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null,
+        method: DotplotStat.Method = DotplotStat.DEF_METHOD
+    ): DotplotStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (method != DotplotStat.Method.DOTDENSITY) {
             if (boundary != null) {
                 xPosKind = BinStat.XPosKind.BOUNDARY
                 xPosValue = boundary
@@ -105,12 +129,12 @@ object Stats {
             }
         }
 
-        return BinStat(
+        return DotplotStat(
             binCount = binCount,
             binWidth = binWidth,
-            method = method,
             xPosKind = xPosKind,
-            xPos = xPosValue
+            xPos = xPosValue,
+            method = method
         )
     }
 
