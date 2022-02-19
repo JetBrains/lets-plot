@@ -18,10 +18,10 @@ import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONSTANTS_SCALING_LIMIT
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.AES_ZOOMIN_LIMIT
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_ZOOMIN_LIMIT
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DEV_PARAMS
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LOCATION
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.MAPPINGS_SCALING_LIMIT
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.PROJECTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TILES
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
@@ -110,8 +110,8 @@ object LiveMapProvider {
                 )
                 layers = LayerConverter.convert(
                     letsPlotLayers,
-                    myLiveMapOptions.getInt(MAPPINGS_SCALING_LIMIT) ?: 0,
-                    myLiveMapOptions.getInt(CONSTANTS_SCALING_LIMIT) ?: -1,
+                    myLiveMapOptions.getInt(AES_ZOOMIN_LIMIT) ?: 0,
+                    myLiveMapOptions.getInt(CONST_ZOOMIN_LIMIT) ?: -1,
                     myLiveMapOptions.getBool(Option.Geom.LiveMap.GEODESIC) ?: true
                 )
             }

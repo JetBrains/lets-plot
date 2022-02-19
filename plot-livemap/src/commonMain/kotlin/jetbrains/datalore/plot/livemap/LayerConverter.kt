@@ -17,8 +17,8 @@ import jetbrains.livemap.api.*
 object LayerConverter {
     fun convert(
         letsPlotLayers: List<LayerRendererData>,
-        mappingsScaleLimit: Int,
-        constantsScaleLimit: Int,
+        aesScalingLimit: Int,
+        constScalingLimit: Int,
         geodesic: Boolean
     ): List<LayersBuilder.() -> Unit> {
         return letsPlotLayers.mapIndexed { index, layer ->
@@ -56,14 +56,14 @@ object LayerConverter {
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
-            val positiveScaleLimit = when (Aes.SIZE !in layer.mappedAes) {
-                true -> mappingsScaleLimit
-                false -> constantsScaleLimit
+            val positiveScalingLimit = when (Aes.SIZE in layer.mappedAes) {
+                true -> aesScalingLimit
+                false -> constScalingLimit
             }
 
-            val sizeScalingRange = when (positiveScaleLimit) {
+            val sizeScalingRange = when (positiveScalingLimit) {
                 -1 -> -2..Int.MAX_VALUE
-                else -> -2..positiveScaleLimit
+                else -> -2..positiveScalingLimit
             }
 
             createLayerBuilder(

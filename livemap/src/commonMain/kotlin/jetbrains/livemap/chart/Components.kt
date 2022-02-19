@@ -17,7 +17,7 @@ class ChartElementComponent : EcsComponent {
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
     var scalingSizeFactor: Double = 1.0
-    var scalingAlphaValue: Double? = null
+    var scalingAlphaValue: Int? = null
 }
 
 class TextSpecComponent : EcsComponent {

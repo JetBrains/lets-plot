@@ -47,7 +47,7 @@ object Renderers {
                 ctx.fill()
             }
             if (chartElement.strokeColor != null && !chartElement.strokeWidth.isNaN()) {
-                ctx.setStrokeStyle(chartElement.strokeColor)
+                ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
                 ctx.setLineWidth(chartElement.strokeWidth)
                 ctx.stroke()
             }
@@ -56,13 +56,13 @@ object Renderers {
 
     class PolygonRenderer : Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
-            if (!entity.contains(ScreenGeometryComponent::class)) {
+            if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
 
             ctx.save()
 
-            if (entity.contains(ScaleComponent::class)) {
+            if (entity.contains<ScaleComponent>()) {
                 val scale = entity.get<ScaleComponent>().scale
                 if (scale != 1.0) {
                     ctx.scale(scale, scale)
@@ -84,7 +84,7 @@ object Renderers {
                 }
 
                 if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-                    c.setStrokeStyle(chartElement.strokeColor)
+                    c.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
                     c.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
                     c.stroke()
                 }
@@ -96,12 +96,12 @@ object Renderers {
 
     class PathRenderer : Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
-            if (!entity.contains(ScreenGeometryComponent::class)) {
+            if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
 
             val chartElement = entity.get<ChartElementComponent>()
-            ctx.setStrokeStyle(chartElement.strokeColor)
+            ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
             ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scalingSizeFactor }.toDoubleArray())
             ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
             ctx.beginPath()
@@ -128,4 +128,3 @@ object Renderers {
         }
     }
 }
-

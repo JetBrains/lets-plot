@@ -60,7 +60,7 @@ class LiveMap {
         ]
       },
       "zoom": 6,
-      "constants_scaling_limit": 2, 
+      "const_zoomin_limit": 2, 
       "tiles": {
         "kind": "raster_zxy",
         "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/ASTER_GDEM_Greyscale_Shaded_Relief/default//GoogleMapsCompatible_Level12/{z}/{y}/{x}.jpg",
@@ -1706,7 +1706,7 @@ class LiveMap {
         ]
       },
       "zoom": 6,
-      "mappings_scaling_limit": -1,
+      "aes_zoomin_limit": -1,
       "tiles": {
         "kind": "raster_zxy",
         "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_CityLights_2012/default//GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",

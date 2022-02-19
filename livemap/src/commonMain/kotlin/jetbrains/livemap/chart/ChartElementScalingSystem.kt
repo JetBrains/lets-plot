@@ -20,28 +20,30 @@ import kotlin.math.roundToInt
 class ChartElementScalingSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
-
+    private val alphaScalingStartingLevel = 3
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         if (context.initialZoom == null) {
             return
         }
 
         onEachEntity2<ZoomLevelChangedComponent, ChartElementComponent> { entity, _, chartElementComponent ->
-            val zoomDelta = context.camera.zoom.roundToInt() - context.initialZoom!!
             with(chartElementComponent) {
-                scalingSizeFactor = sizeScalingRange?.let {
+                sizeScalingRange?.let {
+                    val zoomDelta = context.camera.zoom.roundToInt() - context.initialZoom!!
                     val scalingLevel = zoomDelta.coerceIn(it)
-                    when {
+
+                    val alphaScalingLevel = scalingLevel - alphaScalingStartingLevel + 1
+                    scalingAlphaValue = when {
+                        alphaScalingEnabled && alphaScalingLevel > 0 -> (max(0.1, 1.0 - 0.2 * (alphaScalingLevel)) * 255).roundToInt()
+                        else -> null
+                    }
+
+                    scalingSizeFactor = when {
                         scalingLevel == 0 -> 1.0
                         scalingLevel > 0 -> 2.0.pow(scalingLevel)
                         scalingLevel < 0 -> 1.0 / 2.0.pow(abs(scalingLevel))
                         else -> error("Unknown")
                     }
-                } ?: 1.0
-
-                scalingAlphaValue = when {
-                    alphaScalingEnabled && zoomDelta > 2 -> max(0.1, 1.0 - 0.2 * (zoomDelta - 2))
-                    else -> null
                 }
 
                 entity.tryGet<SymbolComponent>()?.let {

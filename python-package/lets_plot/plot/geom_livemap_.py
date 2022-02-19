@@ -35,8 +35,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=None,
                  scale_zooms=None,
                  scale_objects=None,
-                 mappings_scaling_limit=None,
-                 constants_scaling_limit=None,
+                 aes_zoomin_limit=None,
+                 const_zoomin_limit=None,
                  **other_args):
     """
     Display an interactive map.
@@ -87,14 +87,16 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         or the result of a call to a `maptiles_xxx()` functions.
     show_coord_pick_tools : bool, defafult=False
         Show buttons "copy location" and "draw geometry"
-    scale_zooms : int, defafult=2
-        Number of zoom-ins when map objects will get scaled.
-    scale_objects : str
-        Kind of objects to be scaled on zoom-in. There are two kind of objects - constant and mapped.
-        Values:
-         - 'constant' - objects with static size will be scaled on zoom-in, mapped objects will keep initial size
-         - 'none' - constant and mapped objects will keep their initial size
-         - 'both' - constant and mapped objects will be scaled on zoom-in
+    aes_zoomin_limit : int, defafult=0
+        Number of zoom-ins when map objects with mapped size will get scaled.
+         0: no scaling
+         -1: no limit
+         n: number of zoomins with scaling
+    const_zoomin_limit : int, defafult=-1
+        Number of zoom-ins when map objects with constant size will get scaled.
+         0: no scaling
+         -1: no limit
+         n: number of zoomins with scaling
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -240,8 +242,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=show_coord_pick_tools,
                  scale_zooms=scale_zooms,
                  scale_objects=scale_objects,
-                 mappings_scaling_limit=mappings_scaling_limit,
-                 constants_scaling_limit=constants_scaling_limit,
+                 aes_zoomin_limit=aes_zoomin_limit,
+                 const_zoomin_limit=const_zoomin_limit,
                  **other_args
     )
 
