@@ -31,11 +31,11 @@ internal object FreeScalesTilesLayouter {
 //        throw IllegalStateException("Not implemented")
 
         // rough estimate (without axis. The final size will be smaller)
-        val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles, facets.colCount)
+        val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
         val vAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.LEFT, vAxisTheme)
         val geomWidth = (tilesAreaSize.x - addedHSize - vAxisCount * vAxisThickness) / facets.colCount
 
-        val hAxisCount = FacetedPlotLayoutUtil.countHAxisInFirstCol(facetTiles, facets.colCount)
+        val hAxisCount = FacetedPlotLayoutUtil.countHAxisInFirstCol(facetTiles)
         val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme)
         val geomHeight = (tilesAreaSize.y - addedVSize - hAxisCount * hAxisThickness) / facets.rowCount
 

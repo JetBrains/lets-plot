@@ -9,6 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.colIndices
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.rowIndices
 import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
@@ -79,65 +81,86 @@ internal class FacetedPlotLayout(
 
         // create final plot tiles layout infos
 
+        // Compute tile vwrtical offsets in 1st column.
+        val firstColIndices = colIndices(facetTiles, 0)
+        val firstColTileHeights = firstColIndices.map {
+            Pair(facetTiles[it], tileLayoutInfos[it])
+        }.map { (facetTile, layoutInfo) ->
+            val geomHeight = layoutInfo.geomHeight()
+            val heightWithAxis = if (layoutInfo.hAxisShown) {
+                geomHeight + layoutInfo.axisThicknessX()
+            } else {
+                geomHeight
+            }
+
+            val heightWithStrip = if (showFacetStrip) {
+                val addedHeight = facetColHeadHeight(facetTile.colLabs.size)
+                heightWithAxis + addedHeight
+            } else {
+                heightWithAxis
+            }
+            heightWithStrip
+        }
+        val firstColTileVOffsets = List(facets.rowCount) { i ->
+            firstColTileHeights.take(i).sum() + PANEL_PADDING * i
+        }
+
+        // Compute tile horizontal offsets in 1st row.
+        val firstRowIndices = rowIndices(facetTiles, 0)
+        val firstRowTileWidths = firstRowIndices.map {
+            Pair(facetTiles[it], tileLayoutInfos[it])
+        }.map { (facetTile, layoutInfo) ->
+            val geomWidth = layoutInfo.geomWidth()
+            val widthWithAxis = if (layoutInfo.vAxisShown) {
+                geomWidth + layoutInfo.axisThicknessY()
+            } else {
+                geomWidth
+            }
+            val widthWithFacetTab = if (facetTile.rowLab != null && showFacetStrip) {
+                widthWithAxis + FACET_TAB_HEIGHT
+            } else {
+                widthWithAxis
+            }
+            widthWithFacetTab
+        }
+        val firstRowTileHOffsets = List(facets.colCount) { i ->
+            firstRowTileWidths.take(i).sum() + PANEL_PADDING * i
+        }
+
         var tilesAreaBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
         val tilesAreaOffset = DoubleVector(paddingLeft, paddingTop)
         val tileInfos = ArrayList<TileLayoutInfo>()
 
-        var offsetX = 0.0
-        var offsetY = 0.0
-        var currRow = 0
-        var prevHeight = 0.0
-
         for ((index, facetTile) in facetTiles.withIndex()) {
             val tileLayoutInfo = tileLayoutInfos[index]
+
+            val geomX = if (facetTile.hasVAxis) {
+                tileLayoutInfo.axisThicknessY()
+            } else {
+                0.0
+            }
+
+            val geomY = if (showFacetStrip) {
+                facetColHeadHeight(facetTile.colLabs.size)
+            } else {
+                0.0
+            }
+
             val geomWidth = tileLayoutInfo.geomWidth()
             val geomHeight = tileLayoutInfo.geomHeight()
-
-            val axisThicknessX = tileLayoutInfo.axisThicknessX()
-            val axisThicknessY = tileLayoutInfo.axisThicknessY()
-
-            var width = geomWidth
-            var geomX = 0.0
-            if (facetTile.hasVAxis) {
-                width += axisThicknessY
-                geomX = axisThicknessY
-            }
-            if (facetTile.rowLab != null && showFacetStrip) {
-                width += FACET_TAB_HEIGHT
-            }
-
-            var height = geomHeight
-            if (facetTile.hasHAxis /*&& facetTile.row == facets.rowCount - 1*/) {   // bottom row only
-                height += axisThicknessX
-            }
-
-            var geomY = 0.0
-            if (showFacetStrip) {
-                val addedHeight = facetColHeadHeight(facetTile.colLabs.size)
-                height += addedHeight
-                geomY = addedHeight
-            }
-
-            val bounds = DoubleRectangle(0.0, 0.0, width, height)
             val geomBounds = DoubleRectangle(geomX, geomY, geomWidth, geomHeight)
 
-            val row = facetTile.row
-            if (row > currRow) {
-                currRow = row
-                offsetY += prevHeight + PANEL_PADDING
-            }
-            prevHeight = height
+            val offset = DoubleVector(
+                firstRowTileHOffsets[facetTile.col],
+                firstColTileVOffsets[facetTile.row]
+            )
 
-            val col = facetTile.col
-            if (col == 0) {
-                offsetX = 0.0
-            }
+            val tileWidth = firstRowTileWidths[facetTile.col]
+            val tileHeight = firstColTileHeights[facetTile.row]
+            val tileBounds = DoubleRectangle(0.0, 0.0, tileWidth, tileHeight)
 
-            val offset = DoubleVector(offsetX, offsetY)
-            offsetX += width + PANEL_PADDING
-
-            var info = TileLayoutInfo(
-                bounds,
+            var newLayoutInfo = TileLayoutInfo(
+                tileBounds,
                 geomBounds,
                 TileLayoutUtil.clipBounds(geomBounds),
                 tileLayoutInfo.hAxisInfo,
@@ -149,12 +172,11 @@ internal class FacetedPlotLayout(
                 .withOffset(tilesAreaOffset.add(offset))
 
             if (showFacetStrip) {
-                info = info.withFacetLabels(facetTile.colLabs, facetTile.rowLab)
+                newLayoutInfo = newLayoutInfo.withFacetLabels(facetTile.colLabs, facetTile.rowLab)
             }
 
-            tileInfos.add(info)
-
-            tilesAreaBounds = tilesAreaBounds.union(info.getAbsoluteBounds(tilesAreaOffset))
+            tileInfos.add(newLayoutInfo)
+            tilesAreaBounds = tilesAreaBounds.union(newLayoutInfo.getAbsoluteBounds(tilesAreaOffset))
         }
 
         val plotSize = DoubleVector(

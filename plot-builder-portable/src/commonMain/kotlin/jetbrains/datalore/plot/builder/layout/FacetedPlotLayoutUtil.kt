@@ -10,28 +10,14 @@ import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import kotlin.math.max
 
 internal object FacetedPlotLayoutUtil {
-    fun countVAxisInFirstRow(
-        facetTiles: List<PlotFacets.FacetTileInfo>,
-        colCount: Int,
-    ): Int {
-        return facetTiles.take(colCount).map {
+    fun countVAxisInFirstRow(facetTiles: List<PlotFacets.FacetTileInfo>): Int {
+        return facetTiles.filter { it.row == 0 }.map {
             if (it.hasVAxis) 1 else 0
         }.sum()
     }
 
-    fun countHAxisInFirstCol(
-        facetTiles: List<PlotFacets.FacetTileInfo>,
-        colCount: Int,
-    ): Int {
-//        val col0Indices = (facetTiles.indices).filter { it % colCount == 0 }
-//        return col0Indices
-//            .map { facetTiles[it] }
-//            .map {
-//                if (it.hasHAxis) 1 else 0
-//            }.sum()
-
-        val col0Tiles = facetTiles.filter { it.col == 0 }
-        return col0Tiles.map {
+    fun countHAxisInFirstCol(facetTiles: List<PlotFacets.FacetTileInfo>): Int {
+        return facetTiles.filter { it.col == 0 }.map {
             if (it.hasHAxis) 1 else 0
         }.sum()
     }
@@ -60,17 +46,6 @@ internal object FacetedPlotLayoutUtil {
                 rowWidth += (tileLayoutInfo.geomWidth() + addAxisWidth)
             }
 
-//            for (c in 0 until facets.colCount) {
-//                val i = r * facets.colCount + c
-//                if (i < tileLayoutInfos.size) {
-//                    val tileLayoutInfo = tileLayoutInfos[i]
-//                    val addAxisWidth = when (tileLayoutInfo.vAxisShown) {
-//                        true -> tileLayoutInfo.axisThicknessY()
-//                        else -> 0.0
-//                    }
-//                    rowWidth += (tileLayoutInfo.geomWidth() + addAxisWidth)
-//                }
-//            }
             totalTilesWidth = max(totalTilesWidth, rowWidth)
         }
 
@@ -87,17 +62,6 @@ internal object FacetedPlotLayoutUtil {
                 colHeight += (tileLayoutInfo.geomHeight() + addAxisHeight)
             }
 
-//            for (r in 0 until facets.rowCount) {
-//                val i = r * facets.colCount + c
-//                if (i < tileLayoutInfos.size) {
-//                    val tileLayoutInfo = tileLayoutInfos[i]
-//                    val addAxisHeight = when (tileLayoutInfo.hAxisShown) {
-//                        true -> tileLayoutInfo.axisThicknessX()
-//                        else -> 0.0
-//                    }
-//                    colHeight += (tileLayoutInfo.geomHeight() + addAxisHeight)
-//                }
-//            }
             totalTilesHeight = max(totalTilesHeight, colHeight)
         }
 
@@ -114,7 +78,7 @@ internal object FacetedPlotLayoutUtil {
 //        return facetTiles.filter { it.row == row }
 //    }
 
-    private fun colIndices(facetTiles: List<PlotFacets.FacetTileInfo>, col: Int): List<Int> {
+    fun colIndices(facetTiles: List<PlotFacets.FacetTileInfo>, col: Int): List<Int> {
         return facetTiles.withIndex()
             .filter { (_, tile) ->
                 tile.col == col
@@ -123,7 +87,7 @@ internal object FacetedPlotLayoutUtil {
             }
     }
 
-    private fun rowIndices(facetTiles: List<PlotFacets.FacetTileInfo>, row: Int): List<Int> {
+    fun rowIndices(facetTiles: List<PlotFacets.FacetTileInfo>, row: Int): List<Int> {
         return facetTiles.withIndex()
             .filter { (_, tile) ->
                 tile.row == row

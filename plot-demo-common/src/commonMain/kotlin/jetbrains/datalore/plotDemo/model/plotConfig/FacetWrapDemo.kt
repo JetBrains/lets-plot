@@ -11,11 +11,11 @@ import jetbrains.datalore.plotDemo.data.AutoMpg
 class FacetWrapDemo {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            oneFacetDef(),
-//            oneFacet3cols(),
+            oneFacetDef(),
+            oneFacet3cols(),
             oneFacet4rows(),
-//            twoFacets(),
-//            twoFacets_CylindersOrderDesc(),
+            twoFacets(),
+            twoFacets_CylindersOrderDesc(),
         )
     }
 
