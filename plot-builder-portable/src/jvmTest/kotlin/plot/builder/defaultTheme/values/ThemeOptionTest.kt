@@ -109,6 +109,8 @@ internal class ThemeOptionTest {
 
             ThemeOption.PLOT_BKGR_RECT -> (theme.plot() as DefaultPlotTheme).backgroundKey
             ThemeOption.PLOT_TITLE -> (theme.plot() as DefaultPlotTheme).titleKey
+            ThemeOption.PLOT_SUBTITLE -> (theme.plot() as DefaultPlotTheme).subtitleKey
+            ThemeOption.PLOT_CAPTION -> (theme.plot() as DefaultPlotTheme).captionKey
             ThemeOption.LEGEND_BKGR_RECT -> (theme.legend() as DefaultLegendTheme).backgroundKey
             ThemeOption.LEGEND_TEXT -> (theme.legend() as DefaultLegendTheme).textKey
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey

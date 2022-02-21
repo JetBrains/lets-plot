@@ -75,7 +75,12 @@ internal object PositionalScalesUtil {
 
         return when (freeScale) {
             true -> {
-                throw IllegalStateException("Not implemented")
+                // Each tile has its own domain
+                domains.mapIndexed { i, v ->
+                    // 'expand' ranges and include '0' if necessary
+                    val domainExpanded = RangeUtil.expandRange(v, aes, scaleProto, layersByTile[i])
+                    SeriesUtil.ensureApplicableRange(domainExpanded)
+                }
             }
             else -> {
                 // One domain for all tiles.

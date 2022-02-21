@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.layout
+package jetbrains.datalore.plot.builder.layout.tile
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import kotlin.math.max
 
-internal object XYPlotLayoutUtil {
+internal object TileLayoutUtil {
     const val GEOM_MARGIN = 0.0          // min space around geom area
     private const val CLIP_EXTEND = 5.0
     val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
@@ -83,6 +83,15 @@ internal object XYPlotLayoutUtil {
             plotSize.x - 2 * geomPaddung,
             plotSize.y - 2 * geomPaddung
         )
+        return maxTickLabelsBounds(axisOrientation, stretch, geomBounds, maxGeomBounds)
+    }
+
+    fun maxTickLabelsBounds(
+        axisOrientation: Orientation,
+        stretch: Double,
+        geomBounds: DoubleRectangle,
+        maxGeomBounds: DoubleRectangle,
+    ): DoubleRectangle {
         when (axisOrientation) {
             Orientation.TOP,
             Orientation.BOTTOM -> {

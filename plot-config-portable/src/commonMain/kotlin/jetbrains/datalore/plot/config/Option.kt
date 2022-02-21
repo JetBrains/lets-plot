@@ -93,6 +93,9 @@ object Option {
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
         const val TITLE_TEXT = "text"
+        const val SUBTITLE_TEXT = "subtitle"
+        const val CAPTION = "caption"
+        const val CAPTION_TEXT = "text"
         const val COORD = "coord"
         const val FACET = "facet"
         const val THEME = "theme"
@@ -114,6 +117,7 @@ object Option {
         const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
+        const val TOOLTIP_TITLE = "tooltip_title"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
     }
@@ -156,6 +160,10 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
+        object Violin {
+            const val DRAW_QUANTILES = "draw_quantiles"
+        }
+
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"
@@ -195,13 +203,14 @@ object Option {
             const val LOCATION = "location"
             const val ZOOM = "zoom"
             const val STROKE = "stroke"
-            const val SCALED = "scaled"
             const val CLUSTERING = "clustering"
             const val LABELS = "labels"
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
+            const val AES_ZOOMIN_LIMIT = "aes_zoomin_limit"
+            const val CONST_ZOOMIN_LIMIT = "const_zoomin_limit"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -291,6 +300,10 @@ object Option {
             const val IS_CONTOUR = "contour"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+        }
+
+        object YDensity {
+            const val SCALE = "scale"
         }
     }
 

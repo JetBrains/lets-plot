@@ -47,18 +47,18 @@ class TooltipConfig {
                            'geom': 'point',
                            'tooltips' : {
                                'tooltip_lines': [  
-                                    'x/y|$aesX x $aesY', 
                                     '$aesColor (miles per gallon)',
-                                    'car \'$vehicleName\' ($originCar)',
                                     '@|$modelYear',
-                                    '@|$originCar',
+                                    'x/y|$aesX x $aesY',                                    
+                                    '',
                                     '#mpg data set'
                                ],
                                'tooltip_formats': [
                                     { 'field' : '$aesX', 'format' : '.1f' }, 
                                     { 'field' : '$aesY', 'format' : '.2f' }, 
                                     { 'field' : 'model year', 'format' : '19{.0f}' }
-                               ]
+                               ],                           
+                               'tooltip_title': 'car \'$vehicleName\' ($originCar)'
                            }
                         }
                      ]

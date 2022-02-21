@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.livemap.LiveMapOptions
+import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
@@ -237,22 +237,23 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
-        fun violin(): GeomProvider {
+        fun violin(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.VIOLIN,
                 AestheticsDefaults.violin(),
-                ViolinGeom.HANDLES_GROUPS
-            ) { ViolinGeom() }.build()
+                ViolinGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
         }
 
         fun livemap(
-            options: LiveMapOptions
+            displayMode: LivemapConstants.DisplayMode
         ): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
-                AestheticsDefaults.livemap(options.displayMode),
+                AestheticsDefaults.livemap(displayMode),
                 LiveMapGeom.HANDLES_GROUPS,
-                myGeomSupplier = { LiveMapGeom(options.displayMode) }
+                myGeomSupplier = { LiveMapGeom(displayMode) }
             ).build()
         }
 

@@ -25,6 +25,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
     private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
     private val myIsCrosshairEnabled: Boolean = builder.isCrosshairEnabled
+    private val myTooltipTitle: TooltipLine? = builder.tooltipTitle
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -41,7 +42,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame,
             myTooltipProperties,
             myIgnoreInvisibleTargets,
-            myIsCrosshairEnabled
+            myIsCrosshairEnabled,
+            myTooltipTitle?.let(::TooltipLine)
         )
     }
 
@@ -67,7 +69,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 dataFrame,
                 TooltipProperties.NONE,
                 ignoreInvisibleTargets = false,
-                isCrosshairEnabled = false
+                isCrosshairEnabled = false,
+                tooltipTitle = null
             )
         }
 
@@ -77,7 +80,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame: DataFrame,
             tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean,
-            isCrosshairEnabled: Boolean
+            isCrosshairEnabled: Boolean,
+            tooltipTitle: TooltipLine?
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
 
@@ -94,6 +98,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 line.fields.any(ValueSource::isAxis)
             }
 
+            tooltipTitle?.initDataContext(dataContext)
+
             return ContextualMapping(
                 mappedTooltipLines,
                 tooltipProperties.anchor,
@@ -101,7 +107,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 ignoreInvisibleTargets,
                 hasGeneralTooltip,
                 hasAxisTooltip,
-                isCrosshairEnabled
+                isCrosshairEnabled,
+                tooltipTitle
             )
         }
     }

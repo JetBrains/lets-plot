@@ -141,14 +141,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         }
 
         private fun labelSpecToString(plotLabelSpec: PlotLabelSpec): String {
-            return when (plotLabelSpec) {
-                PlotLabelSpec.PLOT_TITLE -> "PLOT_TITLE"
-                PlotLabelSpec.AXIS_TICK -> "AXIS_TICK"
-                PlotLabelSpec.AXIS_TICK_SMALL -> "AXIS_TICK_SMALL"
-                PlotLabelSpec.AXIS_TITLE -> "AXIS_TITLE"
-                PlotLabelSpec.LEGEND_TITLE -> "LEGEND_TITLE"
-                PlotLabelSpec.LEGEND_ITEM -> "LEGEND_ITEM"
-            }
+            return plotLabelSpec.name
         }
     }
 }

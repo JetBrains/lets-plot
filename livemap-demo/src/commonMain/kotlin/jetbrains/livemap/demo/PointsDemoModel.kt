@@ -25,7 +25,12 @@ class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                     point {
                         coord(MOSCOW)
+                        sizeScalingRange = -2..3
+                        alphaScalingEnabled = true
+
+                        shape = 21
                         strokeColor = Color.RED
+                        fillColor = Color.LIGHT_GREEN
                     }
                     point {
                         coord(BOSTON)

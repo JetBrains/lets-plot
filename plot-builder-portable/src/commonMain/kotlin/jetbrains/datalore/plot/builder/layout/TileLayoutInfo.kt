@@ -15,42 +15,42 @@ class TileLayoutInfo private constructor(
     // relative to plot tile
     val bounds: DoubleRectangle,      // plotting area + optional elements (axis, axis tick labels)
     val geomBounds: DoubleRectangle,  // actual plotting area
-    val clipBounds: DoubleRectangle,  // geom shapes outside these bounds will be cut-off
+    private val clipBounds: DoubleRectangle,  // geom shapes outside these bounds will be cut-off
 
     // Params xAxisInfo/yAxisInfo can be NULL.
     // In this case any mapping of positional Aes should be dropped (live map plot).
-    val xAxisInfo: AxisLayoutInfo?,
-    val yAxisInfo: AxisLayoutInfo?,
+    val hAxisInfo: AxisLayoutInfo?,
+    val vAxisInfo: AxisLayoutInfo?,
 
-    xAxisShown: Boolean,
-    yAxisShown: Boolean,
+    hAxisShown: Boolean,
+    vAxisShown: Boolean,
 
     val facetXLabels: List<String>,
     val facetYLabel: String?,
 
     val trueIndex: Int     // tile index before re-ordering (in facet wrap)
 ) {
-    val xAxisShown: Boolean = xAxisInfo != null && xAxisShown
-    val yAxisShown: Boolean = yAxisInfo != null && yAxisShown
+    val hAxisShown: Boolean = hAxisInfo != null && hAxisShown
+    val vAxisShown: Boolean = vAxisInfo != null && vAxisShown
 
     constructor(
         bounds: DoubleRectangle,
         geomBounds: DoubleRectangle,
         clipBounds: DoubleRectangle,
-        xAxisInfo: AxisLayoutInfo?,
-        yAxisInfo: AxisLayoutInfo?,
-        xAxisShown: Boolean = true,
-        yAxisShown: Boolean = true,
+        hAxisInfo: AxisLayoutInfo?,
+        vAxisInfo: AxisLayoutInfo?,
+        hAxisShown: Boolean,
+        vAxisShown: Boolean,
         trueIndex: Int
     ) : this(
         DoubleVector.ZERO,
         bounds,
         geomBounds,
         clipBounds,
-        xAxisInfo,
-        yAxisInfo,
-        xAxisShown = xAxisShown,
-        yAxisShown = yAxisShown,
+        hAxisInfo,
+        vAxisInfo,
+        hAxisShown = hAxisShown,
+        vAxisShown = vAxisShown,
         facetXLabels = emptyList(),
         facetYLabel = null,
         trueIndex
@@ -59,13 +59,39 @@ class TileLayoutInfo private constructor(
     fun withOffset(offset: DoubleVector): TileLayoutInfo {
         return TileLayoutInfo(
             offset,
-            bounds,
-            geomBounds,
-            clipBounds,
-            xAxisInfo, yAxisInfo,
-            xAxisShown, yAxisShown,
-            facetXLabels, facetYLabel,
-            trueIndex
+            this.bounds,
+            this.geomBounds,
+            this.clipBounds,
+            this.hAxisInfo, this.vAxisInfo,
+            this.hAxisShown, this.vAxisShown,
+            this.facetXLabels, this.facetYLabel,
+            this.trueIndex
+        )
+    }
+
+    fun withFacetLabels(xLabels: List<String>, yLabel: String?): TileLayoutInfo {
+        return TileLayoutInfo(
+            this.plotOrigin,
+            this.bounds,
+            this.geomBounds,
+            this.clipBounds,
+            this.hAxisInfo, this.vAxisInfo,
+            this.hAxisShown, this.vAxisShown,
+            xLabels, yLabel,
+            this.trueIndex
+        )
+    }
+
+    fun withAxisShown(hAxisShown: Boolean, vAxisShown: Boolean): TileLayoutInfo {
+        return TileLayoutInfo(
+            this.plotOrigin,
+            this.bounds,
+            this.geomBounds,
+            this.clipBounds,
+            this.hAxisInfo, this.vAxisInfo,
+            hAxisShown, vAxisShown,
+            this.facetXLabels, this.facetYLabel,
+            this.trueIndex
         )
     }
 
@@ -79,16 +105,19 @@ class TileLayoutInfo private constructor(
         return geomBounds.add(offset)
     }
 
-    fun withFacetLabels(xLabels: List<String>, yLabel: String?): TileLayoutInfo {
-        return TileLayoutInfo(
-            this.plotOrigin,
-            this.bounds,
-            this.geomBounds,
-            this.clipBounds,
-            this.xAxisInfo, this.yAxisInfo,
-            this.xAxisShown, this.yAxisShown,
-            xLabels, yLabel,
-            trueIndex
-        )
+    fun axisThicknessX(): Double {
+        return bounds.bottom - geomBounds.bottom
+    }
+
+    fun axisThicknessY(): Double {
+        return geomBounds.left - bounds.left
+    }
+
+    fun geomWidth(): Double {
+        return geomBounds.width
+    }
+
+    fun geomHeight(): Double {
+        return geomBounds.height
     }
 }

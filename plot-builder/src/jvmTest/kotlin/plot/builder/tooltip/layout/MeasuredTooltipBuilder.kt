@@ -57,6 +57,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
             TooltipSpec(
                 layoutHint = hint,
                 lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
+                title = null,
                 fill = myFill!!,
                 isOutlier = true,
                 anchor = myAnchor,

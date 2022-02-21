@@ -24,7 +24,7 @@ class PointLocatorHelperTest {
         .addComponents {
             + SymbolComponent().apply { size = explicitVec(radius * 2, radius * 2) }
             + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
-            + ChartElementComponent().apply { scaleSizeFactor = 1.0 }
+            + ChartElementComponent().apply { scalingSizeFactor = 1.0 }
         }
 
 

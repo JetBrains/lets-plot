@@ -46,7 +46,6 @@ open class OptionsAccessor(
             defaultOptions[option]
         }
     }
-
     fun getSafe(option: String): Any {
         return get(option) ?: throw IllegalStateException("Option `$option` not found.")
     }
@@ -69,6 +68,14 @@ open class OptionsAccessor(
     fun getDoubleList(option: String): List<Double> {
         val list = getNumList(option)
         return list.map { it.toDouble() }
+    }
+
+    fun getBoundedDoubleList(option: String, lowerBound: Double, upperBound: Double): List<Double> {
+        val list = getDoubleList(option)
+        list.forEach {
+            check(it in lowerBound..upperBound) { "Quantile $it is not in range [$lowerBound, $upperBound]" }
+        }
+        return list
     }
 
     fun getNumPair(option: String): Pair<Number, Number> {

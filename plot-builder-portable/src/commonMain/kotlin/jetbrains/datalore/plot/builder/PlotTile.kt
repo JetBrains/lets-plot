@@ -16,11 +16,11 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
-import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_H_PADDING
-import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_TAB_HEIGHT
-import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.FACET_V_PADDING
-import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColHeadHeight
-import jetbrains.datalore.plot.builder.layout.FacetGridPlotLayout.Companion.facetColLabelSize
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_H_PADDING
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_TAB_HEIGHT
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_V_PADDING
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadHeight
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColLabelSize
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.Theme

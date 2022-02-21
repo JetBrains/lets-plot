@@ -16,6 +16,8 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
 
     override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
 
+    override val cylindrical: Boolean = false
+
     override fun project(v: LonLatPoint): GeographicPoint {
 
         val x = toRadians(v.x)

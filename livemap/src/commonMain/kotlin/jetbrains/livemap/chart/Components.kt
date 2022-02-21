@@ -14,9 +14,10 @@ class ChartElementComponent : EcsComponent {
     var strokeColor: Color? = null
     var lineDash: DoubleArray? = null
 
-    var scaleRange: ClosedRange<Int>? = null
-    var scaleSizeFactor: Double = 1.0
-    var scaleAlphaValue: Double? = null
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
+    var scalingSizeFactor: Double = 1.0
+    var scalingAlphaValue: Int? = null
 }
 
 class TextSpecComponent : EcsComponent {

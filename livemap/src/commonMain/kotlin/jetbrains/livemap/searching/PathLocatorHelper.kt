@@ -23,7 +23,6 @@ class PathLocatorHelper : LocatorHelper {
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
         if (!target.contains(LOCATABLE_COMPONENTS)) {
-            println("missing locatable components")
             return false
         }
 
