@@ -50,18 +50,22 @@ class PlotSvgComponent constructor(
     subtitle: String?,
     private val layersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
-    private val frameOfReferenceProvider: TileFrameOfReferenceProvider,
+    private val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
-    val theme: Theme
+    val theme: Theme,
+    caption: String?
 ) : SvgComponent() {
 
-    private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty) ?: emptyList()
+    private fun splitToLines(text: String?) =
+        text?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty) ?: emptyList()
+
     private val titleLines: List<String> = splitToLines(title)
     private val subtitleLines: List<String> = splitToLines(subtitle)
+    private val captionLines: List<String> = splitToLines(caption)
 
-    val flippedAxis = frameOfReferenceProvider.flipAxis
+    val flippedAxis = frameOfReferenceProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
     var interactor: PlotInteractor? = null
@@ -77,10 +81,10 @@ class PlotSvgComponent constructor(
         private set
 
     // ToDo: remove
-    private val axisTitleLeft: String? = frameOfReferenceProvider.vAxisLabel
+    private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel
 
     // ToDo: remove
-    private val axisTitleBottom: String? = frameOfReferenceProvider.hAxisLabel
+    private val axisTitleBottom: String? = frameOfReferenceProviderByTile[0].hAxisLabel
 
     private val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -183,7 +187,9 @@ class PlotSvgComponent constructor(
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
-            legendsBlockInfo, theme
+            legendsBlockInfo,
+            theme,
+            captionLines
         )
 
         // Layout plot inners
@@ -201,7 +207,9 @@ class PlotSvgComponent constructor(
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
-            legendsBlockInfo, theme
+            legendsBlockInfo,
+            theme,
+            captionLines
         )
 
         // Position the "entire" plot rect in the center of the "overall" rect.
@@ -242,7 +250,7 @@ class PlotSvgComponent constructor(
         @Suppress("UnnecessaryVariable")
         val tilesOrigin = plotInnerOrigin
         for (tileLayoutInfo in plotInfo.tiles) {
-            val tileLayersIndex = tileLayoutInfo.trueIndex
+            val tileIndex = tileLayoutInfo.trueIndex
 
 //            println("plot offset: " + tileInfo.plotOffset)
 //            println("     bounds: " + tileInfo.bounds)
@@ -250,12 +258,12 @@ class PlotSvgComponent constructor(
 //            println("clip bounds: " + tileInfo.clipBounds)
 
             // Create a plot tile.
-            val frameOfReference: TileFrameOfReference = frameOfReferenceProvider.createFrameOfReference(
+            val frameOfReference = frameOfReferenceProviderByTile[tileIndex].createFrameOfReference(
                 tileLayoutInfo,
                 coordProvider,
                 DEBUG_DRAWING
             )
-            val tileLayers = tileLayers(tileLayersIndex)
+            val tileLayers = tileLayers(tileIndex)
             val tile = PlotTile(tileLayers, tilesOrigin, tileLayoutInfo, theme, frameOfReference)
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
@@ -297,7 +305,7 @@ class PlotSvgComponent constructor(
         }
         // add plot subtitle
         if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
+            val titleSize = PlotLayoutUtil.textDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
             addTitle(
                 subtitleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
@@ -351,6 +359,31 @@ class PlotSvgComponent constructor(
                 add(legendBox)
             }
         }
+
+        // add caption
+        if (captionLines.isNotEmpty()) {
+            val captionLineHeight = PlotLabelSpec.PLOT_CAPTION.height()
+            val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
+            captionLabel.addClassName(Style.PLOT_CAPTION)
+            captionLabel.textColor().set(theme.plot().captionColor())
+            captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
+            captionLabel.setX(0.0)
+            captionLabel.setLineVerticalMargin(captionLineHeight)
+
+            val captionSize = PlotLayoutUtil.textDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
+            val captionBounds = DoubleRectangle(
+                geomAreaBounds.right - captionSize.x,
+                plotOuterBounds.bottom - captionSize.y,
+                captionSize.x,
+                captionSize.y
+            )
+            captionLabel.moveTo(captionBounds.right, captionBounds.top + captionLineHeight)
+            add(captionLabel)
+
+            if (DEBUG_DRAWING) {
+                drawDebugRect(captionBounds, Color.BLUE)
+            }
+        }
     }
 
     private fun addTitle(
@@ -368,7 +401,7 @@ class PlotSvgComponent constructor(
         titleLabel.setX(0.0)
         titleLabel.setLineVerticalMargin(titleLineHeight)
 
-        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
+        val titleSize = PlotLayoutUtil.textDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
 
         titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
@@ -376,7 +409,7 @@ class PlotSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             var h = 0.0
-            PlotLayoutUtil.titleLinesDimensions(titleLines, labelSpec).forEach { sz ->
+            PlotLayoutUtil.textLinesDimensions(titleLines, labelSpec).forEach { sz ->
                 val bounds = DoubleRectangle(
                     leftTop.add(DoubleVector(0.0, h)),
                     sz

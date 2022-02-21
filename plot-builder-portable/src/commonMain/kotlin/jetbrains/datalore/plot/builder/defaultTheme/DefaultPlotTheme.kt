@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.defaultTheme
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBTITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
@@ -22,6 +23,7 @@ internal class DefaultPlotTheme(
     internal val backgroundKey = listOf(PLOT_BKGR_RECT, RECT)
     internal val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)
     internal val subtitleKey = listOf(PLOT_SUBTITLE, PLOT_TITLE, TITLE, TEXT)
+    internal val captionKey = listOf(PLOT_CAPTION, TITLE, TEXT)
 
     override fun showBackground(): Boolean {
         return !isElemBlank(backgroundKey)
@@ -45,5 +47,9 @@ internal class DefaultPlotTheme(
 
     override fun subtitleColor(): Color {
         return getColor(getElemValue(subtitleKey), Elem.COLOR)
+    }
+
+    override fun captionColor(): Color {
+        return getColor(getElemValue(captionKey), Elem.COLOR)
     }
 }

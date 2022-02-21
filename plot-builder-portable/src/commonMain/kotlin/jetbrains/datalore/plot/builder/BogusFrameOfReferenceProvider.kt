@@ -6,16 +6,16 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 
-class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
+internal class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
     override val hAxisLabel: String? = null
     override val vAxisLabel: String? = null
 
     override val flipAxis: Boolean = false
 
-    override fun createTileLayout(): TileLayout {
+    override fun createTileLayoutProvider(): TileLayoutProvider {
         throw IllegalStateException("Bogus frame of reference provider is not supposed to be used.")
     }
 

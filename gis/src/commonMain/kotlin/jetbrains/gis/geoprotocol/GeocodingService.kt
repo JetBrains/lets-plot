@@ -6,8 +6,6 @@
 package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
-import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeoResponse.*
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.AmbiguousFeature
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature

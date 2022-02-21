@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
-import jetbrains.datalore.plot.livemap.LiveMapUtil
+import jetbrains.datalore.plot.livemap.LiveMapProvider
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 
@@ -49,7 +49,7 @@ internal object AwtLiveMapFactoryUtil {
     ) {
         LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
             ?.let {
-                LiveMapUtil.injectLiveMapProvider(
+                LiveMapProvider.injectLiveMapProvider(
                     plotAssembler.layersByTile,
                     it,
                     cursorServiceConfig

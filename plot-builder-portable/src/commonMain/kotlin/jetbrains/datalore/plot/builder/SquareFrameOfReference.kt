@@ -96,9 +96,9 @@ internal class SquareFrameOfReference(
             val hAxis = buildAxis(
                 hScale,
                 hScaleMapper,
-                layoutInfo.xAxisInfo!!,
+                layoutInfo.hAxisInfo!!,
                 hideAxis = !drawHAxis,
-                hideAxisBreaks = !layoutInfo.xAxisShown,
+                hideAxisBreaks = !layoutInfo.hAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
                 hAxisTheme,
@@ -116,9 +116,9 @@ internal class SquareFrameOfReference(
             val vAxis = buildAxis(
                 vScale,
                 vScaleMapper,
-                layoutInfo.yAxisInfo!!,
+                layoutInfo.vAxisInfo!!,
                 hideAxis = !drawVAxis,
-                hideAxisBreaks = !layoutInfo.yAxisShown,
+                hideAxisBreaks = !layoutInfo.vAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
                 vAxisTheme,
@@ -167,8 +167,8 @@ internal class SquareFrameOfReference(
         val hAxisMapper = hScaleMapper
         val vAxisMapper = vScaleMapper
 
-        val hAxisDomain = layoutInfo.xAxisInfo!!.axisDomain
-        val vAxisDomain = layoutInfo.yAxisInfo!!.axisDomain
+        val hAxisDomain = layoutInfo.hAxisInfo!!.axisDomain
+        val vAxisDomain = layoutInfo.vAxisInfo!!.axisDomain
         val aesBounds = DoubleRectangle(
             xRange = ClosedRange(
                 hAxisMapper(hAxisDomain.lowerEnd) as Double,

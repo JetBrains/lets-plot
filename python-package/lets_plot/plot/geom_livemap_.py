@@ -33,6 +33,10 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  geodesic=None,
                  tiles=None,
                  show_coord_pick_tools=None,
+                 scale_zooms=None,
+                 scale_objects=None,
+                 aes_zoomin_limit=None,
+                 const_zoomin_limit=None,
                  **other_args):
     """
     Display an interactive map.
@@ -81,9 +85,18 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Tiles provider, either as a string - URL for a standard raster ZXY tile provider
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
         or the result of a call to a `maptiles_xxx()` functions.
-
     show_coord_pick_tools : bool, defafult=False
         Show buttons "copy location" and "draw geometry"
+    aes_zoomin_limit : int, defafult=0
+        Number of zoom-ins when map objects with mapped size will get scaled.
+         0: no scaling
+         -1: no limit
+         n: number of zoomins with scaling
+    const_zoomin_limit : int, defafult=-1
+        Number of zoom-ins when map objects with constant size will get scaled.
+         0: no scaling
+         -1: no limit
+         n: number of zoomins with scaling
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -141,6 +154,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     Examples
     --------
     .. jupyter-execute::
+        :param scale_objects:
         :linenos:
         :emphasize-lines: 3
 
@@ -226,7 +240,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  tiles=tiles,
                  geocoding=geocoding,
                  show_coord_pick_tools=show_coord_pick_tools,
-                 **other_args)
+                 scale_zooms=scale_zooms,
+                 scale_objects=scale_objects,
+                 aes_zoomin_limit=aes_zoomin_limit,
+                 const_zoomin_limit=const_zoomin_limit,
+                 **other_args
+    )
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}

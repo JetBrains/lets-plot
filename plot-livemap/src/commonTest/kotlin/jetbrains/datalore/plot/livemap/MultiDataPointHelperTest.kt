@@ -11,10 +11,9 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
-import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
-import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
-import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.BAR
-import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.PIE_CHART
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.*
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode.BAR
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode.PIE_CHART
 import jetbrains.datalore.plot.livemap.MultiDataPointHelperTest.MultiDataBuilder.DataPointBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -117,7 +116,7 @@ class MultiDataPointHelperTest {
         private var mySortingMode = BAR
 
         val points: List<MultiDataPoint>
-            get() = MultiDataPointHelper.getPoints(build(), mySortingMode)
+            get() = DataPointsConverter.MultiDataPointHelper.getPoints(build(), mySortingMode)
 
         private fun build(): Aesthetics {
             val values = ArrayList<Double>()

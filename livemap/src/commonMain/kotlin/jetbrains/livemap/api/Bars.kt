@@ -86,7 +86,8 @@ class BarsFactory(
                     renderer = BarChart.Renderer()
                 }
                 + ChartElementComponent().apply {
-                    scaleRange = it.scaleRange
+                    sizeScalingRange = it.sizeScalingRange
+                    alphaScalingEnabled = it.alphaScalingEnabled
                     strokeColor = it.strokeColor
                     strokeWidth = it.strokeWidth
                 }

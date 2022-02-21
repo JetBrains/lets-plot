@@ -32,6 +32,7 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
     }
 
     override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
+    override val cylindrical: Boolean = false
 
     override fun project(v: LonLatPoint): GeographicPoint {
         var x = toRadians(v.x)

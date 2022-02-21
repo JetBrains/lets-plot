@@ -1,21 +1,25 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.layout
+package jetbrains.datalore.plot.builder.layout.tile
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.GEOM_MARGIN
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.clipBounds
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.geomBounds
-import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.maxTickLabelsBounds
+import jetbrains.datalore.plot.builder.layout.AxisLayout
+import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
+import jetbrains.datalore.plot.builder.layout.TileLayout
+import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.clipBounds
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomBounds
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxTickLabelsBounds
 
-internal class XYPlotTileLayout(
+internal class TopDownTileLayout(
     private val hAxisLayout: AxisLayout,
     private val vAxisLayout: AxisLayout,
     private val hDomain: ClosedRange<Double>, // transformed data ranges.
@@ -96,6 +100,8 @@ internal class XYPlotTileLayout(
             clipBounds(geomBounds),
             hAxisInfo,
             vAxisInfo,
+            hAxisShown = true,
+            vAxisShown = true,
             trueIndex = 0
         )
     }

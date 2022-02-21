@@ -8,14 +8,16 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Image
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
 import jetbrains.datalore.plot.config.Option.Geom.PointRange
@@ -92,7 +94,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LIVE_MAP -> {
-                return GeomProvider.livemap(parseFromLayerOptions(opts))
+                return GeomProvider.livemap(opts.mergedOptions.getEnum<DisplayMode>(DISPLAY_MODE) ?: POINT)
             }
 
             GeomKind.STEP -> return GeomProvider.step {

@@ -13,43 +13,44 @@ import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-class ChartElementScaleSystem(
+class ChartElementScalingSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
-
+    private val alphaScalingStartingLevel = 3
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         if (context.initialZoom == null) {
             return
         }
 
         onEachEntity2<ZoomLevelChangedComponent, ChartElementComponent> { entity, _, chartElementComponent ->
-            val zoomDelta = context.camera.zoom.roundToInt() - context.initialZoom!!
             with(chartElementComponent) {
-                if (scaleRange != null) {
-                    scaleSizeFactor = computeSizeFactor(zoomDelta.coerceIn(scaleRange!!))
-                    scaleAlphaValue = when {
-                        abs(zoomDelta) == 1 -> 0.7
-                        abs(zoomDelta) >= 2 -> 0.5
+                sizeScalingRange?.let {
+                    val zoomDelta = context.camera.zoom.roundToInt() - context.initialZoom!!
+                    val scalingLevel = zoomDelta.coerceIn(it)
+
+                    val alphaScalingLevel = scalingLevel - alphaScalingStartingLevel + 1
+                    scalingAlphaValue = when {
+                        alphaScalingEnabled && alphaScalingLevel > 0 -> (max(0.1, 1.0 - 0.2 * (alphaScalingLevel)) * 255).roundToInt()
                         else -> null
                     }
-                } else {
-                    scaleSizeFactor = 1.0
-                    scaleAlphaValue = null
+
+                    scalingSizeFactor = when {
+                        scalingLevel == 0 -> 1.0
+                        scalingLevel > 0 -> 2.0.pow(scalingLevel)
+                        scalingLevel < 0 -> 1.0 / 2.0.pow(abs(scalingLevel))
+                        else -> error("Unknown")
+                    }
                 }
+
                 entity.tryGet<SymbolComponent>()?.let {
-                    entity.provide(::ScreenDimensionComponent).dimension = it.size * scaleSizeFactor
+                    entity.provide(::ScreenDimensionComponent).dimension = it.size * scalingSizeFactor
                 }
             }
         }
     }
 
-    private fun computeSizeFactor(zoomDelta: Int): Double = when {
-        zoomDelta == 0 -> 1.0
-        zoomDelta > 0 -> 2.0.pow(zoomDelta)
-        zoomDelta < 0 -> 1.0 / 2.0.pow(abs(zoomDelta))
-        else -> error("Unknown")
-    }
 }

@@ -45,6 +45,9 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     val tooltipProperties: TooltipSpecification.TooltipProperties
         get() = myUserTooltipSpec?.tooltipProperties ?: TooltipSpecification.TooltipProperties.NONE
 
+    val tooltipTitle: TooltipLine?
+        get() = myUserTooltipSpec?.tooltipTitle
+
     val isCrosshairEnabled: Boolean
         get() = myIsCrosshairEnabled
 
@@ -141,7 +144,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                     constantsMap = myTooltipConstantsAesList
                 )
             }
-            myUserTooltipSpec!!.tooltipLinePatterns == null -> {
+            myUserTooltipSpec!!.useDefaultTooltips() -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
                 defaultValueSourceTooltipLines(
                     myTooltipAes,
@@ -151,7 +154,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                     myTooltipConstantsAesList
                 )
             }
-            myUserTooltipSpec!!.tooltipLinePatterns!!.isEmpty() -> {
+            myUserTooltipSpec!!.hideTooltips() -> {
                 // User list is empty => not show tooltips
                 emptyList()
             }

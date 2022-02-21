@@ -38,16 +38,16 @@ object Renderers {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElement = entity.get<ChartElementComponent>()
             val symbolData = entity.get<SymbolComponent>()
-            val radius = symbolData.size.x * chartElement.scaleSizeFactor / 2.0
+            val radius = symbolData.size.x * chartElement.scalingSizeFactor / 2.0
 
             ctx.beginPath()
             drawPath(ctx, radius, shape)
             if (chartElement.fillColor != null) {
-                ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scaleAlphaValue))
+                ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
                 ctx.fill()
             }
             if (chartElement.strokeColor != null && !chartElement.strokeWidth.isNaN()) {
-                ctx.setStrokeStyle(chartElement.strokeColor)
+                ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
                 ctx.setLineWidth(chartElement.strokeWidth)
                 ctx.stroke()
             }
@@ -56,13 +56,13 @@ object Renderers {
 
     class PolygonRenderer : Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
-            if (!entity.contains(ScreenGeometryComponent::class)) {
+            if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
 
             ctx.save()
 
-            if (entity.contains(ScaleComponent::class)) {
+            if (entity.contains<ScaleComponent>()) {
                 val scale = entity.get<ScaleComponent>().scale
                 if (scale != 1.0) {
                     ctx.scale(scale, scale)
@@ -79,13 +79,13 @@ object Renderers {
                 c.closePath()
 
                 if (chartElement.fillColor != null) {
-                    c.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scaleAlphaValue))
+                    c.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
                     c.fill()
                 }
 
                 if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-                    c.setStrokeStyle(chartElement.strokeColor)
-                    c.setLineWidth(chartElement.strokeWidth * chartElement.scaleSizeFactor)
+                    c.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
+                    c.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
                     c.stroke()
                 }
             }
@@ -96,14 +96,14 @@ object Renderers {
 
     class PathRenderer : Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
-            if (!entity.contains(ScreenGeometryComponent::class)) {
+            if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
 
             val chartElement = entity.get<ChartElementComponent>()
-            ctx.setStrokeStyle(chartElement.strokeColor)
-            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scaleSizeFactor }.toDoubleArray())
-            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scaleSizeFactor)
+            ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
+            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scalingSizeFactor }.toDoubleArray())
+            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
             ctx.beginPath()
 
             drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx, Context2d::stroke)
@@ -128,4 +128,3 @@ object Renderers {
         }
     }
 }
-

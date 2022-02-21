@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 object LayerRendererUtil {
 
@@ -43,7 +42,6 @@ object LayerRendererUtil {
     ) {
         val geom: Geom = layer.geom
         val geomKind: GeomKind = layer.geomKind
-        val dataAccess: MappedDataAccess = layer.dataAccess
         val contextualMapping: ContextualMapping = layer.contextualMapping
         val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
     }

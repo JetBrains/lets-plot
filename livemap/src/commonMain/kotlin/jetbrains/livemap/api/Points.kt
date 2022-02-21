@@ -56,7 +56,8 @@ fun Points.point(block: PointBuilder.() -> Unit) {
 class PointBuilder(
     private val myFactory: MapEntityFactory,
 ) {
-    var scaleRange: ClosedRange<Int>? = null
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 4.0
     var point: Vec<LonLat>? = null
@@ -85,7 +86,8 @@ class PointBuilder(
                     renderer = Renderers.PointRenderer(shape)
                 }
                 +ChartElementComponent().apply {
-                    scaleRange = this@PointBuilder.scaleRange
+                    sizeScalingRange = this@PointBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PointBuilder.alphaScalingEnabled
                     when (shape) {
                         in 1..14 -> {
                             strokeColor = this@PointBuilder.strokeColor

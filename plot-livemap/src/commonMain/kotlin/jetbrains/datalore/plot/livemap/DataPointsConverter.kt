@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
@@ -25,30 +26,41 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.createMu
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.multiPointAppender
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode.BAR
+import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode.PIE_CHART
 import kotlin.math.abs
 import kotlin.math.min
 
 internal class DataPointsConverter(
-    layerIndex: Int,
-    aesthetics: Aesthetics,
-    geodesic: Boolean
+    private val layerIndex: Int,
+    private val aesthetics: Aesthetics,
+    private val geodesic: Boolean
 ) {
-    private val myPointFeatureConverter = PointFeatureConverter(layerIndex, aesthetics)
-    private val mySinglePathFeatureConverter = SinglePathFeatureConverter(layerIndex, aesthetics, geodesic)
-    private val myMultiPathFeatureConverter = MultiPathFeatureConverter(layerIndex, aesthetics, geodesic)
+    private val pointFeatureConverter get() = PointFeatureConverter(aesthetics)
+    private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics, geodesic)
+    private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics, geodesic)
+    private fun symbolConverter(mapLayerKind: MapLayerKind, sortingMode: SortingMode): List<DataPointLiveMapAesthetics> {
+        return MultiDataPointHelper.getPoints(aesthetics, sortingMode)
+            .map {
+                DataPointLiveMapAesthetics(it, mapLayerKind)
+                    .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
+            }
+    }
 
-    fun toPoint(geom: Geom) = myPointFeatureConverter.point(geom)
-    fun toHorizontalLine() = myPointFeatureConverter.hLine()
-    fun toVerticalLine() = myPointFeatureConverter.vLine()
+    fun toPoint(geom: Geom) = pointFeatureConverter.point(geom)
+    fun toHorizontalLine() = pointFeatureConverter.hLine()
+    fun toVerticalLine() = pointFeatureConverter.vLine()
     fun toSegment(geom: Geom) = mySinglePathFeatureConverter.segment(geom)
     fun toRect() = myMultiPathFeatureConverter.rect()
     fun toTile() = mySinglePathFeatureConverter.tile()
     fun toPath(geom: Geom) = myMultiPathFeatureConverter.path(geom)
     fun toPolygon() = myMultiPathFeatureConverter.polygon()
-    fun toText() = myPointFeatureConverter.text()
+    fun toText() = pointFeatureConverter.text()
+    fun toPie(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.PIE, PIE_CHART)
+    fun toBar(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.BAR, BAR)
 
     private abstract class PathFeatureConverterBase internal constructor(
-        private val layerIndex: Int,
         internal val aesthetics: Aesthetics,
         private val myGeodesic: Boolean
     ) {
@@ -70,7 +82,6 @@ internal class DataPointsConverter(
         internal fun pathToBuilder(p: DataPointAesthetics, points: List<Vec<LonLat>>, isClosed: Boolean) =
             DataPointLiveMapAesthetics(
                 p = p,
-                layerIndex = layerIndex,
                 layerKind = when {
                     isClosed -> MapLayerKind.POLYGON
                     else -> MapLayerKind.PATH
@@ -91,10 +102,9 @@ internal class DataPointsConverter(
     }
 
     private inner class MultiPathFeatureConverter(
-        val layerIndex: Int,
         aes: Aesthetics,
         geodesic: Boolean
-    ) : PathFeatureConverterBase(layerIndex, aes, geodesic) {
+    ) : PathFeatureConverterBase(aes, geodesic) {
 
         internal fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
             setAnimation((geom as? PathGeom)?.animation)
@@ -133,10 +143,9 @@ internal class DataPointsConverter(
     }
 
     private inner class SinglePathFeatureConverter(
-        val layerIndex: Int,
         aesthetics: Aesthetics,
         geodesic: Boolean
-    ) : PathFeatureConverterBase(layerIndex, aesthetics, geodesic) {
+    ) : PathFeatureConverterBase(aesthetics, geodesic) {
         internal fun tile(): List<DataPointLiveMapAesthetics> {
             val d = getMinXYNonZeroDistance(aesthetics)
             return process(isClosed = true, dataPointToGeometry = { p ->
@@ -235,7 +244,6 @@ internal class DataPointsConverter(
     }
 
     private class PointFeatureConverter(
-        val layerIndex: Int,
         private val myAesthetics: Aesthetics
     ) {
         private var myAnimation: Int? = null
@@ -287,7 +295,7 @@ internal class DataPointsConverter(
             val mapObjects = ArrayList<DataPointLiveMapAesthetics>(myAesthetics.dataPointCount())
             for (p in myAesthetics.dataPoints()) {
                 dataPointToGeometry(p)?.let { v ->
-                    DataPointLiveMapAesthetics(p, layerIndex, layerKind)
+                    DataPointLiveMapAesthetics(p, layerKind)
                         .setGeometryPoint(v)
                         .setAnimation(myAnimation)
                 }?.let(mapObjects::add)
@@ -300,4 +308,85 @@ internal class DataPointsConverter(
     private fun <T> List<DoubleVector>.toVecs(): List<Vec<T>> {
         return map { explicitVec<T>(it.x, it.y) }
     }
+
+    internal class MultiDataPointHelper private constructor(
+    ) {
+
+        companion object {
+            fun getPoints(aesthetics: Aesthetics, sortingMode: SortingMode): List<MultiDataPoint> {
+                val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
+
+                fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
+                    val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
+                    return builders.getOrPut(coord) { MultiDataPointBuilder(p, sortingMode) }
+                }
+
+                aesthetics.dataPoints()
+                    .filter { it.symY() != null }
+                    .forEach { p -> fetchBuilder(p).add(p) }
+                return builders.values.map(MultiDataPointBuilder::build)
+            }
+        }
+
+        internal enum class SortingMode {
+            BAR,
+            PIE_CHART
+        }
+
+        private class MultiDataPointBuilder(
+            private val myAes: DataPointAesthetics,
+            private val mySortingMode: SortingMode
+        ) {
+            private val myPoints = ArrayList<DataPointAesthetics>()
+            private var myUsesOrder: Boolean = false
+
+            internal fun add(p: DataPointAesthetics) {
+                if (p.symX() != 0.0) {
+                    myUsesOrder = true
+                }
+
+                myPoints.add(p)
+            }
+
+            internal fun build(): MultiDataPoint {
+                myPoints.sort(if (myUsesOrder) BY_ORDER else BY_VALUE)
+
+                if (mySortingMode == PIE_CHART && !myUsesOrder) {
+                    myPoints.move(myPoints.lastIndex, 0)
+                }
+
+                return MultiDataPoint(
+                    aes = myAes,
+                    indices = myPoints.map { it.index() },
+                    values = myPoints.map { it.symY()!! }, // symY can't be null - pre-filtered in function getPoints()
+                    colors = myPoints.map { it.fill()!! }
+                )
+            }
+
+            private fun <T> MutableList<T>.sort(sorting: (T) -> Double) {
+                sortedBy(sorting).also { clear(); addAll(it) }
+            }
+
+            private fun <T> MutableList<T>.move(from: Int, to: Int) {
+                val p = this[from]
+
+                val delta = if (to <= from) 0 else -1
+                removeAt(from)
+                add(to + delta, p)
+            }
+
+            companion object {
+                private val BY_ORDER: (DataPointAesthetics) -> Double = { it.symX()!! }
+                private val BY_VALUE: (DataPointAesthetics) -> Double = { it.symY()!! }
+            }
+        }
+
+        internal data class MultiDataPoint(
+            val aes: DataPointAesthetics,
+            val indices: List<Int>,
+            val values: List<Double>,
+            val colors: List<Color>
+        )
+    }
+
 }
