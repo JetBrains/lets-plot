@@ -6,20 +6,19 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.base.enums.EnumInfoFactory
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class DotplotStat(
     binCount: Int,
     binWidth: Double?,
-    xPosKind: XPosKind,
-    xPos: Double,
+    private val xPosKind: BinStat.XPosKind,
+    private val xPos: Double,
     private val method: Method
-) : BinStat(binCount, binWidth, xPosKind, xPos) {
+) : BaseStat(DEF_MAPPING) {
+    private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X)
@@ -37,8 +36,8 @@ class DotplotStat(
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
             val binsData = when(method) {
-                Method.HISTODOT -> computeStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
-                Method.DOTDENSITY -> computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X))
+                Method.HISTODOT -> BinStatUtil.computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X), xPosKind, xPos, binOptions)
+                Method.DOTDENSITY -> BinStatUtil.computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X), binOptions)
             }
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
@@ -52,19 +51,6 @@ class DotplotStat(
             .putNumeric(Stats.DENSITY, statDensity)
             .putNumeric(Stats.BIN_WIDTH, statBinWidth)
             .build()
-    }
-
-    private fun computeDotdensityStatSeries(
-        rangeX: ClosedRange<Double>,
-        valuesX: List<Double?>
-    ): BinStatUtil.BinsData {
-        val spanX = SeriesUtil.span(rangeX)
-        val b = BinStatUtil.binCountAndWidth(spanX, binOptions)
-
-        return BinStatUtil.computeDotdensityBins(
-            valuesX,
-            b.width
-        )
     }
 
     enum class Method {
@@ -86,5 +72,12 @@ class DotplotStat(
 
     companion object {
         val DEF_METHOD = Method.DOTDENSITY
+
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.COUNT,
+            Aes.STACKSIZE to Stats.COUNT,
+            Aes.BINWIDTH to Stats.BIN_WIDTH
+        )
     }
 }

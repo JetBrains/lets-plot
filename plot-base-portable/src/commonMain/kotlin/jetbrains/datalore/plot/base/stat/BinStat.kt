@@ -5,13 +5,10 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.abs
 
 /**
  * Default stat for geom_histogram
@@ -34,7 +31,7 @@ open class BinStat(
     private val xPosKind: XPosKind,
     private val xPos: Double
 ) : BaseStat(DEF_MAPPING) {
-    protected val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
+    private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.WEIGHT)
@@ -48,92 +45,27 @@ open class BinStat(
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
-        val statBinWidth = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
-            val binsData = computeStatSeries(data, rangeX, data.getNumeric(TransformVar.X))
+            val binsData = BinStatUtil.computeHistogramStatSeries(
+                data,
+                rangeX,
+                data.getNumeric(TransformVar.X),
+                xPosKind,
+                xPos,
+                binOptions
+            )
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
             statDensity.addAll(binsData.density)
-            statBinWidth.addAll(binsData.binWidth)
         }
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.COUNT, statCount)
             .putNumeric(Stats.DENSITY, statDensity)
-            .putNumeric(Stats.BIN_WIDTH, statBinWidth)
             .build()
-    }
-
-    protected fun computeStatSeries(
-        data: DataFrame,
-        rangeX: ClosedRange<Double>,
-        valuesX: List<Double?>
-    ): BinStatUtil.BinsData {
-        var startX: Double? = rangeX.lowerEnd
-        var spanX = rangeX.upperEnd - startX!!
-
-        // initial bin count/width
-        var b: BinStatUtil.CountAndWidth = BinStatUtil.binCountAndWidth(spanX, binOptions)
-
-        // adjusted bin count/width
-        // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
-        startX -= b.width * 0.7
-        spanX += b.width * 1.4
-        b = BinStatUtil.binCountAndWidth(spanX, binOptions)
-        val binCount = b.count
-        val binWidth = b.width
-
-        // optional horizontal adjustment (+/-0.5 bin width max)
-        if (xPosKind != XPosKind.NONE) {
-            var minDelta = Double.MAX_VALUE
-            val x = xPos
-
-            for (i in 0 until binCount) {
-                val binLeft = startX + i * binWidth
-                val delta: Double
-                if (xPosKind == XPosKind.CENTER) {
-                    delta = x - (binLeft + binWidth / 2)
-                } else {       // BOUNDARY
-                    if (i == 0) {
-                        minDelta = x - startX // init still
-                    }
-                    delta = x - (binLeft + binWidth)
-                }
-
-                if (abs(delta) < abs(minDelta)) {
-                    minDelta = delta
-                }
-            }
-
-            // max offset: +/-0.5 bin width
-            val offset = minDelta % (binWidth / 2)
-            startX += offset
-        }
-
-        // density plot area should be == 1
-        val normalBinWidth = SeriesUtil.span(rangeX) / binCount
-        val densityNormalizingFactor = if (normalBinWidth > 0)
-            1.0 / normalBinWidth
-        else
-            1.0
-
-        // compute bins
-
-        val binsData = BinStatUtil.computeHistogramBins(
-            valuesX,
-            startX,
-            binCount,
-            binWidth,
-            BinStatUtil.weightAtIndex(data),
-            densityNormalizingFactor
-        )
-        check(binsData.x.size == binCount)
-        { "Internal: stat data size=" + binsData.x.size + " expected bin count=" + binCount }
-
-        return binsData
     }
 
     enum class XPosKind {
@@ -145,9 +77,7 @@ open class BinStat(
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.COUNT,
-            Aes.STACKSIZE to Stats.COUNT,
-            Aes.BINWIDTH to Stats.BIN_WIDTH
+            Aes.Y to Stats.COUNT
         )
     }
 }

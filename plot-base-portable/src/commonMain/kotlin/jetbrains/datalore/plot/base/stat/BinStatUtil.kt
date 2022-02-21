@@ -5,14 +5,12 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.util.MutableDouble
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 object BinStatUtil {
     private const val MAX_BIN_COUNT = 500
@@ -49,7 +47,90 @@ object BinStatUtil {
         return CountAndWidth(binCount, binWidth)
     }
 
-    fun computeHistogramBins(
+    fun computeHistogramStatSeries(
+        data: DataFrame,
+        rangeX: ClosedRange<Double>,
+        valuesX: List<Double?>,
+        xPosKind: BinStat.XPosKind,
+        xPos: Double,
+        binOptions: BinOptions
+    ): BinsData {
+        var startX: Double? = rangeX.lowerEnd
+        var spanX = rangeX.upperEnd - startX!!
+
+        // initial bin count/width
+        var b: CountAndWidth = binCountAndWidth(spanX, binOptions)
+
+        // adjusted bin count/width
+        // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
+        startX -= b.width * 0.7
+        spanX += b.width * 1.4
+        b = binCountAndWidth(spanX, binOptions)
+        val binCount = b.count
+        val binWidth = b.width
+
+        // optional horizontal adjustment (+/-0.5 bin width max)
+        if (xPosKind != BinStat.XPosKind.NONE) {
+            var minDelta = Double.MAX_VALUE
+            val x = xPos
+
+            for (i in 0 until binCount) {
+                val binLeft = startX + i * binWidth
+                val delta: Double
+                if (xPosKind == BinStat.XPosKind.CENTER) {
+                    delta = x - (binLeft + binWidth / 2)
+                } else {       // BOUNDARY
+                    if (i == 0) {
+                        minDelta = x - startX // init still
+                    }
+                    delta = x - (binLeft + binWidth)
+                }
+
+                if (abs(delta) < abs(minDelta)) {
+                    minDelta = delta
+                }
+            }
+
+            // max offset: +/-0.5 bin width
+            val offset = minDelta % (binWidth / 2)
+            startX += offset
+        }
+
+        // density plot area should be == 1
+        val normalBinWidth = SeriesUtil.span(rangeX) / binCount
+        val densityNormalizingFactor = if (normalBinWidth > 0)
+            1.0 / normalBinWidth
+        else
+            1.0
+
+        // compute bins
+
+        val binsData = computeHistogramBins(
+            valuesX,
+            startX,
+            binCount,
+            binWidth,
+            weightAtIndex(data),
+            densityNormalizingFactor
+        )
+        check(binsData.x.size == binCount)
+        { "Internal: stat data size=" + binsData.x.size + " expected bin count=" + binCount }
+
+        return binsData
+    }
+
+    fun computeDotdensityStatSeries(
+        rangeX: ClosedRange<Double>,
+        valuesX: List<Double?>,
+        binOptions: BinOptions
+    ): BinsData {
+        val spanX = SeriesUtil.span(rangeX)
+        val b = binCountAndWidth(spanX, binOptions)
+
+        return computeDotdensityBins(valuesX, b.width)
+    }
+
+    private fun computeHistogramBins(
         valuesX: List<Double?>,
         startX: Double,
         binCount: Int,
@@ -104,7 +185,7 @@ object BinStatUtil {
         return BinsData(x, counts, densities, List(x.size) { binWidth })
     }
 
-    fun computeDotdensityBins(
+    private fun computeDotdensityBins(
         valuesX: List<Double?>,
         binWidth: Double
     ): BinsData {

@@ -96,10 +96,10 @@ object StatProto {
         }
     }
 
-    private fun configureDotplotStat(options: OptionsAccessor): BinStat {
+    private fun configureDotplotStat(options: OptionsAccessor): DotplotStat {
 
         val method = options.getString(Bin.METHOD)?.let {
-            DotplotStat.Method.safeValueOf(it!!)
+            DotplotStat.Method.safeValueOf(it)
         }
 
         return Stats.dotplot(
