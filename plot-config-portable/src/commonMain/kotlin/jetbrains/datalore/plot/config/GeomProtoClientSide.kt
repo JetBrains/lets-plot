@@ -64,7 +64,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.stackRatio = opts.getDouble(Dotplot.STACKRATIO)!!
                 }
                 if (opts.hasOwn(Dotplot.STACKGROUPS)) {
-                    geom.stackGroups = opts.getBoolean(Dotplot.STACKGROUPS)!!
+                    geom.stackGroups = opts.getBoolean(Dotplot.STACKGROUPS)
                 }
                 if (opts.hasOwn(Dotplot.STACKDIR)) {
                     geom.stackDir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
