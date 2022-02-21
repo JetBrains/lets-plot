@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.enums.EnumInfoFactory
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
@@ -34,13 +34,13 @@ class DotplotGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = FilledCircleLegendKeyElementFactory()
 
-    override fun preferableNullDomain(aes: Aes<*>): ClosedRange<Double> {
+    override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
         return if (aes == Aes.Y)
             when (stackdir) {
-                Stackdir.UP -> ClosedRange(0.0, 1.0)
-                Stackdir.DOWN -> ClosedRange(-1.0, 0.0)
+                Stackdir.UP -> DoubleSpan(0.0, 1.0)
+                Stackdir.DOWN -> DoubleSpan(-1.0, 0.0)
                 Stackdir.CENTER,
-                Stackdir.CENTERWHOLE -> ClosedRange(-0.5, 0.5)
+                Stackdir.CENTERWHOLE -> DoubleSpan(-0.5, 0.5)
             }
         else
             super.preferableNullDomain(aes)

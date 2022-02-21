@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
@@ -57,7 +57,7 @@ interface GeomLayer {
 
     fun <T> getDefault(aes: Aes<T>): T
 
-    fun preferableNullDomain(aes: Aes<*>): ClosedRange<Double>
+    fun preferableNullDomain(aes: Aes<*>): DoubleSpan
 
     fun rangeIncludesZero(aes: Aes<*>): Boolean
 

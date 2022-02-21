@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
@@ -256,7 +256,7 @@ class GeomLayerBuilder {
             return aestheticsDefaults.defaultValue(aes)
         }
 
-        override fun preferableNullDomain(aes: Aes<*>): ClosedRange<Double> {
+        override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
             return (geom as GeomBase).preferableNullDomain(aes)
         }
 
