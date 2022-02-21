@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.base.stat.DotplotStat.Method
@@ -29,6 +30,9 @@ class DotplotGeom : GeomBase() {
     var stackgroups: Boolean = DEF_STACKGROUPS
     var stackdir: Stackdir = DEF_STACKDIR
     var method: Method = DEF_METHOD
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = FilledCircleLegendKeyElementFactory()
 
     override fun preferableNullDomain(aes: Aes<*>): ClosedRange<Double> {
         return if (aes == Aes.Y)

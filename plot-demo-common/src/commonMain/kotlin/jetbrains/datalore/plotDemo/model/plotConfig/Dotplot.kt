@@ -107,7 +107,8 @@ class Dotplot {
                 "                 'geom': 'dotplot'," +
                 "                 'method': 'histodot'," +
                 "                 'bins': 20," +
-                "                 'stackgroups': true" +
+                "                 'stackgroups': true," +
+                "                 'color': 'black'" +
                 "               }" +
                 "             ]" +
                 "}"
