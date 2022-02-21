@@ -25,10 +25,10 @@ import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.max
 
 class DotplotGeom : GeomBase() {
-    var dotsize: Double = DEF_DOTSIZE
-    var stackratio: Double = DEF_STACKRATIO
-    var stackgroups: Boolean = DEF_STACKGROUPS
-    var stackdir: Stackdir = DEF_STACKDIR
+    var dotSize: Double = DEF_DOTSIZE
+    var stackRatio: Double = DEF_STACKRATIO
+    var stackGroups: Boolean = DEF_STACKGROUPS
+    var stackDir: Stackdir = DEF_STACKDIR
     var method: Method = DEF_METHOD
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -36,7 +36,7 @@ class DotplotGeom : GeomBase() {
 
     override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
         return if (aes == Aes.Y)
-            when (stackdir) {
+            when (stackDir) {
                 Stackdir.UP -> DoubleSpan(0.0, 1.0)
                 Stackdir.DOWN -> DoubleSpan(-1.0, 0.0)
                 Stackdir.CENTER,
@@ -79,12 +79,12 @@ class DotplotGeom : GeomBase() {
             val groupStackSize = p.stacksize()!!.toInt()
             var dotId = -1
             for (i in 0 until groupStackSize) {
-                dotId = if (stackgroups && method == Method.HISTODOT) stackSize + i else i
+                dotId = if (stackGroups && method == Method.HISTODOT) stackSize + i else i
                 val center = getDotCenter(p, dotId, binWidthPx)
                 val path = dotHelper.createDot(
                     p,
                     geomHelper.toClient(center, p),
-                    dotsize * binWidthPx / 2
+                    dotSize * binWidthPx / 2
                 )
                 root.add(path.rootGroup)
             }
@@ -103,12 +103,12 @@ class DotplotGeom : GeomBase() {
         if (!isFinite(p.x()) || !isFinite(p.stacksize()))
             return
 
-        val dotRadius = dotsize * binWidthPx
+        val dotRadius = dotSize * binWidthPx / 2
         val hintRectWidth = dotRadius
-        val yShiftSign = if (stackdir == Stackdir.DOWN) -1 else 1
+        val yShiftSign = if (stackDir == Stackdir.DOWN) -1 else 1
         val origin = getDotCenter(p, dotId, binWidthPx)
-            .add(DoubleVector(-hintRectWidth / 4, yShiftSign * dotRadius / 2))
-        val dimension = DoubleVector(hintRectWidth / 2, 0.0)
+            .add(DoubleVector(-hintRectWidth / 2, yShiftSign * dotRadius))
+        val dimension = DoubleVector(hintRectWidth, 0.0)
         val rect = DoubleRectangle(origin, dimension)
 
         ctx.targetCollector.addRectangle(
@@ -131,17 +131,17 @@ class DotplotGeom : GeomBase() {
         binWidthPx: Double
     ) : DoubleVector {
         val x = p.x()!!
-        val shiftedDotId = when (stackdir) {
-            Stackdir.UP -> dotId + 1 / (2 * stackratio)
-            Stackdir.DOWN -> -dotId - 1 / (2 * stackratio)
+        val shiftedDotId = when (stackDir) {
+            Stackdir.UP -> dotId + 1 / (2 * stackRatio)
+            Stackdir.DOWN -> -dotId - 1 / (2 * stackRatio)
             Stackdir.CENTER -> dotId + 0.5 - p.stacksize()!! / 2
             Stackdir.CENTERWHOLE -> {
                 val parityShift = if (p.stacksize()!!.toInt() % 2 == 0) 0.0 else 0.5
-                dotId + parityShift - p.stacksize()!! / 2 + 1 / (2 * stackratio)
+                dotId + parityShift - p.stacksize()!! / 2 + 1 / (2 * stackRatio)
             }
         }
 
-        return DoubleVector(x, shiftedDotId * dotsize * stackratio * binWidthPx)
+        return DoubleVector(x, shiftedDotId * dotSize * stackRatio * binWidthPx)
     }
 
     private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :

@@ -55,16 +55,16 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             GeomKind.DOTPLOT -> return GeomProvider.dotplot {
                 val geom = DotplotGeom()
                 if (opts.hasOwn(Dotplot.DOTSIZE)) {
-                    geom.dotsize = opts.getDouble(Dotplot.DOTSIZE)!!
+                    geom.dotSize = opts.getDouble(Dotplot.DOTSIZE)!!
                 }
                 if (opts.hasOwn(Dotplot.STACKRATIO)) {
-                    geom.stackratio = opts.getDouble(Dotplot.STACKRATIO)!!
+                    geom.stackRatio = opts.getDouble(Dotplot.STACKRATIO)!!
                 }
                 if (opts.hasOwn(Dotplot.STACKGROUPS)) {
-                    geom.stackgroups = opts.getBoolean(Dotplot.STACKGROUPS)!!
+                    geom.stackGroups = opts.getBoolean(Dotplot.STACKGROUPS)!!
                 }
                 if (opts.hasOwn(Dotplot.STACKDIR)) {
-                    geom.stackdir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
+                    geom.stackDir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
                 }
                 if (opts.hasOwn(Dotplot.METHOD)) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(Dotplot.METHOD)!!)

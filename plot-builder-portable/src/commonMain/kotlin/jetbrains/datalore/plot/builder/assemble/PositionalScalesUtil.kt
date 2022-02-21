@@ -127,8 +127,7 @@ internal object PositionalScalesUtil {
             Aes.affectingScaleX(it) ||
                     Aes.affectingScaleY(it) ||
                     it == Aes.HEIGHT ||
-                    it == Aes.WIDTH ||
-                    it == Aes.STACKSIZE
+                    it == Aes.WIDTH
         }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
