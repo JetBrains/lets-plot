@@ -35,8 +35,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=None,
                  scale_zooms=None,
                  scale_objects=None,
-                 aes_zoomin_limit=None,
-                 const_zoomin_limit=None,
+                 data_size_zoomin=None,
+                 const_size_zoomin=None,
                  **other_args):
     """
     Display an interactive map.
@@ -87,12 +87,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         or the result of a call to a `maptiles_xxx()` functions.
     show_coord_pick_tools : bool, defafult=False
         Show buttons "copy location" and "draw geometry"
-    aes_zoomin_limit : int, defafult=0
+    data_size_zoomin : int, defafult=0
         Number of zoom-ins when map objects with mapped size will get scaled.
          0: no scaling
          -1: no limit
          n: number of zoomins with scaling
-    const_zoomin_limit : int, defafult=-1
+    const_size_zoomin : int, defafult=-1
         Number of zoom-ins when map objects with constant size will get scaled.
          0: no scaling
          -1: no limit
@@ -242,8 +242,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=show_coord_pick_tools,
                  scale_zooms=scale_zooms,
                  scale_objects=scale_objects,
-                 aes_zoomin_limit=aes_zoomin_limit,
-                 const_zoomin_limit=const_zoomin_limit,
+                 data_size_zoomin=data_size_zoomin,
+                 const_size_zoomin=const_size_zoomin,
                  **other_args
     )
 
