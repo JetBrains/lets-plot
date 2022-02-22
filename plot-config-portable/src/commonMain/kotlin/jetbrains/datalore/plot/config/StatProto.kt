@@ -60,6 +60,8 @@ object StatProto {
                 )
             }
 
+            StatKind.DOTPLOT -> return configureDotplotStat(options)
+
             StatKind.CONTOUR -> {
                 return ContourStat(
                     binCount = options.getIntegerDef(Contour.BINS, ContourStat.DEF_BIN_COUNT),
@@ -93,6 +95,21 @@ object StatProto {
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
+    }
+
+    private fun configureDotplotStat(options: OptionsAccessor): DotplotStat {
+
+        val method = options.getString(Bin.METHOD)?.let {
+            DotplotStat.Method.safeValueOf(it)
+        }
+
+        return Stats.dotplot(
+            binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
+            binWidth = options.getDouble(Bin.BINWIDTH),
+            center = options.getDouble(Bin.CENTER),
+            boundary = options.getDouble(Bin.BOUNDARY),
+            method = method ?: DotplotStat.DEF_METHOD
+        )
     }
 
     private fun configureSmoothStat(options: OptionsAccessor): SmoothStat {

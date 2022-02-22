@@ -26,6 +26,7 @@ object Stats {
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
+    val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
@@ -48,6 +49,7 @@ object Stats {
             MIDDLE,
             UPPER,
             WIDTH,
+            BIN_WIDTH,
             VIOLIN_WIDTH,
             SCALED,
             GROUP,
@@ -105,6 +107,34 @@ object Stats {
             binWidth = binWidth,
             xPosKind = xPosKind,
             xPos = xPosValue
+        )
+    }
+
+    fun dotplot(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null,
+        method: DotplotStat.Method = DotplotStat.DEF_METHOD
+    ): DotplotStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (method != DotplotStat.Method.DOTDENSITY) {
+            if (boundary != null) {
+                xPosKind = BinStat.XPosKind.BOUNDARY
+                xPosValue = boundary
+            } else if (center != null) {
+                xPosKind = BinStat.XPosKind.CENTER
+                xPosValue = center
+            }
+        }
+
+        return DotplotStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue,
+            method = method
         )
     }
 

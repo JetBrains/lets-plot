@@ -87,10 +87,13 @@ internal object PositionalScalesUtil {
                 val domainOverall = domains.reduceOrNull { r0, r1 ->
                     RangeUtil.updateRange(r0, r1)!!
                 }
+                val preferableNullDomainOverall = layersByTile[0]
+                    .map { it.preferableNullDomain(aes) }
+                    .reduceOrNull { r0, r1 -> RangeUtil.updateRange(r0, r1)!! }
 
                 // 'expand' ranges and include '0' if necessary
                 val domainExpanded = RangeUtil.expandRange(domainOverall, aes, scaleProto, layersByTile[0])
-                val domain = SeriesUtil.ensureApplicableRange(domainExpanded)
+                val domain = SeriesUtil.ensureApplicableRange(domainExpanded, preferableNullDomainOverall)
 
                 layersByTile.map { domain }
             }
@@ -244,26 +247,31 @@ internal object PositionalScalesUtil {
         geomCtx: GeomContext
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val renderedAes = layer.renderedAes()
-        val computeExpandX = renderedAes.contains(Aes.WIDTH)
-        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
-        val rangeX = if (computeExpandX)
-            computeLayerDryRunRangeAfterSizeExpand(
+        val rangeX = when {
+            renderedAes.contains(Aes.WIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
                 Aes.X,
                 Aes.WIDTH,
                 aesthetics,
                 geomCtx
             )
-        else
-            null
-        val rangeY = if (computeExpandY)
-            computeLayerDryRunRangeAfterSizeExpand(
-                Aes.Y,
-                Aes.HEIGHT,
+            renderedAes.contains(Aes.BINWIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
+                Aes.X,
+                Aes.BINWIDTH,
                 aesthetics,
                 geomCtx
             )
-        else
-            null
+            else -> null
+        }
+        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
+        val rangeY = if (computeExpandY)
+                computeLayerDryRunRangeAfterSizeExpand(
+                    Aes.Y,
+                    Aes.HEIGHT,
+                    aesthetics,
+                    geomCtx
+                )
+            else
+                null
 
         return Pair(rangeX, rangeY)
     }

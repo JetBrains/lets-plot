@@ -129,6 +129,14 @@ object Option {
 
     object Geom {
 
+        object Dotplot {
+            const val DOTSIZE = "dotsize"
+            const val STACKRATIO = "stackratio"
+            const val STACKGROUPS = "stackgroups"
+            const val STACKDIR = "stackdir"
+            const val METHOD = "method"
+        }
+
         object Choropleth {
             const val GEO_POSITIONS = "map"
         }
@@ -242,6 +250,7 @@ object Option {
         object Bin {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+            const val METHOD = "method"
             const val CENTER = "center"
             const val BOUNDARY = "boundary"
         }
@@ -452,6 +461,7 @@ object Option {
         private const val SMOOTH = "smooth"
         private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
+        private const val DOTPLOT = "dotplot"
         private const val TILE = "tile"
         private const val BIN_2D = "bin2d"
         private const val MAP = "map"
@@ -492,6 +502,7 @@ object Option {
             map[SMOOTH] = GeomKind.SMOOTH
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
+            map[DOTPLOT] = GeomKind.DOTPLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP

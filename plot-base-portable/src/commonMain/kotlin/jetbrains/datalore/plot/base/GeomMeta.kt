@@ -101,6 +101,16 @@ object GeomMeta {
                 Aes.SIZE
             )
 
+            GeomKind.DOTPLOT -> listOf(
+                Aes.X,
+                Aes.BINWIDTH,
+                Aes.STACKSIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SIZE
+            )
+
             GeomKind.TILE,
             GeomKind.BIN_2D -> listOf(
                 Aes.X, Aes.Y,

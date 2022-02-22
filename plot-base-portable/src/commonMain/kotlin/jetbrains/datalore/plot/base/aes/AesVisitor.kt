@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -26,6 +27,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
@@ -95,6 +97,9 @@ abstract class AesVisitor<T> {
         if (aes == SIZE) {
             return size()
         }
+        if (aes == STACKSIZE) {
+            return stacksize()
+        }
         if (aes == LINETYPE) {
             return lineType()
         }
@@ -103,6 +108,9 @@ abstract class AesVisitor<T> {
         }
         if (aes == HEIGHT) {
             return height()
+        }
+        if (aes == BINWIDTH) {
+            return binwidth()
         }
         if (aes == VIOLINWIDTH) {
             return violinwidth()
@@ -207,9 +215,13 @@ abstract class AesVisitor<T> {
 
     protected abstract fun size(): T
 
+    protected abstract fun stacksize(): T
+
     protected abstract fun width(): T
 
     protected abstract fun height(): T
+
+    protected abstract fun binwidth(): T
 
     protected abstract fun violinwidth(): T
 
