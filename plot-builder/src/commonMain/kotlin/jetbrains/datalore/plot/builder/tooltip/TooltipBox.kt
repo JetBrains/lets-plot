@@ -393,7 +393,6 @@ class TooltipBox: SvgComponent() {
             titleComponent.setX(0.0)
             titleComponent.setFontWeight("bold")
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            myTitleContainer.children().add(titleComponent.rootGroup)
 
             // set interval between substrings
             val lineHeight = with(myTitleContainer.children()) {
@@ -403,7 +402,9 @@ class TooltipBox: SvgComponent() {
                 remove(lineTextLabel.rootGroup)
                 height
             }
-            titleComponent.setLineVerticalMargin(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+            titleComponent.setY(myVerticalContentPadding, lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+
+            myTitleContainer.children().add(titleComponent.rootGroup)
 
             return titleComponent
         }
@@ -411,17 +412,16 @@ class TooltipBox: SvgComponent() {
         private fun layoutTitle(
             titleComponent: MultilineLabel?,
             totalTooltipWidth: Double,
-            lineHeight: Double
+            titleHeight: Double
         ): DoubleVector {
             if (titleComponent == null) {
                 return DoubleVector.ZERO
             }
 
-            val yPosition = myVerticalContentPadding
-            titleComponent.y().set(yPosition)
+            titleComponent.y().set(myVerticalContentPadding)
             titleComponent.setX(totalTooltipWidth / 2)
 
-            val titleSize = DoubleVector(totalTooltipWidth, yPosition + lineHeight)
+            val titleSize = DoubleVector(totalTooltipWidth, titleComponent.y().get()!! + titleHeight)
 
             // add line separator
             val pathData = SvgPathDataBuilder().apply {
@@ -480,7 +480,7 @@ class TooltipBox: SvgComponent() {
             // sef vertical shifts for tspan elements
             valueLineHeights.zip(components).onEach { (height, component) ->
                 val (_, valueComponent) = component
-                valueComponent.setLineVerticalMargin(height + INTERVAL_BETWEEN_SUBSTRINGS)
+                valueComponent.setY(0.0, height + INTERVAL_BETWEEN_SUBSTRINGS)
             }
 
             val rawBBoxes = lines.zip(components).map { (line, component) ->
@@ -560,7 +560,7 @@ class TooltipBox: SvgComponent() {
                     //  - in Batik it is close to the abs(bBox.top)
                     //  - in JavaFx it is constant = fontSize
                     val yPosition = textDimension.y - min(valueBBox.top, labelBBox.top)
-                    valueComponent.y().set(yPosition)
+                    valueComponent.setY(yPosition, defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
                     labelComponent?.y()?.set(yPosition)
 
                     when {

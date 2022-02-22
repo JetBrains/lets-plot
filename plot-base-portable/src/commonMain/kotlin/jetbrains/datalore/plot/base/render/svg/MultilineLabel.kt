@@ -62,10 +62,22 @@ class MultilineLabel(text: String) : SvgComponent() {
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
     }
 
-    fun setVerticalAnchor(anchor: VerticalAnchor) {
-        // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
-        //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
-        myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+    fun setVerticalAnchor(anchor: VerticalAnchor, verticalMargin: Double) {
+        if (linesCount() == 1) {
+            // keep the old logic for a one-line label:
+            //   replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
+            //   myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
+            myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+            return
+        }
+
+        val y = y().get() ?: 0.0
+        val startPos = when (anchor) {
+            VerticalAnchor.TOP -> y + verticalMargin
+            VerticalAnchor.BOTTOM -> y - (linesCount() - 1) * verticalMargin
+            VerticalAnchor.CENTER -> y - (linesCount().toDouble()/2 - 1) * verticalMargin
+        }
+        setY(startPos, verticalMargin)
     }
 
     fun setFontSize(px: Double) {
@@ -125,16 +137,14 @@ class MultilineLabel(text: String) : SvgComponent() {
             }
     }
 
-    fun setLineVerticalMargin(margin: Double) {
+    fun setY(y: Double, verticalMargin: Double) {
+        y().set(y)
+
+        // set X for tspan elements
         myText.children()
             .filterIsInstance<SvgTSpanElement>()
             .forEachIndexed { index, tspan ->
-                val dyString = if (index == 0) {
-                    "0.0"
-                } else {
-                    margin.toString()
-                }
-                tspan.textDy().set(dyString)
+                tspan.y().set(y + verticalMargin * index)
             }
     }
 

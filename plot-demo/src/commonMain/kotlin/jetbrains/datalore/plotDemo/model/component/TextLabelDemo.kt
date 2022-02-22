@@ -97,7 +97,7 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createAxis(dim: DoubleVector): SvgElement {
+        internal fun createAxis(dim: DoubleVector): SvgElement {
             val hAxis = SvgLineElement(0.0, dim.y / 2, dim.x, dim.y / 2)
             hAxis.stroke().set(SvgColors.RED)
             val vAxis = SvgLineElement(dim.x / 2, 0.0, dim.x / 2, dim.y)

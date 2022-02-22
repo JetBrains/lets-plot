@@ -58,8 +58,7 @@ class PlotSvgComponent constructor(
     caption: String?
 ) : SvgComponent() {
 
-    private fun splitToLines(text: String?) =
-        text?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty) ?: emptyList()
+    private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
 
     private val titleLines: List<String> = splitToLines(title)
     private val subtitleLines: List<String> = splitToLines(subtitle)
@@ -368,7 +367,7 @@ class PlotSvgComponent constructor(
             captionLabel.textColor().set(theme.plot().captionColor())
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
             captionLabel.setX(0.0)
-            captionLabel.setLineVerticalMargin(captionLineHeight)
+            captionLabel.setY(0.0, captionLineHeight)
 
             val captionSize = PlotLayoutUtil.textDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
             val captionBounds = DoubleRectangle(
@@ -399,7 +398,7 @@ class PlotSvgComponent constructor(
         titleLabel.textColor().set(color)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
-        titleLabel.setLineVerticalMargin(titleLineHeight)
+        titleLabel.setY(0.0, titleLineHeight)
 
         val titleSize = PlotLayoutUtil.textDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
