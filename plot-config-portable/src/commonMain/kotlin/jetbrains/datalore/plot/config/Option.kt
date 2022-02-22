@@ -211,6 +211,7 @@ object Option {
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val DATA_SIZE_ZOOMIN = "data_size_zoomin"
             const val CONST_SIZE_ZOOMIN = "const_size_zoomin"
+            const val TOPMOST = "topmost"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"

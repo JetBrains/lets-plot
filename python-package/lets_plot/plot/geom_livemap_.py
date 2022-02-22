@@ -37,6 +37,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  scale_objects=None,
                  data_size_zoomin=None,
                  const_size_zoomin=None,
+                 topmost=None,
                  **other_args):
     """
     Display an interactive map.
@@ -97,6 +98,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
          0: no scaling
          -1: no limit
          n: number of zoomins with scaling
+    topmost : bool, default=False
+        Draw livemap layer above other geoms.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -244,6 +247,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  scale_objects=scale_objects,
                  data_size_zoomin=data_size_zoomin,
                  const_size_zoomin=const_size_zoomin,
+                 topmost=topmost,
                  **other_args
     )
 

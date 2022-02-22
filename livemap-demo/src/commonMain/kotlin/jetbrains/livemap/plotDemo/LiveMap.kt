@@ -1619,6 +1619,7 @@ class LiveMap {
         'shape': 21,
         'color': 'black',
         'fill': 'yellow',
+        'topmost': true,
         'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
     },
    {

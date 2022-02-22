@@ -26,6 +26,7 @@
 
 ### Changed
 
+- geom_livemap: new parameter `topmost` that controls z-index of the `geom_livemap` layer.
 - geom_livemap: new parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons
 
 - New tooltip style: rounded corners, bold label, colored marker inside the tooltip.
