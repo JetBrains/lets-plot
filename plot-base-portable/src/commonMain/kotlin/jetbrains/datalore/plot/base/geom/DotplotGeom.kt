@@ -104,11 +104,10 @@ class DotplotGeom : GeomBase() {
             return
 
         val dotRadius = dotSize * binWidthPx / 2
-        val hintRectWidth = dotRadius
         val yShiftSign = if (stackDir == Stackdir.DOWN) -1 else 1
         val origin = getDotCenter(p, dotId, binWidthPx)
-            .add(DoubleVector(-hintRectWidth / 2, yShiftSign * dotRadius))
-        val dimension = DoubleVector(hintRectWidth, 0.0)
+            .add(DoubleVector(-dotRadius, yShiftSign * dotRadius))
+        val dimension = DoubleVector(2 * dotRadius, 0.0)
         val rect = DoubleRectangle(origin, dimension)
 
         ctx.targetCollector.addRectangle(
