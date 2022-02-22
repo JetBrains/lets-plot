@@ -125,9 +125,14 @@ object BinStatUtil {
         binOptions: BinOptions
     ): BinsData {
         val spanX = SeriesUtil.span(rangeX)
-        val b = binCountAndWidth(spanX, binOptions)
+        val binWidth = if (spanX > 0.0) {
+            binCountAndWidth(spanX, binOptions).width
+        } else {
+            // Only one stack of dots overall data
+            1.0
+        }
 
-        return computeDotdensityBins(valuesX, b.width)
+        return computeDotdensityBins(valuesX, binWidth)
     }
 
     private fun computeHistogramBins(

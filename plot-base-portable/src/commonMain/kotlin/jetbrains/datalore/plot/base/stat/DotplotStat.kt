@@ -36,8 +36,8 @@ class DotplotStat(
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
             val binsData = when(method) {
-                Method.HISTODOT -> BinStatUtil.computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X), xPosKind, xPos, binOptions)
                 Method.DOTDENSITY -> BinStatUtil.computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X), binOptions)
+                Method.HISTODOT -> BinStatUtil.computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X), xPosKind, xPos, binOptions)
             }
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
