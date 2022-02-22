@@ -606,7 +606,10 @@ class TooltipBox: SvgComponent() {
                                 labelComponent?.y()?.set(-textSize.y + labelComponent.y().get()!!)
                                 labelComponent?.rotate(90.0)
 
-                                valueComponent.y().set(-textSize.y + valueComponent.y().get()!!)
+                                valueComponent.setY(
+                                    -textSize.y + valueComponent.y().get()!!,
+                                    defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS
+                                )
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()
