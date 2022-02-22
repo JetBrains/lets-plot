@@ -247,17 +247,22 @@ internal object PositionalScalesUtil {
         geomCtx: GeomContext
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val renderedAes = layer.renderedAes()
-        val computeExpandX = renderedAes.contains(Aes.WIDTH)
-        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
-        val rangeX = if (computeExpandX)
-            computeLayerDryRunRangeAfterSizeExpand(
+        val rangeX = when {
+            renderedAes.contains(Aes.WIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
                 Aes.X,
                 Aes.WIDTH,
                 aesthetics,
                 geomCtx
             )
-        else
-            null
+            renderedAes.contains(Aes.BINWIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
+                Aes.X,
+                Aes.BINWIDTH,
+                aesthetics,
+                geomCtx
+            )
+            else -> null
+        }
+        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
         val rangeY = if (computeExpandY)
                 computeLayerDryRunRangeAfterSizeExpand(
                     Aes.Y,

@@ -108,7 +108,6 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.WIDTH,
                 Aes.SIZE
             )
 

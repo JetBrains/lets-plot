@@ -71,7 +71,7 @@ object AesInitValue {
         VALUE_MAP[STACKSIZE] = 0.0
         VALUE_MAP[WIDTH] = 1.0
         VALUE_MAP[HEIGHT] = 1.0
-        VALUE_MAP[BINWIDTH] = 0.0
+        VALUE_MAP[BINWIDTH] = 1.0
         VALUE_MAP[VIOLINWIDTH] = 0.0
         VALUE_MAP[WEIGHT] = 1.0
         VALUE_MAP[INTERCEPT] = 0.0
