@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.base.stat.DotplotStat.Method
 import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import kotlin.math.ceil
 import kotlin.math.max
 
 class DotplotGeom : GeomBase() {
@@ -57,10 +58,15 @@ class DotplotGeom : GeomBase() {
         if (!pointsWithBinWidth.any()) return
 
         val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
+        val stackCapacity = if (ctx.flipped) {
+            ceil(ctx.getAesBounds().width / binWidthPx).toInt()
+        } else {
+            ceil(ctx.getAesBounds().height / binWidthPx).toInt()
+        }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
             .groupBy { p -> p.x()!! }
             .forEach { (_, dataPointStack) ->
-                buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx)
+                buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx, stackCapacity)
             }
     }
 
@@ -70,7 +76,8 @@ class DotplotGeom : GeomBase() {
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext,
-        binWidthPx: Double
+        binWidthPx: Double,
+        stackCapacity: Int
     ) {
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
@@ -80,6 +87,8 @@ class DotplotGeom : GeomBase() {
             var dotId = -1
             for (i in 0 until groupStackSize) {
                 dotId = if (stackGroups && method == Method.HISTODOT) stackSize + i else i
+                // Break only current loop because of hints for empty groups
+                if (dotId > stackCapacity) break
                 val center = getDotCenter(p, dotId, binWidthPx)
                 val path = dotHelper.createDot(
                     p,
