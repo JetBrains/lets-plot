@@ -11,7 +11,7 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
 
-- Multi-line title: title, subtitle, caption can be split into multiple lines using `\n` as a text separator.
+- Multi-line title: title, subtitle, caption, legend title can be split into multiple lines using `\n` as a text separator.
     
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
 

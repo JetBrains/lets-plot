@@ -5,9 +5,11 @@
 
 package jetbrains.datalore.plot.builder.guide
 
+import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.textDimensions
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
 abstract class LegendBoxLayout(
@@ -27,28 +29,33 @@ abstract class LegendBoxLayout(
 
     val titleLocation: DoubleVector
         get() = if (isHorizontal) {
-            DoubleVector(0.0, graphSize.y / 2)
+            val maxHeight = max(graphSize.y, titleSize(title).y)
+            DoubleVector(0.0, maxHeight / 2)
         } else {
             DoubleVector.ZERO
         }
 
     val titleBounds: DoubleRectangle
         get() {
-            var origin = titleLocation
-            val size = titleSize(title)
+            var origin = DoubleVector.ZERO
             if (isHorizontal) {
-                origin = DoubleVector(origin.x, origin.y - size.y / 2)
+                val titleHeight = titleSize(title).y
+                val y = if (graphSize.y > titleHeight ) (graphSize.y - titleHeight) / 2 else origin.y
+                origin = DoubleVector(origin.x, y)
             }
-            return DoubleRectangle(origin, size)
+            return DoubleRectangle(origin, titleSize(title))
         }
 
     val graphOrigin: DoubleVector
         get() = when {
-            isHorizontal ->
-                DoubleVector(titleSize(title).x, 0.0)
+            isHorizontal -> {
+                val titleSize = titleSize(title)
+                val y = if (titleSize.y > graphSize.y ) (titleSize.y - graphSize.y) / 2 else 0.0
+                DoubleVector(titleSize.x, y)
+            }
             else -> {
-                // make some space betwee title and the rest of the content.
-                val y = TITLE_SPEC.height() + TITLE_SPEC.height() / 3
+                // make some space between title and the rest of the content.
+                val y = titleSize(title).y + TITLE_SPEC.height() / 3
                 DoubleVector(0.0, y)
             }
         }
@@ -69,7 +76,7 @@ abstract class LegendBoxLayout(
         private fun titleSize(s: String): DoubleVector {
             return when {
                 s.isBlank() -> DoubleVector.ZERO
-                else -> TITLE_SPEC.dimensions(s.length)
+                else -> textDimensions(s.split('\n'), TITLE_SPEC)
             }
         }
     }

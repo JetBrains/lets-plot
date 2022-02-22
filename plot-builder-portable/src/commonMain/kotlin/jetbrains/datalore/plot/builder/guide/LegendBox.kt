@@ -8,14 +8,13 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.*
 
 abstract class LegendBox : SvgComponent() {
 
@@ -92,11 +91,12 @@ abstract class LegendBox : SvgComponent() {
         origin: DoubleVector,
         horizontalAnchor: Text.HorizontalAnchor,
         verticalAnchor: Text.VerticalAnchor
-    ): TextLabel {
-        val label = TextLabel(title)
+    ): MultilineLabel {
+        val label = MultilineLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
+        label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
-        label.setVerticalAnchor(verticalAnchor)
+        label.setVerticalAnchor(verticalAnchor, PlotLabelSpec.LEGEND_TITLE.height())
         label.moveTo(origin)
         return label
     }

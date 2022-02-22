@@ -304,7 +304,7 @@ class PlotSvgComponent constructor(
         }
         // add plot subtitle
         if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.textDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
+            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
             addTitle(
                 subtitleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
@@ -369,7 +369,7 @@ class PlotSvgComponent constructor(
             captionLabel.setX(0.0)
             captionLabel.setY(0.0, captionLineHeight)
 
-            val captionSize = PlotLayoutUtil.textDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
+            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
             val captionBounds = DoubleRectangle(
                 geomAreaBounds.right - captionSize.x,
                 plotOuterBounds.bottom - captionSize.y,
@@ -400,7 +400,7 @@ class PlotSvgComponent constructor(
         titleLabel.setX(0.0)
         titleLabel.setY(0.0, titleLineHeight)
 
-        val titleSize = PlotLayoutUtil.textDimensions(titleLines, labelSpec)
+        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
 
         titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
