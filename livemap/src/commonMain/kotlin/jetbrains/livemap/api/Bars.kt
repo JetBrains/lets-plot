@@ -1,9 +1,6 @@
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.Client
 import jetbrains.livemap.chart.BarChart
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.SymbolComponent
@@ -22,11 +19,8 @@ import kotlin.math.abs
 import kotlin.math.sign
 
 @LiveMapDsl
-class Bars(
-    zoomable: Boolean,
-    factory: MapEntityFactory
-) {
-    val barsFactory = BarsFactory(zoomable, factory)
+class Bars(factory: MapEntityFactory) {
+    val barsFactory = BarsFactory(factory)
 }
 
 fun LayersBuilder.bars(block: Bars.() -> Unit) {
@@ -37,7 +31,7 @@ fun LayersBuilder.bars(block: Bars.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Bars(zoomable, MapEntityFactory(layerEntity)).apply {
+    Bars(MapEntityFactory(layerEntity)).apply {
         block()
         barsFactory.produce()
     }
@@ -47,33 +41,8 @@ fun Bars.bar(block: Symbol.() -> Unit) {
     barsFactory.add(Symbol().apply(block))
 }
 
-fun splitMapBarChart(symbol: Symbol, maxAbsValue: Double, consumer: (Int, Vec<Client>, Vec<Client>, Color) -> Unit) {
-    val heights = symbol.values.map { barValue ->
-        val height = when (maxAbsValue) {
-            0.0 -> 0.0
-            else -> barValue / maxAbsValue
-        }
-
-        when {
-            abs(height) >= MIN_HEIGHT -> height //
-            else -> height.sign * MIN_HEIGHT
-        }
-    }
-    val barWidth = (2 * symbol.radius) / symbol.values.size
-
-    heights.forEachIndexed { index, height ->
-        val barDimension =  explicitVec<Client>(barWidth, symbol.radius * abs(height))
-        val barOffset = explicitVec<Client>(
-            x = barWidth * index - symbol.radius,
-            y = if (height > 0) -barDimension.y else 0.0
-        )
-        consumer(symbol.indices[index], barOffset, barDimension, symbol.colors[index])
-    }
-}
-
 @LiveMapDsl
 class BarsFactory(
-    private val zoomable: Boolean,
     private val myFactory: MapEntityFactory
 ) {
     private val mySymbols = ArrayList<Symbol>()
@@ -117,7 +86,8 @@ class BarsFactory(
                     renderer = BarChart.Renderer()
                 }
                 + ChartElementComponent().apply {
-                    scalable = this@BarsFactory.zoomable
+                    sizeScalingRange = it.sizeScalingRange
+                    alphaScalingEnabled = it.alphaScalingEnabled
                     strokeColor = it.strokeColor
                     strokeWidth = it.strokeWidth
                 }

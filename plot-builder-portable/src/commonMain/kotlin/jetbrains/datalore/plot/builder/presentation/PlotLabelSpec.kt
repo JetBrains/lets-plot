@@ -11,6 +11,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) :
     LabelSpec {
     PLOT_TITLE(Defaults.Common.Title.FONT_SIZE.toDouble(), true),
+    PLOT_SUBTITLE(Defaults.Common.Subtitle.FONT_SIZE.toDouble()),
+    PLOT_CAPTION(Defaults.Common.Caption.FONT_SIZE.toDouble()),
 
     AXIS_TICK(Plot.Axis.TICK_FONT_SIZE.toDouble()),
     AXIS_TICK_SMALL(Plot.Axis.TICK_FONT_SIZE_SMALL.toDouble()),

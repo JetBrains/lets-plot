@@ -13,12 +13,14 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 
-class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
+class LiveMapGeom(
+    val displayMode: DisplayMode
+) : Geom {
     private lateinit var myMapProvider: LiveMapProvider
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() {
-            return when (myDisplayMode) {
+            return when (displayMode) {
                 DisplayMode.POINT -> PointLegendKeyElementFactory()
                 DisplayMode.PIE -> FilledCircleLegendKeyElementFactory()
                 else -> GenericLegendKeyElementFactory()

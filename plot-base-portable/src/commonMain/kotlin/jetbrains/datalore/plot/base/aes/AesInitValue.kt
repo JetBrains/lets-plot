@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -29,6 +30,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
@@ -66,8 +68,10 @@ object AesInitValue {
         VALUE_MAP[SHAPE] = NamedShape.SOLID_CIRCLE
         VALUE_MAP[LINETYPE] = NamedLineType.SOLID
         VALUE_MAP[SIZE] = 0.5  // Line thickness. Should be redefined for other shapes
+        VALUE_MAP[STACKSIZE] = 0.0
         VALUE_MAP[WIDTH] = 1.0
         VALUE_MAP[HEIGHT] = 1.0
+        VALUE_MAP[BINWIDTH] = 1.0
         VALUE_MAP[VIOLINWIDTH] = 0.0
         VALUE_MAP[WEIGHT] = 1.0
         VALUE_MAP[INTERCEPT] = 0.0

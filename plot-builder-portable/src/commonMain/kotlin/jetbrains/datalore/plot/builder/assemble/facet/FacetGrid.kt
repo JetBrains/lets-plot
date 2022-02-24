@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.builder.assemble.facet
 
+import jetbrains.datalore.plot.FeatureSwitch.FACET_FREE_X
+import jetbrains.datalore.plot.FeatureSwitch.FACET_FREE_Y
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import kotlin.math.max
@@ -28,6 +30,12 @@ class FacetGrid(
     override val numTiles = colCount * rowCount
     override val variables: List<String>
         get() = listOfNotNull(xVar, yVar)
+
+    override val freeHScale: Boolean
+        get() = FACET_FREE_X && xVar != null // if facet columns or both
+
+    override val freeVScale: Boolean
+        get() = FACET_FREE_Y && yVar != null // if facet rows or both
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
@@ -82,10 +90,10 @@ class FacetGrid(
         val infos = ArrayList<FacetTileInfo>()
         for (row in 0 until rowCount) {
             val addColLab = row == 0
-            val hasXAxis = row == rowCount - 1
+            val hasHAxis = row == rowCount - 1
             for (col in 0 until colCount) {
                 val addRowLab = col == colCount - 1
-                val hasYAxis = col == 0
+                val hasVAxis = col == 0
 
                 val colLabs = if (addColLab) {
                     colLabels[col]?.let { listOf(it) } ?: emptyList()
@@ -98,7 +106,8 @@ class FacetGrid(
                         col, row,
                         colLabs,
                         if (addRowLab) rowLabels[row] else null,
-                        hasXAxis, hasYAxis,
+                        hasHAxis = hasHAxis,
+                        hasVAxis = hasVAxis,
                         trueIndex = infos.size
                     )
                 )

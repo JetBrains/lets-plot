@@ -11,6 +11,7 @@ enum class GeomKind {
     SMOOTH,
     BAR,
     HISTOGRAM,
+    DOTPLOT,
     TILE,
     BIN_2D,
     MAP,

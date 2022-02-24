@@ -23,7 +23,7 @@ import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.chart.ChartElementScaleSystem
+import jetbrains.livemap.chart.ChartElementScalingSystem
 import jetbrains.livemap.chart.GrowingPathEffect
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
@@ -93,7 +93,7 @@ class LiveMap(
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
     private val myAttribution: String?,
-    private val myShowAdnvancedActions: Boolean,
+    private val myShowCoordPickTools: Boolean,
     private val myCursorService: CursorService
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
@@ -231,7 +231,7 @@ class LiveMap(
                     myMapLocationConsumer,
                     myLayerManager,
                     myAttribution,
-                    myShowAdnvancedActions,
+                    myShowCoordPickTools,
                     myDevParams.isSet(SHOW_RESET_POSITION_ACTION),
                 ),
 
@@ -260,7 +260,7 @@ class LiveMap(
                 HoverObjectDetectionSystem(myUiService, componentManager),
 
                 // Charts
-                ChartElementScaleSystem(componentManager),
+                ChartElementScalingSystem(componentManager),
                 RenderingSystem(componentManager),
 
                 UiRenderingTaskSystem(componentManager),
@@ -329,7 +329,6 @@ class LiveMap(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myDevParams.isSet(DevParams.ENABLE_SCALING),
             myTextMeasurer
         )
 

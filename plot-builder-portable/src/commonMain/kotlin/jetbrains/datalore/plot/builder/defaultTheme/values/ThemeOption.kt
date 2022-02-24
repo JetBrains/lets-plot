@@ -14,8 +14,8 @@ object ThemeOption {
 
     const val PLOT_BKGR_RECT = "plot_background"
     const val PLOT_TITLE = "plot_title"
-    const val PLOT_SUBTITLE = "plot_subtitle" // ToDo
-    const val PLOT_CAPTION = "plot_caption"   // ToDo
+    const val PLOT_SUBTITLE = "plot_subtitle"
+    const val PLOT_CAPTION = "plot_caption"
 
     // Axis
     const val AXIS = "axis"
@@ -137,6 +137,8 @@ object ThemeOption {
         // Actually, text sizes are defined in "theme values".
         val elemWithColorOnly = listOf(
             PLOT_TITLE,
+            PLOT_SUBTITLE,
+            PLOT_CAPTION,
             AXIS_TITLE_X,
             AXIS_TITLE_Y,
             AXIS_TEXT_X,

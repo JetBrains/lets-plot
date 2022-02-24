@@ -29,8 +29,7 @@ import jetbrains.livemap.searching.PointLocatorHelper
 @LiveMapDsl
 class Points(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection,
-    val zoomable: Boolean
+    val mapProjection: MapProjection
 )
 
 fun LayersBuilder.points(block: Points.() -> Unit) {
@@ -43,13 +42,12 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 
     Points(
         MapEntityFactory(layerEntity),
-        mapProjection,
-        zoomable
+        mapProjection
     ).apply(block)
 }
 
 fun Points.point(block: PointBuilder.() -> Unit) {
-    PointBuilder(factory, zoomable)
+    PointBuilder(factory)
         .apply(block)
         .build()
 }
@@ -57,8 +55,9 @@ fun Points.point(block: PointBuilder.() -> Unit) {
 @LiveMapDsl
 class PointBuilder(
     private val myFactory: MapEntityFactory,
-    private val zoomable: Boolean
 ) {
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 4.0
     var point: Vec<LonLat>? = null
@@ -87,7 +86,8 @@ class PointBuilder(
                     renderer = Renderers.PointRenderer(shape)
                 }
                 +ChartElementComponent().apply {
-                    scalable = this@PointBuilder.zoomable
+                    sizeScalingRange = this@PointBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PointBuilder.alphaScalingEnabled
                     when (shape) {
                         in 1..14 -> {
                             strokeColor = this@PointBuilder.strokeColor

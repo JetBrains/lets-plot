@@ -14,7 +14,7 @@ __all__ = ['ggtitle',
            'xlab', 'ylab']
 
 
-def ggtitle(label):
+def ggtitle(label, subtitle=None):
     """
     Add title to the plot.
 
@@ -22,6 +22,11 @@ def ggtitle(label):
     ----------
     label : str
         The text for the plot title.
+
+    subtitle : str
+        The text for the plot subtitle.
+
+    Split a long title/subtitle into two lines or more using `\n` as a text separator.
 
     Returns
     --------
@@ -41,7 +46,7 @@ def ggtitle(label):
             ggtitle('New Plot Title')
 
     """
-    return labs(title=label)
+    return labs(title=label, subtitle=subtitle)
 
 
 def xlab(label):
@@ -106,7 +111,7 @@ def ylab(label):
 
 def labs(**kwargs):
     """
-    Change plot title, axis labels and legend titles.
+    Change plot title, plot subtitle, axis labels and legend titles.
 
     Parameters
     ----------
@@ -129,16 +134,26 @@ def labs(**kwargs):
         LetsPlot.setup_html()
         data = {'x': list(range(10)), 'y': list(range(10))}
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
-            labs(title='New plot title', x='New x axis label', \\
-                 y='New y axis label', size='New legend title')
+            labs(title='New plot title', subtitle='The plot subtitle', caption='The plot caption', \\
+                 x='New x axis label', y='New y axis label', size='New legend title')
 
     """
     specs = []
+
+    # handle ggtitle
+    title = kwargs.pop('title', None)
+    subtitle = kwargs.pop('subtitle', None)
+    if title is not None or subtitle is not None:
+        specs.append(FeatureSpec('ggtitle', name=None, text=title, subtitle=subtitle))
+
+    # plot caption
+    caption = kwargs.pop('caption', None)
+    if caption is not None:
+        specs.append(FeatureSpec('caption', name=None, text=caption))
+
+    # scales
     for k, v in kwargs.items():
-        if k == 'title':
-            specs.append(FeatureSpec('ggtitle', name=None, text=v))
-        else:
-            specs.append(_scale(aesthetic=k, name=v))
+        specs.append(_scale(aesthetic=k, name=v))
 
     if len(specs) == 1:
         return specs[0]

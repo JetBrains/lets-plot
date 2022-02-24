@@ -11,4 +11,7 @@ object FeatureSwitch {
 
     const val PLOT_DEBUG_DRAWING = false
     const val LEGEND_DEBUG_DRAWING = false
+
+    const val FACET_FREE_X = false
+    const val FACET_FREE_Y = false
 }

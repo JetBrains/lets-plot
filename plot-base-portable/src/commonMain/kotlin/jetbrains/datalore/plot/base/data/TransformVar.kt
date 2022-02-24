@@ -22,8 +22,10 @@ object TransformVar {
     val SHAPE = DataFrame.Variable("transform.SHAPE", TRANSFORM)
     val LINETYPE = DataFrame.Variable("transform.LINETYPE", TRANSFORM)
     val SIZE = DataFrame.Variable("transform.SIZE", TRANSFORM)
+    val STACKSIZE = DataFrame.Variable("transform.STACKSIZE", TRANSFORM)
     val WIDTH = DataFrame.Variable("transform.WIDTH", TRANSFORM)
     val HEIGHT = DataFrame.Variable("transform.HEIGHT", TRANSFORM)
+    val BINWIDTH = DataFrame.Variable("transform.BINWIDTH", TRANSFORM)
     val VIOLINWIDTH = DataFrame.Variable("transform.VIOLINWIDTH", TRANSFORM)
     val WEIGHT = DataFrame.Variable("transform.WEIGHT", TRANSFORM)
     val INTERCEPT = DataFrame.Variable("transform.INTERCEPT", TRANSFORM)
@@ -122,12 +124,20 @@ object TransformVar {
             return SIZE
         }
 
+        override fun stacksize(): DataFrame.Variable {
+            return STACKSIZE
+        }
+
         override fun width(): DataFrame.Variable {
             return WIDTH
         }
 
         override fun height(): DataFrame.Variable {
             return HEIGHT
+        }
+
+        override fun binwidth(): DataFrame.Variable {
+            return BINWIDTH
         }
 
         override fun violinwidth(): DataFrame.Variable {

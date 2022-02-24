@@ -19,17 +19,17 @@ object GeomInteractionUtil {
     internal fun configGeomTargets(
         layerConfig: LayerConfig,
         scaleMap: TypedScaleMap,
-        multilayer: Boolean,
+        multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         theme: Theme
     ): GeomInteraction {
-        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayer, isLiveMap, theme).build()
+        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, theme).build()
     }
 
     internal fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
         scaleMap: TypedScaleMap,
-        multilayer: Boolean,
+        multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         theme: Theme
     ): GeomInteractionBuilder {
@@ -42,7 +42,7 @@ object GeomInteractionUtil {
             layerConfig.geomProto.renders(),
             layerConfig.geomProto.geomKind,
             layerConfig.statKind,
-            multilayer,
+            multilayerWithTooltips,
             isCrosshairEnabled
         )
         val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
@@ -63,14 +63,15 @@ object GeomInteractionUtil {
         renders: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind,
-        multilayer: Boolean,
+        multilayerWithTooltips: Boolean,
         isCrosshairEnabled: Boolean
     ): GeomInteractionBuilder {
 
         val builder = initGeomInteractionBuilder(renders, geomKind, statKind, isCrosshairEnabled)
 
-        if (multilayer && !isCrosshairEnabled) {
-            // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot.
+        if (multilayerWithTooltips && !isCrosshairEnabled) {
+            // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
+            // and tooltips should not be disabled in other layers.
             // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
             // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
             // but not above a column).
@@ -90,6 +91,7 @@ object GeomInteractionUtil {
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
+            GeomKind.DOTPLOT -> listOf(Aes.BINWIDTH)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
@@ -240,6 +242,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY,
             GeomKind.FREQPOLY,
             GeomKind.HISTOGRAM,
+            GeomKind.DOTPLOT,
             GeomKind.LINE,
             GeomKind.AREA,
             GeomKind.BAR,

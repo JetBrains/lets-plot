@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
@@ -30,6 +31,10 @@ abstract class GeomBase : Geom {
         ctx: GeomContext
     ) {
         buildIntern(root, aesthetics, pos, coord, ctx)
+    }
+
+    open fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
+        return DoubleSpan(-0.5, 0.5)
     }
 
     protected fun getGeomTargetCollector(ctx: GeomContext): GeomTargetCollector {

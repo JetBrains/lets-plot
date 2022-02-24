@@ -16,8 +16,13 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
+import jetbrains.livemap.LiveMap
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.DevParams
-import jetbrains.livemap.config.LiveMapSpec
+import jetbrains.livemap.config.MAX_ZOOM
+import jetbrains.livemap.config.MIN_ZOOM
+import jetbrains.livemap.config.createMapProjection
+import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -27,12 +32,18 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.projections.GeoProjection
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.core.projections.createArcPath
+import jetbrains.livemap.fragment.newFragmentProvider
+import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
+import jetbrains.livemap.mapengine.basemap.Tilesets.chessboard
 import jetbrains.livemap.mapengine.camera.CameraListenerComponent
 import jetbrains.livemap.mapengine.camera.CenterChangedComponent
 import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.mapengine.viewport.ViewportHelper
+import jetbrains.livemap.toClientPoint
 import jetbrains.livemap.ui.CursorService
 import kotlin.math.abs
 
@@ -41,61 +52,64 @@ annotation class LiveMapDsl
 
 @LiveMapDsl
 class LiveMapBuilder {
-    lateinit var size: DoubleVector
-    lateinit var geocodingService: GeocodingService
-    lateinit var tileSystemProvider: BasemapTileSystemProvider
-
+    private var isLoopY: Boolean = false
+    var size: DoubleVector = DoubleVector.ZERO
+    var geocodingService: GeocodingService = Services.bogusGeocodingService()
+    var tileSystemProvider: BasemapTileSystemProvider = chessboard()
     var layers: List<LayersBuilder.() -> Unit> = emptyList()
-
-    var zoom: Int? = null
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
-
     var projection: GeoProjection = Projections.mercator()
-    var isLoopX: Boolean = true
-    var isLoopY: Boolean = false
-
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> }
-
     var attribution: String? = null
+    var showCoordPickTools = false
+    var zoom: Int? = null
+    var minZoom: Int = MIN_ZOOM
+    var maxZoom: Int = MAX_ZOOM
+    var cursorService: CursorService = CursorService()
 
-    var showAdvancedActions = false
+    var devParams: DevParams = DevParams(HashMap<String, Any>())
 
-    var devParams: DevParams =
-        DevParams(HashMap<String, Any>())
+    fun build(): LiveMap {
+        require(zoom == null || zoom in IntRange(minZoom, maxZoom)) {
+            error("Zoom must be in range [${minZoom}, ${maxZoom}], but was $zoom")
+        }
 
-    fun build(): LiveMapSpec {
-        return LiveMapSpec(
-            size = size,
-            zoom = zoom,
-            isInteractive = interactive,
-            layers = layers,
-
-            location = mapLocation,
-
-            geoProjection = projection,
-            isLoopX = isLoopX,
-            isLoopY = isLoopY,
-
-            geocodingService = geocodingService,
-
-            mapLocationConsumer = mapLocationConsumer,
-
-            basemapTileSystemProvider = tileSystemProvider,
-
-            devParams = devParams,
-
-            attribution = attribution,
-            showAdvancedActions = showAdvancedActions,
-
-            // deprecated
-            isClustering = false,
-            isLabels = true,
-            isScaled = false,
-            isTiles = true,
-            isUseFrame = true,
-            cursorService = CursorService()
+        val mapProjection = createMapProjection(projection)
+        val viewportHelper = ViewportHelper(mapProjection.mapRect, myLoopX = projection.cylindrical, isLoopY)
+        val viewport = Viewport.create(
+            viewportHelper,
+            size.toClientPoint(),
+            mapProjection.mapRect.center,
+            minZoom,
+            maxZoom
         )
+        viewport.zoom = zoom ?: (viewport.minZoom + 1) // + 1 to not blink zoomOut button in disabled state
+
+
+        return LiveMap(
+            myMapRuler = viewportHelper,
+            myMapProjection = mapProjection,
+            viewport = viewport,
+            layers = layers,
+            myBasemapTileSystemProvider = tileSystemProvider,
+            myFragmentProvider = newFragmentProvider(geocodingService, size),
+            myDevParams = devParams,
+            myMapLocationConsumer = mapLocationConsumer,
+            myMapLocationRect = mapLocation
+                ?.getBBox(
+                    MapLocationGeocoder(
+                        geocodingService,
+                        viewportHelper,
+                        mapProjection
+                    )
+                ),
+            myZoom = zoom,
+            myAttribution = attribution,
+            myShowCoordPickTools = showCoordPickTools,
+            myCursorService = cursorService
+        )
+
     }
 }
 
@@ -104,12 +118,13 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
-    val zoomable: Boolean,
     val textMeasurer: TextMeasurer
 )
 
 @LiveMapDsl
 class Symbol {
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 0.0
     var point: Vec<LonLat>? = null
@@ -190,14 +205,8 @@ class Location {
 
     var coordinate: Vec<LonLat>? = null
         set(v) {
-            field = v; mapLocation = v?.let { MapLocation.create(
-                GeoRectangle(
-                    it.x,
-                    it.y,
-                    it.x,
-                    it.y
-                )
-            ) }
+            field = v
+            mapLocation = v?.let { MapLocation.create(GeoRectangle(it.x, it.y, it.x, it.y)) }
         }
 
     internal var mapLocation: MapLocation? = null
@@ -261,6 +270,16 @@ class MapEntityFactory(layerEntity: EcsEntity) {
         return mapEntity(myComponentManager, myParentLayerComponent, name)
             .also { myLayerEntityComponent.add(it.id) }
     }
+
+    fun createStaticEntityWithLocation(name: String, point: LonLatPoint): EcsEntity =
+        createStaticEntity(name, point).addComponents {
+            + NeedLocationComponent
+            + NeedCalculateLocationComponent
+        }
+
+    fun createStaticEntity(name: String, point: LonLatPoint): EcsEntity =
+        createMapEntity(name)
+            .add(LonLatComponent(point))
 }
 
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
@@ -284,8 +303,6 @@ fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
 fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     Projection().apply(block).let {
         projection = it.geoProjection
-        isLoopX = it.loopX
-        isLoopY = it.loopY
     }
 }
 
@@ -294,4 +311,8 @@ fun liveMapVectorTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
 
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
     return LiveMapGeocodingServiceBuilder().apply(block).build()
+}
+
+internal fun EcsEntity.setInitializer(block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsEntity {
+    return add(PointInitializerComponent(block))
 }

@@ -8,14 +8,18 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
+import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
+import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
 import jetbrains.datalore.plot.config.Option.Geom.PointRange
@@ -51,6 +55,26 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
+            GeomKind.DOTPLOT -> return GeomProvider.dotplot {
+                val geom = DotplotGeom()
+                if (opts.hasOwn(Dotplot.DOTSIZE)) {
+                    geom.dotSize = opts.getDouble(Dotplot.DOTSIZE)!!
+                }
+                if (opts.hasOwn(Dotplot.STACKRATIO)) {
+                    geom.stackRatio = opts.getDouble(Dotplot.STACKRATIO)!!
+                }
+                if (opts.hasOwn(Dotplot.STACKGROUPS)) {
+                    geom.stackGroups = opts.getBoolean(Dotplot.STACKGROUPS)
+                }
+                if (opts.hasOwn(Dotplot.STACKDIR)) {
+                    geom.stackDir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
+                }
+                if (opts.hasOwn(Dotplot.METHOD)) {
+                    geom.method = DotplotStat.Method.safeValueOf(opts.getString(Dotplot.METHOD)!!)
+                }
+                geom
+            }
+
             GeomKind.CROSS_BAR -> return GeomProvider.crossBar {
                 val geom = CrossBarGeom()
                 if (opts.hasOwn(CrossBar.FATTEN)) {
@@ -92,7 +116,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LIVE_MAP -> {
-                return GeomProvider.livemap(parseFromLayerOptions(opts))
+                return GeomProvider.livemap(opts.mergedOptions.getEnum<DisplayMode>(DISPLAY_MODE) ?: POINT)
             }
 
             GeomKind.STEP -> return GeomProvider.step {
@@ -186,6 +210,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
             PROVIDER[GeomKind.BAR] = GeomProvider.bar()
             PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
+            // dotplot - special case
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()

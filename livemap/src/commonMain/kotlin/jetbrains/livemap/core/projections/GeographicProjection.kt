@@ -17,6 +17,7 @@ internal class GeographicProjection : GeoProjection {
     override fun project(v: LonLatPoint): GeographicPoint = explicitVec(limitLon(v.x), limitLat(v.y))
     override fun invert(v: GeographicPoint): LonLatPoint = explicitVec(limitLon(v.x), limitLat(v.y))
     override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
+    override val cylindrical: Boolean = false
 
     companion object {
         private val VALID_RECTANGLE = newSpanRectangle(

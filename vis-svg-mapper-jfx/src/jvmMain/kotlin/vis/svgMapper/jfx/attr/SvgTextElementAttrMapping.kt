@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.geometry.VPos
 import javafx.scene.text.Text
+import javafx.scene.text.TextAlignment
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_CENTER
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_TOP
@@ -42,16 +43,18 @@ internal object SvgTextElementAttrMapping : SvgShapeMapping<Text>() {
 
     fun revalidatePositionAttributes(svgTextAnchor: String?, target: Text) {
         val width = target.boundsInLocal.width
-        SvgConstants.SVG_TEXT_ANCHOR_END
         when (svgTextAnchor) {
             SvgConstants.SVG_TEXT_ANCHOR_END -> {
                 target.translateX = -width
+                target.textAlignment = TextAlignment.RIGHT
             }
             SvgConstants.SVG_TEXT_ANCHOR_MIDDLE -> {
                 target.translateX = -width / 2
+                target.textAlignment = TextAlignment.CENTER
             }
             else -> {
                 target.translateX = 0.0
+                target.textAlignment = TextAlignment.LEFT
             }
         }
     }

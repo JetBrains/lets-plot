@@ -176,9 +176,9 @@ object SeriesUtil {
      * ToDo: Use with caution.
      * ToDo: The correct method of domain validation is temporarily in 'Transforms.ensureApplicableDomain'.
      */
-    fun ensureApplicableRange(range: ClosedRange<Double>?): ClosedRange<Double> {
+    fun ensureApplicableRange(range: ClosedRange<Double>?, preferableNullRange: ClosedRange<Double>? = null): ClosedRange<Double> {
         if (range == null) {
-            return ClosedRange(-0.5, 0.5)
+            return preferableNullRange ?: ClosedRange(-0.5, 0.5)
         }
         if (isSubTiny(range)) {
             val median = range.lowerEnd

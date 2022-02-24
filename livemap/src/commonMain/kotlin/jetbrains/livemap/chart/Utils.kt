@@ -8,7 +8,7 @@ package jetbrains.livemap.chart
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.PI
-import kotlin.math.roundToInt
+import kotlin.math.min
 import kotlin.math.sqrt
 
 object Utils {
@@ -128,31 +128,8 @@ object Utils {
         ctx.lineTo(0.0, -r)
     }
 
-    private fun min(lhs: Int?, rhs: Int?): Int? {
-        if (lhs == null && rhs == null) {
-            return null
-        }
-
-        if (lhs != null && rhs == null) {
-            return lhs
-        }
-
-        if (lhs == null && rhs != null) {
-            return rhs
-        }
-
-        check(lhs != null && rhs != null)
-
-        if (lhs < rhs) {
-            return lhs
-        }
-
-        return rhs
+    fun changeAlphaWithMin(color: Color, newAlpha: Int?): Color {
+        return newAlpha?.let { min(it, color.alpha) }?.let(color::changeAlpha) ?: color
     }
 
-    fun changeAlphaWithMin(color: Color, alpha: Double?): Color? {
-        val intAlpha = alpha?.let { (255 * it).roundToInt() }
-        val newAlpha = min(intAlpha, color.alpha)
-        return newAlpha?.let { color.changeAlpha(it) }
-    }
 }

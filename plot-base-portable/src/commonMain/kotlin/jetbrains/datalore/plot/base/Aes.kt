@@ -37,8 +37,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val LINETYPE: Aes<LineType> = Aes("linetype", false)
 
         val SIZE: Aes<Double> = Aes("size")
+        val STACKSIZE: Aes<Double> = Aes("stacksize")
         val WIDTH: Aes<Double> = Aes("width")
         val HEIGHT: Aes<Double> = Aes("height")
+        val BINWIDTH: Aes<Double> = Aes("binwidth")
         val VIOLINWIDTH: Aes<Double> = Aes("violinwidth")
         val WEIGHT: Aes<Double> = Aes("weight")
         val INTERCEPT: Aes<Double> = Aes("intercept")
@@ -151,8 +153,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == FLOW ||
                     aes == LABEL ||
                     aes == SLOPE ||
+                    aes == STACKSIZE ||
                     aes == WIDTH ||
                     aes == HEIGHT ||
+                    aes == BINWIDTH ||
                     aes == VIOLINWIDTH ||
                     aes == HJUST ||
                     aes == VJUST ||

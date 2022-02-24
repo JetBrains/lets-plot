@@ -14,5 +14,4 @@ enum class MapLayerKind {
     TEXT,
     PIE,
     BAR,
-    HEATMAP
 }

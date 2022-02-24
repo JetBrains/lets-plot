@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 
 internal class LongitudeSegment(start: Double, end: Double) {
@@ -35,7 +35,7 @@ internal class LongitudeSegment(start: Double, end: Double) {
     }
 
 
-    fun splitByAntiMeridian(): List<ClosedRange<Double>> = splitSegment(myStart, myEnd, MIN_LONGITUDE, MAX_LONGITUDE)
+    fun splitByAntiMeridian(): List<DoubleSpan> = splitSegment(myStart, myEnd, MIN_LONGITUDE, MAX_LONGITUDE)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -54,20 +54,20 @@ internal class LongitudeSegment(start: Double, end: Double) {
             end: Double,
             min: Double,
             max: Double
-        ) : List<ClosedRange<Double>> {
+        ) : List<DoubleSpan> {
             return if (start <= end) {
-                listOf(ClosedRange(start, end))
+                listOf(DoubleSpan(start, end))
             } else {
                 listOf(
-                    ClosedRange(start, max),
-                    ClosedRange(min, end)
+                    DoubleSpan(start, max),
+                    DoubleSpan(min, end)
                 )
             }
         }
 
         private fun disjointRangesEncloseRange(
-            ranges: List<ClosedRange<Double>>,
-            internalRange: ClosedRange<Double>
+            ranges: List<DoubleSpan>,
+            internalRange: DoubleSpan
         ): Boolean {
             for (range in ranges) {
                 if (range.encloses(internalRange)) {

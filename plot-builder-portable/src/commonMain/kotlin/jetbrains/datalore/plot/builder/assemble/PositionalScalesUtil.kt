@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
@@ -20,17 +21,22 @@ import kotlin.math.min
 internal object PositionalScalesUtil {
     /**
      * Computers X/Y ranges of transformed input series.
+     *
+     * @return list of pairs (x-domain, y-domain).
+     *          Elements is this list match corresponding elements in the `layersByTile` list.
      */
     fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
         xScaleProto: Scale<Double>,
-        yScaleProto: Scale<Double>
-    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        var xInitialDomain: ClosedRange<Double>? = RangeUtil.initialRange(xScaleProto.transform)
-        var yInitialDomain: ClosedRange<Double>? = RangeUtil.initialRange(yScaleProto.transform)
+        yScaleProto: Scale<Double>,
+        freeX: Boolean,
+        freeY: Boolean,
+    ): List<Pair<DoubleSpan, DoubleSpan>> {
+        var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(xScaleProto.transform)
+        var yInitialDomain: DoubleSpan? = RangeUtil.initialRange(yScaleProto.transform)
 
-        var xDomains = ArrayList<ClosedRange<Double>>()
-        val yDomains = ArrayList<ClosedRange<Double>>()
+        var xDomains = ArrayList<DoubleSpan>()
+        val yDomains = ArrayList<DoubleSpan>()
         for (tileLayers in layersByTile) {
             val (xDomain, yDomain) = computeTileXYDomains(
                 tileLayers,
@@ -41,23 +47,57 @@ internal object PositionalScalesUtil {
             yDomain?.run { yDomains.add(yDomain) }
         }
 
-        // ToDo: overal domain and 'expanded' domain by tile.
-        val xDomainOverall = xDomains.reduceOrNull() { r0, r1 ->
-            RangeUtil.updateRange(r0, r1)!!
-        }
-        val yDomainOverall = yDomains.reduceOrNull() { r0, r1 ->
-            RangeUtil.updateRange(r0, r1)!!
-        }
+        val domainsX: List<DoubleSpan> = finalizeDomains(
+            Aes.X,
+            xScaleProto,
+            xDomains,
+            layersByTile,
+            freeX
+        )
+        val domainsY: List<DoubleSpan> = finalizeDomains(
+            Aes.Y,
+            yScaleProto,
+            yDomains,
+            layersByTile,
+            freeY
+        )
 
-        // 'expand' ranges and include '0' if necessary
-        val xDomainExpanded = RangeUtil.expandRange(xDomainOverall, Aes.X, xScaleProto, layersByTile[0])
-        val yDomainExpanded = RangeUtil.expandRange(yDomainOverall, Aes.Y, yScaleProto, layersByTile[0])
+        return domainsX.zip(domainsY)
+    }
 
-        // validate XY ranges
-        // ToDo: by tile.
-        val xDomain = SeriesUtil.ensureApplicableRange(xDomainExpanded)
-        val yDomain = SeriesUtil.ensureApplicableRange(yDomainExpanded)
-        return Pair(xDomain, yDomain)
+    private fun finalizeDomains(
+        aes: Aes<Double>,
+        scaleProto: Scale<*>,
+        domains: List<DoubleSpan>,
+        layersByTile: List<List<GeomLayer>>,
+        freeScale: Boolean
+    ): List<DoubleSpan> {
+
+        return when (freeScale) {
+            true -> {
+                // Each tile has its own domain
+                domains.mapIndexed { i, v ->
+                    // 'expand' ranges and include '0' if necessary
+                    val domainExpanded = RangeUtil.expandRange(v, aes, scaleProto, layersByTile[i])
+                    SeriesUtil.ensureApplicableRange(domainExpanded)
+                }
+            }
+            else -> {
+                // One domain for all tiles.
+                val domainOverall = domains.reduceOrNull { r0, r1 ->
+                    RangeUtil.updateRange(r0, r1)!!
+                }
+                val preferableNullDomainOverall = layersByTile[0]
+                    .map { it.preferableNullDomain(aes) }
+                    .reduceOrNull { r0, r1 -> RangeUtil.updateRange(r0, r1)!! }
+
+                // 'expand' ranges and include '0' if necessary
+                val domainExpanded = RangeUtil.expandRange(domainOverall, aes, scaleProto, layersByTile[0])
+                val domain = SeriesUtil.ensureApplicableRange(domainExpanded, preferableNullDomainOverall)
+
+                layersByTile.map { domain }
+            }
+        }
     }
 
     private fun computeTileXYDomains(
@@ -207,26 +247,31 @@ internal object PositionalScalesUtil {
         geomCtx: GeomContext
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val renderedAes = layer.renderedAes()
-        val computeExpandX = renderedAes.contains(Aes.WIDTH)
-        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
-        val rangeX = if (computeExpandX)
-            computeLayerDryRunRangeAfterSizeExpand(
+        val rangeX = when {
+            renderedAes.contains(Aes.WIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
                 Aes.X,
                 Aes.WIDTH,
                 aesthetics,
                 geomCtx
             )
-        else
-            null
-        val rangeY = if (computeExpandY)
-            computeLayerDryRunRangeAfterSizeExpand(
-                Aes.Y,
-                Aes.HEIGHT,
+            renderedAes.contains(Aes.BINWIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
+                Aes.X,
+                Aes.BINWIDTH,
                 aesthetics,
                 geomCtx
             )
-        else
-            null
+            else -> null
+        }
+        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
+        val rangeY = if (computeExpandY)
+                computeLayerDryRunRangeAfterSizeExpand(
+                    Aes.Y,
+                    Aes.HEIGHT,
+                    aesthetics,
+                    geomCtx
+                )
+            else
+                null
 
         return Pair(rangeX, rangeY)
     }

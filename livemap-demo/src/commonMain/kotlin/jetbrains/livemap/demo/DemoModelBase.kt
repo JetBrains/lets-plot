@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
@@ -14,7 +15,6 @@ import jetbrains.livemap.api.Services
 import jetbrains.livemap.api.liveMapConfig
 import jetbrains.livemap.api.projection
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
-import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.core.Clipboard
 import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.mapengine.basemap.Tilesets
@@ -24,8 +24,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
         val liveMap = createLiveMapSpec()
             .apply(block)
             .run(LiveMapBuilder::build)
-            .run(::LiveMapFactory)
-            .run(LiveMapFactory::createLiveMap)
+            .run(Asyncs::constant)
 
         return Registration.from(
             LiveMapPresenter().apply { render(canvasControl, liveMap) }

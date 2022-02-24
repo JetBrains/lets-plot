@@ -175,7 +175,7 @@ class GeomInteractionBuilderCreationTest {
             val builder = GeomInteractionUtil.createGeomInteractionBuilder(
                 layerConfig = layerConfig,
                 scaleMap = plotConfig.scaleMap,
-                multilayer = false,
+                multilayerWithTooltips = false,
                 isLiveMap = false,
                 theme = DefaultTheme.minimal2()
             )
@@ -306,7 +306,7 @@ class GeomInteractionBuilderCreationTest {
         return GeomInteractionUtil.createGeomInteractionBuilder(
             layerConfig = layerConfig,
             scaleMap = plotConfig.scaleMap,
-            multilayer = false,
+            multilayerWithTooltips = false,
             isLiveMap = false,
             theme
         )

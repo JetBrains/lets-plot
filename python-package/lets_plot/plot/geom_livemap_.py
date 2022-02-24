@@ -32,7 +32,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  projection=None,
                  geodesic=None,
                  tiles=None,
-                 show_advanced_actions=None,
+                 show_coord_pick_tools=None,
+                 scale_zooms=None,
+                 scale_objects=None,
+                 data_size_zoomin=None,
+                 const_size_zoomin=None,
+                 topmost=None,
                  **other_args):
     """
     Display an interactive map.
@@ -81,9 +86,20 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Tiles provider, either as a string - URL for a standard raster ZXY tile provider
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
         or the result of a call to a `maptiles_xxx()` functions.
-
-    show_advanced_actions : bool, defafult=False
-        Show buttons with actions "copy location" and "draw geometry"
+    show_coord_pick_tools : bool, defafult=False
+        Show buttons "copy location" and "draw geometry"
+    data_size_zoomin : int, defafult=0
+        Number of zoom-ins when map objects with mapped size will get scaled.
+         0: no scaling
+         -1: no limit
+         n: number of zoomins with scaling
+    const_size_zoomin : int, defafult=-1
+        Number of zoom-ins when map objects with constant size will get scaled.
+         0: no scaling
+         -1: no limit
+         n: number of zoomins with scaling
+    topmost : bool, default=False
+        Draw livemap layer above other geoms.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -141,6 +157,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     Examples
     --------
     .. jupyter-execute::
+        :param scale_objects:
         :linenos:
         :emphasize-lines: 3
 
@@ -225,8 +242,14 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  geodesic=geodesic,
                  tiles=tiles,
                  geocoding=geocoding,
-                 show_advanced_actions=show_advanced_actions,
-                 **other_args)
+                 show_coord_pick_tools=show_coord_pick_tools,
+                 scale_zooms=scale_zooms,
+                 scale_objects=scale_objects,
+                 data_size_zoomin=data_size_zoomin,
+                 const_size_zoomin=const_size_zoomin,
+                 topmost=topmost,
+                 **other_args
+    )
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}

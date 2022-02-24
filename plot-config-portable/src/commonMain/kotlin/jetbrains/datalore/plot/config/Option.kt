@@ -93,6 +93,9 @@ object Option {
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
         const val TITLE_TEXT = "text"
+        const val SUBTITLE_TEXT = "subtitle"
+        const val CAPTION = "caption"
+        const val CAPTION_TEXT = "text"
         const val COORD = "coord"
         const val FACET = "facet"
         const val THEME = "theme"
@@ -114,6 +117,7 @@ object Option {
         const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
+        const val TOOLTIP_TITLE = "tooltip_title"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
     }
@@ -124,6 +128,14 @@ object Option {
     }
 
     object Geom {
+
+        object Dotplot {
+            const val DOTSIZE = "dotsize"
+            const val STACKRATIO = "stackratio"
+            const val STACKGROUPS = "stackgroups"
+            const val STACKDIR = "stackdir"
+            const val METHOD = "method"
+        }
 
         object Choropleth {
             const val GEO_POSITIONS = "map"
@@ -191,13 +203,15 @@ object Option {
             const val LOCATION = "location"
             const val ZOOM = "zoom"
             const val STROKE = "stroke"
-            const val SCALED = "scaled"
             const val CLUSTERING = "clustering"
             const val LABELS = "labels"
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
-            const val SHOW_ADVANCEDS_ACTIONS = "show_advanced_actions"
+            const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
+            const val DATA_SIZE_ZOOMIN = "data_size_zoomin"
+            const val CONST_SIZE_ZOOMIN = "const_size_zoomin"
+            const val TOPMOST = "topmost"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -237,6 +251,7 @@ object Option {
         object Bin {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+            const val METHOD = "method"
             const val CENTER = "center"
             const val BOUNDARY = "boundary"
         }
@@ -447,6 +462,7 @@ object Option {
         private const val SMOOTH = "smooth"
         private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
+        private const val DOTPLOT = "dotplot"
         private const val TILE = "tile"
         private const val BIN_2D = "bin2d"
         private const val MAP = "map"
@@ -487,6 +503,7 @@ object Option {
             map[SMOOTH] = GeomKind.SMOOTH
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
+            map[DOTPLOT] = GeomKind.DOTPLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP
