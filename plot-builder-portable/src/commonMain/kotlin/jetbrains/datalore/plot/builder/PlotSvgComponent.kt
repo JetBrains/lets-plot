@@ -367,7 +367,7 @@ class PlotSvgComponent constructor(
             captionLabel.textColor().set(theme.plot().captionColor())
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
             captionLabel.setX(0.0)
-            captionLabel.setY(0.0, captionLineHeight)
+            captionLabel.setLineHeight(captionLineHeight)
 
             val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
             val captionBounds = DoubleRectangle(
@@ -398,7 +398,7 @@ class PlotSvgComponent constructor(
         titleLabel.textColor().set(color)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
-        titleLabel.setY(0.0, titleLineHeight)
+        titleLabel.setLineHeight(titleLineHeight)
 
         val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)

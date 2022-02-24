@@ -94,7 +94,7 @@ abstract class LegendBox : SvgComponent() {
         label.addClassName(Style.LEGEND_TITLE)
         label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
-        label.setY(0.0, PlotLabelSpec.LEGEND_TITLE.height())
+        label.setLineHeight(PlotLabelSpec.LEGEND_TITLE.height())
         label.moveTo(
             // top-align the first line of a multi-line title
             origin.add(DoubleVector(0.0, PlotLabelSpec.LEGEND_TITLE.height()*0.8))

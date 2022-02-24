@@ -386,20 +386,15 @@ class TooltipBox: SvgComponent() {
             titleLine: String,
             titleColor: Color
         ): MultilineLabel {
-
             val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
-
             titleComponent.textColor().set(titleColor)
             titleComponent.setX(0.0)
             titleComponent.setFontWeight("bold")
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-
-            // set interval between substrings
             val lineHeight = estimateLineHeight(titleLine) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
-            titleComponent.setY(myVerticalContentPadding, lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+            titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
-
             return titleComponent
         }
 
@@ -427,10 +422,10 @@ class TooltipBox: SvgComponent() {
                 return DoubleVector.ZERO
             }
 
-            titleComponent.y().set(myVerticalContentPadding)
             titleComponent.setX(totalTooltipWidth / 2)
+            titleComponent.setY(myVerticalContentPadding)
 
-            val titleSize = DoubleVector(totalTooltipWidth, titleComponent.y().get()!! + titleHeight)
+            val titleSize = DoubleVector(totalTooltipWidth, titleComponent.y()!! + titleHeight)
 
             // add line separator
             val pathData = SvgPathDataBuilder().apply {
@@ -473,16 +468,17 @@ class TooltipBox: SvgComponent() {
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
-            // max line height - will be used as default height for empty string
-            val defaultLineHeight = lines.mapNotNull { line ->
+            // calculate heights of original value lines
+            val lineHeights = lines.map { line ->
                 listOfNotNull(estimateLineHeight(line.label), estimateLineHeight(line.value)).maxOrNull()
-            }.maxOrNull() ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+                    ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+            }
 
             // sef vertical shifts for tspan elements
-            components.onEach { component ->
+            lineHeights.zip(components).onEach { (height, component) ->
                 val (labelComponent, valueComponent) = component
-                labelComponent?.setY(0.0, defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
-                valueComponent.setY(0.0, defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+                labelComponent?.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
+                valueComponent.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
             }
 
             val rawBBoxes = lines.zip(components).map { (line, component) ->
@@ -495,6 +491,9 @@ class TooltipBox: SvgComponent() {
 
             // max label width - all labels will be aligned to this value
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
+
+            // max line height - will be used as default height for empty string
+            val defaultLineHeight = lineHeights.maxOrNull() ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
             val labelWidths = lines.zip(components).map { (line, component) ->
                 when {
@@ -558,8 +557,8 @@ class TooltipBox: SvgComponent() {
                     //  - in Batik it is close to the abs(bBox.top)
                     //  - in JavaFx it is constant = fontSize
                     val yPosition = textDimension.y - min(valueBBox.top, labelBBox.top)
-                    valueComponent.setY(yPosition, defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
-                    labelComponent?.setY(yPosition, defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+                    valueComponent.setY(yPosition)
+                    labelComponent?.setY(yPosition)
 
                     when {
                         labelComponent != null && labelBBox.dimension.x > 0 -> {
@@ -601,16 +600,10 @@ class TooltipBox: SvgComponent() {
                     if (rotate) {
                         components
                             .onEach { (labelComponent, valueComponent) ->
-                                labelComponent?.setY(
-                                    -textSize.y + labelComponent.y().get()!!,
-                                    defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS
-                                )
+                                labelComponent?.setY(-textSize.y + labelComponent.y()!!)
                                 labelComponent?.rotate(90.0)
 
-                                valueComponent.setY(
-                                    -textSize.y + valueComponent.y().get()!!,
-                                    defaultLineHeight + INTERVAL_BETWEEN_SUBSTRINGS
-                                )
+                                valueComponent.setY(-textSize.y + valueComponent.y()!!)
                                 valueComponent.rotate(90.0)
                             }
                         textSize.flip()
