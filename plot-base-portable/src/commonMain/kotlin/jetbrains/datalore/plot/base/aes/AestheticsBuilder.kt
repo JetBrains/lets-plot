@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -29,6 +30,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
@@ -396,12 +398,20 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return get(SIZE)
         }
 
+        override fun stacksize(): Double {
+            return get(STACKSIZE)
+        }
+
         override fun width(): Double {
             return get(WIDTH)
         }
 
         override fun height(): Double {
             return get(HEIGHT)
+        }
+
+        override fun binwidth(): Double {
+            return get(BINWIDTH)
         }
 
         override fun violinwidth(): Double {

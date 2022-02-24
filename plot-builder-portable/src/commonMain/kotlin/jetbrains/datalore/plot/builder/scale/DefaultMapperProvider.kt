@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
@@ -27,6 +28,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
@@ -98,9 +100,11 @@ object DefaultMapperProvider {
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
 
             this.put(SIZE, SizeMapperProvider.DEFAULT)
+            this.put(STACKSIZE, NUMERIC_IDENTITY)
             this.put(WIDTH, NUMERIC_IDENTITY)
             this.put(HEIGHT, NUMERIC_IDENTITY)
             this.put(WEIGHT, NUMERIC_IDENTITY)
+            this.put(BINWIDTH, NUMERIC_IDENTITY)
             this.put(VIOLINWIDTH, NUMERIC_IDENTITY)
             this.put(INTERCEPT, NUMERIC_IDENTITY)
             this.put(SLOPE, NUMERIC_IDENTITY)

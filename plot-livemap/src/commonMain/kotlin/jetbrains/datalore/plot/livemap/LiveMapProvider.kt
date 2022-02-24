@@ -9,6 +9,7 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.interact.ContextualMapping
@@ -18,12 +19,13 @@ import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.AES_ZOOMIN_LIMIT
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_ZOOMIN_LIMIT
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DEV_PARAMS
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LOCATION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.PROJECTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TILES
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TOPMOST
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.ATTRIBUTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MAX_ZOOM
@@ -59,7 +61,7 @@ object LiveMapProvider {
                 require(tileLayers.first().isLiveMap)
                 tileLayers.first().setLiveMapProvider(
                     MyLiveMapProvider(
-                        tileLayers,
+                        tileLayers.map { createLayerRendererData(it, IDENTITY, IDENTITY) },
                         liveMapOptions,
                         cursorServiceConfig.cursorService
                     )
@@ -69,19 +71,16 @@ object LiveMapProvider {
     }
 
     private class MyLiveMapProvider internal constructor(
-        private val geomLayers: List<GeomLayer>,
+        private val letsPlotLayers: List<LayerRendererData>,
         private val myLiveMapOptions: Map<*, *>,
         private val cursor: CursorService,
     ) : LiveMapProvider {
         init {
-            require(geomLayers.isNotEmpty())
-            require(geomLayers.first().isLiveMap) { "geom_livemap have to be the very first geom after ggplot()" }
+            require(letsPlotLayers.isNotEmpty())
+            require(letsPlotLayers.first().geomKind == GeomKind.LIVE_MAP) { "geom_livemap have to be the very first geom after ggplot()" }
         }
 
         override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
-            val letsPlotLayers: List<LayerRendererData> = geomLayers
-                .map { layer -> createLayerRendererData(layer, IDENTITY, IDENTITY) }
-
             val liveMapBuilder: LiveMapBuilder = LiveMapBuilder().apply {
                 size = bounds.dimension
                 projection = when (myLiveMapOptions.getEnum(PROJECTION) ?: EPSG3857) {
@@ -109,9 +108,12 @@ object LiveMapProvider {
                     devParams.read(DevParams.COMPUTATION_PROJECTION_QUANT)
                 )
                 layers = LayerConverter.convert(
-                    letsPlotLayers,
-                    myLiveMapOptions.getInt(AES_ZOOMIN_LIMIT) ?: 0,
-                    myLiveMapOptions.getInt(CONST_ZOOMIN_LIMIT) ?: -1,
+                    when (myLiveMapOptions.getBool(TOPMOST) ?: false) {
+                        false -> letsPlotLayers
+                        true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
+                    },
+                    myLiveMapOptions.getInt(DATA_SIZE_ZOOMIN) ?: 0,
+                    myLiveMapOptions.getInt(CONST_SIZE_ZOOMIN) ?: -1,
                     myLiveMapOptions.getBool(Option.Geom.LiveMap.GEODESIC) ?: true
                 )
             }
@@ -149,7 +151,11 @@ object LiveMapProvider {
             ?: Services.bogusGeocodingService()
     }
 
-    private fun createTileSystemProvider(options: Map<*, *>, debugTiles: Boolean, quant: Int): BasemapTileSystemProvider {
+    private fun createTileSystemProvider(
+        options: Map<*, *>,
+        debugTiles: Boolean,
+        quant: Int,
+    ): BasemapTileSystemProvider {
         if (debugTiles) {
             return Tilesets.chessboard()
         }

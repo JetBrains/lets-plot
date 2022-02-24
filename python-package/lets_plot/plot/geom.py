@@ -3,6 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
+
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84, get_geo_data_frame_meta
 
@@ -11,7 +12,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84,
 #
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
-           'geom_histogram', 'geom_bin2d',
+           'geom_histogram', 'geom_dotplot', 'geom_bin2d',
            'geom_tile', 'geom_raster',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
@@ -761,7 +762,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     center : float
         Specifies x-value to align bin centers to.
     boundary : float
-        Specifies x-value to align bin boundary (i.e. point berween bins) to.
+        Specifies x-value to align bin boundary (i.e. point between bins) to.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -781,6 +782,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Computed variables:
 
     - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..binwidth..: width of each bin.
 
     `geom_histogram()` understands the following aesthetics mappings:
 
@@ -842,6 +844,145 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  data=data,
                  stat=stat,
                  position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 center=center,
+                 boundary=boundary,
+                 **other_args)
+
+
+def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
+                 bins=None,
+                 binwidth=None,
+                 center=None,
+                 boundary=None,
+                 **other_args):
+    """
+    Dot plots represent individual observations in a batch of data with circular dots.
+    The diameter of a dot corresponds to the maximum width or bin width, depending on the binning algorithm.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='dotplot'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'dotplot' (depends on `method` parameter).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    binwidth : float
+        When method is 'dotdensity', this specifies maximum bin width.
+        When method is 'histodot', this specifies bin width.
+    bins : int, default=30
+        When method is 'histodot', this specifies number of bins. Overridden by `binwidth`.
+    method : {'dotdensity', 'histodot'}, default='dotdensity'
+        Use 'dotdensity' for dot-density binning,
+        or 'histodot' for fixed bin widths (like in geom_histogram).
+    stackdir : {'up', 'down', 'center', 'centerwhole'}, default='up'
+        Which direction to stack the dots.
+    stackratio : float, default=1.0
+        How close to stack the dots.
+        Use smaller values for closer, overlapping dots.
+    dotsize : float, default=1.0
+        The diameter of the dots relative to binwidth.
+    center : float
+        When method is 'histodot', this specifies x-value to align bin centers to.
+    boundary : float
+        When method is 'histodot', this specifies x-value to align bin boundary
+        (i.e. point between bins) to.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    With 'dotdensity' binning, the bin positions are determined by the data and binwidth, which is the maximum width of each bin.
+    With 'histodot' binning, the bins have fixed positions and fixed widths, much like a histogram.
+
+    Computed variables:
+
+    - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..binwidth..: max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
+
+    `geom_dotplot()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=100)}
+        ggplot(data, aes(x='x')) + geom_dotplot()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.gamma(2.0, size=100)}
+        ggplot(data, aes(x='x')) + \\
+            geom_dotplot(aes(color='x', fill='x'), \\
+                         binwidth=.2, method='histodot', boundary=0.0)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=100)}
+        ggplot(data, aes(x='x')) + \\
+            geom_dotplot(binwidth=.2, stackdir='centerwhole', \\
+                         stackratio=1.2, color='black', fill='gray')
+
+    """
+    return _geom('dotplot',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=None,
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
