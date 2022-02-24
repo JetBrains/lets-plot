@@ -21,19 +21,6 @@ abstract class LegendBoxLayout(
 
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
     val titleHorizontalAnchor = Text.HorizontalAnchor.LEFT
-    val titleVerticalAnchor = if (isHorizontal) {
-        Text.VerticalAnchor.CENTER
-    } else {
-        Text.VerticalAnchor.TOP
-    }
-
-    val titleLocation: DoubleVector
-        get() = if (isHorizontal) {
-            val maxHeight = max(graphSize.y, titleSize(title).y)
-            DoubleVector(0.0, maxHeight / 2)
-        } else {
-            DoubleVector.ZERO
-        }
 
     val titleBounds: DoubleRectangle
         get() {
@@ -55,7 +42,7 @@ abstract class LegendBoxLayout(
             }
             else -> {
                 // make some space between title and the rest of the content.
-                val y = titleSize(title).y + TITLE_SPEC.height() / 3
+                val y = titleSize(title).y + TITLE_SPEC.height() / 2
                 DoubleVector(0.0, y)
             }
         }

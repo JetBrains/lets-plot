@@ -51,9 +51,8 @@ abstract class LegendBox : SvgComponent() {
         val l = spec.layout
         if (hasTitle()) {
             val label = createTitleLabel(
-                l.titleLocation,
-                l.titleHorizontalAnchor,
-                l.titleVerticalAnchor
+                l.titleBounds.origin,
+                l.titleHorizontalAnchor
             )
             label.textColor().set(theme.titleColor())
             innerGroup.children().add(label.rootGroup)
@@ -89,15 +88,17 @@ abstract class LegendBox : SvgComponent() {
 
     private fun createTitleLabel(
         origin: DoubleVector,
-        horizontalAnchor: Text.HorizontalAnchor,
-        verticalAnchor: Text.VerticalAnchor
+        horizontalAnchor: Text.HorizontalAnchor
     ): MultilineLabel {
         val label = MultilineLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
         label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
-        label.setVerticalAnchor(verticalAnchor, PlotLabelSpec.LEGEND_TITLE.height())
-        label.moveTo(origin)
+        label.setY(0.0, PlotLabelSpec.LEGEND_TITLE.height())
+        label.moveTo(
+            // top-align the first line of a multi-line title
+            origin.add(DoubleVector(0.0, PlotLabelSpec.LEGEND_TITLE.height()*0.8))
+        )
         return label
     }
 

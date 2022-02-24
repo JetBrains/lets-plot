@@ -9,8 +9,6 @@ import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
-import jetbrains.datalore.plot.base.render.svg.Text.toDY
 import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgTSpanElement
@@ -60,24 +58,6 @@ class MultilineLabel(text: String) : SvgComponent() {
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
-    }
-
-    fun setVerticalAnchor(anchor: VerticalAnchor, verticalMargin: Double) {
-        if (linesCount() == 1) {
-            // keep the old logic for a one-line label:
-            //   replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
-            //   myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
-            myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
-            return
-        }
-
-        val y = y().get() ?: 0.0
-        val startPos = when (anchor) {
-            VerticalAnchor.TOP -> y + verticalMargin
-            VerticalAnchor.BOTTOM -> y - (linesCount() - 1) * verticalMargin
-            VerticalAnchor.CENTER -> y - (linesCount().toDouble()/2 - 1) * verticalMargin
-        }
-        setY(startPos, verticalMargin)
     }
 
     fun setFontSize(px: Double) {
