@@ -24,7 +24,7 @@ internal object PlotLayoutUtil {
 
     private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
         if (text.isEmpty()) {
-            return DoubleVector.ZERO
+            return DoubleVector(0.0, labelSpec.height())
         }
         return DoubleVector(
             labelSpec.width(text.length),
@@ -50,8 +50,10 @@ internal object PlotLayoutUtil {
         }
         return linesDimensions
             .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
-            .add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
     }
+
+    internal fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector =
+        textDimensions(textLines, labelSpec).add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
 
     private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)
 
@@ -141,15 +143,15 @@ internal object PlotLayoutUtil {
         val titleDelta = titleSizeDelta(titleLines, subtitleLines)
         val axisTitlesDelta = axisTitleSizeDelta(axisTitleLeft, axisTitleBottom, axisEnabled)
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        val captionDelta = DoubleVector(0.0, textDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION).y)
+        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION).y)
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
     fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>): DoubleVector {
         return DoubleVector(
             0.0,
-            textDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
-                    textDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
+            titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
+                    titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
         )
     }
 

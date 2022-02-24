@@ -5,12 +5,9 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
-import jetbrains.datalore.plot.base.render.svg.Text.toDY
 import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgTSpanElement
@@ -24,6 +21,7 @@ class MultilineLabel(text: String) : SvgComponent() {
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
+    private var myLineHeight = 0.0
 
     init {
         addTSpanElements(text.split('\n'))
@@ -50,22 +48,16 @@ class MultilineLabel(text: String) : SvgComponent() {
         return myText.fillOpacity()
     }
 
-    fun x(): Property<Double?> {
-        return myText.x()
+    fun x(): Double? {
+        return myText.x().get()
     }
 
-    fun y(): Property<Double?> {
-        return myText.y()
+    fun y(): Double? {
+        return myText.y().get()
     }
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
-    }
-
-    fun setVerticalAnchor(anchor: VerticalAnchor) {
-        // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
-        //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
-        myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
     }
 
     fun setFontSize(px: Double) {
@@ -115,7 +107,7 @@ class MultilineLabel(text: String) : SvgComponent() {
     }
 
     fun setX(x: Double) {
-        x().set(x)
+        myText.x().set(x)
 
         // set X for tspan elements
         myText.children()
@@ -125,16 +117,23 @@ class MultilineLabel(text: String) : SvgComponent() {
             }
     }
 
-    fun setLineVerticalMargin(margin: Double) {
+    fun setY(y: Double) {
+        myText.y().set(y)
+        updatePositions()
+    }
+
+    fun setLineHeight(v: Double) {
+        myLineHeight = v
+        updatePositions()
+    }
+
+    private fun updatePositions() {
+        val y = y() ?: 0.0
+        // set absolute Y values for tspan elements (it allows to use empty lines)
         myText.children()
             .filterIsInstance<SvgTSpanElement>()
             .forEachIndexed { index, tspan ->
-                val dyString = if (index == 0) {
-                    "0.0"
-                } else {
-                    margin.toString()
-                }
-                tspan.textDy().set(dyString)
+                tspan.y().set(y + myLineHeight * index)
             }
     }
 

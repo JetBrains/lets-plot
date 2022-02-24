@@ -8,14 +8,13 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.*
 
 abstract class LegendBox : SvgComponent() {
 
@@ -52,9 +51,8 @@ abstract class LegendBox : SvgComponent() {
         val l = spec.layout
         if (hasTitle()) {
             val label = createTitleLabel(
-                l.titleLocation,
-                l.titleHorizontalAnchor,
-                l.titleVerticalAnchor
+                l.titleBounds.origin,
+                l.titleHorizontalAnchor
             )
             label.textColor().set(theme.titleColor())
             innerGroup.children().add(label.rootGroup)
@@ -90,14 +88,17 @@ abstract class LegendBox : SvgComponent() {
 
     private fun createTitleLabel(
         origin: DoubleVector,
-        horizontalAnchor: Text.HorizontalAnchor,
-        verticalAnchor: Text.VerticalAnchor
-    ): TextLabel {
-        val label = TextLabel(title)
+        horizontalAnchor: Text.HorizontalAnchor
+    ): MultilineLabel {
+        val label = MultilineLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
+        label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
-        label.setVerticalAnchor(verticalAnchor)
-        label.moveTo(origin)
+        label.setLineHeight(PlotLabelSpec.LEGEND_TITLE.height())
+        label.moveTo(
+            // top-align the first line of a multi-line title
+            origin.add(DoubleVector(0.0, PlotLabelSpec.LEGEND_TITLE.height()*0.8))
+        )
         return label
     }
 

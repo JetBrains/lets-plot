@@ -58,8 +58,7 @@ class PlotSvgComponent constructor(
     caption: String?
 ) : SvgComponent() {
 
-    private fun splitToLines(text: String?) =
-        text?.split('\n')?.map(String::trim)?.filterNot(String::isEmpty) ?: emptyList()
+    private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
 
     private val titleLines: List<String> = splitToLines(title)
     private val subtitleLines: List<String> = splitToLines(subtitle)
@@ -305,7 +304,7 @@ class PlotSvgComponent constructor(
         }
         // add plot subtitle
         if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.textDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
+            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
             addTitle(
                 subtitleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
@@ -368,9 +367,9 @@ class PlotSvgComponent constructor(
             captionLabel.textColor().set(theme.plot().captionColor())
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
             captionLabel.setX(0.0)
-            captionLabel.setLineVerticalMargin(captionLineHeight)
+            captionLabel.setLineHeight(captionLineHeight)
 
-            val captionSize = PlotLayoutUtil.textDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
+            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
             val captionBounds = DoubleRectangle(
                 geomAreaBounds.right - captionSize.x,
                 plotOuterBounds.bottom - captionSize.y,
@@ -399,9 +398,9 @@ class PlotSvgComponent constructor(
         titleLabel.textColor().set(color)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
-        titleLabel.setLineVerticalMargin(titleLineHeight)
+        titleLabel.setLineHeight(titleLineHeight)
 
-        val titleSize = PlotLayoutUtil.textDimensions(titleLines, labelSpec)
+        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
 
         titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
