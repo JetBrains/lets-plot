@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -29,6 +30,17 @@ class LegendComponent(
             val labelBox = labelBoxes.next()
             val breakElement = createBreakElement(br, layout.keySize, keyLabelBox, labelBox)
             contentRoot.children().add(breakElement)
+        }
+
+        if (debug) {
+            val graphBounds = DoubleRectangle(DoubleVector.ZERO, layout.graphSize)
+            contentRoot.children().add(
+                createTransparentRect(
+                    graphBounds,
+                    Color.DARK_BLUE,
+                    1.0
+                )
+            )
         }
         return layout.size
     }
