@@ -7,11 +7,11 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.LinePathConstructor
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 
 open class PathGeom : GeomBase() {
 
@@ -40,8 +40,10 @@ open class PathGeom : GeomBase() {
             targetCollector,
             dataPoints,
             linesHelper,
-            myClosePath = false
-        ) { p -> listOf(HintColorUtil.fromColor(p)) }
+            myClosePath = false,
+            { p -> listOf(HintColorUtil.fromColor(p)) },
+            ctx.flipped
+        )
 
         appendNodes(
             geomConstructor.construct(),
