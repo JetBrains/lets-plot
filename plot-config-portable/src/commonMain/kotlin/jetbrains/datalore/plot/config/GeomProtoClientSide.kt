@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Segment
 import jetbrains.datalore.plot.config.Option.Geom.Step
 import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
+import jetbrains.datalore.plot.config.Option.Geom.YDotplot
 
 
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
@@ -55,7 +56,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
-            GeomKind.DOTPLOT -> return GeomProvider.dotplot {
+            GeomKind.DOT_PLOT -> return GeomProvider.dotplot {
                 val geom = DotplotGeom()
                 if (opts.hasOwn(Dotplot.DOTSIZE)) {
                     geom.dotSize = opts.getDouble(Dotplot.DOTSIZE)!!
@@ -111,6 +112,22 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 val geom = ViolinGeom()
                 if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
                     geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
+                }
+                geom
+            }
+            GeomKind.Y_DOT_PLOT -> return GeomProvider.ydotplot {
+                val geom = YDotplotGeom()
+                if (opts.hasOwn(YDotplot.DOTSIZE)) {
+                    geom.dotSize = opts.getDouble(YDotplot.DOTSIZE)!!
+                }
+                if (opts.hasOwn(YDotplot.STACKRATIO)) {
+                    geom.stackRatio = opts.getDouble(YDotplot.STACKRATIO)!!
+                }
+                if (opts.hasOwn(YDotplot.STACKDIR)) {
+                    geom.stackDir = YDotplotGeom.Stackdir.safeValueOf(opts.getString(YDotplot.STACKDIR)!!)
+                }
+                if (opts.hasOwn(YDotplot.METHOD)) {
+                    geom.method = DotplotStat.Method.safeValueOf(opts.getString(YDotplot.METHOD)!!)
                 }
                 geom
             }

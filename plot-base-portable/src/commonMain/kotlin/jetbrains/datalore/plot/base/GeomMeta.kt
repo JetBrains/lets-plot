@@ -101,7 +101,7 @@ object GeomMeta {
                 Aes.SIZE
             )
 
-            GeomKind.DOTPLOT -> listOf(
+            GeomKind.DOT_PLOT -> listOf(
                 Aes.X,
                 Aes.BINWIDTH,
                 Aes.STACKSIZE,
@@ -230,6 +230,19 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.LINETYPE,
+                Aes.SIZE,
+                Aes.WIDTH
+            )
+
+            GeomKind.Y_DOT_PLOT -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.BINWIDTH,
+                Aes.STACKSIZE,
+
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
                 Aes.SIZE,
                 Aes.WIDTH
             )

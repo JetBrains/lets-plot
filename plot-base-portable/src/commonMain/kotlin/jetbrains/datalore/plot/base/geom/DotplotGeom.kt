@@ -58,10 +58,10 @@ class DotplotGeom : GeomBase() {
         if (!pointsWithBinWidth.any()) return
 
         val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
-        val stackCapacity = if (ctx.flipped) {
-            ceil(ctx.getAesBounds().width / binWidthPx).toInt()
-        } else {
-            ceil(ctx.getAesBounds().height / binWidthPx).toInt()
+        val stackCapacity = (
+            if (ctx.flipped) ctx.getAesBounds().width else ctx.getAesBounds().height
+        ).let {
+            ceil(it / (dotSize * binWidthPx)).toInt()
         }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
             .groupBy { p -> p.x()!! }
@@ -152,7 +152,7 @@ class DotplotGeom : GeomBase() {
         return DoubleVector(x, shiftedDotId * dotSize * stackRatio * binWidthPx)
     }
 
-    private class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
+    class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
         LinesHelper(pos, coord, ctx) {
             fun createDot(
                 p: DataPointAesthetics,

@@ -248,30 +248,19 @@ internal object PositionalScalesUtil {
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val renderedAes = layer.renderedAes()
         val rangeX = when {
-            renderedAes.contains(Aes.WIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
-                Aes.X,
-                Aes.WIDTH,
-                aesthetics,
-                geomCtx
-            )
-            renderedAes.contains(Aes.BINWIDTH) -> computeLayerDryRunRangeAfterSizeExpand(
-                Aes.X,
-                Aes.BINWIDTH,
-                aesthetics,
-                geomCtx
-            )
+            Aes.WIDTH in renderedAes -> Aes.WIDTH
+            Aes.BINWIDTH in renderedAes && layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
             else -> null
+        }?.let {
+            computeLayerDryRunRangeAfterSizeExpand(Aes.X, it, aesthetics, geomCtx)
         }
-        val computeExpandY = renderedAes.contains(Aes.HEIGHT)
-        val rangeY = if (computeExpandY)
-                computeLayerDryRunRangeAfterSizeExpand(
-                    Aes.Y,
-                    Aes.HEIGHT,
-                    aesthetics,
-                    geomCtx
-                )
-            else
-                null
+        val rangeY = when {
+            Aes.HEIGHT in renderedAes -> Aes.HEIGHT
+            Aes.BINWIDTH in renderedAes && layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
+            else -> null
+        }?.let {
+            computeLayerDryRunRangeAfterSizeExpand(Aes.Y, it, aesthetics, geomCtx)
+        }
 
         return Pair(rangeX, rangeY)
     }

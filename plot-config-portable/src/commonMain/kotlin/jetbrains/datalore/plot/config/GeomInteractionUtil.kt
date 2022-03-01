@@ -91,7 +91,8 @@ object GeomInteractionUtil {
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
-            GeomKind.DOTPLOT -> listOf(Aes.BINWIDTH)
+            GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
+            GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
@@ -242,7 +243,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY,
             GeomKind.FREQPOLY,
             GeomKind.HISTOGRAM,
-            GeomKind.DOTPLOT,
+            GeomKind.DOT_PLOT,
             GeomKind.LINE,
             GeomKind.AREA,
             GeomKind.BAR,
@@ -267,7 +268,8 @@ object GeomInteractionUtil {
             GeomKind.JITTER,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
-            GeomKind.VIOLIN -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
+            GeomKind.VIOLIN,
+            GeomKind.Y_DOT_PLOT -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {
                 when (statKind) {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(

@@ -138,6 +138,34 @@ object Stats {
         )
     }
 
+    fun ydotplot(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null,
+        method: DotplotStat.Method = DotplotStat.DEF_METHOD
+    ): YDotplotStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (method != DotplotStat.Method.DOTDENSITY) {
+            if (boundary != null) {
+                xPosKind = BinStat.XPosKind.BOUNDARY
+                xPosValue = boundary
+            } else if (center != null) {
+                xPosKind = BinStat.XPosKind.CENTER
+                xPosValue = center
+            }
+        }
+
+        return YDotplotStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue,
+            method = method
+        )
+    }
+
     fun smooth(
         smootherPointCount: Int = SmoothStat.DEF_EVAL_POINT_COUNT,
         smoothingMethod: SmoothStat.Method = SmoothStat.DEF_SMOOTHING_METHOD,

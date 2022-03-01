@@ -164,6 +164,13 @@ object Option {
             const val DRAW_QUANTILES = "draw_quantiles"
         }
 
+        object YDotplot {
+            const val DOTSIZE = "dotsize"
+            const val STACKRATIO = "stackratio"
+            const val STACKDIR = "stackdir"
+            const val METHOD = "method"
+        }
+
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"
@@ -476,6 +483,7 @@ object Option {
         private const val V_LINE = "vline"
         private const val BOX_PLOT = "boxplot"
         private const val VIOLIN = "violin"
+        private const val YDOTPLOT = "ydotplot"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
         private const val RIBBON = "ribbon"
@@ -503,7 +511,7 @@ object Option {
             map[SMOOTH] = GeomKind.SMOOTH
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
-            map[DOTPLOT] = GeomKind.DOTPLOT
+            map[YDOTPLOT] = GeomKind.Y_DOT_PLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP

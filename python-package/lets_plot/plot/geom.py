@@ -18,7 +18,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
-           'geom_boxplot', 'geom_violin',
+           'geom_boxplot', 'geom_violin', 'geom_ydotplot',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
@@ -2796,6 +2796,27 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 **other_args)
+
+
+def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  bins=None,
+                  binwidth=None,
+                  center=None,
+                  boundary=None,
+                  **other_args):
+    return _geom('ydotplot',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 center=center,
+                 boundary=boundary,
                  **other_args)
 
 
