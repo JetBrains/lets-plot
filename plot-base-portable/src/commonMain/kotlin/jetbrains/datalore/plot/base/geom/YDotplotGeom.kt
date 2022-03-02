@@ -24,6 +24,7 @@ import kotlin.math.min
 class YDotplotGeom : GeomBase() {
     var dotSize: Double = DotplotGeom.DEF_DOTSIZE
     var stackRatio: Double = DotplotGeom.DEF_STACKRATIO
+    var stackGroups: Boolean = DotplotGeom.DEF_STACKGROUPS
     var stackDir: Stackdir = DEF_STACKDIR
     var method: DotplotStat.Method = DotplotGeom.DEF_METHOD
     var stackCapacity: Int = 0
@@ -50,7 +51,11 @@ class YDotplotGeom : GeomBase() {
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointGroup) ->
-                buildStack(root, dataPointGroup, pos, coord, ctx, binWidthPx)
+                dataPointGroup
+                    .groupBy(DataPointAesthetics::y)
+                    .forEach { (_, dataPointStack) ->
+                        buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx)
+                    }
             }
     }
 
@@ -64,18 +69,27 @@ class YDotplotGeom : GeomBase() {
     ) {
         val dotHelper = DotplotGeom.DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
+        val stackSize = boundedStackSize(dataPoints.map { it.stacksize()!! }.sum().toInt())
+        var builtStackSize = 0
         for (p in dataPoints) {
-            for (dotId in 0 until boundedStackSize(p)) {
-                val center = getDotCenter(p, dotId, binWidthPx, ctx.flipped, geomHelper)
+            val groupStackSize = boundedStackSize(builtStackSize + p.stacksize()!!.toInt()) - builtStackSize
+            val currentStackSize = if (stackGroups()) stackSize else groupStackSize
+            var dotId = -1
+            for (i in 0 until groupStackSize) {
+                dotId = if (stackGroups()) builtStackSize + i else i
+                val center = getDotCenter(p, dotId, currentStackSize, binWidthPx, ctx.flipped, geomHelper)
                 val path = dotHelper.createDot(p, center, dotSize * binWidthPx / 2)
                 root.add(path.rootGroup)
             }
-            buildHint(p, ctx, geomHelper, binWidthPx)
+            buildHint(p, dotId, currentStackSize, ctx, geomHelper, binWidthPx)
+            builtStackSize += groupStackSize
         }
     }
 
     private fun buildHint(
         p: DataPointAesthetics,
+        dotId: Int,
+        currentStackSize: Int,
         ctx: GeomContext,
         geomHelper: GeomHelper,
         binWidthPx: Double
@@ -84,9 +98,8 @@ class YDotplotGeom : GeomBase() {
             return
 
         val dotRadius = dotSize * binWidthPx / 2
-        val stackSize = boundedStackSize(p)
-        val origin = if (stackSize > 0) {
-            getDotCenter(p, stackSize - 1, binWidthPx, ctx.flipped, geomHelper)
+        val origin = if (currentStackSize > 0) {
+            getDotCenter(p, dotId, currentStackSize, binWidthPx, ctx.flipped, geomHelper)
         } else {
             geomHelper.toClient(DoubleVector(p.x()!!, p.y()!!), p)
         }
@@ -105,13 +118,13 @@ class YDotplotGeom : GeomBase() {
     private fun getDotCenter(
         p: DataPointAesthetics,
         dotId: Int,
+        stackSize: Int,
         binWidthPx: Double,
         flip: Boolean,
         geomHelper: GeomHelper
     ) : DoubleVector {
         val x = p.x()!!
         val y = p.y()!!
-        val stackSize = boundedStackSize(p)
         val shiftedDotId = when (stackDir) {
             Stackdir.LEFT -> -dotId - 1.0 / (2.0 * stackRatio)
             Stackdir.RIGHT -> dotId + 1.0 / (2.0 * stackRatio)
@@ -126,8 +139,11 @@ class YDotplotGeom : GeomBase() {
         return geomHelper.toClient(DoubleVector(x, y), p).add(if (flip) shift.flip() else shift)
     }
 
-    private fun boundedStackSize(p: DataPointAesthetics): Int {
-        val stackSize = p.stacksize()!!.toInt()
+    private fun stackGroups(): Boolean {
+        return stackGroups && method == DotplotStat.Method.HISTODOT
+    }
+
+    private fun boundedStackSize(stackSize: Int): Int {
         val parityCorrectionTerm = if (stackSize % 2 == stackCapacity % 2) 0 else 1
 
         return min(stackSize, stackCapacity + parityCorrectionTerm)

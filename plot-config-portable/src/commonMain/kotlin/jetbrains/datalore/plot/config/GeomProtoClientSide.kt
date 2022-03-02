@@ -123,6 +123,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(YDotplot.STACKRATIO)) {
                     geom.stackRatio = opts.getDouble(YDotplot.STACKRATIO)!!
                 }
+                if (opts.hasOwn(YDotplot.STACKGROUPS)) {
+                    geom.stackGroups = opts.getBoolean(YDotplot.STACKGROUPS)
+                }
                 if (opts.hasOwn(YDotplot.STACKDIR)) {
                     geom.stackDir = YDotplotGeom.Stackdir.safeValueOf(opts.getString(YDotplot.STACKDIR)!!)
                 }

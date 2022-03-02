@@ -14,7 +14,8 @@ class YDotplot {
             basic(),
             histodot(),
             coordFlip(),
-            withGroups(),
+            groupingWithStackgroups(),
+            //groupingWithoutStackgroups(),
             ydotplotParams(),
             statIdentity(),
         )
@@ -99,7 +100,7 @@ class YDotplot {
 
     }
 
-    private fun withGroups(): MutableMap<String, Any> {
+    private fun groupingWithoutStackgroups(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
@@ -112,12 +113,42 @@ class YDotplot {
                 "                'fill': 'group'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'Additional grouping'" +
+                "                'text': 'Grouping without stackgroups'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'ydotplot'," +
+                "                 'method': 'histodot'," +
                 "                 'binwidth': 0.25" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun groupingWithStackgroups(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
+                "             'group': ['x', 'x', 'x', 'y', 'y', 'y', 'x', 'x', 'x', 'x', 'y', 'y']," +
+                "             'value': [0, 0, 1, 1, 1, 2, 1, 2, 2, 3, 2, 3]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'class'," +
+                "                'y': 'value'," +
+                "                'fill': 'group'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Grouping with stackgroups'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'ydotplot'," +
+                "                 'method': 'histodot'," +
+                "                 'binwidth': 0.25," +
+                "                 'stackgroups': true" +
                 "               }" +
                 "             ]" +
                 "}"

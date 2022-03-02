@@ -76,6 +76,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 layerOptions.getDouble(Option.Geom.Jitter.WIDTH),
                 layerOptions.getDouble(Option.Geom.Jitter.HEIGHT)
             )
+            Y_DOT_PLOT -> if (layerOptions.hasOwn(Option.Geom.YDotplot.STACKGROUPS) &&
+                              layerOptions.getBoolean(Option.Geom.YDotplot.STACKGROUPS)) {
+                PosProvider.wrap(PositionAdjustments.identity())
+            } else {
+                PosProvider.dodge(0.95)
+            }
 
             // Some other geoms has stateless position adjustments defined in `defaults`
             // Otherwise it's just `identity`
@@ -196,7 +202,6 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun yDotplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "ydotplot"
-            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
             return defaults
         }
 
