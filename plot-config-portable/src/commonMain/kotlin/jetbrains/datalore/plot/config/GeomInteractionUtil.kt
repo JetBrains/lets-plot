@@ -261,6 +261,7 @@ object GeomInteractionUtil {
                 builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             }
             GeomKind.BOX_PLOT,
+            GeomKind.Y_DOT_PLOT,
             GeomKind.BIN_2D,
             GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
             GeomKind.TEXT,
@@ -268,8 +269,7 @@ object GeomInteractionUtil {
             GeomKind.JITTER,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
-            GeomKind.VIOLIN,
-            GeomKind.Y_DOT_PLOT -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
+            GeomKind.VIOLIN -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
             GeomKind.PATH -> {
                 when (statKind) {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(

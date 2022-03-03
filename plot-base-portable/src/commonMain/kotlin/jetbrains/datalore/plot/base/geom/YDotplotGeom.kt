@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.enums.EnumInfoFactory
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
@@ -16,7 +17,6 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.DotplotStat
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -89,29 +89,38 @@ class YDotplotGeom : GeomBase() {
     private fun buildHint(
         p: DataPointAesthetics,
         dotId: Int,
-        currentStackSize: Int,
+        stackSize: Int,
         ctx: GeomContext,
         geomHelper: GeomHelper,
         binWidthPx: Double
     ) {
-        if (!SeriesUtil.isFinite(p.x()) || !SeriesUtil.isFinite(p.stacksize()))
-            return
+        val dotRadius = dotSize * binWidthPx / 2.0
+        val currentStackSize = p.stacksize()!!.toInt()
+        val rect: DoubleRectangle = (if (currentStackSize > 0) {
+            getDotCenter(p, dotId, stackSize, binWidthPx, ctx.flipped, geomHelper)
+        } else null)?.let { origin ->
+            val width = 2.0 * dotRadius
+            val height = 2.0 * dotRadius * (currentStackSize * stackRatio - (stackRatio - 1))
+            if (ctx.flipped) {
+                DoubleRectangle(
+                    DoubleVector(origin.x - dotRadius, origin.y - height + dotRadius),
+                    DoubleVector(width, height)
+                )
+            } else {
+                DoubleRectangle(
+                    DoubleVector(origin.x - height + dotRadius, origin.y - dotRadius),
+                    DoubleVector(height, width)
+                )
+            }
+        } ?: return
 
-        val dotRadius = dotSize * binWidthPx / 2
-        val origin = if (currentStackSize > 0) {
-            getDotCenter(p, dotId, currentStackSize, binWidthPx, ctx.flipped, geomHelper)
-        } else {
-            geomHelper.toClient(DoubleVector(p.x()!!, p.y()!!), p)
-        }
-
-        ctx.targetCollector.addPoint(
+        ctx.targetCollector.addRectangle(
             p.index(),
-            origin,
-            dotRadius,
+            rect,
             GeomTargetCollector.TooltipParams.params()
                 .setMainColor(HintColorUtil.fromFill(p))
                 .setColors(HintColorUtil.fromMappedColors(ctx)(p)),
-            TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
 
