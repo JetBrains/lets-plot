@@ -22,11 +22,11 @@ import kotlin.math.max
 import kotlin.math.min
 
 class YDotplotGeom : GeomBase() {
-    var dotSize: Double = DotplotGeom.DEF_DOTSIZE
     var stackRatio: Double = DotplotGeom.DEF_STACKRATIO
     var stackGroups: Boolean = DotplotGeom.DEF_STACKGROUPS
     var stackDir: Stackdir = DEF_STACKDIR
     var method: DotplotStat.Method = DotplotGeom.DEF_METHOD
+    var dotSize: Double = 0.0
     var stackCapacity: Int = 0
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -42,11 +42,13 @@ class YDotplotGeom : GeomBase() {
         val pointsWithBinWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.BINWIDTH)
         if (!pointsWithBinWidth.any()) return
 
+        val definedDataPoints = GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
         val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y), 2.0)
+        initDotSize(definedDataPoints, ctx, binWidthPx)
         stackCapacity = (
-            if (ctx.flipped) ctx.getAesBounds().width else ctx.getAesBounds().height
-        ).let {
-            ceil(it / (dotSize * binWidthPx)).toInt() + 1
+            if (ctx.flipped) ctx.getAesBounds().height else ctx.getAesBounds().width
+        ).let { boundPx ->
+            ceil(boundPx / (dotSize * stackRatio * binWidthPx)).toInt() + 1
         }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
@@ -101,14 +103,15 @@ class YDotplotGeom : GeomBase() {
         } else null)?.let { origin ->
             val width = 2.0 * dotRadius
             val height = 2.0 * dotRadius * (currentStackSize * stackRatio - (stackRatio - 1))
+            val stackShift = if (stackDir == Stackdir.LEFT) -dotRadius else -height + dotRadius
             if (ctx.flipped) {
                 DoubleRectangle(
-                    DoubleVector(origin.x - dotRadius, origin.y - height + dotRadius),
+                    DoubleVector(origin.x - dotRadius, origin.y + stackShift),
                     DoubleVector(width, height)
                 )
             } else {
                 DoubleRectangle(
-                    DoubleVector(origin.x - height + dotRadius, origin.y - dotRadius),
+                    DoubleVector(origin.x + stackShift, origin.y - dotRadius),
                     DoubleVector(height, width)
                 )
             }
@@ -148,6 +151,44 @@ class YDotplotGeom : GeomBase() {
         return geomHelper.toClient(DoubleVector(x, y), p).add(if (flip) shift.flip() else shift)
     }
 
+    private fun initDotSize(
+        definedDataPoints: Iterable<DataPointAesthetics>,
+        ctx: GeomContext,
+        binWidthPx: Double
+    ) {
+        if (dotSize > 0.0) return
+        val stackSizeLimit: (DataPointAesthetics) -> Int = { p ->
+            when (stackDir) {
+                Stackdir.LEFT,
+                Stackdir.RIGHT -> 2 * p.stacksize()!!
+                Stackdir.CENTER -> p.stacksize()!!
+                Stackdir.CENTERWHOLE -> p.stacksize()!! + 1
+            }.toInt()
+        }
+        val maxStackSize: Int? = if (stackGroups()) {
+            definedDataPoints
+                .groupBy { Pair(it.x()!!, it.y()!!) }
+                .map { (_, dataPointStack) ->
+                    dataPointStack.map(stackSizeLimit).sum()
+                }.maxOrNull()
+        } else {
+            definedDataPoints
+                .groupBy(DataPointAesthetics::x)
+                .map { (_, dataPointCategory) ->
+                    dataPointCategory
+                        .groupBy(DataPointAesthetics::group)
+                        .map { (_, dataPointGroup) ->
+                            dataPointGroup.map(stackSizeLimit).maxOrNull()
+                        }.filterNotNull().sum()
+                }.maxOrNull()
+        }
+        dotSize = if (maxStackSize == null) {
+            MIN_DOT_DIAMETER_PX / binWidthPx
+        } else {
+            max((ctx.getResolution(Aes.X) / (maxStackSize * stackRatio)).toInt(), MIN_DOT_DIAMETER_PX) / binWidthPx
+        }
+    }
+
     private fun stackGroups(): Boolean {
         return stackGroups && method == DotplotStat.Method.HISTODOT
     }
@@ -176,6 +217,7 @@ class YDotplotGeom : GeomBase() {
     }
 
     companion object {
+        const val MIN_DOT_DIAMETER_PX = 2
         val DEF_STACKDIR = Stackdir.CENTER
 
         const val HANDLES_GROUPS = true

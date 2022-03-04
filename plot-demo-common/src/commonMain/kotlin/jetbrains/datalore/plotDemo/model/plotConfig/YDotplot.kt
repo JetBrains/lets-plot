@@ -14,10 +14,13 @@ class YDotplot {
             basic(),
             histodot(),
             coordFlip(),
-            groupingWithStackgroups(),
-            //groupingWithoutStackgroups(),
+            ////groupingWithStackgroups(),
+            groupingWithoutStackgroups(),
             ydotplotParams(),
             statIdentity(),
+            ////regressionTest01(),
+            ////regressionTest02(),
+            ////regressionTest03(),
         )
     }
 
@@ -84,8 +87,7 @@ class YDotplot {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'ydotplot'," +
-                "                 'binwidth': 0.2," +
-                "                 'dotsize': 0.2" +
+                "                 'binwidth': 0.2" +
                 "               }" +
                 "             ]," +
                 "   'coord': {" +
@@ -103,9 +105,9 @@ class YDotplot {
     private fun groupingWithoutStackgroups(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
-                "             'group': ['x', 'x', 'x', 'y', 'y', 'y', 'x', 'x', 'x', 'x', 'y', 'y']," +
-                "             'value': [0, 0, 1, 1, 1, 2, 1, 2, 2, 3, 2, 3]" +
+                "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
+                "             'group': ['x', 'x', 'x', 'x', 'y', 'y', 'y', 'x', 'x', 'x', 'x', 'y', 'y']," +
+                "             'value': [0, 0, 0, 1, 1, 1, 2, 1, 2, 2, 3, 2, 3]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'class'," +
@@ -131,9 +133,9 @@ class YDotplot {
     private fun groupingWithStackgroups(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
-                "             'group': ['x', 'x', 'x', 'y', 'y', 'y', 'x', 'x', 'x', 'x', 'y', 'y']," +
-                "             'value': [0, 0, 1, 1, 1, 2, 1, 2, 2, 3, 2, 3]" +
+                "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
+                "             'group': ['x', 'x', 'x', 'x', 'y', 'y', 'y', 'x', 'x', 'x', 'x', 'y', 'y']," +
+                "             'value': [0, 0, 0, 1, 1, 1, 2, 1, 2, 2, 3, 2, 3]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'class'," +
@@ -208,6 +210,87 @@ class YDotplot {
                 "                 'stat': 'identity'" +
                 "               }" +
                 "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun regressionTest01(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'y': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Regression test 01'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'ydotplot'," +
+                "                 'binwidth': 1.0" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun regressionTest02(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
+                "             'group': ['x', 'x', 'x', 'x', 'y', 'y', 'y', 'x', 'x', 'x', 'x', 'y', 'y']," +
+                "             'value': [0, 0, 0, 1, 1, 1, 2, 1, 2, 2, 3, 2, 3]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'class'," +
+                "                'y': 'value'," +
+                "                'fill': 'group'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Regression test 02'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'ydotplot'," +
+                "                 'binwidth': 0.25," +
+                "                 'stackratio': 0.75," +
+                "                 'stackdir': 'left'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun regressionTest03(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': ['A', 'A', 'A', 'B', 'B', 'B']," +
+                "             'y': [0, 0, 0, 0, 1, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Regression test 03'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'ydotplot'," +
+                "                 'binwidth': 1.0" +
+                "               }" +
+                "             ]," +
+                "   'coord': {" +
+                "              'name': 'flip'," +
+                "              'flip': true" +
+                "            }" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))
