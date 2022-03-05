@@ -52,8 +52,13 @@ internal object PlotLayoutUtil {
             .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
     }
 
-    internal fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector =
-        textDimensions(textLines, labelSpec).add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
+    internal fun titleDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
+        return if (textLines.isEmpty()) {
+            DoubleVector.ZERO
+        } else {
+            textDimensions(textLines, labelSpec).add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
+        }
+    }
 
     private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)
 

@@ -52,14 +52,12 @@ open class AreaGeom : GeomBase() {
             reducer(0.999, false)
         )
 
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         for (multiPointData in multiPointDataList) {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                setupTooltipParams(multiPointData.aes)
-                    .setColors(colorsByDataPoint(multiPointData.aes)),
+                setupTooltipParams(multiPointData.aes, ctx),
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {
@@ -69,8 +67,10 @@ open class AreaGeom : GeomBase() {
         }
     }
 
-    protected open fun setupTooltipParams(aes: DataPointAesthetics): TooltipParams {
-        return params().setMainColor(fromFill(aes))
+    protected open fun setupTooltipParams(aes: DataPointAesthetics, ctx: GeomContext): TooltipParams {
+        return params()
+            .setMainColor(fromFill(aes))
+            .setColors(HintColorUtil.fromMappedColors(ctx)(aes))
     }
 
     private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics): DoubleVector? {

@@ -178,7 +178,7 @@ class LayerConfig(
         aesMappings = aesMappings - explicitConstantAes
 
         // init AES constants excluding mapped AES
-        constantsMap = LayerConfigUtil.initConstants(this, aesMappings.keys)
+        constantsMap = LayerConfigUtil.initConstants(this, consumedAesSet - aesMappings.keys)
 
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappingOptions)

@@ -9,8 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.colIndices
-import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.rowIndices
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByCol
+import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByRow
 import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
@@ -53,12 +53,11 @@ internal class FacetedPlotLayout(
             tilesAreaSize = tilesAreaSize.subtract(labsTotalDim)
         }
 
-        val tileLayoutInfos: List<TileLayoutInfo> = if (facets.freeHScale || facets.freeVScale) {
+        val layoutInfos: List<TileLayoutInfo> = if (facets.freeHScale || facets.freeVScale) {
             FreeScalesTilesLayouter.createTileLayoutInfos(
                 tilesAreaSize,
-                facetTiles,
-                layoutProviderByTile,
                 facets,
+                layoutProviderByTile,
                 totalAddedHSize,
                 totalAddedVSize,
                 coordProvider,
@@ -68,9 +67,8 @@ internal class FacetedPlotLayout(
         } else {
             FixedScalesTilesLayouter.createTileLayoutInfos(
                 tilesAreaSize,
-                facetTiles,
-                layoutProviderByTile,
                 facets,
+                layoutProviderByTile,
                 totalAddedHSize,
                 totalAddedVSize,
                 coordProvider,
@@ -79,112 +77,119 @@ internal class FacetedPlotLayout(
             )
         }
 
-        // create final plot tiles layout infos
+        // Create final plot tiles layout infos.
 
-        // Compute tile vwrtical offsets in 1st column.
-        val firstColIndices = colIndices(facetTiles, 0)
-        val firstColTileHeights = firstColIndices.map {
-            Pair(facetTiles[it], tileLayoutInfos[it])
-        }.map { (facetTile, layoutInfo) ->
-            val geomHeight = layoutInfo.geomHeight()
-            val heightWithAxis = if (layoutInfo.hAxisShown) {
-                geomHeight + layoutInfo.axisThicknessX()
-            } else {
-                geomHeight
-            }
+        val plotOrigin = DoubleVector(paddingLeft, paddingTop)
 
-            val heightWithStrip = if (showFacetStrip) {
-                val addedHeight = facetColHeadHeight(facetTile.colLabs.size)
-                heightWithAxis + addedHeight
-            } else {
-                heightWithAxis
-            }
-            heightWithStrip
-        }
-        val firstColTileVOffsets = List(facets.rowCount) { i ->
-            firstColTileHeights.take(i).sum() + PANEL_PADDING * i
-        }
+        // Align geom areas of tiles.
 
-        // Compute tile horizontal offsets in 1st row.
-        val firstRowIndices = rowIndices(facetTiles, 0)
-        val firstRowTileWidths = firstRowIndices.map {
-            Pair(facetTiles[it], tileLayoutInfos[it])
-        }.map { (facetTile, layoutInfo) ->
-            val geomWidth = layoutInfo.geomWidth()
-            val widthWithAxis = if (layoutInfo.vAxisShown) {
-                geomWidth + layoutInfo.axisThicknessY()
-            } else {
-                geomWidth
-            }
-            val widthWithFacetTab = if (facetTile.rowLab != null && showFacetStrip) {
-                widthWithAxis + FACET_TAB_HEIGHT
-            } else {
-                widthWithAxis
-            }
-            widthWithFacetTab
-        }
-        val firstRowTileHOffsets = List(facets.colCount) { i ->
-            firstRowTileWidths.take(i).sum() + PANEL_PADDING * i
-        }
+        // absolute offsets of tile gom areas.
+        val geomOffsetByCol = geomOffsetsByCol(layoutInfos, facetTiles, PANEL_PADDING, facets.colCount)
+        val geomOffsetByRow = geomOffsetsByRow(
+            layoutInfos, facetTiles, showFacetStrip,
+            PANEL_PADDING, facets.rowCount
+        )
 
-        var tilesAreaBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-        val tilesAreaOffset = DoubleVector(paddingLeft, paddingTop)
-        val tileInfos = ArrayList<TileLayoutInfo>()
-
+        val tileBoundsList = ArrayList<DoubleRectangle>()
+        val geomBoundsList = ArrayList<DoubleRectangle>()
         for ((index, facetTile) in facetTiles.withIndex()) {
-            val tileLayoutInfo = tileLayoutInfos[index]
+            val layoutInfo = layoutInfos[index]
 
-            val geomX = if (facetTile.hasVAxis) {
-                tileLayoutInfo.axisThicknessY()
+            val col = facetTile.col
+            val row = facetTile.row
+            val geomX = geomOffsetByCol[col]
+            val geomY = geomOffsetByRow[row]
+            val geomSize = layoutInfo.geomBounds.dimension
+
+            // Tile width
+            val tileLabelWidth = if (facetTile.rowLab != null && showFacetStrip) {
+                FACET_TAB_HEIGHT  // one label on the left side.
             } else {
                 0.0
             }
 
-            val geomY = if (showFacetStrip) {
+            val axisWidth = if (facetTile.hasVAxis) {
+                layoutInfo.axisThicknessY()
+            } else {
+                0.0
+            }
+
+            val tileX = geomX - axisWidth
+            val tileWidth = geomSize.x + axisWidth + tileLabelWidth
+
+            // Tile height
+            val tileLabelHeight = if (showFacetStrip) {
                 facetColHeadHeight(facetTile.colLabs.size)
             } else {
                 0.0
             }
 
-            val geomWidth = tileLayoutInfo.geomWidth()
-            val geomHeight = tileLayoutInfo.geomHeight()
-            val geomBounds = DoubleRectangle(geomX, geomY, geomWidth, geomHeight)
+            val axisHeight = if (facetTile.hasHAxis) {
+                layoutInfo.axisThicknessX()
+            } else {
+                0.0
+            }
 
-            val offset = DoubleVector(
-                firstRowTileHOffsets[facetTile.col],
-                firstColTileVOffsets[facetTile.row]
+            val tileY = geomY - tileLabelHeight
+            val tileHeight = geomSize.y + tileLabelHeight + axisHeight
+
+//            if (col == 0) {
+//                println("[$row][$tileY] $tileHeight = ${geomSize.y} + $tileLabelHeight + $axisHeight")
+//            }
+
+            // Absolute bounds...
+            val tileBounds = DoubleRectangle(
+                DoubleVector(tileX, tileY),
+                DoubleVector(tileWidth, tileHeight)
+            )
+            val geomBounds = DoubleRectangle(
+                DoubleVector(geomX, geomY),
+                layoutInfo.geomBounds.dimension
             )
 
-            val tileWidth = firstRowTileWidths[facetTile.col]
-            val tileHeight = firstColTileHeights[facetTile.row]
-            val tileBounds = DoubleRectangle(0.0, 0.0, tileWidth, tileHeight)
+            tileBoundsList.add(tileBounds)
+            geomBoundsList.add(geomBounds)
+        }
 
-            var newLayoutInfo = TileLayoutInfo(
-                tileBounds,
-                geomBounds,
+        val tilesAreaOrigin = tileBoundsList
+            .reduce { b0, b1 -> b0.union(b1) }
+            .origin
+
+        // Normalize origin of tilesAreaBounds.
+        val originDelta = tilesAreaOrigin.negate()
+
+        val finalLayoutInfos = ArrayList<TileLayoutInfo>()
+        for ((index, facetTile) in facetTiles.withIndex()) {
+            val layoutInfo = layoutInfos[index]
+            val tileBounds = tileBoundsList[index]
+            val geomBounds = geomBoundsList[index]
+
+            val newLayoutInfo = TileLayoutInfo(
+                tileBounds.add(originDelta),
+                geomBounds.add(originDelta),
                 TileLayoutUtil.clipBounds(geomBounds),
-                tileLayoutInfo.hAxisInfo,
-                tileLayoutInfo.vAxisInfo,
+                layoutInfo.hAxisInfo,
+                layoutInfo.vAxisInfo,
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,
                 trueIndex = facetTile.trueIndex
+            ).withOffset(plotOrigin)
+
+            finalLayoutInfos.add(
+                if (showFacetStrip) {
+                    newLayoutInfo.withFacetLabels(facetTile.colLabs, facetTile.rowLab)
+                } else {
+                    newLayoutInfo
+                }
             )
-                .withOffset(tilesAreaOffset.add(offset))
-
-            if (showFacetStrip) {
-                newLayoutInfo = newLayoutInfo.withFacetLabels(facetTile.colLabs, facetTile.rowLab)
-            }
-
-            tileInfos.add(newLayoutInfo)
-            tilesAreaBounds = tilesAreaBounds.union(newLayoutInfo.getAbsoluteBounds(tilesAreaOffset))
         }
 
-        val plotSize = DoubleVector(
-            tilesAreaBounds.right + paddingRight,
-            tilesAreaBounds.height + paddingBottom
-        )
+        val combinedTilesSize = finalLayoutInfos.map { it.bounds }.reduce { b0, b1 -> b0.union(b1) }.dimension
+        val plotSize = combinedTilesSize
+            .add(plotOrigin)
+            .add(DoubleVector(paddingRight, paddingBottom))
 
-        return PlotLayoutInfo(tileInfos, plotSize)
+        return PlotLayoutInfo(finalLayoutInfos, plotSize)
     }
 
 

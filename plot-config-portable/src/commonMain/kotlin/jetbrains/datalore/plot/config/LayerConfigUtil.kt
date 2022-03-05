@@ -26,19 +26,18 @@ internal object LayerConfigUtil {
         return defaultPos
     }
 
-    fun initConstants(layerConfig: OptionsAccessor, exclude: Set<Aes<*>>): Map<Aes<*>, Any> {
+    fun initConstants(layerConfig: OptionsAccessor, consumedAesSet: Set<Aes<*>>): Map<Aes<*>, Any> {
         val result = HashMap<Aes<*>, Any>()
-        for (option in Option.Mapping.REAL_AES_OPTION_NAMES) {
-            val aes = Option.Mapping.toAes(option)
-            if (aes !in exclude) {
-                layerConfig[option]?.run {
-                    val constantValue = AesOptionConversion.apply(aes, this)
-                        ?: throw IllegalArgumentException("Can't convert to '$option' value: $this")
-                    result[aes] = constantValue
-                }
+        Option.Mapping.REAL_AES_OPTION_NAMES
+            .filter(layerConfig::has)
+            .associateWith(Option.Mapping::toAes)
+            .filterValues { aes -> aes in consumedAesSet }
+            .forEach { (option, aes) ->
+                val optionValue = layerConfig[option]!!
+                val constantValue = AesOptionConversion.apply(aes, optionValue)
+                    ?: throw IllegalArgumentException("Can't convert to '$option' value: $optionValue")
+                result[aes] = constantValue
             }
-        }
-
         return result
     }
 

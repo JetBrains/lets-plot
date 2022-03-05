@@ -34,7 +34,6 @@ class VLineGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
 
         val viewPort = when {
             ctx.flipped -> ctx.getAesBounds().flip()
@@ -59,7 +58,7 @@ class VLineGeom : GeomBase() {
                     geomHelper.toClient(rect, p),
                     GeomTargetCollector.TooltipParams.params()
                         .setMainColor(HintColorUtil.fromColor(p))
-                        .setColors(colorsByDataPoint(p))
+                        .setColors(listOf(HintColorUtil.fromColor(p)))
                 )
             }
         }

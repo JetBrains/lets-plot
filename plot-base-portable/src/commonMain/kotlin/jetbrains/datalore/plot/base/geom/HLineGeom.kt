@@ -36,8 +36,6 @@ class HLineGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
 
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
-
         val viewPort = when {
             ctx.flipped -> ctx.getAesBounds().flip()
             else -> ctx.getAesBounds()
@@ -62,7 +60,7 @@ class HLineGeom : GeomBase() {
                     geomHelper.toClient(rect, p),
                     GeomTargetCollector.TooltipParams.params()
                         .setMainColor(HintColorUtil.fromColor(p))
-                        .setColors(colorsByDataPoint(p)),
+                        .setColors(listOf(HintColorUtil.fromColor(p))),
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }
