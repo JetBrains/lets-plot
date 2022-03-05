@@ -512,6 +512,7 @@ object Option {
             map[SMOOTH] = GeomKind.SMOOTH
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
+            map[DOTPLOT] = GeomKind.DOT_PLOT
             map[YDOTPLOT] = GeomKind.Y_DOT_PLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
