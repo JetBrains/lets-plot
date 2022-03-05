@@ -14,13 +14,12 @@ class YDotplot {
             basic(),
             histodot(),
             coordFlip(),
-            ////groupingWithStackgroups(),
+            //groupingWithStackgroups(),
             groupingWithoutStackgroups(),
             ydotplotParams(),
             statIdentity(),
-            ////regressionTest01(),
-            ////regressionTest02(),
-            ////regressionTest03(),
+            //checkStackCapacity(),
+            //checkHints(),
         )
     }
 
@@ -87,7 +86,8 @@ class YDotplot {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'ydotplot'," +
-                "                 'binwidth': 0.2" +
+                "                 'binwidth': 0.2," +
+                "                 'dotsize': 0.2" +
                 "               }" +
                 "             ]," +
                 "   'coord': {" +
@@ -216,7 +216,7 @@ class YDotplot {
 
     }
 
-    private fun regressionTest01(): MutableMap<String, Any> {
+    private fun checkStackCapacity(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'y': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" +
@@ -225,12 +225,13 @@ class YDotplot {
                 "                'y': 'y'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'Regression test 01'" +
+                "                'text': 'Check stackCapacity'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'ydotplot'," +
-                "                 'binwidth': 1.0" +
+                "                 'binwidth': 1.0," +
+                "                 'dotsize': 0.3" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -239,7 +240,7 @@ class YDotplot {
 
     }
 
-    private fun regressionTest02(): MutableMap<String, Any> {
+    private fun checkHints(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'class': ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']," +
@@ -252,7 +253,7 @@ class YDotplot {
                 "                'fill': 'group'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'Regression test 02'" +
+                "                'text': 'Check hints'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
@@ -262,35 +263,6 @@ class YDotplot {
                 "                 'stackdir': 'left'" +
                 "               }" +
                 "             ]" +
-                "}"
-
-        return HashMap(parsePlotSpec(spec))
-
-    }
-
-    private fun regressionTest03(): MutableMap<String, Any> {
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'data' : {'x': ['A', 'A', 'A', 'B', 'B', 'B']," +
-                "             'y': [0, 0, 0, 0, 1, 1]" +
-                "            }," +
-                "   'mapping': {" +
-                "                'x': 'x'," +
-                "                'y': 'y'" +
-                "              }," +
-                "   'ggtitle': {" +
-                "                'text': 'Regression test 03'" +
-                "              }," +
-                "   'layers': [" +
-                "               {" +
-                "                 'geom': 'ydotplot'," +
-                "                 'binwidth': 1.0" +
-                "               }" +
-                "             ]," +
-                "   'coord': {" +
-                "              'name': 'flip'," +
-                "              'flip': true" +
-                "            }" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))
