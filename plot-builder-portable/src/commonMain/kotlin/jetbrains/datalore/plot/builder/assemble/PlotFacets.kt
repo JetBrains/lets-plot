@@ -190,6 +190,7 @@ abstract class PlotFacets {
         val rowLab: String?,
         val hasHAxis: Boolean,
         val hasVAxis: Boolean,
+        val isBottom: Boolean,  // true is the tile is the last one in its respective column.
         val trueIndex: Int     // tile index before re-ordering (in facet wrap)
     ) {
         override fun toString(): String {

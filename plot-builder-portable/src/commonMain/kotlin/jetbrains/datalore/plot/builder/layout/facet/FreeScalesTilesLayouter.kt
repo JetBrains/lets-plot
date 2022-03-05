@@ -19,16 +19,16 @@ import kotlin.math.abs
 internal object FreeScalesTilesLayouter {
     fun createTileLayoutInfos(
         tilesAreaSize: DoubleVector,
-        facetTiles: List<PlotFacets.FacetTileInfo>,
-        layoutProviderByTile: List<TileLayoutProvider>,
         facets: PlotFacets,
+        layoutProviderByTile: List<TileLayoutProvider>,
         addedHSize: Double,
         addedVSize: Double,
         coordProvider: CoordProvider,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
     ): List<TileLayoutInfo> {
-//        throw IllegalStateException("Not implemented")
+
+        val facetTiles = facets.tileInfos()
 
         // rough estimate (without axis. The final size will be smaller)
         val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
@@ -39,22 +39,25 @@ internal object FreeScalesTilesLayouter {
         val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme)
         val geomHeight = (tilesAreaSize.y - addedVSize - hAxisCount * hAxisThickness) / facets.rowCount
 
+        // 1st iteration
+
         val layoutByTile = layoutProviderByTile.map {
             it.createInsideOutTileLayout()
         }
 
-        // 1st iteration
-
-        val tileLayoutInfos = layoutByTile.map {
-            it.doLayout(
+        val layoutInfos = facetTiles.zip(layoutByTile).map { (facetTile, tileLayout) ->
+            tileLayout.doLayout(
                 DoubleVector(geomWidth, geomHeight),
                 coordProvider
+            ).withAxisShown(
+                facetTile.hasHAxis,
+                facetTile.hasVAxis
             )
         }
 
         // adjust geom size
         val tilesAreaSizeNew = FacetedPlotLayoutUtil.tilesAreaSize(
-            tileLayoutInfos,
+            layoutInfos,
             facets,
             addedHSize,
             addedVSize
@@ -65,7 +68,7 @@ internal object FreeScalesTilesLayouter {
 
         // Error 1 px per tile is ok.
         if (abs(widthDiff) <= facets.colCount && abs(heightDiff) <= facets.rowCount) {
-            return tileLayoutInfos
+            return layoutInfos
         }
 
         // 2nd iteration
@@ -75,13 +78,16 @@ internal object FreeScalesTilesLayouter {
 
         val geomWidth2 = geomWidth + geomWidthDelta
         val geomHeight2 = geomHeight + geomHeightDelta
-        val tileLayoutInfos2 = layoutByTile.map {
-            it.doLayout(
+        val layoutInfos2 = facetTiles.zip(layoutByTile).map { (facetTile, tileLayout) ->
+            tileLayout.doLayout(
                 DoubleVector(geomWidth2, geomHeight2),
                 coordProvider
+            ).withAxisShown(
+                facetTile.hasHAxis,
+                facetTile.hasVAxis
             )
         }
 
-        return tileLayoutInfos2
+        return layoutInfos2
     }
 }

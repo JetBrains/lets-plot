@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.svg.LinePath
 
 class LinePathConstructor(
@@ -18,7 +19,8 @@ class LinePathConstructor(
     private val myDataPoints: Iterable<DataPointAesthetics>,
     private val myLinesHelper: LinesHelper,
     private val myClosePath: Boolean,
-    private val myColorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    private val myColorsByDataPoint: (DataPointAesthetics) -> List<Color>,
+    private val myFlipped: Boolean
 ) {
     fun construct(): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
@@ -45,7 +47,12 @@ class LinePathConstructor(
                 multiPointData.localToGlobalIndex,
                 params()
                     .setMainColor(HintColorUtil.fromColor(multiPointData.aes))
-                    .setColors(myColorsByDataPoint(multiPointData.aes))
+                    .setColors(myColorsByDataPoint(multiPointData.aes)),
+                if (myFlipped) {
+                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                }
             )
         }
     }

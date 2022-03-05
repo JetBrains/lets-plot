@@ -107,6 +107,7 @@ class FacetWrap(
                     null,
                     hasHAxis = hasHAxis,
                     hasVAxis = hasVAxis,
+                    isBottom = isBottom(col, row),
                     trueIndex = i
                 )
             )

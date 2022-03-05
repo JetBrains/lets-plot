@@ -32,7 +32,8 @@ open class PolygonGeom : GeomBase() {
                 dataPoints,
                 linesHelper,
                 myClosePath = true,
-                HintColorUtil.fromMappedColors(ctx)
+                HintColorUtil.fromMappedColors(ctx),
+                ctx.flipped
             )
         appendNodes(
             geomConstructor.construct(),

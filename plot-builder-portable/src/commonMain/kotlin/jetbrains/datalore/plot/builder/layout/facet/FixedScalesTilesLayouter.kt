@@ -20,15 +20,16 @@ import kotlin.math.abs
 internal object FixedScalesTilesLayouter {
     fun createTileLayoutInfos(
         tilesAreaSize: DoubleVector,
-        facetTiles: List<PlotFacets.FacetTileInfo>,
-        layoutProviderByTile: List<TileLayoutProvider>,
         facets: PlotFacets,
+        layoutProviderByTile: List<TileLayoutProvider>,
         addedHSize: Double,
         addedVSize: Double,
         coordProvider: CoordProvider,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
     ): List<TileLayoutInfo> {
+
+        val facetTiles = facets.tileInfos()
 
         // rough estimate (without axis. The final size will be smaller)
         val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
@@ -43,7 +44,7 @@ internal object FixedScalesTilesLayouter {
 
         // 1st iteration
 
-        // With 'fixed' scales: layout just one tile (all tiles are identical).
+        // With 'fixed' scales lets layout just one tile (because all tiles are identical).
         val tileLayout = layoutProviderByTile[0].createTopDownTileLayout()
         val tileLayoutInfo: TileLayoutInfo = tileLayout.doLayout(
             DoubleVector(tileWidth, tileHeight),
