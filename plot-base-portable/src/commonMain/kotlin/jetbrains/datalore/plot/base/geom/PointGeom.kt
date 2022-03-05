@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
@@ -44,7 +45,18 @@ open class PointGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
+        val isMappedFill = ctx.isMappedAes(Aes.FILL)
+        val isMappedColor = ctx.isMappedAes(Aes.COLOR)
+        val colorsByDataPoint: (DataPointAesthetics) -> List<Color> = { p: DataPointAesthetics ->
+            if (p.alpha()!! > 0) {
+                listOfNotNull(
+                    HintColorUtil.fromFill(p).takeIf { isMappedFill },
+                    HintColorUtil.fromColor(p).takeIf { isMappedColor }
+                )
+            } else {
+                emptyList()
+            }
+        }
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
@@ -85,7 +97,7 @@ open class PointGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        fun tooltipParams(p: DataPointAesthetics, colorsByDataPoint: (DataPointAesthetics) -> List<Color>): TooltipParams {
+        private fun tooltipParams(p: DataPointAesthetics, colorsByDataPoint: (DataPointAesthetics) -> List<Color>): TooltipParams {
             var color = Color.TRANSPARENT
             if (p.shape() == TinyPointShape) {
                 color = p.color()!!

@@ -70,8 +70,14 @@ open class AreaGeom : GeomBase() {
     protected open fun setupTooltipParams(aes: DataPointAesthetics, ctx: GeomContext): TooltipParams {
         return params()
             .setMainColor(fromFill(aes))
-            .setColors(HintColorUtil.fromMappedColors(ctx)(aes))
-    }
+            .setColors(
+                HintColorUtil.fromMappedAndVisibleColors(
+                    ctx,
+                    fillFactory = HintColorUtil::fromFill,
+                    strokeFactory = DataPointAesthetics::color
+                ).invoke(aes)
+            )
+      }
 
     private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics): DoubleVector? {
         val coord = GeomUtil.TO_LOCATION_X_Y(p)
