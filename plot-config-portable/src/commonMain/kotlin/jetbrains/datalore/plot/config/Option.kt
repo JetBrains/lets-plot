@@ -367,6 +367,12 @@ object Option {
         const val NAME_GRID = "grid"
         const val NAME_WRAP = "wrap"
 
+        const val SCALES = "scales"
+        const val SCALES_FIXED = "fixed"
+        const val SCALES_FREE = "free"
+        const val SCALES_FREE_X = "free_x"
+        const val SCALES_FREE_Y = "free_y"
+
         // grid
         const val X = "x"
         const val Y = "y"

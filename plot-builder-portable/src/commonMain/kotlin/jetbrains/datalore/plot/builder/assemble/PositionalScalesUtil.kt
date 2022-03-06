@@ -29,52 +29,55 @@ internal object PositionalScalesUtil {
         layersByTile: List<List<GeomLayer>>,
         xScaleProto: Scale<Double>,
         yScaleProto: Scale<Double>,
-        freeX: Boolean,
-        freeY: Boolean,
+        facets: PlotFacets
     ): List<Pair<DoubleSpan, DoubleSpan>> {
         var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(xScaleProto.transform)
         var yInitialDomain: DoubleSpan? = RangeUtil.initialRange(yScaleProto.transform)
 
-        var xDomains = ArrayList<DoubleSpan>()
-        val yDomains = ArrayList<DoubleSpan>()
+        var xDomains = ArrayList<DoubleSpan?>()
+        val yDomains = ArrayList<DoubleSpan?>()
         for (tileLayers in layersByTile) {
             val (xDomain, yDomain) = computeTileXYDomains(
                 tileLayers,
                 xInitialDomain,
                 yInitialDomain
             )
-            xDomain?.run { xDomains.add(xDomain) }
-            yDomain?.run { yDomains.add(yDomain) }
+
+            xDomains.add(xDomain)
+            yDomains.add(yDomain)
         }
 
-        val domainsX: List<DoubleSpan> = finalizeDomains(
+        val adjustedXDomains: List<DoubleSpan?> = facets.adjustHDomains(xDomains)
+        val adjustedYDomains: List<DoubleSpan?> = facets.adjustVDomains(yDomains)
+
+        val finalizedXDomains: List<DoubleSpan> = finalizeDomains(
             Aes.X,
             xScaleProto,
-            xDomains,
+            adjustedXDomains,
             layersByTile,
-            freeX
+            facets.freeHScale
         )
-        val domainsY: List<DoubleSpan> = finalizeDomains(
+        val finalizedYDomains: List<DoubleSpan> = finalizeDomains(
             Aes.Y,
             yScaleProto,
-            yDomains,
+            adjustedYDomains,
             layersByTile,
-            freeY
+            facets.freeVScale
         )
 
-        return domainsX.zip(domainsY)
+        return finalizedXDomains.zip(finalizedYDomains)
     }
 
     private fun finalizeDomains(
         aes: Aes<Double>,
         scaleProto: Scale<*>,
-        domains: List<DoubleSpan>,
+        domains: List<DoubleSpan?>,
         layersByTile: List<List<GeomLayer>>,
         freeScale: Boolean
     ): List<DoubleSpan> {
 
-        return when (freeScale) {
-            true -> {
+        return when {
+            freeScale -> {
                 // Each tile has its own domain
                 domains.mapIndexed { i, v ->
                     // 'expand' ranges and include '0' if necessary
@@ -264,14 +267,14 @@ internal object PositionalScalesUtil {
         }
         val computeExpandY = renderedAes.contains(Aes.HEIGHT)
         val rangeY = if (computeExpandY)
-                computeLayerDryRunRangeAfterSizeExpand(
-                    Aes.Y,
-                    Aes.HEIGHT,
-                    aesthetics,
-                    geomCtx
-                )
-            else
-                null
+            computeLayerDryRunRangeAfterSizeExpand(
+                Aes.Y,
+                Aes.HEIGHT,
+                aesthetics,
+                geomCtx
+            )
+        else
+            null
 
         return Pair(rangeX, rangeY)
     }

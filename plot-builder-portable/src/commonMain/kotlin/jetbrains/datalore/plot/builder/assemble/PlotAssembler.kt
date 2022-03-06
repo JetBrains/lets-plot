@@ -85,8 +85,7 @@ class PlotAssembler private constructor(
                 layersByTile,
                 scaleXProto,
                 scaleYProto,
-                freeX = facets.freeHScale,
-                freeY = facets.freeVScale
+                facets
             )
             val (hScaleProto, vScaleProto) = when (flipAxis) {
                 true -> scaleYProto to scaleXProto

@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-internal class FacetedPlotLayout(
+internal class FacetedPlotLayout constructor(
     private val facets: PlotFacets,
     private val layoutProviderByTile: List<TileLayoutProvider>,
     private val showFacetStrip: Boolean,

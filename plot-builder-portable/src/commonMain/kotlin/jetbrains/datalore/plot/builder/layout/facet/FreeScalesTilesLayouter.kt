@@ -45,7 +45,12 @@ internal object FreeScalesTilesLayouter {
             it.createInsideOutTileLayout()
         }
 
-        val layoutInfos = facetTiles.zip(layoutByTile).map { (facetTile, tileLayout) ->
+
+        val facetTileAndLayout = facetTiles.map {
+            Pair(it, layoutByTile[it.trueIndex])
+        }
+
+        val layoutInfos = facetTileAndLayout.map { (facetTile, tileLayout) ->
             tileLayout.doLayout(
                 DoubleVector(geomWidth, geomHeight),
                 coordProvider
@@ -78,7 +83,7 @@ internal object FreeScalesTilesLayouter {
 
         val geomWidth2 = geomWidth + geomWidthDelta
         val geomHeight2 = geomHeight + geomHeightDelta
-        val layoutInfos2 = facetTiles.zip(layoutByTile).map { (facetTile, tileLayout) ->
+        val layoutInfos2 = facetTileAndLayout.map { (facetTile, tileLayout) ->
             tileLayout.doLayout(
                 DoubleVector(geomWidth2, geomHeight2),
                 coordProvider
