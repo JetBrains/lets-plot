@@ -1,8 +1,6 @@
-## [2.2.2] - 2021-12-??
+## [2.2.2] - 2022-03-??
 
 ### Added
-
-- geom_livemap: button for position reset.
 
 - Plot subtitle and caption   [[#417](https://github.com/JetBrains/lets-plot/issues/417)]: 
   `subtitle` parameter in `ggtitle()` and `labs()`, 
@@ -15,19 +13,24 @@
     
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
 
-- geom_livemap: objects scale on zoom.
 - In tooltip customization API:
   - The `title()` option defines the line, which will be at the beginning of the general tooltip, centered and highlighted in bold.
   - Word wrap:
       - use `\n` as a text separator to split the original string into multiple lines;
       - the value is limited by the number of characters in it.
   - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/tooltip_title.ipynb).
-    
 
-### Changed
+- Perameter `scales` in `facet_grid()/facet_wrap()` [[#451](https://github.com/JetBrains/lets-plot/issues/451), 
+[#479](https://github.com/JetBrains/lets-plot/issues/479)].
 
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/facets_free_scales.ipynb).
+
+- geom_livemap: button for position reset.
+- geom_livemap: objects scale on zoom.
 - geom_livemap: new parameter `topmost` that controls z-index of the `geom_livemap` layer.
 - geom_livemap: new parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons
+
+### Changed
 
 - New tooltip style: rounded corners, bold label, colored marker inside the tooltip.
 
