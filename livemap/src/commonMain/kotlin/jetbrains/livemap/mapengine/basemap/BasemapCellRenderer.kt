@@ -9,7 +9,6 @@ import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
-import jetbrains.livemap.Coordinates.ZERO_CLIENT_POINT
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.basemap.Tile.*
@@ -25,7 +24,7 @@ class BasemapCellRenderer : Renderer {
 
         entity.get<ScreenDimensionComponent>()
             .dimension
-            .run { Rect(ZERO_CLIENT_POINT, this) }
+            .run { Rect(Client.ZERO_VEC, this) }
             .run { render(tile, this, ctx) }
     }
 

@@ -29,6 +29,9 @@ internal class ScaledContext2d(
     }
 
     private fun scaled(font: Context2d.Font): Context2d.Font = font.copy(fontSize = scaled(font.fontSize))
+
+    override fun drawImage(snapshot: Snapshot) = drawImage(snapshot, 0.0, 0.0)
+
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) = ctx.drawImage(snapshot, scaled(x), scaled(y))
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {

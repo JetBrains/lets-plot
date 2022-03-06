@@ -27,11 +27,7 @@ internal class MessageContent(private val message: String) : CanvasContent {
             takeSnapshot()
                 .onSuccess { snapshot ->
                     drawLater(parentControl) {
-                        canvasControl.context.drawImage(
-                            snapshot,
-                            0.0,
-                            0.0
-                        )
+                        canvasControl.context.drawImage(snapshot)
                     }
                 }
         }

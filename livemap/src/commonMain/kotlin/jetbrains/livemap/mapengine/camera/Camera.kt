@@ -6,7 +6,7 @@
 package jetbrains.livemap.mapengine.camera
 
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.livemap.Coordinates.ZERO_WORLD_POINT
+import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.EcsComponentManager
 
@@ -17,6 +17,9 @@ interface Camera {
 
     val isZoomLevelChanged: Boolean
     val isZoomFractionChanged: Boolean
+    val panDistance: Vec<Client>?
+    val panFrameDistance: Vec<Client>?
+
     val isMoved: Boolean
 
     fun requestZoom(zoom: Double)
@@ -26,18 +29,20 @@ interface Camera {
     fun reset()
 }
 
-class MutableCamera(val myComponentManager: EcsComponentManager): Camera {
+class MutableCamera(val myComponentManager: EcsComponentManager) : Camera {
     var requestedZoom: Double? = null
     var requestedPosition: Vec<World>? = null
     var requestedAnimation: Boolean? = null
     var requestedReset: Boolean? = null
 
     override var zoom: Double = 0.0
-    override var position: Vec<World> = ZERO_WORLD_POINT
+    override var position: Vec<World> = World.ZERO_VEC
     override var canReset: Boolean = false
 
     override var isZoomLevelChanged: Boolean = false
     override var isZoomFractionChanged: Boolean = false
+    override var panDistance: Vec<Client>? = null
+    override var panFrameDistance: Vec<Client>? = null
     override var isMoved: Boolean = false
 
     override fun requestZoom(zoom: Double) {

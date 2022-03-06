@@ -14,6 +14,9 @@ interface Canvas {
     val size: Vector
 
     fun takeSnapshot(): Async<Snapshot>
+    fun immidiateSnapshot(): Snapshot
 
-    interface Snapshot
+    interface Snapshot {
+        fun copy(): Snapshot
+    }
 }

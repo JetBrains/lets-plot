@@ -27,11 +27,10 @@ class DevParams(private val devParams: Map<*, *>) {
         val RENDER_TARGET: EnumParam<RenderTarget> =
             EnumParam(
                 "render_target",
-                RenderTarget.OWN_SCREEN_CANVAS,
+                RenderTarget.OWN_OFFSCREEN_CANVAS,
                 listOf(
                     Pair("offscreen_layers", RenderTarget.OWN_OFFSCREEN_CANVAS),
-                    Pair("screen_layers", RenderTarget.OWN_SCREEN_CANVAS),
-                    Pair("single_layer", RenderTarget.SINGLE_SCREEN_CANVAS)
+                    Pair("screen_layers", RenderTarget.OWN_SCREEN_CANVAS)
                 )
             )
 

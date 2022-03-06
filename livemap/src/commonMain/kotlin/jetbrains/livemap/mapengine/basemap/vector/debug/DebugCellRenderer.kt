@@ -7,8 +7,8 @@ package jetbrains.livemap.mapengine.basemap.vector.debug
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
-import jetbrains.livemap.Coordinates.ZERO_CLIENT_POINT
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.basemap.BasemapCellComponent
@@ -29,7 +29,7 @@ class DebugCellRenderer : Renderer {
         ctx.setLineWidth(LINE_WIDTH)
         ctx.setFont(FONT)
 
-        ctx.strokeRect(ZERO_CLIENT_POINT, cellDimension)
+        ctx.strokeRect(Client.ZERO_VEC, cellDimension)
 
         ctx.drawNextLine(entity.get<BasemapCellComponent>().cellKey.toString())
 

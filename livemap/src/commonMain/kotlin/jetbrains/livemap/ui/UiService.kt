@@ -19,7 +19,7 @@ import jetbrains.livemap.core.input.*
 import jetbrains.livemap.core.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.util.Geometries.inside
-import jetbrains.livemap.ui.UiRenderingTaskSystem.UiLayerComponent
+import jetbrains.livemap.ui.UiEntitiesRenderingSystem.UiLayerComponent
 
 class UiService(
     private val myComponentManager: EcsComponentManager,

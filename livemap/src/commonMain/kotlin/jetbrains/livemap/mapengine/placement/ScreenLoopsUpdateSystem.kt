@@ -6,7 +6,7 @@
 package jetbrains.livemap.mapengine.placement
 
 import jetbrains.datalore.base.typedGeometry.plus
-import jetbrains.livemap.Coordinates.ZERO_CLIENT_POINT
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.mapengine.LiveMapContext
@@ -19,7 +19,7 @@ class ScreenLoopsUpdateSystem(componentManager: EcsComponentManager) : AbstractS
 
         getEntities(COMPONENT_TYPES).forEach { entity ->
             val origin = entity
-                .run { tryGet<ScreenOffsetComponent>()?.offset ?: ZERO_CLIENT_POINT }
+                .run { tryGet<ScreenOffsetComponent>()?.offset ?: Client.ZERO_VEC }
                 .run { entity.get<ScreenOriginComponent>().origin + this }
 
             val dimension = entity.get<ScreenDimensionComponent>().dimension

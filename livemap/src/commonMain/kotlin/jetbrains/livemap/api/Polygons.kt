@@ -11,12 +11,12 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
 import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.Coordinates
+import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.PolygonRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.fragment.RegionBBoxComponent
 import jetbrains.livemap.fragment.RegionFragmentsComponent
 import jetbrains.livemap.fragment.RegionRenderer
@@ -47,7 +47,7 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
     val layerEntity =  myComponentManager
         .createEntity("map_layer_polygon")
         .addComponents {
-            + layerManager.addLayer("geom_polygon", LayerGroup.FEATURES)
+            + layerManager.addLayer("geom_polygon", LayerKind.FEATURES)
             + LayerEntitiesComponent()
         }
 
@@ -147,7 +147,7 @@ class PolygonsBuilder(
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
             }.apply {
-                get<ScreenLoopComponent>().origins = listOf(Coordinates.ZERO_CLIENT_POINT)
+                get<ScreenLoopComponent>().origins = listOf(Client.ZERO_VEC)
             }
     }
 }

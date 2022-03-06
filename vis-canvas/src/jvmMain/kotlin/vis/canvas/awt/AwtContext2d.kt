@@ -135,6 +135,10 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.clearRect(rect.left.toInt(), rect.top.toInt(), rect.width.toInt(), rect.height.toInt())
     }
 
+    override fun drawImage(snapshot: Canvas.Snapshot) {
+        drawImage(snapshot, 0.0, 0.0)
+    }
+
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), null)

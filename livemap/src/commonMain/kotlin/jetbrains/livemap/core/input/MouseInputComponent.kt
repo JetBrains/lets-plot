@@ -10,12 +10,11 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.input.MouseEventType.*
 
 class MouseInputComponent : EcsComponent {
-    var location: Vector? = null
     var moveEvent: InputMouseEvent? = null
     var pressEvent: InputMouseEvent? = null
     var clickEvent: InputMouseEvent? = null
     var doubleClickEvent: InputMouseEvent? = null
-    var dragDistance: Vector? = null
+    var dragState: DragState? = null
 
     fun getEvent(type: MouseEventType): InputMouseEvent? {
         return when (type) {
@@ -25,3 +24,11 @@ class MouseInputComponent : EcsComponent {
         }
     }
 }
+
+data class DragState(
+    val origin: Vector = Vector.ZERO,
+    val location: Vector = Vector.ZERO,
+    val started: Boolean = false,
+    val dragging: Boolean = false,
+    val stopped: Boolean = false,
+)

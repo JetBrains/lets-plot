@@ -33,7 +33,7 @@ internal class SpinnerContent : CanvasContent {
                     context2d.drawSpinner(millisTime)
 
                     takeSnapshot()
-                        .onSuccess { canvasControl.context.drawImage(it, 0.0, 0.0) }
+                        .onSuccess { canvasControl.context.drawImage(it) }
                     true
                 }
             )

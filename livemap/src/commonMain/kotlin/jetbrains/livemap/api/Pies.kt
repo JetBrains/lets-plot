@@ -11,7 +11,7 @@ import jetbrains.livemap.chart.DonutChart
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
@@ -32,7 +32,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
-            + layerManager.addLayer("livemap_pie", LayerGroup.FEATURES)
+            + layerManager.addLayer("livemap_pie", LayerKind.FEATURES)
             + LayerEntitiesComponent()
         }
 
