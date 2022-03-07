@@ -16,12 +16,12 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
-        AbstractAssert<SingleLayerAssert, List<LayerConfig>>(layers, SingleLayerAssert::class.java) {
+    AbstractAssert<SingleLayerAssert, List<LayerConfig>>(layers, SingleLayerAssert::class.java) {
 
     private val myLayer: LayerConfig
 
     init {
-        assertEquals(1, layers.size)
+        assertEquals(1, layers.size, "No plot layers!")
         myLayer = layers[0]
     }
 
