@@ -5,54 +5,37 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.plot.builder.assemble.facet.FacetScales
+import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
 
-class FacetWrapDemo {
+class FacetWrapFreeScalesDemo {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            oneFacetDef(),
-            oneFacet3cols(),
-            oneFacet4rows(),
-            twoFacets(),
-            twoFacets_CylindersOrderDesc(),
+            oneFacetDef(FacetScales.FREE_X),
+            oneFacetDef(FacetScales.FREE_Y),
+            oneFacetDef(FacetScales.FREE),
+            twoFacets(FacetScales.FREE_X),
+            twoFacets(FacetScales.FREE_Y),
+            twoFacets(FacetScales.FREE),
         )
     }
 
-    private fun oneFacetDef(): MutableMap<String, Any> {
+    private fun oneFacetDef(scales: FacetScales): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
             "facets" to AutoMpg.cylinders.name,
+            Option.Facet.SCALES to scales,
             "format" to "{d} cyl"
         )
+
+        plotSpec["ggtitle"] = mapOf("text" to "scales='${scales.toString().lowercase()}'")
         return plotSpec
     }
 
-    private fun oneFacet3cols(): MutableMap<String, Any> {
-        val plotSpec = commonSpecs()
-        plotSpec["facet"] = mapOf(
-            "name" to "wrap",
-            "facets" to listOf(AutoMpg.cylinders.name),     // one facet variant
-            "ncol" to 3,
-            "format" to "{d} cyl"
-        )
-        return plotSpec
-    }
-
-    private fun oneFacet4rows(): MutableMap<String, Any> {
-        val plotSpec = commonSpecs()
-        plotSpec["facet"] = mapOf(
-            "name" to "wrap",
-            "facets" to AutoMpg.cylinders.name,
-            "nrow" to 4,
-            "format" to "{d} cyl",
-            "dir" to "v"
-        )
-        return plotSpec
-    }
-
-    private fun twoFacets(): MutableMap<String, Any> {
+    private fun twoFacets(scales: FacetScales): MutableMap<String, Any> {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
@@ -61,26 +44,13 @@ class FacetWrapDemo {
                 AutoMpg.cylinders.name,
             ),
             "ncol" to 5,
+            Option.Facet.SCALES to scales,
             "format" to listOf(null, "{d} cyl")
         )
+        plotSpec["ggtitle"] = mapOf("text" to "scales='${scales.toString().lowercase()}'")
         return plotSpec
     }
 
-    @Suppress("FunctionName")
-    private fun twoFacets_CylindersOrderDesc(): MutableMap<String, Any> {
-        val plotSpec = commonSpecs()
-        plotSpec["facet"] = mapOf(
-            "name" to "wrap",
-            "facets" to listOf(
-                AutoMpg.origin.name,
-                AutoMpg.cylinders.name,
-            ),
-            "ncol" to 5,
-            "order" to listOf(null, -1),
-            "format" to listOf(null, "{d} cyl")
-        )
-        return plotSpec
-    }
 
     @Suppress("DuplicatedCode")
     private fun commonSpecs(): MutableMap<String, Any> {

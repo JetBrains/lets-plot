@@ -46,16 +46,16 @@ Text {
     -fx-shape-rendering: crispedges;
 }
 
-.plt-plot-title {
-    -fx-font-size: 19.0px;
+.plt-plot-title Text {
+    -fx-font-size: 16.0px;
     -fx-font-weight: bold;
 }
 
-.plt-plot-subtitle {
+.plt-plot-subtitle Text {
     -fx-font-size: 15.0px;
 }
 
-.plt-plot-caption {
+.plt-plot-caption Text {
     -fx-font-size: 13.0px;
 }
 

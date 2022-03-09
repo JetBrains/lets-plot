@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 
-internal class InsideOutTileLayout(
+internal class InsideOutTileLayout constructor(
     private val hAxisLayout: AxisLayout,
     private val vAxisLayout: AxisLayout,
     private val hDomain: DoubleSpan, // transformed data ranges.
@@ -31,9 +31,6 @@ internal class InsideOutTileLayout(
             geomSize,
             hDomain, vDomain,
         )
-
-//        val hAxisThickness = hAxisInfo.axisBounds().dimension.y
-//        val vAxisThickness = vAxisInfo.axisBounds().dimension.x
 
         val geomBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
 

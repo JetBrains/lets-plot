@@ -31,7 +31,10 @@ class LineRangeGeom : GeomBase() {
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
-
+        val isMappedColor = ctx.isMappedAes(Aes.COLOR)
+        val colorsByDataPoint = { p: DataPointAesthetics ->
+            if (isMappedColor) listOf(p.color()!!) else emptyList()
+        }
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
             val ymin = p.ymin()!!
@@ -47,7 +50,8 @@ class LineRangeGeom : GeomBase() {
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(),
-            { HintColorUtil.fromColor(it) }
+            { HintColorUtil.fromColor(it) },
+            colorsByDataPoint = colorsByDataPoint
         )
     }
 

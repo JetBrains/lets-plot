@@ -10,7 +10,7 @@ from lets_plot._kbridge import _standardize_plot_spec
 from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_STATE, DF_COLUMN_COUNTY
 from lets_plot.geo_data.geocoder import Geocoder
 from lets_plot.plot import ggplot, geom_polygon, geom_point, geom_map, geom_rect, geom_text, geom_path, geom_livemap
-from plot import util
+from lets_plot.plot import util
 from .geo_data import get_map_data_meta, assert_error
 
 

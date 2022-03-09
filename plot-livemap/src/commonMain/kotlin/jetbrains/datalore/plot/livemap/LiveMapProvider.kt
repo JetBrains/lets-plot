@@ -23,9 +23,9 @@ import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DEV_PARAMS
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LOCATION
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.ONTOP
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.PROJECTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TILES
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TOPMOST
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.ATTRIBUTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MAX_ZOOM
@@ -81,6 +81,11 @@ object LiveMapProvider {
         }
 
         override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
+            val plotLayers = when (myLiveMapOptions.getBool(ONTOP) ?: false) {
+                false -> letsPlotLayers
+                true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
+            }
+
             val liveMapBuilder: LiveMapBuilder = LiveMapBuilder().apply {
                 size = bounds.dimension
                 projection = when (myLiveMapOptions.getEnum(PROJECTION) ?: EPSG3857) {
@@ -108,10 +113,7 @@ object LiveMapProvider {
                     devParams.read(DevParams.COMPUTATION_PROJECTION_QUANT)
                 )
                 layers = LayerConverter.convert(
-                    when (myLiveMapOptions.getBool(TOPMOST) ?: false) {
-                        false -> letsPlotLayers
-                        true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
-                    },
+                    plotLayers,
                     myLiveMapOptions.getInt(DATA_SIZE_ZOOMIN) ?: 0,
                     myLiveMapOptions.getInt(CONST_SIZE_ZOOMIN) ?: -1,
                     myLiveMapOptions.getBool(Option.Geom.LiveMap.GEODESIC) ?: true
@@ -119,7 +121,7 @@ object LiveMapProvider {
             }
 
             val targetSource = HashMap<Pair<Int, Int>, ContextualMapping>()
-            letsPlotLayers.onEachIndexed { layerIndex, layer ->
+            plotLayers.onEachIndexed { layerIndex, layer ->
                 layer.aesthetics.dataPoints().forEach { dataPoint ->
                     targetSource[layerIndex to dataPoint.index()] = layer.contextualMapping
                 }

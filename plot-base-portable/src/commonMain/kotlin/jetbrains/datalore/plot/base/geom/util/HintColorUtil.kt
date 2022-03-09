@@ -33,13 +33,18 @@ object HintColorUtil {
         } else color
     }
 
-    fun fromMappedColors(ctx: GeomContext): (DataPointAesthetics) -> List<Color> {
-        val isMappedColor = ctx.isMappedAes(Aes.COLOR)
+    fun fromMappedAndVisibleColors(
+        ctx: GeomContext,
+        fillFactory: (DataPointAesthetics) -> Color?,
+        strokeFactory: (DataPointAesthetics) -> Color?
+    ): (DataPointAesthetics) -> List<Color> {
         val isMappedFill = ctx.isMappedAes(Aes.FILL)
-        return { p ->
+        val isMappedColor = ctx.isMappedAes(Aes.COLOR)
+        return { p: DataPointAesthetics ->
             listOfNotNull(
-                fromFill(p).takeIf { isMappedFill },
-                fromColor(p).takeIf { isMappedColor },
+                // should be mapped and visible
+                fillFactory(p).takeIf { isMappedFill && p.alpha()!! > 0 },
+                strokeFactory(p).takeIf { isMappedColor && p.size()!! > 0 },
             )
         }
     }

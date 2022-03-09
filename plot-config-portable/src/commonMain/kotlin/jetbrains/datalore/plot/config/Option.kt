@@ -211,7 +211,7 @@ object Option {
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val DATA_SIZE_ZOOMIN = "data_size_zoomin"
             const val CONST_SIZE_ZOOMIN = "const_size_zoomin"
-            const val TOPMOST = "topmost"
+            const val ONTOP = "ontop"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -366,6 +366,12 @@ object Option {
         const val NAME = Meta.NAME
         const val NAME_GRID = "grid"
         const val NAME_WRAP = "wrap"
+
+        const val SCALES = "scales"
+        const val SCALES_FIXED = "fixed"
+        const val SCALES_FREE = "free"
+        const val SCALES_FREE_X = "free_x"
+        const val SCALES_FREE_Y = "free_y"
 
         // grid
         const val X = "x"

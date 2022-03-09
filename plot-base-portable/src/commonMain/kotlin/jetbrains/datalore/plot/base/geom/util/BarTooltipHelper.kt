@@ -20,10 +20,15 @@ object BarTooltipHelper {
         ctx: GeomContext,
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         colorFactory: (DataPointAesthetics) -> Color,
-        defaultTooltipKind: TipLayoutHint.Kind? = null
+        defaultTooltipKind: TipLayoutHint.Kind? = null,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color> =
+            HintColorUtil.fromMappedAndVisibleColors(
+                ctx,
+                fillFactory = HintColorUtil::fromFill,
+                strokeFactory = DataPointAesthetics::color
+            )
     ) {
         val helper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
 
         for (p in aesthetics.dataPoints()) {
             val rect = rectFactory(p) ?: continue

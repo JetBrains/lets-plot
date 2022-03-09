@@ -65,6 +65,7 @@ kotlin {
                 implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
                 implementation "org.mockito:mockito-core:$mockito_version"
                 implementation "org.assertj:assertj-core:$assertj_version"
+                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
             }
         }
         jsMain {

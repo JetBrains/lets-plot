@@ -10,7 +10,7 @@ from .core import FeatureSpec
 __all__ = ['facet_grid', 'facet_wrap']
 
 
-def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=None):
+def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=None, y_format=None):
     """
     Splits data by one or two faceting variables.
     For each data subset creates a plot panel and lays out panels as grid.
@@ -22,6 +22,10 @@ def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=Non
         Variable name which defines columns of the facet grid.
     y : str
         Variable name which defines rows of the facet grid.
+    scales : str
+        Specifies whether scales are shared across all facets.
+        'fixed' - shared (the default), 'free' - vary across both rows and columns,
+        'free_x' or 'free_y' - vary across rows or columns respectively.
     x_order : int, default=1
         Specifies ordering direction of columns. 1 - ascending, -1 - descending, 0 - no ordering.
     y_order : int, default=1
@@ -87,11 +91,12 @@ def facet_grid(x=None, y=None, x_order=1, y_order=1, x_format=None, y_format=Non
     """
     return _facet('grid',
                   x=x, y=y,
+                  scales=scales,
                   x_order=x_order, y_order=y_order,
                   x_format=x_format, y_format=y_format)
 
 
-def facet_wrap(facets, ncol=None, nrow=None, order=1, format=None, dir="h"):
+def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=None, dir="h"):
     """
     Splits data by one or more faceting variables.
     For each data subset creates a plot panel and lays out panels
@@ -105,6 +110,10 @@ def facet_wrap(facets, ncol=None, nrow=None, order=1, format=None, dir="h"):
         Number of columns.
     nrow : int
         Number of rows.
+    scales : str
+        Specifies whether scales are shared across all facets.
+        'fixed' - shared (the default), 'free' - vary across both rows and columns,
+        'free_x' or 'free_y' - vary across rows or columns respectively.
     order : int or list, default=1
         Specifies ordering direction panels. 1 - ascending, -1 - descending, 0 - no ordering.
         When a list is given, then values in the list are positionally matched to variables in `facets`.
@@ -170,6 +179,7 @@ def facet_wrap(facets, ncol=None, nrow=None, order=1, format=None, dir="h"):
     return _facet('wrap',
                   facets=facets,
                   ncol=ncol, nrow=nrow,
+                  scales=scales,
                   order=order,
                   format=format,
                   dir=dir)

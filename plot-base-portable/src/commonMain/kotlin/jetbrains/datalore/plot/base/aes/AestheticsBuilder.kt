@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
@@ -247,16 +248,16 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             }
         }
 
-        override fun range(aes: Aes<Double>): ClosedRange<Double>? {
+        override fun range(aes: Aes<Double>): DoubleSpan? {
             if (!myRangeByNumericAes.containsKey(aes)) {
                 val r = when {
-                    myDataPointCount <= 0 ->
-                        ClosedRange(0.0, 0.0)
+                    myDataPointCount <= 0 -> null
+//                        ClosedRange(0.0, 0.0)
                     myConstantAes.contains(aes) -> {
                         // constant should not be null
                         val v = numericValues(aes).iterator().next()!!
                         if (v.isFinite()) {
-                            ClosedRange(v, v)
+                            DoubleSpan(v, v)
                         } else null
                     }
                     else -> {

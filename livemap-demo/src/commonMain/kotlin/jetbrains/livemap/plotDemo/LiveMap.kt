@@ -1619,7 +1619,7 @@ class LiveMap {
         'shape': 21,
         'color': 'black',
         'fill': 'yellow',
-        'topmost': true,
+        'ontop': true,
         'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
     },
    {

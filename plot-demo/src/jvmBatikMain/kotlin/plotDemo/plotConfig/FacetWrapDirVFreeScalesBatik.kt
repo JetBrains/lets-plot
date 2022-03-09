@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.FacetWrapDirVDemo
+import jetbrains.datalore.plotDemo.model.plotConfig.FacetWrapDirVFreeScalesDemo
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 import java.awt.Dimension
 
 fun main() {
-    with(FacetWrapDirVDemo()) {
+    with(FacetWrapDirVFreeScalesDemo()) {
         PlotSpecsDemoWindowBatik(
-            "Facet wrap, dir='v'",
+            "Facet wrap, dir='v', free scales",
             plotSpecList(),
             2,
             Dimension(600, 600)

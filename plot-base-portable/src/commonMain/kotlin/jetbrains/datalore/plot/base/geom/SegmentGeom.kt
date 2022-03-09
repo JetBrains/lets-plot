@@ -52,7 +52,7 @@ class SegmentGeom : GeomBase() {
                     { p.index() },
                     GeomTargetCollector.TooltipParams.params()
                         .setMainColor(HintColorUtil.fromColor(p))
-                        .setColors(listOf(HintColorUtil.fromColor(p)))
+                        .setColors(listOf(p.color()!!))
                 )
 
                 if (arrowSpec != null) {
