@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
@@ -34,6 +35,16 @@ abstract class PlotFacets {
      *          the index is computed like: row * nCols + col
      */
     abstract fun tileInfos(): List<FacetTileInfo>
+
+    /**
+     * @param domains Transformed X-mapped data ranges by tile.
+     */
+    open fun adjustHDomains(domains: List<DoubleSpan?>): List<DoubleSpan?> = domains
+
+    /**
+     * @param domains Transformed Y-mapped data ranges by tile.
+     */
+    open fun adjustVDomains(domains: List<DoubleSpan?>): List<DoubleSpan?> = domains
 
     companion object {
         const val DEF_ORDER_DIR = 0 // no ordering

@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 
-class HorizontalAxisLayouter(
+class HorizontalAxisLayouter constructor(
     orientation: Orientation,
     domainRange: ClosedRange<Double>,
     labelsLayout: AxisLabelsLayout

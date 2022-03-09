@@ -42,7 +42,12 @@ class RibbonGeom : GeomBase() {
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
+        val colorsByDataPoint = HintColorUtil.fromMappedAndVisibleColors(
+            ctx,
+            fillFactory = HintColorUtil::fromFill,
+            strokeFactory = DataPointAesthetics::color
+        )
+
         for (p in aesthetics.dataPoints()) {
             addTarget(p, ctx, GeomUtil.TO_LOCATION_X_YMAX, helper, colorsByDataPoint)
         }

@@ -5,14 +5,13 @@
 
 package jetbrains.datalore.plot.builder.assemble.facet
 
-import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class FacetWrap(
+class FacetWrap constructor(
     private val facets: List<String>,
     levels: List<List<Any>>,
     private val nrow: Int?,
@@ -20,6 +19,7 @@ class FacetWrap(
     private val direction: Direction,
     facetOrdering: List<Int>,
     private val facetFormatters: List<(Any) -> String>,
+    scales: FacetScales = FacetScales.FIXED
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
@@ -30,11 +30,11 @@ class FacetWrap(
     override val rowCount: Int = shape.second
     override val variables: List<String> = facets
 
-    override val freeHScale: Boolean
-        get() = FeatureSwitch.FACET_FREE_X
+    override val freeHScale: Boolean =
+        scales == FacetScales.FREE || scales == FacetScales.FREE_X
 
-    override val freeVScale: Boolean
-        get() = FeatureSwitch.FACET_FREE_Y
+    override val freeVScale: Boolean =
+        scales == FacetScales.FREE || scales == FacetScales.FREE_Y
 
     /**
      * @return List of Dataframes, one Dataframe per tile.

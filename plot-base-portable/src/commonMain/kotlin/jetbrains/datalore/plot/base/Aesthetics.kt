@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 interface Aesthetics {
     val isEmpty: Boolean
@@ -21,7 +21,7 @@ interface Aesthetics {
      *
      * @return The range of mapped data
      */
-    fun range(aes: Aes<Double>): ClosedRange<Double>?
+    fun range(aes: Aes<Double>): DoubleSpan?
 
     fun resolution(aes: Aes<Double>, naValue: Double): Double
 

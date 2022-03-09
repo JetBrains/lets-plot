@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
@@ -16,6 +17,7 @@ import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
+import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 
 
@@ -39,6 +41,11 @@ object ServerSideTestUtil {
     fun createLayerConfigsWithoutEncoding(plotSpec: MutableMap<String, Any>): List<LayerConfig> {
         @Suppress("NAME_SHADOWING")
         val plotSpec = serverTransformWithoutEncoding(plotSpec)
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            throw IllegalStateException(errorMessage)
+        }
+
         return PlotConfigServerSide(plotSpec).layerConfigs
     }
 

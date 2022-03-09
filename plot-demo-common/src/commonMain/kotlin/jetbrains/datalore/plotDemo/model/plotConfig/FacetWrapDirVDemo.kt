@@ -100,7 +100,8 @@ class FacetWrapDirVDemo {
                     {
                         'geom': 'point'
                     }
-                ]
+                ],
+                'theme': {'name': 'grey'}
             }
         """.trimIndent()
 

@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
+import jetbrains.datalore.plot.builder.assemble.facet.FacetScales
 import jetbrains.datalore.plot.builder.assemble.facet.FacetWrap
 import jetbrains.datalore.plot.config.Option.Facet
 import jetbrains.datalore.plot.config.Option.Facet.FACETS_FILL_DIR
@@ -57,12 +58,15 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             }
         }
 
+        val scales: FacetScales = getScalesOption()
+
         return FacetGrid(
             nameX, nameY, ArrayList(levelsX), ArrayList(levelsY),
             getOrderOption(X_ORDER),
             getOrderOption(Y_ORDER),
             getFormatterOption(X_FORMAT),
             getFormatterOption(Y_FORMAT),
+            scales
         )
     }
 
@@ -101,7 +105,9 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
         // Num of formatters must be same as num of factes.
         val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters)
+        val scales: FacetScales = getScalesOption()
+
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales)
     }
 
 
@@ -146,5 +152,21 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
 
     private fun getFormatterOption(optionName: String): (Any) -> String {
         return toFormatterVal(get(optionName))
+    }
+
+    private fun getScalesOption(): FacetScales {
+        return getString(Facet.SCALES)?.let {
+            when (it.lowercase()) {
+                Facet.SCALES_FIXED -> FacetScales.FIXED
+                Facet.SCALES_FREE -> FacetScales.FREE
+                Facet.SCALES_FREE_X -> FacetScales.FREE_X
+                Facet.SCALES_FREE_Y -> FacetScales.FREE_Y
+                else -> throw IllegalArgumentException(
+                    "Unsupported `scales` value: $it.\n" +
+                            "Use: ${Facet.SCALES_FIXED}, ${Facet.SCALES_FREE}, " +
+                            "${Facet.SCALES_FREE_X} or ${Facet.SCALES_FREE_Y}"
+                )
+            }
+        } ?: FacetScales.FIXED
     }
 }

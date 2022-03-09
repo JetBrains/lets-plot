@@ -22,16 +22,18 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf(
-                MAPPING to aes,
-                LAYERS to listOf(mapOf(
-                        GEOM to GeomName.POINT   // layer without mapping or data
-                ))
+            MAPPING to aes,
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to GeomName.POINT   // layer without mapping or data
+                )
+            )
         )
 
         val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layers)
-                .haveBinding(Aes.X, "x")
-                .haveDataVector("x", inputVector)
+            .haveBinding(Aes.X, "x")
+            .haveDataVector("x", inputVector)
     }
 
     @Test
@@ -43,17 +45,19 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf(
-                DATA to data,
-                MAPPING to aes,
-                LAYERS to listOf(mapOf(
-                        GEOM to GeomName.POINT   // layer without mapping or data
-                ))
+            DATA to data,
+            MAPPING to aes,
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to GeomName.POINT   // layer without mapping or data
+                )
+            )
         )
 
         val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layers)
-                .haveBinding(Aes.X, "x1")
-                .haveDataVector("x1", inputVector)
+            .haveBinding(Aes.X, "x1")
+            .haveDataVector("x1", inputVector)
     }
 
     @Test
@@ -62,16 +66,18 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf<String, Any>(
-                LAYERS to listOf(mapOf(
-                        GEOM to GeomName.POINT,
-                        MAPPING to aes
-                ))
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to GeomName.POINT,
+                    MAPPING to aes
+                )
+            )
         )
 
         val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layers)
-                .haveBinding(Aes.X, "x")
-                .haveDataVector("x", inputVector)
+            .haveBinding(Aes.X, "x")
+            .haveDataVector("x", inputVector)
     }
 
     @Test
@@ -83,16 +89,40 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf<String, Any>(
-                LAYERS to listOf(mapOf(
-                        GEOM to GeomName.POINT,
-                        MAPPING to aes,
-                        DATA to data
-                ))
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to GeomName.POINT,
+                    MAPPING to aes,
+                    DATA to data
+                )
+            )
         )
 
         val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layers)
-                .haveBinding(Aes.X, "x1")
-                .haveDataVector("x1", inputVector)
+            .haveBinding(Aes.X, "x1")
+            .haveDataVector("x1", inputVector)
+    }
+
+    @Test
+    fun intConvertedToDouble() {
+        val inputVector = listOf(1.0, 2.0, 3)
+        val aes = mapOf("x" to inputVector)
+
+        val plotOpts = mutableMapOf<String, Any>(
+            LAYERS to listOf(
+                mapOf(
+                    GEOM to GeomName.POINT,
+                    MAPPING to aes,
+                )
+            )
+        )
+
+        val expectedVector = inputVector.map { it.toDouble() }
+
+        val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        SingleLayerAssert.assertThat(layers)
+            .haveBinding(Aes.X, "x")
+            .haveDataVector("x", expectedVector)
     }
 }

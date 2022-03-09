@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.plot.server.config.transform
 
+import jetbrains.datalore.plot.server.config.transform.NumericDataVectorChangeUtil.containsNumbersToConvert
+import jetbrains.datalore.plot.server.config.transform.NumericDataVectorChangeUtil.convertNumbersToDouble
+
 internal object ReplaceDataVectorsInAesMappingChangeUtil {
 
     private fun genVarName(baseName: String, usedNamesCollector: MutableSet<String>): String {
@@ -74,7 +77,15 @@ internal object ReplaceDataVectorsInAesMappingChangeUtil {
                 }
             }
 
-            data.putAll(addedDataVectors)
+            val processedVectors = addedDataVectors.mapValues { (_, list) ->
+                if (containsNumbersToConvert(list)) {
+                    convertNumbersToDouble(list)
+                } else {
+                    list
+                }
+            }
+
+            data.putAll(processedVectors)
             myOpts[myDataKey] = data
         }
     }

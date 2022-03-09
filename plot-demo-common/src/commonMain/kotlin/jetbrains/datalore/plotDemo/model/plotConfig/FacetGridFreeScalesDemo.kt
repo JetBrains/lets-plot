@@ -5,20 +5,17 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.plot.config.Option.Facet
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
-import kotlin.random.Random
-import kotlin.random.nextInt
 
-class FacetGridDemo {
+class FacetGridFreeScalesDemo {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             cols(),
             rows(),
             both(),
             bothFlipped(),
-            both_YOrderingDesc(),
-            numericFacetVariable(),
         )
     }
 
@@ -27,16 +24,11 @@ class FacetGridDemo {
         plotSpec["facet"] = mapOf(
             "name" to "grid",
             "x" to AutoMpg.cylinders.name,
+            Facet.SCALES to Facet.SCALES_FREE_X,
             "x_format" to "{d} cyl"
         )
 
-        plotSpec["coord"] = mapOf(
-            "name" to "fixed",
-            "xlim" to listOf(100, 150),
-            "ylim" to listOf(0, 50),
-        )
-
-        plotSpec["ggtitle"] = mapOf("text" to "coord_fixed")
+        plotSpec["ggtitle"] = mapOf("text" to "scales='free_x'")
 
         return plotSpec
     }
@@ -45,8 +37,11 @@ class FacetGridDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "y" to AutoMpg.origin.name
+            "y" to AutoMpg.origin.name,
+            Facet.SCALES to Facet.SCALES_FREE_Y,
         )
+
+        plotSpec["ggtitle"] = mapOf("text" to "scales='free_y'")
         return plotSpec
     }
 
@@ -56,8 +51,11 @@ class FacetGridDemo {
             "name" to "grid",
             "x" to AutoMpg.cylinders.name,
             "y" to AutoMpg.origin.name,
+            Facet.SCALES to Facet.SCALES_FREE,
             "x_format" to "{d} cyl"
         )
+
+        plotSpec["ggtitle"] = mapOf("text" to "scales='free'")
         return plotSpec
     }
 
@@ -67,21 +65,11 @@ class FacetGridDemo {
             "name" to "grid",
             "x" to AutoMpg.origin.name,
             "y" to AutoMpg.cylinders.name,
+            Facet.SCALES to Facet.SCALES_FREE,
             "y_format" to "{d} cyl"
         )
-        return plotSpec
-    }
 
-    @Suppress("FunctionName")
-    private fun both_YOrderingDesc(): MutableMap<String, Any> {
-        val plotSpec = commonSpecs()
-        plotSpec["facet"] = mapOf(
-            "name" to "grid",
-            "x" to AutoMpg.cylinders.name,
-            "y" to AutoMpg.origin.name,
-            "y_order" to -1,
-            "x_format" to "{d} cyl"
-        )
+        plotSpec["ggtitle"] = mapOf("text" to "scales='free' (flipped)")
         return plotSpec
     }
 
@@ -107,39 +95,4 @@ class FacetGridDemo {
         plotSpec["data"] = AutoMpg.df
         return plotSpec
     }
-
-    private fun numericFacetVariable(): MutableMap<String, Any> {
-        val rnd = Random(0)
-        val n = 100
-        val x = (1..n).map() { rnd.nextDouble() }.joinToString { it.toString() }
-        val c = (1..n).map { rnd.nextInt(1..6) }.joinToString { it.toString() }
-        val spec = """
-            |{
-            |  "kind": "plot",
-            |  "data": {
-            |    "x": [$x],
-            |    "c": [$c]
-            |  },
-            |  "mapping": {"x": "x"},
-            |  "facet": {
-            |    "name": "grid",
-            |    "x": "c",
-            |    "x_order": 1,
-            |    "y_order": 1
-            |  },
-            |  "layers": [
-            |    {
-            |      "geom": "histogram",
-            |      "tooltips": {
-            |        "tooltip_formats": [],
-            |        "tooltip_lines": ["@|@c"]
-            |      }
-            |    }
-            |  ]
-            |}            
-        """.trimMargin()
-
-        return parsePlotSpec(spec)
-    }
-
 }

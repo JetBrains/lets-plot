@@ -125,7 +125,13 @@ class DotplotGeom : GeomBase() {
             geomHelper.toClient(rect, p),
             GeomTargetCollector.TooltipParams.params()
                 .setMainColor(HintColorUtil.fromFill(p))
-                .setColors(HintColorUtil.fromMappedColors(ctx)(p)),
+                .setColors(
+                    HintColorUtil.fromMappedAndVisibleColors(
+                        ctx,
+                        fillFactory = HintColorUtil::fromFill,
+                        strokeFactory = DataPointAesthetics::color
+                    ).invoke(p)
+                ),
             tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             } else {
@@ -165,8 +171,8 @@ class DotplotGeom : GeomBase() {
 
                 val builder = SvgPathDataBuilder(true)
                 builder.moveTo(leftBound)
-                builder.ellipticalArc(r, r, 0.0, false, false, rightBound)
-                builder.ellipticalArc(r, r, 0.0, false, false, leftBound)
+                builder.ellipticalArc(r, r, 0.0, largeArc = false, sweep = false, to = rightBound)
+                builder.ellipticalArc(r, r, 0.0, largeArc = false, sweep = false, to = leftBound)
                 builder.closePath()
 
                 val path = LinePath(builder)

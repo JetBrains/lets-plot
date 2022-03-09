@@ -7,30 +7,34 @@ package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
+import jetbrains.datalore.plot.server.config.transform.NumericDataVectorChangeUtil.containsNumbersToConvert
+import jetbrains.datalore.plot.server.config.transform.NumericDataVectorChangeUtil.convertNumbersToDouble
 
 internal class NumericDataVectorSpecChange : SpecChange {
     private fun needChange(l: List<*>): Boolean {
-        for (o in l) {
-            if (o != null) {
-                if (o is Number) {
-                    if (o !is Double) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
+//        for (o in l) {
+//            if (o != null) {
+//                if (o is Number) {
+//                    if (o !is Double) {
+//                        return true
+//                    }
+//                }
+//            }
+//        }
+//        return false
+        return containsNumbersToConvert(l)
     }
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val keys = HashSet(spec.keys)
         for (key in keys) {
-            val dat = spec[key]!!
+            val dat = spec.getValue(key)
             require(dat is List<*>) { "The value of data variable [$key] must be a list but was ${dat::class.simpleName}" }
             if (needChange(dat)) {
-                spec[key] = dat.map { o: Any? ->
-                    if (o is Number) o.toDouble() else o
-                }
+//                spec[key] = dat.map { o: Any? ->
+//                    if (o is Number) o.toDouble() else o
+//                }
+                spec[key] = convertNumbersToDouble(dat)
             }
         }
     }

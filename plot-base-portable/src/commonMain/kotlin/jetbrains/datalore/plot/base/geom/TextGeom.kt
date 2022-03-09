@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AesScaling
@@ -37,7 +38,9 @@ class TextGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val sizeUnitRatio = getSizeUnitRatio(ctx)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
+        val colorsByDataPoint = { p: DataPointAesthetics ->
+            listOfNotNull(HintColorUtil.fromColor(p).takeIf { p.alpha()!! > 0 })
+        }
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()

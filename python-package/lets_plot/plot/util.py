@@ -59,11 +59,13 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
     if is_dict_or_dataframe(data):
         for column_name, values in data.items():
-            if isinstance(values, Iterable) and all(isinstance(val, datetime) for val in values):
-                series_meta.append({
-                    'column': column_name,
-                    'type': 'datetime'
-                })
+            if isinstance(values, Iterable):
+                not_empty_series = any(True for _ in values)
+                if not_empty_series and all(isinstance(val, datetime) for val in values):
+                    series_meta.append({
+                        'column': column_name,
+                        'type': 'datetime'
+                    })
 
     if len(series_meta) > 0:
         data_meta.update({'series_annotations': series_meta})

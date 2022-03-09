@@ -36,7 +36,9 @@ class ErrorBarGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.fromMappedColors(ctx)
+        val colorsByDataPoint = { p: DataPointAesthetics ->
+            if (ctx.isMappedAes(Aes.COLOR)) listOf(fromColor(p)) else emptyList()
+        }
 
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),

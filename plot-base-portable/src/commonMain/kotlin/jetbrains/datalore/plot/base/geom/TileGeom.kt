@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectTargetCollectorHelper
@@ -34,16 +35,23 @@ open class TileGeom : GeomBase() {
         )
         root.add(wrap(slimGroup))
 
+        val colorsByDataPoint: (DataPointAesthetics) -> List<Color> = { p: DataPointAesthetics ->
+            if (p.alpha()!! > 0) {
+                HintColorUtil.fromMappedAndVisibleColors(
+                    ctx,
+                    fillFactory = HintColorUtil::fromFill,
+                    strokeFactory = HintColorUtil::fromColor
+                ).invoke(p)
+            } else {
+                emptyList()
+            }
+        }
         RectTargetCollectorHelper(
             helper,
             rectangleByDataPoint(ctx),
-            { p: DataPointAesthetics ->
-                HintColorUtil.fromFill(
-                    p
-                )
-            },
+            { p: DataPointAesthetics -> HintColorUtil.fromFill(p) },
             TipLayoutHint.Kind.CURSOR_TOOLTIP,
-            HintColorUtil.fromMappedColors(ctx)
+            colorsByDataPoint
         )
             .collectTo(ctx.targetCollector)
     }
