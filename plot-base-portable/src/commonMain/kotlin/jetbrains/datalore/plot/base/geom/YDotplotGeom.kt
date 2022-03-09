@@ -114,13 +114,18 @@ class YDotplotGeom : GeomBase() {
                 DoubleVector(height, width)
             )
         }
+        val colorTransform = HintColorUtil.fromMappedAndVisibleColors(
+            ctx,
+            fillFactory = HintColorUtil::fromFill,
+            strokeFactory = DataPointAesthetics::color
+        )
 
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
             GeomTargetCollector.TooltipParams.params()
                 .setMainColor(HintColorUtil.fromFill(p))
-                .setColors(HintColorUtil.fromMappedColors(ctx)(p)),
+                .setColors(colorTransform(p)),
             TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
