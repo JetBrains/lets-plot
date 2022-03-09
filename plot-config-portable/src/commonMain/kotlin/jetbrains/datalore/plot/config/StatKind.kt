@@ -18,6 +18,7 @@ enum class StatKind {
     CONTOURF,
     BOXPLOT,
     YDENSITY,
+    YDOTPLOT,
     DENSITY,
     DENSITY2D,
     DENSITY2DF;

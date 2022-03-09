@@ -35,7 +35,7 @@ class DotplotStat(
 
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
-            val binsData = when(method) {
+            val binsData = when (method) {
                 Method.DOTDENSITY -> BinStatUtil.computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X), binOptions)
                 Method.HISTODOT -> BinStatUtil.computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X), xPosKind, xPos, binOptions)
             }
@@ -75,7 +75,6 @@ class DotplotStat(
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.COUNT,
             Aes.STACKSIZE to Stats.COUNT,
             Aes.BINWIDTH to Stats.BIN_WIDTH
         )

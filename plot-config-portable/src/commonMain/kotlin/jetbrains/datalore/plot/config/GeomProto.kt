@@ -31,7 +31,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             SMOOTH -> DefaultSampling.SMOOTH
             BAR -> DefaultSampling.BAR
             HISTOGRAM -> DefaultSampling.HISTOGRAM
-            DOTPLOT -> DefaultSampling.DOTPLOT
+            DOT_PLOT -> DefaultSampling.DOT_PLOT
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
             ERROR_BAR -> DefaultSampling.ERROR_BAR
@@ -46,7 +46,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
-            VIOLIN -> Samplings.NONE // DefaultSampling.VIOLIN
+            VIOLIN -> DefaultSampling.VIOLIN
+            Y_DOT_PLOT -> DefaultSampling.Y_DOT_PLOT
             RIBBON -> DefaultSampling.RIBBON
             AREA -> DefaultSampling.AREA
             DENSITY -> DefaultSampling.DENSITY
@@ -75,6 +76,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 layerOptions.getDouble(Option.Geom.Jitter.WIDTH),
                 layerOptions.getDouble(Option.Geom.Jitter.HEIGHT)
             )
+            Y_DOT_PLOT -> if (layerOptions.hasOwn(Option.Geom.YDotplot.STACKGROUPS) &&
+                              layerOptions.getBoolean(Option.Geom.YDotplot.STACKGROUPS)) {
+                PosProvider.wrap(PositionAdjustments.identity())
+            } else {
+                PosProvider.dodge(0.95)
+            }
 
             // Some other geoms has stateless position adjustments defined in `defaults`
             // Otherwise it's just `identity`
@@ -97,7 +104,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 barDefaults()
             DEFAULTS[HISTOGRAM] =
                 histogramDefaults()
-            DEFAULTS[DOTPLOT] =
+            DEFAULTS[DOT_PLOT] =
                 dotplotDefaults()
             DEFAULTS[CONTOUR] =
                 contourDefaults()
@@ -109,6 +116,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 boxplotDefaults()
             DEFAULTS[VIOLIN] =
                 violinDefaults()
+            DEFAULTS[Y_DOT_PLOT] =
+                yDotplotDefaults()
             DEFAULTS[AREA] =
                 areaDefaults()
             DEFAULTS[DENSITY] =
@@ -187,6 +196,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "ydensity"
             defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
+            return defaults
+        }
+
+        private fun yDotplotDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "ydotplot"
             return defaults
         }
 

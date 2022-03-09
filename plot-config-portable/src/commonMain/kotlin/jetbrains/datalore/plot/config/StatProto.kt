@@ -87,6 +87,8 @@ object StatProto {
 
             StatKind.YDENSITY -> return configureYDensityStat(options)
 
+            StatKind.YDOTPLOT -> return configureYDotplotStat(options)
+
             StatKind.DENSITY -> return configureDensityStat(options)
 
             StatKind.DENSITY2D -> return configureDensity2dStat(options, false)
@@ -186,6 +188,21 @@ object StatProto {
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX)
+        )
+    }
+
+    private fun configureYDotplotStat(options: OptionsAccessor): YDotplotStat {
+
+        val method = options.getString(Bin.METHOD)?.let {
+            DotplotStat.Method.safeValueOf(it)
+        }
+
+        return Stats.ydotplot(
+            binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
+            binWidth = options.getDouble(Bin.BINWIDTH),
+            center = options.getDouble(Bin.CENTER),
+            boundary = options.getDouble(Bin.BOUNDARY),
+            method = method ?: DotplotStat.DEF_METHOD
         )
     }
 
