@@ -9,12 +9,14 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.PlotContainerPortable
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svgToString.SvgToString
+import kotlin.math.max
 
 
 object MonolithicCommon {
@@ -78,14 +80,27 @@ object MonolithicCommon {
                     )
                 )
             }
-            PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(plotSpec)
+            PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(plotSpec, plotMaxWidth)
             else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
         }
     }
 
     private fun buildGGBunchFromProcessedSpecs(
-        bunchSpec: MutableMap<String, Any>
+        bunchSpec: MutableMap<String, Any>,
+        bunchMaxWidth: Double?
     ): PlotsBuildResult {
+
+        val scalingCoef = bunchMaxWidth?.let {
+            val naturalBunchSize = PlotSizeHelper.plotBunchSize(bunchSpec)
+            if (it < naturalBunchSize.x) {
+                max(Defaults.MIN_PLOT_WIDTH, it) / naturalBunchSize.x
+            } else {
+                1.0
+            }
+
+        } ?: 1.0
+
+
         val bunchConfig = BunchConfig(bunchSpec)
         if (bunchConfig.bunchItems.isEmpty()) return PlotsBuildResult.Error(
             "No plots in the bunch"
@@ -94,21 +109,27 @@ object MonolithicCommon {
         val buildInfos = ArrayList<PlotBuildInfo>()
         for (bunchItem in bunchConfig.bunchItems) {
             val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
-            var buildInfo =
-                buildSinglePlotFromProcessedSpecs(
-                    plotSpec,
-                    PlotSizeHelper.bunchItemSize(bunchItem),
-                    plotMaxWidth = null
-                )
-
-            buildInfo = PlotBuildInfo(
-                buildInfo.plotAssembler,
-                buildInfo.processedPlotSpec,
-                DoubleVector(bunchItem.x, bunchItem.y),  // true origin
-                buildInfo.size,
-                buildInfo.computationMessages
+            val itemBuildInfoRaw = buildSinglePlotFromProcessedSpecs(
+                plotSpec,
+                PlotSizeHelper.bunchItemSize(bunchItem),
+                plotMaxWidth = null
             )
-            buildInfos.add(buildInfo)
+
+            val itemBounds = DoubleRectangle(
+                DoubleVector(bunchItem.x, bunchItem.y).mul(scalingCoef),
+                itemBuildInfoRaw.size.mul(scalingCoef)
+            )
+
+            val itemBuildInfo = PlotBuildInfo(
+                itemBuildInfoRaw.plotAssembler,
+                itemBuildInfoRaw.processedPlotSpec,
+//                DoubleVector(bunchItem.x, bunchItem.y),  // true origin
+//                itemBuildInfoRaw.size,
+                itemBounds.origin,
+                itemBounds.dimension,
+                itemBuildInfoRaw.computationMessages
+            )
+            buildInfos.add(itemBuildInfo)
         }
 
         return PlotsBuildResult.Success(buildInfos)

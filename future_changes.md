@@ -33,9 +33,11 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 ### Changed
 
 - New tooltip style: rounded corners, bold label, colored marker inside the tooltip.
-
 - Deprecated tooltip customization API:
   function `color()` will be removed in one of the future releases.
+- All plots auto-scale down their size to fit the width of the output (notebook) cell [[#488](https://github.com/JetBrains/lets-plot/issues/488)].
+
+  Earlier neither `ggbunch` nor plots with the `ggsize()` option has been auto-scaleing.
 
 ### Fixed
 
