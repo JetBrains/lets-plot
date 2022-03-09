@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -51,7 +51,7 @@ class YDotplotStat(
         data: DataFrame,
         xs: List<Double?>,
         ys: List<Double?>,
-        rangeY: ClosedRange<Double>?
+        rangeY: DoubleSpan?
     ) : MutableMap<DataFrame.Variable, List<Double>> {
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()

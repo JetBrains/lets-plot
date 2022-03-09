@@ -58,10 +58,11 @@ class DotplotGeom : GeomBase() {
         if (!pointsWithBinWidth.any()) return
 
         val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
-        val stackCapacity = (
-            if (ctx.flipped) ctx.getAesBounds().width else ctx.getAesBounds().height
-        ).let {
-            ceil(it / (dotSize * binWidthPx)).toInt()
+        val stackCapacity = when (ctx.flipped) {
+            true -> ctx.getAesBounds().width
+            false -> ctx.getAesBounds().height
+        }.let {
+            ceil(it / (dotSize * stackRatio * binWidthPx)).toInt() + 1
         }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
             .groupBy { p -> p.x()!! }

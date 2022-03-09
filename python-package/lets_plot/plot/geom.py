@@ -929,7 +929,6 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     `geom_dotplot()` understands the following aesthetics mappings:
 
     - x : x-axis value.
-    - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
@@ -2935,6 +2934,136 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                   center=None,
                   boundary=None,
                   **other_args):
+    """
+    Dot plots represent individual observations in a batch of data with circular dots.
+    The diameter of a dot corresponds to the maximum width or bin width, depending on the binning algorithm.
+    `geom_ydotplot()` is an obvious blend of `geom_violin()` and `geom_dotplot()`.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='ydotplot'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'ydotplot' (depends on `method` parameter).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    binwidth : float
+        When method is 'dotdensity', this specifies maximum bin width.
+        When method is 'histodot', this specifies bin width.
+    bins : int, default=30
+        When method is 'histodot', this specifies number of bins. Overridden by `binwidth`.
+    method : {'dotdensity', 'histodot'}, default='dotdensity'
+        Use 'dotdensity' for dot-density binning,
+        or 'histodot' for fixed bin widths (like in geom_histogram).
+    stackdir : {'left', 'right', 'center', 'centerwhole'}, default='center'
+        Which direction to stack the dots.
+    stackratio : float, default=1.0
+        How close to stack the dots.
+        Use smaller values for closer, overlapping dots.
+    dotsize : float, default=1.0
+        The diameter of the dots relative to binwidth.
+    center : float
+        When method is 'histodot', this specifies x-value to align bin centers to.
+    boundary : float
+        When method is 'histodot', this specifies x-value to align bin boundary
+        (i.e. point between bins) to.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    With 'dotdensity' binning, the bin positions are determined by the data and binwidth, which is the maximum width of each bin.
+    With 'histodot' binning, the bins have fixed positions and fixed widths, much like a histogram.
+
+    Computed variables:
+
+    - ..count.. : number of points with y-axis coordinate in the same bin.
+    - ..binwidth..: max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
+
+    `geom_ydotplot()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.random.choice(['A', 'B'], size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_ydotplot()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.random.choice(['A', 'B'], size=n)
+        y = np.random.gamma(0.75, size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_ydotplot(aes(fill='x'), color='black', \\
+                          binwidth=.15, method='histodot', \\
+                          boundary=0.0, dotsize=.75)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-14
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.random.choice(['A', 'B', 'C'], size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_ydotplot(color='black', fill='#d7191c', \\
+                          method='dotdensity', binwidth=.2,
+                          stackdir='left', stackratio=.8) + \\
+            geom_ydotplot(color='black', fill='#2c7bb6', \\
+                          method='histodot', binwidth=.2, \\
+                          stackdir='right', stackratio=.8)
+
+    """
     return _geom('ydotplot',
                  mapping=mapping,
                  data=data,

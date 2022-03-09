@@ -43,10 +43,11 @@ class YDotplotGeom : GeomBase() {
         if (!pointsWithBinWidth.any()) return
 
         val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y), 2.0)
-        stackCapacity = (
-            if (ctx.flipped) ctx.getAesBounds().height else ctx.getAesBounds().width
-        ).let { boundPx ->
-            ceil(boundPx / (dotSize * stackRatio * binWidthPx)).toInt() + 1
+        stackCapacity = when (ctx.flipped) {
+            true -> ctx.getAesBounds().height
+            false -> ctx.getAesBounds().width
+        }.let {
+            ceil(it / (dotSize * stackRatio * binWidthPx)).toInt() + 1
         }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
@@ -94,26 +95,25 @@ class YDotplotGeom : GeomBase() {
         geomHelper: GeomHelper,
         binWidthPx: Double
     ) {
-        val dotRadius = dotSize * binWidthPx / 2.0
         val currentStackSize = p.stacksize()!!.toInt()
-        val rect: DoubleRectangle = (if (currentStackSize > 0) {
-            getDotCenter(p, dotId, stackSize, binWidthPx, ctx.flipped, geomHelper)
-        } else null)?.let { origin ->
-            val width = 2.0 * dotRadius
-            val height = 2.0 * dotRadius * (currentStackSize * stackRatio - (stackRatio - 1))
-            val stackShift = if (stackDir == Stackdir.LEFT) -dotRadius else -height + dotRadius
-            if (ctx.flipped) {
-                DoubleRectangle(
-                    DoubleVector(origin.x - dotRadius, origin.y + stackShift),
-                    DoubleVector(width, height)
-                )
-            } else {
-                DoubleRectangle(
-                    DoubleVector(origin.x + stackShift, origin.y - dotRadius),
-                    DoubleVector(height, width)
-                )
-            }
-        } ?: return
+        if (currentStackSize == 0) return
+
+        val center = getDotCenter(p, dotId, stackSize, binWidthPx, ctx.flipped, geomHelper)
+        val radius = dotSize * binWidthPx / 2.0
+        val width = 2.0 * radius
+        val height = 2.0 * radius * (currentStackSize * stackRatio - (stackRatio - 1))
+        val stackShift = if (stackDir == Stackdir.LEFT) -radius else -height + radius
+        val rect = if (ctx.flipped) {
+            DoubleRectangle(
+                DoubleVector(center.x - radius, center.y + stackShift),
+                DoubleVector(width, height)
+            )
+        } else {
+            DoubleRectangle(
+                DoubleVector(center.x + stackShift, center.y - radius),
+                DoubleVector(height, width)
+            )
+        }
 
         ctx.targetCollector.addRectangle(
             p.index(),
