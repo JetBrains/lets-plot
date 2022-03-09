@@ -3,7 +3,7 @@
 
 from datetime import datetime
 from pandas import DataFrame
-from plot.util import as_annotated_data
+from lets_plot.plot.util import as_annotated_data
 
 dt_value = datetime(2020, 1, 1)
 data_dict = {
@@ -34,6 +34,16 @@ def test_as_annotated_data_list():
 
 def test_as_annotated_data_string():
     data = {'x': 'foo', 'y': 'bar'}
+    assert {} == get_data_meta(data)
+
+
+def test_dict_with_empty_series():
+    data = {'x': [], 'y': []}
+    assert {} == get_data_meta(data)
+
+
+def test_df_with_empty_series():
+    data = DataFrame({'x': [], 'y': []})
     assert {} == get_data_meta(data)
 
 
