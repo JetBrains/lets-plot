@@ -1,6 +1,6 @@
 import enum
 from abc import abstractmethod
-from collections import Iterable
+from collections.abc import Iterable
 from typing import List, Optional, Union, Dict
 
 from pandas import DataFrame, Series

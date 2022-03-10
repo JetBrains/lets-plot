@@ -1,6 +1,7 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-from collections import namedtuple, Iterable
+from collections import namedtuple
+from collections.abc import Iterable
 from typing import Union, List, Optional, Dict
 
 from pandas import Series

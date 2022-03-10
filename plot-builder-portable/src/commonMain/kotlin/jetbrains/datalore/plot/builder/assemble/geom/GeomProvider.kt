@@ -115,7 +115,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
         fun dotplot(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
-                GeomKind.DOTPLOT,
+                GeomKind.DOT_PLOT,
                 AestheticsDefaults.dotplot(),
                 DotplotGeom.HANDLES_GROUPS,
                 supplier
@@ -242,6 +242,15 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 GeomKind.VIOLIN,
                 AestheticsDefaults.violin(),
                 ViolinGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
+        }
+
+        fun ydotplot(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.Y_DOT_PLOT,
+                AestheticsDefaults.ydotplot(),
+                YDotplotGeom.HANDLES_GROUPS,
                 supplier
             ).build()
         }

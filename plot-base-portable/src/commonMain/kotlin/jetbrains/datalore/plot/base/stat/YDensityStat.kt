@@ -144,11 +144,12 @@ class YDensityStat(
     }
 
     companion object {
+        val DEF_SCALE = Scale.AREA
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH
         )
-        val DEF_SCALE = Scale.AREA
     }
 }
