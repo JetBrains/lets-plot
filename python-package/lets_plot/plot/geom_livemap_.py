@@ -89,17 +89,24 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     show_coord_pick_tools : bool, defafult=False
         Show buttons "copy location" and "draw geometry"
     data_size_zoomin : int, defafult=0
-        Number of zoom-ins when map objects with mapped size will get scaled.
-         0: no scaling
-         -1: no limit
-         n: number of zoomins with scaling
+        Controls how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
+        when the size is set by means of mapping between the data and the `size` aesthetic.
+
+         0: size never increases
+         -1: size will be increasing without limits
+         n: a number of zooming-in steps (counting from the initial state of the map widget)
+            when size of objects will be increasing. Farther zooming will no longer affect the size.
     const_size_zoomin : int, defafult=-1
-        Number of zoom-ins when map objects with constant size will get scaled.
-         0: no scaling
-         -1: no limit
-         n: number of zoomins with scaling
+        Controls how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
+        when the size is not linked to a data (i.e. constant size).
+
+         0: size never increases
+         -1: size will be increasing without limits
+         n: a number of zooming-in steps (counting from the initial state of the map widget)
+            when size of objects will be increasing. Farther zooming will no longer affect the size.
     ontop : bool, default=False
-        Draw livemap layer above other geoms.
+        Whether geometry objects created by aesthetics mappings specified in directly in `geom_livemap()`
+        appear below (False) or ontop (True) of  objects of other plot layers.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
