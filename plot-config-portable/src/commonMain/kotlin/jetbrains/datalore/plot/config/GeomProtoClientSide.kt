@@ -127,7 +127,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.stackGroups = opts.getBoolean(YDotplot.STACKGROUPS)
                 }
                 if (opts.hasOwn(YDotplot.STACKDIR)) {
-                    geom.stackDir = YDotplotGeom.Stackdir.safeValueOf(opts.getString(YDotplot.STACKDIR)!!)
+                    geom.yStackDir = YDotplotGeom.YStackdir.safeValueOf(opts.getString(YDotplot.STACKDIR)!!)
                 }
                 if (opts.hasOwn(YDotplot.METHOD)) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(YDotplot.METHOD)!!)
