@@ -32,16 +32,11 @@ object PlotSizeHelper {
         return if (plotSize != null) {
             plotSize
         } else {
-            var plotSizeSpec = getSizeOptionOrNull(plotSpec)
-            if (plotSizeSpec != null) {
-                plotSizeSpec
+            val preferredSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
+            if (plotMaxWidth != null && plotMaxWidth < preferredSize.x) {
+                preferredSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / preferredSize.x)
             } else {
-                val defSize = defaultSinglePlotSize(facets, containsLiveMap)
-                if (plotMaxWidth != null && plotMaxWidth < defSize.x) {
-                    defSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / defSize.x)
-                } else {
-                    defSize
-                }
+                preferredSize
             }
         }
     }
