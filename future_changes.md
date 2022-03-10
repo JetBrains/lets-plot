@@ -20,15 +20,28 @@
       - the value is limited by the number of characters in it.
   - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/tooltip_title.ipynb).
 
-- Perameter `scales` in `facet_grid()/facet_wrap()` [[#451](https://github.com/JetBrains/lets-plot/issues/451), 
+- Parameter `scales` in `facet_grid()/facet_wrap()` [[#451](https://github.com/JetBrains/lets-plot/issues/451), 
 [#479](https://github.com/JetBrains/lets-plot/issues/479)].
 
-See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/facets_free_scales.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/facets_free_scales.ipynb).
 
 - geom_livemap: button for position reset.
 - geom_livemap: objects scale on zoom.
 - geom_livemap: new parameter `ontop` that controls z-index of the `geom_livemap` layer.
 - geom_livemap: new parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons
+
+- New geometries:
+  - `geom_violin()`
+
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-12/notebooks/geom_violin.ipynb).
+
+  - `geom_dotplot()`
+
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/geom_dotplot.ipynb).
+
+  - `geom_ydotplot()`
+
+      See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/geom_ydotplot.ipynb).
 
 ### Changed
 
