@@ -49,3 +49,4 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 - Fix tooltips for `geom_histogram(stat='density')`.
 - The axis tooltip overlaps the general tooltip [[#515](https://github.com/JetBrains/lets-plot/issues/515)].
 - The multi-layer tooltip detection strategy will only be used if more than one layer provides tooltips.
+- scaleColorManual Divide by Zero with 1 mapping [[#506](https://github.com/JetBrains/lets-plot/issues/506)].
