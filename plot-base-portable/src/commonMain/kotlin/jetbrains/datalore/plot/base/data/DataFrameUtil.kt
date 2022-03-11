@@ -36,8 +36,8 @@ object DataFrameUtil {
     }
 
     fun hasVariable(data: DataFrame, varName: String): Boolean {
-        for (`var` in data.variables()) {
-            if (varName == `var`.name) {
+        for (v in data.variables()) {
+            if (varName == v.name) {
                 return true
             }
         }

@@ -79,6 +79,7 @@ abstract class PlotFacets {
                 val levelKey = nameLevelTuple.map { it.second }
 
                 // build the data subset
+                // ToDo: will we lose isNumeric, isDataTime, orderSpacs?
                 val b = DataFrame.Builder()
                 val variables = data.variables()
                 for (variable in variables) {
@@ -109,9 +110,13 @@ abstract class PlotFacets {
                     val indices = when {
                         // 'empty' data in layers with no aes mapping (only constants)
                         data.isEmpty -> emptyList()
-                        else -> {
+                        DataFrameUtil.hasVariable(data, varName) -> {
                             val variable = DataFrameUtil.findVariableOrFail(data, varName)
                             SeriesUtil.matchingIndices(data[variable], level)
+                        }
+                        else -> {
+                            // 'data' has no column 'varName' -> the entire data should be shown in each facet.
+                            (0 until data.rowCount()).toList()
                         }
                     }
                     indicesByLevel[level] = indices
