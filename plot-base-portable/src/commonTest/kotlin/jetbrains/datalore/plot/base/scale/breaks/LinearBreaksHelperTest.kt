@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.base.scale.breaks
 
 import jetbrains.datalore.base.assertion.assertArrayEquals
 import kotlin.math.sign
-import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class LinearBreaksHelperTest {
@@ -62,24 +62,35 @@ class LinearBreaksHelperTest {
         assertTrue(sign(breaks[0]) >= 0)
     }
 
-    //TODO
-    //FIXME
-    @Ignore
     @Test
-    fun fixMe() {
+    fun beyondPrecision() {
         val breaks = computeBreaks(
-            1667.9,
-            1667.8999999999996,
+            1.0,
+            1.0 + 1E-13,
             5
         )
-        print(breaks)
-        assertTrue(sign(breaks[0]) >= 0)
+        assertEquals(1, breaks.size)
+        assertEquals(1.0, breaks[0])
     }
 
     companion object {
 
-        private val DOMAINS = arrayOf(doubleArrayOf(0.0, 100.0), doubleArrayOf(50.0, 100.0), doubleArrayOf(49.5, 100.5), doubleArrayOf(90.0, 100.0), doubleArrayOf(-20.0, 20.0), doubleArrayOf(100.0, 0.0))
-        private val EXPECTED_BREAKS = arrayOf(doubleArrayOf(0.0, 20.0, 40.0, 60.0, 80.0, 100.0), doubleArrayOf(50.0, 60.0, 70.0, 80.0, 90.0, 100.0), doubleArrayOf(50.0, 60.0, 70.0, 80.0, 90.0, 100.0), doubleArrayOf(90.0, 92.0, 94.0, 96.0, 98.0, 100.0), doubleArrayOf(-20.0, -10.0, 0.0, 10.0, 20.0), doubleArrayOf(100.0, 80.0, 60.0, 40.0, 20.0, 0.0))
+        private val DOMAINS = arrayOf(
+            doubleArrayOf(0.0, 100.0),
+            doubleArrayOf(50.0, 100.0),
+            doubleArrayOf(49.5, 100.5),
+            doubleArrayOf(90.0, 100.0),
+            doubleArrayOf(-20.0, 20.0),
+            doubleArrayOf(100.0, 0.0)
+        )
+        private val EXPECTED_BREAKS = arrayOf(
+            doubleArrayOf(0.0, 20.0, 40.0, 60.0, 80.0, 100.0),
+            doubleArrayOf(50.0, 60.0, 70.0, 80.0, 90.0, 100.0),
+            doubleArrayOf(50.0, 60.0, 70.0, 80.0, 90.0, 100.0),
+            doubleArrayOf(90.0, 92.0, 94.0, 96.0, 98.0, 100.0),
+            doubleArrayOf(-20.0, -10.0, 0.0, 10.0, 20.0),
+            doubleArrayOf(100.0, 80.0, 60.0, 40.0, 20.0, 0.0)
+        )
 
         private const val ERROR_TOLERANCE = 1e-10
 
@@ -92,7 +103,11 @@ class LinearBreaksHelperTest {
             }.toTypedArray()
         }
 
-        private fun assertBreaks(scaleDomains: Array<DoubleArray>, expectedBreaks: Array<DoubleArray>, errorTolerance: Double) {
+        private fun assertBreaks(
+            scaleDomains: Array<DoubleArray>,
+            expectedBreaks: Array<DoubleArray>,
+            errorTolerance: Double
+        ) {
             val targetBreakCount = 5
             for ((i, domain) in scaleDomains.withIndex()) {
                 val expectedBreaks_i = expectedBreaks[i]
@@ -107,18 +122,17 @@ class LinearBreaksHelperTest {
                 print(breaks_i)
 
                 assertArrayEquals(
-                        expectedBreaks_i.toTypedArray(),
-                        asPrimitiveDoubles(
-                            breaks_i
-                        ).toTypedArray(),
-                        errorTolerance
+                    expectedBreaks_i.toTypedArray(),
+                    asPrimitiveDoubles(
+                        breaks_i
+                    ).toTypedArray(),
+                    errorTolerance
                 )
             }
         }
 
         private fun computeBreaks(domainStart: Double, domainEnd: Double, targetBreakCount: Int): Array<Double> {
-            val helper =
-                LinearBreaksHelper(domainStart, domainEnd, targetBreakCount)
+            val helper = LinearBreaksHelper(domainStart, domainEnd, targetBreakCount)
             return helper.breaks.toTypedArray()
         }
 

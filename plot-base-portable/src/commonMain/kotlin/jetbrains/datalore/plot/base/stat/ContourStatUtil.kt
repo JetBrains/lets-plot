@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil.isSubTiny
 import kotlin.math.max
 import kotlin.math.min
 
@@ -59,7 +58,7 @@ object ContourStatUtil {
     }
 
     fun computeLevels(zRange: ClosedRange<Double>?, binOptions: BinStatUtil.BinOptions): List<Double>? {
-        if (zRange == null || isSubTiny(zRange)) return null
+        if (zRange == null || SeriesUtil.isBeyondPrecision(zRange)) return null
 
         val b = BinStatUtil.binCountAndWidth(SeriesUtil.span(zRange), binOptions)
         val levels = ArrayList<Double>()

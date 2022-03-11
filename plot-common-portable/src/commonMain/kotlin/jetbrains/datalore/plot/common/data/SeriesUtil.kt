@@ -6,25 +6,33 @@
 package jetbrains.datalore.plot.common.data
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering
+import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
 
 
 object SeriesUtil {
     const val TINY = 1e-50
+    private const val MAX_DECIMAL_PLACES = 12
 
     private val REAL_NUMBER = { it: Double? -> isFinite(it) }
 
     val NEGATIVE_NUMBER = { input: Double -> input < 0 }
 
-    fun isSubTiny(value: Double): Boolean {
-        return value < TINY
+    fun isBeyondPrecision(range: DoubleSpan): Boolean {
+        val delta = span(range)
+        return delta < TINY ||                       // ??
+                isBeyondPrecision(range.lowerEnd, delta) ||
+                isBeyondPrecision(range.upperEnd, delta)
     }
 
-    fun isSubTiny(range: ClosedRange<Double>): Boolean {
-        return isFinite(range) && span(range) < TINY
+    fun isBeyondPrecision(base: Double, delta: Double): Boolean {
+        val basePower = log10(base)
+        val deltaPower = log10(delta)
+        return (basePower - deltaPower) > MAX_DECIMAL_PLACES
     }
 
     fun checkedDoubles(values: Iterable<*>): CheckedDoubleIterable {
@@ -176,11 +184,15 @@ object SeriesUtil {
      * ToDo: Use with caution.
      * ToDo: The correct method of domain validation is temporarily in 'Transforms.ensureApplicableDomain'.
      */
-    fun ensureApplicableRange(range: ClosedRange<Double>?, preferableNullRange: ClosedRange<Double>? = null): ClosedRange<Double> {
+    fun ensureApplicableRange(
+        range: ClosedRange<Double>?,
+        preferableNullRange: ClosedRange<Double>? = null
+    ): ClosedRange<Double> {
         if (range == null) {
             return preferableNullRange ?: ClosedRange(-0.5, 0.5)
         }
-        if (isSubTiny(range)) {
+//        if (isSubTiny(range)) {
+        if (isBeyondPrecision(range)) {
             val median = range.lowerEnd
             return ClosedRange(median - 0.5, median + 0.5)
         }

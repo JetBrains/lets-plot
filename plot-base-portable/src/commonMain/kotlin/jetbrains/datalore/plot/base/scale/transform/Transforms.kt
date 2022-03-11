@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.isBeyondPrecision
 
 object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
@@ -46,11 +46,9 @@ object Transforms {
         }
 
         val domain = transform.toApplicableDomain(dataRange)
-        return when {
-            SeriesUtil.isSubTiny(domain) ->
-                transform.createApplicableDomain(domain.upperEnd)
-            else ->
-                domain
+        return when (isBeyondPrecision(domain)) {
+            true -> transform.createApplicableDomain(domain.upperEnd)
+            false -> domain
         }
     }
 

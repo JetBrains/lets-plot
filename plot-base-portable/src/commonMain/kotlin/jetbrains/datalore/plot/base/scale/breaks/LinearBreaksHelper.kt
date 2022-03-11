@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.*
 
 class LinearBreaksHelper(
@@ -24,11 +25,14 @@ class LinearBreaksHelper(
             computeNiceStep(this.span, count)
         }
 
-        val breaks = if (precise) {
-            (0 until count).map { normalStart + step / 2 + it * step }
-        } else {
-            computeNiceBreaks(normalStart, normalEnd, step)
-        }
+        val breaks =
+            if (SeriesUtil.isBeyondPrecision(normalStart, step) || SeriesUtil.isBeyondPrecision(normalEnd, step)) {
+                emptyList()
+            } else if (precise) {
+                (0 until count).map { normalStart + step / 2 + it * step }
+            } else {
+                computeNiceBreaks(normalStart, normalEnd, step)
+            }
 
         this.breaks = if (breaks.isEmpty()) {
             listOf(normalStart)

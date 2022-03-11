@@ -10,11 +10,12 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.util.MutableDouble
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 import jetbrains.datalore.plot.common.data.SeriesUtil.expand
-import jetbrains.datalore.plot.common.data.SeriesUtil.isSubTiny
+import jetbrains.datalore.plot.common.data.SeriesUtil.isBeyondPrecision
+import jetbrains.datalore.plot.common.data.SeriesUtil.span
+import jetbrains.datalore.plot.common.util.MutableDouble
 import kotlin.math.floor
 
 /**
@@ -63,20 +64,20 @@ class Bin2dStat(
         val xRangeInit = adjustRangeInitial(xRange)
         val yRangeInit = adjustRangeInitial(yRange)
 
-        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(SeriesUtil.span(xRangeInit), binOptionsX)
-        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(SeriesUtil.span(yRangeInit), binOptionsY)
+        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(span(xRangeInit), binOptionsX)
+        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(span(yRangeInit), binOptionsY)
 
         // final bin width and count
 
         val xRangeFinal = adjustRangeFinal(xRange, xCountAndWidthInit.width)
         val yRangeFinal = adjustRangeFinal(yRange, yCountAndWidthInit.width)
 
-        val xCountAndWidthFinal = BinStatUtil.binCountAndWidth(SeriesUtil.span(xRangeFinal), binOptionsX)
-        val yCountAndWidthFinal = BinStatUtil.binCountAndWidth(SeriesUtil.span(yRangeFinal), binOptionsY)
+        val xCountAndWidthFinal = BinStatUtil.binCountAndWidth(span(xRangeFinal), binOptionsX)
+        val yCountAndWidthFinal = BinStatUtil.binCountAndWidth(span(yRangeFinal), binOptionsY)
 
         val countTotal = xCountAndWidthFinal.count * yCountAndWidthFinal.count
         val densityNormalizingFactor =
-            densityNormalizingFactor(SeriesUtil.span(xRangeFinal), SeriesUtil.span(yRangeFinal), countTotal)
+            densityNormalizingFactor(span(xRangeFinal), span(yRangeFinal), countTotal)
 
         val binsData = computeBins(
             data.getNumeric(TransformVar.X),
@@ -180,7 +181,7 @@ class Bin2dStat(
         }
 
         private fun adjustRangeFinal(r: ClosedRange<Double>, binWidth: Double): ClosedRange<Double> {
-            return if (isSubTiny(r)) {
+            return if (isBeyondPrecision(r)) {
                 // 0 span allways becomes 1
                 expand(r, 0.5, 0.5)
             } else {
