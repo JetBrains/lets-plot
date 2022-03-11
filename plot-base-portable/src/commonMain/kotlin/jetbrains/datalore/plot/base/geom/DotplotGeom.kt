@@ -20,16 +20,16 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.base.stat.DotplotStat.Method
-import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.math.min
 
-class DotplotGeom : GeomBase() {
+open class DotplotGeom : GeomBase() {
     var dotSize: Double = DEF_DOTSIZE
     var stackRatio: Double = DEF_STACKRATIO
     var stackGroups: Boolean = DEF_STACKGROUPS
-    var stackDir: Stackdir = DEF_STACKDIR
+    open var stackDir: Stackdir = DEF_STACKDIR
     var method: Method = DEF_METHOD
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -58,16 +58,10 @@ class DotplotGeom : GeomBase() {
         if (!pointsWithBinWidth.any()) return
 
         val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
-        val stackCapacity = when (ctx.flipped) {
-            true -> ctx.getAesBounds().width
-            false -> ctx.getAesBounds().height
-        }.let {
-            ceil(it / (dotSize * stackRatio * binWidthPx)).toInt() + 1
-        }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
-            .groupBy { p -> p.x()!! }
+            .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointStack) ->
-                buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx, stackCapacity)
+                buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx)
             }
     }
 
@@ -77,29 +71,30 @@ class DotplotGeom : GeomBase() {
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext,
-        binWidthPx: Double,
-        stackCapacity: Int
+        binWidthPx: Double
     ) {
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        var stackSize = 0
+        var builtStackSize = 0
         for (p in dataPoints) {
-            val groupStackSize = p.stacksize()!!.toInt()
+            val groupStackSize = boundedStackSize(
+                builtStackSize + p.stacksize()!!.toInt(),
+                ctx,
+                binWidthPx,
+                ctx.flipped
+            ) - builtStackSize
             var dotId = -1
             for (i in 0 until groupStackSize) {
-                dotId = if (stackGroups && method == Method.HISTODOT) stackSize + i else i
-                // Break only current loop because of hints for empty groups
-                if (dotId > stackCapacity) break
-                val center = getDotCenter(p, dotId, binWidthPx)
+                dotId = if (stackDotsAcrossGroups()) builtStackSize + i else i
                 val path = dotHelper.createDot(
                     p,
-                    geomHelper.toClient(center, p),
+                    getDotCenter(p, dotId, p.stacksize()!!.toInt(), binWidthPx, ctx.flipped, geomHelper),
                     dotSize * binWidthPx / 2
                 )
                 root.add(path.rootGroup)
             }
             buildHint(p, dotId, ctx, geomHelper, binWidthPx)
-            stackSize += groupStackSize
+            builtStackSize += groupStackSize
         }
     }
 
@@ -110,19 +105,20 @@ class DotplotGeom : GeomBase() {
         geomHelper: GeomHelper,
         binWidthPx: Double
     ) {
-        if (!isFinite(p.x()) || !isFinite(p.stacksize()))
-            return
-
-        val dotRadius = dotSize * binWidthPx / 2
-        val yShiftSign = if (stackDir == Stackdir.DOWN) -1 else 1
-        val origin = getDotCenter(p, dotId, binWidthPx)
-            .add(DoubleVector(-dotRadius, yShiftSign * dotRadius))
-        val dimension = DoubleVector(2 * dotRadius, 0.0)
-        val rect = DoubleRectangle(origin, dimension)
+        val dotRadius = dotSize * binWidthPx / 2.0
+        val stackDirSign = if (stackDir == Stackdir.DOWN) -1 else 1
+        val flipSign = if (ctx.flipped) 1 else -1
+        val center = getDotCenter(p, dotId, p.stacksize()!!.toInt(), binWidthPx, ctx.flipped, geomHelper)
+        val shiftToOrigin = DoubleVector(-dotRadius, stackDirSign * flipSign * dotRadius)
+        val dimension = DoubleVector(2.0 * dotRadius, 0.0)
+        val rect = if (ctx.flipped)
+            DoubleRectangle(center.add(shiftToOrigin.flip()), dimension.flip())
+        else
+            DoubleRectangle(center.add(shiftToOrigin), dimension)
 
         ctx.targetCollector.addRectangle(
             p.index(),
-            geomHelper.toClient(rect, p),
+            rect,
             GeomTargetCollector.TooltipParams.params()
                 .setMainColor(HintColorUtil.fromFill(p))
                 .setColors(
@@ -143,23 +139,27 @@ class DotplotGeom : GeomBase() {
     private fun getDotCenter(
         p: DataPointAesthetics,
         dotId: Int,
-        binWidthPx: Double
+        stackSize: Int,
+        binWidthPx: Double,
+        flip: Boolean,
+        geomHelper: GeomHelper
     ) : DoubleVector {
         val x = p.x()!!
         val shiftedDotId = when (stackDir) {
-            Stackdir.UP -> dotId + 1 / (2 * stackRatio)
-            Stackdir.DOWN -> -dotId - 1 / (2 * stackRatio)
-            Stackdir.CENTER -> dotId + 0.5 - p.stacksize()!! / 2
+            Stackdir.UP -> dotId + 1.0 / (2.0 * stackRatio)
+            Stackdir.DOWN -> -dotId - 1.0 / (2.0 * stackRatio)
+            Stackdir.CENTER -> dotId + 0.5 - stackSize / 2.0
             Stackdir.CENTERWHOLE -> {
-                val parityShift = if (p.stacksize()!!.toInt() % 2 == 0) 0.0 else 0.5
-                dotId + parityShift - p.stacksize()!! / 2 + 1 / (2 * stackRatio)
+                val parityShift = if (stackSize % 2 == 0) 0.0 else 0.5
+                dotId + parityShift - stackSize / 2.0 + 1.0 / (2.0 * stackRatio)
             }
         }
+        val shift = DoubleVector(0.0, shiftedDotId * dotSize * stackRatio * binWidthPx)
 
-        return DoubleVector(x, shiftedDotId * dotSize * stackRatio * binWidthPx)
+        return geomHelper.toClient(DoubleVector(x, 0.0), p).add(if (flip) shift.flip() else shift.negate())
     }
 
-    class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
+    protected class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
         LinesHelper(pos, coord, ctx) {
             fun createDot(
                 p: DataPointAesthetics,
@@ -182,6 +182,27 @@ class DotplotGeom : GeomBase() {
             }
     }
 
+    protected fun stackDotsAcrossGroups(): Boolean {
+        return stackGroups && method == Method.HISTODOT
+    }
+
+    protected fun boundedStackSize(
+        stackSize: Int,
+        ctx: GeomContext,
+        binWidthPx: Double,
+        stacksAreVertical: Boolean
+    ): Int {
+        val stackCapacity = when (stacksAreVertical) {
+            true -> ctx.getAesBounds().width
+            false -> ctx.getAesBounds().height
+        }.let {
+            ceil(it / (dotSize * stackRatio * binWidthPx)).toInt() + 1
+        }
+        val parityCorrectionTerm = if (stackSize % 2 == stackCapacity % 2) 0 else 1
+
+        return min(stackSize, stackCapacity + parityCorrectionTerm)
+    }
+
     enum class Stackdir {
         UP, DOWN, CENTER, CENTERWHOLE;
 
@@ -200,9 +221,9 @@ class DotplotGeom : GeomBase() {
     }
 
     companion object {
-        val DEF_DOTSIZE = 1.0
-        val DEF_STACKRATIO = 1.0
-        val DEF_STACKGROUPS = false
+        const val DEF_DOTSIZE = 1.0
+        const val DEF_STACKRATIO = 1.0
+        const val DEF_STACKGROUPS = false
         val DEF_STACKDIR = Stackdir.UP
         val DEF_METHOD = Method.DOTDENSITY
 

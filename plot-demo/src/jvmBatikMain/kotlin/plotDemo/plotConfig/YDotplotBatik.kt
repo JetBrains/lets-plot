@@ -11,7 +11,7 @@ import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 fun main() {
     with(YDotplot()) {
         PlotSpecsDemoWindowBatik(
-            "YDotPlot",
+            "Y-Dot plot",
             plotSpecList()
         ).open()
     }
