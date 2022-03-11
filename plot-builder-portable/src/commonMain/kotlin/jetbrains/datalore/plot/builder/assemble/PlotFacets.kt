@@ -79,16 +79,7 @@ abstract class PlotFacets {
                 val levelKey = nameLevelTuple.map { it.second }
 
                 // build the data subset
-                // ToDo: will we lose isNumeric, isDataTime, orderSpacs?
-                val b = DataFrame.Builder()
-                val variables = data.variables()
-                for (variable in variables) {
-                    val source = data[variable]
-                    val target = SeriesUtil.pickAtIndices(source, indices)
-                    b.put(variable, target)
-                }
-
-                val levelData = b.build()
+                val levelData = data.slice(indices)
                 dataByLevelKey.add(levelKey to levelData)
             }
 

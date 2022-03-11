@@ -242,6 +242,7 @@ object SeriesUtil {
         return result
     }
 
+    // ToDo: see Kotlin `slice()`
     fun <T> pickAtIndices(list: List<T>, indices: List<Int>): List<T> {
         val initialCapacity = if (indices.size > 10) indices.size else 10
         val result = ArrayList<T>(initialCapacity)
@@ -253,6 +254,7 @@ object SeriesUtil {
         return result
     }
 
+    // ToDo: see Kotlin `slice()`
     fun <T> pickAtIndices(list: List<T>, indices: Set<Int>): List<T> {
         val result = ArrayList<T>(list.size)
         for (i in list.indices) {

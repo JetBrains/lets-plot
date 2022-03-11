@@ -146,6 +146,10 @@ class DataFrame private constructor(builder: Builder) {
         return Builder(this)
     }
 
+    fun slice(indices: Iterable<Int>): DataFrame {
+        return Builder(this, indices).build()
+    }
+
     private fun assertDefined(variable: Variable) {
         if (!has(variable)) {
             val e = IllegalArgumentException("Undefined variable: '$variable'")
@@ -238,7 +242,7 @@ class DataFrame private constructor(builder: Builder) {
         } else {
             get(orderSpec.variable).zip(get(orderSpec.orderBy))
         }
-            .filter { isValueComparable(it.second) && isValueComparable(it.first)}
+            .filter { isValueComparable(it.second) && isValueComparable(it.first) }
             .sortedWith(compareBy({ it.second as Comparable<*> }, { it.first as Comparable<*> }))
             .mapNotNull { it.first }
 
@@ -268,6 +272,17 @@ class DataFrame private constructor(builder: Builder) {
 
         constructor(data: DataFrame) {
             myVectorByVar.putAll(data.myVectorByVar)
+            myIsNumeric.putAll(data.myIsNumeric)
+            myIsDateTime.putAll(data.myIsDateTime)
+            myOrderSpecs.addAll(data.myOrderSpecs)
+        }
+
+        internal constructor(data: DataFrame, indices: Iterable<Int>) {
+            val newVectors = data.myVectorByVar.mapValues { (_, serie) ->
+                serie.slice(indices)
+            }
+
+            myVectorByVar.putAll(newVectors)
             myIsNumeric.putAll(data.myIsNumeric)
             myIsDateTime.putAll(data.myIsDateTime)
             myOrderSpecs.addAll(data.myOrderSpecs)
