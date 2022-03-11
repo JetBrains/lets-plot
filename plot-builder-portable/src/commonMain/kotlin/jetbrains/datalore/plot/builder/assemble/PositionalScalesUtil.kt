@@ -87,7 +87,7 @@ internal object PositionalScalesUtil {
             }
             else -> {
                 // One domain for all tiles.
-                val domainOverall = domains.reduceOrNull { r0, r1 ->
+                val domainOverall = domains.filterNotNull().reduceOrNull { r0, r1 ->
                     RangeUtil.updateRange(r0, r1)!!
                 }
                 val preferableNullDomainOverall = layersByTile[0]

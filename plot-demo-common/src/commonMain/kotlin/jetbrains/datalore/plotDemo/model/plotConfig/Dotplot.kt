@@ -14,6 +14,7 @@ class Dotplot {
             basic(),
             histodot(),
             coordFlip(),
+            //facets(),
             withGroups(),
             dotplotParams(),
             statIdentity(),
@@ -84,6 +85,33 @@ class Dotplot {
                 "              'name': 'flip'," +
                 "              'flip': true" +
                 "            }" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun facets(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "                'x': 'sepal length (cm)'," +
+                "                'fill': 'target'" +
+                "              }," +
+                "   'facet': {'name': 'grid'," +
+                "             'x': 'target'," +
+                "             'x_order': 1," +
+                "             'y_order': 1}," +
+                "   'ggtitle': {" +
+                "                'text': 'Default dotplot'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'dotplot'" +
+                "               }" +
+                "             ]" +
                 "}"
 
         val plotSpec = HashMap(parsePlotSpec(spec))
