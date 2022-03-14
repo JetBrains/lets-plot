@@ -73,8 +73,11 @@ class layer_tooltips(FeatureSpec):
         """
         Initialize self.
 
-        :param variables: List of strings
+        Parameters
+        ----------
+        variables : list of str
             Variable names to place in the general tooltip with default formatting.
+
         """
 
         self._tooltip_formats: List = []
@@ -416,6 +419,7 @@ class layer_tooltips(FeatureSpec):
             ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
                 geom_point(tooltips=layer_tooltips().line('(^x, ^y)')\\
                                                     .color('magenta'))
+
         """
         print("WARN: The function color() is deprecated and is no longer supported.")
 
@@ -442,7 +446,8 @@ class layer_tooltips(FeatureSpec):
         The specification rules are the same as for the `lines()` function:
         variables and aesthetics can be used in the template.
         The resulting string will be at the beginning of the general tooltip, centered and highlighted in bold.
-        A long title can be split into multiple lines using `\n` as a text separator.
+        A long title can be split into multiple lines using `\\\\n` as a text separator.
+
         """
         self._tooltip_title = value
         return self

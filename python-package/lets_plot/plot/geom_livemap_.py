@@ -162,7 +162,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     Examples
     --------
     .. jupyter-execute::
-        :param scale_objects:
         :linenos:
         :emphasize-lines: 3
 
