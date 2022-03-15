@@ -7,23 +7,23 @@
   `caption` parameter in `labs()`, 
   `plot_subtitle` and `plot_caption` parameters in `theme()`. 
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/title_subtitle_caption.ipynb).
 
 - Multi-line title: title, subtitle, caption, legend title can be split into multiple lines using `\n` as a text separator.
     
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/title_subtitle_caption.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/title_subtitle_caption.ipynb).
 
 - In tooltip customization API:
-  - The `title()` option defines the line, which will be at the beginning of the general tooltip, centered and highlighted in bold.
+  - The `title()` option defines a tooltip "title" text which will always appear above the rest of the tooltip content.
   - Word wrap:
       - use `\n` as a text separator to split the original string into multiple lines;
       - the value is limited by the number of characters in it.
-  - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/tooltip_title.ipynb).
+  - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/tooltip_title.ipynb).
 
 - Parameter `scales` in `facet_grid()/facet_wrap()` [[#451](https://github.com/JetBrains/lets-plot/issues/451), 
 [#479](https://github.com/JetBrains/lets-plot/issues/479)].
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/facets_free_scales.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/facets_free_scales.ipynb).
 
 - geom_livemap: button for position reset.
 - geom_livemap: new parameters `data_size_zoomin, const_size_zoomin` which control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map.
@@ -33,15 +33,15 @@
 - New geometries:
   - `geom_violin()`
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-12/notebooks/geom_violin.ipynb).
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21a/notebooks/geom_violin.ipynb).
 
   - `geom_dotplot()`
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/geom_dotplot.ipynb).
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_dotplot.ipynb).
 
   - `geom_ydotplot()`
 
-      See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22-02/notebooks/geom_ydotplot.ipynb).
+      See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_ydotplot.ipynb).
 
 ### Changed
 
