@@ -1,4 +1,4 @@
-## [2.2.2] - 2022-03-??
+## [2.3.0] - 2022-03-??
 
 ### Added
 
@@ -8,49 +8,49 @@
   `plot_subtitle` and `plot_caption` parameters in `theme()`. 
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/title_subtitle_caption.ipynb).
-
-- Multi-line title: title, subtitle, caption, legend title can be split into multiple lines using `\n` as a text separator.
+     
+- The 'newline' character (`\n`) now works as `line break` in plot title, subtitle, caption and in legend title.
     
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/title_subtitle_caption.ipynb).
 
-- In tooltip customization API:
+- New in tooltip customization API:
   - The `title()` option defines a tooltip "title" text which will always appear above the rest of the tooltip content.
-  - Word wrap:
-      - use `\n` as a text separator to split the original string into multiple lines;
-      - the value is limited by the number of characters in it.
-  - See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/tooltip_title.ipynb).
+  - The 'newline' character (`\n`) now works as `line break` in tooltips.
+  - Automatic word wrap: occurs when the length of a text value in tooltip exceeds the 30 characters limit.  
+  
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/tooltip_title.ipynb).
 
 - Parameter `scales` in `facet_grid()/facet_wrap()` [[#451](https://github.com/JetBrains/lets-plot/issues/451), 
 [#479](https://github.com/JetBrains/lets-plot/issues/479)].
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/facets_free_scales.ipynb).
-
-- geom_livemap: button for position reset.
-- geom_livemap: new parameters `data_size_zoomin, const_size_zoomin` which control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map.
-- geom_livemap: new parameter `ontop` that controls z-index of the `geom_livemap` layer.
-- geom_livemap: new parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons
+             
+- New in `geom_livemap()`:
+  - The `Reset` button: return the map widget to its initial zoom/location state.
+  - Parameters `data_size_zoomin, const_size_zoomin`: allow to configure how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map.
+  - Parameter `ontop` that controls z-index of the `geom_livemap` layer.
+  - Parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons.
 
 - New geometries:
   - `geom_violin()`
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21a/notebooks/geom_violin.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21a/notebooks/geom_violin.ipynb).
 
   - `geom_dotplot()`
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_dotplot.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_dotplot.ipynb).
 
   - `geom_ydotplot()`
 
-      See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_ydotplot.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_ydotplot.ipynb).
+                                              
 
 ### Changed
 
 - New tooltip style: rounded corners, bold label, colored marker inside the tooltip.
 - Deprecated tooltip customization API:
   function `color()` will be removed in one of the future releases.
-- All plots auto-scale down their size to fit the width of the output (notebook) cell [[#488](https://github.com/JetBrains/lets-plot/issues/488)].
-
-  Earlier neither `ggbunch` nor plots with the `ggsize()` option has been auto-scaleing.
+- 'Auto shrink': plots automatically shrink when necessary to fit width of the output (notebook) cell [[#488](https://github.com/JetBrains/lets-plot/issues/488)].
 
 ### Fixed
 
